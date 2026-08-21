@@ -111,6 +111,17 @@ const DEFAULT_SOURCES: Source[] = [
   { name: "DekhoCampus", url: "https://dekhocampus.com/news", source_type: "own", is_active: true },
 ];
 
+const IMAGE_URL_SETTING_KEYS = new Set<keyof Settings>(["image_template_url", "logo_url"]);
+
+function normalizeImageSettingUrl(value: unknown) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/^(https?:|data:|blob:)/i.test(raw)) return raw;
+  if (raw.startsWith("//")) return `https:${raw}`;
+  if (/^(dekhocampus\.com|www\.dekhocampus\.com|[a-z0-9-]+\.supabase\.co)\//i.test(raw)) return `https://${raw}`;
+  return raw;
+}
+
 export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: () => void }) {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [sources, setSources] = useState<Source[]>(DEFAULT_SOURCES);
@@ -186,7 +197,10 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
   }, [settings, sources, loading]);
 
   const activeSourceCount = useMemo(() => sources.filter(s => s.is_active).length, [sources]);
-  const updateSetting = (key: keyof Settings, value: any) => setSettings(prev => ({ ...prev, [key]: value }));
+  const updateSetting = (key: keyof Settings, value: any) => setSettings(prev => ({
+    ...prev,
+    [key]: IMAGE_URL_SETTING_KEYS.has(key) ? normalizeImageSettingUrl(value) : value,
+  }));
 
   const edgeErrorMessage = async (error: any) => {
     try {
@@ -217,7 +231,12 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         next_run_at: nextRun,
       };
       const settingsPayload = supportsAdvancedSettings
-        ? { ...settings, next_run_at: nextRun }
+        ? {
+            ...settings,
+            image_template_url: normalizeImageSettingUrl(settings.image_template_url),
+            logo_url: normalizeImageSettingUrl(settings.logo_url),
+            next_run_at: nextRun,
+          }
         : legacySettings;
       const { error } = await (supabase as any).from("blog_auto_agent_settings").upsert({ id: "default", ...settingsPayload });
       if (error) throw error;

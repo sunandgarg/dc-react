@@ -24,6 +24,7 @@ const FloatingBot = lazyRetry(() => import("@/components/FloatingBot").then((mod
 const CookieConsent = lazyRetry(() => import("@/components/CookieConsent").then((module) => ({ default: module.CookieConsent })), "CookieConsent");
 const DeploymentUpdateCoordinator = lazyRetry(() => import("@/components/DeploymentUpdateCoordinator").then((module) => ({ default: module.DeploymentUpdateCoordinator })), "DeploymentUpdateCoordinator");
 const WhatsAppButton = lazyRetry(() => import("@/components/WhatsAppButton").then((module) => ({ default: module.WhatsAppButton })), "WhatsAppButton");
+const PreferredSourceNudge = lazyRetry(() => import("@/components/PreferredSourceNudge").then((module) => ({ default: module.PreferredSourceNudge })), "PreferredSourceNudge");
 const SiteIntegrations = lazyRetry(() => import("@/components/SiteIntegrations").then((module) => ({ default: module.SiteIntegrations })), "SiteIntegrations");
 const AdsenseLoader = lazyRetry(() => import("@/components/ads/AdsenseLoader").then((module) => ({ default: module.AdsenseLoader })), "AdsenseLoader");
 const UserTrackingProvider = lazyRetry(() => import("@/hooks/useUserTracking").then((module) => ({ default: module.UserTrackingProvider })), "UserTrackingProvider");
@@ -105,6 +106,7 @@ function DeferredGlobalUi() {
       <IntentTrackingProvider>{null}</IntentTrackingProvider>
       <GlobalWhatsApp />
       <GlobalDiya />
+      <PreferredSourceNudge />
     </Suspense>
   );
 }

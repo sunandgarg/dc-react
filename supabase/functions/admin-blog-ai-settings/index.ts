@@ -7,10 +7,24 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 const DEFAULT_CLAUDE_TEXT_MODEL = "auto-sonnet";
 const LEGACY_CLAUDE_MODEL_IDS = new Set(["claude-sonnet-5", "claude-sonnet-4-20250514", "claude-3-5-sonnet-20241022", "claude-3-5-sonnet-latest", "claude-3-5-sonnet"]);
 
+function inferTextProvider(value: unknown) {
+  const model = String(value || "").trim().toLowerCase();
+  if (model.startsWith("gemini")) return "gemini";
+  if (model.startsWith("gpt") || model.startsWith("o")) return "openai";
+  if (model.startsWith("grok")) return "xai";
+  return "anthropic";
+}
+
 function normalizeClaudeTextModel(value: unknown) {
   const model = String(value || "").trim();
   if (!model) return DEFAULT_CLAUDE_TEXT_MODEL;
   return LEGACY_CLAUDE_MODEL_IDS.has(model) ? DEFAULT_CLAUDE_TEXT_MODEL : model;
+}
+
+function normalizeTextModel(value: unknown) {
+  const model = String(value || "").trim();
+  if (!model) return "gemini-3.5-flash-lite";
+  return inferTextProvider(model) === "anthropic" ? normalizeClaudeTextModel(model) : model;
 }
 
 function normalizeImageModel(value: unknown) {
@@ -34,14 +48,14 @@ Deno.serve(async (req) => {
     if (req.method === "GET") {
       const { data, error } = await admin.from("blog_ai_provider_settings").select("text_model,image_model,image_quality,claude_api_key_ciphertext,openai_api_key_ciphertext,updated_at").eq("id", "default").maybeSingle();
       if (error) throw error;
-      return json({ text_model: normalizeClaudeTextModel(data?.text_model), image_model: normalizeImageModel(data?.image_model), image_quality: data?.image_quality, claude_key_set: Boolean(data?.claude_api_key_ciphertext), openai_key_set: Boolean(data?.openai_api_key_ciphertext), updated_at: data?.updated_at });
+      return json({ text_model: normalizeTextModel(data?.text_model), image_model: normalizeImageModel(data?.image_model), image_quality: data?.image_quality, claude_key_set: Boolean(data?.claude_api_key_ciphertext), openai_key_set: Boolean(data?.openai_api_key_ciphertext), updated_at: data?.updated_at });
     }
 
     const body = await req.json();
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), updated_by: userData.user.id };
     if (String(body.claude_api_key || "").trim()) updates.claude_api_key_ciphertext = await encryptBlogSecret(String(body.claude_api_key).trim(), service);
     if (String(body.openai_api_key || "").trim()) updates.openai_api_key_ciphertext = await encryptBlogSecret(String(body.openai_api_key).trim(), service);
-    if (body.text_model) updates.text_model = normalizeClaudeTextModel(body.text_model);
+    if (body.text_model) updates.text_model = normalizeTextModel(body.text_model);
     if (body.image_model) updates.image_model = normalizeImageModel(body.image_model);
     if (["low", "medium", "high"].includes(body.image_quality)) updates.image_quality = body.image_quality;
     const { error } = await admin.from("blog_ai_provider_settings").upsert({ id: "default", ...updates });
