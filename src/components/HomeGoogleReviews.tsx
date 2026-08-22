@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Star, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { functionUrl } from "@/lib/backendMode";
 
 interface Review {
   author_name: string;
@@ -33,10 +34,9 @@ export function HomeGoogleReviews() {
       if (!cancelled && urlRow?.value && urlRow?.enabled) setReviewUrl(urlRow.value);
 
       try {
-        const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
         const qs = new URLSearchParams({ entityType: "site", entitySlug: "homepage" });
         if (placeRow?.value) qs.set("placeId", placeRow.value);
-        const res = await fetch(`https://${projectId}.functions.supabase.co/google-reviews?${qs}`, {
+        const res = await fetch(`${functionUrl("google-reviews")}?${qs}`, {
           headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
         });
         if (res.ok) {

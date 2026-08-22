@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase, supabaseProjectUrl } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
+import { functionUrl } from '@/lib/backendMode';
 import { Copy, Check, Key, RefreshCw, Eye, EyeOff, Code, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -15,8 +16,6 @@ export function UniversityApiPanel({ universityId, universityName }: UniversityA
   const [copied, setCopied] = useState<string | null>(null);
   const [regenerating, setRegenerating] = useState(false);
   const { toast } = useToast();
-
-  const supabaseUrl = supabaseProjectUrl;
 
   useEffect(() => {
     fetchApiKey();
@@ -87,7 +86,7 @@ export function UniversityApiPanel({ universityId, universityName }: UniversityA
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const apiEndpoint = `${supabaseUrl}/functions/v1/receive-lead`;
+  const apiEndpoint = functionUrl('receive-lead');
 
   const samplePayload = {
     university_id: universityId,

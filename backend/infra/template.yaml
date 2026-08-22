@@ -1,13 +1,18 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: DekhoCampus parallel API. It is safe to deploy before enabling AWS traffic.
+Description: DekhoCampus Node/Prisma API backed by MySQL.
 
 Parameters:
-  SupabaseUrl:
+  DatabaseUrl:
     Type: String
+    NoEcho: true
+  SupabaseFunctionsFallbackUrl:
+    Type: String
+    Default: ''
   SupabasePublishableKey:
     Type: String
     NoEcho: true
+    Default: ''
   CorsOrigin:
     Type: String
     Default: https://dekhocampus.com
@@ -19,41 +24,30 @@ Globals:
     MemorySize: 1024
     Environment:
       Variables:
-        BACKEND_USE_SUPABASE: 'yes'
-        BACKEND_USE_AWS: 'no'
-        SUPABASE_URL: !Ref SupabaseUrl
+        DATABASE_URL: !Ref DatabaseUrl
+        SUPABASE_FUNCTIONS_FALLBACK_URL: !Ref SupabaseFunctionsFallbackUrl
         SUPABASE_PUBLISHABLE_KEY: !Ref SupabasePublishableKey
         CORS_ORIGIN: !Ref CorsOrigin
 
 Resources:
-  ParallelApi:
+  Api:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../src/
-      Handler: lambda.handler
+      CodeUri: ../
+      Handler: src/lambda.handler
       Events:
+        Proxy:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
         Health:
           Type: HttpApi
           Properties:
             Path: /health
             Method: GET
-        Status:
-          Type: HttpApi
-          Properties:
-            Path: /v1/status
-            Method: GET
-        Functions:
-          Type: HttpApi
-          Properties:
-            Path: /v1/functions/{proxy+}
-            Method: ANY
-        RestProxy:
-          Type: HttpApi
-          Properties:
-            Path: /v1/rest/{proxy+}
-            Method: ANY
 
 Outputs:
   ApiUrl:
-    Description: Set this value as VITE_AWS_API_URL only after health and shadow checks pass.
+    Description: Set this value as VITE_API_URL.
     Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com'

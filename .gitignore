@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+work/
 supabase/.temp/
 reports/legacy-csv-mapped/
 reports/legacy-csv-*.json

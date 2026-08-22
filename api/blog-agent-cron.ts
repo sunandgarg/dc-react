@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://kozdctbbvrnyddlftmvf.supabase.co";
+const API_URL = (process.env.API_URL || process.env.VITE_API_URL || "http://localhost:8787").replace(/\/$/, "");
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET" && req.method !== "POST") {
@@ -20,7 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: "BLOG_AGENT_SECRET is not configured in Vercel" });
   }
 
-  const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-blog-agent`, {
+  const response = await fetch(`${API_URL}/v1/functions/admin-blog-agent`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

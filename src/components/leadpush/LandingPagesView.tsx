@@ -39,7 +39,8 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { supabase, supabaseProjectUrl } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
+import { functionUrl } from '@/lib/backendMode';
 
 interface LandingPage {
   id: string;
@@ -60,7 +61,7 @@ interface Props {
   universities: any[];
 }
 
-const RECEIVE_URL = `${supabaseProjectUrl}/functions/v1/receive-lead`;
+const RECEIVE_URL = functionUrl('receive-lead');
 
 export function LandingPagesView({ universities }: Props) {
   const navigate = useNavigate();

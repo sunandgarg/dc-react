@@ -1,7 +1,22 @@
 {
-  "name": "dekhocampus-aws-backend",
+  "name": "dekhocampus-node-backend",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "node --env-file=.env src/server.mjs", "start": "node src/server.mjs" },
-  "engines": { "node": ">=20" }
+  "scripts": {
+    "dev": "node --env-file=.env.local src/server.mjs",
+    "start": "node src/server.mjs",
+    "prisma:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:import": "node scripts/import-mysql.mjs",
+    "schema:generate": "node scripts/generate-prisma-schema.mjs"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.3"
+  },
+  "devDependencies": {
+    "prisma": "^6.16.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }

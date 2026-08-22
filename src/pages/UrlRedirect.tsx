@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertCircle } from 'lucide-react';
+import { restUrl } from '@/lib/backendMode';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://kozdctbbvrnyddlftmvf.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_XeGGxsGIdsWpU0u3L3xSTg_I775axzd';
 
 const KNOWN_ROUTES = new Set([
@@ -141,16 +141,14 @@ function trackClick(urlId: string) {
     'Content-Type': 'application/json',
     'Prefer': 'return=minimal',
   };
-  const base = SUPABASE_URL;
-
   try {
-    fetch(`${base}/rest/v1/url_clicks`, {
+    fetch(restUrl('url_clicks'), {
       method: 'POST',
       headers,
       body: JSON.stringify({ url_id: urlId, user_agent: ua, referrer, browser, os, device_type: deviceType }),
       keepalive: true,
     });
-    fetch(`${base}/rest/v1/rpc/increment_url_clicks`, {
+    fetch(restUrl('rpc/increment_url_clicks'), {
       method: 'POST',
       headers,
       body: JSON.stringify({ p_url_id: urlId }),

@@ -1,4 +1,10 @@
-# Welcome to your Lovable project
+# DekhoCampus React, Node, Prisma, and MySQL
+
+The existing React/Vite frontend is preserved. Application data can now be routed to the Node/Prisma/MySQL backend in `backend/` by setting `VITE_USE_MYSQL=yes`, `VITE_USE_SUPABASE=no`, and `VITE_API_URL`.
+
+For local setup and API details, see `backend/README.md`. For verified scope, unresolved production dependencies, and the exact cutover order, see `docs/MIGRATION_STATUS.md`.
+
+# Original project documentation
 
 ## Production hosting
 

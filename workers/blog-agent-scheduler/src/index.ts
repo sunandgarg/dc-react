@@ -1,11 +1,11 @@
-/** Cloudflare Worker Cron Trigger for the Supabase blog auto-agent. */
-type Env = { SUPABASE_URL?: string; BLOG_AGENT_SECRET?: string };
+/** Cloudflare Worker Cron Trigger for the Node blog auto-agent. */
+type Env = { API_URL?: string; BLOG_AGENT_SECRET?: string };
 
 async function runBlogAgent(env: Env) {
-  if (!env.SUPABASE_URL || !env.BLOG_AGENT_SECRET) {
-    throw new Error("SUPABASE_URL and BLOG_AGENT_SECRET must be configured as Worker secrets");
+  if (!env.API_URL || !env.BLOG_AGENT_SECRET) {
+    throw new Error("API_URL and BLOG_AGENT_SECRET must be configured as Worker secrets");
   }
-  const response = await fetch(`${env.SUPABASE_URL.replace(/\/$/, "")}/functions/v1/admin-blog-agent`, {
+  const response = await fetch(`${env.API_URL.replace(/\/$/, "")}/v1/functions/admin-blog-agent`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-blog-agent-secret": env.BLOG_AGENT_SECRET },
     body: JSON.stringify({ trigger_type: "schedule" }),

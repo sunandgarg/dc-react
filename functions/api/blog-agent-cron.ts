@@ -1,11 +1,11 @@
 /**
  * Cloudflare Pages replacement for the legacy Vercel cron endpoint.
- * Configure CRON_SECRET, BLOG_AGENT_SECRET, and SUPABASE_URL as encrypted
+ * Configure CRON_SECRET, BLOG_AGENT_SECRET, and API_URL as encrypted
  * Cloudflare Pages variables. This is an authenticated manual endpoint; the
  * actual 30-minute schedule is handled by workers/blog-agent-scheduler.
  */
 type Env = {
-  SUPABASE_URL?: string;
+  API_URL?: string;
   CRON_SECRET?: string;
   BLOG_AGENT_SECRET?: string;
 };
@@ -21,11 +21,11 @@ export const onRequest = async ({ request, env }: PagesContext): Promise<Respons
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  if (!env.SUPABASE_URL || !env.BLOG_AGENT_SECRET) {
-    return Response.json({ error: "SUPABASE_URL or BLOG_AGENT_SECRET is not configured" }, { status: 500 });
+  if (!env.API_URL || !env.BLOG_AGENT_SECRET) {
+    return Response.json({ error: "API_URL or BLOG_AGENT_SECRET is not configured" }, { status: 500 });
   }
 
-  const response = await fetch(`${env.SUPABASE_URL.replace(/\/$/, "")}/functions/v1/admin-blog-agent`, {
+  const response = await fetch(`${env.API_URL.replace(/\/$/, "")}/v1/functions/admin-blog-agent`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

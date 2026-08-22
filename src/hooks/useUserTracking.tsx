@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { restUrl } from "@/lib/backendMode";
 
 const SESSION_KEY = "dc_session_id";
 const SESSION_STARTED_KEY = "dc_session_started";
@@ -87,7 +88,7 @@ if (typeof window !== "undefined") {
     try {
       if (queue.length && analyticsEnabled()) {
         const blob = new Blob([JSON.stringify(queue)], { type: "application/json" });
-        navigator.sendBeacon?.(`https://hpjbwtnvtktezwhafuuf.supabase.co/rest/v1/user_events`, blob);
+        navigator.sendBeacon?.(restUrl("user_events"), blob);
       }
     } catch {}
   });
