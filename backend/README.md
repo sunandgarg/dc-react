@@ -12,10 +12,11 @@ npm --prefix backend install
 npm --prefix backend run prisma:generate
 npm --prefix backend run db:push
 npm --prefix backend run db:import
+npm --prefix backend run db:parity
 npm --prefix backend run dev
 ```
 
-The importer reads the ignored JSON exports under `work/supabase-data`. Generate those exports with a server-only Supabase secret:
+The importer reads the ignored JSON exports under `work/supabase-data`. The parity step also recovers compatible indexes, foreign keys, integrity triggers, and views from the tracked PostgreSQL schema reference and later migrations. Generate fresh data exports with a server-only Supabase secret:
 
 ```sh
 node backend/scripts/export-supabase-rest.mjs
@@ -27,6 +28,7 @@ Never place a Supabase secret, service-role key, or MySQL password in a `VITE_*`
 
 - `GET /health` and `GET /v1/status`
 - `/v1/rest/:table` for compatible table reads and mutations
+- read-only MySQL views at `/v1/rest/leads_daily_business_rollup` and `/v1/rest/college_editorial_completion_progress`
 - `/v1/rest/rpc/:function` for the ported MySQL RPCs
 - `/v1/functions/:function` for the temporary Supabase Edge Function fallback
 

@@ -46,7 +46,7 @@ export function ArticleLinksEditor({
       .from("article_links").select("*").eq(ownerColumn, ownerId);
     setLinks(data || []);
   };
-  useEffect(() => { if (ownerId) load(); /* eslint-disable-next-line */ }, [ownerId]);
+  useEffect(() => { if (ownerId) load(); }, [ownerId]);
 
   const addOne = async (entitySlug: string) => {
     const s = entitySlug.trim().toLowerCase();

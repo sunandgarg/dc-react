@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
@@ -7,6 +7,17 @@ const buildId =
   process.env.CF_PAGES_COMMIT_SHA ||
   process.env.GITHUB_SHA ||
   `local-${Date.now().toString(36)}`;
+
+const emitBuildVersionPlugin: Plugin = {
+  name: "emit-build-version",
+  generateBundle() {
+    this.emitFile({
+      type: "asset",
+      fileName: "version.json",
+      source: JSON.stringify({ buildId }),
+    });
+  },
+};
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -20,23 +31,14 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
-    {
-      name: "emit-build-version",
-      generateBundle(this: any) {
-        this.emitFile({
-          type: "asset",
-          fileName: "version.json",
-          source: JSON.stringify({ buildId }),
-        });
-      },
-    },
+    emitBuildVersionPlugin,
   ].filter(Boolean),
   define: {
     __APP_BUILD_ID__: JSON.stringify(buildId),
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
   build: {

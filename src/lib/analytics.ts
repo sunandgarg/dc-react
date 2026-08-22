@@ -55,7 +55,6 @@ export function trackEvent(name: LpEventName | string, params: AnalyticsParams =
     }
   } catch {/* noop */}
   if (import.meta.env.DEV) {
-    // eslint-disable-next-line no-console
     console.debug("[analytics]", name, payload);
   }
 

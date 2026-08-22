@@ -94,7 +94,7 @@ export default function AdminLeadIntelligence() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
+  useEffect(() => { load(); }, []);
 
   const filteredRows = useMemo(() => {
     const q = filters.q.trim().toLowerCase();

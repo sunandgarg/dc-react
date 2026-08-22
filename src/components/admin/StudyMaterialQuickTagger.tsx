@@ -112,7 +112,6 @@ export function StudyMaterialQuickTagger({ tags, onChange, articleId }: Props) {
         setPreloading(false);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articleId]);
 
   useEffect(() => {
@@ -143,7 +142,10 @@ export function StudyMaterialQuickTagger({ tags, onChange, articleId }: Props) {
   const ALL_SECTIONS = useMemo(() => [...QUICK_LINKS, ...RESOURCES], []);
 
   const toggle = (set: Set<string>, setSet: (s: Set<string>) => void, key: string) => {
-    const n = new Set(set); n.has(key) ? n.delete(key) : n.add(key); setSet(n);
+    const n = new Set(set);
+    if (n.has(key)) n.delete(key);
+    else n.add(key);
+    setSet(n);
   };
 
   const apply = async () => {

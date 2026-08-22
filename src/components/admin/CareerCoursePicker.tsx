@@ -36,8 +36,6 @@ export function CareerCoursePicker({ careerSlug }: Props) {
   };
   useEffect(() => { reload(); }, [careerSlug]);
 
-  if (!careerSlug) return <p className="text-xs text-muted-foreground">Save the career first to link courses.</p>;
-
   const linkedSet = useMemo(() => new Set(links.map((l) => l.course_slug)), [links]);
 
   const toggle = async (slug: string) => {
@@ -57,6 +55,8 @@ export function CareerCoursePicker({ careerSlug }: Props) {
     const s = q.toLowerCase();
     return courses.filter((c) => !s || c.name.toLowerCase().includes(s) || c.slug.toLowerCase().includes(s) || (c.category || "").toLowerCase().includes(s)).slice(0, 200);
   }, [courses, q]);
+
+  if (!careerSlug) return <p className="text-xs text-muted-foreground">Save the career first to link courses.</p>;
 
   return (
     <div className="space-y-2">

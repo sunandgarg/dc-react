@@ -125,7 +125,7 @@ export default function AdminUserAnalytics() {
   };
 
   const identityFor = (s: any) => {
-    let name = s.lead_name, phone = s.lead_phone, email = s.lead_email;
+    const name = s.lead_name, phone = s.lead_phone, email = s.lead_email;
     if (!phone && !email && leadIndex && Object.keys(leadIndex).length) {
       // best-effort: skip - only show what we have
     }

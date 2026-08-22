@@ -19,7 +19,6 @@ export class ChunkErrorBoundary extends Component<{ children: ReactNode }, State
   }
 
   componentDidCatch(error: Error) {
-    // eslint-disable-next-line no-console
     console.error("[ChunkErrorBoundary]", error);
     try {
       trackEvent("chunk_load_error", {

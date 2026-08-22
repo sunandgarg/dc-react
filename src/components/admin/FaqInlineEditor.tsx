@@ -55,7 +55,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
     }
   };
 
-  useEffect(() => { reload(); /* eslint-disable-next-line */ }, [page, itemSlug]);
+  useEffect(() => { reload(); }, [page, itemSlug]);
 
   const save = async () => {
     if (!draft) return;

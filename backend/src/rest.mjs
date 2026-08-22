@@ -323,9 +323,10 @@ async function handleDelete(table, request, url) {
 }
 
 export async function handleRest(table, request) {
-  if (!tableNames.has(table) || schemaMetadata[table].ignored) return { status: 404, body: { code: "PGRST205", message: `Table ${table} is unavailable` } };
+  if (!tableNames.has(table)) return { status: 404, body: { code: "PGRST205", message: `Table ${table} is unavailable` } };
   const url = new URL(request.url);
   if (["GET", "HEAD"].includes(request.method)) return handleGet(table, request, url);
+  if (schemaMetadata[table].ignored) return { status: 405, body: { code: "25006", message: `Resource ${table} is read-only` } };
   if (request.method === "POST") return handlePost(table, request, url);
   if (request.method === "PATCH") return handlePatch(table, request, url);
   if (request.method === "DELETE") return handleDelete(table, request, url);

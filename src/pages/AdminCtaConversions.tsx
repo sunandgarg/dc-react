@@ -63,26 +63,6 @@ export default function AdminCtaConversions() {
     return () => { cancelled = true; };
   }, [range, isAdmin]);
 
-  // Defense-in-depth: even though the route is admin-guarded and RLS blocks
-  // non-admins, render an explicit denial UI so it's obvious in the page itself.
-  if (!authLoading && !isAdmin) {
-    return (
-      <AdminLayout title="CTA Conversions">
-      <div className="mb-4">
-        <CSVTools table="cta_events" filename="cta_events.csv" columns="*" upsertKey="id" />
-      </div>
-
-        <div className="max-w-md mx-auto mt-20 p-8 text-center">
-          <Lock className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-          <h2 className="text-xl font-bold mb-1">Admin only</h2>
-          <p className="text-sm text-muted-foreground">
-            CTA conversion data is restricted to administrators. Ask a workspace admin to grant you access.
-          </p>
-        </div>
-      </AdminLayout>
-    );
-  }
-
   const filtered = useMemo(() => {
     return rows.filter((r) => {
       if (pageFilter !== "all" && r.page !== pageFilter) return false;
@@ -148,6 +128,25 @@ export default function AdminCtaConversions() {
     const topPageRate = topPageSessions ? topPageClicks / topPageSessions : 0;
     return { clicksPerSession, topPage, topPageRate };
   }, [stats, filtered]);
+
+  // Defense-in-depth: even though the route is admin-guarded and RLS blocks
+  // non-admins, render an explicit denial UI so it's obvious in the page itself.
+  if (!authLoading && !isAdmin) {
+    return (
+      <AdminLayout title="CTA Conversions">
+        <div className="mb-4">
+          <CSVTools table="cta_events" filename="cta_events.csv" columns="*" upsertKey="id" />
+        </div>
+        <div className="max-w-md mx-auto mt-20 p-8 text-center">
+          <Lock className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
+          <h2 className="text-xl font-bold mb-1">Admin only</h2>
+          <p className="text-sm text-muted-foreground">
+            CTA conversion data is restricted to administrators. Ask a workspace admin to grant you access.
+          </p>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="CTA Conversions">

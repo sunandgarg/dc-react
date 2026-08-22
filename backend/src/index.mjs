@@ -14,6 +14,7 @@ const publicReadTables = new Set([
   "legal_pages", "placement_records", "popular_places", "program_categories", "programs", "promoted_programs", "push_landing_pages",
   "scholarships", "site_integrations", "state_cities", "states_cities", "stream_categories", "study_board_links", "study_boards", "study_chapters",
   "study_resources", "study_subjects", "study_toppers", "target_roadmaps", "trusted_partners", "universities", "url_mappings",
+  "college_editorial_completion_progress", "leads_daily_business_rollup",
 ]);
 
 const publicWriteTables = new Set([
@@ -22,7 +23,7 @@ const publicWriteTables = new Set([
 ]);
 
 const ownedTables = new Map([
-  ["profiles", "id"], ["user_documents", "user_id"], ["user_education_entries", "user_id"],
+  ["profiles", "user_id"], ["user_documents", "user_id"], ["user_education_entries", "user_id"],
   ["user_favorites", "user_id"], ["user_sessions", "user_id"], ["wallet_transactions", "user_id"],
 ]);
 

@@ -6,15 +6,17 @@
     "dev": "node --env-file=.env.local src/server.mjs",
     "start": "node src/server.mjs",
     "prisma:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:import": "node scripts/import-mysql.mjs",
+    "db:push": "node --env-file-if-exists=.env.local ./node_modules/prisma/build/index.js db push",
+    "db:import": "node --env-file-if-exists=.env.local scripts/import-mysql.mjs",
+    "db:parity": "node --env-file-if-exists=.env.local scripts/apply-mysql-parity.mjs",
     "schema:generate": "node scripts/generate-prisma-schema.mjs"
   },
   "dependencies": {
-    "@prisma/client": "^6.16.3"
+    "@prisma/client": "6.12.0",
+    "mysql2": "^3.23.4"
   },
   "devDependencies": {
-    "prisma": "^6.16.3"
+    "prisma": "6.12.0"
   },
   "engines": {
     "node": ">=20"

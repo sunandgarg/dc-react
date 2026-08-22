@@ -66,7 +66,7 @@ function getProfilePrefill(): { name?: string; email?: string; phone?: string } 
   } catch { return {}; }
 }
 
-let queue: any[] = [];
+const queue: any[] = [];
 let flushTimer: any = null;
 
 function enqueue(event: any) {

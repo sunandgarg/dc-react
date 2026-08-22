@@ -4,143 +4,129 @@ Last verified: 2026-08-22
 
 ## Current outcome
 
-The unchanged React/Vite user interface now has a selectable Node.js, Prisma, and MySQL data path. A full point-in-time export of every readable Supabase REST definition was loaded into an isolated local MySQL 9.6 database. Public content pages run against the local Node API; Supabase remains a compatibility dependency for Auth, Storage, Realtime, and Edge Functions.
+The existing React interface now has a selectable Node.js, Prisma, and MySQL data path. A point-in-time export of all 149 readable Supabase REST resources was loaded into an isolated local MySQL 9.6 database. Public pages run against the local Node API. Supabase remains a documented compatibility dependency for Auth, Storage, Realtime, and Edge Functions.
 
-This state is safe for local development and public-page verification. It is **not safe for a production cutover away from Supabase** until every blocked item below is completed.
+This state is safe for local development and public-page verification. It is **not approved for a production cutover away from Supabase** until every blocked item below is completed.
 
 ## Completed and verified
 
-- [x] Preserved the existing React component tree, styling, routes, and responsive UI.
-- [x] Added environment switches: `VITE_USE_MYSQL`, `VITE_USE_SUPABASE`, and `VITE_API_URL`.
-- [x] Routed existing `supabase.from(...)` requests through the Node API without rewriting individual pages.
+- [x] Preserved the React component tree, routes, styling, and responsive user interface.
+- [x] Added `VITE_USE_MYSQL`, `VITE_USE_SUPABASE`, and `VITE_API_URL` switches.
+- [x] Routed existing `supabase.from(...)` calls through the Node compatibility API without rewriting individual pages.
 - [x] Generated 149 Prisma model definitions from the live Supabase REST schema.
 - [x] Imported 58,669 physical-table rows into local MySQL with zero importer errors.
-- [x] Preserved the two read-only view result sets in the export; the views are listed as blocked below.
 - [x] Implemented compatible GET, HEAD, POST, PATCH, DELETE, filtering, ordering, ranges, counts, one-level relationships, JSON decoding, defaults, and object responses.
 - [x] Implemented MySQL RPC handlers for `has_role`, `clear_featured_rank`, `set_featured_rank`, `set_ai_emergency_stop`, `intent_merge_visitor`, `increment_url_clicks`, `is_user_approved`, `search_directory_fast`, and `get_data_cleaning_coverage`.
-- [x] Added anonymous public-table allowlists, authenticated row ownership for user tables, and admin checks for private tables/RPCs.
-- [x] Added Docker, local Node server, Prisma generation/import scripts, and AWS SAM configuration.
-- [x] Verified health, public reads, denied private reads, search RPC, insert/object response, cleanup, and nested relationship hydration against local MySQL.
-- [x] Verified the homepage, college directory, course directory, and exam directory in Chrome against Node/MySQL. The college directory rendered 24 imported records including ICFAI Business School Gurgaon, JECRC University, and Masters' Union.
+- [x] Added anonymous public-table allowlists, authenticated ownership checks for user tables, and admin checks for private tables and RPCs. Corrected `profiles` ownership to use `user_id`.
+- [x] Recovered 48 safe unique indexes, 95 additional simple B-tree performance indexes, 29 foreign-key lookup indexes, and all 29 discoverable public-schema foreign-key constraints with their original delete actions. Another 21 source indexes were already covered by an equal or stronger target index.
+- [x] Added 97 automatic `updated_at` triggers plus immutable `short_id` triggers for colleges, courses, and exams.
+- [x] Translated `college_editorial_completion_progress` and `leads_daily_business_rollup` to read-only MySQL views and exposed them through the Node API.
+- [x] Compared both MySQL view result sets with the Supabase export. Every value matched: one daily lead rollup and one editorial progress row covering 935 colleges.
+- [x] Added an idempotent `db:parity` step to database setup.
+- [x] Added Docker, a local Node server, Prisma generation/import/parity scripts, and AWS SAM configuration.
+- [x] Verified health, public reads, denied private reads, search RPC, insert/object response, cleanup, nested relationship hydration, and both read-only views against local MySQL.
+- [x] Verified the homepage, college directory, course directory, and exam directory against Node/MySQL. The college directory rendered imported records including ICFAI Business School Gurgaon, JECRC University, and Masters' Union.
 - [x] Passed 114 frontend tests across 26 test files.
 - [x] Passed TypeScript validation with `tsc --noEmit`.
-- [x] Completed the production Vite build and post-build metadata/sitemap tasks.
-- [x] Generated the live production sitemap successfully: 237,993 URLs across six sitemap files.
-- [x] Confirmed no Supabase secret key is present in tracked source files.
-- [x] Backend production dependency audit reports zero vulnerabilities.
-- [x] Applied all non-breaking frontend `npm audit` fixes, reducing the inherited production audit from 13 findings to 5.
+- [x] Passed the full ESLint command with zero errors. There are 101 non-blocking legacy Hook-dependency/Fast Refresh warnings still listed below.
+- [x] Completed the Vite 8 production build and generated 237,993 sitemap URLs across six files.
+- [x] Upgraded Vite, React Router, Sharp, the React SWC plugin, and Lovable Tagger; both frontend and backend production audits report zero vulnerabilities.
+- [x] Confirmed the supplied Supabase secret is absent from tracked source files.
 
 ## Completed but requiring production verification
 
-- [~] Database import is point-in-time. A final delta export and write freeze are required at cutover.
-- [~] Prisma/MySQL types, primary keys, JSON values, timestamps, and discovered relationship metadata are generated. PostgreSQL secondary indexes, unique constraints, check constraints, triggers, and RLS policies are not fully represented by the REST OpenAPI export and require a direct PostgreSQL schema dump or manual parity review.
-- [~] The Node API validates Supabase JWTs during the compatibility phase. Production latency, token refresh, admin access, and all user-owned dashboard flows require staging tests with real accounts.
-- [~] Docker and AWS deployment configuration are prepared but have not been deployed because no production infrastructure/database credentials were provided.
+- [~] The database import is point-in-time. A final delta export and write freeze are required at cutover.
+- [~] Prisma/MySQL types, primary keys, JSON values, timestamps, 48 unique indexes, 124 additional indexes, 29 relationship constraints, 100 integrity triggers, and both views are implemented. PostgreSQL check constraints, 12 partial/functional indexes, complex workflow triggers/functions, and final migration ordering still require a current catalog-level parity review.
+- [~] PostgreSQL declared `exams.slug` unique, but the live exported data contains two rows with slug `ceed`. The parity script safely skips that unique index instead of deleting or changing source data.
+- [~] The Node API validates Supabase JWTs during the compatibility phase. Production latency, token refresh, admin access, and user-owned dashboard flows need staging tests with real accounts.
+- [~] Docker and AWS deployment configuration are prepared but not deployed because production infrastructure credentials were not provided.
 
 ## Remaining work and blockers
 
 ### 1. Production MySQL database and deployment
 
-- **What is left:** provision production MySQL, apply the Prisma schema, restore the exported data, run a final delta import, deploy the Node API, and configure the frontend production API URL.
-- **Why blocked:** no production `DATABASE_URL`, MySQL host/user/password/TLS settings, deployment account, domain, or DNS permission was supplied.
-- **Required:** production MySQL credentials, chosen hosting target, API hostname, TLS policy, and deployment permission.
+- **What is left:** provision production MySQL, apply schema/import/parity, run a final delta import, deploy the Node API, and configure the production frontend API URL.
+- **Why blocked:** no production `DATABASE_URL`, MySQL host/user/password/TLS settings, deployment account, API hostname, DNS permission, or cutover window was supplied.
+- **Required:** production MySQL credentials, chosen hosting target, API hostname, TLS policy, DNS access, and deployment permission.
 - **Affected:** all `/v1/rest/*` and `/v1/rest/rpc/*` routes and the production frontend environment.
-- **Can the app safely run now:** yes only locally or with the existing Supabase production path; no for a production MySQL cutover.
-- **Recommended action:** provision a staging MySQL instance first, deploy this API, and execute the full regression checklist before production.
+- **Can the app safely run without it:** yes locally or on the existing Supabase production path; no for production MySQL cutover.
+- **Recommended action:** provision staging MySQL first, deploy the API, and run the acceptance matrix before production.
 
-### 2. Database schema parity
+### 2. Final database parity and one source-data conflict
 
-- **What is left:** recreate and verify secondary indexes, unique constraints, foreign-key enforcement, check constraints, triggers, and functions that were not exposed in the REST OpenAPI description.
-- **Why blocked:** the supplied REST access exposes records and field descriptions, not a complete PostgreSQL catalog dump.
-- **Required:** a `pg_dump --schema-only` export or direct database connection with catalog-read permission.
-- **Affected:** write integrity, performance, background workflows, and admin mutations.
-- **Can the app safely run now:** local verification is safe; production writes are not approved without parity review.
-- **Recommended action:** export the source schema, translate it to MySQL migrations, benchmark the largest tables, then rerun import verification.
+- **What is left:** compare the current live PostgreSQL catalog with MySQL; translate remaining check constraints, safe partial-index equivalents, and complex workflow triggers/functions. Resolve the duplicated `ceed` exam slug before enabling its unique index.
+- **Why blocked:** the tracked `db-export/full_schema.sql` is useful but dates from August 3 and contains 117 tables, while the August 22 live REST schema contains 149 resources. Later checked-in migrations were applied to parity where determinable, but only a fresh catalog export can prove the final live order/state. Automatically choosing which duplicate exam row to change or delete would corrupt source intent.
+- **Required:** a fresh `pg_dump --schema-only` or live catalog-read access, plus an owner decision for the two `ceed` exam records.
+- **Affected:** production write integrity, cascade behavior, background workflows, query performance, and exam slug routing.
+- **Can the app safely run without it:** local read verification is safe; unrestricted production writes are not approved.
+- **Recommended action:** export the live schema, diff it against `backend/scripts/apply-mysql-parity.mjs`, resolve the duplicate in the source system, then rerun parity and write tests.
 
-### 3. Two PostgreSQL views
+### 3. Supabase Auth replacement
 
-- **What is left:** create MySQL equivalents of `college_editorial_completion_progress` and `leads_daily_business_rollup`.
-- **Why blocked:** the REST schema exposes each view's result columns but not its SQL definition.
-- **Required:** the PostgreSQL `CREATE VIEW` definitions or direct database catalog access.
-- **Affected:** editorial completion reporting and daily lead business reporting.
-- **Can the app safely run now:** public pages can; those two reports cannot use MySQL yet.
-- **Recommended action:** obtain the view SQL, translate it, add fixtures, and compare source/target results.
+- **What is left:** replace Supabase Auth, migrate identities, configure Google OAuth, recreate password/OTP flows, and remove Supabase JWT validation.
+- **Why blocked:** passwords are not exportable and OAuth/email/SMS credentials plus an identity-provider decision were not supplied.
+- **Required:** replacement identity provider, OAuth client credentials, email/SMS credentials, redirect URLs, and a user reset/link plan.
+- **Affected:** sign-in, onboarding, dashboards, admin access, invitations, phone OTP, and protected Node routes.
+- **Can the app safely run without it:** yes while Supabase Auth remains enabled; no after Supabase is removed.
+- **Recommended action:** retain Supabase Auth in staging, migrate accounts through a controlled link/reset flow, then switch Node JWT validation.
 
-### 4. Supabase Auth migration
+### 4. Supabase Storage migration
 
-- **What is left:** replace Supabase Auth, migrate identities, configure Google OAuth, recreate password/OTP flows, and remove JWT validation against Supabase.
-- **Why blocked:** the Auth API returned one user record but does not expose recoverable passwords or third-party OAuth secrets.
-- **Required:** an identity-provider decision, OAuth client credentials, email/SMS provider credentials, redirect URLs, and a user migration/reset plan.
-- **Affected:** sign-in, onboarding, user dashboards, admin access, invitations, phone OTP, and protected Node routes.
-- **Can the app safely run now:** yes while Supabase Auth remains enabled; no if Supabase is removed.
-- **Recommended action:** keep Supabase Auth during staging, choose the replacement, migrate accounts with a controlled reset/link flow, then change Node JWT validation.
-
-### 5. Supabase Storage migration
-
-- **What is left:** copy and verify five buckets: `ad-images`, `user-documents`, `admin-uploads`, `study-material`, and `legacy-public-assets`, then update stored URLs and upload/download code.
-- **Why blocked:** the inventory contains 267,214 objects totaling about 13.5 GB; no destination S3/R2 bucket, access keys, region, CDN hostname, or migration window was supplied.
+- **What is left:** copy and verify `ad-images`, `user-documents`, `admin-uploads`, `study-material`, and `legacy-public-assets`; update stored URLs and upload/download code.
+- **Why blocked:** 267,214 objects totaling about 13.5 GB need a destination and migration window; no S3/R2 bucket, access keys, region, or CDN hostname was supplied.
 - **Inventory:** `ad-images` 1 object / 1,970,226 bytes; `admin-uploads` 238 / 427,927,183 bytes; `legacy-public-assets` 266,975 / 13,040,329,530 bytes; the other two buckets were empty at inventory time.
+- **Required:** versioned destination bucket, least-privilege credentials, region, CDN hostname, and migration window.
 - **Affected:** images, PDFs, user documents, admin uploads, study material, and existing public asset URLs.
-- **Can the app safely run now:** yes while Supabase Storage remains available; no if its buckets are disabled.
-- **Recommended action:** provision versioned S3/R2 storage, run the included inventory/export tool in resumable batches, checksum objects, then rewrite URLs after CDN verification.
+- **Can the app safely run without it:** yes while Supabase Storage remains available; no if those buckets are disabled.
+- **Recommended action:** run the included resumable inventory/export flow, checksum every object, verify the CDN, then rewrite URLs.
 
-### 6. Edge Functions and third-party services
+### 5. Native Node Edge Function migration and third-party services
 
-- **What is left:** port the remaining named function calls to native Node handlers and migrate their provider secrets. Current Node routes proxy them to Supabase for compatibility.
+- **What is left:** port all remaining function calls from the checked-in Deno sources to native Node handlers and migrate provider secrets. The Node routes currently proxy these calls to deployed Supabase functions for compatibility.
 - **Named calls found:** `admin-ai-generate`, `admin-blog-agent`, `admin-blog-ai-settings`, `admin-blog-studio`, `admin-data-cleaner`, `admin-invite-user`, `ai-counselor`, `bootstrap`, `cat-response-analyzer`, `check-eligibility`, `google-reviews`, `intent-export-csv`, `lp-dispatch-lead`, `phone-auth`, `predict-colleges`, `predict-lead-intent`, `process-lead`, `process-queue`, `purge-university-cache`, `receive-lead`, `save-lead`, `send-email`, `send-otp`, `study-otp`, `summarize-user-session`, `target-roadmap`, `test-api`, and `verify-domain`.
-- **Why blocked:** function-specific AI, SMS, email, Google, webhook, cron, and university API credentials were not supplied, and the Supabase dashboard account could not open the target project.
-- **Required:** all provider credentials, webhook allowlists, cron secrets, expected production behavior, and access to source function secrets/configuration.
+- **Why blocked:** source code is available, but required AI, SMS, email, Google, webhook, cron, and university-service secrets are not. Native replacements cannot be contract-tested without those services.
+- **Required:** provider credentials, webhook allowlists, cron secrets, and test accounts/expected responses for each integration.
 - **Affected:** AI tools, OTP, email, lead delivery, queues, scheduled jobs, Google reviews, admin automation, and university integrations.
-- **Can the app safely run now:** yes while `SUPABASE_FUNCTIONS_FALLBACK_URL` is configured and Supabase functions remain deployed; no without that fallback.
-- **Recommended action:** port and contract-test one dependency group at a time, starting with auth/OTP and lead processing, while retaining fallback until parity is proven.
+- **Can the app safely run without it:** yes only while `SUPABASE_FUNCTIONS_FALLBACK_URL` is configured and the Supabase functions remain deployed.
+- **Recommended action:** port and contract-test auth/OTP and lead processing first, then AI/admin integrations, retaining fallback until response parity is proven.
 
-### 7. Realtime cutover
+### 6. Realtime cutover
 
-- **What is left:** replace Supabase Realtime subscriptions with WebSockets or another event system backed by MySQL.
-- **Why blocked:** no production event transport, hosting topology, or scale requirements were supplied.
-- **Required:** WebSocket/event-bus choice, deployment support, authentication rules, and channel inventory validation.
-- **Affected:** live admin queues, dashboards, lead updates, and any components using Supabase channels.
-- **Can the app safely run now:** yes while Supabase Realtime remains enabled; no after Supabase removal.
-- **Recommended action:** inventory channels in staging, implement authenticated Node WebSockets, then dual-publish and compare events before cutover.
+- **What is left:** replace Supabase Realtime channels with authenticated Node WebSockets or another MySQL-backed event transport.
+- **Why blocked:** no production event infrastructure, hosting topology, or scale requirements were supplied.
+- **Required:** transport choice, deployment support, authentication rules, and production channel inventory.
+- **Affected:** live admin queues, dashboards, lead updates, and components using Supabase channels.
+- **Can the app safely run without it:** yes while Supabase Realtime remains enabled; no after Supabase removal.
+- **Recommended action:** inventory channels in staging, dual-publish through Node, compare events, then cut over subscribers.
 
-### 8. Production end-to-end approval
+### 7. Production end-to-end approval
 
-- **What is left:** test real login/OTP, all admin modules, uploads/downloads, every Edge Function integration, background schedules, redirects, and production domain CORS against staging and production-like data.
-- **Why blocked:** production services and provider credentials are unavailable in this execution.
-- **Required:** staging deployment, test accounts, service credentials, and a maintenance/cutover window.
-- **Affected:** whole application.
-- **Can the app safely run now:** local public flows are verified; production cutover is not approved.
-- **Recommended action:** complete blockers 1 through 7, run the acceptance matrix, take a source backup, run the delta import, then switch traffic with a documented rollback.
+- **What is left:** verify real login/OTP, all admin modules, uploads/downloads, every external integration, background schedules, redirects, production CORS, security, and load behavior.
+- **Why blocked:** production-like services, accounts, infrastructure, and provider credentials are unavailable.
+- **Required:** staging deployment, test accounts, all service credentials, monitoring, and a maintenance/cutover window.
+- **Affected:** the whole application.
+- **Can the app safely run without it:** local public flows are verified; production MySQL cutover is not approved.
+- **Recommended action:** complete blockers 1 through 6, run acceptance tests, back up the source, apply the delta import, and switch traffic with rollback ready.
 
-### 9. Existing repository lint baseline
+### 8. Non-blocking frontend lint warnings
 
-- **What is left:** reduce or formally baseline the existing ESLint backlog. The full repository lint currently reports 2,034 errors and 106 warnings, dominated by pre-existing `no-explicit-any` findings in frontend and Supabase function code.
-- **Why blocked:** repairing more than two thousand pre-existing type/style findings is a separate frontend-wide refactor and would conflict with the requirement to preserve the current frontend behavior during this migration.
-- **Required:** approval for a dedicated lint/type-hardening pass, preferably module-by-module with regression tests.
-- **Affected:** many existing frontend, script, and legacy Supabase function files; this is not limited to the migration files.
-- **Can the app safely run now:** the application builds and 114 tests pass, so this does not block local execution, but CI must not claim a clean lint run.
-- **Recommended action:** establish a changed-files lint gate immediately, then burn down the historical backlog separately.
-
-### 10. Frontend dependency major-version security upgrades
-
-- **What is left:** resolve five remaining production audit findings in `esbuild`/Vite, React Router, and Sharp/libvips.
-- **Why blocked:** npm can only resolve them with forced major-version upgrades to Vite 8, React Router 7, and Sharp 0.35, which can break the preserved frontend and require a dedicated compatibility migration.
-- **Required:** approval for major upgrades plus router, build, image-processing, browser, and deployment regression testing.
-- **Affected:** frontend routing, development/build tooling, and legacy image migration scripts.
-- **Can the app safely run now:** local build/tests pass, but the audit is not clean and production risk must be reviewed.
-- **Recommended action:** upgrade each dependency family in a separate tested change; do not use `npm audit fix --force` blindly.
+- **What is left:** 101 historical warnings, primarily React Hook dependency review and Fast Refresh file-boundary organization.
+- **Why not changed automatically:** adding dependencies can alter effect timing or create request loops, and splitting component files is unrelated to the data-platform migration. The actual Hook-order violations and all lint errors were fixed.
+- **Required:** a focused component-by-component review with UI regression tests; no credential is required.
+- **Affected:** listed frontend components and hooks only; build, TypeScript, tests, and lint all pass.
+- **Can the app safely run without it:** yes. These warnings do not block local operation or build output.
+- **Recommended action:** address Hook dependency warnings first, then extract shared exports for Fast Refresh.
 
 ## Exact completion order
 
-1. Rotate the Supabase secret shared during migration and store the replacement only in a secret manager.
-2. Obtain a complete PostgreSQL schema dump and finish MySQL constraints, indexes, triggers, and both views.
+1. Rotate the Supabase secret shared for this migration and store the replacement only in a secret manager.
+2. Export the current live PostgreSQL catalog, resolve the duplicate `ceed` exam slug, and finish check/partial-index/workflow-function parity.
 3. Provision staging MySQL and deploy the Node API with TLS and restricted CORS.
-4. Run a fresh full import, then compare per-table counts and sampled checksums.
-5. Configure and verify Supabase Auth compatibility in staging.
-6. Provision destination object storage, migrate/checksum all 267,214 objects, and update URLs.
-7. Port Edge Functions and provider secrets, then replace scheduled jobs and webhooks.
+4. Run a fresh full import, apply `db:parity`, and compare per-table counts plus sampled checksums.
+5. Configure and verify Supabase Auth compatibility in staging, then execute the selected identity migration.
+6. Provision destination object storage, copy/checksum all 267,214 objects, verify CDN URLs, and switch storage code.
+7. Port and contract-test Edge Functions with provider secrets; replace scheduled jobs and webhooks.
 8. Implement and dual-test the Realtime replacement.
-9. Establish a changed-files lint gate and schedule the existing lint backlog cleanup.
-10. Upgrade Vite/esbuild, React Router, and Sharp with focused regression tests.
-11. Run public, user, admin, OTP, upload, integration, security, and load tests.
-12. Freeze source writes, run the final delta import, back up both systems, switch frontend/API traffic, monitor, and retain rollback until stable.
+9. Run public, user, admin, OTP, upload, integration, security, and load tests.
+10. Freeze source writes, run the final delta import, back up both systems, switch traffic, monitor, and retain rollback until stable.
+11. Complete the non-blocking 101-warning frontend lint cleanup as a separate behavior-reviewed hardening pass.

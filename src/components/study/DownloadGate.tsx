@@ -180,11 +180,6 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
       }).catch(() => {});
       setLeadConsentPreference(consentAccepted);
 
-      // Increment download count (best effort)
-      if (meta?.resource_id) {
-        supabase.rpc as any; // noop placeholder
-      }
-
       toast.success("Verified! Starting download…");
       triggerDownload();
     } catch (err: any) {

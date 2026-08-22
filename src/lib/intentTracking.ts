@@ -115,7 +115,7 @@ function getTrafficSource(): string {
 // ------------------------------------------------------------------
 // Queue + flush (batched, non-blocking)
 // ------------------------------------------------------------------
-let queue: any[] = [];
+const queue: any[] = [];
 let flushTimer: any = null;
 
 async function flush() {

@@ -160,7 +160,8 @@ export default function AdminTagsManager() {
                       checked={isSel}
                       onChange={() => {
                         const n = new Set(selected);
-                        isSel ? n.delete(a.id) : n.add(a.id);
+                        if (isSel) n.delete(a.id);
+                        else n.add(a.id);
                         setSelected(n);
                       }}
                       className="mt-1"

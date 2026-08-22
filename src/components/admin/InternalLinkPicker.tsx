@@ -58,7 +58,7 @@ export function InternalLinkPicker({ open, onClose, onPick }: Props) {
           .limit(40);
         if (cancelled) return;
         const mapped = (data || []).map((r: any) => {
-          let name = r.name || r.title || r.full_name || r.slug;
+          const name = r.name || r.title || r.full_name || r.slug;
           let url = r.slug ? `${cfg.pathPrefix}/${r.slug}` : "#";
           if (entity === "board") url = r.url || r.link || "#";
           if (entity === "college_subject") {

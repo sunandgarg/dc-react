@@ -7,7 +7,7 @@ const store: Record<string, { entity_type: string; entity_slug: string }[]> = {}
 
 vi.mock("@/integrations/supabase/client", () => {
   function tableApi(table: string) {
-    let _filters: any = {};
+    const _filters: any = {};
     let _select = "*";
     let _inFilter: { col: string; vals: any[] } | null = null;
     const api: any = {

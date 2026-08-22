@@ -56,7 +56,7 @@ export function SlugScopedTableEditor({
     setLoading(false);
   };
 
-  useEffect(() => { reload(); /* eslint-disable-next-line */ }, [table, scopeColumn, scopeValue]);
+  useEffect(() => { reload(); }, [table, scopeColumn, scopeValue]);
 
   const save = async () => {
     if (!draft || !scopeValue) return;

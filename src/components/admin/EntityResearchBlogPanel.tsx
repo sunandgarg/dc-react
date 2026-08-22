@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any -- New tables are deployed before generated Supabase types are refreshed. */
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpenCheck, CalendarClock, CheckCircle2, Loader2, Pause, Play, Plus, Search, Sparkles, Trash2, X } from "lucide-react";

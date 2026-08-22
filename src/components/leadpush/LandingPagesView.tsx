@@ -320,7 +320,7 @@ function LandingPageDialog({
       toast({ title: 'Pick a preset', variant: 'destructive' });
       return;
     }
-    let defaults: Record<string, string> = {};
+    const defaults: Record<string, string> = {};
     try {
       const parsed = JSON.parse(defaultsJson || '{}');
       Object.entries(parsed).forEach(([k, v]) => {

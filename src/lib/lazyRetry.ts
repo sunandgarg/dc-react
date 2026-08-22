@@ -67,7 +67,6 @@ function logChunkFailure(name: string, attempt: number, err: unknown, throttledM
     href: typeof window !== "undefined" ? window.location.href : undefined,
     message: String((err as any)?.message || err),
   };
-  // eslint-disable-next-line no-console
   console.error("[lazyRetry] chunk failure", detail);
   try {
     trackEvent("chunk_load_error", detail);
