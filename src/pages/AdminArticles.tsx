@@ -143,8 +143,8 @@ export default function AdminArticles() {
     }
     const rawRank = (editing as any).featured_rank ?? null;
     const desiredRank = rawRank == null ? null : Number(rawRank);
-    if (desiredRank != null && (!Number.isInteger(desiredRank) || desiredRank < 1 || desiredRank > 5)) {
-      toast.error("Featured slot must be empty or between #1 and #5.");
+    if (desiredRank != null && (!Number.isInteger(desiredRank) || desiredRank < 1 || desiredRank > 4)) {
+      toast.error("Featured slot must be empty or between #1 and #4.");
       return;
     }
     const { featured_rank: _omit, ...payload } = editing as any;
@@ -325,7 +325,7 @@ export default function AdminArticles() {
                   <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="my-article-slug" className="rounded-lg h-9 text-sm" /></div>
                   <div className="sm:col-span-2"><ImageUploadField label="Featured Image" value={editing.featured_image || ""} onChange={(v) => update("featured_image", v)} preset="article" folder="article-images" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Views</label><Input type="number" value={editing.views ?? 0} onChange={(e) => update("views", parseInt(e.target.value) || 0)} className="rounded-lg h-9 text-sm" /></div>
-                  <div className="sm:col-span-2 lg:col-span-3"><FeaturedRankPicker value={(editing as any).featured_rank} onChange={(v) => update("featured_rank" as any, v)} label="Pin to News page top" maxSlots={5} slotLabel={(r) => `#${r}${r === 1 ? " (Big Hero)" : ` (Small ${r - 1})`}`} helpText="#1 = big hero card on /news. #2-5 = the four small cards beside it. Picking a slot pushes existing pinned items down; anything beyond #5 unpins automatically." /></div>
+                  <div className="sm:col-span-2 lg:col-span-3"><FeaturedRankPicker value={(editing as any).featured_rank} onChange={(v) => update("featured_rank" as any, v)} label="Pin to News page top" maxSlots={4} slotLabel={(r) => `#${r}${r === 1 ? " (Big Hero)" : ` (Small ${r - 1})`}`} helpText="#1 = big hero card on /news. #2-4 = the three small cards beside it. Picking a slot pushes existing pinned items down; anything beyond #4 unpins automatically." /></div>
                 </div>
                 <RichTextEditor label="Description *" value={editing.description || ""} onChange={(v) => update("description", v)} rows={3} />
                 <div className="flex items-center gap-2">

@@ -15,7 +15,7 @@ interface Props {
  */
 export function FeaturedRankPanel({ table, detailPath }: Props) {
   const qc = useQueryClient();
-  const maxSlots = 5; // articles: 1 hero + 4 small; colleges: 1 hero + 4 small
+  const maxSlots = table === "articles" ? 4 : 5;
   const slots = Array.from({ length: maxSlots }, (_, i) => i + 1);
 
   const { data = [], isLoading } = useQuery({
@@ -51,8 +51,8 @@ export function FeaturedRankPanel({ table, detailPath }: Props) {
       : `Featured (Top ${maxSlots} pinned)`;
   const sub =
     table === "articles"
-      ? "#1 is the big hero, #2-4 are the three small cards on /news. Click ✕ to unpin."
-      : "#1 is the big hero, #2-5 are the four small cards. Click ✕ to unpin.";
+      ? "#1 is the big hero, #2-4 are the three small cards on /news. Click x to unpin."
+      : "#1 is the big hero, #2-5 are the four small cards. Click x to unpin.";
 
   return (
     <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-3 mb-4">
