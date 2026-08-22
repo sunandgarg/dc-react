@@ -236,7 +236,44 @@ async function generateBlogJsonResilient(
   }
 }
 
-type SelectedEntity = { entity_type: "college" | "course" | "exam"; slug: string };
+type SelectedEntity = {
+  entity_type: "college" | "course" | "exam";
+  slug: string;
+  article_count?: number;
+  topic_focus?: string[];
+  schedule_id?: string;
+  topic_offset?: number;
+};
+
+const ENTITY_ANGLES = {
+  college: [
+    ["latest_updates", "latest verified updates and what students should check now"],
+    ["admissions", "admission process, eligibility, documents and decision timeline"],
+    ["courses", "course choices, curriculum pathways and who each programme suits"],
+    ["placements", "placement preparation, recruiter context and outcome questions to ask"],
+    ["campus", "campus facilities, student life and practical planning"],
+    ["scholarships", "scholarships, financial planning and application guidance"],
+    ["evergreen_guides", "a practical student and parent decision guide"],
+  ],
+  course: [
+    ["latest_updates", "latest academic and admission updates"],
+    ["overview", "course scope, structure and who should choose it"],
+    ["eligibility", "eligibility, entrance routes and application planning"],
+    ["curriculum", "subjects, skills and learning roadmap"],
+    ["careers", "career paths, roles and employability skills"],
+    ["colleges", "how to compare colleges offering this course"],
+    ["evergreen_guides", "a complete student decision guide"],
+  ],
+  exam: [
+    ["latest_updates", "latest verified notice, dates and student action points"],
+    ["eligibility", "eligibility, application steps and required documents"],
+    ["pattern", "exam pattern, syllabus and marking strategy"],
+    ["preparation", "preparation plan, revision method and mock-test strategy"],
+    ["last_minute", "last-minute preparation and exam-day checklist"],
+    ["cutoff", "result, cutoff and counselling guidance"],
+    ["evergreen_guides", "a complete candidate guide"],
+  ],
+} as const;
 
 async function loadSelectedEntityResearch(admin: any, selected: SelectedEntity[]) {
   const tableByType = { college: "colleges", course: "courses", exam: "exams" } as const;
@@ -264,16 +301,35 @@ async function loadSelectedEntityResearch(admin: any, selected: SelectedEntity[]
     }
     sourceUrls.forEach((url) => officialSources.push({ name: `${data.name} official source`, url, source_type: "official", entity_type: item.entity_type, entity_slug: item.slug }));
     const safeRecord = Object.fromEntries(Object.entries(data).filter(([key]) => !["id", "created_at", "updated_at"].includes(key)).slice(0, 80));
-    topics.push({
-      title: `${data.name}: latest guide, eligibility, fees, dates and key facts`,
-      angle: `A source-backed guide to ${data.name} for Indian students and parents`,
-      primary_keyword: data.name,
-      geo_focus: [data.city, data.state, "India"].filter(Boolean).join(", "),
-      reason: "Selected by an administrator for official-source research",
-      category: item.entity_type === "exam" ? "Exams" : item.entity_type === "course" ? "Courses" : "Colleges",
-      tags: [item.entity_type, item.slug, "official-source-research"],
-      selected_entity: { type: item.entity_type, slug: item.slug, url: `https://dekhocampus.com/${pathByType[item.entity_type]}/${item.slug}` },
-      database_facts: safeRecord,
+    const requestedCount = Math.min(10, Math.max(1, Number(item.article_count || 1)));
+    const focus = new Set((item.topic_focus || []).map((value) => String(value).toLowerCase()));
+    const angles = ENTITY_ANGLES[item.entity_type];
+    const preferredAngles = focus.size ? angles.filter(([kind]) => focus.has(kind)) : angles;
+    const finalAngles = preferredAngles.length ? preferredAngles : angles;
+    for (let index = 0; index < requestedCount; index += 1) {
+      const [topicKind, angle] = finalAngles[(index + Number(item.topic_offset || 0)) % finalAngles.length];
+      topics.push({
+        title: `${data.name}: ${angle}`,
+        angle: `A source-aware ${angle} for Indian students and parents`,
+        primary_keyword: data.name,
+        geo_focus: [data.city, data.state, "India"].filter(Boolean).join(", "),
+        reason: index === 0 ? "Selected by an administrator for official-source research" : "Scheduled entity coverage with a distinct student-intent angle",
+        category: item.entity_type === "exam" ? "Exams" : item.entity_type === "course" ? "Courses" : "Colleges",
+        tags: [item.entity_type, item.slug, "entity-article-agent", topicKind],
+        topic_kind: topicKind,
+        selected_entity: { type: item.entity_type, slug: item.slug, name: data.name, url: `https://dekhocampus.com/${pathByType[item.entity_type]}/${item.slug}` },
+        database_facts: safeRecord,
+        schedule_id: item.schedule_id || null,
+      });
+    }
+
+    const newsQuery = encodeURIComponent(`\"${data.name}\" education OR admission OR exam`);
+    officialSources.push({
+      name: `${data.name} public news signals`,
+      url: `https://news.google.com/rss/search?q=${newsQuery}&hl=en-IN&gl=IN&ceid=IN:en`,
+      source_type: "public_signal",
+      entity_type: item.entity_type,
+      entity_slug: item.slug,
     });
   }
   return { topics, officialSources };
@@ -403,6 +459,7 @@ Deno.serve(async (req) => {
   const admin = createClient(supabaseUrl, service);
 
   let runId = "";
+  let activeEntitySchedule: any = null;
   try {
     await requireAccess(req, admin);
     const body: any = await req.json().catch(() => ({}));
@@ -443,8 +500,54 @@ Deno.serve(async (req) => {
         control_note: cleanControlNote(body.note),
       });
     }
-    const entityResearchMode = body.mode === "entity_research";
-    const triggerType = body.trigger_type === "schedule" ? "schedule" : entityResearchMode ? "entity_research" : "manual";
+    const entityScheduleMode = body.mode === "entity_schedule";
+    const entityResearchMode = body.mode === "entity_research" || entityScheduleMode;
+    const triggerType = entityScheduleMode ? "entity_schedule" : body.trigger_type === "schedule" ? "schedule" : entityResearchMode ? "entity_research" : "manual";
+
+    let requestedEntities = (Array.isArray(body.selected_entities) ? body.selected_entities : []) as SelectedEntity[];
+    if (entityScheduleMode) {
+      if (body.schedule_id) {
+        const { data, error } = await admin.from("entity_article_schedules").select("*").eq("id", body.schedule_id).maybeSingle();
+        if (error) throw error;
+        activeEntitySchedule = data;
+        if (activeEntitySchedule) {
+          await admin.from("entity_article_schedules").update({ last_status: "running", last_message: "Manual run started" }).eq("id", activeEntitySchedule.id);
+        }
+      } else {
+        const { data, error } = await admin.rpc("claim_due_entity_article_schedule");
+        if (error) throw error;
+        activeEntitySchedule = data?.[0] || null;
+      }
+      if (!activeEntitySchedule) return json({ skipped: true, message: "No entity article schedule is due" });
+
+      const indiaDate = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+      const { count, error: countError } = await admin.from("entity_article_publications")
+        .select("id", { count: "exact", head: true })
+        .eq("schedule_id", activeEntitySchedule.id)
+        .eq("generated_for_date", indiaDate);
+      if (countError) throw countError;
+      const producedToday = Number(count || 0);
+      const remainingToday = Math.max(0, Number(activeEntitySchedule.articles_per_day || 1) - producedToday);
+      if (!remainingToday) {
+        await admin.from("entity_article_schedules").update({ last_status: "skipped", last_message: "Daily article target already reached" }).eq("id", activeEntitySchedule.id);
+        return json({ skipped: true, message: "Daily entity article target reached", schedule_id: activeEntitySchedule.id });
+      }
+      const requestedNow = body.generate_remaining_today ? remainingToday : Math.min(remainingToday, Math.max(1, Number(body.article_count || 1)));
+      requestedEntities = [{
+        entity_type: activeEntitySchedule.entity_type,
+        slug: activeEntitySchedule.entity_slug,
+        article_count: requestedNow,
+        topic_focus: activeEntitySchedule.topic_focus,
+        schedule_id: activeEntitySchedule.id,
+        topic_offset: producedToday,
+      }];
+      body.override = {
+        ...(body.override || {}),
+        posts_per_run: requestedNow,
+        publish_status: activeEntitySchedule.publish_status,
+        human_review_required: activeEntitySchedule.human_review_required,
+      };
+    }
 
     const { data: settingsRow } = await admin.from("blog_auto_agent_settings").select("*").eq("id", "default").maybeSingle();
     const settings = {
@@ -513,15 +616,16 @@ Deno.serve(async (req) => {
     const authorsById = new Map((selectedAuthorRows || []).map((author: any) => [author.id, author]));
     const selectedAuthors = selectedAuthorIds.map((id: string) => authorsById.get(id)).filter(Boolean) as Array<{ id: string; name: string }>;
 
-    if (triggerType === "schedule" && !settings.enabled) return json({ skipped: true, message: "Blog auto agent is disabled" });
-    if (triggerType === "schedule" && settings.next_run_at && new Date(settings.next_run_at).getTime() > Date.now()) {
+    if (!entityResearchMode && triggerType === "schedule" && !settings.enabled) return json({ skipped: true, message: "Blog auto agent is disabled" });
+    if (!entityResearchMode && triggerType === "schedule" && settings.next_run_at && new Date(settings.next_run_at).getTime() > Date.now()) {
       return json({ skipped: true, message: "Next run time has not arrived yet", next_run_at: settings.next_run_at });
     }
 
     const dayStart = new Date();
     dayStart.setHours(0, 0, 0, 0);
     const { data: todayArticles } = await admin.from("articles").select("id").gte("created_at", dayStart.toISOString()).contains("tags", ["auto-blog-agent"]);
-    if ((todayArticles || []).length >= settings.daily_post_cap) {
+    const effectiveDailyCap = entityResearchMode ? 100 : Number(settings.daily_post_cap || 12);
+    if ((todayArticles || []).length >= effectiveDailyCap) {
       return json({ skipped: true, message: "Daily post cap reached", count: (todayArticles || []).length });
     }
 
@@ -541,6 +645,8 @@ Deno.serve(async (req) => {
         current_step: "Preparing research sources",
         estimated_seconds: Math.max(90, Number(settings.posts_per_run || 1) * 105),
         total_steps: 2 + Number(settings.posts_per_run || 1) * 3,
+        entity_schedule_id: activeEntitySchedule?.id || null,
+        agent_mode: entityScheduleMode ? "entity_schedule" : entityResearchMode ? "entity_research" : "general",
       }).select("id").single();
       runId = run?.id || "";
     }
@@ -549,7 +655,7 @@ Deno.serve(async (req) => {
     let sources = dedupeSources(sourceRows).filter((source) => source.is_active !== false);
     let selectedEntityTopics: any[] = [];
     if (entityResearchMode) {
-      const selected = (Array.isArray(body.selected_entities) ? body.selected_entities : [])
+      const selected = requestedEntities
         .filter((item: any) => ["college", "course", "exam"].includes(item?.entity_type) && item?.slug)
         .slice(0, 20) as SelectedEntity[];
       if (!selected.length) throw new Error("Select at least one college, course or exam for research");
@@ -576,10 +682,13 @@ Deno.serve(async (req) => {
       .flatMap((signal: any) => Array.isArray(signal.trend_candidates) ? signal.trend_candidates : [])
       .sort((a: any, b: any) => Number(b.traffic_score || 0) - Number(a.traffic_score || 0))
       .slice(0, 20);
-    const remainingDailyCapacity = Math.max(0, Number(settings.daily_post_cap || 1) - (todayArticles || []).length);
+    const remainingDailyCapacity = Math.max(0, effectiveDailyCap - (todayArticles || []).length);
     const dailyTrendMode = !entityResearchMode && trendSlotsRemaining > 0 && trendCandidates.length > 0;
+    const requestedEntityArticleCount = entityResearchMode
+      ? requestedEntities.reduce((sum, item) => sum + Math.min(10, Math.max(1, Number(item.article_count || 1))), 0)
+      : Number(settings.posts_per_run || 1);
     const postLimit = Math.max(0, Math.min(
-      dailyTrendMode ? trendSlotsRemaining : Number(settings.posts_per_run || 1),
+      dailyTrendMode ? trendSlotsRemaining : requestedEntityArticleCount,
       remainingDailyCapacity,
     ));
     if (!postLimit) return json({ skipped: true, message: "Daily post cap reached", count: (todayArticles || []).length });
@@ -625,7 +734,7 @@ Deno.serve(async (req) => {
         required_sections: settings.required_sections,
         minimum_sources: settings.minimum_sources,
         editorial_quality_target: settings.editorial_quality_target,
-      })}\n\nTarget length: ${settings.word_limit} words.\n\nReturn JSON only: {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,entity_suggestions:[{entity_type,entity_slug,label}],research_notes,cover_kicker}.\n\nRules: optimise for the configured search, answer-engine, geographic and AI-discovery goals while prioritising student usefulness. Open with a concise direct answer, use descriptive headings, short paragraphs, comparison-ready facts, FAQs, named entities, and small hyphen '-' only. Write naturally with varied sentence length and concrete student-facing explanations; do not claim a human or detector score. Never copy source wording or structure. Avoid fake certainty on dates, fees, cutoffs or rules. Use official, first-party, regulator, authority, government, university, exam-authority, Google News/trend and DekhoCampus internal context only. Do not use competitor sites as research sources. Do not add any visible Sources, References, Citations, bibliography, source links, credits or competitor-credit section in content_html. Never mention or link competitor publication names/domains such as CollegeDekho, Collegedunia, Shiksha, Careers360, KollegeApply, GetMyUni or PaGaLGuY in the article body. Keep source notes only inside research_notes for internal editorial review. Add useful internal links only when a matching DekhoCampus college, course, exam, job profile, scholarship, tool or news page is present in the supplied context.`;
+      })}\n\nTarget length: ${settings.word_limit} words.\n\nReturn JSON only: {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,entity_suggestions:[{entity_type,entity_slug,label}],research_notes,cover_kicker}.\n\nRules: optimise for the configured search, answer-engine, geographic and AI-discovery goals while prioritising student usefulness. Open with a concise direct answer, use descriptive headings, short paragraphs, comparison-ready facts, FAQs, named entities, and small hyphen '-' only. Turn the approved angle into a natural, specific headline instead of copying the prompt wording. Write naturally with varied sentence length and concrete student-facing explanations; do not claim a human or detector score. Never copy source wording or structure. Never describe an item as news, latest, announced, changed or current unless a dated research signal supports that statement. If no genuine recent update exists, write the supplied evergreen student-guide angle and say what readers should verify on the official site. Treat database_facts as context that can be stale; do not repeat fees, dates, rankings, acreage, placements, recruiters, approvals or superlative claims unless corroborated by supplied first-party evidence. Never call a programme world-class or invent a development. Avoid fake certainty on dates, fees, cutoffs or rules. Use official, first-party, regulator, authority, government, university, exam-authority, Google News/trend and DekhoCampus internal context only. Do not use competitor sites as research sources. Do not add any visible Sources, References, Citations, bibliography, source links, credits or competitor-credit section in content_html. Never mention or link competitor publication names/domains such as CollegeDekho, Collegedunia, Shiksha, Careers360, KollegeApply, GetMyUni or PaGaLGuY in the article body. Keep source notes only inside research_notes for internal editorial review. Add useful internal links only when a matching DekhoCampus college, course, exam, job profile, scholarship, tool or news page is present in the supplied context.`;
       const articleRaw = await generateBlogJsonResilient(admin, blogAi, articlePrompt + "\nThis is AI-assisted content that requires editorial review. Never claim human authorship, undetectability, a detector score or 0 AI.", "article-generation");
       await assertRunActive(admin, runId);
       const draft = await parseOrRepairJson(blogAi, articleRaw, admin);
@@ -658,7 +767,12 @@ Deno.serve(async (req) => {
         });
         await assertRunActive(admin, runId);
       }
-      const tags = Array.from(new Set([...(draft.tags || []), "auto-blog-agent", ...(dailyTrendMode ? ["google-trends-daily", "trending"] : [])]));
+      const tags = Array.from(new Set([
+        ...(draft.tags || []),
+        "auto-blog-agent",
+        ...(entityResearchMode ? ["entity-article-agent", topic.selected_entity?.type, topic.selected_entity?.slug, topic.topic_kind].filter(Boolean) : []),
+        ...(dailyTrendMode ? ["google-trends-daily", "trending"] : []),
+      ]));
       const authorIndex = settings.author_mode === "round_robin" && selectedAuthors.length
         ? (Number(settings.last_author_index ?? -1) + createdIds.length + 1) % selectedAuthors.length
         : 0;
@@ -688,6 +802,23 @@ Deno.serve(async (req) => {
       existingTitles.add(savedTitle);
       existingTitleList.push(savedTitle);
 
+      if (topic.selected_entity?.type && topic.selected_entity?.slug) {
+        await admin.from("article_links").upsert({
+          article_id: article.id,
+          entity_type: topic.selected_entity.type,
+          entity_slug: topic.selected_entity.slug,
+        }, { onConflict: "article_id,entity_type,entity_slug" });
+      }
+      if (topic.schedule_id) {
+        await admin.from("entity_article_publications").insert({
+          schedule_id: topic.schedule_id,
+          article_id: article.id,
+          entity_type: topic.selected_entity?.type,
+          entity_slug: topic.selected_entity?.slug,
+          topic_kind: topic.topic_kind || "evergreen_guide",
+        });
+      }
+
       for (const suggestion of draft.entity_suggestions || []) {
         await admin.from("article_links").upsert({ article_id: article.id, entity_type: suggestion.entity_type, entity_slug: suggestion.entity_slug }, { onConflict: "article_id,entity_type,entity_slug" });
       }
@@ -697,7 +828,16 @@ Deno.serve(async (req) => {
     const nextAuthorIndex = settings.author_mode === "round_robin" && selectedAuthors.length && createdIds.length
       ? (Number(settings.last_author_index ?? -1) + createdIds.length) % selectedAuthors.length
       : Number(settings.last_author_index ?? -1);
-    await admin.from("blog_auto_agent_settings").upsert({ id: "default", last_run_at: new Date().toISOString(), next_run_at: nextRun, last_author_index: nextAuthorIndex });
+    if (!entityResearchMode) {
+      await admin.from("blog_auto_agent_settings").upsert({ id: "default", last_run_at: new Date().toISOString(), next_run_at: nextRun, last_author_index: nextAuthorIndex });
+    }
+    if (activeEntitySchedule) {
+      await admin.from("entity_article_schedules").update({
+        last_run_at: new Date().toISOString(),
+        last_status: createdIds.length ? "completed" : "skipped",
+        last_message: createdIds.length ? `Created ${createdIds.length} article(s)` : "No new non-duplicate topic was available",
+      }).eq("id", activeEntitySchedule.id);
+    }
     if (runId) await admin.from("blog_auto_agent_runs").update({
       status: "completed",
       progress: 100,
@@ -710,13 +850,16 @@ Deno.serve(async (req) => {
       message: `Created ${createdIds.length} article(s) using ${blogTextProviderLabel(blogAi.textModel)}:${blogAi.textModel} and ${blogAi.imageProvider || "openai"}:${blogAi.imageModel}`,
     }).eq("id", runId);
 
-    return json({ success: true, created_article_ids: createdIds, topics, next_run_at: nextRun });
+    return json({ success: true, created_article_ids: createdIds, topics, next_run_at: entityResearchMode ? activeEntitySchedule?.next_run_at || null : nextRun, schedule_id: activeEntitySchedule?.id || null });
   } catch (error) {
     if (error instanceof RunControlError) {
       return json({ success: true, run_id: runId, status: error.status, message: `Run ${error.status}` });
     }
     const message = error instanceof Error ? error.message : String(error);
     if (runId) await admin.from("blog_auto_agent_runs").update({ status: "failed", progress: 100, current_step: "Failed", finished_at: new Date().toISOString(), message }).eq("id", runId);
+    if (activeEntitySchedule?.id) {
+      await admin.from("entity_article_schedules").update({ last_status: "failed", last_message: message.slice(0, 500) }).eq("id", activeEntitySchedule.id);
+    }
     return json({ error: message }, 400);
   }
 });
