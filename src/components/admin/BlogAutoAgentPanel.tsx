@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Bot, CheckCircle2, CirclePause, Clock, ExternalLink, ImageIcon, Loader2, OctagonX, Play, RotateCcw, Save, Sparkles, Square, Timer } from "lucide-react";
+import { Bot, CheckCircle2, CirclePause, Clock, ExternalLink, ImageIcon, Loader2, OctagonX, Play, Plus, RotateCcw, Save, Sparkles, Square, Timer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -40,11 +40,13 @@ type Settings = {
   logo_position: "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-right";
   image_aspect_ratio: "16:9" | "1:1" | "4:5";
   output_resolution: "web" | "2k" | "4k";
+  google_trends_daily_enabled: boolean;
+  google_trends_daily_posts: number;
   last_run_at?: string | null;
   next_run_at?: string | null;
 };
 
-type Source = { id?: string; name: string; url: string; source_type: "competitor" | "own"; is_active: boolean };
+type Source = { id?: string; name: string; url: string; source_type: "official" | "public_signal" | "own" | "competitor"; is_active: boolean };
 type Run = {
   id: string;
   status: "running" | "paused" | "cancelling" | "cancelled" | "aborted" | "completed" | "skipped" | "failed";
@@ -103,13 +105,18 @@ const DEFAULT_SETTINGS: Settings = {
   logo_position: "top-center",
   image_aspect_ratio: "16:9",
   output_resolution: "4k",
+  google_trends_daily_enabled: true,
+  google_trends_daily_posts: 3,
 };
 
 const DEFAULT_SOURCES: Source[] = [
   { name: "Google News Education", url: "https://news.google.com/rss/search?q=education%20admission%20India", source_type: "own", is_active: true },
   { name: "Google News Exams", url: "https://news.google.com/rss/search?q=exam%20counselling%20admission%20India", source_type: "own", is_active: true },
+  { name: "Google Trends India", url: "https://trends.google.com/trending/rss?geo=IN", source_type: "public_signal", is_active: true },
   { name: "DekhoCampus", url: "https://dekhocampus.com/news", source_type: "own", is_active: true },
 ];
+
+const COMPETITOR_SOURCE_PATTERN = /(collegedekho|college\s*dekho|collegedunia|college\s*dunia|shiksha|careers\s*360|careers360|kollege\s*apply|kollegeapply|getmyuni|pagalguy)/i;
 
 const IMAGE_URL_SETTING_KEYS = new Set<keyof Settings>(["image_template_url", "logo_url"]);
 
@@ -132,6 +139,9 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
   const [authors, setAuthors] = useState<Author[]>([]);
   const [now, setNow] = useState(Date.now());
   const [supportsAdvancedSettings, setSupportsAdvancedSettings] = useState(false);
+  const [supportsGoogleTrendsSettings, setSupportsGoogleTrendsSettings] = useState(false);
+  const [sourceDraft, setSourceDraft] = useState<Pick<Source, "name" | "url" | "source_type">>({ name: "", url: "", source_type: "official" });
+  const [removedSourceIds, setRemovedSourceIds] = useState<string[]>([]);
 
   const load = async (showLoader = false) => {
     if (showLoader) setLoading(true);
@@ -146,6 +156,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       ]);
       if (settingsData) {
         setSupportsAdvancedSettings(Object.prototype.hasOwnProperty.call(settingsData, "image_mode"));
+        setSupportsGoogleTrendsSettings(Object.prototype.hasOwnProperty.call(settingsData, "google_trends_daily_enabled"));
         setSettings({ ...DEFAULT_SETTINGS, ...settingsData });
       }
       if (sourceData?.length) setSources(sourceData);
@@ -233,6 +244,10 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       const settingsPayload = supportsAdvancedSettings
         ? {
             ...settings,
+            ...(supportsGoogleTrendsSettings ? {} : {
+              google_trends_daily_enabled: undefined,
+              google_trends_daily_posts: undefined,
+            }),
             image_template_url: normalizeImageSettingUrl(settings.image_template_url),
             logo_url: normalizeImageSettingUrl(settings.logo_url),
             next_run_at: nextRun,
@@ -243,6 +258,11 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       for (const [index, source] of sources.entries()) {
         await (supabase as any).from("blog_research_sources").upsert({ ...source, display_order: (index + 1) * 10 }, { onConflict: "url" });
       }
+      if (removedSourceIds.length) {
+        const { error: deleteError } = await (supabase as any).from("blog_research_sources").delete().in("id", removedSourceIds);
+        if (deleteError) throw deleteError;
+        setRemovedSourceIds([]);
+      }
       toast.success("Auto blog agent settings saved");
       sessionStorage.removeItem(DRAFT_KEY);
       await load(false);
@@ -251,6 +271,30 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     } finally {
       setBusy(false);
     }
+  };
+
+  const addSource = () => {
+    const name = sourceDraft.name.trim();
+    const url = sourceDraft.url.trim();
+    try {
+      const parsed = new URL(url);
+      if (!/^https?:$/.test(parsed.protocol)) throw new Error("Use an http or https URL");
+      if (COMPETITOR_SOURCE_PATTERN.test(`${name} ${url}`)) {
+        toast.error("Competitor sources are blocked. Add an official, regulator, government, or public-news source instead.");
+        return;
+      }
+      if (!name) throw new Error("Enter a source name");
+      if (sources.some((source) => source.url.toLowerCase() === parsed.toString().toLowerCase())) throw new Error("This source is already listed");
+      setSources((current) => [...current, { name, url: parsed.toString(), source_type: sourceDraft.source_type, is_active: true }]);
+      setSourceDraft({ name: "", url: "", source_type: "official" });
+    } catch (error: any) {
+      toast.error(error.message || "Enter a valid source URL");
+    }
+  };
+
+  const removeSource = (source: Source, index: number) => {
+    if (source.id) setRemovedSourceIds((current) => [...current, source.id!]);
+    setSources((current) => current.filter((_, itemIndex) => itemIndex !== index));
   };
 
   const runNow = async () => {
@@ -482,6 +526,16 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             {[800, 1200, 1800].map(limit => <Button key={limit} size="sm" variant={settings.word_limit === limit ? "default" : "outline"} onClick={() => updateSetting("word_limit", limit)}>{limit}</Button>)}
           </div>
         </div>
+        {supportsGoogleTrendsSettings && <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 lg:col-span-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <Label className="text-sm font-semibold">Daily Google Trends articles</Label>
+              <p className="mt-1 text-xs text-muted-foreground">At the first scheduled run each day, the agent selects the top Indian education trends by Google Trends' published traffic estimate and writes distinct articles before normal research runs continue.</p>
+            </div>
+            <Switch checked={settings.google_trends_daily_enabled} onCheckedChange={(value) => updateSetting("google_trends_daily_enabled", value)} />
+          </div>
+          {settings.google_trends_daily_enabled && <div className="mt-3 flex items-center gap-3"><Label className="whitespace-nowrap text-xs">Daily trend posts</Label><Input type="number" min={1} max={3} value={settings.google_trends_daily_posts} onChange={(event) => updateSetting("google_trends_daily_posts", Math.min(3, Math.max(1, Number(event.target.value || 3))))} className="h-9 w-20" /><span className="text-xs text-muted-foreground">Maximum 3 per day, subject to the daily article cap and available valid trends.</span></div>}
+        </div>}
       </div>
 
       {supportsAdvancedSettings && <div className="mt-4 rounded-2xl border p-4">
@@ -583,15 +637,25 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
 
       <div className="mt-4">
         <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground"><Sparkles className="h-3.5 w-3.5" /> Research sources visible to the agent</div>
+        <div className="mb-3 rounded-xl border bg-muted/30 p-3">
+          <p className="mb-3 text-xs text-muted-foreground">Add official institution pages, government/regulator notices, or public signals. Research is internal only - no visible source section is published with an article.</p>
+          <div className="grid gap-2 md:grid-cols-[1fr_2fr_150px_auto]">
+            <Input aria-label="Research source name" value={sourceDraft.name} onChange={(event) => setSourceDraft((current) => ({ ...current, name: event.target.value }))} placeholder="Source name" />
+            <Input aria-label="Research source URL" value={sourceDraft.url} onChange={(event) => setSourceDraft((current) => ({ ...current, url: event.target.value }))} placeholder="https://example.gov.in/updates" />
+            <select aria-label="Research source type" value={sourceDraft.source_type} onChange={(event) => setSourceDraft((current) => ({ ...current, source_type: event.target.value as Source["source_type"] }))} className="h-10 rounded-md border bg-background px-3 text-sm"><option value="official">Official / regulator</option><option value="public_signal">Public signal</option><option value="own">DekhoCampus</option></select>
+            <Button type="button" variant="outline" onClick={addSource} className="gap-2"><Plus className="h-4 w-4" /> Add</Button>
+          </div>
+        </div>
         <div className="grid gap-2 md:grid-cols-2">
           {sources.map((source, index) => (
-            <label key={source.url} className="flex items-center gap-3 rounded-xl border p-3 text-sm">
+            <div key={source.url} className="flex items-center gap-3 rounded-xl border p-3 text-sm">
               <Switch checked={source.is_active} onCheckedChange={(value) => setSources(prev => prev.map((item, i) => i === index ? { ...item, is_active: value } : item))} />
               <span className="min-w-0 flex-1">
                 <span className="block font-medium">{source.name} <Badge variant="outline" className="ml-1 text-[10px]">{source.source_type}</Badge></span>
                 <span className="block truncate text-xs text-muted-foreground">{source.url}</span>
               </span>
-            </label>
+              <Button type="button" size="icon" variant="ghost" onClick={() => removeSource(source, index)} className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${source.name}`}><Trash2 className="h-4 w-4" /></Button>
+            </div>
           ))}
         </div>
       </div>

@@ -11,6 +11,7 @@ const cors = {
 };
 
 const DEFAULT_SOURCES = [
+  { name: "Google Trends India", url: "https://trends.google.com/trending/rss?geo=IN", source_type: "public_signal" },
   { name: "Google News Education", url: "https://news.google.com/rss/search?q=education+OR+college+OR+admission+OR+exam+India&hl=en-IN&gl=IN&ceid=IN:en", source_type: "public_signal" },
   { name: "Google News Exams", url: "https://news.google.com/rss/search?q=JEE+OR+NEET+OR+CUET+OR+CAT+OR+board+exam+India&hl=en-IN&gl=IN&ceid=IN:en", source_type: "public_signal" },
   { name: "DekhoCampus", url: "https://dekhocampus.com/news", source_type: "own" },
@@ -28,6 +29,43 @@ function stripHtml(input: string) {
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function decodeXml(value: string) {
+  return String(value || "")
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function trendTrafficScore(value: string) {
+  const match = String(value || "").replace(/,/g, "").match(/([\d.]+)\s*([KMB])?\+?/i);
+  if (!match) return 0;
+  const base = Number(match[1]);
+  const multiplier = { k: 1_000, m: 1_000_000, b: 1_000_000_000 }[String(match[2] || "").toLowerCase() as "k" | "m" | "b"] || 1;
+  return Number.isFinite(base) ? base * multiplier : 0;
+}
+
+function extractGoogleTrendCandidates(xml: string) {
+  const candidates: Array<{ title: string; approximate_traffic: string; traffic_score: number }> = [];
+  const itemPattern = /<item\b[^>]*>([\s\S]*?)<\/item>/gi;
+  for (const match of xml.matchAll(itemPattern)) {
+    const item = match[1];
+    const title = decodeXml(item.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] || "");
+    const traffic = decodeXml(item.match(/<(?:ht:)?approx_traffic[^>]*>([\s\S]*?)<\/(?:ht:)?approx_traffic>/i)?.[1] || "");
+    if (!title || !traffic) continue;
+    candidates.push({ title, approximate_traffic: traffic, traffic_score: trendTrafficScore(traffic) });
+  }
+  return candidates.sort((a, b) => b.traffic_score - a.traffic_score).slice(0, 20);
+}
+
+function isGoogleTrendsSource(source: any) {
+  return /trends\.google\.com\/trending/i.test(String(source?.url || ""));
 }
 
 function esc(value: string) {
@@ -103,12 +141,14 @@ async function fetchSignals(sources: any[]) {
     const response = await fetch(source.url, {
       headers: {
         "User-Agent": "DekhoCampus editorial research bot/1.0",
-        "Accept": "text/html,application/xhtml+xml",
+        "Accept": "application/rss+xml,application/xml,text/xml,text/html,application/xhtml+xml",
       },
     });
     if (!response.ok) return { ...source, ok: false, signal: `Unavailable ${response.status}` };
-    const signal = stripHtml((await response.text()).slice(0, 160000)).slice(0, 4500);
-    return { ...source, ok: true, signal };
+    const raw = (await response.text()).slice(0, 160000);
+    const trend_candidates = isGoogleTrendsSource(source) ? extractGoogleTrendCandidates(raw) : [];
+    const signal = stripHtml(raw).slice(0, 4500);
+    return { ...source, ok: true, signal, trend_candidates };
   }));
   return results.map((result, index) => result.status === "fulfilled" ? result.value : { ...safeSources[index], ok: false, signal: "Fetch failed" });
 }
@@ -342,6 +382,18 @@ function isSimilarTitle(candidate: string, existingTitles: string[]) {
   });
 }
 
+function dedupeSources(rows: any[] | null | undefined) {
+  const byUrl = new Map<string, any>();
+  for (const source of [...DEFAULT_SOURCES, ...(rows || [])]) {
+    const url = String(source?.url || "").trim();
+    if (!url || BLOCKED_ARTICLE_COMPETITOR_PATTERN.test(`${source?.name || ""} ${url}`)) continue;
+    // A saved setting deliberately overrides the built-in default, including
+    // its active/inactive state.
+    byUrl.set(url.toLowerCase(), { ...source, url });
+  }
+  return [...byUrl.values()];
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   if (req.method !== "POST") return json({ error: "method not allowed" }, 405);
@@ -425,6 +477,8 @@ Deno.serve(async (req) => {
       logo_position: "top-center",
       image_aspect_ratio: "16:9",
       output_resolution: "4k",
+      google_trends_daily_enabled: true,
+      google_trends_daily_posts: 3,
       ...(settingsRow || {}),
       ...(body.override || {}),
     };
@@ -491,8 +545,8 @@ Deno.serve(async (req) => {
       runId = run?.id || "";
     }
 
-    const { data: sourceRows } = await admin.from("blog_research_sources").select("*").eq("is_active", true).order("display_order");
-    let sources = (sourceRows?.length ? sourceRows : DEFAULT_SOURCES);
+    const { data: sourceRows } = await admin.from("blog_research_sources").select("*").order("display_order");
+    let sources = dedupeSources(sourceRows).filter((source) => source.is_active !== false);
     let selectedEntityTopics: any[] = [];
     if (entityResearchMode) {
       const selected = (Array.isArray(body.selected_entities) ? body.selected_entities : [])
@@ -512,15 +566,38 @@ Deno.serve(async (req) => {
     const existingTitleList = existingArticles.map((article: any) => normalizedTitle(article.title));
     const existingTitles = new Set(existingTitleList);
 
-    const topicPrompt = `You are the DekhoCampus education-news editor. Today is ${new Date().toISOString().slice(0, 10)} in India.\n\nResearch signals from official, public, Google News/trend and own website pages only:\n${JSON.stringify(signals)}\n\nRecent DekhoCampus article titles and slugs to avoid duplicates:\n${JSON.stringify(existingArticles.slice(0, 1500).map((a: any) => ({ title: a.title, slug: a.slug })))}\n\nPick the best ${Math.max(settings.posts_per_run * 2, 4)} article opportunities for Indian students and parents. Prioritise timely admissions, exams, counselling, scholarships, careers and college decisions. Reject anything already covered by DekhoCampus. Do not use, cite, mention or link competitor publishers. Return JSON only: {topics:[{title,angle,primary_keyword,geo_focus,reason,category,tags:[...]}]}.`;
+    const { data: dailyTrendArticles } = triggerType === "schedule" && settings.google_trends_daily_enabled !== false
+      ? await admin.from("articles").select("id").gte("created_at", dayStart.toISOString()).contains("tags", ["google-trends-daily"])
+      : { data: [] };
+    const trendSlotsRemaining = triggerType === "schedule" && settings.google_trends_daily_enabled !== false
+      ? Math.max(0, Math.min(3, Number(settings.google_trends_daily_posts || 3)) - (dailyTrendArticles || []).length)
+      : 0;
+    const trendCandidates = signals
+      .flatMap((signal: any) => Array.isArray(signal.trend_candidates) ? signal.trend_candidates : [])
+      .sort((a: any, b: any) => Number(b.traffic_score || 0) - Number(a.traffic_score || 0))
+      .slice(0, 20);
+    const remainingDailyCapacity = Math.max(0, Number(settings.daily_post_cap || 1) - (todayArticles || []).length);
+    const dailyTrendMode = !entityResearchMode && trendSlotsRemaining > 0 && trendCandidates.length > 0;
+    const postLimit = Math.max(0, Math.min(
+      dailyTrendMode ? trendSlotsRemaining : Number(settings.posts_per_run || 1),
+      remainingDailyCapacity,
+    ));
+    if (!postLimit) return json({ skipped: true, message: "Daily post cap reached", count: (todayArticles || []).length });
+
+    const dailyTrendInstruction = dailyTrendMode
+      ? `\n\nDAILY GOOGLE TRENDS MODE: Select exactly ${postLimit} distinct article opportunities from these top Indian Google Trends candidates, ordered by their published approximate traffic estimate:\n${JSON.stringify(trendCandidates)}\nEvery returned topic MUST contain trend_source_title copied exactly from one candidate title and trend_volume copied from that candidate's approximate_traffic. Do not invent a trend, do not select a lower-volume candidate while a higher-volume relevant education candidate is available, and skip unrelated/non-education candidates.`
+      : "";
+    const topicPrompt = `You are the DekhoCampus education-news editor. Today is ${new Date().toISOString().slice(0, 10)} in India.\n\nResearch signals from official, public, Google News/trend and own website pages only:\n${JSON.stringify(signals)}\n\nRecent DekhoCampus article titles and slugs to avoid duplicates:\n${JSON.stringify(existingArticles.slice(0, 1500).map((a: any) => ({ title: a.title, slug: a.slug })))}\n\nPick the best ${dailyTrendMode ? postLimit : Math.max(postLimit * 2, 4)} article opportunities for Indian students and parents. Prioritise timely admissions, exams, counselling, scholarships, careers and college decisions. Reject anything already covered by DekhoCampus. Do not use, cite, mention or link competitor publishers.${dailyTrendInstruction}\nReturn JSON only: {topics:[{title,angle,primary_keyword,geo_focus,reason,category,tags:[...],trend_source_title?,trend_volume?}]}.`;
     const generatedTopics = entityResearchMode
       ? selectedEntityTopics
       : ((await parseOrRepairJson(blogAi, await generateBlogJsonResilient(admin, blogAi, topicPrompt + "\nUse natural plain language, never use an em dash, and return JSON only.", "topic-research"), admin)).topics || []);
     await assertRunActive(admin, runId);
+    const allowedTrendTitles = new Set(trendCandidates.map((item: any) => normalizedTitle(item.title)));
     const topics = generatedTopics.filter((topic: any) => {
       const candidateSlug = slugify(topic.title || "");
-      return candidateSlug && !existingSlugs.has(candidateSlug) && !existingTitles.has(normalizedTitle(topic.title)) && !isSimilarTitle(topic.title, existingTitleList);
-    }).slice(0, settings.posts_per_run);
+      const isAllowedTrend = !dailyTrendMode || allowedTrendTitles.has(normalizedTitle(topic.trend_source_title));
+      return isAllowedTrend && candidateSlug && !existingSlugs.has(candidateSlug) && !existingTitles.has(normalizedTitle(topic.title)) && !isSimilarTitle(topic.title, existingTitleList);
+    }).slice(0, postLimit);
     await updateRun(admin, runId, {
       progress: 30,
       current_step: topics.length ? `Selected ${topics.length} original topic(s)` : "No new non-duplicate topics found",
@@ -531,7 +608,7 @@ Deno.serve(async (req) => {
 
     const createdIds: string[] = Array.isArray(resumedRun?.created_article_ids) ? [...resumedRun.created_article_ids] : [];
     for (const [topicIndex, topic] of topics.entries()) {
-      if (createdIds.length >= Number(settings.posts_per_run || 1)) break;
+      if (createdIds.length >= postLimit) break;
       await getAiRuntimeControl(admin, "blog-agent");
       await assertRunActive(admin, runId);
       const baseProgress = 30 + Math.round((topicIndex / Math.max(topics.length, 1)) * 65);
@@ -581,7 +658,7 @@ Deno.serve(async (req) => {
         });
         await assertRunActive(admin, runId);
       }
-      const tags = Array.from(new Set([...(draft.tags || []), "auto-blog-agent"]));
+      const tags = Array.from(new Set([...(draft.tags || []), "auto-blog-agent", ...(dailyTrendMode ? ["google-trends-daily", "trending"] : [])]));
       const authorIndex = settings.author_mode === "round_robin" && selectedAuthors.length
         ? (Number(settings.last_author_index ?? -1) + createdIds.length + 1) % selectedAuthors.length
         : 0;
