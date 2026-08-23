@@ -7,21 +7,25 @@ ingress:
   rules:
     - component:
         name: api
+        preserve_path_prefix: true
       match:
         path:
           prefix: /v1
     - component:
         name: api
+        preserve_path_prefix: true
       match:
         path:
           prefix: /auth
     - component:
         name: api
+        preserve_path_prefix: true
       match:
         path:
           prefix: /storage
     - component:
         name: api
+        preserve_path_prefix: true
       match:
         path:
           prefix: /health
