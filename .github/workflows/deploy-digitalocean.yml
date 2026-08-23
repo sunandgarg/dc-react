@@ -68,7 +68,7 @@ jobs:
               'AUTH_JWT_SECRET': os.environ['AUTH_JWT_SECRET'],
               'SUPABASE_STORAGE_SERVICE_KEY': os.environ['SUPABASE_STORAGE_SERVICE_KEY'],
               'SMS_FAST2SMS_API_KEY': os.environ['SMS_FAST2SMS_API_KEY'],
-              'CORS_ORIGIN': 'https://dekhocampus.com,https://www.dekhocampus.com',
+              'CORS_ORIGIN': 'https://dekhocampus.com,https://www.dekhocampus.com,https://test.dekhocampus.com',
           }
           spec['services'][0]['envs'].extend(
               {'key': key, 'scope': 'RUN_TIME', 'type': 'SECRET', 'value': value}

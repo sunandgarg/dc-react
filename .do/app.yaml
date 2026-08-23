@@ -1,5 +1,9 @@
 name: dc-react
 region: blr
+domains:
+  - domain: test.dekhocampus.com
+    type: PRIMARY
+    zone: dekhocampus.com
 alerts:
   - rule: DEPLOYMENT_FAILED
   - rule: DOMAIN_FAILED
