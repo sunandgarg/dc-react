@@ -9,7 +9,27 @@ if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 const metadata = JSON.parse(await readFile(new URL("../prisma/schema-metadata.json", import.meta.url), "utf8"));
 const postgresSchemaReference = await readFile(new URL("../../db-export/full_schema.sql", import.meta.url), "utf8").catch(() => "");
 const prisma = new PrismaClient();
-const mysqlConnection = await mysql.createConnection(process.env.DATABASE_URL);
+
+async function createMysqlConnection() {
+  const url = new URL(process.env.DATABASE_URL);
+  const caFile = process.env.DB_SSL_CA || url.searchParams.get("sslcert");
+  url.searchParams.delete("sslcert");
+  url.searchParams.delete("sslaccept");
+
+  if (!caFile) return mysql.createConnection(url.toString());
+
+  const ca = await readFile(new URL(`../prisma/${caFile}`, import.meta.url), "utf8");
+  return mysql.createConnection({
+    uri: url.toString(),
+    ssl: {
+      ca,
+      minVersion: "TLSv1.2",
+      rejectUnauthorized: true,
+    },
+  });
+}
+
+const mysqlConnection = await createMysqlConnection();
 const quote = (identifier) => `\`${String(identifier).replaceAll("`", "``")}\``;
 
 // Unique constraints recovered from the checked-in PostgreSQL migrations.
