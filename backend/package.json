@@ -10,6 +10,7 @@
     "db:push": "node --env-file-if-exists=.env.local ./node_modules/prisma/build/index.js db push",
     "db:setup:runtime": "node scripts/setup-runtime-database.mjs",
     "db:import": "node --env-file-if-exists=.env.local scripts/import-mysql.mjs",
+    "db:import:live-supabase": "node scripts/import-live-supabase.mjs",
     "db:parity": "node --env-file-if-exists=.env.local scripts/apply-mysql-parity.mjs",
     "schema:generate": "node scripts/generate-prisma-schema.mjs"
   },

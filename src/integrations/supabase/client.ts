@@ -67,7 +67,9 @@ const storageClient = storageProjectUrl
           if (session?.access_token) headers.set('authorization', `Bearer ${session.access_token}`);
           else headers.delete('authorization');
 
-          if (url.pathname.startsWith('/storage/v1/')) {
+          const isPublicStorageRead = (init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase() === 'GET'
+            && url.pathname.startsWith('/storage/v1/object/public/');
+          if (url.pathname.startsWith('/storage/v1/') && !isPublicStorageRead) {
             return fetch(`${resolvedApiUrl}${url.pathname}${url.search}`, { ...init, headers });
           }
           return fetch(input, { ...init, headers });

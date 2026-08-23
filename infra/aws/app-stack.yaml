@@ -26,6 +26,9 @@ Parameters:
   SupabaseStorageServiceKey:
     Type: String
     NoEcho: true
+  SmsFast2SmsApiKey:
+    Type: String
+    NoEcho: true
   DesiredCount:
     Type: Number
     Default: 1
@@ -164,6 +167,11 @@ Resources:
     Properties:
       Description: !Sub '${ProjectName} API runtime credentials'
       SecretString: !Sub '{"authJwtSecret":"${AuthJwtSecret}","supabaseStorageServiceKey":"${SupabaseStorageServiceKey}"}'
+  SmsSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: !Sub '${ProjectName} SMS provider credential'
+      SecretString: !Sub '{"fast2smsApiKey":"${SmsFast2SmsApiKey}"}'
   Database:
     Type: AWS::RDS::DBInstance
     DeletionPolicy: Snapshot
@@ -230,7 +238,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: secretsmanager:GetSecretValue
-                Resource: [!Ref DatabaseSecret, !Ref RuntimeSecret]
+                Resource: [!Ref DatabaseSecret, !Ref RuntimeSecret, !Ref SmsSecret]
   TaskRole:
     Type: AWS::IAM::Role
     Properties:
@@ -278,6 +286,8 @@ Resources:
               ValueFrom: !Sub '${RuntimeSecret}:authJwtSecret::'
             - Name: SUPABASE_STORAGE_SERVICE_KEY
               ValueFrom: !Sub '${RuntimeSecret}:supabaseStorageServiceKey::'
+            - Name: SMS_FAST2SMS_API_KEY
+              ValueFrom: !Sub '${SmsSecret}:fast2smsApiKey::'
           HealthCheck:
             Command:
               - CMD-SHELL

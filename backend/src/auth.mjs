@@ -68,6 +68,60 @@ async function userFromRequest(request) {
   return prisma.app_auth_users.findUnique({ where: { id: payload.sub } });
 }
 
+function providerConfig(value) {
+  if (!value) return {};
+  if (typeof value === "string") {
+    try { return JSON.parse(value); } catch { return {}; }
+  }
+  return value;
+}
+
+function fast2SmsError(text, fallback) {
+  try {
+    const parsed = JSON.parse(text);
+    if (typeof parsed?.message === "string") return parsed.message;
+    if (typeof parsed?.message?.description === "string") return parsed.message.description;
+  } catch {}
+  return fallback;
+}
+
+async function sendFast2SmsOtp(phone, otp) {
+  const provider = await prisma.otp_providers.findFirst({
+    where: { provider_name: "fast2sms", channel: "sms", is_active: true },
+  });
+  const apiKey = String(process.env.SMS_FAST2SMS_API_KEY || "").trim();
+  if (!provider || !apiKey) return false;
+
+  const config = providerConfig(provider.config_json);
+  const mobile = phone.replace(/^\+91/, "");
+  const templateId = String(provider.template_id || config.otp_id || "").trim();
+  if (!/^\d{10}$/.test(mobile) || !templateId) {
+    throw Object.assign(new Error("Fast2SMS configuration is incomplete"), { status: 503, code: "SMS_NOT_CONFIGURED" });
+  }
+
+  const response = await fetch(`${String(provider.base_url || "https://www.fast2sms.com").replace(/\/$/, "")}/dev/otp/send`, {
+    method: "POST",
+    headers: { authorization: apiKey, accept: "application/json", "content-type": "application/json" },
+    body: JSON.stringify({
+      mobile,
+      otp_id: templateId,
+      otp,
+      otp_expiry: Math.min(1440, Math.max(1, Number(config.otp_expiry_minutes || 10))),
+      otp_length: Math.min(10, Math.max(4, Number(config.otp_length || otp.length))),
+      ...(Array.isArray(config.otp_variables_values) && config.otp_variables_values.length
+        ? { variables_values: config.otp_variables_values.join("|") }
+        : {}),
+    }),
+  });
+  const text = await response.text();
+  let parsed = null;
+  try { parsed = JSON.parse(text); } catch {}
+  if (!response.ok || parsed?.return !== true) {
+    throw Object.assign(new Error(fast2SmsError(text, "Fast2SMS rejected the OTP request")), { status: 502, code: "SMS_DELIVERY_FAILED" });
+  }
+  return true;
+}
+
 export async function resolveNativeIdentity(request) {
   const user = await userFromRequest(request);
   return user ? authUser(user) : null;
@@ -84,6 +138,8 @@ export async function sendPhoneOtp(request) {
   if (webhook) {
     const response = await fetch(webhook, { method: "POST", headers: { "content-type": "application/json", ...(process.env.SMS_WEBHOOK_BEARER_TOKEN ? { authorization: `Bearer ${process.env.SMS_WEBHOOK_BEARER_TOKEN}` } : {}) }, body: JSON.stringify({ phone, message: `Your DekhoCampus verification code is ${otp}. It expires in 10 minutes.` }) });
     if (!response.ok) throw Object.assign(new Error("SMS provider rejected the OTP request"), { status: 502, code: "SMS_DELIVERY_FAILED" });
+  } else if (await sendFast2SmsOtp(phone, otp)) {
+    // The active provider configuration lives in MySQL; the API credential is injected from Secrets Manager.
   } else if (process.env.NODE_ENV === "production") {
     throw Object.assign(new Error("SMS provider is not configured"), { status: 503, code: "SMS_NOT_CONFIGURED" });
   }
