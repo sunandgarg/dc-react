@@ -58,13 +58,14 @@ function normalizeForDatabase(value, field) {
   return value;
 }
 
-function applyDefaults(table, row) {
+export function applyDefaults(table, row) {
   const result = { ...row };
   for (const [name, field] of Object.entries(schemaMetadata[table].fields)) {
     if (result[name] !== undefined) continue;
     if (String(field.default).includes("gen_random_uuid")) result[name] = randomUUID();
     else if (String(field.default).toLowerCase() === "now()") result[name] = new Date().toISOString();
     else if (field.default !== null) result[name] = field.default;
+    else if (field.type === "Json" && !field.nullable && String(field.format).endsWith("[]")) result[name] = [];
   }
   return result;
 }
