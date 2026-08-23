@@ -12,7 +12,7 @@ The GitHub `production` environment supplies these as encrypted runtime variable
 - `SUPABASE_STORAGE_SERVICE_KEY`: the existing Supabase project's secret/service-role key, used only by the Node storage proxy.
 - Provider credentials used by the unported function list in `docs/MIGRATION_STATUS.md`.
 
-`DATABASE_URL` is injected from the managed MySQL binding in `.do/app.yaml`. `SUPABASE_STORAGE_URL` and the public Vite storage URL are already set to the existing project URL. The backend container applies the Prisma schema and MySQL parity objects before starting the HTTP server.
+`DATABASE_URL` is injected from the managed MySQL binding in `.do/app.yaml`. `SUPABASE_STORAGE_URL` and the public Vite storage URL are already set to the existing project URL. The migration workflow copies the complete MySQL schema and data before deployment; normal container restarts do not run schema-changing DDL.
 
 ## Routing
 
