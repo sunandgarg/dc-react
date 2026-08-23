@@ -1,0 +1,102 @@
+name: Deploy production to AWS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - backend/**
+      - infra/aws/**
+      - public/**
+      - src/**
+      - .github/workflows/deploy-aws.yml
+      - package.json
+      - package-lock.json
+      - vite.config.*
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: dc-react-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'ap-south-1' }}
+  PROJECT_NAME: dc-react
+  SUPABASE_STORAGE_URL: ${{ vars.SUPABASE_STORAGE_URL || 'https://kozdctbbvrnyddlftmvf.supabase.co' }}
+
+jobs:
+  verify-and-deploy:
+    if: github.event_name == 'workflow_dispatch' || vars.AWS_AUTO_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install and verify
+        run: |
+          npm ci
+          npm --prefix backend ci
+          npm test
+          npm --prefix backend test
+          npm run lint
+          npm run build
+          npm --prefix backend run prisma:generate
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push immutable images
+        id: images
+        env:
+          ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          API_IMAGE="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME-api:$GITHUB_SHA"
+          WEB_IMAGE="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME-web:$GITHUB_SHA"
+          docker build --file backend/Dockerfile --tag "$API_IMAGE" .
+          docker build --file infra/aws/Dockerfile.web --build-arg VITE_SUPABASE_STORAGE_URL="$SUPABASE_STORAGE_URL" --tag "$WEB_IMAGE" .
+          docker push "$API_IMAGE"
+          docker push "$WEB_IMAGE"
+          echo "api=$API_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "web=$WEB_IMAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy CloudFormation stack
+        env:
+          API_IMAGE: ${{ steps.images.outputs.api }}
+          WEB_IMAGE: ${{ steps.images.outputs.web }}
+          AUTH_JWT_SECRET: ${{ secrets.AUTH_JWT_SECRET }}
+          SUPABASE_STORAGE_SERVICE_KEY: ${{ secrets.SUPABASE_STORAGE_SERVICE_KEY }}
+          CERTIFICATE_ARN: ${{ vars.ACM_CERTIFICATE_ARN }}
+        run: |
+          aws cloudformation deploy \
+            --template-file infra/aws/app-stack.yaml \
+            --stack-name "$PROJECT_NAME-production" \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              ProjectName="$PROJECT_NAME" \
+              ApiImageUri="$API_IMAGE" \
+              WebImageUri="$WEB_IMAGE" \
+              CertificateArn="$CERTIFICATE_ARN" \
+              AuthJwtSecret="$AUTH_JWT_SECRET" \
+              SupabaseStorageUrl="$SUPABASE_STORAGE_URL" \
+              SupabaseStorageServiceKey="$SUPABASE_STORAGE_SERVICE_KEY"
+
+      - name: Show deployment endpoint
+        run: |
+          aws cloudformation describe-stacks \
+            --stack-name "$PROJECT_NAME-production" \
+            --query 'Stacks[0].Outputs[?OutputKey==`ApplicationUrl`].OutputValue' \
+            --output text

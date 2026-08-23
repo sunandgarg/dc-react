@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { PrismaClient } from "@prisma/client";
+import "./database-url.mjs";
 
 export const prisma = new PrismaClient();
 export const schemaMetadata = JSON.parse(
@@ -23,4 +24,3 @@ export function jsonSafe(value) {
     return item;
   }));
 }
-

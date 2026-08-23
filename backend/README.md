@@ -40,8 +40,8 @@ VITE_API_URL=http://127.0.0.1:8787
 VITE_SUPABASE_STORAGE_URL=https://your-project.supabase.co
 ```
 
-Database traffic, auth, and function calls use Node/MySQL. Only file and image storage uses Supabase. Unported function handlers return HTTP 501, and the remaining compatibility-channel calls do not provide live updates until native SSE or WebSocket support is added. Their exact status is tracked in `docs/MIGRATION_STATUS.md`.
+Database traffic, auth, function calls, and periodic admin refreshes use Node/MySQL. Only file and image bytes use Supabase Storage. Unported function handlers return HTTP 501. Their exact status is tracked in `docs/MIGRATION_STATUS.md`.
 
 ## Deployment
 
-The Dockerfile supports the DigitalOcean App Platform deployment in `.do/app.yaml`. Supply `DATABASE_URL`, `AUTH_JWT_SECRET`, `SUPABASE_STORAGE_URL`, `SUPABASE_STORAGE_SERVICE_KEY`, and allowed production origins as server-side variables. Do not switch production traffic until the blockers in the migration status document are closed. `infra/template.yaml` remains only as historical AWS reference material.
+The production AWS configuration is in `infra/aws/`. It deploys the Docker API with React/Nginx on ECS Fargate and RDS MySQL. AWS injects `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `AUTH_JWT_SECRET`, and `SUPABASE_STORAGE_SERVICE_KEY` at runtime; `scripts/setup-runtime-database.mjs` safely assembles the Prisma URL and initializes a new empty database. Do not switch production traffic until the blockers in the migration status document are closed.

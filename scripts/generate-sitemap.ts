@@ -39,8 +39,12 @@ import { SITE_URL } from "../src/lib/constant";
 const fileEnv = loadEnv(process.env.NODE_ENV || "production", process.cwd(), "");
 const env = { ...fileEnv, ...process.env };
 const BASE_URL = (env.SITEMAP_BASE_URL || SITE_URL).replace(/\/+$/, "");
-const API_URL = (env.SITEMAP_API_URL || env.VITE_API_URL || "").replace(/\/+$/, "");
-const SITEMAP_SEED_URL = env.SITEMAP_SEED_URL || "https://dekhocampus.com/sitemap.xml";
+const API_URL = (env.SITEMAP_API_URL === "none"
+  ? ""
+  : env.SITEMAP_API_URL || env.VITE_API_URL || "").replace(/\/+$/, "");
+const SITEMAP_SEED_URL = env.SITEMAP_SEED_URL === "none"
+  ? ""
+  : env.SITEMAP_SEED_URL || "https://dekhocampus.com/sitemap.xml";
 const PAGE_SIZE = 1000;
 
 interface SitemapEntry {
@@ -257,6 +261,7 @@ function canonicalSeedPath(rawLocation: string) {
 }
 
 async function fetchSeedEntries(): Promise<SitemapEntry[]> {
+  if (!SITEMAP_SEED_URL) return [];
   const pending = [SITEMAP_SEED_URL];
   const visited = new Set<string>();
   const entries: SitemapEntry[] = [];

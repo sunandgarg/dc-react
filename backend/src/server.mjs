@@ -1,4 +1,6 @@
 import http from "node:http";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import { handleRequest } from "./index.mjs";
 
 const port = Number(process.env.PORT || 8787);
@@ -16,9 +18,14 @@ http.createServer(async (req, res) => {
     });
     const response = await handleRequest(request);
     res.writeHead(response.status, Object.fromEntries(response.headers));
-    res.end(Buffer.from(await response.arrayBuffer()));
+    if (!response.body) res.end();
+    else await pipeline(Readable.fromWeb(response.body), res);
   } catch (error) {
     console.error(error);
+    if (res.headersSent) {
+      res.destroy(error instanceof Error ? error : undefined);
+      return;
+    }
     res.writeHead(500, { "content-type": "application/json" });
     res.end(JSON.stringify({ error: "Internal server error" }));
   }

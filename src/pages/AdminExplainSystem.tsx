@@ -37,8 +37,8 @@ function LogsConsole() {
   const [live, setLive] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const load = async () => {
-    setLoading(true);
+  const load = async (silent = false) => {
+    if (!silent) setLoading(true);
     const { data, error } = await supabase
       .from("system_logs")
       .select("*")
@@ -46,19 +46,15 @@ function LogsConsole() {
       .limit(500);
     if (error) toast.error(error.message);
     setLogs((data as any) || []);
-    setLoading(false);
+    if (!silent) setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
 
   useEffect(() => {
     if (!live) return;
-    const ch = supabase
-      .channel("explain_system_logs_live")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "system_logs" },
-        (payload) => setLogs((prev) => [payload.new as any, ...prev].slice(0, 1000)))
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    const timer = window.setInterval(() => { void load(true); }, 5_000);
+    return () => window.clearInterval(timer);
   }, [live]);
 
   const functions = useMemo(() => Array.from(new Set(logs.map((l) => l.function_name))).sort(), [logs]);
@@ -145,7 +141,7 @@ function DeveloperView() {
           <li><b>Backend:</b> Node.js + Prisma + MySQL 8, with table authorization enforced by the Node API.</li>
           <li><b>Auth:</b> Native access/refresh tokens and mobile OTP via the <code>send-otp</code> and <code>phone-auth</code> Node handlers.</li>
           <li><b>AI:</b> Provider-backed workflows are present in the UI but remain unavailable until their native Node handlers and provider credentials are deployed.</li>
-          <li><b>Logging:</b> Node request logs and the <code>system_logs</code> table are available. Live push updates remain pending native realtime transport.</li>
+          <li><b>Logging:</b> Node request logs and the <code>system_logs</code> table are available, with the console refreshing from MySQL every five seconds while live mode is enabled.</li>
         </ul>
       </Card>
       <Card className="p-5">

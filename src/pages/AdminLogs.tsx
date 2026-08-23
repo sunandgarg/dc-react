@@ -37,8 +37,8 @@ export default function AdminLogs() {
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  const load = async () => {
-    setLoading(true);
+  const load = async (silent = false) => {
+    if (!silent) setLoading(true);
     const { data, error } = await supabase
       .from("system_logs")
       .select("*")
@@ -46,22 +46,15 @@ export default function AdminLogs() {
       .limit(500);
     if (error) toast.error(error.message);
     setLogs((data as any) || []);
-    setLoading(false);
+    if (!silent) setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
 
   useEffect(() => {
     if (!live) return;
-    const ch = supabase
-      .channel("system_logs_live")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "system_logs" },
-        (payload) => setLogs((prev) => [payload.new as any, ...prev].slice(0, 1000)),
-      )
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    const timer = window.setInterval(() => { void load(true); }, 5_000);
+    return () => window.clearInterval(timer);
   }, [live]);
 
   const functions = useMemo(() => Array.from(new Set(logs.map((l) => l.function_name))).sort(), [logs]);

@@ -3,10 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node --test test/*.test.mjs",
     "dev": "node --env-file=.env.local src/server.mjs",
     "start": "node src/server.mjs",
     "prisma:generate": "prisma generate",
     "db:push": "node --env-file-if-exists=.env.local ./node_modules/prisma/build/index.js db push",
+    "db:setup:runtime": "node scripts/setup-runtime-database.mjs",
     "db:import": "node --env-file-if-exists=.env.local scripts/import-mysql.mjs",
     "db:parity": "node --env-file-if-exists=.env.local scripts/apply-mysql-parity.mjs",
     "schema:generate": "node scripts/generate-prisma-schema.mjs"

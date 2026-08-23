@@ -170,8 +170,24 @@ export async function handleRequest(request) {
   const requestId = request.headers.get("x-request-id") || randomUUID();
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...corsHeaders(request), "x-request-id": requestId } });
   const url = new URL(request.url);
+  if (url.pathname === "/health/live") {
+    return json(200, { ok: true, backend: "node", requestId }, requestId, request);
+  }
   if (url.pathname === "/health" || url.pathname === "/v1/status") {
-    return json(200, { ok: true, backend: "node", database: "mysql", orm: "prisma", requestId }, requestId, request);
+    try {
+      await prisma.$queryRawUnsafe("SELECT 1");
+      return json(200, {
+        ok: true,
+        backend: "node",
+        database: "mysql",
+        orm: "prisma",
+        storage: Boolean(process.env.SUPABASE_STORAGE_URL && process.env.SUPABASE_STORAGE_SERVICE_KEY),
+        requestId,
+      }, requestId, request);
+    } catch (error) {
+      console.error(`[${requestId}] health check failed`, error);
+      return json(503, { ok: false, backend: "node", database: "unavailable", requestId }, requestId, request);
+    }
   }
 
   try {

@@ -68,11 +68,6 @@ export function useAdminAuth(): AdminAuthState & { refetch: () => Promise<void> 
   // Track which user ID we've already checked to avoid redundant checks
   const checkedUserIdRef = useRef<string | null>(null);
   const isInitialCheckDoneRef = useRef(false);
-  // useAdminAuth is mounted by several components at the same time. The
-  // compatibility client reuses channels by topic, so a shared topic can subscribe before
-  // another hook adds its postgres_changes callback, which throws and crashes
-  // the React tree. Give every hook instance its own channel topic.
-  const channelInstanceIdRef = useRef(Math.random().toString(36).slice(2));
 
   const checkAdminStatus = useCallback(async (isInitial: boolean = false) => {
     if (!user) {
@@ -201,29 +196,11 @@ export function useAdminAuth(): AdminAuthState & { refetch: () => Promise<void> 
     }
   }, [authLoading, user?.id]);
 
-  // Set up realtime subscription for profile changes
+  // Keep approval and role changes fresh without depending on Supabase Realtime.
   useEffect(() => {
     if (!user) return;
-
-    const channel = supabase
-      .channel(`profile-changes:${user.id}:${channelInstanceIdRef.current}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'profiles',
-          filter: `id=eq.${user.id}`,
-        },
-        () => {
-          checkAdminStatus(false);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    const timer = window.setInterval(() => { void checkAdminStatus(false); }, 30_000);
+    return () => window.clearInterval(timer);
   }, [user?.id, checkAdminStatus]);
 
   return {
