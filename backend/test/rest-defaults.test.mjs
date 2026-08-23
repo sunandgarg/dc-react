@@ -10,10 +10,10 @@ test("applies empty arrays for required PostgreSQL array fields", () => {
   assert.deepEqual(college.related_courses, []);
 });
 
-test("does not invent defaults for nullable or jsonb fields", () => {
+test("defaults required jsonb objects but leaves nullable fields alone", () => {
   const college = applyDefaults("colleges", { name: "QA College", slug: "qa-college" });
 
-  assert.equal(college.data_source_urls, undefined);
+  assert.deepEqual(college.data_source_urls, {});
   assert.equal(college.parent_university_slug, undefined);
 });
 

@@ -66,7 +66,9 @@ export function applyDefaults(table, row) {
     if (String(field.default).includes("gen_random_uuid")) result[name] = randomUUID();
     else if (String(field.default).toLowerCase() === "now()") result[name] = new Date().toISOString();
     else if (field.default !== null) result[name] = field.default;
-    else if (field.type === "Json" && !field.nullable && String(field.format).endsWith("[]")) result[name] = [];
+    else if (field.type === "Json" && !field.nullable) {
+      result[name] = String(field.format).endsWith("[]") ? [] : {};
+    }
   }
   return result;
 }
