@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata, tableNames, jsonSafe } from "./db.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
+const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
 
 function splitDepth(value, separator = ",") {
   const parts = [];
@@ -68,6 +69,18 @@ export function applyDefaults(table, row) {
     else if (field.type === "Json" && !field.nullable && String(field.format).endsWith("[]")) result[name] = [];
   }
   return result;
+}
+
+export function nextShortIdValue(table, currentMax) {
+  const start = SHORT_ID_STARTS[table];
+  if (!start) return undefined;
+  if (currentMax === null || currentMax === undefined) return start;
+  return Math.max(start, Number(currentMax) + 1);
+}
+
+function isDuplicateKeyError(error) {
+  const detail = `${error?.message || ""} ${error?.meta?.message || ""} ${error?.meta?.code || ""}`;
+  return error?.code === "P2002" || /duplicate entry|\b1062\b/i.test(detail);
 }
 
 function decodeRow(table, row) {
@@ -268,22 +281,36 @@ async function handleGet(table, request, url) {
 async function insertRow(table, input, merge, conflictColumns) {
   const row = applyDefaults(table, input);
   const allowed = schemaMetadata[table].fields;
-  const columns = Object.keys(row).filter((column) => allowed[column]);
-  if (!columns.length) throw new Error("Insert contains no known columns");
-  const values = columns.map((column) => normalizeForDatabase(row[column], allowed[column]));
+  const providedColumns = Object.keys(row).filter((column) => allowed[column]);
   if (merge && conflictColumns.length) {
     const conflictValues = conflictColumns.map((column) => normalizeForDatabase(row[column], allowed[column]));
     if (conflictValues.every((value) => value !== undefined)) {
       const existing = await prisma.$queryRawUnsafe(`SELECT 1 FROM ${quote(table)} WHERE ${conflictColumns.map((column) => `${quote(column)} = ?`).join(" AND ")} LIMIT 1`, ...conflictValues);
       if (existing.length) {
-        const updates = columns.filter((column) => !conflictColumns.includes(column));
+        const updates = providedColumns.filter((column) => !conflictColumns.includes(column));
         if (updates.length) await prisma.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${updates.map((column) => `${quote(column)} = ?`).join(",")} WHERE ${conflictColumns.map((column) => `${quote(column)} = ?`).join(" AND ")}`, ...updates.map((column) => normalizeForDatabase(row[column], allowed[column])), ...conflictValues);
         return row;
       }
     }
   }
-  await prisma.$executeRawUnsafe(`INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`, ...values);
-  return row;
+
+  const generateShortId = row.short_id === undefined && SHORT_ID_STARTS[table];
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    if (generateShortId) {
+      const maximum = await prisma.$queryRawUnsafe(`SELECT MAX(${quote("short_id")}) AS maximum FROM ${quote(table)}`);
+      row.short_id = nextShortIdValue(table, maximum[0]?.maximum);
+    }
+    const columns = Object.keys(row).filter((column) => allowed[column]);
+    if (!columns.length) throw new Error("Insert contains no known columns");
+    const values = columns.map((column) => normalizeForDatabase(row[column], allowed[column]));
+    try {
+      await prisma.$executeRawUnsafe(`INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`, ...values);
+      return row;
+    } catch (error) {
+      if (!generateShortId || !isDuplicateKeyError(error) || attempt === 3) throw error;
+    }
+  }
+  throw new Error(`Unable to allocate short_id for ${table}`);
 }
 
 async function handlePost(table, request, url) {
