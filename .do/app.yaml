@@ -52,7 +52,7 @@ services:
         value: 0.0.0.0
       - key: DATABASE_URL
         scope: RUN_TIME
-        value: ${dc-react-mysql.DATABASE_PRIVATE_URL}
+        value: ${dc-react-mysql.DATABASE_URL}
       - key: SUPABASE_STORAGE_URL
         scope: RUN_TIME
         value: https://kozdctbbvrnyddlftmvf.supabase.co
