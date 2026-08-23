@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { handleRest, handleRpc } from "./rest.mjs";
 import { prisma } from "./db.mjs";
+import { handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp } from "./auth.mjs";
+import { handleStorage } from "./storage.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -40,9 +42,11 @@ const allowedOrigins = String(process.env.CORS_ORIGIN || "http://localhost:5173,
 
 function corsHeaders(request) {
   const origin = request.headers.get("origin");
+  const requestOrigin = new URL(request.url).origin;
+  const allowedOrigin = origin && (allowedOrigins.includes(origin) || origin === requestOrigin) ? origin : allowedOrigins[0] || "null";
   return {
-    "access-control-allow-origin": origin && allowedOrigins.includes(origin) ? origin : allowedOrigins[0] || "null",
-    "access-control-allow-headers": "accept, accept-profile, authorization, apikey, content-profile, content-type, prefer, range, range-unit, x-client-info, x-request-id, x-supabase-api-version",
+    "access-control-allow-origin": allowedOrigin,
+    "access-control-allow-headers": "accept, accept-profile, authorization, apikey, content-profile, content-type, prefer, range, range-unit, x-client-info, x-request-id, x-upsert",
     "access-control-expose-headers": "content-range, range-unit, x-request-id",
     "access-control-allow-methods": "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS",
     vary: "Origin",
@@ -61,17 +65,7 @@ function bearerToken(request) {
 }
 
 async function resolveIdentity(request) {
-  const token = bearerToken(request);
-  if (!token || token.startsWith("sb_publishable_")) return null;
-  const base = process.env.SUPABASE_URL || process.env.SUPABASE_FUNCTIONS_FALLBACK_URL;
-  const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!base || !publishableKey) throw new HttpError(503, "AUTH_NOT_CONFIGURED", "Supabase Auth compatibility is not configured");
-  const response = await fetch(`${base.replace(/\/$/, "")}/auth/v1/user`, {
-    headers: { authorization: `Bearer ${token}`, apikey: publishableKey },
-  });
-  if (!response.ok) return null;
-  const user = await response.json();
-  return typeof user?.id === "string" ? user : null;
+  return resolveNativeIdentity(request);
 }
 
 async function isAdmin(userId) {
@@ -118,22 +112,58 @@ async function authorizeRpc(name, request) {
   throw new HttpError(403, "RPC_ACCESS_DENIED", "This operation requires administrator access");
 }
 
-async function proxySupabaseFunction(name, request, requestId) {
-  const base = process.env.SUPABASE_FUNCTIONS_FALLBACK_URL || process.env.SUPABASE_URL;
-  const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!base || !publishableKey) return json(501, { code: "FUNCTION_NOT_MIGRATED", error: `Function ${name} requires a native Node handler or configured Supabase fallback` }, requestId, request);
-  const headers = new Headers(request.headers);
-  headers.set("apikey", headers.get("apikey") || publishableKey);
-  headers.set("x-request-id", requestId);
-  const response = await fetch(`${base.replace(/\/$/, "")}/functions/v1/${encodeURIComponent(name)}`, {
-    method: request.method,
-    headers,
-    body: ["GET", "HEAD"].includes(request.method) ? undefined : await request.arrayBuffer(),
+async function bootstrapPayload() {
+  const rows = async (table, where = "") => prisma.$queryRawUnsafe(`SELECT * FROM \`${table}\` ${where}`);
+  const [heroBanners, heroSettings, featuredColleges, trustedPartners, leadFormSettings, featureToggles, ads, siteIntegrations] = await Promise.all([
+    rows("hero_banners", "WHERE `is_active` = 1 ORDER BY `display_order` ASC"),
+    rows("hero_settings", "LIMIT 1"),
+    rows("featured_colleges", "WHERE `is_active` = 1 ORDER BY `display_order` ASC"),
+    rows("trusted_partners", "WHERE `is_active` = 1 ORDER BY `display_order` ASC"),
+    rows("lead_form_settings", "LIMIT 1"),
+    rows("feature_toggles"),
+    rows("ads", "WHERE `is_active` = 1"),
+    rows("site_integrations", "WHERE `enabled` = 1"),
+  ]);
+  return {
+    hero_banners: heroBanners,
+    hero_settings: heroSettings[0] || null,
+    featured_colleges: featuredColleges,
+    trusted_partners: trustedPartners,
+    lead_form_settings: leadFormSettings[0] || null,
+    feature_toggles: featureToggles,
+    ads,
+    site_integrations: siteIntegrations.map(({ key, value, enabled }) => ({ key, value, enabled: Boolean(enabled) })),
+  };
+}
+
+async function saveLead(request) {
+  const input = await request.json().catch(() => ({}));
+  const phone = String(input.phone || "").replace(/\D/g, "").slice(-10);
+  if (!input.name || !/^[6-9]\d{9}$/.test(phone)) throw new HttpError(400, "INVALID_LEAD", "Name and a valid 10-digit Indian mobile number are required");
+  const lead = await prisma.leads.create({
+    data: {
+      id: randomUUID(),
+      name: String(input.name).slice(0, 250),
+      email: input.email ? String(input.email).slice(0, 320) : null,
+      phone,
+      city: input.city ? String(input.city).slice(0, 250) : null,
+      state: input.state ? String(input.state).slice(0, 250) : null,
+      current_situation: input.current_situation ? String(input.current_situation) : null,
+      initial_query: input.initial_query ? String(input.initial_query) : null,
+      source: input.source ? String(input.source) : "website",
+      cta: input.cta ? String(input.cta) : null,
+      page_url: input.page_url ? String(input.page_url) : null,
+      interested_college_slug: input.interested_college_slug ? String(input.interested_college_slug) : null,
+      interested_course_slug: input.interested_course_slug ? String(input.interested_course_slug) : null,
+      interested_exam_slug: input.interested_exam_slug ? String(input.interested_exam_slug) : null,
+      otp_verified: Boolean(input.otp_verified),
+      program_mode: input.program_mode ? String(input.program_mode) : "unknown",
+      device_type: input.device_type ? String(input.device_type) : null,
+      source_category: input.source_category ? String(input.source_category) : null,
+      status: "new",
+    },
   });
-  const responseHeaders = new Headers(response.headers);
-  Object.entries(corsHeaders(request)).forEach(([key, value]) => responseHeaders.set(key, value));
-  responseHeaders.set("x-request-id", requestId);
-  return new Response(response.body, { status: response.status, headers: responseHeaders });
+  return { success: true, lead_id: lead.id };
 }
 
 export async function handleRequest(request) {
@@ -145,6 +175,16 @@ export async function handleRequest(request) {
   }
 
   try {
+    const authResult = await handleAuth(request);
+    if (authResult) return json(authResult.status, authResult.body, requestId, request);
+    const storageResult = await handleStorage(request);
+    if (storageResult instanceof Response) {
+      const headers = new Headers(storageResult.headers);
+      Object.entries(corsHeaders(request)).forEach(([key, value]) => headers.set(key, value));
+      headers.set("x-request-id", requestId);
+      return new Response(storageResult.body, { status: storageResult.status, headers });
+    }
+    if (storageResult) return json(storageResult.status, storageResult.body, requestId, request);
     const rpcMatch = url.pathname.match(/^\/v1\/rest\/rpc\/([A-Za-z0-9_-]+)$/);
     if (rpcMatch) {
       await authorizeRpc(rpcMatch[1], request);
@@ -158,7 +198,13 @@ export async function handleRequest(request) {
       return json(result.status, result.body, requestId, request, result.headers);
     }
     const functionMatch = url.pathname.match(/^\/v1\/functions\/([A-Za-z0-9_-]+)$/);
-    if (functionMatch) return proxySupabaseFunction(functionMatch[1], request, requestId);
+    if (functionMatch) {
+      if (functionMatch[1] === "send-otp") return json(200, await sendPhoneOtp(request), requestId, request);
+      if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
+      if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(), requestId, request, { "cache-control": "public, max-age=60" });
+      if (functionMatch[1] === "save-lead") return json(200, await saveLead(request), requestId, request);
+      return json(501, { code: "FUNCTION_NOT_MIGRATED", error: `Function ${functionMatch[1]} has no native Node handler` }, requestId, request);
+    }
     return json(404, { error: "Route not found", requestId }, requestId, request);
   } catch (error) {
     console.error(`[${requestId}]`, error);

@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "dev:backend": "npm --prefix backend run dev",
-    "db:setup": "npm --prefix backend run prisma:generate && npm --prefix backend run db:push && npm --prefix backend run db:import && npm --prefix backend run db:parity",
+    "db:setup": "npm run db:setup:fresh",
+    "db:setup:fresh": "npm --prefix backend run prisma:generate && npm --prefix backend run db:push && npm --prefix backend run db:parity",
+    "db:import:supabase-archive": "npm --prefix backend run db:import",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",

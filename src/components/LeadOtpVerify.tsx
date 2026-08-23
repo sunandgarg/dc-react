@@ -33,7 +33,6 @@ export function LeadOtpVerify({ phone, onVerified, onCancel, formKey }: LeadOtpV
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           phone: `+91${phone}`,
@@ -104,7 +103,6 @@ export function LeadOtpVerify({ phone, onVerified, onCancel, formKey }: LeadOtpV
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           phone: `+91${phone}`,

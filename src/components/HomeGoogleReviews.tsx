@@ -36,9 +36,7 @@ export function HomeGoogleReviews() {
       try {
         const qs = new URLSearchParams({ entityType: "site", entitySlug: "homepage" });
         if (placeRow?.value) qs.set("placeId", placeRow.value);
-        const res = await fetch(`${functionUrl("google-reviews")}?${qs}`, {
-          headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
-        });
+        const res = await fetch(`${functionUrl("google-reviews")}?${qs}`);
         if (res.ok) {
           const j = await res.json();
           if (!cancelled) {

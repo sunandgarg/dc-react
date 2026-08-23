@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 work/
+backend/storage/
 supabase/.temp/
 reports/legacy-csv-mapped/
 reports/legacy-csv-*.json

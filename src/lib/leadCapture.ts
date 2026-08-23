@@ -101,7 +101,6 @@ export async function silentSaveLead(payload: SilentLeadPayload): Promise<boolea
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
       body: JSON.stringify(body),
       keepalive: true,

@@ -242,7 +242,6 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           phone: `+91${phone}`,
@@ -277,7 +276,6 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
       body: JSON.stringify({
         phone: `+91${phone}`,

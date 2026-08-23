@@ -8,61 +8,14 @@ For local setup and API details, see `backend/README.md`. For verified scope, un
 
 ## Production hosting
 
-The React frontend is deployed by **Cloudflare Pages** from GitHub. The backend
-remains Supabase: Postgres, Auth, Storage, and the Edge Functions under
-`supabase/functions`. Cloudflare serves the static Vite build; it does not
-replace Supabase or require database credentials in the browser.
+DigitalOcean App Platform serves the React frontend and Node API. A managed
+MySQL cluster stores application and auth data. The existing Supabase project
+is retained only for files and images; uploads are authorized by Node and the
+Supabase storage service key is never exposed to the browser.
 
-In Cloudflare Pages, connect the GitHub repository and use:
-
-| Setting | Value |
-| --- | --- |
-| Production branch | `main` |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-
-Set these Cloudflare Pages environment variables for **Production** and
-**Preview** builds:
-
-```env
-VITE_SUPABASE_URL=https://kozdctbbvrnyddlftmvf.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
-```
-
-`public/_redirects` provides the React Router fallback, so refreshing a route
-such as `/auth` or `/college/example` works on Cloudflare Pages. The Cloudflare
-Pages Function at `/api/blog-agent-cron` is available for authenticated manual
-runs. The 30-minute schedule is the separate Worker in
-`workers/blog-agent-scheduler`, because Cron Triggers run Workers rather than
-Pages Functions. Deploy it once and set its secrets:
-
-```sh
-npx wrangler deploy --config workers/blog-agent-scheduler/wrangler.jsonc
-npx wrangler secret put SUPABASE_URL --config workers/blog-agent-scheduler/wrangler.jsonc
-npx wrangler secret put BLOG_AGENT_SECRET --config workers/blog-agent-scheduler/wrangler.jsonc
-```
-
-The Worker configuration declares `*/30 * * * *` in UTC. Do not use a
-publishable key or service-role key as a Cloudflare frontend variable.
-
-To provision a fresh Supabase project from this repository, authenticate the
-Supabase CLI, then run the following from the repository root. This applies the
-versioned database migrations and deploys every Edge Function. Configure any
-third-party credentials as Supabase Edge Function secrets, never as Vite/Vercel
-public variables.
-
-```sh
-npx supabase login
-npx supabase link --project-ref kozdctbbvrnyddlftmvf
-npx supabase db push
-for fn in supabase/functions/*; do
-  [ -d "$fn" ] && npx supabase functions deploy "$(basename "$fn")"
-done
-```
-
-For Google sign-in, add the Cloudflare production URL, Pages preview URL, and
-custom domain to Supabase Authentication → URL Configuration, then enable
-Google in Authentication → Providers using its OAuth client credentials.
+The production app specification is in `.do/app.yaml`. Deployment details,
+required encrypted variables, and the first-admin procedure are documented in
+`docs/DIGITALOCEAN_DEPLOYMENT.md`.
 
 ## Legacy content migration
 

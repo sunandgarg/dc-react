@@ -147,7 +147,7 @@ export default function AdminLeadIntelligence() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session.session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          ...(session.session?.access_token ? { Authorization: `Bearer ${session.session.access_token}` } : {}),
         },
         body: JSON.stringify({ ...filters, format: "csv" }),
       });

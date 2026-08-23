@@ -4,8 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { AlertCircle } from 'lucide-react';
 import { restUrl } from '@/lib/backendMode';
 
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_XeGGxsGIdsWpU0u3L3xSTg_I775axzd';
-
 const KNOWN_ROUTES = new Set([
   'auth', 'dashboard', 'lead-push', 'crm', 'settings',
   'url-shortener', 'telecaller', 'universities', 'upload',
@@ -137,7 +135,6 @@ function trackClick(urlId: string) {
   const { browser, os, deviceType } = parseUA(ua);
 
   const headers: Record<string, string> = {
-    'apikey': SUPABASE_PUBLISHABLE_KEY,
     'Content-Type': 'application/json',
     'Prefer': 'return=minimal',
   };

@@ -8,2822 +8,3010 @@ datasource db {
 }
 
 model about_founders {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  title String @db.LongText
-  bio String @db.LongText
-  photo String @db.LongText
-  linkedin_url String @db.LongText
-  twitter_url String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  name          String   @db.LongText
+  title         String   @db.LongText
+  bio           String   @db.LongText
+  photo         String   @db.LongText
+  linkedin_url  String   @db.LongText
+  twitter_url   String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("about_founders")
 }
 
 model about_milestones {
-  id String @id @default(uuid()) @db.Char(36)
-  year String @db.LongText
-  title String @db.LongText
-  description String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  year          String   @db.LongText
+  title         String   @db.LongText
+  description   String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("about_milestones")
 }
 
 model about_page {
-  id String @id @default(uuid()) @db.Char(36)
-  hero_eyebrow String @db.LongText
-  hero_title String @db.LongText
-  hero_subtitle String @db.LongText
-  hero_image String @db.LongText
-  mission String @db.LongText
-  vision String @db.LongText
-  story String @db.LongText
-  story_image String @db.LongText
-  cta_title String @db.LongText
-  cta_subtitle String @db.LongText
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id               String   @id @default(uuid()) @db.Char(36)
+  hero_eyebrow     String   @db.LongText
+  hero_title       String   @db.LongText
+  hero_subtitle    String   @db.LongText
+  hero_image       String   @db.LongText
+  mission          String   @db.LongText
+  vision           String   @db.LongText
+  story            String   @db.LongText
+  story_image      String   @db.LongText
+  cta_title        String   @db.LongText
+  cta_subtitle     String   @db.LongText
+  meta_title       String   @db.LongText
+  meta_description String   @db.LongText
+  updated_at       DateTime @default(now()) @db.DateTime(3)
+
   @@map("about_page")
 }
 
 model about_press {
-  id String @id @default(uuid()) @db.Char(36)
-  outlet String @db.LongText
-  headline String @db.LongText
-  url String @db.LongText
-  logo String @db.LongText
-  published_on String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  outlet        String   @db.LongText
+  headline      String   @db.LongText
+  url           String   @db.LongText
+  logo          String   @db.LongText
+  published_on  String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("about_press")
 }
 
 model about_stats {
-  id String @id @default(uuid()) @db.Char(36)
-  label String @db.LongText
-  value String @db.LongText
-  description String @db.LongText
-  icon_emoji String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  label         String   @db.LongText
+  value         String   @db.LongText
+  description   String   @db.LongText
+  icon_emoji    String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("about_stats")
 }
 
 model about_team {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  role String @db.LongText
-  department String @db.LongText
-  photo String @db.LongText
-  linkedin_url String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  name          String   @db.LongText
+  role          String   @db.LongText
+  department    String   @db.LongText
+  photo         String   @db.LongText
+  linkedin_url  String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("about_team")
 }
 
 model about_values {
-  id String @id @default(uuid()) @db.Char(36)
-  title String @db.LongText
-  description String @db.LongText
-  icon_emoji String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  title         String   @db.LongText
+  description   String   @db.LongText
+  icon_emoji    String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("about_values")
 }
 
 model ad_analytics_events {
-  id String @id @default(uuid()) @db.Char(36)
-  ad_unit_id String? @db.Char(36)
-  event_type String @db.LongText
-  device String? @db.LongText
-  page_url String? @db.LongText
-  country String? @db.LongText
+  id         String   @id @default(uuid()) @db.Char(36)
+  ad_unit_id String?  @db.Char(36)
+  event_type String   @db.LongText
+  device     String?  @db.LongText
+  page_url   String?  @db.LongText
+  country    String?  @db.LongText
   created_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("ad_analytics_events")
 }
 
 model ad_scripts {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  location String @db.LongText
-  code String @db.LongText
-  is_active Boolean @default(true)
+  id         String    @id @default(uuid()) @db.Char(36)
+  name       String    @db.LongText
+  location   String    @db.LongText
+  code       String    @db.LongText
+  is_active  Boolean   @default(true)
   start_date DateTime? @db.DateTime(3)
-  end_date DateTime? @db.DateTime(3)
-  notes String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  end_date   DateTime? @db.DateTime(3)
+  notes      String?   @db.LongText
+  created_at DateTime  @default(now()) @db.DateTime(3)
+  updated_at DateTime  @default(now()) @db.DateTime(3)
+
   @@map("ad_scripts")
 }
 
 model ad_units {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  ad_type String @db.LongText
-  placement String @db.LongText
-  position String @db.LongText
-  ad_slot_id String? @db.LongText
-  ad_format String? @db.LongText
-  full_width_responsive Boolean @default(true)
-  custom_html String? @db.LongText
-  priority Int @default(0)
-  is_active Boolean @default(true)
-  start_date DateTime? @db.DateTime(3)
-  end_date DateTime? @db.DateTime(3)
-  target_devices Json
-  target_roles Json
-  target_countries Json
-  target_categories Json
-  url_pattern String? @db.LongText
-  min_width Int?
-  min_height Int?
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                    String    @id @default(uuid()) @db.Char(36)
+  name                  String    @db.LongText
+  ad_type               String    @db.LongText
+  placement             String    @db.LongText
+  position              String    @db.LongText
+  ad_slot_id            String?   @db.LongText
+  ad_format             String?   @db.LongText
+  full_width_responsive Boolean   @default(true)
+  custom_html           String?   @db.LongText
+  priority              Int       @default(0)
+  is_active             Boolean   @default(true)
+  start_date            DateTime? @db.DateTime(3)
+  end_date              DateTime? @db.DateTime(3)
+  target_devices        Json
+  target_roles          Json
+  target_countries      Json
+  target_categories     Json
+  url_pattern           String?   @db.LongText
+  min_width             Int?
+  min_height            Int?
+  created_at            DateTime  @default(now()) @db.DateTime(3)
+  updated_at            DateTime  @default(now()) @db.DateTime(3)
+
   @@map("ad_units")
 }
 
 model ads {
-  id String @id @default(uuid()) @db.Char(36)
-  title String @db.LongText
-  subtitle String? @db.LongText
-  cta_text String @db.LongText
-  link_url String @db.LongText
-  image_url String? @db.LongText
-  variant String @db.LongText
-  bg_gradient String @db.LongText
-  target_type String @db.LongText
-  target_page String? @db.LongText
-  target_item_slug String? @db.LongText
-  target_city String? @db.LongText
-  position String @db.LongText
-  priority Int @default(0)
-  is_active Boolean @default(true)
-  start_date DateTime? @db.DateTime(3)
-  end_date DateTime? @db.DateTime(3)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id               String    @id @default(uuid()) @db.Char(36)
+  title            String    @db.LongText
+  subtitle         String?   @db.LongText
+  cta_text         String    @db.LongText
+  link_url         String    @db.LongText
+  image_url        String?   @db.LongText
+  variant          String    @db.LongText
+  bg_gradient      String    @db.LongText
+  target_type      String    @db.LongText
+  target_page      String?   @db.LongText
+  target_item_slug String?   @db.LongText
+  target_city      String?   @db.LongText
+  position         String    @db.LongText
+  priority         Int       @default(0)
+  is_active        Boolean   @default(true)
+  start_date       DateTime? @db.DateTime(3)
+  end_date         DateTime? @db.DateTime(3)
+  created_at       DateTime  @default(now()) @db.DateTime(3)
+  updated_at       DateTime  @default(now()) @db.DateTime(3)
+
   @@map("ads")
 }
 
 model adsense_settings {
-  id String @id @default(uuid()) @db.Char(36)
-  publisher_id String? @db.LongText
-  client_id String? @db.LongText
-  account_id String? @db.LongText
-  verification_meta String? @db.LongText
-  auto_ads_enabled Boolean @default(false)
-  ads_globally_enabled Boolean @default(true)
-  enabled_on_mobile Boolean @default(true)
-  enabled_on_desktop Boolean @default(true)
-  enabled_for_guests Boolean @default(true)
-  enabled_for_logged_in Boolean @default(true)
-  disabled_roles Json
-  disabled_pages Json
-  ads_per_page_limit Int @default(0)
-  lazy_load_enabled Boolean @default(true)
-  refresh_interval_seconds Int @default(0)
-  head_scripts String? @db.LongText
-  body_scripts String? @db.LongText
-  footer_scripts String? @db.LongText
-  custom_css String? @db.LongText
-  custom_js String? @db.LongText
-  api_keys Json
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                       String   @id @default(uuid()) @db.Char(36)
+  publisher_id             String?  @db.LongText
+  client_id                String?  @db.LongText
+  account_id               String?  @db.LongText
+  verification_meta        String?  @db.LongText
+  auto_ads_enabled         Boolean  @default(false)
+  ads_globally_enabled     Boolean  @default(true)
+  enabled_on_mobile        Boolean  @default(true)
+  enabled_on_desktop       Boolean  @default(true)
+  enabled_for_guests       Boolean  @default(true)
+  enabled_for_logged_in    Boolean  @default(true)
+  disabled_roles           Json
+  disabled_pages           Json
+  ads_per_page_limit       Int      @default(0)
+  lazy_load_enabled        Boolean  @default(true)
+  refresh_interval_seconds Int      @default(0)
+  head_scripts             String?  @db.LongText
+  body_scripts             String?  @db.LongText
+  footer_scripts           String?  @db.LongText
+  custom_css               String?  @db.LongText
+  custom_js                String?  @db.LongText
+  api_keys                 Json
+  created_at               DateTime @default(now()) @db.DateTime(3)
+  updated_at               DateTime @default(now()) @db.DateTime(3)
+
   @@map("adsense_settings")
 }
 
 model ai_budget_settings {
-  provider String @id @db.VarChar(191)
-  monthly_budget_usd Decimal @default(0) @db.Decimal(65, 20)
-  baseline_spend_usd Decimal @default(0) @db.Decimal(65, 20)
-  currency String @db.LongText
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  updated_by String? @db.Char(36)
+  provider           String   @id @db.VarChar(191)
+  monthly_budget_usd Decimal  @default(0) @db.Decimal(65, 20)
+  baseline_spend_usd Decimal  @default(0) @db.Decimal(65, 20)
+  currency           String   @db.LongText
+  updated_at         DateTime @default(now()) @db.DateTime(3)
+  updated_by         String?  @db.Char(36)
+
   @@map("ai_budget_settings")
 }
 
 model ai_content_reports {
-  id String @id @default(uuid()) @db.Char(36)
-  source String @db.LongText
-  message_excerpt String? @db.LongText
-  full_content String? @db.LongText
-  reason String? @db.LongText
-  reporter_name String? @db.LongText
-  reporter_email String? @db.LongText
-  reporter_phone String? @db.LongText
-  user_id String? @db.Char(36)
-  page_url String? @db.LongText
-  context Json?
-  status String @db.LongText
-  admin_notes String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String   @id @default(uuid()) @db.Char(36)
+  source          String   @db.LongText
+  message_excerpt String?  @db.LongText
+  full_content    String?  @db.LongText
+  reason          String?  @db.LongText
+  reporter_name   String?  @db.LongText
+  reporter_email  String?  @db.LongText
+  reporter_phone  String?  @db.LongText
+  user_id         String?  @db.Char(36)
+  page_url        String?  @db.LongText
+  context         Json?
+  status          String   @db.LongText
+  admin_notes     String?  @db.LongText
+  created_at      DateTime @default(now()) @db.DateTime(3)
+  updated_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("ai_content_reports")
 }
 
 model ai_providers {
-  id String @id @default(uuid()) @db.Char(36)
-  provider_name String @db.LongText
-  display_name String @db.LongText
-  api_key_encrypted String @db.LongText
-  base_url String @db.LongText
-  default_model String @db.LongText
-  is_active Boolean @default(false)
-  icon_emoji String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                String   @id @default(uuid()) @db.Char(36)
+  provider_name     String   @db.LongText
+  display_name      String   @db.LongText
+  api_key_encrypted String   @db.LongText
+  base_url          String   @db.LongText
+  default_model     String   @db.LongText
+  is_active         Boolean  @default(false)
+  icon_emoji        String   @db.LongText
+  created_at        DateTime @default(now()) @db.DateTime(3)
+  updated_at        DateTime @default(now()) @db.DateTime(3)
+
   @@map("ai_providers")
 }
 
 model ai_runtime_controls {
-  feature String @id @db.VarChar(191)
-  display_name String @db.LongText
-  is_enabled Boolean @default(true)
-  provider String? @db.LongText
-  model String? @db.LongText
-  stop_reason String? @db.LongText
-  updated_by String? @db.Char(36)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  feature      String   @id @db.VarChar(191)
+  display_name String   @db.LongText
+  is_enabled   Boolean  @default(true)
+  provider     String?  @db.LongText
+  model        String?  @db.LongText
+  stop_reason  String?  @db.LongText
+  updated_by   String?  @db.Char(36)
+  updated_at   DateTime @default(now()) @db.DateTime(3)
+
   @@map("ai_runtime_controls")
 }
 
 model ai_usage_events {
-  id String @id @default(uuid()) @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  provider String @db.LongText
-  model String @db.LongText
-  feature String @db.LongText
-  operation String? @db.LongText
-  input_tokens BigInt @default(0)
-  output_tokens BigInt @default(0)
-  total_tokens BigInt?
-  image_count Int @default(0)
-  estimated_cost_usd Decimal @default(0) @db.Decimal(65, 20)
-  request_id String? @db.LongText
-  user_id String? @db.Char(36)
-  metadata Json
+  id                 String   @id @default(uuid()) @db.Char(36)
+  created_at         DateTime @default(now()) @db.DateTime(3)
+  provider           String   @db.LongText
+  model              String   @db.LongText
+  feature            String   @db.LongText
+  operation          String?  @db.LongText
+  input_tokens       BigInt   @default(0)
+  output_tokens      BigInt   @default(0)
+  total_tokens       BigInt?
+  image_count        Int      @default(0)
+  estimated_cost_usd Decimal  @default(0) @db.Decimal(65, 20)
+  request_id         String?  @db.LongText
+  user_id            String?  @db.Char(36)
+  metadata           Json
+
   @@map("ai_usage_events")
 }
 
 model also_check_modules {
-  id String @id @default(uuid()) @db.Char(36)
-  key String @db.LongText
-  title String @db.LongText
-  description String? @db.LongText
-  url String @db.LongText
-  icon String? @db.LongText
-  sort_order Int @default(0)
-  enabled Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id          String   @id @default(uuid()) @db.Char(36)
+  key         String   @db.LongText
+  title       String   @db.LongText
+  description String?  @db.LongText
+  url         String   @db.LongText
+  icon        String?  @db.LongText
+  sort_order  Int      @default(0)
+  enabled     Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.DateTime(3)
+  updated_at  DateTime @default(now()) @db.DateTime(3)
+
   @@map("also_check_modules")
 }
 
 model api_logs {
-  id String @id @default(uuid()) @db.Char(36)
-  university_id String @db.Char(36)
-  lead_id String? @db.Char(36)
-  batch_id String? @db.Char(36)
-  user_id String? @db.LongText
-  application_no String? @db.LongText
-  trigger_point String? @db.LongText
-  webhook_id String? @db.LongText
-  data_push_type String? @db.LongText
-  email String? @db.LongText
-  mobile String? @db.LongText
-  form String? @db.LongText
-  status String @db.LongText
-  response String? @db.LongText
-  lead_data Json?
-  source String? @db.LongText
-  medium String? @db.LongText
-  campaign String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id             String   @id @default(uuid()) @db.Char(36)
+  university_id  String   @db.Char(36)
+  lead_id        String?  @db.Char(36)
+  batch_id       String?  @db.Char(36)
+  user_id        String?  @db.LongText
+  application_no String?  @db.LongText
+  trigger_point  String?  @db.LongText
+  webhook_id     String?  @db.LongText
+  data_push_type String?  @db.LongText
+  email          String?  @db.LongText
+  mobile         String?  @db.LongText
+  form           String?  @db.LongText
+  status         String   @db.LongText
+  response       String?  @db.LongText
+  lead_data      Json?
+  source         String?  @db.LongText
+  medium         String?  @db.LongText
+  campaign       String?  @db.LongText
+  created_at     DateTime @default(now()) @db.DateTime(3)
+
   @@map("api_logs")
 }
 
 model app_settings {
-  key String @id @db.VarChar(191)
-  value String? @db.LongText
+  key        String   @id @db.VarChar(191)
+  value      String?  @db.LongText
   updated_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("app_settings")
 }
 
 model approval_bodies {
-  id String @id @default(uuid()) @db.Char(36)
-  code String @db.LongText
-  name String @db.LongText
-  logo_url String @db.LongText
-  description String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  code          String   @db.LongText
+  name          String   @db.LongText
+  logo_url      String   @db.LongText
+  description   String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("approval_bodies")
 }
 
 model article_categories {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  slug          String   @db.LongText
+  name          String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("article_categories")
 }
 
 model article_links {
-  id String @id @default(uuid()) @db.Char(36)
-  article_id String @db.Char(36)
-  entity_type String @db.LongText
-  entity_slug String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id          String   @id @default(uuid()) @db.Char(36)
+  article_id  String   @db.Char(36)
+  entity_type String   @db.LongText
+  entity_slug String   @db.LongText
+  created_at  DateTime @default(now()) @db.DateTime(3)
+
   @@map("article_links")
 }
 
 model articles {
-  id String @id @default(uuid()) @db.Char(36)
-  status String @db.LongText
-  title String @db.LongText
-  slug String @db.LongText
-  description String @db.LongText
-  content String @db.LongText
-  vertical String @db.LongText
-  category String @db.LongText
-  author String @db.LongText
-  featured_image String @db.LongText
-  views Int @default(0)
-  tags Json
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  meta_keywords String @db.LongText
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  created_by String? @db.Char(36)
-  author_id String? @db.Char(36)
-  featured_rank Int?
-  official_website String? @db.LongText
-  data_verified_at DateTime? @db.DateTime(3)
-  data_source_urls Json
-  data_quality_score Int @default(0)
-  data_clean_attempts Int @default(0)
-  data_clean_successes Int @default(0)
+  id                   String    @id @default(uuid()) @db.Char(36)
+  status               String    @db.LongText
+  title                String    @db.LongText
+  slug                 String    @db.LongText
+  description          String    @db.LongText
+  content              String    @db.LongText
+  vertical             String    @db.LongText
+  category             String    @db.LongText
+  author               String    @db.LongText
+  featured_image       String    @db.LongText
+  views                Int       @default(0)
+  tags                 Json
+  meta_title           String    @db.LongText
+  meta_description     String    @db.LongText
+  meta_keywords        String    @db.LongText
+  is_active            Boolean   @default(true)
+  created_at           DateTime  @default(now()) @db.DateTime(3)
+  updated_at           DateTime  @default(now()) @db.DateTime(3)
+  created_by           String?   @db.Char(36)
+  author_id            String?   @db.Char(36)
+  featured_rank        Int?
+  official_website     String?   @db.LongText
+  data_verified_at     DateTime? @db.DateTime(3)
+  data_source_urls     Json
+  data_quality_score   Int       @default(0)
+  data_clean_attempts  Int       @default(0)
+  data_clean_successes Int       @default(0)
   data_last_checked_at DateTime? @db.DateTime(3)
-  data_clean_state String @db.LongText
+  data_clean_state     String    @db.LongText
+
   @@map("articles")
 }
 
 model authors {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  designation String @db.LongText
-  photo String @db.LongText
-  short_bio String @db.LongText
-  bio String @db.LongText
-  expertise Json
-  email String @db.LongText
-  linkedin_url String @db.LongText
-  twitter_url String @db.LongText
-  website_url String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  user_id String? @db.Char(36)
+  id            String   @id @default(uuid()) @db.Char(36)
+  slug          String   @db.LongText
+  name          String   @db.LongText
+  designation   String   @db.LongText
+  photo         String   @db.LongText
+  short_bio     String   @db.LongText
+  bio           String   @db.LongText
+  expertise     Json
+  email         String   @db.LongText
+  linkedin_url  String   @db.LongText
+  twitter_url   String   @db.LongText
+  website_url   String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+  user_id       String?  @db.Char(36)
+
   @@map("authors")
 }
 
 model blog_ai_provider_settings {
-  id String @id @db.VarChar(191)
-  claude_api_key_ciphertext String @db.LongText
-  openai_api_key_ciphertext String @db.LongText
-  text_model String @db.LongText
-  image_model String @db.LongText
-  image_quality String @db.LongText
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  updated_by String? @db.Char(36)
+  id                        String   @id @db.VarChar(191)
+  claude_api_key_ciphertext String   @db.LongText
+  openai_api_key_ciphertext String   @db.LongText
+  text_model                String   @db.LongText
+  image_model               String   @db.LongText
+  image_quality             String   @db.LongText
+  updated_at                DateTime @default(now()) @db.DateTime(3)
+  updated_by                String?  @db.Char(36)
+
   @@map("blog_ai_provider_settings")
 }
 
 model blog_auto_agent_runs {
-  id String @id @default(uuid()) @db.Char(36)
-  status String @db.LongText
-  trigger_type String @db.LongText
-  started_at DateTime @default(now()) @db.DateTime(3)
-  finished_at DateTime? @db.DateTime(3)
-  interval_minutes Int?
-  model_provider String? @db.LongText
-  word_limit Int?
-  sources Json
-  selected_topics Json
+  id                  String    @id @default(uuid()) @db.Char(36)
+  status              String    @db.LongText
+  trigger_type        String    @db.LongText
+  started_at          DateTime  @default(now()) @db.DateTime(3)
+  finished_at         DateTime? @db.DateTime(3)
+  interval_minutes    Int?
+  model_provider      String?   @db.LongText
+  word_limit          Int?
+  sources             Json
+  selected_topics     Json
   created_article_ids Json
-  message String @db.LongText
-  progress Int @default(0)
-  current_step String @db.LongText
-  estimated_seconds Int @default(0)
-  completed_steps Int @default(0)
-  total_steps Int @default(1)
-  resumed_at DateTime? @db.DateTime(3)
-  paused_at DateTime? @db.DateTime(3)
-  cancelled_at DateTime? @db.DateTime(3)
-  aborted_at DateTime? @db.DateTime(3)
-  control_note String @db.LongText
-  entity_schedule_id String? @db.Char(36)
-  agent_mode String @db.LongText
+  message             String    @db.LongText
+  progress            Int       @default(0)
+  current_step        String    @db.LongText
+  estimated_seconds   Int       @default(0)
+  completed_steps     Int       @default(0)
+  total_steps         Int       @default(1)
+  resumed_at          DateTime? @db.DateTime(3)
+  paused_at           DateTime? @db.DateTime(3)
+  cancelled_at        DateTime? @db.DateTime(3)
+  aborted_at          DateTime? @db.DateTime(3)
+  control_note        String    @db.LongText
+  entity_schedule_id  String?   @db.Char(36)
+  agent_mode          String    @db.LongText
+
   @@map("blog_auto_agent_runs")
 }
 
 model blog_auto_agent_settings {
-  id String @id @db.VarChar(191)
-  enabled Boolean @default(false)
-  interval_minutes Int @default(60)
-  posts_per_run Int @default(2)
-  daily_post_cap Int @default(12)
-  publish_status String @db.LongText
-  model_provider String @db.LongText
-  word_limit Int @default(1200)
-  last_run_at DateTime? @db.DateTime(3)
-  next_run_at DateTime? @db.DateTime(3)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  scheduler_token String? @db.LongText
-  author_mode String @db.LongText
-  author_ids Json
-  last_author_index Int
-  text_model String @db.LongText
-  image_provider String @db.LongText
-  image_model String @db.LongText
-  language String @db.LongText
-  audience String @db.LongText
-  tone String @db.LongText
-  content_goals Json
-  required_sections Json
-  minimum_sources Int @default(2)
-  editorial_quality_target Int @default(80)
-  human_review_required Boolean @default(true)
-  image_mode String @db.LongText
-  image_template_url String @db.LongText
-  image_prompt_style String @db.LongText
-  include_logo Boolean @default(true)
-  logo_url String @db.LongText
-  logo_position String @db.LongText
-  image_aspect_ratio String @db.LongText
-  output_resolution String @db.LongText
-  google_trends_daily_enabled Boolean @default(true)
-  google_trends_daily_posts Int @default(3)
+  id                          String    @id @db.VarChar(191)
+  enabled                     Boolean   @default(false)
+  interval_minutes            Int       @default(60)
+  posts_per_run               Int       @default(2)
+  daily_post_cap              Int       @default(12)
+  publish_status              String    @db.LongText
+  model_provider              String    @db.LongText
+  word_limit                  Int       @default(1200)
+  last_run_at                 DateTime? @db.DateTime(3)
+  next_run_at                 DateTime? @db.DateTime(3)
+  created_at                  DateTime  @default(now()) @db.DateTime(3)
+  updated_at                  DateTime  @default(now()) @db.DateTime(3)
+  scheduler_token             String?   @db.LongText
+  author_mode                 String    @db.LongText
+  author_ids                  Json
+  last_author_index           Int
+  text_model                  String    @db.LongText
+  image_provider              String    @db.LongText
+  image_model                 String    @db.LongText
+  language                    String    @db.LongText
+  audience                    String    @db.LongText
+  tone                        String    @db.LongText
+  content_goals               Json
+  required_sections           Json
+  minimum_sources             Int       @default(2)
+  editorial_quality_target    Int       @default(80)
+  human_review_required       Boolean   @default(true)
+  image_mode                  String    @db.LongText
+  image_template_url          String    @db.LongText
+  image_prompt_style          String    @db.LongText
+  include_logo                Boolean   @default(true)
+  logo_url                    String    @db.LongText
+  logo_position               String    @db.LongText
+  image_aspect_ratio          String    @db.LongText
+  output_resolution           String    @db.LongText
+  google_trends_daily_enabled Boolean   @default(true)
+  google_trends_daily_posts   Int       @default(3)
+
   @@map("blog_auto_agent_settings")
 }
 
 model blog_research_sources {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  url String @db.LongText
-  source_type String @db.LongText
-  is_active Boolean @default(true)
-  display_order Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  name          String   @db.LongText
+  url           String   @db.LongText
+  source_type   String   @db.LongText
+  is_active     Boolean  @default(true)
+  display_order Int      @default(0)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("blog_research_sources")
 }
 
 model career_course_links {
-  id String @id @default(uuid()) @db.Char(36)
-  career_slug String @db.LongText
-  course_slug String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id          String   @id @default(uuid()) @db.Char(36)
+  career_slug String   @db.LongText
+  course_slug String   @db.LongText
+  created_at  DateTime @default(now()) @db.DateTime(3)
+
   @@map("career_course_links")
 }
 
 model career_profiles {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  domain String @db.LongText
-  short_description String @db.LongText
-  description String @db.LongText
-  avg_salary String @db.LongText
-  growth String @db.LongText
-  experience_required String @db.LongText
-  top_skills Json
-  top_companies Json
-  related_courses Json
-  related_exams Json
-  job_roles Json
-  image String @db.LongText
-  icon_emoji String @db.LongText
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  meta_keywords String @db.LongText
-  status String @db.LongText
-  is_featured Boolean @default(false)
-  is_active Boolean @default(true)
-  display_order Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  youtube_video_url String @db.LongText
-  author_id String? @db.Char(36)
-  page_summary String? @db.LongText
-  official_website String? @db.LongText
-  data_verified_at DateTime? @db.DateTime(3)
-  data_source_urls Json
-  data_quality_score Int @default(0)
-  data_clean_attempts Int @default(0)
-  data_clean_successes Int @default(0)
+  id                   String    @id @default(uuid()) @db.Char(36)
+  slug                 String    @db.LongText
+  name                 String    @db.LongText
+  domain               String    @db.LongText
+  short_description    String    @db.LongText
+  description          String    @db.LongText
+  avg_salary           String    @db.LongText
+  growth               String    @db.LongText
+  experience_required  String    @db.LongText
+  top_skills           Json
+  top_companies        Json
+  related_courses      Json
+  related_exams        Json
+  job_roles            Json
+  image                String    @db.LongText
+  icon_emoji           String    @db.LongText
+  meta_title           String    @db.LongText
+  meta_description     String    @db.LongText
+  meta_keywords        String    @db.LongText
+  status               String    @db.LongText
+  is_featured          Boolean   @default(false)
+  is_active            Boolean   @default(true)
+  display_order        Int       @default(0)
+  created_at           DateTime  @default(now()) @db.DateTime(3)
+  updated_at           DateTime  @default(now()) @db.DateTime(3)
+  youtube_video_url    String    @db.LongText
+  author_id            String?   @db.Char(36)
+  page_summary         String?   @db.LongText
+  official_website     String?   @db.LongText
+  data_verified_at     DateTime? @db.DateTime(3)
+  data_source_urls     Json
+  data_quality_score   Int       @default(0)
+  data_clean_attempts  Int       @default(0)
+  data_clean_successes Int       @default(0)
   data_last_checked_at DateTime? @db.DateTime(3)
-  data_clean_state String @db.LongText
+  data_clean_state     String    @db.LongText
+
   @@map("career_profiles")
 }
 
 model cat_universe_cutoffs {
-  id String @id @default(uuid()) @db.Char(36)
-  module_slug String @db.LongText
-  college_name String @db.LongText
-  city String @db.LongText
-  exam_name String @db.LongText
-  category String @db.LongText
-  percentile Decimal @default(0) @db.Decimal(65, 20)
-  cutoff_band String @db.LongText
-  fees String @db.LongText
-  avg_package String @db.LongText
-  college_slug String @db.LongText
-  highlight String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  module_slug   String   @db.LongText
+  college_name  String   @db.LongText
+  city          String   @db.LongText
+  exam_name     String   @db.LongText
+  category      String   @db.LongText
+  percentile    Decimal  @default(0) @db.Decimal(65, 20)
+  cutoff_band   String   @db.LongText
+  fees          String   @db.LongText
+  avg_package   String   @db.LongText
+  college_slug  String   @db.LongText
+  highlight     String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("cat_universe_cutoffs")
 }
 
 model cat_universe_modules {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  section_slug String @db.LongText
-  title String @db.LongText
-  subtitle String @db.LongText
-  description String @db.LongText
-  module_type String @db.LongText
-  exam_key String @db.LongText
-  icon_name String @db.LongText
-  badge String @db.LongText
-  stat_label String @db.LongText
-  stat_value String @db.LongText
-  detail_points String @db.LongText
-  audience_text String @db.LongText
-  primary_cta_label String @db.LongText
-  primary_cta_href String @db.LongText
-  lead_source String @db.LongText
-  display_order Int @default(0)
-  is_featured Boolean @default(false)
-  show_on_home Boolean @default(false)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  official_website String? @db.LongText
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  data_verified_at DateTime? @db.DateTime(3)
-  data_source_urls Json
-  data_quality_score Int?
-  data_clean_attempts Int @default(0)
-  data_clean_successes Int @default(0)
+  id                   String    @id @default(uuid()) @db.Char(36)
+  slug                 String    @db.LongText
+  section_slug         String    @db.LongText
+  title                String    @db.LongText
+  subtitle             String    @db.LongText
+  description          String    @db.LongText
+  module_type          String    @db.LongText
+  exam_key             String    @db.LongText
+  icon_name            String    @db.LongText
+  badge                String    @db.LongText
+  stat_label           String    @db.LongText
+  stat_value           String    @db.LongText
+  detail_points        String    @db.LongText
+  audience_text        String    @db.LongText
+  primary_cta_label    String    @db.LongText
+  primary_cta_href     String    @db.LongText
+  lead_source          String    @db.LongText
+  display_order        Int       @default(0)
+  is_featured          Boolean   @default(false)
+  show_on_home         Boolean   @default(false)
+  is_active            Boolean   @default(true)
+  created_at           DateTime  @default(now()) @db.DateTime(3)
+  updated_at           DateTime  @default(now()) @db.DateTime(3)
+  official_website     String?   @db.LongText
+  meta_title           String    @db.LongText
+  meta_description     String    @db.LongText
+  data_verified_at     DateTime? @db.DateTime(3)
+  data_source_urls     Json
+  data_quality_score   Int?
+  data_clean_attempts  Int       @default(0)
+  data_clean_successes Int       @default(0)
   data_last_checked_at DateTime? @db.DateTime(3)
-  data_clean_state String @db.LongText
+  data_clean_state     String    @db.LongText
+
   @@map("cat_universe_modules")
 }
 
 model cat_universe_resources {
-  id String @id @default(uuid()) @db.Char(36)
-  module_slug String @db.LongText
-  title String @db.LongText
-  subtitle String @db.LongText
-  resource_type String @db.LongText
-  year Int?
-  href String @db.LongText
-  badge String @db.LongText
-  meta String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  module_slug   String   @db.LongText
+  title         String   @db.LongText
+  subtitle      String   @db.LongText
+  resource_type String   @db.LongText
+  year          Int?
+  href          String   @db.LongText
+  badge         String   @db.LongText
+  meta          String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("cat_universe_resources")
 }
 
 model cat_universe_sections {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  title String @db.LongText
-  description String @db.LongText
-  icon_name String @db.LongText
-  accent_class String @db.LongText
-  lead_hook String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  slug          String   @db.LongText
+  title         String   @db.LongText
+  description   String   @db.LongText
+  icon_name     String   @db.LongText
+  accent_class  String   @db.LongText
+  lead_hook     String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("cat_universe_sections")
 }
 
 model cat_universe_settings {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  hero_badge String @db.LongText
-  title String @db.LongText
-  subtitle String @db.LongText
-  primary_cta_label String @db.LongText
-  primary_cta_href String @db.LongText
-  toggle_label String @db.LongText
-  lead_title String @db.LongText
-  lead_subtitle String @db.LongText
-  seo_title String @db.LongText
-  seo_description String @db.LongText
-  show_home_toggle Boolean @default(true)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                String   @id @default(uuid()) @db.Char(36)
+  slug              String   @db.LongText
+  hero_badge        String   @db.LongText
+  title             String   @db.LongText
+  subtitle          String   @db.LongText
+  primary_cta_label String   @db.LongText
+  primary_cta_href  String   @db.LongText
+  toggle_label      String   @db.LongText
+  lead_title        String   @db.LongText
+  lead_subtitle     String   @db.LongText
+  seo_title         String   @db.LongText
+  seo_description   String   @db.LongText
+  show_home_toggle  Boolean  @default(true)
+  is_active         Boolean  @default(true)
+  created_at        DateTime @default(now()) @db.DateTime(3)
+  updated_at        DateTime @default(now()) @db.DateTime(3)
+
   @@map("cat_universe_settings")
 }
 
 model college_applications {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String? @db.Char(36)
-  name String @db.LongText
-  email String? @db.LongText
-  phone String @db.LongText
-  city String? @db.LongText
-  state String? @db.LongText
-  college_slug String @db.LongText
-  college_name String? @db.LongText
-  course_slug String? @db.LongText
-  course_interest String? @db.LongText
-  message String? @db.LongText
-  status String @db.LongText
-  admin_notes String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String   @id @default(uuid()) @db.Char(36)
+  user_id         String?  @db.Char(36)
+  name            String   @db.LongText
+  email           String?  @db.LongText
+  phone           String   @db.LongText
+  city            String?  @db.LongText
+  state           String?  @db.LongText
+  college_slug    String   @db.LongText
+  college_name    String?  @db.LongText
+  course_slug     String?  @db.LongText
+  course_interest String?  @db.LongText
+  message         String?  @db.LongText
+  status          String   @db.LongText
+  admin_notes     String?  @db.LongText
+  created_at      DateTime @default(now()) @db.DateTime(3)
+  updated_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_applications")
 }
 
 model college_contacts {
-  id String @id @default(uuid()) @db.Char(36)
-  college_slug String @db.LongText
-  address String? @db.LongText
-  phone String? @db.LongText
-  email String? @db.LongText
-  website String? @db.LongText
-  map_embed String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  map_link String? @db.LongText
+  id           String   @id @default(uuid()) @db.Char(36)
+  college_slug String   @db.LongText
+  address      String?  @db.LongText
+  phone        String?  @db.LongText
+  email        String?  @db.LongText
+  website      String?  @db.LongText
+  map_embed    String?  @db.LongText
+  created_at   DateTime @default(now()) @db.DateTime(3)
+  updated_at   DateTime @default(now()) @db.DateTime(3)
+  map_link     String?  @db.LongText
+
   @@map("college_contacts")
 }
 
 model college_editorial_completion_progress {
-  total_colleges Int?
-  complete_colleges Int?
-  pending_colleges Int?
-  official_source_linked Int?
-  official_source_pending Int?
+  total_colleges            Int?
+  complete_colleges         Int?
+  pending_colleges          Int?
+  official_source_linked    Int?
+  official_source_pending   Int?
   official_courses_verified Int?
-  official_fees_verified Int?
-  human_review_pending Int?
-  last_updated_at DateTime? @db.DateTime(3)
+  official_fees_verified    Int?
+  human_review_pending      Int?
+  last_updated_at           DateTime? @db.DateTime(3)
+
   @@map("college_editorial_completion_progress")
   @@ignore
 }
 
 model college_editorial_completion_queue {
-  college_slug String @id @db.VarChar(191)
-  college_name String @db.LongText
-  priority Int @default(50)
-  status String @db.LongText
-  source_status String @db.LongText
-  course_status String @db.LongText
-  fee_status String @db.LongText
-  word_count Int @default(0)
-  module_count Int @default(0)
-  faq_count Int @default(0)
-  faculty_count Int @default(0)
-  approved_review_count Int @default(0)
-  placement_record_count Int @default(0)
-  has_contact Boolean @default(false)
-  internal_entity_link_count Int @default(0)
-  missing_requirements Json
-  last_audited_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  college_slug               String   @id @db.VarChar(191)
+  college_name               String   @db.LongText
+  priority                   Int      @default(50)
+  status                     String   @db.LongText
+  source_status              String   @db.LongText
+  course_status              String   @db.LongText
+  fee_status                 String   @db.LongText
+  word_count                 Int      @default(0)
+  module_count               Int      @default(0)
+  faq_count                  Int      @default(0)
+  faculty_count              Int      @default(0)
+  approved_review_count      Int      @default(0)
+  placement_record_count     Int      @default(0)
+  has_contact                Boolean  @default(false)
+  internal_entity_link_count Int      @default(0)
+  missing_requirements       Json
+  last_audited_at            DateTime @default(now()) @db.DateTime(3)
+  updated_at                 DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_editorial_completion_queue")
 }
 
 model college_facilities {
-  id String @id @default(uuid()) @db.Char(36)
-  college_slug String @db.LongText
-  facility_id String? @db.Char(36)
-  custom_note String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id           String   @id @default(uuid()) @db.Char(36)
+  college_slug String   @db.LongText
+  facility_id  String?  @db.Char(36)
+  custom_note  String?  @db.LongText
+  created_at   DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_facilities")
 }
 
 model college_few_links {
-  id String @id @default(uuid()) @db.Char(36)
-  program_slug String @db.LongText
-  university_slug String @db.LongText
-  title String @db.LongText
-  url String @db.LongText
-  icon_emoji String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String   @id @default(uuid()) @db.Char(36)
+  program_slug    String   @db.LongText
+  university_slug String   @db.LongText
+  title           String   @db.LongText
+  url             String   @db.LongText
+  icon_emoji      String   @db.LongText
+  display_order   Int      @default(0)
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.DateTime(3)
+  updated_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_few_links")
 }
 
 model college_programs {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  short_description String @db.LongText
-  total_semesters Int @default(8)
-  icon_emoji String @db.LongText
-  image String @db.LongText
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  is_active Boolean @default(true)
-  display_order Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                String   @id @default(uuid()) @db.Char(36)
+  slug              String   @db.LongText
+  name              String   @db.LongText
+  short_description String   @db.LongText
+  total_semesters   Int      @default(8)
+  icon_emoji        String   @db.LongText
+  image             String   @db.LongText
+  meta_title        String   @db.LongText
+  meta_description  String   @db.LongText
+  is_active         Boolean  @default(true)
+  display_order     Int      @default(0)
+  created_at        DateTime @default(now()) @db.DateTime(3)
+  updated_at        DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_programs")
 }
 
 model college_quick_links {
-  id String @id @default(uuid()) @db.Char(36)
-  program_slug String @db.LongText
-  university_slug String @db.LongText
-  semester_num Int?
-  link_type String @db.LongText
-  title String @db.LongText
-  description String @db.LongText
-  icon_emoji String @db.LongText
-  url String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String   @id @default(uuid()) @db.Char(36)
+  program_slug    String   @db.LongText
+  university_slug String   @db.LongText
+  semester_num    Int?
+  link_type       String   @db.LongText
+  title           String   @db.LongText
+  description     String   @db.LongText
+  icon_emoji      String   @db.LongText
+  url             String   @db.LongText
+  display_order   Int      @default(0)
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.DateTime(3)
+  updated_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_quick_links")
 }
 
 model college_resources {
-  id String @id @default(uuid()) @db.Char(36)
-  subject_id String @db.Char(36)
-  resource_type String @db.LongText
-  title String @db.LongText
-  description String @db.LongText
-  file_url String @db.LongText
-  external_url String @db.LongText
-  year Int?
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  subject_id    String   @db.Char(36)
+  resource_type String   @db.LongText
+  title         String   @db.LongText
+  description   String   @db.LongText
+  file_url      String   @db.LongText
+  external_url  String   @db.LongText
+  year          Int?
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_resources")
 }
 
 model college_reviews {
-  id String @id @default(uuid()) @db.Char(36)
-  college_slug String @db.LongText
-  user_id String? @db.Char(36)
-  reviewer_name String @db.LongText
-  rating Int @default(5)
-  title String @db.LongText
-  body String @db.LongText
-  course String? @db.LongText
-  year_of_study String? @db.LongText
-  is_anonymous Boolean @default(false)
-  status String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  report_count Int @default(0)
-  last_report_reason String? @db.LongText
-  moderation_note String? @db.LongText
+  id                 String   @id @default(uuid()) @db.Char(36)
+  college_slug       String   @db.LongText
+  user_id            String?  @db.Char(36)
+  reviewer_name      String   @db.LongText
+  rating             Int      @default(5)
+  title              String   @db.LongText
+  body               String   @db.LongText
+  course             String?  @db.LongText
+  year_of_study      String?  @db.LongText
+  is_anonymous       Boolean  @default(false)
+  status             String   @db.LongText
+  created_at         DateTime @default(now()) @db.DateTime(3)
+  updated_at         DateTime @default(now()) @db.DateTime(3)
+  report_count       Int      @default(0)
+  last_report_reason String?  @db.LongText
+  moderation_note    String?  @db.LongText
+
   @@map("college_reviews")
 }
 
 model college_semesters {
-  id String @id @default(uuid()) @db.Char(36)
-  program_slug String @db.LongText
-  university_slug String @db.LongText
-  semester_num Int
-  title String @db.LongText
-  description String @db.LongText
-  is_active Boolean @default(true)
-  display_order Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String   @id @default(uuid()) @db.Char(36)
+  program_slug    String   @db.LongText
+  university_slug String   @db.LongText
+  semester_num    Int
+  title           String   @db.LongText
+  description     String   @db.LongText
+  is_active       Boolean  @default(true)
+  display_order   Int      @default(0)
+  created_at      DateTime @default(now()) @db.DateTime(3)
+  updated_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_semesters")
 }
 
 model college_subjects {
-  id String @id @default(uuid()) @db.Char(36)
-  program_slug String @db.LongText
-  university_slug String @db.LongText
-  semester_num Int
-  slug String @db.LongText
-  name String @db.LongText
-  code String @db.LongText
-  branch String @db.LongText
-  description String @db.LongText
-  credits Int @default(0)
-  is_active Boolean @default(true)
-  display_order Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String   @id @default(uuid()) @db.Char(36)
+  program_slug    String   @db.LongText
+  university_slug String   @db.LongText
+  semester_num    Int
+  slug            String   @db.LongText
+  name            String   @db.LongText
+  code            String   @db.LongText
+  branch          String   @db.LongText
+  description     String   @db.LongText
+  credits         Int      @default(0)
+  is_active       Boolean  @default(true)
+  display_order   Int      @default(0)
+  created_at      DateTime @default(now()) @db.DateTime(3)
+  updated_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_subjects")
 }
 
 model college_toppers {
-  id String @id @default(uuid()) @db.Char(36)
-  program_slug String @db.LongText
-  university_slug String @db.LongText
-  year Int
-  rank Int @default(1)
-  name String @db.LongText
-  branch String @db.LongText
-  marks String @db.LongText
-  percentage String @db.LongText
-  photo String @db.LongText
-  quote String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String   @id @default(uuid()) @db.Char(36)
+  program_slug    String   @db.LongText
+  university_slug String   @db.LongText
+  year            Int
+  rank            Int      @default(1)
+  name            String   @db.LongText
+  branch          String   @db.LongText
+  marks           String   @db.LongText
+  percentage      String   @db.LongText
+  photo           String   @db.LongText
+  quote           String   @db.LongText
+  display_order   Int      @default(0)
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.DateTime(3)
+  updated_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("college_toppers")
 }
 
 model college_universities {
-  id String @id @default(uuid()) @db.Char(36)
-  program_slug String @db.LongText
-  slug String @db.LongText
-  name String @db.LongText
-  short_name String @db.LongText
-  state String @db.LongText
-  city String @db.LongText
-  logo String @db.LongText
-  description String @db.LongText
-  total_semesters Int @default(8)
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  is_active Boolean @default(true)
-  display_order Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  official_website String? @db.LongText
-  data_verified_at DateTime? @db.DateTime(3)
-  data_source_urls Json
-  data_quality_score Int?
-  data_clean_attempts Int @default(0)
-  data_clean_successes Int @default(0)
+  id                   String    @id @default(uuid()) @db.Char(36)
+  program_slug         String    @db.LongText
+  slug                 String    @db.LongText
+  name                 String    @db.LongText
+  short_name           String    @db.LongText
+  state                String    @db.LongText
+  city                 String    @db.LongText
+  logo                 String    @db.LongText
+  description          String    @db.LongText
+  total_semesters      Int       @default(8)
+  meta_title           String    @db.LongText
+  meta_description     String    @db.LongText
+  is_active            Boolean   @default(true)
+  display_order        Int       @default(0)
+  created_at           DateTime  @default(now()) @db.DateTime(3)
+  updated_at           DateTime  @default(now()) @db.DateTime(3)
+  official_website     String?   @db.LongText
+  data_verified_at     DateTime? @db.DateTime(3)
+  data_source_urls     Json
+  data_quality_score   Int?
+  data_clean_attempts  Int       @default(0)
+  data_clean_successes Int       @default(0)
   data_last_checked_at DateTime? @db.DateTime(3)
-  data_clean_state String @db.LongText
+  data_clean_state     String    @db.LongText
+
   @@map("college_universities")
 }
 
 model colleges {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  short_name String @db.LongText
-  location String @db.LongText
-  city String @db.LongText
-  state String @db.LongText
-  type String @db.LongText
-  category String @db.LongText
-  rating Decimal @default(0) @db.Decimal(65, 20)
-  reviews Int @default(0)
-  courses_count Int @default(0)
-  fees String @db.LongText
-  placement String @db.LongText
-  ranking String @db.LongText
-  image String @db.LongText
-  tags Json
-  established Int @default(2000)
-  description String @db.LongText
-  highlights Json
-  facilities Json
-  approvals Json
-  naac_grade String @db.LongText
-  top_recruiters Json
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  status String @db.LongText
-  logo String @db.LongText
-  carousel_images Json
-  brochure_url String @db.LongText
-  eligibility_criteria String @db.LongText
-  admission_process String @db.LongText
-  scholarship_details String @db.LongText
-  hostel_life String @db.LongText
-  gallery_images Json
-  cutoff String @db.LongText
-  course_fee_content String @db.LongText
-  placement_content String @db.LongText
-  rankings_content String @db.LongText
-  facilities_content String @db.LongText
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  meta_keywords String @db.LongText
-  banner_ad_image String @db.LongText
-  square_ad_image String @db.LongText
-  youtube_video_url String @db.LongText
-  approval_logos Json
-  approval_logo_names Json
-  categories Json
-  priority Int @default(50)
-  author_id String? @db.Char(36)
-  featured_rank Int?
-  priority_updated_at DateTime @default(now()) @db.DateTime(3)
-  apply_cta_mode String @db.LongText
-  apply_url String? @db.LongText
-  admission_criteria_points Json
-  page_summary String? @db.LongText
-  related_courses Json
-  related_exams Json
-  secondary_state String? @db.LongText
-  secondary_city String? @db.LongText
-  admission_deadline DateTime? @db.DateTime(3)
-  short_id BigInt
-  scholarship_available String? @db.LongText
-  affiliation_kind String @db.LongText
-  parent_university_slug String? @db.LongText
-  is_partner Boolean @default(false)
-  official_website String? @db.LongText
-  data_verified_at DateTime? @db.DateTime(3)
-  data_source_urls Json
-  data_quality_score Int @default(0)
-  data_clean_attempts Int @default(0)
-  data_clean_successes Int @default(0)
-  data_last_checked_at DateTime? @db.DateTime(3)
-  data_clean_state String @db.LongText
-  ai_clean_pass_count Int @default(0)
-  data_clean_method String? @db.LongText
-  official_source_clean_pass_count Int @default(0)
-  official_source_cleaned_at DateTime? @db.DateTime(3)
-  official_source_url String? @db.LongText
-  official_courses_verified Boolean @default(false)
-  official_fees_verified Boolean @default(false)
-  requires_official_source_refresh Boolean @default(false)
-  data_clean_audit_note String? @db.LongText
-  editorial_word_count Int @default(0)
-  editorial_module_count Int @default(0)
-  editorial_audit_state String @db.LongText
-  editorial_source_tier String @db.LongText
-  editorial_audited_at DateTime? @db.DateTime(3)
-  editorial_audit_note String? @db.LongText
-  editorial_target_word_min Int @default(6000)
-  editorial_target_word_max Int @default(9000)
-  editorial_human_reviewed Boolean @default(false)
-  editorial_readiness_failures Json
+  id                               String    @id @default(uuid()) @db.Char(36)
+  slug                             String    @db.LongText
+  name                             String    @db.LongText
+  short_name                       String    @db.LongText
+  location                         String    @db.LongText
+  city                             String    @db.LongText
+  state                            String    @db.LongText
+  type                             String    @db.LongText
+  category                         String    @db.LongText
+  rating                           Decimal   @default(0) @db.Decimal(65, 20)
+  reviews                          Int       @default(0)
+  courses_count                    Int       @default(0)
+  fees                             String    @db.LongText
+  placement                        String    @db.LongText
+  ranking                          String    @db.LongText
+  image                            String    @db.LongText
+  tags                             Json
+  established                      Int       @default(2000)
+  description                      String    @db.LongText
+  highlights                       Json
+  facilities                       Json
+  approvals                        Json
+  naac_grade                       String    @db.LongText
+  top_recruiters                   Json
+  is_active                        Boolean   @default(true)
+  created_at                       DateTime  @default(now()) @db.DateTime(3)
+  updated_at                       DateTime  @default(now()) @db.DateTime(3)
+  status                           String    @db.LongText
+  logo                             String    @db.LongText
+  carousel_images                  Json
+  brochure_url                     String    @db.LongText
+  eligibility_criteria             String    @db.LongText
+  admission_process                String    @db.LongText
+  scholarship_details              String    @db.LongText
+  hostel_life                      String    @db.LongText
+  gallery_images                   Json
+  cutoff                           String    @db.LongText
+  course_fee_content               String    @db.LongText
+  placement_content                String    @db.LongText
+  rankings_content                 String    @db.LongText
+  facilities_content               String    @db.LongText
+  meta_title                       String    @db.LongText
+  meta_description                 String    @db.LongText
+  meta_keywords                    String    @db.LongText
+  banner_ad_image                  String    @db.LongText
+  square_ad_image                  String    @db.LongText
+  youtube_video_url                String    @db.LongText
+  approval_logos                   Json
+  approval_logo_names              Json
+  categories                       Json
+  priority                         Int       @default(50)
+  author_id                        String?   @db.Char(36)
+  featured_rank                    Int?
+  priority_updated_at              DateTime  @default(now()) @db.DateTime(3)
+  apply_cta_mode                   String    @db.LongText
+  apply_url                        String?   @db.LongText
+  admission_criteria_points        Json
+  page_summary                     String?   @db.LongText
+  related_courses                  Json
+  related_exams                    Json
+  secondary_state                  String?   @db.LongText
+  secondary_city                   String?   @db.LongText
+  admission_deadline               DateTime? @db.DateTime(3)
+  short_id                         BigInt
+  scholarship_available            String?   @db.LongText
+  affiliation_kind                 String    @db.LongText
+  parent_university_slug           String?   @db.LongText
+  is_partner                       Boolean   @default(false)
+  official_website                 String?   @db.LongText
+  data_verified_at                 DateTime? @db.DateTime(3)
+  data_source_urls                 Json
+  data_quality_score               Int       @default(0)
+  data_clean_attempts              Int       @default(0)
+  data_clean_successes             Int       @default(0)
+  data_last_checked_at             DateTime? @db.DateTime(3)
+  data_clean_state                 String    @db.LongText
+  ai_clean_pass_count              Int       @default(0)
+  data_clean_method                String?   @db.LongText
+  official_source_clean_pass_count Int       @default(0)
+  official_source_cleaned_at       DateTime? @db.DateTime(3)
+  official_source_url              String?   @db.LongText
+  official_courses_verified        Boolean   @default(false)
+  official_fees_verified           Boolean   @default(false)
+  requires_official_source_refresh Boolean   @default(false)
+  data_clean_audit_note            String?   @db.LongText
+  editorial_word_count             Int       @default(0)
+  editorial_module_count           Int       @default(0)
+  editorial_audit_state            String    @db.LongText
+  editorial_source_tier            String    @db.LongText
+  editorial_audited_at             DateTime? @db.DateTime(3)
+  editorial_audit_note             String?   @db.LongText
+  editorial_target_word_min        Int       @default(6000)
+  editorial_target_word_max        Int       @default(9000)
+  editorial_human_reviewed         Boolean   @default(false)
+  editorial_readiness_failures     Json
   editorial_last_evidence_check_at DateTime? @db.DateTime(3)
+
   @@map("colleges")
 }
 
 model companies {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  logo String? @db.LongText
-  sector String? @db.LongText
-  website String? @db.LongText
+  id         String   @id @default(uuid()) @db.Char(36)
+  name       String   @db.LongText
+  logo       String?  @db.LongText
+  sector     String?  @db.LongText
+  website    String?  @db.LongText
   created_at DateTime @default(now()) @db.DateTime(3)
   updated_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("companies")
 }
 
 model course_fees {
-  id String @id @default(uuid()) @db.Char(36)
-  college_slug String @db.LongText
-  course_slug String @db.LongText
-  course_name String? @db.LongText
-  fee_amount Decimal? @default(0) @db.Decimal(65, 20)
-  fee_type String? @db.LongText
-  year String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id           String   @id @default(uuid()) @db.Char(36)
+  college_slug String   @db.LongText
+  course_slug  String   @db.LongText
+  course_name  String?  @db.LongText
+  fee_amount   Decimal? @default(0) @db.Decimal(65, 20)
+  fee_type     String?  @db.LongText
+  year         String?  @db.LongText
+  created_at   DateTime @default(now()) @db.DateTime(3)
+
   @@map("course_fees")
 }
 
 model course_specializations {
-  id String @id @default(uuid()) @db.Char(36)
-  university_id String @db.Char(36)
-  course String @db.LongText
-  specialization String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id             String   @id @default(uuid()) @db.Char(36)
+  university_id  String   @db.Char(36)
+  course         String   @db.LongText
+  specialization String?  @db.LongText
+  created_at     DateTime @default(now()) @db.DateTime(3)
+
   @@map("course_specializations")
 }
 
 model courses {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  full_name String @db.LongText
-  category String @db.LongText
-  duration String @db.LongText
-  level String @db.LongText
-  colleges_count Int @default(0)
-  avg_fees String @db.LongText
-  avg_salary String @db.LongText
-  growth String @db.LongText
-  description String @db.LongText
-  eligibility String @db.LongText
-  top_exams Json
-  careers Json
-  subjects Json
-  image String @db.LongText
-  mode String @db.LongText
-  specializations Json
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  status String @db.LongText
-  short_description String @db.LongText
-  domain String @db.LongText
-  duration_type String @db.LongText
-  study_type String @db.LongText
-  rating Decimal @default(0) @db.Decimal(65, 20)
-  fee_type String @db.LongText
-  fee Decimal @default(0) @db.Decimal(65, 20)
-  low_fee Decimal @default(0) @db.Decimal(65, 20)
-  high_fee Decimal @default(0) @db.Decimal(65, 20)
-  syllabus_pdf_url String @db.LongText
-  about_content String @db.LongText
-  scope_content String @db.LongText
-  subjects_content String @db.LongText
-  placements_content String @db.LongText
-  admission_process String @db.LongText
-  fees_content String @db.LongText
-  cutoff_content String @db.LongText
-  specialization_content String @db.LongText
-  recruiters_content String @db.LongText
-  syllabus_content String @db.LongText
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  meta_keywords String @db.LongText
-  youtube_video_url String @db.LongText
-  categories Json
-  priority Int @default(50)
-  author_id String? @db.Char(36)
-  page_summary String? @db.LongText
-  linked_school_classes Json
+  id                      String    @id @default(uuid()) @db.Char(36)
+  slug                    String    @db.LongText
+  name                    String    @db.LongText
+  full_name               String    @db.LongText
+  category                String    @db.LongText
+  duration                String    @db.LongText
+  level                   String    @db.LongText
+  colleges_count          Int       @default(0)
+  avg_fees                String    @db.LongText
+  avg_salary              String    @db.LongText
+  growth                  String    @db.LongText
+  description             String    @db.LongText
+  eligibility             String    @db.LongText
+  top_exams               Json
+  careers                 Json
+  subjects                Json
+  image                   String    @db.LongText
+  mode                    String    @db.LongText
+  specializations         Json
+  is_active               Boolean   @default(true)
+  created_at              DateTime  @default(now()) @db.DateTime(3)
+  updated_at              DateTime  @default(now()) @db.DateTime(3)
+  status                  String    @db.LongText
+  short_description       String    @db.LongText
+  domain                  String    @db.LongText
+  duration_type           String    @db.LongText
+  study_type              String    @db.LongText
+  rating                  Decimal   @default(0) @db.Decimal(65, 20)
+  fee_type                String    @db.LongText
+  fee                     Decimal   @default(0) @db.Decimal(65, 20)
+  low_fee                 Decimal   @default(0) @db.Decimal(65, 20)
+  high_fee                Decimal   @default(0) @db.Decimal(65, 20)
+  syllabus_pdf_url        String    @db.LongText
+  about_content           String    @db.LongText
+  scope_content           String    @db.LongText
+  subjects_content        String    @db.LongText
+  placements_content      String    @db.LongText
+  admission_process       String    @db.LongText
+  fees_content            String    @db.LongText
+  cutoff_content          String    @db.LongText
+  specialization_content  String    @db.LongText
+  recruiters_content      String    @db.LongText
+  syllabus_content        String    @db.LongText
+  meta_title              String    @db.LongText
+  meta_description        String    @db.LongText
+  meta_keywords           String    @db.LongText
+  youtube_video_url       String    @db.LongText
+  categories              Json
+  priority                Int       @default(50)
+  author_id               String?   @db.Char(36)
+  page_summary            String?   @db.LongText
+  linked_school_classes   Json
   linked_college_subjects Json
-  short_id Int
-  official_website String? @db.LongText
-  data_verified_at DateTime? @db.DateTime(3)
-  data_source_urls Json
-  data_quality_score Int @default(0)
-  data_clean_attempts Int @default(0)
-  data_clean_successes Int @default(0)
-  data_last_checked_at DateTime? @db.DateTime(3)
-  data_clean_state String @db.LongText
-  ai_clean_pass_count Int @default(0)
+  short_id                Int
+  official_website        String?   @db.LongText
+  data_verified_at        DateTime? @db.DateTime(3)
+  data_source_urls        Json
+  data_quality_score      Int       @default(0)
+  data_clean_attempts     Int       @default(0)
+  data_clean_successes    Int       @default(0)
+  data_last_checked_at    DateTime? @db.DateTime(3)
+  data_clean_state        String    @db.LongText
+  ai_clean_pass_count     Int       @default(0)
+
   @@map("courses")
 }
 
 model cta_events {
-  id String @id @default(uuid()) @db.Char(36)
-  page String @db.LongText
-  cta String @db.LongText
-  entity_slug String? @db.LongText
-  entity_name String? @db.LongText
-  user_id String? @db.Char(36)
-  session_id String? @db.LongText
-  referrer String? @db.LongText
-  path String? @db.LongText
-  utm_source String? @db.LongText
-  utm_medium String? @db.LongText
-  utm_campaign String? @db.LongText
-  user_agent String? @db.LongText
-  meta Json?
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id           String   @id @default(uuid()) @db.Char(36)
+  page         String   @db.LongText
+  cta          String   @db.LongText
+  entity_slug  String?  @db.LongText
+  entity_name  String?  @db.LongText
+  user_id      String?  @db.Char(36)
+  session_id   String?  @db.LongText
+  referrer     String?  @db.LongText
+  path         String?  @db.LongText
+  utm_source   String?  @db.LongText
+  utm_medium   String?  @db.LongText
+  utm_campaign String?  @db.LongText
+  user_agent   String?  @db.LongText
+  meta         Json?
+  created_at   DateTime @default(now()) @db.DateTime(3)
+
   @@map("cta_events")
 }
 
 model custom_column_values {
-  id String @id @default(uuid()) @db.Char(36)
-  university_id String @db.Char(36)
-  column_id String @db.Char(36)
-  value String @db.LongText
-  parent_column_id String? @db.Char(36)
-  parent_value_id String? @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id               String   @id @default(uuid()) @db.Char(36)
+  university_id    String   @db.Char(36)
+  column_id        String   @db.Char(36)
+  value            String   @db.LongText
+  parent_column_id String?  @db.Char(36)
+  parent_value_id  String?  @db.Char(36)
+  created_at       DateTime @default(now()) @db.DateTime(3)
+
   @@map("custom_column_values")
 }
 
 model custom_columns {
-  id String @id @default(uuid()) @db.Char(36)
-  university_id String @db.Char(36)
-  column_name String @db.LongText
-  column_key String @db.LongText
-  is_required Boolean? @default(false)
-  sort_order Int? @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  university_id String   @db.Char(36)
+  column_name   String   @db.LongText
+  column_key    String   @db.LongText
+  is_required   Boolean? @default(false)
+  sort_order    Int?     @default(0)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("custom_columns")
 }
 
 model custom_domains {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  domain String @db.LongText
-  status String @db.LongText
-  verification_token String @default(uuid()) @db.LongText
-  verified_at DateTime? @db.DateTime(3)
-  ssl_status String? @db.LongText
-  dns_config Json?
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                 String    @id @default(uuid()) @db.Char(36)
+  user_id            String    @db.Char(36)
+  domain             String    @db.LongText
+  status             String    @db.LongText
+  verification_token String    @default(uuid()) @db.LongText
+  verified_at        DateTime? @db.DateTime(3)
+  ssl_status         String?   @db.LongText
+  dns_config         Json?
+  created_at         DateTime  @default(now()) @db.DateTime(3)
+  updated_at         DateTime  @default(now()) @db.DateTime(3)
+
   @@map("custom_domains")
 }
 
 model data_cleaning_exclusions {
-  id String @id @default(uuid()) @db.Char(36)
-  entity_type String @db.LongText
-  entity_id String @db.LongText
-  entity_slug String? @db.LongText
-  entity_name String @db.LongText
-  reason String @db.LongText
-  created_by String? @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id          String   @id @default(uuid()) @db.Char(36)
+  entity_type String   @db.LongText
+  entity_id   String   @db.LongText
+  entity_slug String?  @db.LongText
+  entity_name String   @db.LongText
+  reason      String   @db.LongText
+  created_by  String?  @db.Char(36)
+  created_at  DateTime @default(now()) @db.DateTime(3)
+
   @@map("data_cleaning_exclusions")
 }
 
 model data_cleaning_items {
-  id String @id @default(uuid()) @db.Char(36)
-  job_id String @db.Char(36)
-  entity_type String @db.LongText
-  entity_id String @db.LongText
-  entity_slug String? @db.LongText
-  entity_name String @db.LongText
-  status String @db.LongText
-  attempt Int @default(0)
-  official_url String? @db.LongText
-  source_urls Json
-  confidence Decimal? @db.Decimal(65, 20)
-  before_data Json?
-  proposed_data Json?
-  changed_fields Json
-  warnings Json
-  error_message String? @db.LongText
-  started_at DateTime? @db.DateTime(3)
-  completed_at DateTime? @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  cleaning_pass Int @default(1)
-  previous_attempts Int @default(0)
+  id                String    @id @default(uuid()) @db.Char(36)
+  job_id            String    @db.Char(36)
+  entity_type       String    @db.LongText
+  entity_id         String    @db.LongText
+  entity_slug       String?   @db.LongText
+  entity_name       String    @db.LongText
+  status            String    @db.LongText
+  attempt           Int       @default(0)
+  official_url      String?   @db.LongText
+  source_urls       Json
+  confidence        Decimal?  @db.Decimal(65, 20)
+  before_data       Json?
+  proposed_data     Json?
+  changed_fields    Json
+  warnings          Json
+  error_message     String?   @db.LongText
+  started_at        DateTime? @db.DateTime(3)
+  completed_at      DateTime? @db.DateTime(3)
+  updated_at        DateTime  @default(now()) @db.DateTime(3)
+  cleaning_pass     Int       @default(1)
+  previous_attempts Int       @default(0)
+
   @@map("data_cleaning_items")
 }
 
 model data_cleaning_jobs {
-  id String @id @default(uuid()) @db.Char(36)
-  entity_types Json
-  status String @db.LongText
-  apply_mode String @db.LongText
-  batch_size Int @default(100)
-  max_records Int?
-  total_items Int @default(0)
-  processed_items Int @default(0)
-  updated_items Int @default(0)
-  review_items Int @default(0)
-  skipped_items Int @default(0)
-  failed_items Int @default(0)
-  current_entity String? @db.LongText
-  current_name String? @db.LongText
-  message String @db.LongText
-  created_by String? @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  started_at DateTime? @db.DateTime(3)
-  completed_at DateTime? @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  cleaning_pass Int @default(1)
+  id              String    @id @default(uuid()) @db.Char(36)
+  entity_types    Json
+  status          String    @db.LongText
+  apply_mode      String    @db.LongText
+  batch_size      Int       @default(100)
+  max_records     Int?
+  total_items     Int       @default(0)
+  processed_items Int       @default(0)
+  updated_items   Int       @default(0)
+  review_items    Int       @default(0)
+  skipped_items   Int       @default(0)
+  failed_items    Int       @default(0)
+  current_entity  String?   @db.LongText
+  current_name    String?   @db.LongText
+  message         String    @db.LongText
+  created_by      String?   @db.Char(36)
+  created_at      DateTime  @default(now()) @db.DateTime(3)
+  started_at      DateTime? @db.DateTime(3)
+  completed_at    DateTime? @db.DateTime(3)
+  updated_at      DateTime  @default(now()) @db.DateTime(3)
+  cleaning_pass   Int       @default(1)
+
   @@map("data_cleaning_jobs")
 }
 
 model data_cleaning_settings {
-  id String @id @db.VarChar(191)
-  scheduler_token String @default(uuid()) @db.LongText
-  worker_concurrency Int @default(2)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                 String   @id @db.VarChar(191)
+  scheduler_token    String   @default(uuid()) @db.LongText
+  worker_concurrency Int      @default(2)
+  updated_at         DateTime @default(now()) @db.DateTime(3)
+
   @@map("data_cleaning_settings")
 }
 
 model email_log {
-  id String @id @default(uuid()) @db.Char(36)
-  provider_name String @db.LongText
-  to_email String @db.LongText
-  subject String @db.LongText
-  status String @db.LongText
-  message_id String? @db.LongText
-  error String? @db.LongText
-  meta Json
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  provider_name String   @db.LongText
+  to_email      String   @db.LongText
+  subject       String   @db.LongText
+  status        String   @db.LongText
+  message_id    String?  @db.LongText
+  error         String?  @db.LongText
+  meta          Json
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("email_log")
 }
 
 model email_providers {
-  id String @id @default(uuid()) @db.Char(36)
-  provider_name String @db.LongText
-  display_name String @db.LongText
-  api_key String? @db.LongText
-  api_secret String? @db.LongText
-  region String? @db.LongText
-  from_email String? @db.LongText
-  from_name String? @db.LongText
-  reply_to String? @db.LongText
-  config_json Json
-  is_active Boolean @default(false)
-  icon_emoji String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  provider_name String   @db.LongText
+  display_name  String   @db.LongText
+  api_key       String?  @db.LongText
+  api_secret    String?  @db.LongText
+  region        String?  @db.LongText
+  from_email    String?  @db.LongText
+  from_name     String?  @db.LongText
+  reply_to      String?  @db.LongText
+  config_json   Json
+  is_active     Boolean  @default(false)
+  icon_emoji    String?  @db.LongText
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("email_providers")
 }
 
 model entity_article_publications {
-  id String @id @default(uuid()) @db.Char(36)
-  schedule_id String @db.Char(36)
-  article_id String @db.Char(36)
-  entity_type String @db.LongText
-  entity_slug String @db.LongText
-  topic_kind String @db.LongText
+  id                 String   @id @default(uuid()) @db.Char(36)
+  schedule_id        String   @db.Char(36)
+  article_id         String   @db.Char(36)
+  entity_type        String   @db.LongText
+  entity_slug        String   @db.LongText
+  topic_kind         String   @db.LongText
   generated_for_date DateTime @db.Date
-  created_at DateTime @default(now()) @db.DateTime(3)
+  created_at         DateTime @default(now()) @db.DateTime(3)
+
   @@map("entity_article_publications")
 }
 
 model entity_article_schedules {
-  id String @id @default(uuid()) @db.Char(36)
-  entity_type String @db.LongText
-  entity_slug String @db.LongText
-  entity_name String @db.LongText
-  enabled Boolean @default(true)
-  articles_per_day Int @default(1)
-  interval_minutes Int @default(1440)
-  publish_status String @db.LongText
-  human_review_required Boolean @default(true)
-  topic_focus Json
-  last_run_at DateTime? @db.DateTime(3)
-  next_run_at DateTime @default(now()) @db.DateTime(3)
-  last_status String @db.LongText
-  last_message String @db.LongText
-  created_by String? @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                    String    @id @default(uuid()) @db.Char(36)
+  entity_type           String    @db.LongText
+  entity_slug           String    @db.LongText
+  entity_name           String    @db.LongText
+  enabled               Boolean   @default(true)
+  articles_per_day      Int       @default(1)
+  interval_minutes      Int       @default(1440)
+  publish_status        String    @db.LongText
+  human_review_required Boolean   @default(true)
+  topic_focus           Json
+  last_run_at           DateTime? @db.DateTime(3)
+  next_run_at           DateTime  @default(now()) @db.DateTime(3)
+  last_status           String    @db.LongText
+  last_message          String    @db.LongText
+  created_by            String?   @db.Char(36)
+  created_at            DateTime  @default(now()) @db.DateTime(3)
+  updated_at            DateTime  @default(now()) @db.DateTime(3)
+
   @@map("entity_article_schedules")
 }
 
 model exams {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  full_name String @db.LongText
-  category String @db.LongText
-  level String @db.LongText
-  exam_date String @db.LongText
-  applicants String @db.LongText
-  eligibility String @db.LongText
-  mode String @db.LongText
-  description String @db.LongText
-  important_dates Json
-  syllabus Json
-  top_colleges Json
-  image String @db.LongText
-  registration_url String @db.LongText
-  duration String @db.LongText
-  exam_type String @db.LongText
-  language String @db.LongText
-  frequency String @db.LongText
-  application_mode String @db.LongText
-  status String @db.LongText
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  short_name String @db.LongText
-  logo String @db.LongText
-  application_start_date String @db.LongText
-  application_end_date String @db.LongText
-  result_date String @db.LongText
-  website String @db.LongText
-  negative_marking Boolean @default(false)
-  seats String @db.LongText
-  age_limit String @db.LongText
-  sample_paper_url String @db.LongText
-  summary_content String @db.LongText
-  application_process String @db.LongText
-  exam_pattern String @db.LongText
-  cutoff_content String @db.LongText
-  preparation_tips String @db.LongText
-  counselling_content String @db.LongText
-  center_content String @db.LongText
-  question_paper String @db.LongText
-  gender_wise String @db.LongText
-  result_content String @db.LongText
-  cast_wise_fee String @db.LongText
-  dates_content String @db.LongText
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  meta_keywords String @db.LongText
-  is_top_exam Boolean @default(false)
-  youtube_video_url String @db.LongText
-  question_papers Json
-  brochure_url String @db.LongText
-  how_to_apply_video_url String? @db.LongText
-  categories Json
-  priority Int @default(50)
-  author_id String? @db.Char(36)
-  page_summary String? @db.LongText
-  linked_school_classes Json
+  id                      String    @id @default(uuid()) @db.Char(36)
+  slug                    String    @db.LongText
+  name                    String    @db.LongText
+  full_name               String    @db.LongText
+  category                String    @db.LongText
+  level                   String    @db.LongText
+  exam_date               String    @db.LongText
+  applicants              String    @db.LongText
+  eligibility             String    @db.LongText
+  mode                    String    @db.LongText
+  description             String    @db.LongText
+  important_dates         Json
+  syllabus                Json
+  top_colleges            Json
+  image                   String    @db.LongText
+  registration_url        String    @db.LongText
+  duration                String    @db.LongText
+  exam_type               String    @db.LongText
+  language                String    @db.LongText
+  frequency               String    @db.LongText
+  application_mode        String    @db.LongText
+  status                  String    @db.LongText
+  is_active               Boolean   @default(true)
+  created_at              DateTime  @default(now()) @db.DateTime(3)
+  updated_at              DateTime  @default(now()) @db.DateTime(3)
+  short_name              String    @db.LongText
+  logo                    String    @db.LongText
+  application_start_date  String    @db.LongText
+  application_end_date    String    @db.LongText
+  result_date             String    @db.LongText
+  website                 String    @db.LongText
+  negative_marking        Boolean   @default(false)
+  seats                   String    @db.LongText
+  age_limit               String    @db.LongText
+  sample_paper_url        String    @db.LongText
+  summary_content         String    @db.LongText
+  application_process     String    @db.LongText
+  exam_pattern            String    @db.LongText
+  cutoff_content          String    @db.LongText
+  preparation_tips        String    @db.LongText
+  counselling_content     String    @db.LongText
+  center_content          String    @db.LongText
+  question_paper          String    @db.LongText
+  gender_wise             String    @db.LongText
+  result_content          String    @db.LongText
+  cast_wise_fee           String    @db.LongText
+  dates_content           String    @db.LongText
+  meta_title              String    @db.LongText
+  meta_description        String    @db.LongText
+  meta_keywords           String    @db.LongText
+  is_top_exam             Boolean   @default(false)
+  youtube_video_url       String    @db.LongText
+  question_papers         Json
+  brochure_url            String    @db.LongText
+  how_to_apply_video_url  String?   @db.LongText
+  categories              Json
+  priority                Int       @default(50)
+  author_id               String?   @db.Char(36)
+  page_summary            String?   @db.LongText
+  linked_school_classes   Json
   linked_college_subjects Json
-  short_id Int
-  official_website String? @db.LongText
-  data_verified_at DateTime? @db.DateTime(3)
-  data_source_urls Json
-  data_quality_score Int @default(0)
-  data_clean_attempts Int @default(0)
-  data_clean_successes Int @default(0)
-  data_last_checked_at DateTime? @db.DateTime(3)
-  data_clean_state String @db.LongText
-  ai_clean_pass_count Int @default(0)
+  short_id                Int
+  official_website        String?   @db.LongText
+  data_verified_at        DateTime? @db.DateTime(3)
+  data_source_urls        Json
+  data_quality_score      Int       @default(0)
+  data_clean_attempts     Int       @default(0)
+  data_clean_successes    Int       @default(0)
+  data_last_checked_at    DateTime? @db.DateTime(3)
+  data_clean_state        String    @db.LongText
+  ai_clean_pass_count     Int       @default(0)
+
   @@map("exams")
 }
 
 model facilities_library {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  icon_emoji String? @db.LongText
-  description String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id          String   @id @default(uuid()) @db.Char(36)
+  name        String   @db.LongText
+  icon_emoji  String?  @db.LongText
+  description String?  @db.LongText
+  created_at  DateTime @default(now()) @db.DateTime(3)
+
   @@map("facilities_library")
 }
 
 model faculty {
-  id String @id @default(uuid()) @db.Char(36)
-  college_slug String @db.LongText
-  name String @db.LongText
-  designation String? @db.LongText
-  department String? @db.LongText
-  qualification String? @db.LongText
-  photo String? @db.LongText
-  bio String? @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  gender String? @db.LongText
-  linkedin_url String @db.LongText
+  id            String   @id @default(uuid()) @db.Char(36)
+  college_slug  String   @db.LongText
+  name          String   @db.LongText
+  designation   String?  @db.LongText
+  department    String?  @db.LongText
+  qualification String?  @db.LongText
+  photo         String?  @db.LongText
+  bio           String?  @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+  gender        String?  @db.LongText
+  linkedin_url  String   @db.LongText
+
   @@map("faculty")
 }
 
 model faqs {
-  id String @id @default(uuid()) @db.Char(36)
-  question String @db.LongText
-  answer String @db.LongText
-  page String @db.LongText
-  item_slug String? @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  question      String   @db.LongText
+  answer        String   @db.LongText
+  page          String   @db.LongText
+  item_slug     String?  @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("faqs")
 }
 
 model feature_toggles {
-  feature_key String @id @db.VarChar(191)
-  label String @db.LongText
-  parent_key String? @db.LongText
-  is_enabled Boolean @default(true)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  feature_key String   @id @db.VarChar(191)
+  label       String   @db.LongText
+  parent_key  String?  @db.LongText
+  is_enabled  Boolean  @default(true)
+  updated_at  DateTime @default(now()) @db.DateTime(3)
+
   @@map("feature_toggles")
 }
 
 model featured_colleges {
-  id String @id @default(uuid()) @db.Char(36)
-  college_slug String @db.LongText
-  category String? @db.LongText
-  state String? @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  college_slug  String   @db.LongText
+  category      String?  @db.LongText
+  state         String?  @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("featured_colleges")
 }
 
 model hero_banners {
-  id String @id @default(uuid()) @db.Char(36)
-  title String @db.LongText
-  image_url String @db.LongText
-  link_url String @db.LongText
-  cta_text String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  subtitle String? @db.LongText
+  id            String   @id @default(uuid()) @db.Char(36)
+  title         String   @db.LongText
+  image_url     String   @db.LongText
+  link_url      String   @db.LongText
+  cta_text      String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+  subtitle      String?  @db.LongText
+
   @@map("hero_banners")
 }
 
 model hero_categories {
-  id String @id @default(uuid()) @db.Char(36)
-  key String @db.LongText
-  label String @db.LongText
-  image_url String @db.LongText
-  href String @db.LongText
-  tint String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  key           String   @db.LongText
+  label         String   @db.LongText
+  image_url     String   @db.LongText
+  href          String   @db.LongText
+  tint          String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("hero_categories")
 }
 
 model hero_settings {
-  id String @id @default(uuid()) @db.Char(36)
-  image_urls Json
-  overlay_mode String @db.LongText
-  tint_color String @db.LongText
-  overlay_opacity Decimal @default(0.45) @db.Decimal(65, 20)
-  blur_px Int @default(3)
-  grayscale Decimal @default(0) @db.Decimal(65, 20)
-  brightness Decimal @default(1) @db.Decimal(65, 20)
-  saturation Decimal @default(1.05) @db.Decimal(65, 20)
-  rotation_seconds Int @default(11)
-  is_active Boolean @default(true)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id               String   @id @default(uuid()) @db.Char(36)
+  image_urls       Json
+  overlay_mode     String   @db.LongText
+  tint_color       String   @db.LongText
+  overlay_opacity  Decimal  @default(0.45) @db.Decimal(65, 20)
+  blur_px          Int      @default(3)
+  grayscale        Decimal  @default(0) @db.Decimal(65, 20)
+  brightness       Decimal  @default(1) @db.Decimal(65, 20)
+  saturation       Decimal  @default(1.05) @db.Decimal(65, 20)
+  rotation_seconds Int      @default(11)
+  is_active        Boolean  @default(true)
+  updated_at       DateTime @default(now()) @db.DateTime(3)
+  created_at       DateTime @default(now()) @db.DateTime(3)
+
   @@map("hero_settings")
 }
 
 model intent_alerts {
-  id String @id @default(uuid()) @db.Char(36)
-  subject_type String @db.LongText
-  subject_id String @db.Char(36)
-  alert_type String @db.LongText
-  score Int?
-  college_slug String? @db.LongText
-  course_slug String? @db.LongText
-  payload Json
-  delivered Boolean @default(false)
-  delivery_attempts Int @default(0)
-  last_attempt_at DateTime? @db.DateTime(3)
-  delivered_at DateTime? @db.DateTime(3)
-  last_error String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id                String    @id @default(uuid()) @db.Char(36)
+  subject_type      String    @db.LongText
+  subject_id        String    @db.Char(36)
+  alert_type        String    @db.LongText
+  score             Int?
+  college_slug      String?   @db.LongText
+  course_slug       String?   @db.LongText
+  payload           Json
+  delivered         Boolean   @default(false)
+  delivery_attempts Int       @default(0)
+  last_attempt_at   DateTime? @db.DateTime(3)
+  delivered_at      DateTime? @db.DateTime(3)
+  last_error        String?   @db.LongText
+  created_at        DateTime  @default(now()) @db.DateTime(3)
+
   @@map("intent_alerts")
 }
 
 model intent_crm_exports {
-  id String @id @default(uuid()) @db.Char(36)
-  requested_by String? @db.Char(36)
-  filters Json
-  row_count Int @default(0)
-  format String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id           String   @id @default(uuid()) @db.Char(36)
+  requested_by String?  @db.Char(36)
+  filters      Json
+  row_count    Int      @default(0)
+  format       String   @db.LongText
+  created_at   DateTime @default(now()) @db.DateTime(3)
+
   @@map("intent_crm_exports")
 }
 
 model intent_event_weights {
-  event_type String @id @db.VarChar(191)
-  label String @db.LongText
-  weight Int @default(0)
-  is_active Boolean @default(true)
-  category String? @db.LongText
+  event_type String   @id @db.VarChar(191)
+  label      String   @db.LongText
+  weight     Int      @default(0)
+  is_active  Boolean  @default(true)
+  category   String?  @db.LongText
   updated_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("intent_event_weights")
 }
 
 model intent_events {
-  id BigInt @id
-  occurred_at DateTime @default(now()) @db.DateTime(3)
-  event_type String @db.LongText
-  visitor_id String? @db.Char(36)
-  user_id String? @db.Char(36)
-  session_id String? @db.LongText
-  college_slug String? @db.LongText
-  course_slug String? @db.LongText
-  exam_slug String? @db.LongText
-  university_slug String? @db.LongText
-  device_type String? @db.LongText
-  city String? @db.LongText
-  state String? @db.LongText
-  country String? @db.LongText
-  traffic_source String? @db.LongText
-  utm_source String? @db.LongText
-  utm_medium String? @db.LongText
-  utm_campaign String? @db.LongText
-  utm_content String? @db.LongText
-  utm_term String? @db.LongText
-  page_url String? @db.LongText
-  referrer String? @db.LongText
-  metadata Json
-  score_delta Int @default(0)
+  id              BigInt   @id
+  occurred_at     DateTime @default(now()) @db.DateTime(3)
+  event_type      String   @db.LongText
+  visitor_id      String?  @db.Char(36)
+  user_id         String?  @db.Char(36)
+  session_id      String?  @db.LongText
+  college_slug    String?  @db.LongText
+  course_slug     String?  @db.LongText
+  exam_slug       String?  @db.LongText
+  university_slug String?  @db.LongText
+  device_type     String?  @db.LongText
+  city            String?  @db.LongText
+  state           String?  @db.LongText
+  country         String?  @db.LongText
+  traffic_source  String?  @db.LongText
+  utm_source      String?  @db.LongText
+  utm_medium      String?  @db.LongText
+  utm_campaign    String?  @db.LongText
+  utm_content     String?  @db.LongText
+  utm_term        String?  @db.LongText
+  page_url        String?  @db.LongText
+  referrer        String?  @db.LongText
+  metadata        Json
+  score_delta     Int      @default(0)
+
   @@map("intent_events")
 }
 
 model intent_lead_scores {
-  id String @id @default(uuid()) @db.Char(36)
-  subject_type String @db.LongText
-  subject_id String @db.Char(36)
-  score Int @default(0)
-  category String @db.LongText
-  top_college_slug String? @db.LongText
-  top_course_slug String? @db.LongText
-  top_exam_slug String? @db.LongText
-  event_count Int @default(0)
-  last_event_type String? @db.LongText
-  last_event_at DateTime? @db.DateTime(3)
-  first_event_at DateTime? @db.DateTime(3)
-  lead_id String? @db.Char(36)
-  signals Json
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id               String    @id @default(uuid()) @db.Char(36)
+  subject_type     String    @db.LongText
+  subject_id       String    @db.Char(36)
+  score            Int       @default(0)
+  category         String    @db.LongText
+  top_college_slug String?   @db.LongText
+  top_course_slug  String?   @db.LongText
+  top_exam_slug    String?   @db.LongText
+  event_count      Int       @default(0)
+  last_event_type  String?   @db.LongText
+  last_event_at    DateTime? @db.DateTime(3)
+  first_event_at   DateTime? @db.DateTime(3)
+  lead_id          String?   @db.Char(36)
+  signals          Json
+  created_at       DateTime  @default(now()) @db.DateTime(3)
+  updated_at       DateTime  @default(now()) @db.DateTime(3)
+
   @@map("intent_lead_scores")
 }
 
 model intent_university_webhooks {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  college_slug String? @db.LongText
-  university_slug String? @db.LongText
-  webhook_url String @db.LongText
-  secret String? @db.LongText
-  threshold_score Int @default(80)
-  alert_types Json
-  is_active Boolean @default(true)
+  id               String    @id @default(uuid()) @db.Char(36)
+  name             String    @db.LongText
+  college_slug     String?   @db.LongText
+  university_slug  String?   @db.LongText
+  webhook_url      String    @db.LongText
+  secret           String?   @db.LongText
+  threshold_score  Int       @default(80)
+  alert_types      Json
+  is_active        Boolean   @default(true)
   last_delivery_at DateTime? @db.DateTime(3)
-  failures Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  failures         Int       @default(0)
+  created_at       DateTime  @default(now()) @db.DateTime(3)
+  updated_at       DateTime  @default(now()) @db.DateTime(3)
+
   @@map("intent_university_webhooks")
 }
 
 model intent_visitors {
-  visitor_id String @id @default(uuid()) @db.Char(36)
-  merged_user_id String? @db.Char(36)
-  first_seen_at DateTime @default(now()) @db.DateTime(3)
-  last_seen_at DateTime @default(now()) @db.DateTime(3)
-  device_type String? @db.LongText
-  city String? @db.LongText
-  state String? @db.LongText
-  country String? @db.LongText
-  user_agent String? @db.LongText
-  utm Json
-  referrer String? @db.LongText
-  landing_url String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  visitor_id     String   @id @default(uuid()) @db.Char(36)
+  merged_user_id String?  @db.Char(36)
+  first_seen_at  DateTime @default(now()) @db.DateTime(3)
+  last_seen_at   DateTime @default(now()) @db.DateTime(3)
+  device_type    String?  @db.LongText
+  city           String?  @db.LongText
+  state          String?  @db.LongText
+  country        String?  @db.LongText
+  user_agent     String?  @db.LongText
+  utm            Json
+  referrer       String?  @db.LongText
+  landing_url    String?  @db.LongText
+  created_at     DateTime @default(now()) @db.DateTime(3)
+  updated_at     DateTime @default(now()) @db.DateTime(3)
+
   @@map("intent_visitors")
 }
 
 model job_applications {
-  id String @id @default(uuid()) @db.Char(36)
-  job_id String? @db.Char(36)
-  job_slug String @db.LongText
-  job_title String? @db.LongText
-  company String? @db.LongText
-  full_name String @db.LongText
-  email String @db.LongText
-  phone String @db.LongText
-  current_location String? @db.LongText
-  experience String? @db.LongText
-  current_company String? @db.LongText
-  current_designation String? @db.LongText
-  expected_salary String? @db.LongText
-  notice_period String? @db.LongText
-  resume_url String? @db.LongText
-  portfolio_url String? @db.LongText
-  linkedin_url String? @db.LongText
-  cover_letter String? @db.LongText
-  status String @db.LongText
-  admin_notes String? @db.LongText
-  user_id String? @db.Char(36)
-  source String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                  String   @id @default(uuid()) @db.Char(36)
+  job_id              String?  @db.Char(36)
+  job_slug            String   @db.LongText
+  job_title           String?  @db.LongText
+  company             String?  @db.LongText
+  full_name           String   @db.LongText
+  email               String   @db.LongText
+  phone               String   @db.LongText
+  current_location    String?  @db.LongText
+  experience          String?  @db.LongText
+  current_company     String?  @db.LongText
+  current_designation String?  @db.LongText
+  expected_salary     String?  @db.LongText
+  notice_period       String?  @db.LongText
+  resume_url          String?  @db.LongText
+  portfolio_url       String?  @db.LongText
+  linkedin_url        String?  @db.LongText
+  cover_letter        String?  @db.LongText
+  status              String   @db.LongText
+  admin_notes         String?  @db.LongText
+  user_id             String?  @db.Char(36)
+  source              String?  @db.LongText
+  created_at          DateTime @default(now()) @db.DateTime(3)
+  updated_at          DateTime @default(now()) @db.DateTime(3)
+
   @@map("job_applications")
 }
 
 model jobs {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  title String @db.LongText
-  company String @db.LongText
-  company_logo String? @db.LongText
-  location String? @db.LongText
-  job_type String? @db.LongText
-  experience String? @db.LongText
-  salary String? @db.LongText
-  category String? @db.LongText
-  short_description String? @db.LongText
-  description String? @db.LongText
-  requirements String? @db.LongText
-  responsibilities String? @db.LongText
-  skills Json?
-  apply_url String? @db.LongText
-  apply_email String? @db.LongText
-  is_active Boolean @default(true)
-  is_featured Boolean @default(false)
-  is_remote Boolean @default(false)
-  display_order Int @default(0)
-  posted_at DateTime @default(now()) @db.DateTime(3)
-  expires_at DateTime? @db.DateTime(3)
-  meta_title String? @db.LongText
-  meta_description String? @db.LongText
-  meta_keywords String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                String    @id @default(uuid()) @db.Char(36)
+  slug              String    @db.LongText
+  title             String    @db.LongText
+  company           String    @db.LongText
+  company_logo      String?   @db.LongText
+  location          String?   @db.LongText
+  job_type          String?   @db.LongText
+  experience        String?   @db.LongText
+  salary            String?   @db.LongText
+  category          String?   @db.LongText
+  short_description String?   @db.LongText
+  description       String?   @db.LongText
+  requirements      String?   @db.LongText
+  responsibilities  String?   @db.LongText
+  skills            Json?
+  apply_url         String?   @db.LongText
+  apply_email       String?   @db.LongText
+  is_active         Boolean   @default(true)
+  is_featured       Boolean   @default(false)
+  is_remote         Boolean   @default(false)
+  display_order     Int       @default(0)
+  posted_at         DateTime  @default(now()) @db.DateTime(3)
+  expires_at        DateTime? @db.DateTime(3)
+  meta_title        String?   @db.LongText
+  meta_description  String?   @db.LongText
+  meta_keywords     String?   @db.LongText
+  created_at        DateTime  @default(now()) @db.DateTime(3)
+  updated_at        DateTime  @default(now()) @db.DateTime(3)
+
   @@map("jobs")
 }
 
 model landing_page_leads {
-  id String @id @default(uuid()) @db.Char(36)
-  landing_slug String @db.LongText
-  name String @db.LongText
-  email String? @db.LongText
-  phone String @db.LongText
-  city String? @db.LongText
-  state String? @db.LongText
-  course String? @db.LongText
-  utm_source String? @db.LongText
-  utm_medium String? @db.LongText
-  utm_campaign String? @db.LongText
-  utm_content String? @db.LongText
-  utm_term String? @db.LongText
-  gclid String? @db.LongText
-  fbclid String? @db.LongText
-  referrer String? @db.LongText
-  page_url String? @db.LongText
-  consent Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id           String   @id @default(uuid()) @db.Char(36)
+  landing_slug String   @db.LongText
+  name         String   @db.LongText
+  email        String?  @db.LongText
+  phone        String   @db.LongText
+  city         String?  @db.LongText
+  state        String?  @db.LongText
+  course       String?  @db.LongText
+  utm_source   String?  @db.LongText
+  utm_medium   String?  @db.LongText
+  utm_campaign String?  @db.LongText
+  utm_content  String?  @db.LongText
+  utm_term     String?  @db.LongText
+  gclid        String?  @db.LongText
+  fbclid       String?  @db.LongText
+  referrer     String?  @db.LongText
+  page_url     String?  @db.LongText
+  consent      Boolean  @default(true)
+  created_at   DateTime @default(now()) @db.DateTime(3)
+
   @@map("landing_page_leads")
 }
 
 model landing_pages {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  is_active Boolean @default(true)
-  brand_name String @db.LongText
-  logo_url String @db.LongText
-  nav_links Json
-  cta_label String @db.LongText
-  cta_href String @db.LongText
-  eyebrow String @db.LongText
-  hero_title String @db.LongText
-  hero_subtitle String @db.LongText
-  primary_cta_label String @db.LongText
-  primary_cta_href String @db.LongText
-  secondary_cta_label String @db.LongText
-  secondary_cta_href String @db.LongText
-  stats Json
-  form_title String @db.LongText
-  form_subtitle String @db.LongText
-  form_courses Json
-  form_submit_label String @db.LongText
-  form_consent_text String @db.LongText
-  courses_title String @db.LongText
-  courses_subtitle String @db.LongText
-  courses Json
-  why_title String @db.LongText
-  why_subtitle String @db.LongText
-  why_items Json
-  testimonials_title String @db.LongText
-  testimonials Json
-  faqs Json
-  footer_text String @db.LongText
-  privacy_url String @db.LongText
-  terms_url String @db.LongText
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  meta_keywords String @db.LongText
-  og_image String @db.LongText
-  ga_id String @db.LongText
-  gtm_id String @db.LongText
-  meta_pixel_id String @db.LongText
-  theme Json
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  lp_type String @db.LongText
-  multiple_layout String @db.LongText
-  multiple_colleges Json
-  exam_ad Json
-  advertiser_name String @db.LongText
-  advertiser_address String @db.LongText
-  advertiser_contact String @db.LongText
-  disclosure_text String @db.LongText
+  id                  String   @id @default(uuid()) @db.Char(36)
+  slug                String   @db.LongText
+  is_active           Boolean  @default(true)
+  brand_name          String   @db.LongText
+  logo_url            String   @db.LongText
+  nav_links           Json
+  cta_label           String   @db.LongText
+  cta_href            String   @db.LongText
+  eyebrow             String   @db.LongText
+  hero_title          String   @db.LongText
+  hero_subtitle       String   @db.LongText
+  primary_cta_label   String   @db.LongText
+  primary_cta_href    String   @db.LongText
+  secondary_cta_label String   @db.LongText
+  secondary_cta_href  String   @db.LongText
+  stats               Json
+  form_title          String   @db.LongText
+  form_subtitle       String   @db.LongText
+  form_courses        Json
+  form_submit_label   String   @db.LongText
+  form_consent_text   String   @db.LongText
+  courses_title       String   @db.LongText
+  courses_subtitle    String   @db.LongText
+  courses             Json
+  why_title           String   @db.LongText
+  why_subtitle        String   @db.LongText
+  why_items           Json
+  testimonials_title  String   @db.LongText
+  testimonials        Json
+  faqs                Json
+  footer_text         String   @db.LongText
+  privacy_url         String   @db.LongText
+  terms_url           String   @db.LongText
+  meta_title          String   @db.LongText
+  meta_description    String   @db.LongText
+  meta_keywords       String   @db.LongText
+  og_image            String   @db.LongText
+  ga_id               String   @db.LongText
+  gtm_id              String   @db.LongText
+  meta_pixel_id       String   @db.LongText
+  theme               Json
+  created_at          DateTime @default(now()) @db.DateTime(3)
+  updated_at          DateTime @default(now()) @db.DateTime(3)
+  lp_type             String   @db.LongText
+  multiple_layout     String   @db.LongText
+  multiple_colleges   Json
+  exam_ad             Json
+  advertiser_name     String   @db.LongText
+  advertiser_address  String   @db.LongText
+  advertiser_contact  String   @db.LongText
+  disclosure_text     String   @db.LongText
+
   @@map("landing_pages")
 }
 
 model lead_form_settings {
-  id String @id @default(uuid()) @db.Char(36)
-  singleton Boolean @default(true)
-  otp_mode String @db.LongText
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  updated_by String? @db.Char(36)
-  channel_preference String @db.LongText
-  form_overrides Json
+  id                 String   @id @default(uuid()) @db.Char(36)
+  singleton          Boolean  @default(true)
+  otp_mode           String   @db.LongText
+  updated_at         DateTime @default(now()) @db.DateTime(3)
+  updated_by         String?  @db.Char(36)
+  channel_preference String   @db.LongText
+  form_overrides     Json
+
   @@map("lead_form_settings")
 }
 
 model lead_notes {
-  id String @id @default(uuid()) @db.Char(36)
-  lead_id String @db.Char(36)
-  author_id String? @db.Char(36)
-  kind String @db.LongText
-  body String? @db.LongText
-  meta Json
+  id         String   @id @default(uuid()) @db.Char(36)
+  lead_id    String   @db.Char(36)
+  author_id  String?  @db.Char(36)
+  kind       String   @db.LongText
+  body       String?  @db.LongText
+  meta       Json
   created_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("lead_notes")
 }
 
 model leads {
-  id String @id @default(uuid()) @db.Char(36)
-  name String? @db.LongText
-  email String? @db.LongText
-  phone String? @db.LongText
-  current_situation String? @db.LongText
-  city String? @db.LongText
-  state String? @db.LongText
-  initial_query String? @db.LongText
-  source String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  interested_college_slug String? @db.LongText
-  interested_course_slug String? @db.LongText
-  interested_exam_slug String? @db.LongText
-  otp_verified Boolean @default(false)
-  cta String? @db.LongText
-  page_url String? @db.LongText
-  program_mode String @db.LongText
-  device_type String? @db.LongText
-  source_category String? @db.LongText
-  status String @db.LongText
-  assigned_to String? @db.Char(36)
+  id                      String   @id @default(uuid()) @db.Char(36)
+  name                    String?  @db.LongText
+  email                   String?  @db.LongText
+  phone                   String?  @db.LongText
+  current_situation       String?  @db.LongText
+  city                    String?  @db.LongText
+  state                   String?  @db.LongText
+  initial_query           String?  @db.LongText
+  source                  String?  @db.LongText
+  created_at              DateTime @default(now()) @db.DateTime(3)
+  updated_at              DateTime @default(now()) @db.DateTime(3)
+  interested_college_slug String?  @db.LongText
+  interested_course_slug  String?  @db.LongText
+  interested_exam_slug    String?  @db.LongText
+  otp_verified            Boolean  @default(false)
+  cta                     String?  @db.LongText
+  page_url                String?  @db.LongText
+  program_mode            String   @db.LongText
+  device_type             String?  @db.LongText
+  source_category         String?  @db.LongText
+  status                  String   @db.LongText
+  assigned_to             String?  @db.Char(36)
+
   @@map("leads")
 }
 
 model leads_daily_business_rollup {
-  representative_id String? @db.Char(36)
-  lead_day DateTime? @db.Date
-  identity_key String? @db.LongText
-  is_silent Boolean?
-  event_count BigInt?
-  first_seen_at DateTime? @db.DateTime(3)
-  last_seen_at DateTime? @db.DateTime(3)
+  representative_id String?   @db.Char(36)
+  lead_day          DateTime? @db.Date
+  identity_key      String?   @db.LongText
+  is_silent         Boolean?
+  event_count       BigInt?
+  first_seen_at     DateTime? @db.DateTime(3)
+  last_seen_at      DateTime? @db.DateTime(3)
+
   @@map("leads_daily_business_rollup")
   @@ignore
 }
 
 model legacy_import_runs {
-  id String @id @default(uuid()) @db.Char(36)
-  source_name String @db.LongText
-  source_sha256 String @db.LongText
-  mode String @db.LongText
-  summary Json
-  started_at DateTime @default(now()) @db.DateTime(3)
-  completed_at DateTime? @db.DateTime(3)
-  initiated_by String @db.LongText
+  id            String    @id @default(uuid()) @db.Char(36)
+  source_name   String    @db.LongText
+  source_sha256 String    @db.LongText
+  mode          String    @db.LongText
+  summary       Json
+  started_at    DateTime  @default(now()) @db.DateTime(3)
+  completed_at  DateTime? @db.DateTime(3)
+  initiated_by  String    @db.LongText
+
   @@map("legacy_import_runs")
 }
 
 model legacy_leads_quarantine {
-  id String @id @default(uuid()) @db.Char(36)
-  legacy_lead_id BigInt
-  contact_fingerprint String @db.LongText
-  name String? @db.LongText
-  email String? @db.LongText
-  phone String? @db.LongText
-  gender String? @db.LongText
-  course_name String? @db.LongText
-  level String? @db.LongText
-  state String? @db.LongText
-  city String? @db.LongText
-  source String? @db.LongText
-  source_detail String? @db.LongText
-  legacy_created_at DateTime? @db.DateTime(3)
-  consent_status String @db.LongText
-  marketing_eligible Boolean @default(false)
-  retention_review_at DateTime @db.Date
-  imported_at DateTime @default(now()) @db.DateTime(3)
-  import_run_id String? @db.Char(36)
+  id                  String    @id @default(uuid()) @db.Char(36)
+  legacy_lead_id      BigInt
+  contact_fingerprint String    @db.LongText
+  name                String?   @db.LongText
+  email               String?   @db.LongText
+  phone               String?   @db.LongText
+  gender              String?   @db.LongText
+  course_name         String?   @db.LongText
+  level               String?   @db.LongText
+  state               String?   @db.LongText
+  city                String?   @db.LongText
+  source              String?   @db.LongText
+  source_detail       String?   @db.LongText
+  legacy_created_at   DateTime? @db.DateTime(3)
+  consent_status      String    @db.LongText
+  marketing_eligible  Boolean   @default(false)
+  retention_review_at DateTime  @db.Date
+  imported_at         DateTime  @default(now()) @db.DateTime(3)
+  import_run_id       String?   @db.Char(36)
+
   @@map("legacy_leads_quarantine")
 }
 
 model legal_pages {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  title String @db.LongText
-  content String @db.LongText
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id               String   @id @default(uuid()) @db.Char(36)
+  slug             String   @db.LongText
+  title            String   @db.LongText
+  content          String   @db.LongText
+  meta_title       String   @db.LongText
+  meta_description String   @db.LongText
+  is_active        Boolean  @default(true)
+  created_at       DateTime @default(now()) @db.DateTime(3)
+  updated_at       DateTime @default(now()) @db.DateTime(3)
+
   @@map("legal_pages")
 }
 
 model lp_api_keys {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  api_key String @db.LongText
-  is_active Boolean @default(true)
-  rate_limit_per_minute Int @default(60)
-  allowed_ips Json
-  default_source String? @db.LongText
-  default_medium String? @db.LongText
-  default_campaign String? @db.LongText
-  notes String? @db.LongText
-  last_used_at DateTime? @db.DateTime(3)
-  call_count Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id                    String    @id @default(uuid()) @db.Char(36)
+  name                  String    @db.LongText
+  api_key               String    @db.LongText
+  is_active             Boolean   @default(true)
+  rate_limit_per_minute Int       @default(60)
+  allowed_ips           Json
+  default_source        String?   @db.LongText
+  default_medium        String?   @db.LongText
+  default_campaign      String?   @db.LongText
+  notes                 String?   @db.LongText
+  last_used_at          DateTime? @db.DateTime(3)
+  call_count            Int       @default(0)
+  created_at            DateTime  @default(now()) @db.DateTime(3)
+  updated_at            DateTime  @default(now()) @db.DateTime(3)
+
   @@map("lp_api_keys")
 }
 
 model lp_automation_rules {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  description String? @db.LongText
-  priority Int @default(100)
-  is_active Boolean @default(true)
-  match_cities Json
-  match_states Json
-  match_courses Json
-  match_sources Json
-  match_ctas Json
-  match_all Boolean @default(false)
+  id             String   @id @default(uuid()) @db.Char(36)
+  name           String   @db.LongText
+  description    String?  @db.LongText
+  priority       Int      @default(100)
+  is_active      Boolean  @default(true)
+  match_cities   Json
+  match_states   Json
+  match_courses  Json
+  match_sources  Json
+  match_ctas     Json
+  match_all      Boolean  @default(false)
   university_ids Json
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  prefills Json
-  auto_dispatch Boolean @default(true)
+  created_at     DateTime @default(now()) @db.DateTime(3)
+  updated_at     DateTime @default(now()) @db.DateTime(3)
+  prefills       Json
+  auto_dispatch  Boolean  @default(true)
+
   @@map("lp_automation_rules")
 }
 
 model lp_batches {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  source String @db.LongText
-  total Int @default(0)
-  success Int @default(0)
-  duplicate Int @default(0)
-  fail Int @default(0)
-  status String @db.LongText
-  payload Json?
-  created_by String? @db.Char(36)
+  id         String   @id @default(uuid()) @db.Char(36)
+  name       String   @db.LongText
+  source     String   @db.LongText
+  total      Int      @default(0)
+  success    Int      @default(0)
+  duplicate  Int      @default(0)
+  fail       Int      @default(0)
+  status     String   @db.LongText
+  payload    Json?
+  created_by String?  @db.Char(36)
   created_at DateTime @default(now()) @db.DateTime(3)
   updated_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("lp_batches")
 }
 
 model lp_marketing_flows {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  description String? @db.LongText
-  rule_ids Json
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id          String   @id @default(uuid()) @db.Char(36)
+  name        String   @db.LongText
+  description String?  @db.LongText
+  rule_ids    Json
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.DateTime(3)
+  updated_at  DateTime @default(now()) @db.DateTime(3)
+
   @@map("lp_marketing_flows")
 }
 
 model lp_multi_flows {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  description String? @db.LongText
-  flow_ids Json
-  trigger_event String @db.LongText
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  name          String   @db.LongText
+  description   String?  @db.LongText
+  flow_ids      Json
+  trigger_event String   @db.LongText
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("lp_multi_flows")
 }
 
 model lp_push_logs {
-  id String @id @default(uuid()) @db.Char(36)
-  lead_id String? @db.Char(36)
-  university_id String? @db.Char(36)
-  rule_id String? @db.Char(36)
-  flow_id String? @db.Char(36)
-  multi_flow_id String? @db.Char(36)
-  status String @db.LongText
-  http_status Int?
+  id              String   @id @default(uuid()) @db.Char(36)
+  lead_id         String?  @db.Char(36)
+  university_id   String?  @db.Char(36)
+  rule_id         String?  @db.Char(36)
+  flow_id         String?  @db.Char(36)
+  multi_flow_id   String?  @db.Char(36)
+  status          String   @db.LongText
+  http_status     Int?
   request_payload Json?
-  response_body String? @db.LongText
-  error String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  response_body   String?  @db.LongText
+  error           String?  @db.LongText
+  created_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("lp_push_logs")
 }
 
 model lp_universities {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  api_url String @db.LongText
-  api_type String @db.LongText
-  college_id String? @db.LongText
-  secret_key String? @db.LongText
-  source String? @db.LongText
-  medium String? @db.LongText
-  campaign String? @db.LongText
-  auth_type String @db.LongText
-  auth_header_key String? @db.LongText
-  auth_header_value String? @db.LongText
-  custom_headers Json
-  column_mapping Json
-  static_fields Json
-  university_defaults Json
-  payload_wrapper String @db.LongText
-  leads_per_minute Int @default(30)
-  is_active Boolean @default(true)
-  notes String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  programs Json
-  state_cities Json
+  id                     String   @id @default(uuid()) @db.Char(36)
+  name                   String   @db.LongText
+  api_url                String   @db.LongText
+  api_type               String   @db.LongText
+  college_id             String?  @db.LongText
+  secret_key             String?  @db.LongText
+  source                 String?  @db.LongText
+  medium                 String?  @db.LongText
+  campaign               String?  @db.LongText
+  auth_type              String   @db.LongText
+  auth_header_key        String?  @db.LongText
+  auth_header_value      String?  @db.LongText
+  custom_headers         Json
+  column_mapping         Json
+  static_fields          Json
+  university_defaults    Json
+  payload_wrapper        String   @db.LongText
+  leads_per_minute       Int      @default(30)
+  is_active              Boolean  @default(true)
+  notes                  String?  @db.LongText
+  created_at             DateTime @default(now()) @db.DateTime(3)
+  updated_at             DateTime @default(now()) @db.DateTime(3)
+  programs               Json
+  state_cities           Json
   course_specializations Json
-  default_values Json
-  utm_link String? @db.LongText
-  publisher_panel_url String? @db.LongText
-  publisher_id String? @db.LongText
+  default_values         Json
+  utm_link               String?  @db.LongText
+  publisher_panel_url    String?  @db.LongText
+  publisher_id           String?  @db.LongText
+
   @@map("lp_universities")
 }
 
 model lp_utm_links {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  destination_url String @db.LongText
-  utm_source String? @db.LongText
-  utm_medium String? @db.LongText
-  utm_campaign String? @db.LongText
-  utm_term String? @db.LongText
-  utm_content String? @db.LongText
-  click_count Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String   @id @default(uuid()) @db.Char(36)
+  slug            String   @db.LongText
+  destination_url String   @db.LongText
+  utm_source      String?  @db.LongText
+  utm_medium      String?  @db.LongText
+  utm_campaign    String?  @db.LongText
+  utm_term        String?  @db.LongText
+  utm_content     String?  @db.LongText
+  click_count     Int      @default(0)
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.DateTime(3)
+  updated_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("lp_utm_links")
 }
 
 model marketing_automations {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  module String @db.LongText
-  list_name String @db.LongText
-  trigger_type String @db.LongText
+  id             String    @id @default(uuid()) @db.Char(36)
+  name           String    @db.LongText
+  module         String    @db.LongText
+  list_name      String    @db.LongText
+  trigger_type   String    @db.LongText
   trigger_config Json
-  status String @db.LongText
-  nodes Json
-  total_runs Int @default(0)
-  last_run_at DateTime? @db.DateTime(3)
-  created_by String? @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  status         String    @db.LongText
+  nodes          Json
+  total_runs     Int       @default(0)
+  last_run_at    DateTime? @db.DateTime(3)
+  created_by     String?   @db.Char(36)
+  created_at     DateTime  @default(now()) @db.DateTime(3)
+  updated_at     DateTime  @default(now()) @db.DateTime(3)
+
   @@map("marketing_automations")
 }
 
 model multi_push_presets {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  description String? @db.LongText
+  id             String   @id @default(uuid()) @db.Char(36)
+  name           String   @db.LongText
+  description    String?  @db.LongText
   university_ids Json
-  is_default Boolean @default(false)
-  created_by String? @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  is_default     Boolean  @default(false)
+  created_by     String?  @db.Char(36)
+  created_at     DateTime @default(now()) @db.DateTime(3)
+  updated_at     DateTime @default(now()) @db.DateTime(3)
+
   @@map("multi_push_presets")
 }
 
 model multi_push_university_defaults {
-  id String @id @default(uuid()) @db.Char(36)
-  university_id String @db.Char(36)
-  defaults Json
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  university_id String   @db.Char(36)
+  defaults      Json
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("multi_push_university_defaults")
 }
 
 model otp_providers {
-  id String @id @default(uuid()) @db.Char(36)
-  channel String @db.LongText
-  provider_name String @db.LongText
-  display_name String @db.LongText
-  api_key String @db.LongText
-  api_secret String @db.LongText
-  sender_id String @db.LongText
-  base_url String @db.LongText
-  template_id String @db.LongText
-  is_active Boolean @default(false)
-  icon_emoji String @db.LongText
-  config_json Json
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  channel       String   @db.LongText
+  provider_name String   @db.LongText
+  display_name  String   @db.LongText
+  api_key       String   @db.LongText
+  api_secret    String   @db.LongText
+  sender_id     String   @db.LongText
+  base_url      String   @db.LongText
+  template_id   String   @db.LongText
+  is_active     Boolean  @default(false)
+  icon_emoji    String   @db.LongText
+  config_json   Json
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("otp_providers")
 }
 
 model otp_sessions {
-  id String @id @default(uuid()) @db.Char(36)
-  phone String @db.LongText
-  otp_hash String @db.LongText
-  channel String @db.LongText
-  provider_name String? @db.LongText
-  expires_at DateTime @db.DateTime(3)
-  attempts Int @default(0)
-  max_attempts Int @default(5)
-  consumed_at DateTime? @db.DateTime(3)
-  delivery_status String @db.LongText
-  transaction_id String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String    @id @default(uuid()) @db.Char(36)
+  phone           String    @db.LongText
+  otp_hash        String    @db.LongText
+  channel         String    @db.LongText
+  provider_name   String?   @db.LongText
+  expires_at      DateTime  @db.DateTime(3)
+  attempts        Int       @default(0)
+  max_attempts    Int       @default(5)
+  consumed_at     DateTime? @db.DateTime(3)
+  delivery_status String    @db.LongText
+  transaction_id  String?   @db.LongText
+  created_at      DateTime  @default(now()) @db.DateTime(3)
+  updated_at      DateTime  @default(now()) @db.DateTime(3)
+
   @@map("otp_sessions")
 }
 
 model placement_records {
-  id String @id @default(uuid()) @db.Char(36)
-  college_slug String @db.LongText
-  course_slug String? @db.LongText
-  company_id String? @db.Char(36)
-  company_name String? @db.LongText
-  package_lpa Decimal? @default(0) @db.Decimal(65, 20)
-  year String? @db.LongText
-  role String? @db.LongText
-  hires_count Int? @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id           String   @id @default(uuid()) @db.Char(36)
+  college_slug String   @db.LongText
+  course_slug  String?  @db.LongText
+  company_id   String?  @db.Char(36)
+  company_name String?  @db.LongText
+  package_lpa  Decimal? @default(0) @db.Decimal(65, 20)
+  year         String?  @db.LongText
+  role         String?  @db.LongText
+  hires_count  Int?     @default(0)
+  created_at   DateTime @default(now()) @db.DateTime(3)
+
   @@map("placement_records")
 }
 
 model popular_places {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  state String @db.LongText
-  image_url String? @db.LongText
-  college_count Int @default(0)
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  name          String   @db.LongText
+  state         String   @db.LongText
+  image_url     String?  @db.LongText
+  college_count Int      @default(0)
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("popular_places")
 }
 
 model profiles {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  display_name String? @db.LongText
-  email String? @db.LongText
-  avatar_url String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  phone String? @db.LongText
-  dob String? @db.LongText
-  gender String? @db.LongText
-  social_category String? @db.LongText
-  marital_status String? @db.LongText
-  physically_challenged Boolean? @default(false)
-  city String? @db.LongText
-  state String? @db.LongText
-  class_10_board String? @db.LongText
-  class_10_school String? @db.LongText
-  class_10_year String? @db.LongText
-  class_10_marks_type String? @db.LongText
-  class_10_percentage String? @db.LongText
-  class_12_board String? @db.LongText
-  class_12_school String? @db.LongText
-  class_12_year String? @db.LongText
-  class_12_marks_type String? @db.LongText
-  class_12_percentage String? @db.LongText
-  preferred_stream String? @db.LongText
-  preferred_level String? @db.LongText
-  current_status String? @db.LongText
-  education_level String? @db.LongText
-  profile_image_url String? @db.LongText
-  kyc_completed Boolean? @default(false)
-  kyc_completed_at DateTime? @db.DateTime(3)
-  education_status String? @db.LongText
-  current_semester String? @db.LongText
-  onboarding_completed Boolean @default(false)
-  mask_leads Boolean @default(false)
+  id                    String    @id @default(uuid()) @db.Char(36)
+  user_id               String    @db.Char(36)
+  display_name          String?   @db.LongText
+  email                 String?   @db.LongText
+  avatar_url            String?   @db.LongText
+  created_at            DateTime  @default(now()) @db.DateTime(3)
+  updated_at            DateTime  @default(now()) @db.DateTime(3)
+  phone                 String?   @db.LongText
+  dob                   String?   @db.LongText
+  gender                String?   @db.LongText
+  social_category       String?   @db.LongText
+  marital_status        String?   @db.LongText
+  physically_challenged Boolean?  @default(false)
+  city                  String?   @db.LongText
+  state                 String?   @db.LongText
+  class_10_board        String?   @db.LongText
+  class_10_school       String?   @db.LongText
+  class_10_year         String?   @db.LongText
+  class_10_marks_type   String?   @db.LongText
+  class_10_percentage   String?   @db.LongText
+  class_12_board        String?   @db.LongText
+  class_12_school       String?   @db.LongText
+  class_12_year         String?   @db.LongText
+  class_12_marks_type   String?   @db.LongText
+  class_12_percentage   String?   @db.LongText
+  preferred_stream      String?   @db.LongText
+  preferred_level       String?   @db.LongText
+  current_status        String?   @db.LongText
+  education_level       String?   @db.LongText
+  profile_image_url     String?   @db.LongText
+  kyc_completed         Boolean?  @default(false)
+  kyc_completed_at      DateTime? @db.DateTime(3)
+  education_status      String?   @db.LongText
+  current_semester      String?   @db.LongText
+  onboarding_completed  Boolean   @default(false)
+  mask_leads            Boolean   @default(false)
+
   @@map("profiles")
 }
 
+model app_auth_users {
+  id             String                    @id @db.Char(36)
+  email          String?                   @unique @db.VarChar(320)
+  phone          String?                   @unique @db.VarChar(32)
+  provider       String                    @default("phone") @db.VarChar(32)
+  user_metadata  Json?
+  created_at     DateTime                  @default(now()) @db.DateTime(3)
+  updated_at     DateTime                  @updatedAt @db.DateTime(3)
+  refresh_tokens app_auth_refresh_tokens[]
+
+  @@map("app_auth_users")
+}
+
+model app_auth_refresh_tokens {
+  id         String         @id @db.Char(36)
+  user_id    String         @db.Char(36)
+  token_hash String         @unique @db.Char(64)
+  expires_at DateTime       @db.DateTime(3)
+  revoked_at DateTime?      @db.DateTime(3)
+  created_at DateTime       @default(now()) @db.DateTime(3)
+  user       app_auth_users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("app_auth_refresh_tokens")
+}
+
+model app_auth_otps {
+  id          String    @id @db.Char(36)
+  phone       String    @db.VarChar(32)
+  otp_hash    String    @db.Char(64)
+  attempts    Int       @default(0)
+  expires_at  DateTime  @db.DateTime(3)
+  consumed_at DateTime? @db.DateTime(3)
+  created_at  DateTime  @default(now()) @db.DateTime(3)
+
+  @@index([phone, created_at])
+  @@map("app_auth_otps")
+}
+
 model program_categories {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  icon_emoji String @db.LongText
-  icon_url String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  slug          String   @db.LongText
+  name          String   @db.LongText
+  icon_emoji    String   @db.LongText
+  icon_url      String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("program_categories")
 }
 
 model programs {
-  id String @id @default(uuid()) @db.Char(36)
-  university_id String @db.Char(36)
-  name String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  university_id String   @db.Char(36)
+  name          String   @db.LongText
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("programs")
 }
 
 model promoted_programs {
-  id String @id @default(uuid()) @db.Char(36)
-  college_name String @db.LongText
-  college_slug String @db.LongText
-  title String @db.LongText
-  badge String @db.LongText
-  badge_variant String @db.LongText
-  program_type String @db.LongText
-  duration String @db.LongText
-  original_price Decimal @default(0) @db.Decimal(65, 20)
-  discount_percent Int @default(0)
-  course_slug String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  tag String @db.LongText
-  delivery_mode String @db.LongText
-  country String @db.LongText
-  image_url String @db.LongText
-  slug String @db.LongText
-  category_slug String @db.LongText
-  hero_image String @db.LongText
-  hero_video_url String @db.LongText
-  brochure_url String @db.LongText
-  apply_url String @db.LongText
-  summary String @db.LongText
-  about_program String @db.LongText
-  eligibility String @db.LongText
-  batch_start_date String @db.LongText
-  schedule String @db.LongText
-  emi_starts_at Decimal @default(0) @db.Decimal(65, 20)
-  certificate_image String @db.LongText
-  highlights Json
-  learning_outcomes Json
-  curriculum Json
-  faculty Json
-  faqs Json
-  fee_breakdown Json
-  partner_logos Json
-  tools_taught Json
-  placement_stats Json
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  rating Decimal @default(0) @db.Decimal(65, 20)
-  learners_count String @db.LongText
-  ranking_text String @db.LongText
-  why_this_program String @db.LongText
-  who_should_apply Json
-  application_steps Json
-  program_stats Json
-  top_companies Json
-  mentors Json
-  testimonials Json
-  degree_image String @db.LongText
-  youtube_url String @db.LongText
-  contact_phone String @db.LongText
-  institute_logo String @db.LongText
-  institute_legacy_title String @db.LongText
+  id                      String   @id @default(uuid()) @db.Char(36)
+  college_name            String   @db.LongText
+  college_slug            String   @db.LongText
+  title                   String   @db.LongText
+  badge                   String   @db.LongText
+  badge_variant           String   @db.LongText
+  program_type            String   @db.LongText
+  duration                String   @db.LongText
+  original_price          Decimal  @default(0) @db.Decimal(65, 20)
+  discount_percent        Int      @default(0)
+  course_slug             String   @db.LongText
+  display_order           Int      @default(0)
+  is_active               Boolean  @default(true)
+  created_at              DateTime @default(now()) @db.DateTime(3)
+  updated_at              DateTime @default(now()) @db.DateTime(3)
+  tag                     String   @db.LongText
+  delivery_mode           String   @db.LongText
+  country                 String   @db.LongText
+  image_url               String   @db.LongText
+  slug                    String   @db.LongText
+  category_slug           String   @db.LongText
+  hero_image              String   @db.LongText
+  hero_video_url          String   @db.LongText
+  brochure_url            String   @db.LongText
+  apply_url               String   @db.LongText
+  summary                 String   @db.LongText
+  about_program           String   @db.LongText
+  eligibility             String   @db.LongText
+  batch_start_date        String   @db.LongText
+  schedule                String   @db.LongText
+  emi_starts_at           Decimal  @default(0) @db.Decimal(65, 20)
+  certificate_image       String   @db.LongText
+  highlights              Json
+  learning_outcomes       Json
+  curriculum              Json
+  faculty                 Json
+  faqs                    Json
+  fee_breakdown           Json
+  partner_logos           Json
+  tools_taught            Json
+  placement_stats         Json
+  meta_title              String   @db.LongText
+  meta_description        String   @db.LongText
+  rating                  Decimal  @default(0) @db.Decimal(65, 20)
+  learners_count          String   @db.LongText
+  ranking_text            String   @db.LongText
+  why_this_program        String   @db.LongText
+  who_should_apply        Json
+  application_steps       Json
+  program_stats           Json
+  top_companies           Json
+  mentors                 Json
+  testimonials            Json
+  degree_image            String   @db.LongText
+  youtube_url             String   @db.LongText
+  contact_phone           String   @db.LongText
+  institute_logo          String   @db.LongText
+  institute_legacy_title  String   @db.LongText
   institute_legacy_points Json
+
   @@map("promoted_programs")
 }
 
 model push_landing_pages {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  description String? @db.LongText
-  api_key String @db.LongText
-  routing_mode String @db.LongText
-  university_ids Json
-  preset_id String? @db.Char(36)
-  default_values Json
-  is_active Boolean @default(true)
-  submissions_count Int @default(0)
+  id                 String    @id @default(uuid()) @db.Char(36)
+  name               String    @db.LongText
+  description        String?   @db.LongText
+  api_key            String    @db.LongText
+  routing_mode       String    @db.LongText
+  university_ids     Json
+  preset_id          String?   @db.Char(36)
+  default_values     Json
+  is_active          Boolean   @default(true)
+  submissions_count  Int       @default(0)
   last_submission_at DateTime? @db.DateTime(3)
-  created_by String? @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  created_by         String?   @db.Char(36)
+  created_at         DateTime  @default(now()) @db.DateTime(3)
+  updated_at         DateTime  @default(now()) @db.DateTime(3)
+
   @@map("push_landing_pages")
 }
 
 model push_leads {
-  id String @id @default(uuid()) @db.Char(36)
-  batch_id String @db.Char(36)
-  university_id String @db.Char(36)
-  user_id String? @db.Char(36)
-  name String @db.LongText
-  email String @db.LongText
-  mobile String @db.LongText
-  address String? @db.LongText
-  state String? @db.LongText
-  city String? @db.LongText
-  course String? @db.LongText
-  specialization String? @db.LongText
-  lead_source String? @db.LongText
-  lead_medium String? @db.LongText
-  lead_campaign String? @db.LongText
-  extra_data Json?
-  status String? @db.LongText
-  api_response String? @db.LongText
-  retry_count Int? @default(0)
-  processed_at DateTime? @db.DateTime(3)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id             String    @id @default(uuid()) @db.Char(36)
+  batch_id       String    @db.Char(36)
+  university_id  String    @db.Char(36)
+  user_id        String?   @db.Char(36)
+  name           String    @db.LongText
+  email          String    @db.LongText
+  mobile         String    @db.LongText
+  address        String?   @db.LongText
+  state          String?   @db.LongText
+  city           String?   @db.LongText
+  course         String?   @db.LongText
+  specialization String?   @db.LongText
+  lead_source    String?   @db.LongText
+  lead_medium    String?   @db.LongText
+  lead_campaign  String?   @db.LongText
+  extra_data     Json?
+  status         String?   @db.LongText
+  api_response   String?   @db.LongText
+  retry_count    Int?      @default(0)
+  processed_at   DateTime? @db.DateTime(3)
+  created_at     DateTime  @default(now()) @db.DateTime(3)
+
   @@map("push_leads")
 }
 
 model referrals {
-  id String @id @default(uuid()) @db.Char(36)
-  referrer_id String @db.Char(36)
-  friend_name String @db.LongText
-  friend_mobile String @db.LongText
-  friend_email String @db.LongText
-  alternate_mobile String? @db.LongText
-  alternate_email String? @db.LongText
-  friend_state String @db.LongText
-  friend_city String @db.LongText
-  desired_city String? @db.LongText
+  id               String   @id @default(uuid()) @db.Char(36)
+  referrer_id      String   @db.Char(36)
+  friend_name      String   @db.LongText
+  friend_mobile    String   @db.LongText
+  friend_email     String   @db.LongText
+  alternate_mobile String?  @db.LongText
+  alternate_email  String?  @db.LongText
+  friend_state     String   @db.LongText
+  friend_city      String   @db.LongText
+  desired_city     String?  @db.LongText
   desired_colleges Json?
-  status String @db.LongText
-  reward_amount Decimal? @default(0) @db.Decimal(65, 20)
-  reward_paid Boolean? @default(false)
-  admin_notes String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  status           String   @db.LongText
+  reward_amount    Decimal? @default(0) @db.Decimal(65, 20)
+  reward_paid      Boolean? @default(false)
+  admin_notes      String?  @db.LongText
+  created_at       DateTime @default(now()) @db.DateTime(3)
+  updated_at       DateTime @default(now()) @db.DateTime(3)
+
   @@map("referrals")
 }
 
 model review_reports {
-  id String @id @default(uuid()) @db.Char(36)
-  review_id String @db.Char(36)
-  reporter_user_id String? @db.Char(36)
-  reporter_name String? @db.LongText
-  reason String @db.LongText
-  status String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id               String   @id @default(uuid()) @db.Char(36)
+  review_id        String   @db.Char(36)
+  reporter_user_id String?  @db.Char(36)
+  reporter_name    String?  @db.LongText
+  reason           String   @db.LongText
+  status           String   @db.LongText
+  created_at       DateTime @default(now()) @db.DateTime(3)
+
   @@map("review_reports")
 }
 
 model scholarships {
-  id String @id @default(uuid()) @db.Char(36)
-  title String @db.LongText
-  slug String @db.LongText
-  provider String @db.LongText
-  amount String @db.LongText
-  eligibility String @db.LongText
-  deadline String @db.LongText
-  category String @db.LongText
-  level String @db.LongText
-  description String @db.LongText
-  apply_url String @db.LongText
-  image String @db.LongText
-  is_live Boolean @default(true)
-  is_active Boolean @default(true)
-  display_order Int @default(0)
-  meta_title String @db.LongText
-  meta_description String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  author_id String? @db.Char(36)
-  page_summary String? @db.LongText
-  official_website String? @db.LongText
-  data_verified_at DateTime? @db.DateTime(3)
-  data_source_urls Json
-  data_quality_score Int @default(0)
-  data_clean_attempts Int @default(0)
-  data_clean_successes Int @default(0)
+  id                   String    @id @default(uuid()) @db.Char(36)
+  title                String    @db.LongText
+  slug                 String    @db.LongText
+  provider             String    @db.LongText
+  amount               String    @db.LongText
+  eligibility          String    @db.LongText
+  deadline             String    @db.LongText
+  category             String    @db.LongText
+  level                String    @db.LongText
+  description          String    @db.LongText
+  apply_url            String    @db.LongText
+  image                String    @db.LongText
+  is_live              Boolean   @default(true)
+  is_active            Boolean   @default(true)
+  display_order        Int       @default(0)
+  meta_title           String    @db.LongText
+  meta_description     String    @db.LongText
+  created_at           DateTime  @default(now()) @db.DateTime(3)
+  updated_at           DateTime  @default(now()) @db.DateTime(3)
+  author_id            String?   @db.Char(36)
+  page_summary         String?   @db.LongText
+  official_website     String?   @db.LongText
+  data_verified_at     DateTime? @db.DateTime(3)
+  data_source_urls     Json
+  data_quality_score   Int       @default(0)
+  data_clean_attempts  Int       @default(0)
+  data_clean_successes Int       @default(0)
   data_last_checked_at DateTime? @db.DateTime(3)
-  data_clean_state String @db.LongText
+  data_clean_state     String    @db.LongText
+
   @@map("scholarships")
 }
 
 model site_integrations {
-  id String @id @default(uuid()) @db.Char(36)
-  key String @db.LongText
-  label String @db.LongText
-  category String @db.LongText
-  value String @db.LongText
-  enabled Boolean @default(false)
-  notes String @db.LongText
+  id         String   @id @default(uuid()) @db.Char(36)
+  key        String   @db.LongText
+  label      String   @db.LongText
+  category   String   @db.LongText
+  value      String   @db.LongText
+  enabled    Boolean  @default(false)
+  notes      String   @db.LongText
   updated_at DateTime @default(now()) @db.DateTime(3)
   created_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("site_integrations")
 }
 
 model state_cities {
-  id String @id @default(uuid()) @db.Char(36)
-  university_id String @db.Char(36)
-  state String @db.LongText
-  city String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  university_id String   @db.Char(36)
+  state         String   @db.LongText
+  city          String   @db.LongText
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("state_cities")
 }
 
 model states_cities {
-  id String @id @default(uuid()) @db.Char(36)
-  state String @db.LongText
-  city String @db.LongText
-  is_active Boolean @default(true)
-  display_order Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  state         String   @db.LongText
+  city          String   @db.LongText
+  is_active     Boolean  @default(true)
+  display_order Int      @default(0)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("states_cities")
 }
 
 model stream_categories {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  label String @db.LongText
-  emoji String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  slug          String   @db.LongText
+  label         String   @db.LongText
+  emoji         String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("stream_categories")
 }
 
 model study_board_links {
-  id String @id @default(uuid()) @db.Char(36)
-  board_slug String @db.LongText
-  class_num Int
-  title String @db.LongText
-  url String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  category String @db.LongText
+  id            String   @id @default(uuid()) @db.Char(36)
+  board_slug    String   @db.LongText
+  class_num     Int
+  title         String   @db.LongText
+  url           String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+  category      String   @db.LongText
+
   @@map("study_board_links")
 }
 
 model study_boards {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  description String? @db.LongText
-  icon_emoji String? @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  image_url String @db.LongText
+  id            String   @id @default(uuid()) @db.Char(36)
+  slug          String   @db.LongText
+  name          String   @db.LongText
+  description   String?  @db.LongText
+  icon_emoji    String?  @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  image_url     String   @db.LongText
+
   @@map("study_boards")
 }
 
 model study_chapters {
-  id String @id @default(uuid()) @db.Char(36)
-  subject_id String @db.Char(36)
-  slug String @db.LongText
-  name String @db.LongText
-  chapter_number Int? @default(0)
-  description String? @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id             String   @id @default(uuid()) @db.Char(36)
+  subject_id     String   @db.Char(36)
+  slug           String   @db.LongText
+  name           String   @db.LongText
+  chapter_number Int?     @default(0)
+  description    String?  @db.LongText
+  display_order  Int      @default(0)
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now()) @db.DateTime(3)
+  updated_at     DateTime @default(now()) @db.DateTime(3)
+
   @@map("study_chapters")
 }
 
 model study_resources {
-  id String @id @default(uuid()) @db.Char(36)
-  chapter_id String? @db.Char(36)
-  subject_id String? @db.Char(36)
-  resource_type String @db.LongText
-  year String? @db.LongText
-  title String @db.LongText
-  description String? @db.LongText
-  file_url String? @db.LongText
-  file_size_kb Int? @default(0)
-  download_count Int @default(0)
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  content_html String @db.LongText
+  id             String   @id @default(uuid()) @db.Char(36)
+  chapter_id     String?  @db.Char(36)
+  subject_id     String?  @db.Char(36)
+  resource_type  String   @db.LongText
+  year           String?  @db.LongText
+  title          String   @db.LongText
+  description    String?  @db.LongText
+  file_url       String?  @db.LongText
+  file_size_kb   Int?     @default(0)
+  download_count Int      @default(0)
+  display_order  Int      @default(0)
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now()) @db.DateTime(3)
+  updated_at     DateTime @default(now()) @db.DateTime(3)
+  content_html   String   @db.LongText
   content_images Json
+
   @@map("study_resources")
 }
 
 model study_subjects {
-  id String @id @default(uuid()) @db.Char(36)
-  slug String @db.LongText
-  class_num Int
-  board_slug String @db.LongText
-  name String @db.LongText
-  description String? @db.LongText
-  icon_emoji String? @db.LongText
-  cover_image String? @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  author_id String? @db.Char(36)
-  official_website String? @db.LongText
-  data_verified_at DateTime? @db.DateTime(3)
-  data_source_urls Json
-  data_quality_score Int?
-  data_clean_attempts Int @default(0)
-  data_clean_successes Int @default(0)
+  id                   String    @id @default(uuid()) @db.Char(36)
+  slug                 String    @db.LongText
+  class_num            Int
+  board_slug           String    @db.LongText
+  name                 String    @db.LongText
+  description          String?   @db.LongText
+  icon_emoji           String?   @db.LongText
+  cover_image          String?   @db.LongText
+  display_order        Int       @default(0)
+  is_active            Boolean   @default(true)
+  created_at           DateTime  @default(now()) @db.DateTime(3)
+  updated_at           DateTime  @default(now()) @db.DateTime(3)
+  author_id            String?   @db.Char(36)
+  official_website     String?   @db.LongText
+  data_verified_at     DateTime? @db.DateTime(3)
+  data_source_urls     Json
+  data_quality_score   Int?
+  data_clean_attempts  Int       @default(0)
+  data_clean_successes Int       @default(0)
   data_last_checked_at DateTime? @db.DateTime(3)
-  data_clean_state String @db.LongText
+  data_clean_state     String    @db.LongText
+
   @@map("study_subjects")
 }
 
 model study_toppers {
-  id String @id @default(uuid()) @db.Char(36)
-  class_num Int
-  board_slug String @db.LongText
-  stream String @db.LongText
-  year Int
-  rank Int @default(1)
-  name String @db.LongText
-  marks String @db.LongText
-  percentage Decimal @default(0) @db.Decimal(65, 20)
-  school String @db.LongText
-  city String @db.LongText
-  photo String @db.LongText
-  is_active Boolean @default(true)
-  display_order Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  class_num     Int
+  board_slug    String   @db.LongText
+  stream        String   @db.LongText
+  year          Int
+  rank          Int      @default(1)
+  name          String   @db.LongText
+  marks         String   @db.LongText
+  percentage    Decimal  @default(0) @db.Decimal(65, 20)
+  school        String   @db.LongText
+  city          String   @db.LongText
+  photo         String   @db.LongText
+  is_active     Boolean  @default(true)
+  display_order Int      @default(0)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("study_toppers")
 }
 
 model sub_users {
-  id String @id @default(uuid()) @db.Char(36)
-  parent_user_id String @db.Char(36)
-  type String @db.LongText
-  name String @db.LongText
-  email String? @db.LongText
-  phone String? @db.LongText
-  role String? @db.LongText
-  permissions Json
-  status String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id             String   @id @default(uuid()) @db.Char(36)
+  parent_user_id String   @db.Char(36)
+  type           String   @db.LongText
+  name           String   @db.LongText
+  email          String?  @db.LongText
+  phone          String?  @db.LongText
+  role           String?  @db.LongText
+  permissions    Json
+  status         String   @db.LongText
+  created_at     DateTime @default(now()) @db.DateTime(3)
+  updated_at     DateTime @default(now()) @db.DateTime(3)
+
   @@map("sub_users")
 }
 
 model system_logs {
-  id String @id @default(uuid()) @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  function_name String @db.LongText
-  level String @db.LongText
-  flow String? @db.LongText
-  method String? @db.LongText
-  message String @db.LongText
-  context Json?
-  request_id String? @db.LongText
+  id            String   @id @default(uuid()) @db.Char(36)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  function_name String   @db.LongText
+  level         String   @db.LongText
+  flow          String?  @db.LongText
+  method        String?  @db.LongText
+  message       String   @db.LongText
+  context       Json?
+  request_id    String?  @db.LongText
+
   @@map("system_logs")
 }
 
 model target_roadmaps {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  share_token String @default(uuid()) @db.LongText
-  slug String? @db.LongText
-  target_college String @db.LongText
-  target_course String? @db.LongText
-  class_level String? @db.LongText
-  stream String? @db.LongText
-  board String? @db.LongText
-  current_percent String? @db.LongText
-  state String? @db.LongText
-  hours_per_day Int?
-  weaknesses String? @db.LongText
-  roadmap Json
-  is_primary Boolean @default(false)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id              String   @id @default(uuid()) @db.Char(36)
+  user_id         String   @db.Char(36)
+  share_token     String   @default(uuid()) @db.LongText
+  slug            String?  @db.LongText
+  target_college  String   @db.LongText
+  target_course   String?  @db.LongText
+  class_level     String?  @db.LongText
+  stream          String?  @db.LongText
+  board           String?  @db.LongText
+  current_percent String?  @db.LongText
+  state           String?  @db.LongText
+  hours_per_day   Int?
+  weaknesses      String?  @db.LongText
+  roadmap         Json
+  is_primary      Boolean  @default(false)
+  created_at      DateTime @default(now()) @db.DateTime(3)
+  updated_at      DateTime @default(now()) @db.DateTime(3)
+
   @@map("target_roadmaps")
 }
 
 model team_invites {
-  id String @id @default(uuid()) @db.Char(36)
-  email String? @db.LongText
-  phone String? @db.LongText
-  display_name String? @db.LongText
-  role String @db.LongText
-  permissions Json
-  mask_leads Boolean @default(false)
-  status String @db.LongText
-  accepted_user_id String? @db.Char(36)
-  created_by String? @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id               String   @id @default(uuid()) @db.Char(36)
+  email            String?  @db.LongText
+  phone            String?  @db.LongText
+  display_name     String?  @db.LongText
+  role             String   @db.LongText
+  permissions      Json
+  mask_leads       Boolean  @default(false)
+  status           String   @db.LongText
+  accepted_user_id String?  @db.Char(36)
+  created_by       String?  @db.Char(36)
+  created_at       DateTime @default(now()) @db.DateTime(3)
+  updated_at       DateTime @default(now()) @db.DateTime(3)
+
   @@map("team_invites")
 }
 
 model trusted_partners {
-  id String @id @default(uuid()) @db.Char(36)
-  college_slug String @db.LongText
-  name String @db.LongText
-  logo_url String @db.LongText
-  display_order Int @default(0)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id            String   @id @default(uuid()) @db.Char(36)
+  college_slug  String   @db.LongText
+  name          String   @db.LongText
+  logo_url      String   @db.LongText
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.DateTime(3)
+  updated_at    DateTime @default(now()) @db.DateTime(3)
+
   @@map("trusted_partners")
 }
 
 model universities {
-  id String @id @default(uuid()) @db.Char(36)
-  name String @db.LongText
-  api_url String @db.LongText
-  college_id String @db.LongText
-  secret_key String @db.LongText
-  source String? @db.LongText
-  medium String? @db.LongText
-  campaign String? @db.LongText
-  api_type String? @db.LongText
-  leads_per_minute Int? @default(5)
-  column_mapping Json?
-  default_values Json?
-  utm_link String? @db.LongText
-  daily_limit Int?
-  admission_commitment Int?
-  contact_person_name String? @db.LongText
-  contact_person_mobile String? @db.LongText
-  contact_person_email String? @db.LongText
-  whatsapp_group_link String? @db.LongText
-  deal_price Decimal? @db.Decimal(65, 20)
-  gst_inclusive Boolean? @default(true)
-  city String? @db.LongText
-  state String? @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  api_timeout_seconds Int? @default(30)
-  default_push_concurrency Int? @default(2)
-  daily_lead_limit Int?
-  daily_pushed_count Int? @default(0)
-  daily_count_reset_at DateTime? @db.Date
-  status String? @db.LongText
-  is_active Boolean? @default(true)
-  publisher_panel_url String? @db.LongText
-  publisher_id String? @db.LongText
-  auth_type String? @db.LongText
-  auth_header_key String? @db.LongText
-  auth_header_value String? @db.LongText
-  payload_wrapper String? @db.LongText
-  custom_headers Json?
-  programs Json?
-  state_cities Json?
-  course_specializations Json?
-  custom_columns Json?
-  payload_fields Json?
-  sample_csv_content String? @db.LongText
-  slug String? @db.LongText
+  id                       String    @id @default(uuid()) @db.Char(36)
+  name                     String    @db.LongText
+  api_url                  String    @db.LongText
+  college_id               String    @db.LongText
+  secret_key               String    @db.LongText
+  source                   String?   @db.LongText
+  medium                   String?   @db.LongText
+  campaign                 String?   @db.LongText
+  api_type                 String?   @db.LongText
+  leads_per_minute         Int?      @default(5)
+  column_mapping           Json?
+  default_values           Json?
+  utm_link                 String?   @db.LongText
+  daily_limit              Int?
+  admission_commitment     Int?
+  contact_person_name      String?   @db.LongText
+  contact_person_mobile    String?   @db.LongText
+  contact_person_email     String?   @db.LongText
+  whatsapp_group_link      String?   @db.LongText
+  deal_price               Decimal?  @db.Decimal(65, 20)
+  gst_inclusive            Boolean?  @default(true)
+  city                     String?   @db.LongText
+  state                    String?   @db.LongText
+  created_at               DateTime  @default(now()) @db.DateTime(3)
+  updated_at               DateTime  @default(now()) @db.DateTime(3)
+  api_timeout_seconds      Int?      @default(30)
+  default_push_concurrency Int?      @default(2)
+  daily_lead_limit         Int?
+  daily_pushed_count       Int?      @default(0)
+  daily_count_reset_at     DateTime? @db.Date
+  status                   String?   @db.LongText
+  is_active                Boolean?  @default(true)
+  publisher_panel_url      String?   @db.LongText
+  publisher_id             String?   @db.LongText
+  auth_type                String?   @db.LongText
+  auth_header_key          String?   @db.LongText
+  auth_header_value        String?   @db.LongText
+  payload_wrapper          String?   @db.LongText
+  custom_headers           Json?
+  programs                 Json?
+  state_cities             Json?
+  course_specializations   Json?
+  custom_columns           Json?
+  payload_fields           Json?
+  sample_csv_content       String?   @db.LongText
+  slug                     String?   @db.LongText
+
   @@map("universities")
 }
 
 model university_api_keys {
-  id String @id @default(uuid()) @db.Char(36)
-  university_id String @db.Char(36)
-  api_key String @db.LongText
-  name String @db.LongText
-  is_active Boolean? @default(true)
-  last_used_at DateTime? @db.DateTime(3)
-  request_count Int? @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id            String    @id @default(uuid()) @db.Char(36)
+  university_id String    @db.Char(36)
+  api_key       String    @db.LongText
+  name          String    @db.LongText
+  is_active     Boolean?  @default(true)
+  last_used_at  DateTime? @db.DateTime(3)
+  request_count Int?      @default(0)
+  created_at    DateTime  @default(now()) @db.DateTime(3)
+
   @@map("university_api_keys")
 }
 
 model upload_batches {
-  id String @id @default(uuid()) @db.Char(36)
-  university_id String @db.Char(36)
-  user_id String? @db.Char(36)
-  file_name String @db.LongText
-  total_leads Int @default(0)
-  success_count Int @default(0)
-  fail_count Int @default(0)
-  duplicate_count Int @default(0)
-  status String? @db.LongText
-  csv_data String? @db.LongText
-  scheduled_at DateTime? @db.DateTime(3)
-  leads_per_minute Int? @default(5)
-  api_config Json?
-  created_at DateTime @default(now()) @db.DateTime(3)
-  completed_at DateTime? @db.DateTime(3)
-  is_paused Boolean? @default(false)
-  is_cancelled Boolean? @default(false)
-  processed_count Int? @default(0)
-  current_lead_index Int? @default(0)
-  error_message String? @db.LongText
+  id                 String    @id @default(uuid()) @db.Char(36)
+  university_id      String    @db.Char(36)
+  user_id            String?   @db.Char(36)
+  file_name          String    @db.LongText
+  total_leads        Int       @default(0)
+  success_count      Int       @default(0)
+  fail_count         Int       @default(0)
+  duplicate_count    Int       @default(0)
+  status             String?   @db.LongText
+  csv_data           String?   @db.LongText
+  scheduled_at       DateTime? @db.DateTime(3)
+  leads_per_minute   Int?      @default(5)
+  api_config         Json?
+  created_at         DateTime  @default(now()) @db.DateTime(3)
+  completed_at       DateTime? @db.DateTime(3)
+  is_paused          Boolean?  @default(false)
+  is_cancelled       Boolean?  @default(false)
+  processed_count    Int?      @default(0)
+  current_lead_index Int?      @default(0)
+  error_message      String?   @db.LongText
+
   @@map("upload_batches")
 }
 
 model url_api_keys {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  key_hash String @db.LongText
-  key_prefix String @db.LongText
-  name String @db.LongText
-  permissions Json?
-  rate_limit Int @default(100)
-  requests_today Int @default(0)
-  last_used_at DateTime? @db.DateTime(3)
-  expires_at DateTime? @db.DateTime(3)
-  is_active Boolean @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id             String    @id @default(uuid()) @db.Char(36)
+  user_id        String    @db.Char(36)
+  key_hash       String    @db.LongText
+  key_prefix     String    @db.LongText
+  name           String    @db.LongText
+  permissions    Json?
+  rate_limit     Int       @default(100)
+  requests_today Int       @default(0)
+  last_used_at   DateTime? @db.DateTime(3)
+  expires_at     DateTime? @db.DateTime(3)
+  is_active      Boolean   @default(true)
+  created_at     DateTime  @default(now()) @db.DateTime(3)
+
   @@map("url_api_keys")
 }
 
 model url_bulk_imports {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String? @db.Char(36)
-  file_name String @db.LongText
-  total_urls Int @default(0)
-  success_count Int @default(0)
-  error_count Int @default(0)
-  status String @db.LongText
-  error_report Json?
-  created_at DateTime @default(now()) @db.DateTime(3)
-  completed_at DateTime? @db.DateTime(3)
+  id            String    @id @default(uuid()) @db.Char(36)
+  user_id       String?   @db.Char(36)
+  file_name     String    @db.LongText
+  total_urls    Int       @default(0)
+  success_count Int       @default(0)
+  error_count   Int       @default(0)
+  status        String    @db.LongText
+  error_report  Json?
+  created_at    DateTime  @default(now()) @db.DateTime(3)
+  completed_at  DateTime? @db.DateTime(3)
+
   @@map("url_bulk_imports")
 }
 
 model url_clicks {
-  id String @id @default(uuid()) @db.Char(36)
-  url_id String @db.Char(36)
-  clicked_at DateTime @default(now()) @db.DateTime(3)
-  ip_address String? @db.LongText
-  user_agent String? @db.LongText
-  referrer String? @db.LongText
-  country String? @db.LongText
-  city String? @db.LongText
-  device_type String? @db.LongText
-  browser String? @db.LongText
-  os String? @db.LongText
+  id          String   @id @default(uuid()) @db.Char(36)
+  url_id      String   @db.Char(36)
+  clicked_at  DateTime @default(now()) @db.DateTime(3)
+  ip_address  String?  @db.LongText
+  user_agent  String?  @db.LongText
+  referrer    String?  @db.LongText
+  country     String?  @db.LongText
+  city        String?  @db.LongText
+  device_type String?  @db.LongText
+  browser     String?  @db.LongText
+  os          String?  @db.LongText
+
   @@map("url_clicks")
 }
 
 model url_mappings {
-  id String @id @default(uuid()) @db.Char(36)
-  short_code String @db.LongText
-  original_url String @db.LongText
-  user_id String? @db.Char(36)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  expires_at DateTime? @db.DateTime(3)
-  clicks Int @default(0)
-  is_active Boolean @default(true)
-  custom_code Boolean @default(false)
-  title String? @db.LongText
-  tags Json?
+  id              String    @id @default(uuid()) @db.Char(36)
+  short_code      String    @db.LongText
+  original_url    String    @db.LongText
+  user_id         String?   @db.Char(36)
+  created_at      DateTime  @default(now()) @db.DateTime(3)
+  expires_at      DateTime? @db.DateTime(3)
+  clicks          Int       @default(0)
+  is_active       Boolean   @default(true)
+  custom_code     Boolean   @default(false)
+  title           String?   @db.LongText
+  tags            Json?
   last_checked_at DateTime? @db.DateTime(3)
-  is_healthy Boolean? @default(true)
-  header String? @db.LongText
-  user_tracking Boolean? @default(true)
-  code_length Int? @default(6)
-  domain String? @db.LongText
+  is_healthy      Boolean?  @default(true)
+  header          String?   @db.LongText
+  user_tracking   Boolean?  @default(true)
+  code_length     Int?      @default(6)
+  domain          String?   @db.LongText
+
   @@map("url_mappings")
 }
 
 model user_consent {
-  id String @id @default(uuid()) @db.Char(36)
-  session_id String @db.LongText
-  user_id String? @db.Char(36)
-  essential Boolean @default(true)
-  analytics Boolean @default(false)
-  marketing Boolean @default(false)
-  prefill Boolean @default(false)
-  user_agent String? @db.LongText
+  id         String   @id @default(uuid()) @db.Char(36)
+  session_id String   @db.LongText
+  user_id    String?  @db.Char(36)
+  essential  Boolean  @default(true)
+  analytics  Boolean  @default(false)
+  marketing  Boolean  @default(false)
+  prefill    Boolean  @default(false)
+  user_agent String?  @db.LongText
   created_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("user_consent")
 }
 
 model user_documents {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  doc_type String @db.LongText
-  file_name String @db.LongText
-  file_url String @db.LongText
-  file_size Int? @default(0)
+  id         String   @id @default(uuid()) @db.Char(36)
+  user_id    String   @db.Char(36)
+  doc_type   String   @db.LongText
+  file_name  String   @db.LongText
+  file_url   String   @db.LongText
+  file_size  Int?     @default(0)
   created_at DateTime @default(now()) @db.DateTime(3)
   updated_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("user_documents")
 }
 
 model user_education_entries {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  level String @db.LongText
-  degree String? @db.LongText
-  specialization String? @db.LongText
-  institution String? @db.LongText
-  board_university String? @db.LongText
-  start_year String? @db.LongText
-  end_year String? @db.LongText
-  marks_type String? @db.LongText
-  percentage_cgpa String? @db.LongText
-  status String? @db.LongText
-  notes String? @db.LongText
-  sort_order Int @default(0)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  updated_at DateTime @default(now()) @db.DateTime(3)
+  id               String   @id @default(uuid()) @db.Char(36)
+  user_id          String   @db.Char(36)
+  level            String   @db.LongText
+  degree           String?  @db.LongText
+  specialization   String?  @db.LongText
+  institution      String?  @db.LongText
+  board_university String?  @db.LongText
+  start_year       String?  @db.LongText
+  end_year         String?  @db.LongText
+  marks_type       String?  @db.LongText
+  percentage_cgpa  String?  @db.LongText
+  status           String?  @db.LongText
+  notes            String?  @db.LongText
+  sort_order       Int      @default(0)
+  created_at       DateTime @default(now()) @db.DateTime(3)
+  updated_at       DateTime @default(now()) @db.DateTime(3)
+
   @@map("user_education_entries")
 }
 
 model user_events {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String? @db.Char(36)
-  session_id String @db.LongText
-  event_type String @db.LongText
-  path String? @db.LongText
-  element String? @db.LongText
-  metadata Json?
-  user_agent String? @db.LongText
-  referrer String? @db.LongText
+  id         String   @id @default(uuid()) @db.Char(36)
+  user_id    String?  @db.Char(36)
+  session_id String   @db.LongText
+  event_type String   @db.LongText
+  path       String?  @db.LongText
+  element    String?  @db.LongText
+  metadata   Json?
+  user_agent String?  @db.LongText
+  referrer   String?  @db.LongText
   created_at DateTime @default(now()) @db.DateTime(3)
-  x Int?
-  y Int?
-  vw Int?
-  vh Int?
+  x          Int?
+  y          Int?
+  vw         Int?
+  vh         Int?
+
   @@map("user_events")
 }
 
 model user_favorites {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  college_slug String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id           String   @id @default(uuid()) @db.Char(36)
+  user_id      String   @db.Char(36)
+  college_slug String   @db.LongText
+  created_at   DateTime @default(now()) @db.DateTime(3)
+
   @@map("user_favorites")
 }
 
 model user_permissions {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  module String? @db.LongText
-  action String? @db.LongText
-  allow Boolean? @default(true)
-  created_at DateTime @default(now()) @db.DateTime(3)
-  resource String @db.LongText
-  can_view Boolean @default(true)
-  can_create Boolean @default(false)
-  can_edit Boolean @default(false)
-  can_delete Boolean @default(false)
-  scope String @db.LongText
-  updated_at DateTime @default(now()) @db.DateTime(3)
-  can_publish Boolean @default(false)
+  id          String   @id @default(uuid()) @db.Char(36)
+  user_id     String   @db.Char(36)
+  module      String?  @db.LongText
+  action      String?  @db.LongText
+  allow       Boolean? @default(true)
+  created_at  DateTime @default(now()) @db.DateTime(3)
+  resource    String   @db.LongText
+  can_view    Boolean  @default(true)
+  can_create  Boolean  @default(false)
+  can_edit    Boolean  @default(false)
+  can_delete  Boolean  @default(false)
+  scope       String   @db.LongText
+  updated_at  DateTime @default(now()) @db.DateTime(3)
+  can_publish Boolean  @default(false)
+
   @@map("user_permissions")
 }
 
 model user_roles {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  role String @db.LongText
+  id         String   @id @default(uuid()) @db.Char(36)
+  user_id    String   @db.Char(36)
+  role       String   @db.LongText
   created_at DateTime @default(now()) @db.DateTime(3)
+
   @@map("user_roles")
 }
 
 model user_sessions {
-  id String @id @default(uuid()) @db.Char(36)
-  session_id String @db.LongText
-  user_id String? @db.Char(36)
-  started_at DateTime @default(now()) @db.DateTime(3)
-  last_seen_at DateTime @default(now()) @db.DateTime(3)
-  pages_visited Int @default(0)
-  total_events Int @default(0)
-  device String? @db.LongText
-  last_path String? @db.LongText
-  referrer String? @db.LongText
-  utm Json?
-  ai_summary String? @db.LongText
-  ai_summary_at DateTime? @db.DateTime(3)
-  lead_id String? @db.Char(36)
-  lead_name String? @db.LongText
-  lead_email String? @db.LongText
-  lead_phone String? @db.LongText
-  viewport String? @db.LongText
-  screen String? @db.LongText
-  language String? @db.LongText
-  timezone String? @db.LongText
-  total_time_ms BigInt? @default(0)
-  max_scroll_pct Int? @default(0)
-  country String? @db.LongText
-  city String? @db.LongText
-  opt_in Json?
-  entry_path String? @db.LongText
-  exit_path String? @db.LongText
-  conversion Boolean? @default(false)
+  id             String    @id @default(uuid()) @db.Char(36)
+  session_id     String    @db.LongText
+  user_id        String?   @db.Char(36)
+  started_at     DateTime  @default(now()) @db.DateTime(3)
+  last_seen_at   DateTime  @default(now()) @db.DateTime(3)
+  pages_visited  Int       @default(0)
+  total_events   Int       @default(0)
+  device         String?   @db.LongText
+  last_path      String?   @db.LongText
+  referrer       String?   @db.LongText
+  utm            Json?
+  ai_summary     String?   @db.LongText
+  ai_summary_at  DateTime? @db.DateTime(3)
+  lead_id        String?   @db.Char(36)
+  lead_name      String?   @db.LongText
+  lead_email     String?   @db.LongText
+  lead_phone     String?   @db.LongText
+  viewport       String?   @db.LongText
+  screen         String?   @db.LongText
+  language       String?   @db.LongText
+  timezone       String?   @db.LongText
+  total_time_ms  BigInt?   @default(0)
+  max_scroll_pct Int?      @default(0)
+  country        String?   @db.LongText
+  city           String?   @db.LongText
+  opt_in         Json?
+  entry_path     String?   @db.LongText
+  exit_path      String?   @db.LongText
+  conversion     Boolean?  @default(false)
+
   @@map("user_sessions")
 }
 
 model wallet_transactions {
-  id String @id @default(uuid()) @db.Char(36)
-  user_id String @db.Char(36)
-  type String @db.LongText
-  amount Decimal @default(0) @db.Decimal(65, 20)
-  description String? @db.LongText
-  referral_id String? @db.Char(36)
-  status String @db.LongText
-  created_at DateTime @default(now()) @db.DateTime(3)
+  id          String   @id @default(uuid()) @db.Char(36)
+  user_id     String   @db.Char(36)
+  type        String   @db.LongText
+  amount      Decimal  @default(0) @db.Decimal(65, 20)
+  description String?  @db.LongText
+  referral_id String?  @db.Char(36)
+  status      String   @db.LongText
+  created_at  DateTime @default(now()) @db.DateTime(3)
+
   @@map("wallet_transactions")
 }

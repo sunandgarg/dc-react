@@ -86,7 +86,6 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({ phone: form.phone, action: "send", channel: otpChannel }),
       });
@@ -117,7 +116,6 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({ phone: form.phone, action: "resend", channel: otpChannel }),
       });
@@ -150,7 +148,6 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({ phone: form.phone, otp, token: otpToken, action: "verify", channel: otpChannel }),
       });
@@ -161,7 +158,6 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           name: form.name,

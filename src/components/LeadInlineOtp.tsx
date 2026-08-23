@@ -118,7 +118,6 @@ export function useInlineOtp(phone: string, formKey: string) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           phone: `+91${phoneAtSend}`,
@@ -155,7 +154,6 @@ export function useInlineOtp(phone: string, formKey: string) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           phone: `+91${normalizedPhone}`,

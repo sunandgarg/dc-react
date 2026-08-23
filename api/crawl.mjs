@@ -1,6 +1,4 @@
 const SITE_URL = "https://dekhocampus.com";
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "";
-const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "";
 const API_URL = (process.env.API_URL || process.env.VITE_API_URL || "").replace(/\/$/, "");
 
 const PRIVATE_PREFIXES = ["/admin", "/dashboard", "/auth", "/onboarding", "/target-dashboard", "/my-targets"];
@@ -76,12 +74,6 @@ function publicImage(value) {
   return /^https?:\/\//i.test(image) ? image : "";
 }
 
-function apiHeaders() {
-  const headers = { apikey: SUPABASE_KEY };
-  if (SUPABASE_KEY && !/^sb_publishable_/i.test(SUPABASE_KEY)) headers.Authorization = `Bearer ${SUPABASE_KEY}`;
-  return headers;
-}
-
 function parseSlugWithId(param = "") {
   const value = decodeURIComponent(String(param || "")).trim();
   const match = value.match(/^(.*?)-(\d+)$/);
@@ -90,14 +82,13 @@ function parseSlugWithId(param = "") {
 }
 
 async function fetchRows(config, slug, limit = 1) {
-  if (!API_URL && (!SUPABASE_URL || !SUPABASE_KEY)) return [];
+  if (!API_URL) return [];
   const parsed = slug ? parseSlugWithId(slug) : { slug: "" };
   const query = new URLSearchParams({ select: slug ? config.detailSelect : config.listSelect, is_active: "eq.true", limit: String(limit) });
   if (slug && parsed.shortId) query.set("or", `(short_id.eq.${parsed.shortId},slug.eq.${parsed.slug})`);
   else if (slug) query.set("slug", `eq.${parsed.slug}`);
   else query.set("order", `${config.name}.asc`);
-  const dataBase = API_URL ? `${API_URL}/v1/rest` : `${SUPABASE_URL.replace(/\/$/, "")}/rest/v1`;
-  const response = await fetch(`${dataBase}/${config.table}?${query}`, { headers: API_URL ? {} : apiHeaders() });
+  const response = await fetch(`${API_URL}/v1/rest/${config.table}?${query}`);
   if (!response.ok) return [];
   return response.json();
 }

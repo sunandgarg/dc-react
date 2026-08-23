@@ -46,4 +46,4 @@ Auth, Storage, Realtime, and unported Edge Functions remain on Supabase during t
 
 ## Deployment
 
-The Dockerfile and `infra/template.yaml` support a container or AWS Lambda/API Gateway deployment. Supply `DATABASE_URL`, `SUPABASE_FUNCTIONS_FALLBACK_URL`, `SUPABASE_PUBLISHABLE_KEY`, and allowed production origins as server-side secrets. Do not switch production traffic until the blockers in the migration status document are closed.
+The Dockerfile supports the DigitalOcean App Platform deployment in `.do/app.yaml`. Supply `DATABASE_URL`, `AUTH_JWT_SECRET`, `SUPABASE_STORAGE_URL`, `SUPABASE_STORAGE_SERVICE_KEY`, and allowed production origins as server-side variables. Do not switch production traffic until the blockers in the migration status document are closed. `infra/template.yaml` remains only as historical AWS reference material.
