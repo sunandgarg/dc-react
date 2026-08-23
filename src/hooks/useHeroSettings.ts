@@ -26,7 +26,7 @@ const numericHeroFields = [
   "rotation_seconds",
 ] as const;
 
-function normalizeHeroSettings(settings: HeroSettings | null): HeroSettings | null {
+export function normalizeHeroSettings(settings: HeroSettings | null): HeroSettings | null {
   if (!settings) return null;
 
   return numericHeroFields.reduce(
@@ -52,6 +52,7 @@ export function useHeroSettings() {
       if (error) throw error;
       return normalizeHeroSettings(data as HeroSettings | null);
     },
+    select: normalizeHeroSettings,
     staleTime: 5 * 60_000,
     gcTime: 30 * 60_000,
   });
