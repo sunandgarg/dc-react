@@ -83,7 +83,7 @@ jobs:
         run: |
           APP_ID=$(doctl apps list --output json | jq -r --arg name "$DO_APP_NAME" '.[] | select(.spec.name == $name) | .id' | head -1)
           if [ -z "$APP_ID" ]; then
-            APP_ID=$(doctl apps create --spec /tmp/dc-react-app.yaml --output json | jq -r 'if type == "array" then .[0].id else .id end')
+            APP_ID=$(doctl apps create --spec /tmp/dc-react-app.yaml --output json | jq -r 'if type == "array" then .[0].id else (.app.id // .id) end')
           else
             doctl apps update "$APP_ID" --spec /tmp/dc-react-app.yaml --output json >/dev/null
           fi

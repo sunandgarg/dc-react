@@ -32,10 +32,9 @@ ingress:
           prefix: /
 services:
   - name: api
-    github:
-      repo: sunandgarg/dc-react
+    git:
+      repo_clone_url: https://github.com/sunandgarg/dc-react.git
       branch: main
-      deploy_on_push: true
     source_dir: /
     dockerfile_path: backend/Dockerfile
     http_port: 8787
@@ -59,10 +58,9 @@ services:
         value: https://kozdctbbvrnyddlftmvf.supabase.co
 static_sites:
   - name: website
-    github:
-      repo: sunandgarg/dc-react
+    git:
+      repo_clone_url: https://github.com/sunandgarg/dc-react.git
       branch: main
-      deploy_on_push: true
     source_dir: /
     environment_slug: node-js
     build_command: npm ci && npm run build
