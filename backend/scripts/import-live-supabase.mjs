@@ -51,11 +51,14 @@ function sanitizeRow(table, row) {
   let sanitized = row;
   if (table === "otp_providers") sanitized = { ...sanitized, api_key: "", api_secret: "" };
   if (table === "exams" && sanitized.slug) {
-    const existingId = duplicateExamSlugs.get(sanitized.slug);
+    // MySQL's default production collation is case-insensitive while the
+    // Supabase source can contain case/whitespace variants of the same slug.
+    const slugKey = String(sanitized.slug).trim().toLowerCase();
+    const existingId = duplicateExamSlugs.get(slugKey);
     if (existingId && existingId !== sanitized.id) {
-      sanitized = { ...sanitized, slug: `${sanitized.slug}-legacy-${sanitized.id.slice(0, 8)}` };
+      sanitized = { ...sanitized, slug: `${slugKey}-legacy-${sanitized.id.slice(0, 8)}` };
     } else if (!existingId) {
-      duplicateExamSlugs.set(sanitized.slug, sanitized.id);
+      duplicateExamSlugs.set(slugKey, sanitized.id);
     }
   }
   return sanitized;
