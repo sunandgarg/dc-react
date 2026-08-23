@@ -41,8 +41,8 @@ jobs:
 
           const phones = String(process.env.ADMIN_PHONES || '')
             .split(',')
-            .map((value) => `+91${value.replace(/\\D/g, '').slice(-10)}`)
-            .filter((phone) => /^\\+91[6-9]\\d{9}$/.test(phone));
+            .map((value) => `+91${value.replace(/\D/g, '').slice(-10)}`)
+            .filter((phone) => /^\+91[6-9]\d{9}$/.test(phone));
           if (!phones.length) throw new Error('At least one valid Indian mobile number is required');
 
           for (const phone of [...new Set(phones)]) {
@@ -74,4 +74,5 @@ jobs:
           test -n "$task_arn" && test "$task_arn" != "None"
           aws ecs wait tasks-stopped --cluster "$CLUSTER" --tasks "$task_arn"
           exit_code="$(aws ecs describe-tasks --cluster "$CLUSTER" --tasks "$task_arn" --query 'tasks[0].containers[?name==`api`].exitCode | [0]' --output text)"
+          aws logs tail /ecs/dc-react/api --since 15m --format short
           test "$exit_code" = "0"
