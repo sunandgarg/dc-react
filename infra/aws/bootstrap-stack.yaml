@@ -9,6 +9,9 @@ Parameters:
   GitHubRepository:
     Type: String
     Default: sunandgarg/dc-react
+  GitHubRepositorySubject:
+    Type: String
+    Default: sunandgarg@90310674/dc-react@1342626234
   ExistingGitHubOidcProviderArn:
     Type: String
     Default: ''
@@ -46,7 +49,9 @@ Resources:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
               StringLike:
-                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubRepository}:*'
+                token.actions.githubusercontent.com:sub:
+                  - !Sub 'repo:${GitHubRepository}:*'
+                  - !Sub 'repo:${GitHubRepositorySubject}:*'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/PowerUserAccess
       Policies:
