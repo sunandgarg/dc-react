@@ -394,7 +394,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               <Button size="sm" variant="destructive" onClick={() => controlRun("abort")} disabled={busy} className="gap-2"><OctagonX className="h-4 w-4" /> Abort now</Button>
             </div>
           ) : (
-            <p className="mt-3 text-xs text-amber-700">Lifecycle controls become active after the pending Supabase migration and function deployment.</p>
+            <p className="mt-3 text-xs text-amber-700">Lifecycle controls become active after the pending Node function deployment.</p>
           )}
           {!!currentRun.selected_topics?.length && <div className="mt-3 flex flex-wrap gap-2">{currentRun.selected_topics.map((topic, index) => <Badge key={`${topic.title}-${index}`} variant="secondary">{topic.title}</Badge>)}</div>}
         </div>
@@ -432,7 +432,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
 
       {!supportsAdvancedSettings && (
         <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-100">
-          Advanced editorial, lifecycle, template, and logo controls are ready in this release but will remain locked until the production Supabase migration and Edge Functions are deployed.
+          Advanced editorial, lifecycle, template, and logo controls are ready in this release but will remain locked until the production MySQL migration and Node functions are deployed.
         </div>
       )}
 

@@ -1,4 +1,4 @@
-// Single edge-function call that replaces ~8 separate Supabase queries on
+// Single Node function call that replaces roughly eight separate REST queries on
 // first paint. Kicked off at module-import time so the network round-trip
 // happens IN PARALLEL with React's first render, not after.
 import { QueryClient } from "@tanstack/react-query";

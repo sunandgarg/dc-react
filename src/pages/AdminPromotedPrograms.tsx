@@ -176,7 +176,7 @@ export default function AdminPromotedPrograms() {
       </p>
       {!supportsMultiCategory && (
         <div className="mb-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-100">
-          Multi-category assignment is ready in code and will activate after the pending production Supabase migration. Primary categories continue to work now.
+          Multi-category assignment is ready in code and will activate after the pending production MySQL migration. Primary categories continue to work now.
         </div>
       )}
 

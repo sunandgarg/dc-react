@@ -58,10 +58,10 @@ export function trackEvent(name: LpEventName | string, params: AnalyticsParams =
     console.debug("[analytics]", name, payload);
   }
 
-  // Persist lead-popup funnel events to Supabase so admins can analyze them.
+  // Persist lead-popup funnel events through the Node/MySQL compatibility client.
   try {
     if (typeof name === "string" && name.startsWith("lp_popup_")) {
-      // Lazy import to keep this module free of supabase coupling at top.
+      // Lazy import keeps the compatibility client out of the initial bundle path.
       import("@/integrations/supabase/client").then(({ supabase }) => {
         let sid = "anon";
         try { sid = localStorage.getItem("dc_session_id") || "anon"; } catch {}

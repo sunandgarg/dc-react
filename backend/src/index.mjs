@@ -207,8 +207,8 @@ export async function handleRequest(request) {
     }
     return json(404, { error: "Route not found", requestId }, requestId, request);
   } catch (error) {
-    console.error(`[${requestId}]`, error);
     const status = Number(error?.status || 400);
+    if (status >= 500 || !error?.status) console.error(`[${requestId}]`, error);
     return json(status, { code: error?.code || "NODE_API_ERROR", message: error instanceof Error ? error.message : "Request failed", requestId }, requestId, request);
   }
 }

@@ -14,7 +14,7 @@ export interface UserProfilePrefill {
 /**
  * Fetches the logged-in user's profile and returns a prefill-ready object
  * for any lead / application form. Cached aggressively (sessions persist for
- * months thanks to Supabase auth localStorage + autoRefreshToken).
+ * months thanks to native auth localStorage + automatic token refresh).
  */
 export function useUserProfile() {
   const { user } = useAuth();

@@ -13,14 +13,14 @@ const sections = {
 **Styling:** Tailwind CSS + shadcn/ui component library
 **State Management:** TanStack React Query (server state caching)
 **Routing:** React Router v6 with lazy-loaded code splitting
-**Backend:** Lovable Cloud (Supabase-powered PostgreSQL + Edge Functions)
-**AI Integration:** Google Gemini Flash via Lovable AI Gateway (streaming SSE)
+**Backend:** Node.js + Prisma + MySQL 8
+**AI Integration:** Provider-backed native Node handlers (production configuration pending)
 **Animations:** Framer Motion for all transitions and micro-interactions`,
     },
     {
       icon: Database,
       title: "Database Schema",
-      content: `**10 tables** powering the entire platform:
+      content: `**150 base tables** power the complete platform. Core tables include:
 
 | Table | Purpose | Key Fields |
 |-------|---------|------------|
@@ -56,17 +56,19 @@ src/
 │   ├── [Entity]Detail  # Detail pages with scroll-spy sections
 │   └── Admin*          # Admin panel pages
 ├── hooks/              # Custom React hooks
-│   ├── use[Entity]Data # Supabase query hooks (React Query)
+│   ├── use[Entity]Data # Node/MySQL query hooks (React Query)
 │   ├── useAds          # Ad targeting & delivery hook
 │   ├── useAuth         # Authentication context
 │   └── useFeaturedColleges # Featured ordering hook
 ├── data/               # Static fallback data
-├── integrations/       # Supabase client & auto-generated types
+├── integrations/       # Node API compatibility client & generated schema types
 └── assets/             # Images and static files
 
-supabase/functions/
-├── ai-counselor/       # AI chat with streaming SSE
-└── save-lead/          # Lead persistence endpoint
+backend/src/
+├── server.mjs          # Node HTTP server
+├── rest.mjs            # MySQL-backed REST compatibility API
+├── auth.mjs            # Native access/refresh tokens and OTP
+└── storage.mjs         # Authorized Supabase Storage proxy
 \`\`\``,
     },
     {
@@ -105,10 +107,10 @@ All routes use **lazy loading** via \`React.lazy()\` for optimal bundle splittin
       content: `**Flow:**
 1. User types query in hero search → clicks "Ask AI"
 2. \`AILeadForm\` modal captures name, course, state, city
-3. Lead saved to \`leads\` table via \`save-lead\` edge function
+3. Lead saved to \`leads\` table via the native \`save-lead\` Node handler
 4. \`AIChatFullScreen\` opens with context-aware greeting
-5. User query sent to \`ai-counselor\` edge function
-6. Edge function calls Lovable AI Gateway (Gemini Flash)
+5. User query sent to the \`ai-counselor\` Node handler (pending native port)
+6. The configured provider supplies the AI response
 7. Response streamed back via **Server-Sent Events (SSE)**
 8. Frontend parses SSE chunks and renders markdown in real-time
 

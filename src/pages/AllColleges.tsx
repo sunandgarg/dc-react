@@ -190,7 +190,7 @@ export default function AllColleges() {
 
   const cities = selectedState ? (locations?.citiesByState[selectedState] || []) : [];
 
-  // Exact filters/search are applied by Supabase before each 50-card page is
+  // Exact filters/search are applied by the Node/MySQL API before each 50-card page is
   // transferred. Course/exam synonyms remain a cheap final client-side pass.
   const filtered = useMemo(() => {
     const query = debouncedSearch.toLowerCase();

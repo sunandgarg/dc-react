@@ -4,7 +4,11 @@ Last verified: 2026-08-23
 
 ## Current outcome
 
-Supabase Database, Auth, Realtime, and Edge Functions are no longer runtime destinations. The React application uses the Node API for data, auth, and functions; the Node API uses Prisma/MySQL. Supabase is retained only for file and image storage. Storage mutations pass through Node with native authorization and a server-only Supabase service key, while public asset URLs use Supabase's CDN directly.
+The checked-in React application uses the Node API for data and auth, and the Node API uses Prisma/MySQL. Supabase is retained only for file and image storage. Storage mutations pass through Node with native authorization and a server-only Supabase service key, while public asset URLs use Supabase's CDN directly. Unported function handlers and realtime behavior remain explicit gaps described below; they do not fall back to Supabase.
+
+The new stack is **not live on the public domain yet**. On 2026-08-23, `https://dekhocampus.com/` was still served by Apache/Next.js at `13.235.138.165`. The new stack's `/health`, `/v1/status`, and `/v1/rest/*` routes returned the old site's Next.js 404 page. Consequently, the colleges, courses, exams, and counts currently visible on the public domain come from that older deployment, not this repository's Node/MySQL runtime.
+
+The local MySQL database still contains the 2026-08-22 point-in-time import used to prove migration parity. Local counts are 13,016 colleges, 878 courses, and 240 exams. They are local MySQL rows, not live Supabase reads. A newly provisioned DigitalOcean database will be empty because the deployment setup applies schema/parity only and never runs the archived importer.
 
 The checked-in `supabase/`, `db-export/`, and historical migration utilities remain as read-only source/reference material. They are not called by the production build, server, database setup, or DigitalOcean deployment.
 
@@ -24,6 +28,11 @@ Per the latest direction, the DigitalOcean MySQL database will start empty. `npm
 - [x] Verified locally: health, MySQL access, OTP creation/exchange, session issuance, authenticated upload, and public download.
 - [x] Changed the default database setup to schema/parity only, with no old-data import.
 - [x] Added a DigitalOcean App Platform spec for the React static site, Node service, new managed MySQL attachment, health checks, routing, and automatic deploys from `sunandgarg/dc-react:main`.
+- [x] Fixed the App Platform Docker build context so the production parity step includes the tracked PostgreSQL schema reference and all recovered indexes.
+- [x] Changed sitemap entity discovery from Supabase Database to the Node/MySQL API; verified 237,993 URLs from the local imported MySQL snapshot.
+- [x] Verified a disposable empty MySQL database: 150 base tables, 337 indexes, 100 triggers, 2 views, all 149 REST resources, and native OTP/login/user/refresh/logout flows.
+- [x] Verified 114/114 Vitest tests, TypeScript, ESLint with zero errors, Prisma generation, and the production Vite build.
+- [x] Installed the missing Playwright test runner and Chromium, Firefox, and WebKit runtimes. All 33 runnable desktop/mobile checks pass across the three configured projects; 9 authenticated or data-dependent cases skip without their fixtures.
 - [x] Added production deployment instructions and required secret inventory in `docs/DIGITALOCEAN_DEPLOYMENT.md`.
 
 ## Completed but needing production verification
@@ -38,8 +47,8 @@ Per the latest direction, the DigitalOcean MySQL database will start empty. `npm
 ### 1. Paid DigitalOcean resources
 
 - **What is left:** create `dc-react-mysql` and the `dc-react` App Platform app; attach them to the existing `DekhoCampus` project. No DigitalOcean Spaces bucket is needed.
-- **Why not completed:** the signed-in account previously showed $0.00 credits/prepayment and the smallest MySQL option at **$15.15/month**. App Platform adds a separate recurring charge. Creating them begins billing and requires confirmation of the current checkout total.
-- **Required:** explicit approval of the displayed recurring cost immediately before pressing the create buttons.
+- **Why not completed:** no `doctl` authentication is available, and Codex cannot access the signed-in Chrome session because the ChatGPT browser extension/bridge is not installed or enabled in that profile. The previously observed checkout also creates recurring paid resources.
+- **Required:** enable the Codex browser extension in the signed-in Chrome profile and confirm the current recurring total shown before creation.
 - **Affected:** production database, public deployment, and durable uploads.
 - **Can the app safely run without it:** yes locally; no production URL or production database exists yet.
 - **Recommended next action:** approve the cost, then create MySQL first and App Platform second.
@@ -82,9 +91,9 @@ Per the latest direction, the DigitalOcean MySQL database will start empty. `npm
 
 ### 6. Production acceptance
 
-- **What is left:** verify the deployed health route, schema creation, empty-state pages, native login/refresh/logout, admin authorization, Supabase Storage uploads, CORS, every configured provider feature, and deploy-on-push.
+- **What is left:** verify the deployed health route, schema creation, empty-state pages, native login/refresh/logout, admin authorization, Supabase Storage uploads, CORS, every configured provider feature, and deploy-on-push. Run browser regression on desktop and mobile with production fixtures.
 - **Why not completed:** the paid infrastructure and provider credentials above do not exist yet.
-- **Required:** blockers 1, 2, and 5.
+- **Required:** blockers 1, 2, and 5, plus an authenticated administrator storage-state fixture and deterministic clean-database content fixtures for the currently skipped cases.
 - **Affected:** the complete production application.
 - **Can the app safely run without it:** local verification is safe; production approval is not possible yet.
 - **Recommended next action:** run the acceptance checklist immediately after the first deployment before attaching the public domain.
@@ -99,4 +108,4 @@ Per the latest direction, the DigitalOcean MySQL database will start empty. `npm
 6. Configure Google OAuth and remaining provider credentials.
 7. Port and contract-test the 24 remaining function handlers in the order listed above.
 8. Add native realtime transport and verify reconnect/authorization.
-9. Run the complete production acceptance suite, then attach DNS/domain traffic.
+9. Add clean production E2E fixtures, run the complete production acceptance suite, then attach DNS/domain traffic.

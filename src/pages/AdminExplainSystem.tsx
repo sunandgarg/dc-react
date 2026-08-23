@@ -142,16 +142,16 @@ function DeveloperView() {
         <h3 className="font-bold text-base mb-2">🏗️ Architecture Overview</h3>
         <ul className="list-disc pl-5 space-y-1.5 text-foreground/80">
           <li><b>Frontend:</b> React 18 + Vite + Tailwind + shadcn/ui. Routing via react-router-dom. State via TanStack Query + Context.</li>
-          <li><b>Backend:</b> Lovable Cloud (Supabase) - Postgres + RLS + Edge Functions (Deno).</li>
-          <li><b>Auth:</b> Mobile-only OTP via <code>send-otp</code> / <code>study-otp</code> edge functions; provider abstraction in <code>ai_providers</code> / <code>otp_providers</code> tables.</li>
-          <li><b>AI:</b> <code>ai-counselor</code> edge function → routes through admin-configured provider (Lovable AI Gateway by default) with college-priority context injected per request.</li>
-          <li><b>Logging:</b> Shared <code>Logger</code> class (<code>supabase/functions/_shared/logger.ts</code>) writes to console + <code>public.system_logs</code> table. Realtime channel pushes new rows to admin UI.</li>
+          <li><b>Backend:</b> Node.js + Prisma + MySQL 8, with table authorization enforced by the Node API.</li>
+          <li><b>Auth:</b> Native access/refresh tokens and mobile OTP via the <code>send-otp</code> and <code>phone-auth</code> Node handlers.</li>
+          <li><b>AI:</b> Provider-backed workflows are present in the UI but remain unavailable until their native Node handlers and provider credentials are deployed.</li>
+          <li><b>Logging:</b> Node request logs and the <code>system_logs</code> table are available. Live push updates remain pending native realtime transport.</li>
         </ul>
       </Card>
       <Card className="p-5">
         <h3 className="font-bold text-base mb-2">🔑 Key Boundaries & Data Flow</h3>
         <ol className="list-decimal pl-5 space-y-1.5 text-foreground/80">
-          <li><b>Lead capture →</b> <code>LeadCaptureForm</code> / <code>AILeadForm</code> → <code>save-lead</code> edge fn → <code>leads</code> table → <code>lp-dispatch-lead</code> for partner push.</li>
+          <li><b>Lead capture →</b> <code>LeadCaptureForm</code> / <code>AILeadForm</code> → native <code>save-lead</code> handler → <code>leads</code> table → <code>lp-dispatch-lead</code> for partner push.</li>
           <li><b>OTP →</b> <code>useAuth</code> → <code>send-otp</code> (provider chosen from <code>otp_providers</code> active row) → SMS/WhatsApp gateway → verify on submit.</li>
           <li><b>AI chat →</b> <code>AIChatFullScreen</code> → POST <code>/ai-counselor</code> with full message history → SSE stream → markdown render.</li>
           <li><b>Eligibility / Predictor →</b> Page form → <code>check-eligibility</code> / <code>predict-colleges</code> → returns ranked colleges from DB + general-knowledge fallback.</li>
@@ -160,10 +160,11 @@ function DeveloperView() {
       </Card>
       <Card className="p-5">
         <h3 className="font-bold text-base mb-2">🧱 Tables Worth Knowing</h3>
-        <p className="text-foreground/80"><code>colleges, courses, exams, articles, leads, user_roles, ai_providers, otp_providers, system_logs, user_intent_events, featured_colleges, promoted_programs, hero_banners, also_check_modules, ads, popup_events</code> - all under RLS. Admin = security-definer <code>has_role()</code> check.</p>
+        <p className="text-foreground/80"><code>colleges, courses, exams, articles, leads, user_roles, ai_providers, otp_providers, system_logs, user_intent_events, featured_colleges, promoted_programs, hero_banners, also_check_modules, ads, popup_events</code> - protected by Node resource policies. Administrator access requires an <code>admin</code> row in <code>user_roles</code>.</p>
       </Card>
       <Card className="p-5">
-        <h3 className="font-bold text-base mb-2">⚙️ Edge Functions (20+)</h3>
+        <h3 className="font-bold text-base mb-2">⚙️ Node Functions</h3>
+        <p className="mb-2 text-foreground/80">Native now: <code>send-otp</code>, <code>phone-auth</code>, <code>bootstrap</code>, and <code>save-lead</code>. The workflows below are migration inventory and remain unavailable until ported.</p>
         <p className="text-foreground/80 font-mono text-xs">
           ai-counselor · send-otp · study-otp · save-lead · bootstrap · check-eligibility · predict-colleges ·
           process-lead · process-queue · receive-lead · push-receive-lead · lp-dispatch-lead · lp-multi-push ·

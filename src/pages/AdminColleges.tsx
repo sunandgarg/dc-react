@@ -274,7 +274,7 @@ export default function AdminColleges() {
         <div className="flex items-center justify-between border-b border-border bg-muted/30 px-4 py-3">
           <div>
             <h3 className="text-sm font-bold text-foreground">College records</h3>
-            <p className="text-xs text-muted-foreground">Server-paginated directly from Supabase - no 1,000-row cap</p>
+            <p className="text-xs text-muted-foreground">Server-paginated from the Node/MySQL API - no 1,000-row cap</p>
           </div>
           {listQuery.isFetching && <span className="inline-flex items-center gap-1.5 text-xs text-primary"><RefreshCw className="h-3.5 w-3.5 animate-spin" /> Updating</span>}
         </div>

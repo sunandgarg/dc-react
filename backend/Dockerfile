@@ -1,11 +1,12 @@
 FROM node:20-alpine
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-COPY prisma ./prisma
+COPY backend/package.json backend/package-lock.json ./
+COPY backend/prisma ./prisma
 RUN npm ci && DATABASE_URL=mysql://placeholder:placeholder@127.0.0.1:3306/placeholder npx prisma generate
 
-COPY scripts ./scripts
-COPY src ./src
+COPY backend/scripts ./scripts
+COPY backend/src ./src
+COPY db-export/full_schema.sql /db-export/full_schema.sql
 EXPOSE 8787
 CMD ["sh", "-c", "npm run db:push && npm run db:parity && node src/server.mjs"]

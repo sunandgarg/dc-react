@@ -44,8 +44,7 @@ const uniqueIndexes = [
 
 // Public-schema relationships and delete actions recovered from the August 3
 // schema dump plus the later checked-in migrations. Auth-schema relationships
-// intentionally remain enforced by the Node authorization layer while Supabase
-// Auth is the identity provider.
+// are enforced by the native Node authorization layer.
 const foreignKeys = [
   ["ad_analytics_events", "ad_unit_id", "ad_units", "id", "CASCADE"],
   ["article_links", "article_id", "articles", "id", "CASCADE"],

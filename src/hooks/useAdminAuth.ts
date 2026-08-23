@@ -68,8 +68,8 @@ export function useAdminAuth(): AdminAuthState & { refetch: () => Promise<void> 
   // Track which user ID we've already checked to avoid redundant checks
   const checkedUserIdRef = useRef<string | null>(null);
   const isInitialCheckDoneRef = useRef(false);
-  // useAdminAuth is mounted by several components at the same time. Supabase
-  // reuses channels by topic, so a shared topic lets one hook subscribe before
+  // useAdminAuth is mounted by several components at the same time. The
+  // compatibility client reuses channels by topic, so a shared topic can subscribe before
   // another hook adds its postgres_changes callback, which throws and crashes
   // the React tree. Give every hook instance its own channel topic.
   const channelInstanceIdRef = useRef(Math.random().toString(36).slice(2));

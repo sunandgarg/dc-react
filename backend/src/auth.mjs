@@ -80,7 +80,6 @@ export async function sendPhoneOtp(request) {
   const recent = await prisma.app_auth_otps.findFirst({ where: { phone, created_at: { gt: new Date(Date.now() - 45_000) } }, orderBy: { created_at: "desc" } });
   if (recent) throw Object.assign(new Error("Please wait before requesting another OTP"), { status: 429, code: "OTP_RATE_LIMIT" });
   const otp = String(randomInt(100000, 1000000));
-  await prisma.app_auth_otps.create({ data: { id: randomUUID(), phone, otp_hash: otpDigest(phone, otp), expires_at: new Date(Date.now() + 10 * 60_000) } });
   const webhook = String(process.env.SMS_WEBHOOK_URL || "").trim();
   if (webhook) {
     const response = await fetch(webhook, { method: "POST", headers: { "content-type": "application/json", ...(process.env.SMS_WEBHOOK_BEARER_TOKEN ? { authorization: `Bearer ${process.env.SMS_WEBHOOK_BEARER_TOKEN}` } : {}) }, body: JSON.stringify({ phone, message: `Your DekhoCampus verification code is ${otp}. It expires in 10 minutes.` }) });
@@ -88,6 +87,7 @@ export async function sendPhoneOtp(request) {
   } else if (process.env.NODE_ENV === "production") {
     throw Object.assign(new Error("SMS provider is not configured"), { status: 503, code: "SMS_NOT_CONFIGURED" });
   }
+  await prisma.app_auth_otps.create({ data: { id: randomUUID(), phone, otp_hash: otpDigest(phone, otp), expires_at: new Date(Date.now() + 10 * 60_000) } });
   return { success: true, ...(process.env.NODE_ENV === "production" ? {} : { development_otp: otp }) };
 }
 
@@ -115,7 +115,16 @@ export async function handleAuth(request) {
     if (!user) return { status: 401, body: { code: "bad_jwt", msg: "Invalid session" } };
     return { status: 200, body: authUser(user) };
   }
-  if (url.pathname === "/auth/v1/logout" && request.method === "POST") return { status: 204, body: null };
+  if (url.pathname === "/auth/v1/logout" && request.method === "POST") {
+    const user = await userFromRequest(request);
+    if (user) {
+      await prisma.app_auth_refresh_tokens.updateMany({
+        where: { user_id: user.id, revoked_at: null },
+        data: { revoked_at: new Date() },
+      });
+    }
+    return { status: 204, body: null };
+  }
   if (url.pathname === "/auth/v1/token" && request.method === "POST" && url.searchParams.get("grant_type") === "refresh_token") {
     const body = await request.json().catch(() => ({}));
     const row = await prisma.app_auth_refresh_tokens.findUnique({ where: { token_hash: digest(String(body.refresh_token || "")) } });

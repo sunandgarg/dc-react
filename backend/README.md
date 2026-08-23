@@ -11,15 +11,14 @@ cp backend/.env.example backend/.env.local
 npm --prefix backend install
 npm --prefix backend run prisma:generate
 npm --prefix backend run db:push
-npm --prefix backend run db:import
 npm --prefix backend run db:parity
 npm --prefix backend run dev
 ```
 
-The importer reads the ignored JSON exports under `work/supabase-data`. The parity step also recovers compatible indexes, foreign keys, integrity triggers, and views from the tracked PostgreSQL schema reference and later migrations. Generate fresh data exports with a server-only Supabase secret:
+The default setup creates an empty MySQL database. The parity step recovers compatible indexes, foreign keys, integrity triggers, and views from the tracked PostgreSQL schema reference and later migrations. The archived Supabase importer is retained only for an explicitly requested historical restore:
 
 ```sh
-node backend/scripts/export-supabase-rest.mjs
+npm run db:import:supabase-archive
 ```
 
 Never place a Supabase secret, service-role key, or MySQL password in a `VITE_*` variable.
@@ -30,19 +29,18 @@ Never place a Supabase secret, service-role key, or MySQL password in a `VITE_*`
 - `/v1/rest/:table` for compatible table reads and mutations
 - read-only MySQL views at `/v1/rest/leads_daily_business_rollup` and `/v1/rest/college_editorial_completion_progress`
 - `/v1/rest/rpc/:function` for the ported MySQL RPCs
-- `/v1/functions/:function` for the temporary Supabase Edge Function fallback
+- `/v1/functions/:function` for native Node function handlers
 
-Anonymous access is allowlisted for public content and submission tables. Other tables require a valid Supabase user token; administrator operations also require an `admin` row in `user_roles`.
+Anonymous access is allowlisted for public content and submission tables. Other tables require a valid native Node access token; administrator operations also require an `admin` row in `user_roles`.
 
 ## Frontend switch
 
 ```env
-VITE_USE_SUPABASE=no
-VITE_USE_MYSQL=yes
 VITE_API_URL=http://127.0.0.1:8787
+VITE_SUPABASE_STORAGE_URL=https://your-project.supabase.co
 ```
 
-Auth, Storage, Realtime, and unported Edge Functions remain on Supabase during the compatibility phase. Their exact status and production cutover requirements are tracked in `docs/MIGRATION_STATUS.md`.
+Database traffic, auth, and function calls use Node/MySQL. Only file and image storage uses Supabase. Unported function handlers return HTTP 501, and the remaining compatibility-channel calls do not provide live updates until native SSE or WebSocket support is added. Their exact status is tracked in `docs/MIGRATION_STATUS.md`.
 
 ## Deployment
 

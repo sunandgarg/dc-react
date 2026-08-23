@@ -39,18 +39,7 @@ import { SITE_URL } from "../src/lib/constant";
 const fileEnv = loadEnv(process.env.NODE_ENV || "production", process.cwd(), "");
 const env = { ...fileEnv, ...process.env };
 const BASE_URL = (env.SITEMAP_BASE_URL || SITE_URL).replace(/\/+$/, "");
-const SUPABASE_URL = env.SUPABASE_URL || env.VITE_SUPABASE_URL || "";
-// CI should provide a server-only key so RLS cannot silently remove public
-// detail pages from the generated sitemap. Local builds still fall back to the
-// publishable key and emit an explicit warning when no live rows are visible.
-const SUPABASE_KEY =
-  env.SUPABASE_SERVICE_ROLE_KEY ||
-  env.SUPABASE_SECRET_KEY ||
-  env.SUPABASE_ANON_KEY ||
-  env.SUPABASE_PUBLISHABLE_KEY ||
-  env.SUPABASE_PUBLISHER_KEY ||
-  env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  "";
+const API_URL = (env.SITEMAP_API_URL || env.VITE_API_URL || "").replace(/\/+$/, "");
 const SITEMAP_SEED_URL = env.SITEMAP_SEED_URL || "https://dekhocampus.com/sitemap.xml";
 const PAGE_SIZE = 1000;
 
@@ -63,25 +52,27 @@ interface SitemapEntry {
 
 const STATIC: SitemapEntry[] = STATIC_SITEMAP_ROUTES;
 
-function supabaseServerFetch(input: RequestInfo | URL, init?: RequestInit) {
+function nodeApiFetch(input: RequestInfo | URL, init?: RequestInit) {
+  const original = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+  const url = new URL(original);
   const headers = new Headers(init?.headers);
-  if (/^sb_(publishable|secret)_/i.test(SUPABASE_KEY) && headers.get("Authorization") === `Bearer ${SUPABASE_KEY}`) {
-    headers.delete("Authorization");
+  if (headers.get("Authorization") === "Bearer dc-sitemap-client") headers.delete("Authorization");
+  if (url.pathname.startsWith("/rest/v1/")) {
+    url.pathname = `/v1/rest/${url.pathname.slice("/rest/v1/".length)}`;
   }
-  headers.set("apikey", SUPABASE_KEY);
-  return fetch(input, { ...init, headers });
+  return fetch(url, { ...init, headers });
 }
 
-const sb = SUPABASE_URL && SUPABASE_KEY ? createClient(SUPABASE_URL, SUPABASE_KEY, {
-  global: { fetch: supabaseServerFetch },
+const api = API_URL ? createClient(API_URL, "dc-sitemap-client", {
+  global: { fetch: nodeApiFetch },
   auth: { persistSession: false, autoRefreshToken: false },
 }) : null;
 
 async function fetchRows(table: string, select: string, configure?: (query: any) => any): Promise<any[]> {
-  if (!sb) return [];
+  if (!api) return [];
   const rows: any[] = [];
   for (let from = 0; ; from += PAGE_SIZE) {
-    let query = sb.from(table).select(select);
+    let query = api.from(table).select(select);
     if (configure) query = configure(query);
     const { data, error } = await query.range(from, from + PAGE_SIZE - 1);
     if (error) {
@@ -358,7 +349,7 @@ function writeSitemaps(entries: SitemapEntry[]) {
   const liveEntityRowsVisible = Boolean(colleges.length || courses.length || exams.length || articles.length || premiumPrograms.length);
   const seedEntries = liveEntityRowsVisible ? [] : await fetchSeedEntries();
   if (!liveEntityRowsVisible) {
-    console.warn("[sitemap] no live entity rows are visible. Configure SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_SECRET_KEY) in the production build environment so RLS cannot omit detail URLs.");
+    console.warn("[sitemap] no live entity rows are visible. Configure SITEMAP_API_URL for the deployed Node/MySQL API so detail URLs can be generated.");
   }
   const all: SitemapEntry[] = [
     ...STATIC,
