@@ -51,6 +51,13 @@ jobs:
           npm run lint
           npm run build
 
+      - name: Show OIDC claims
+        run: |
+          curl --fail-with-body \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" \
+            | node -e "let body=''; process.stdin.on('data', d => body += d); process.stdin.on('end', () => { const token = JSON.parse(body).value; const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8')); console.log(JSON.stringify({ iss: claims.iss, aud: claims.aud, sub: claims.sub, repository: claims.repository, repository_owner: claims.repository_owner, ref: claims.ref, workflow_ref: claims.workflow_ref, job_workflow_ref: claims.job_workflow_ref }, null, 2)); });"
+
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
