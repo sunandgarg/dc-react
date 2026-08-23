@@ -83,7 +83,7 @@ jobs:
         run: |
           APP_ID=$(doctl apps list --output json | jq -r --arg name "$DO_APP_NAME" '.[] | select(.spec.name == $name) | .id' | head -1)
           if [ -z "$APP_ID" ]; then
-            APP_ID=$(doctl apps create --spec /tmp/dc-react-app.yaml --output json | jq -r '.[0].id')
+            APP_ID=$(doctl apps create --spec /tmp/dc-react-app.yaml --output json | jq -r 'if type == "array" then .[0].id else .id end')
           else
             doctl apps update "$APP_ID" --spec /tmp/dc-react-app.yaml --output json >/dev/null
           fi
@@ -202,16 +202,16 @@ jobs:
         env:
           APP_ID: ${{ steps.app.outputs.id }}
         run: |
-          DEPLOYMENT_ID=$(doctl apps create-deployment "$APP_ID" --output json | jq -r '.[0].id')
+          DEPLOYMENT_ID=$(doctl apps create-deployment "$APP_ID" --output json | jq -r 'if type == "array" then .[0].id else .id end')
           for attempt in $(seq 1 180); do
             DEPLOYMENT=$(doctl apps get-deployment "$APP_ID" "$DEPLOYMENT_ID" --output json)
-            PHASE=$(jq -r '.[0].phase' <<<"$DEPLOYMENT")
+            PHASE=$(jq -r 'if type == "array" then .[0].phase else .phase end' <<<"$DEPLOYMENT")
             [ "$PHASE" = "ACTIVE" ] && break
-            case "$PHASE" in ERROR|CANCELED|SUPERSEDED) echo "$DEPLOYMENT" | jq '.[0] | {phase,cause,progress}'; exit 1 ;; esac
+            case "$PHASE" in ERROR|CANCELED|SUPERSEDED) echo "$DEPLOYMENT" | jq '(if type == "array" then .[0] else . end) | {phase,cause,progress}'; exit 1 ;; esac
             [ "$attempt" -eq 180 ] && exit 1
             sleep 10
           done
-          URL=$(doctl apps get "$APP_ID" --output json | jq -r '.[0].live_url')
+          URL=$(doctl apps get "$APP_ID" --output json | jq -r 'if type == "array" then .[0].live_url else .live_url end')
           for attempt in $(seq 1 60); do
             HEALTH=$(curl --fail --silent --show-error --max-time 15 "$URL/health" || true)
             if jq -e '.ok == true and .database == "mysql" and .storage == true' <<<"$HEALTH" >/dev/null 2>&1; then
