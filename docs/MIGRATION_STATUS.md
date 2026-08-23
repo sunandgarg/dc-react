@@ -8,7 +8,7 @@ The checked-in React application sends database, auth, RPC, and function traffic
 
 No frontend code subscribes to Supabase Realtime. The three former subscriptions now poll Node/MySQL at controlled intervals. No unported Node function falls back to Supabase; it returns an explicit HTTP 501 response.
 
-The AWS production stack is deployed on ECS Fargate behind an ALB, with encrypted RDS MySQL, Secrets Manager, ECR, CloudWatch logs, deployment rollback, and GitHub OIDC. The live ALB health check verifies the Node API, MySQL connection, and Supabase Storage configuration.
+The AWS production database remains encrypted RDS MySQL with Secrets Manager, ECR, backups, and GitHub OIDC. The cost-optimized compute deployment uses one small EC2 host with a static address instead of an always-on ECS Fargate task and Application Load Balancer. The workflow verifies the replacement against MySQL and Supabase Storage before retiring the expensive compute path.
 
 The live Supabase database was imported into RDS by a one-time ECS task. Supabase Storage objects were intentionally not copied: existing file/image URLs remain valid and application records in MySQL retain those URLs. The historical duplicate CEED slug was preserved with an ID-based legacy slug because MySQL correctly enforces the application's unique slug constraint.
 

@@ -56,7 +56,20 @@ jobs:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Allow project instance-profile management
+        run: |
+          aws iam put-role-policy \
+            --role-name "$PROJECT_NAME-github-deploy" \
+            --policy-name ManageLowCostInstanceProfile \
+            --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["iam:AddRoleToInstanceProfile","iam:CreateInstanceProfile","iam:DeleteInstanceProfile","iam:GetInstanceProfile","iam:RemoveRoleFromInstanceProfile"],"Resource":"arn:aws:iam::*:instance-profile/dc-react-*"}]}'
+          sleep 10
+
       - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Validate CloudFormation templates
+        run: |
+          aws cloudformation validate-template --template-body file://infra/aws/app-stack.yaml >/dev/null
+          aws cloudformation validate-template --template-body file://infra/aws/low-cost-stack.yaml >/dev/null
 
       - name: Build and push immutable images
         id: images
@@ -69,10 +82,110 @@ jobs:
           docker build --file infra/aws/Dockerfile.web --build-arg VITE_SUPABASE_STORAGE_URL="$SUPABASE_STORAGE_URL" --tag "$WEB_IMAGE" .
           docker push "$API_IMAGE"
           docker push "$WEB_IMAGE"
+          docker tag "$API_IMAGE" "$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME-api:latest"
+          docker tag "$WEB_IMAGE" "$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME-web:latest"
+          docker push "$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME-api:latest"
+          docker push "$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME-web:latest"
           echo "api=$API_IMAGE" >> "$GITHUB_OUTPUT"
           echo "web=$WEB_IMAGE" >> "$GITHUB_OUTPUT"
 
-      - name: Deploy CloudFormation stack
+      - name: Read foundation resources
+        id: foundation
+        run: |
+          resource_id() {
+            aws cloudformation describe-stack-resource \
+              --stack-name "$PROJECT_NAME-production" \
+              --logical-resource-id "$1" \
+              --query 'StackResourceDetail.PhysicalResourceId' \
+              --output text
+          }
+          echo "vpc=$(resource_id Vpc)" >> "$GITHUB_OUTPUT"
+          echo "subnet=$(resource_id PublicSubnetA)" >> "$GITHUB_OUTPUT"
+          echo "database_sg=$(resource_id ServiceSecurityGroup)" >> "$GITHUB_OUTPUT"
+          echo "database_secret=$(resource_id DatabaseSecret)" >> "$GITHUB_OUTPUT"
+          echo "runtime_secret=$(resource_id RuntimeSecret)" >> "$GITHUB_OUTPUT"
+          echo "sms_secret=$(resource_id SmsSecret)" >> "$GITHUB_OUTPUT"
+          echo "database_host=$(aws rds describe-db-instances --db-instance-identifier "$PROJECT_NAME-mysql" --query 'DBInstances[0].Endpoint.Address' --output text)" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy low-cost application server
+        env:
+          ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          VPC_ID: ${{ steps.foundation.outputs.vpc }}
+          SUBNET_ID: ${{ steps.foundation.outputs.subnet }}
+          DATABASE_SG: ${{ steps.foundation.outputs.database_sg }}
+          DATABASE_HOST: ${{ steps.foundation.outputs.database_host }}
+          DATABASE_SECRET: ${{ steps.foundation.outputs.database_secret }}
+          RUNTIME_SECRET: ${{ steps.foundation.outputs.runtime_secret }}
+          SMS_SECRET: ${{ steps.foundation.outputs.sms_secret }}
+        run: |
+          aws cloudformation deploy \
+            --template-file infra/aws/low-cost-stack.yaml \
+            --stack-name "$PROJECT_NAME-low-cost-production" \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              ProjectName="$PROJECT_NAME" \
+              VpcId="$VPC_ID" \
+              SubnetId="$SUBNET_ID" \
+              DatabaseAccessSecurityGroupId="$DATABASE_SG" \
+              DatabaseHost="$DATABASE_HOST" \
+              DatabaseSecretArn="$DATABASE_SECRET" \
+              RuntimeSecretArn="$RUNTIME_SECRET" \
+              SmsSecretArn="$SMS_SECRET" \
+              ApiImageUri="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME-api:latest" \
+              WebImageUri="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$PROJECT_NAME-web:latest" \
+              SupabaseStorageUrl="$SUPABASE_STORAGE_URL" \
+              InstanceType=t3a.micro
+
+      - name: Refresh containers and verify low-cost server
+        id: lowcost
+        run: |
+          INSTANCE_ID=$(aws cloudformation describe-stacks \
+            --stack-name "$PROJECT_NAME-low-cost-production" \
+            --query 'Stacks[0].Outputs[?OutputKey==`InstanceId`].OutputValue' \
+            --output text)
+          PUBLIC_IP=$(aws cloudformation describe-stacks \
+            --stack-name "$PROJECT_NAME-low-cost-production" \
+            --query 'Stacks[0].Outputs[?OutputKey==`PublicIp`].OutputValue' \
+            --output text)
+          for attempt in $(seq 1 60); do
+            STATUS=$(aws ssm describe-instance-information \
+              --filters "Key=InstanceIds,Values=$INSTANCE_ID" \
+              --query 'InstanceInformationList[0].PingStatus' \
+              --output text 2>/dev/null || true)
+            [ "$STATUS" = "Online" ] && break
+            [ "$attempt" -eq 60 ] && exit 1
+            sleep 5
+          done
+          COMMAND_ID=$(aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name AWS-RunShellScript \
+            --parameters 'commands=["for attempt in $(seq 1 120); do if [ -x /opt/dc-react/deploy.sh ]; then sudo /opt/dc-react/deploy.sh; exit $?; fi; sleep 5; done; exit 1"]' \
+            --query 'Command.CommandId' \
+            --output text)
+          for attempt in $(seq 1 180); do
+            COMMAND_STATUS=$(aws ssm get-command-invocation \
+              --command-id "$COMMAND_ID" \
+              --instance-id "$INSTANCE_ID" \
+              --query Status \
+              --output text 2>/dev/null || true)
+            [ "$COMMAND_STATUS" = "Success" ] && break
+            case "$COMMAND_STATUS" in Failed|Cancelled|TimedOut) exit 1 ;; esac
+            [ "$attempt" -eq 180 ] && exit 1
+            sleep 5
+          done
+          aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "$INSTANCE_ID" --query '{Status:Status,Output:StandardOutputContent,Error:StandardErrorContent}'
+          for attempt in $(seq 1 60); do
+            HEALTH=$(curl --fail --silent --show-error --max-time 10 "http://$PUBLIC_IP/health" || true)
+            if printf '%s' "$HEALTH" | jq -e '.ok == true and .database == "mysql" and .storage == true' >/dev/null; then
+              echo "url=http://$PUBLIC_IP" >> "$GITHUB_OUTPUT"
+              break
+            fi
+            [ "$attempt" -eq 60 ] && exit 1
+            sleep 5
+          done
+
+      - name: Retire ECS and load balancer after verification
         env:
           API_IMAGE: ${{ steps.images.outputs.api }}
           WEB_IMAGE: ${{ steps.images.outputs.web }}
@@ -94,11 +207,16 @@ jobs:
               AuthJwtSecret="$AUTH_JWT_SECRET" \
               SupabaseStorageUrl="$SUPABASE_STORAGE_URL" \
               SupabaseStorageServiceKey="$SUPABASE_STORAGE_SERVICE_KEY" \
-              SmsFast2SmsApiKey="$SMS_FAST2SMS_API_KEY"
+              SmsFast2SmsApiKey="$SMS_FAST2SMS_API_KEY" \
+              LegacyComputeEnabled=false
+
+      - name: Verify optimized production endpoint
+        env:
+          APPLICATION_URL: ${{ steps.lowcost.outputs.url }}
+        run: |
+          curl --fail --silent --show-error "$APPLICATION_URL/health" | jq -e '.ok == true and .database == "mysql" and .storage == true'
 
       - name: Show deployment endpoint
-        run: |
-          aws cloudformation describe-stacks \
-            --stack-name "$PROJECT_NAME-production" \
-            --query 'Stacks[0].Outputs[?OutputKey==`ApplicationUrl`].OutputValue' \
-            --output text
+        env:
+          APPLICATION_URL: ${{ steps.lowcost.outputs.url }}
+        run: echo "$APPLICATION_URL"

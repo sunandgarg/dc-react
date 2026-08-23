@@ -41,10 +41,18 @@ Parameters:
     Type: String
     Default: 'false'
     AllowedValues: ['true', 'false']
+  LegacyComputeEnabled:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
 
 Conditions:
   HasCertificate: !Not [!Equals [!Ref CertificateArn, '']]
   UseMultiAZ: !Equals [!Ref DbMultiAZ, 'true']
+  UseLegacyCompute: !Equals [!Ref LegacyComputeEnabled, 'true']
+  UseLegacyComputeWithCertificate: !And
+    - !Condition UseLegacyCompute
+    - !Condition HasCertificate
 
 Resources:
   Vpc:
@@ -102,6 +110,7 @@ Resources:
 
   LoadBalancerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
+    Condition: UseLegacyCompute
     Properties:
       GroupDescription: Public web ingress
       VpcId: !Ref Vpc
@@ -123,10 +132,13 @@ Resources:
       GroupDescription: App tasks accept traffic only from the ALB
       VpcId: !Ref Vpc
       SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
-          SourceSecurityGroupId: !Ref LoadBalancerSecurityGroup
+        - !If
+          - UseLegacyCompute
+          - IpProtocol: tcp
+            FromPort: 8080
+            ToPort: 8080
+            SourceSecurityGroupId: !Ref LoadBalancerSecurityGroup
+          - !Ref AWS::NoValue
   DatabaseSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -321,6 +333,7 @@ Resources:
 
   LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Condition: UseLegacyCompute
     Properties:
       Scheme: internet-facing
       SecurityGroups: [!Ref LoadBalancerSecurityGroup]
@@ -328,6 +341,7 @@ Resources:
       Type: application
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Condition: UseLegacyCompute
     Properties:
       VpcId: !Ref Vpc
       TargetType: ip
@@ -343,6 +357,7 @@ Resources:
           Value: '30'
   HttpListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: UseLegacyCompute
     Properties:
       LoadBalancerArn: !Ref LoadBalancer
       Port: 80
@@ -356,7 +371,7 @@ Resources:
             TargetGroupArn: !Ref TargetGroup
   HttpsListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
-    Condition: HasCertificate
+    Condition: UseLegacyComputeWithCertificate
     Properties:
       LoadBalancerArn: !Ref LoadBalancer
       Port: 443
@@ -369,6 +384,7 @@ Resources:
           TargetGroupArn: !Ref TargetGroup
   Service:
     Type: AWS::ECS::Service
+    Condition: UseLegacyCompute
     DependsOn: HttpListener
     Properties:
       ServiceName: !Sub '${ProjectName}-web-api'
@@ -396,11 +412,13 @@ Resources:
 
 Outputs:
   ApplicationUrl:
+    Condition: UseLegacyCompute
     Value: !Sub
       - '${Scheme}://${DnsName}'
       - Scheme: !If [HasCertificate, https, http]
         DnsName: !GetAtt LoadBalancer.DNSName
   LoadBalancerDnsName:
+    Condition: UseLegacyCompute
     Value: !GetAtt LoadBalancer.DNSName
   ClusterName:
     Value: !Ref Cluster

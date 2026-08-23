@@ -67,12 +67,19 @@ Resources:
                   - iam:DeleteRolePolicy
                   - iam:DetachRolePolicy
                   - iam:GetRole
+                  - iam:AddRoleToInstanceProfile
+                  - iam:CreateInstanceProfile
+                  - iam:DeleteInstanceProfile
                   - iam:PassRole
                   - iam:PutRolePolicy
+                  - iam:GetInstanceProfile
+                  - iam:RemoveRoleFromInstanceProfile
                   - iam:TagRole
                   - iam:UntagRole
                   - iam:UpdateAssumeRolePolicy
-                Resource: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ProjectName}-*'
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ProjectName}-*'
+                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:instance-profile/${ProjectName}-*'
 
   ApiRepository:
     Type: AWS::ECR::Repository
