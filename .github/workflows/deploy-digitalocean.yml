@@ -1,0 +1,224 @@
+name: Deploy production to DigitalOcean
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: dc-react-digitalocean-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'ap-south-1' }}
+  DO_PROJECT_ID: 15095a2b-d1b1-4d71-b6b8-49c00c3c3ded
+  DO_APP_NAME: dc-react
+  DO_DATABASE_NAME: dc-react-mysql
+  SUPABASE_STORAGE_URL: ${{ vars.SUPABASE_STORAGE_URL || 'https://kozdctbbvrnyddlftmvf.supabase.co' }}
+
+jobs:
+  migrate-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Verify application
+        run: |
+          npm ci
+          npm --prefix backend ci
+          npm --prefix backend run prisma:generate
+          npm test
+          npm --prefix backend test
+          npm run lint
+          npm run build
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Render encrypted App Platform specification
+        env:
+          AUTH_JWT_SECRET: ${{ secrets.AUTH_JWT_SECRET }}
+          SUPABASE_STORAGE_SERVICE_KEY: ${{ secrets.SUPABASE_STORAGE_SERVICE_KEY }}
+          SMS_FAST2SMS_API_KEY: ${{ secrets.SMS_FAST2SMS_API_KEY }}
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          import os
+          import yaml
+
+          with open('.do/app.yaml', encoding='utf-8') as source:
+              spec = yaml.safe_load(source)
+
+          runtime = {
+              'AUTH_JWT_SECRET': os.environ['AUTH_JWT_SECRET'],
+              'SUPABASE_STORAGE_SERVICE_KEY': os.environ['SUPABASE_STORAGE_SERVICE_KEY'],
+              'SMS_FAST2SMS_API_KEY': os.environ['SMS_FAST2SMS_API_KEY'],
+              'CORS_ORIGIN': 'https://dekhocampus.com,https://www.dekhocampus.com',
+          }
+          spec['services'][0]['envs'].extend(
+              {'key': key, 'scope': 'RUN_TIME', 'type': 'SECRET', 'value': value}
+              for key, value in runtime.items()
+          )
+          with open('/tmp/dc-react-app.yaml', 'w', encoding='utf-8') as target:
+              yaml.safe_dump(spec, target, sort_keys=False)
+          PY
+
+      - name: Create or update DigitalOcean application
+        id: app
+        run: |
+          APP_ID=$(doctl apps list --output json | jq -r --arg name "$DO_APP_NAME" '.[] | select(.spec.name == $name) | .id' | head -1)
+          if [ -z "$APP_ID" ]; then
+            APP_ID=$(doctl apps create --spec /tmp/dc-react-app.yaml --output json | jq -r '.[0].id')
+          else
+            doctl apps update "$APP_ID" --spec /tmp/dc-react-app.yaml --output json >/dev/null
+          fi
+          doctl projects resources assign "$DO_PROJECT_ID" --resource "do:app:$APP_ID"
+          echo "id=$APP_ID" >> "$GITHUB_OUTPUT"
+          rm -f /tmp/dc-react-app.yaml
+
+      - name: Wait for managed MySQL
+        id: database
+        run: |
+          for attempt in $(seq 1 120); do
+            DATABASE_JSON=$(doctl databases list --output json)
+            DATABASE_ID=$(jq -r --arg name "$DO_DATABASE_NAME" '.[] | select(.name == $name) | .id' <<<"$DATABASE_JSON" | head -1)
+            DATABASE_STATUS=$(jq -r --arg id "$DATABASE_ID" '.[] | select(.id == $id) | .status' <<<"$DATABASE_JSON")
+            if [ -n "$DATABASE_ID" ] && [ "$DATABASE_STATUS" = "online" ]; then
+              echo "id=$DATABASE_ID" >> "$GITHUB_OUTPUT"
+              break
+            fi
+            [ "$attempt" -eq 120 ] && { echo "Managed MySQL did not become ready"; exit 1; }
+            sleep 10
+          done
+
+      - name: Copy AWS MySQL into DigitalOcean
+        id: migrate
+        env:
+          APP_ID: ${{ steps.app.outputs.id }}
+          DATABASE_ID: ${{ steps.database.outputs.id }}
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        run: |
+          INSTANCE_ID=$(aws cloudformation describe-stacks --stack-name dc-react-low-cost-production --query 'Stacks[0].Outputs[?OutputKey==`InstanceId`].OutputValue' --output text)
+          SOURCE_IP=$(aws cloudformation describe-stacks --stack-name dc-react-low-cost-production --query 'Stacks[0].Outputs[?OutputKey==`PublicIp`].OutputValue' --output text)
+          DATABASE_SECRET=$(aws cloudformation describe-stack-resource --stack-name dc-react-production --logical-resource-id DatabaseSecret --query 'StackResourceDetail.PhysicalResourceId' --output text)
+          SOURCE_HOST=$(aws rds describe-db-instances --db-instance-identifier dc-react-mysql --query 'DBInstances[0].Endpoint.Address' --output text)
+
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" \
+            "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" > /tmp/original-firewall.json
+          jq -n --arg app "$APP_ID" --arg ip "$SOURCE_IP" \
+            '{rules:[{type:"app",value:$app},{type:"ip_addr",value:$ip}]}' > /tmp/import-firewall.json
+          curl --fail --silent --show-error -X PUT \
+            -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" \
+            -H 'Content-Type: application/json' \
+            --data-binary @/tmp/import-firewall.json \
+            "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" >/dev/null
+
+          CONNECTION=$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" \
+            "https://api.digitalocean.com/v2/databases/$DATABASE_ID" | jq -c '.database.connection')
+          export DO_HOST=$(jq -r .host <<<"$CONNECTION")
+          export DO_PORT=$(jq -r .port <<<"$CONNECTION")
+          export DO_USER=$(jq -r .user <<<"$CONNECTION")
+          export DO_PASSWORD=$(jq -r .password <<<"$CONNECTION")
+          export DO_DB=$(jq -r .database <<<"$CONNECTION")
+          export SOURCE_HOST DATABASE_SECRET
+
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import shlex
+
+          values = {name: shlex.quote(os.environ[name]) for name in (
+              'SOURCE_HOST', 'DATABASE_SECRET', 'DO_HOST', 'DO_PORT',
+              'DO_USER', 'DO_PASSWORD', 'DO_DB'
+          )}
+          script = r'''#!/usr/bin/env bash
+          set -euo pipefail
+          SOURCE_HOST={SOURCE_HOST}
+          DATABASE_SECRET={DATABASE_SECRET}
+          DO_HOST={DO_HOST}
+          DO_PORT={DO_PORT}
+          DO_USER={DO_USER}
+          DO_PASSWORD={DO_PASSWORD}
+          DO_DB={DO_DB}
+          SOURCE_JSON=$(aws secretsmanager get-secret-value --region ap-south-1 --secret-id "$DATABASE_SECRET" --query SecretString --output text)
+          SOURCE_USER=$(jq -r .username <<<"$SOURCE_JSON")
+          SOURCE_PASSWORD=$(jq -r .password <<<"$SOURCE_JSON")
+          IMAGE=mysql:8.4
+          docker pull "$IMAGE" >/dev/null
+          SOURCE_COUNT=$(docker run --rm --network host -e MYSQL_PWD="$SOURCE_PASSWORD" "$IMAGE" mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" -Nse 'SELECT COUNT(*) FROM dc_react.colleges')
+          docker run --rm --network host -e MYSQL_PWD="$SOURCE_PASSWORD" "$IMAGE" mysqldump \
+            -h "$SOURCE_HOST" -u "$SOURCE_USER" --single-transaction --quick \
+            --set-gtid-purged=OFF --no-tablespaces --skip-comments dc_react \
+            | sed -E 's/DEFINER=`[^`]+`@`[^`]+`//g' \
+            | docker run --rm -i --network host -e MYSQL_PWD="$DO_PASSWORD" "$IMAGE" mysql \
+              --ssl-mode=REQUIRED -h "$DO_HOST" -P "$DO_PORT" -u "$DO_USER" "$DO_DB"
+          TARGET_COUNT=$(docker run --rm --network host -e MYSQL_PWD="$DO_PASSWORD" "$IMAGE" mysql \
+            --ssl-mode=REQUIRED -h "$DO_HOST" -P "$DO_PORT" -u "$DO_USER" -Nse "SELECT COUNT(*) FROM $DO_DB.colleges")
+          test "$SOURCE_COUNT" = "$TARGET_COUNT"
+          printf 'colleges=%s\n' "$TARGET_COUNT"
+          '''.format(**values)
+          payload = {'commands': [script]}
+          with open('/tmp/ssm-parameters.json', 'w', encoding='utf-8') as target:
+              json.dump(payload, target)
+          PY
+
+          COMMAND_ID=$(aws ssm send-command --instance-ids "$INSTANCE_ID" --document-name AWS-RunShellScript --parameters file:///tmp/ssm-parameters.json --query 'Command.CommandId' --output text)
+          for attempt in $(seq 1 180); do
+            STATUS=$(aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "$INSTANCE_ID" --query Status --output text 2>/dev/null || true)
+            [ "$STATUS" = "Success" ] && break
+            case "$STATUS" in Failed|Cancelled|TimedOut) aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "$INSTANCE_ID"; exit 1 ;; esac
+            [ "$attempt" -eq 180 ] && exit 1
+            sleep 5
+          done
+          aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "$INSTANCE_ID" --query 'StandardOutputContent' --output text
+          rm -f /tmp/ssm-parameters.json
+
+          jq '{rules: [.rules[] | {type,value}]}' /tmp/original-firewall.json > /tmp/restored-firewall.json
+          curl --fail --silent --show-error -X PUT \
+            -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" \
+            -H 'Content-Type: application/json' \
+            --data-binary @/tmp/restored-firewall.json \
+            "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" >/dev/null
+
+      - name: Redeploy and verify DigitalOcean
+        env:
+          APP_ID: ${{ steps.app.outputs.id }}
+        run: |
+          DEPLOYMENT_ID=$(doctl apps create-deployment "$APP_ID" --output json | jq -r '.[0].id')
+          for attempt in $(seq 1 180); do
+            DEPLOYMENT=$(doctl apps get-deployment "$APP_ID" "$DEPLOYMENT_ID" --output json)
+            PHASE=$(jq -r '.[0].phase' <<<"$DEPLOYMENT")
+            [ "$PHASE" = "ACTIVE" ] && break
+            case "$PHASE" in ERROR|CANCELED|SUPERSEDED) echo "$DEPLOYMENT" | jq '.[0] | {phase,cause,progress}'; exit 1 ;; esac
+            [ "$attempt" -eq 180 ] && exit 1
+            sleep 10
+          done
+          URL=$(doctl apps get "$APP_ID" --output json | jq -r '.[0].live_url')
+          for attempt in $(seq 1 60); do
+            HEALTH=$(curl --fail --silent --show-error --max-time 15 "$URL/health" || true)
+            if jq -e '.ok == true and .database == "mysql" and .storage == true' <<<"$HEALTH" >/dev/null 2>&1; then
+              break
+            fi
+            [ "$attempt" -eq 60 ] && { echo "$HEALTH"; exit 1; }
+            sleep 5
+          done
+          curl --fail --silent --show-error "$URL/" >/dev/null
+          echo "DigitalOcean production URL: $URL"
