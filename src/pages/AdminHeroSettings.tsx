@@ -21,7 +21,7 @@ export default function AdminHeroSettings() {
   const { data: textGradientEnabled = true } = useSiteIntegrationEnabled("hero_text_gradient", true);
   const { data: textGradientValue = "0.72" } = useSiteIntegration("hero_text_gradient_strength");
   const textGradientStrength = Number(textGradientValue) || 0.72;
-  const [draft, setDraft] = useDraftState<HeroSettings | null>('admin.hero-settings.draft.v1', null);
+  const [draft, setDraft] = useDraftState<HeroSettings | null>('admin.hero-settings.draft.v2', null);
 
   useEffect(() => { if (data && !draft) setDraft(data); }, [data, draft]);
 

@@ -17,12 +17,32 @@ export interface HeroSettings {
   is_active: boolean;
 }
 
+const numericHeroFields = [
+  "overlay_opacity",
+  "blur_px",
+  "grayscale",
+  "brightness",
+  "saturation",
+  "rotation_seconds",
+] as const;
+
+function normalizeHeroSettings(settings: HeroSettings | null): HeroSettings | null {
+  if (!settings) return null;
+
+  return numericHeroFields.reduce(
+    (normalized, field) => ({ ...normalized, [field]: Number(normalized[field]) }),
+    { ...settings },
+  );
+}
+
 export function useHeroSettings() {
   return useQuery({
     queryKey: ["hero_settings"],
     queryFn: async (): Promise<HeroSettings | null> => {
       const boot = await ensureBootstrap();
-      if (boot && "hero_settings" in boot) return (boot.hero_settings ?? null) as HeroSettings | null;
+      if (boot && "hero_settings" in boot) {
+        return normalizeHeroSettings((boot.hero_settings ?? null) as HeroSettings | null);
+      }
       const { data, error } = await (supabase as any)
         .from("hero_settings")
         .select("*")
@@ -30,7 +50,7 @@ export function useHeroSettings() {
         .limit(1)
         .maybeSingle();
       if (error) throw error;
-      return data as HeroSettings | null;
+      return normalizeHeroSettings(data as HeroSettings | null);
     },
     staleTime: 5 * 60_000,
     gcTime: 30 * 60_000,
