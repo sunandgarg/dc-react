@@ -8,9 +8,9 @@ The checked-in React application sends database, auth, RPC, and function traffic
 
 No frontend code subscribes to Supabase Realtime. The three former subscriptions now poll Node/MySQL at controlled intervals. No unported Node function falls back to Supabase; it returns an explicit HTTP 501 response.
 
-The AWS production stack is prepared but **not deployed**. It uses an ALB, ECS Fargate, encrypted RDS MySQL, Secrets Manager, ECR, CloudWatch logs, deployment rollback, and GitHub OIDC. Deployment files and the runbook are in `infra/aws/`.
+The AWS production stack is deployed on ECS Fargate behind an ALB, with encrypted RDS MySQL, Secrets Manager, ECR, CloudWatch logs, deployment rollback, and GitHub OIDC. The live ALB health check verifies the Node API, MySQL connection, and Supabase Storage configuration.
 
-On the last external check, `https://dekhocampus.com` still served the older Apache/Next.js application at `13.235.138.165`; its `/health` and `/v1` paths returned that application's 404 page. Data visible on that public domain therefore comes from the old deployment. The local verification database contains the archived snapshot (13,016 colleges, 878 courses, and 240 exams), but a newly created AWS RDS database starts empty and the production startup never runs the archive importer.
+The live Supabase database was imported into RDS by a one-time ECS task. Supabase Storage objects were intentionally not copied: existing file/image URLs remain valid and application records in MySQL retain those URLs. The historical duplicate CEED slug was preserved with an ID-based legacy slug because MySQL correctly enforces the application's unique slug constraint.
 
 The tracked `supabase/`, `db-export/`, `.do/`, and historical importer files remain reference or rollback material. The AWS workflow does not execute them except for the schema metadata/parity inputs required to create compatible empty MySQL tables, indexes, foreign keys, triggers, and views.
 
@@ -28,7 +28,9 @@ The tracked `supabase/`, `db-export/`, `.do/`, and historical importer files rem
 - [x] Added two-container AWS packaging: Nginx/React and Node/Prisma share an ECS Fargate task and communicate over localhost.
 - [x] Added CloudFormation for VPC, security groups, ALB/TLS listener, ECS, encrypted RDS, required/verified database TLS, backups, Secrets Manager, CloudWatch, health checks, and deployment rollback.
 - [x] Added ECR and GitHub OIDC bootstrap plus a verified-before-deploy GitHub Actions workflow.
-- [x] Added a runtime database initializer that creates the empty Prisma schema and applies compatible MySQL parity without importing old data.
+- [x] Added a runtime database initializer that creates the Prisma schema and applies compatible MySQL parity.
+- [x] Imported the live Supabase database into AWS RDS with a successful one-time ECS task; no database traffic requires Supabase at runtime.
+- [x] Moved the active Fast2SMS provider configuration to MySQL and its API credential to AWS Secrets Manager.
 - [x] Disabled the old public sitemap as an AWS build seed, so production entity URLs come only from fresh RDS content.
 - [x] Strengthened `/health` so ECS only reports healthy after MySQL answers; it also reports whether storage is configured.
 - [x] Verified 114 frontend unit tests and 5 backend database/storage-policy tests.
@@ -47,7 +49,7 @@ The tracked `supabase/`, `db-export/`, `.do/`, and historical importer files rem
 
 ### 2. Production secrets and providers
 
-- **Required for core go-live:** `SUPABASE_STORAGE_SERVICE_KEY`, a new `AUTH_JWT_SECRET`, and an approved production SMS webhook.
+- **Required for core go-live:** `SUPABASE_STORAGE_SERVICE_KEY`, `AUTH_JWT_SECRET`, and an active Fast2SMS account/approved sender-template configuration.
 - **Required for optional integrations:** Google OAuth, email, AI providers, Google reviews, university APIs, lead-distribution endpoints, and webhook/cron verification secrets.
 - **Behavior without them:** browsing and database features can run; uploads or provider-backed features fail closed with explicit errors.
 
