@@ -78,6 +78,36 @@ jobs:
               yaml.safe_dump(spec, target, sort_keys=False)
           PY
 
+      - name: Ensure managed MySQL is ready
+        id: database
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        run: |
+          DATABASES=$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" \
+            'https://api.digitalocean.com/v2/databases?per_page=100')
+          DATABASE_ID=$(jq -r --arg name "$DO_DATABASE_NAME" '.databases[]? | select(.name == $name) | .id' <<<"$DATABASES" | head -1)
+          if [ -z "$DATABASE_ID" ]; then
+            REQUEST=$(jq -n --arg name "$DO_DATABASE_NAME" --arg project "$DO_PROJECT_ID" \
+              '{name:$name,engine:"mysql",version:"8.4",region:"blr1",size:"db-s-1vcpu-1gb",num_nodes:1,project_id:$project}')
+            DATABASE_ID=$(curl --fail --silent --show-error -X POST \
+              -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" \
+              -H 'Content-Type: application/json' \
+              --data-binary "$REQUEST" \
+              https://api.digitalocean.com/v2/databases | jq -r '.database.id')
+          fi
+          for attempt in $(seq 1 120); do
+            DATABASE_STATUS=$(curl --fail --silent --show-error \
+              -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" \
+              "https://api.digitalocean.com/v2/databases/$DATABASE_ID" | jq -r '.database.status')
+            if [ "$DATABASE_STATUS" = "online" ]; then
+              echo "id=$DATABASE_ID" >> "$GITHUB_OUTPUT"
+              break
+            fi
+            [ "$attempt" -eq 120 ] && { echo "Managed MySQL did not become ready"; exit 1; }
+            sleep 10
+          done
+
       - name: Create or update DigitalOcean application
         id: app
         run: |
@@ -90,21 +120,6 @@ jobs:
           doctl projects resources assign "$DO_PROJECT_ID" --resource "do:app:$APP_ID"
           echo "id=$APP_ID" >> "$GITHUB_OUTPUT"
           rm -f /tmp/dc-react-app.yaml
-
-      - name: Wait for managed MySQL
-        id: database
-        run: |
-          for attempt in $(seq 1 120); do
-            DATABASE_JSON=$(doctl databases list --output json)
-            DATABASE_ID=$(jq -r --arg name "$DO_DATABASE_NAME" '.[] | select(.name == $name) | .id' <<<"$DATABASE_JSON" | head -1)
-            DATABASE_STATUS=$(jq -r --arg id "$DATABASE_ID" '.[] | select(.id == $id) | .status' <<<"$DATABASE_JSON")
-            if [ -n "$DATABASE_ID" ] && [ "$DATABASE_STATUS" = "online" ]; then
-              echo "id=$DATABASE_ID" >> "$GITHUB_OUTPUT"
-              break
-            fi
-            [ "$attempt" -eq 120 ] && { echo "Managed MySQL did not become ready"; exit 1; }
-            sleep 10
-          done
 
       - name: Copy AWS MySQL into DigitalOcean
         id: migrate
