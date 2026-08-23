@@ -163,6 +163,8 @@ Resources:
           cat > /opt/dc-react/deploy.sh <<'DEPLOY'
           #!/bin/bash
           set -euo pipefail
+          exec 9>/var/lock/dc-react-deploy.lock
+          flock 9
           AWS_REGION_VALUE='${AWS::Region}'
           API_IMAGE='${ApiImageUri}'
           WEB_IMAGE='${WebImageUri}'
@@ -192,6 +194,7 @@ Resources:
             --name dc-react-api \
             --restart unless-stopped \
             --network dc-react \
+            --network-alias api \
             --memory 700m \
             --memory-swap 1536m \
             --env-file /opt/dc-react/api.env \
@@ -229,6 +232,17 @@ Resources:
             -p 80:8080 \
             -v /opt/dc-react/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
             "$WEB_IMAGE"
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error http://127.0.0.1/health >/dev/null; then
+              break
+            fi
+            if [ "$attempt" -eq 30 ]; then
+              docker ps -a
+              docker logs dc-react-web --tail 200
+              exit 1
+            fi
+            sleep 2
+          done
           docker image prune -af --filter until=168h
           DEPLOY
           chmod 700 /opt/dc-react/deploy.sh

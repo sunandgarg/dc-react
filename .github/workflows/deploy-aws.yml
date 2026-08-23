@@ -160,7 +160,7 @@ jobs:
           COMMAND_ID=$(aws ssm send-command \
             --instance-ids "$INSTANCE_ID" \
             --document-name AWS-RunShellScript \
-            --parameters 'commands=["for attempt in $(seq 1 120); do if [ -x /opt/dc-react/deploy.sh ]; then sudo /opt/dc-react/deploy.sh; exit $?; fi; sleep 5; done; exit 1"]' \
+            --parameters 'commands=["for attempt in $(seq 1 120); do if [ -x /opt/dc-react/deploy.sh ]; then sudo /opt/dc-react/deploy.sh || exit $?; sudo docker network disconnect dc-react dc-react-api >/dev/null 2>&1 || true; sudo docker network connect --alias api dc-react dc-react-api; sudo docker restart dc-react-web; for health_attempt in $(seq 1 30); do curl --fail --silent http://127.0.0.1/health >/dev/null && exit 0; sleep 2; done; sudo docker ps -a; sudo docker logs dc-react-web --tail 200; exit 1; fi; sleep 5; done; exit 1"]' \
             --query 'Command.CommandId' \
             --output text)
           for attempt in $(seq 1 180); do
