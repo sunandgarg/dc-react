@@ -23,6 +23,12 @@ const headers = {
 };
 const report = { startedAt: new Date().toISOString(), source: "supabase", imported: {}, sourceCounts: {}, errors: {} };
 
+// Supabase contains two historical exam rows with the `ceed` slug. MySQL
+// correctly enforces the application's unique slug contract, so retain the
+// canonical public route and preserve the conflicting row under an ID-based
+// legacy route instead of dropping source data.
+const duplicateExamSlugs = new Map();
+
 const quote = (identifier) => `\`${String(identifier).replaceAll("`", "``")}\``;
 
 function normalizeValue(value, field) {
@@ -42,8 +48,17 @@ function normalizeValue(value, field) {
 }
 
 function sanitizeRow(table, row) {
-  if (table !== "otp_providers") return row;
-  return { ...row, api_key: "", api_secret: "" };
+  let sanitized = row;
+  if (table === "otp_providers") sanitized = { ...sanitized, api_key: "", api_secret: "" };
+  if (table === "exams" && sanitized.slug) {
+    const existingId = duplicateExamSlugs.get(sanitized.slug);
+    if (existingId && existingId !== sanitized.id) {
+      sanitized = { ...sanitized, slug: `${sanitized.slug}-legacy-${sanitized.id.slice(0, 8)}` };
+    } else if (!existingId) {
+      duplicateExamSlugs.set(sanitized.slug, sanitized.id);
+    }
+  }
+  return sanitized;
 }
 
 async function fetchPage(table, offset) {
