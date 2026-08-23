@@ -53,9 +53,9 @@ The tracked `supabase/`, `db-export/`, `.do/`, and historical importer files rem
 
 ### 3. Native function handlers
 
-These UI-invoked handlers are not native Node implementations yet: `admin-ai-generate`, `admin-blog-agent`, `admin-blog-ai-settings`, `admin-blog-studio`, `admin-data-cleaner`, `check-eligibility`, `lp-dispatch-lead`, `predict-colleges`, `predict-lead-intent`, `process-lead`, `process-queue`, `purge-university-cache`, `summarize-user-session`, `target-roadmap`, `test-api`, and `verify-domain`. Additional legacy Supabase functions remain archived but are not called by the main React paths.
+These UI-invoked handlers are not native Node implementations yet: `admin-ai-generate`, `admin-blog-agent`, `admin-blog-ai-settings`, `admin-blog-studio`, `admin-data-cleaner`, `admin-invite-user`, `check-eligibility`, `lp-dispatch-lead`, `predict-colleges`, `predict-lead-intent`, `process-lead`, `process-queue`, `purge-university-cache`, `send-email`, `summarize-user-session`, `target-roadmap`, `test-api`, and `verify-domain`. Additional legacy Supabase functions remain archived but are not called by the main React paths.
 
-Most need external credentials, successful/error contract examples, and provider test accounts. Until ported, their individual screens cannot be called fully functional and return HTTP 501 from Node.
+Most need external credentials, successful/error contract examples, and provider test accounts. The invitation flow also needs an approved native email/phone onboarding contract because password login was removed with Supabase Auth. Until ported, their individual screens cannot be called fully functional and return HTTP 501 from Node.
 
 ### 4. First administrator and content
 
