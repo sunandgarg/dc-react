@@ -185,7 +185,7 @@ Resources:
       BackupRetentionPeriod: 7
       CopyTagsToSnapshot: true
       AutoMinorVersionUpgrade: true
-      DeletionProtection: false
+      DeletionProtection: true
       DBSubnetGroupName: !Ref DatabaseSubnetGroup
       VPCSecurityGroups: [!Ref DatabaseSecurityGroup]
       DBParameterGroupName: !Ref DatabaseParameterGroup
