@@ -423,6 +423,7 @@ Outputs:
   ClusterName:
     Value: !Ref Cluster
   ServiceName:
+    Condition: UseLegacyCompute
     Value: !GetAtt Service.Name
   DatabaseSecretArn:
     Value: !Ref DatabaseSecret
