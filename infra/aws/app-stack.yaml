@@ -148,6 +148,7 @@ Resources:
       Parameters:
         character_set_server: utf8mb4
         collation_server: utf8mb4_unicode_ci
+        log_bin_trust_function_creators: '1'
         require_secure_transport: '1'
   DatabaseSecret:
     Type: AWS::SecretsManager::Secret
