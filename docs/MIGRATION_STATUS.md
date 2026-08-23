@@ -41,8 +41,8 @@ The tracked `supabase/`, `db-export/`, `.do/`, and historical importer files rem
 ### 1. AWS account deployment
 
 - **Left:** create the bootstrap and application CloudFormation stacks, push images, validate ALB health, attach ACM/DNS, and run live regression.
-- **Blocked by:** this Mac has no AWS CLI credentials and the signed-in Chrome profile does not have the ChatGPT/Codex browser extension enabled, so Codex cannot access the already-open AWS console tab.
-- **Required:** enable the browser extension under Codex **Settings -> Computer use**, then keep the signed-in AWS tab open.
+- **Blocked by:** the signed-in AWS account (`DekhoCampus`, account `659681702447`) currently opens CloudFormation at the AWS **Complete your account setup** page. AWS says registration/payment verification is unfinished or the free account plan limits the required service.
+- **Required:** finish AWS registration and payment verification, or upgrade the AWS account plan, then reopen CloudFormation. The production stack should be created in `ap-south-1` as documented in `infra/aws/README.md`.
 - **Safety:** no AWS resource or recurring AWS charge has been created by this work.
 
 ### 2. Production secrets and providers
@@ -67,8 +67,8 @@ After deployment, verify `/health`, TLS/CORS, empty-state public pages, login/re
 
 ## Exact next steps
 
-1. Enable Chrome computer use for Codex and reconnect the signed-in AWS console.
-2. Create `infra/aws/bootstrap-stack.yaml`; place its role/account outputs in the GitHub production environment.
+1. Complete AWS registration/payment verification or upgrade the AWS account plan so CloudFormation, ECS, and RDS are available.
+2. Create `infra/aws/bootstrap-stack.yaml` in `ap-south-1`; place its role/account outputs in the GitHub production environment.
 3. Add `AUTH_JWT_SECRET` and `SUPABASE_STORAGE_SERVICE_KEY`; configure ACM.
 4. Run the AWS deployment workflow and verify the ALB URL before changing DNS.
 5. Configure SMS, create the first native user, and grant the first admin role.
