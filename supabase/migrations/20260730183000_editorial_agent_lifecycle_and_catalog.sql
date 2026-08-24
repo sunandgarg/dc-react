@@ -52,12 +52,12 @@ ALTER TABLE public.blog_auto_agent_runs
   ADD COLUMN IF NOT EXISTS control_note text NOT NULL DEFAULT '';
 
 UPDATE public.blog_ai_provider_settings
-SET text_model = 'gemini-3.5-flash',
+SET text_model = 'gemini-3.6-flash',
     image_model = CASE WHEN image_model IN ('', 'gpt-image-2') THEN 'gpt-image-1' ELSE image_model END
 WHERE id = 'default';
 
 UPDATE public.ai_runtime_controls
-SET provider = 'gemini', model = 'gemini-3.5-flash', updated_at = now()
+SET provider = 'gemini', model = 'gemini-3.6-flash', updated_at = now()
 WHERE feature IN ('blog-studio','blog-agent');
 
 COMMENT ON COLUMN public.blog_auto_agent_settings.editorial_quality_target IS

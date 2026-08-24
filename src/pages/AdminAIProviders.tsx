@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const MODEL_CATALOG: Record<string, string[]> = {
   anthropic: ["auto-haiku", "auto-sonnet", "claude-haiku-4-5", "claude-sonnet-4-5", "claude-opus-4-20250514"],
-  gemini: ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro"],
+  gemini: ["gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash"],
   openai: ["gpt-5", "gpt-4.1", "gpt-4.1-mini", "gpt-4o-mini"],
 };
 /**

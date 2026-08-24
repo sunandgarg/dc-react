@@ -35,7 +35,7 @@ EXECUTE FUNCTION public.update_updated_at_column();
 -- Seed with popular providers
 INSERT INTO public.ai_providers (provider_name, display_name, base_url, default_model, icon_emoji) VALUES
   ('openai', 'ChatGPT / OpenAI', 'https://api.openai.com/v1', 'gpt-4o', '🟢'),
-  ('gemini', 'Google Gemini', 'https://generativelanguage.googleapis.com/v1beta', 'gemini-2.5-flash', '🔵'),
+  ('gemini', 'Google Gemini', 'https://generativelanguage.googleapis.com/v1beta', 'gemini-3.6-flash', '🔵'),
   ('claude', 'Anthropic Claude', 'https://api.anthropic.com/v1', 'claude-sonnet-4-20250514', '🟣'),
   ('perplexity', 'Perplexity AI', 'https://api.perplexity.ai', 'sonar', '🟠'),
   ('grok', 'xAI Grok', 'https://api.x.ai/v1', 'grok-3', '⚫'),

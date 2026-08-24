@@ -27,7 +27,7 @@ for update to authenticated using (
 
 insert into public.ai_runtime_controls (feature, display_name, provider, model) values
   ('global', 'All AI calls', null, null),
-  ('counselor', 'Diya student counselor', 'gemini', 'gemini-3.5-flash'),
+  ('counselor', 'Diya student counselor', 'gemini', 'gemini-3.6-flash'),
   ('data-cleaner', 'Official data cleaner', 'anthropic', 'auto-sonnet'),
   ('blog-studio', 'Editorial blog studio', 'anthropic', 'auto-sonnet'),
   ('blog-agent', 'Automatic blog agent', 'anthropic', 'auto-sonnet'),

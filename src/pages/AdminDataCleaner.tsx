@@ -36,9 +36,9 @@ const CLEANER_MODELS: Record<string, Array<{ value: string; label: string }>> = 
     { value: "claude-sonnet-4-5", label: "Claude Sonnet 4.5" },
   ],
   gemini: [
+    { value: "gemini-3.6-flash", label: "Gemini 3.6 Flash - production default" },
     { value: "gemini-3.5-flash-lite", label: "Gemini 3.5 Flash-Lite - lowest cost" },
-    { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
-    { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro" },
+    { value: "gemini-3.7-flash", label: "Gemini 3.7 Flash - latest Flash" },
   ],
   openai: [
     { value: "gpt-4o-mini", label: "OpenAI GPT-4o mini - low cost" },
@@ -120,7 +120,7 @@ export default function AdminDataCleaner() {
         display_name: "Clean Data",
         is_enabled: true,
         provider: "gemini",
-        model: "gemini-3.5-flash-lite",
+        model: "gemini-3.6-flash",
       };
     },
   });

@@ -9,12 +9,19 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type State = { text_model: string; image_model: string; image_quality: "low" | "medium" | "high"; gemini_key_set: boolean; openai_key_set: boolean };
-const defaults: State = { text_model: "gemini-3.5-flash-lite", image_model: "gpt-image-1", image_quality: "medium", gemini_key_set: false, openai_key_set: false };
+const DEFAULT_TEXT_MODEL = "gemini-3.6-flash";
+const LEGACY_TEXT_MODELS = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
+const normalizeTextModel = (value?: string) => {
+  const model = String(value || "").trim();
+  if (!model.startsWith("gemini-")) return DEFAULT_TEXT_MODEL;
+  return LEGACY_TEXT_MODELS.has(model) ? DEFAULT_TEXT_MODEL : model;
+};
+const defaults: State = { text_model: DEFAULT_TEXT_MODEL, image_model: "gpt-image-1", image_quality: "medium", gemini_key_set: false, openai_key_set: false };
 
 const TEXT_MODELS = [
+  { value: "gemini-3.6-flash", label: "Gemini 3.6 Flash - production default" },
   { value: "gemini-3.5-flash-lite", label: "Gemini 3.5 Flash-Lite - lowest cost" },
-  { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
-  { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro" },
+  { value: "gemini-3.7-flash", label: "Gemini 3.7 Flash - latest Flash" },
 ] as const;
 
 
@@ -26,7 +33,7 @@ export function BlogAISettingsCard() {
 
   const load = async () => {
     const { data, error } = await supabase.functions.invoke("admin-blog-ai-settings", { method: "GET" });
-    if (!error && data && !data.error) setSettings({ ...defaults, ...data, text_model: String(data.text_model || "").startsWith("gemini-") ? data.text_model : defaults.text_model, image_model: "gpt-image-1" });
+    if (!error && data && !data.error) setSettings({ ...defaults, ...data, text_model: normalizeTextModel(data.text_model), image_model: "gpt-image-1" });
   };
   useEffect(() => { void load(); }, []);
 

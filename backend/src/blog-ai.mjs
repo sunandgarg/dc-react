@@ -1,7 +1,7 @@
 import { createHash, randomUUID, webcrypto } from "node:crypto";
 import { prisma, schemaMetadata } from "./db.mjs";
 
-const DEFAULT_GEMINI_MODEL = "gemini-3.5-flash-lite";
+const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const MAX_POSTS_PER_RUN = 10;
 const MAX_DAILY_POSTS = 48;
@@ -10,6 +10,12 @@ const MIN_INTERVAL_MINUTES = 30;
 const cleanJson = (value) => String(value || "").replace(/^```json\s*|\s*```$/gi, "").trim();
 const slugify = (value) => String(value || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 100);
 const stripHtml = (value) => String(value || "").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+const LEGACY_GEMINI_MODELS = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
+const normalizeGeminiModel = (value) => {
+  const model = String(value || "").trim();
+  if (!model.startsWith("gemini-")) return DEFAULT_GEMINI_MODEL;
+  return LEGACY_GEMINI_MODELS.has(model) ? DEFAULT_GEMINI_MODEL : model;
+};
 const stripCompetitorCredits = (value) => String(value || "")
   .replace(/<h[1-6][^>]*>\s*(sources?|references?|citations?)[\s\S]*$/i, "")
   .replace(/<p[^>]*>(?:(?!<\/p>)[\s\S])*(collegedunia|collegedekho|shiksha|careers360|kollegeapply|getmyuni|pagalguy)(?:(?!<\/p>)[\s\S])*<\/p>/gi, "")
@@ -18,6 +24,28 @@ const stripCompetitorCredits = (value) => String(value || "")
 
 async function provider(name) {
   return prisma.ai_providers.findFirst({ where: { provider_name: name }, orderBy: { updated_at: "desc" } });
+}
+
+export async function ensureSupportedAiModels() {
+  const legacyModels = [...LEGACY_GEMINI_MODELS];
+  await Promise.all([
+    prisma.ai_providers.updateMany({
+      where: { provider_name: "gemini", default_model: { in: legacyModels } },
+      data: { default_model: DEFAULT_GEMINI_MODEL, updated_at: new Date() },
+    }).catch(() => null),
+    prisma.ai_runtime_controls.updateMany({
+      where: { provider: "gemini", model: { in: legacyModels } },
+      data: { model: DEFAULT_GEMINI_MODEL, updated_at: new Date() },
+    }).catch(() => null),
+    prisma.blog_ai_provider_settings.updateMany({
+      where: { text_model: { in: legacyModels } },
+      data: { text_model: DEFAULT_GEMINI_MODEL, updated_at: new Date() },
+    }).catch(() => null),
+    prisma.blog_auto_agent_settings.updateMany({
+      where: { text_model: { in: legacyModels } },
+      data: { text_model: DEFAULT_GEMINI_MODEL, updated_at: new Date() },
+    }).catch(() => null),
+  ]);
 }
 
 async function decryptLegacy(value) {
@@ -37,10 +65,10 @@ async function aiConfig() {
     provider("openai"),
     prisma.blog_ai_provider_settings.findUnique({ where: { id: "default" } }).catch(() => null),
   ]);
-  const configuredGeminiModel = String(gemini?.default_model || blog?.text_model || DEFAULT_GEMINI_MODEL).trim();
+  const configuredGeminiModel = normalizeGeminiModel(gemini?.default_model || blog?.text_model || DEFAULT_GEMINI_MODEL);
   return {
     geminiKey: String(process.env.GEMINI_API_KEY || gemini?.api_key_encrypted || "").trim(),
-    geminiModel: configuredGeminiModel.startsWith("gemini-") ? configuredGeminiModel : DEFAULT_GEMINI_MODEL,
+    geminiModel: configuredGeminiModel,
     openaiKey: String(process.env.OPENAI_API_KEY || openai?.api_key_encrypted || await decryptLegacy(blog?.openai_api_key_ciphertext).catch(() => "")).trim(),
     imageModel: DEFAULT_OPENAI_IMAGE_MODEL,
     imageQuality: ["low", "medium", "high"].includes(blog?.image_quality) ? blog.image_quality : "medium",
@@ -59,7 +87,7 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
   const control = await assertAiEnabled(feature);
   const config = await aiConfig();
   if (!config.geminiKey) throw Object.assign(new Error("Gemini API key is not configured in DigitalOcean or Admin - AI Providers"), { status: 503, code: "GEMINI_NOT_CONFIGURED" });
-  const model = String(control?.provider === "gemini" && control?.model ? control.model : config.geminiModel) || DEFAULT_GEMINI_MODEL;
+  const model = normalizeGeminiModel(control?.provider === "gemini" && control?.model ? control.model : config.geminiModel);
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(config.geminiKey)}`, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -156,7 +184,7 @@ export async function handleBlogAiSettings(request, userId) {
   }
   const body = await request.json().catch(() => ({}));
   const requestedTextModel = String(body.text_model || DEFAULT_GEMINI_MODEL);
-  const updates = { text_model: requestedTextModel.startsWith("gemini-") ? requestedTextModel : DEFAULT_GEMINI_MODEL, image_model: DEFAULT_OPENAI_IMAGE_MODEL, image_quality: ["low", "medium", "high"].includes(body.image_quality) ? body.image_quality : "medium", updated_at: new Date(), updated_by: userId };
+  const updates = { text_model: normalizeGeminiModel(requestedTextModel), image_model: DEFAULT_OPENAI_IMAGE_MODEL, image_quality: ["low", "medium", "high"].includes(body.image_quality) ? body.image_quality : "medium", updated_at: new Date(), updated_by: userId };
   const current = await prisma.blog_ai_provider_settings.findUnique({ where: { id: "default" } });
   await prisma.blog_ai_provider_settings.upsert({ where: { id: "default" }, create: { id: "default", claude_api_key_ciphertext: current?.claude_api_key_ciphertext || "", openai_api_key_ciphertext: current?.openai_api_key_ciphertext || "", ...updates }, update: updates });
   for (const [name, key, model] of [["gemini", body.gemini_api_key, updates.text_model], ["openai", body.openai_api_key, updates.image_model]]) {
