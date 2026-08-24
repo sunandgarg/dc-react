@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Lock, Unlock, Save, AlertTriangle } from "lucide-react";
+import { Lock, Unlock, Save, AlertTriangle, CheckCircle2, XCircle, Server } from "lucide-react";
 import { toast } from "sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
@@ -49,6 +49,19 @@ export default function AdminIntegrations() {
     queryKey: ["site_integrations_admin"],
     queryFn: async () => (await supabase.from("site_integrations" as any).select("*").order("category").order("label")).data ?? [],
   });
+  const { data: runtimeStatus } = useQuery({
+    queryKey: ["runtime-integration-status"],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("integration-status");
+      if (error) throw error;
+      return data as {
+        runtime: Record<string, boolean>;
+        ai: Array<{ provider_name: string; display_name: string; configured: boolean; active: boolean }>;
+        otp: Array<{ provider_name: string; display_name: string; configured: boolean; active: boolean }>;
+        email: Array<{ provider_name: string; display_name: string; configured: boolean; active: boolean }>;
+      };
+    },
+  });
 
   const grouped = rows.reduce((acc: any, r: any) => {
     (acc[r.category] = acc[r.category] || []).push(r);
@@ -57,6 +70,7 @@ export default function AdminIntegrations() {
 
   return (
     <AdminLayout title="Integrations & Tracking">
+      {runtimeStatus && <RuntimeStatus status={runtimeStatus} />}
       <div className="mb-4">
         <CSVTools table="site_integrations" filename="site_integrations.csv" columns="*" upsertKey="id" />
       </div>
@@ -81,6 +95,29 @@ export default function AdminIntegrations() {
       ))}
     </AdminLayout>
   );
+}
+
+function RuntimeStatus({ status }: { status: {
+  runtime: Record<string, boolean>;
+  ai: Array<{ provider_name: string; display_name: string; configured: boolean; active: boolean }>;
+  otp: Array<{ provider_name: string; display_name: string; configured: boolean; active: boolean }>;
+  email: Array<{ provider_name: string; display_name: string; configured: boolean; active: boolean }>;
+} }) {
+  const items = [
+    ...Object.entries(status.runtime).map(([key, ready]) => ({ label: key.replaceAll("_", " "), ready })),
+    ...status.ai.map((item) => ({ label: `AI: ${item.display_name}`, ready: item.configured && item.active })),
+    ...status.otp.map((item) => ({ label: `OTP: ${item.display_name}`, ready: item.configured && item.active })),
+    ...status.email.map((item) => ({ label: `Email: ${item.display_name}`, ready: item.configured && item.active })),
+  ];
+  return <section className="mb-6 border border-border bg-card p-4">
+    <div className="mb-3 flex items-center gap-2"><Server className="h-4 w-4" /><h2 className="text-sm font-semibold">DigitalOcean runtime status</h2></div>
+    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((item) => <div key={item.label} className="flex items-center gap-2 text-sm capitalize">
+        {item.ready ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <XCircle className="h-4 w-4 text-destructive" />}
+        <span>{item.label}</span>
+      </div>)}
+    </div>
+  </section>;
 }
 
 function IntegrationRow({ row, onChanged }: { row: any; onChanged: () => void }) {

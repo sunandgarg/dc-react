@@ -3,6 +3,7 @@ import { handleRest, handleRpc } from "./rest.mjs";
 import { prisma } from "./db.mjs";
 import { handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp } from "./auth.mjs";
 import { handleStorage } from "./storage.mjs";
+import { integrationStatus } from "./integration-status.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -219,6 +220,11 @@ export async function handleRequest(request) {
       if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(), requestId, request, { "cache-control": "public, max-age=60" });
       if (functionMatch[1] === "save-lead") return json(200, await saveLead(request), requestId, request);
+      if (functionMatch[1] === "integration-status") {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        return json(200, await integrationStatus(), requestId, request, { "cache-control": "private, no-store" });
+      }
       return json(501, { code: "FUNCTION_NOT_MIGRATED", error: `Function ${functionMatch[1]} has no native Node handler` }, requestId, request);
     }
     return json(404, { error: "Route not found", requestId }, requestId, request);

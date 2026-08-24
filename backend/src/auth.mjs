@@ -3,6 +3,11 @@ import { prisma } from "./db.mjs";
 
 const ACCESS_TTL_SECONDS = Number(process.env.AUTH_ACCESS_TTL_SECONDS || 3600);
 const REFRESH_TTL_SECONDS = Number(process.env.AUTH_REFRESH_TTL_SECONDS || 60 * 60 * 24 * 30);
+const OWNER_ADMIN_PHONES = new Set(["8700602524", "9990109393"]);
+
+export function isOwnerAdminPhone(phone) {
+  return OWNER_ADMIN_PHONES.has(String(phone || "").replace(/\D/g, "").slice(-10));
+}
 
 function secret() {
   const value = process.env.AUTH_JWT_SECRET || (process.env.NODE_ENV === "production" ? "" : "dc-local-development-secret-change-me");
@@ -160,6 +165,12 @@ export async function verifyPhoneOtp(request) {
   let user = await prisma.app_auth_users.findUnique({ where: { phone } });
   if (!user) user = await prisma.app_auth_users.create({ data: { id: randomUUID(), phone, provider: "phone", user_metadata: {} } });
   await prisma.$executeRawUnsafe("INSERT INTO `profiles` (`id`,`user_id`,`phone`,`created_at`,`updated_at`) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE `phone`=VALUES(`phone`),`updated_at`=VALUES(`updated_at`)", user.id, user.id, phone, new Date(), new Date());
+  if (isOwnerAdminPhone(phone)) {
+    await prisma.$executeRawUnsafe(
+      "INSERT INTO `user_roles` (`id`,`user_id`,`role`,`created_at`) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE `role`=VALUES(`role`)",
+      randomUUID(), user.id, "admin", new Date(),
+    );
+  }
   return { session: await issueSession(user), user: authUser(user) };
 }
 
