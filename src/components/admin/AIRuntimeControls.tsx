@@ -35,7 +35,7 @@ const MODELS: Record<string, Array<{ value: string; label: string }>> = {
     { value: "claude-sonnet-4-5", label: "Claude Sonnet 4.5" },
   ],
   gemini: [
-    { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash-Lite - lowest cost" },
+    { value: "gemini-3.5-flash-lite", label: "Gemini 3.5 Flash-Lite - lowest cost" },
     { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
     { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro" },
     { value: "gemini-3.1-flash-lite-image", label: "Gemini 3.1 Flash Lite Image" },

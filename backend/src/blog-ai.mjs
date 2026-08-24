@@ -1,7 +1,7 @@
 import { createHash, randomUUID, webcrypto } from "node:crypto";
 import { prisma, schemaMetadata } from "./db.mjs";
 
-const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_GEMINI_MODEL = "gemini-3.5-flash-lite";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const MAX_POSTS_PER_RUN = 10;
 const MAX_DAILY_POSTS = 48;
