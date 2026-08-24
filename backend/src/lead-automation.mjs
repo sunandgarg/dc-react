@@ -131,15 +131,21 @@ export function buildPartnerRequest(university, lead, overrides = {}) {
 }
 
 async function sendToUniversity(university, lead, rule, flowId = null, multiFlowId = null) {
+  const delivered = await prisma.lp_push_logs.findFirst({
+    where: { lead_id: lead.id, university_id: university.id, status: { in: ["Success", "Duplicate"] } },
+    select: { id: true, status: true },
+  });
+  if (delivered) return { universityId: university.id, status: delivered.status, skipped: true };
   const recent = university.leads_per_minute > 0
     ? await prisma.lp_push_logs.count({ where: { university_id: university.id, created_at: { gt: new Date(Date.now() - 60_000) } } })
     : 0;
   if (recent >= university.leads_per_minute) {
     await prisma.lp_push_logs.create({ data: { id: randomUUID(), lead_id: lead.id, university_id: university.id, rule_id: rule.id, flow_id: flowId, multi_flow_id: multiFlowId, status: "RateLimited", error: `>${university.leads_per_minute}/min` } });
-    return;
+    return { universityId: university.id, status: "RateLimited" };
   }
   const overrides = getPrefillOverrides(rule, university.id, lead);
   const { headers, payload } = buildPartnerRequest(university, lead, overrides);
+  headers["x-idempotency-key"] = `dc-lead-${lead.id}-${university.id}`;
   let status = "Fail"; let httpStatus = 0; let responseBody = ""; let error = null;
   try {
     const response = await fetch(university.api_url, { method: "POST", headers, body: JSON.stringify(payload), signal: AbortSignal.timeout(30_000) });
@@ -148,6 +154,7 @@ async function sendToUniversity(university, lead, rule, flowId = null, multiFlow
     status = categorize(response.status, responseBody, response.ok);
   } catch (cause) { error = String(cause); }
   await prisma.lp_push_logs.create({ data: { id: randomUUID(), lead_id: lead.id, university_id: university.id, rule_id: rule.id, flow_id: flowId, multi_flow_id: multiFlowId, status, http_status: httpStatus, request_payload: payload, response_body: responseBody, error } });
+  return { universityId: university.id, status, httpStatus, error };
 }
 
 export async function dispatchLead(leadId) {
@@ -169,15 +176,13 @@ export async function dispatchLead(leadId) {
   for (const rule of rules) for (const id of list(rule.university_ids)) if (!universityRules.has(id)) universityRules.set(id, rule);
   if (!universityRules.size) return { dispatched: 0, reason: "no rules matched" };
   const universities = await prisma.lp_universities.findMany({ where: { id: { in: [...universityRules.keys()] }, is_active: true } });
-  await Promise.all(universities.map((university) => {
+  const results = await Promise.all(universities.map((university) => {
     const rule = universityRules.get(university.id);
     const flow = activeFlows.find((item) => list(item.rule_ids).includes(rule.id));
     const multi = multiFlows.find((item) => flow && list(item.flow_ids).includes(flow.id));
     return sendToUniversity(university, lead, rule, flow?.id || null, multi?.id || null);
   }));
-  return { dispatched: universities.length };
-}
-
-export function queueLeadAutomation(leadId) {
-  setImmediate(() => dispatchLead(leadId).catch((error) => console.error("lead automation failed", { leadId, error })));
+  const retryable = results.filter((result) => ["Fail", "RateLimited"].includes(result.status));
+  if (retryable.length) throw new Error(`Partner delivery pending for ${retryable.length} of ${results.length} universities`);
+  return { dispatched: results.length, results };
 }

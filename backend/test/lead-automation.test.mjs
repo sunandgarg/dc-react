@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { buildPartnerRequest, getPrefillOverrides, ruleMatches } from "../src/lead-automation.mjs";
+import { retryDelayMs } from "../src/lead-outbox.mjs";
 
 test("matches lead automation conditions with all and any modes", () => {
   const lead = { city: "New Delhi", state: "Delhi", current_situation: "MBA", source: "website" };
@@ -26,4 +27,11 @@ test("merges automation prefills from default through matching scenarios", () =>
     first_name: "Rahul",
     mobile_digits: "918888888888",
   });
+});
+
+test("uses bounded exponential retry delays for durable outbox jobs", () => {
+  assert.equal(retryDelayMs(1), 15_000);
+  assert.equal(retryDelayMs(2), 30_000);
+  assert.equal(retryDelayMs(8), 1_920_000);
+  assert.equal(retryDelayMs(99), 3_600_000);
 });

@@ -3,7 +3,7 @@ import { handleRest, handleRpc } from "./rest.mjs";
 import { prisma } from "./db.mjs";
 import { handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp } from "./auth.mjs";
 import { handleStorage } from "./storage.mjs";
-import { queueLeadAutomation } from "./lead-automation.mjs";
+import { enqueueLeadAutomation } from "./lead-outbox.mjs";
 import { integrationStatus } from "./integration-status.mjs";
 
 const publicReadTables = new Set([
@@ -147,9 +147,11 @@ async function saveLead(request) {
   }
   const phase = input.phase === "identity" ? "identity" : "complete";
   if (input.lead_id) {
-    const result = await prisma.leads.updateMany({
-      where: { id: String(input.lead_id), phone },
-      data: {
+    const leadId = String(input.lead_id);
+    const result = await prisma.$transaction(async (tx) => {
+      const updated = await tx.leads.updateMany({
+        where: { id: leadId, phone },
+        data: {
         current_situation: input.current_situation ? String(input.current_situation) : null,
         city: input.city ? String(input.city).slice(0, 250) : null,
         state: input.state ? String(input.state).slice(0, 250) : null,
@@ -159,15 +161,18 @@ async function saveLead(request) {
         program_mode: input.program_mode ? String(input.program_mode) : "unknown",
         status: "new",
         updated_at: new Date(),
-      },
+        },
+      });
+      if (updated.count) await enqueueLeadAutomation(tx, leadId);
+      return updated;
     });
     if (!result.count) throw new HttpError(404, "LEAD_NOT_FOUND", "The saved lead could not be updated");
-    queueLeadAutomation(String(input.lead_id));
-    return { success: true, lead_id: String(input.lead_id), phase: "complete" };
+    return { success: true, lead_id: leadId, phase: "complete" };
   }
   const existingCount = await prisma.leads.count({ where: { OR: [{ phone }, { email }] } });
-  const lead = await prisma.leads.create({
-    data: {
+  const lead = await prisma.$transaction(async (tx) => {
+    const created = await tx.leads.create({
+      data: {
       id: randomUUID(),
       name: String(input.name).slice(0, 250),
       email: email.slice(0, 320),
@@ -187,9 +192,11 @@ async function saveLead(request) {
       device_type: input.device_type ? String(input.device_type) : null,
       source_category: input.source_category ? String(input.source_category) : null,
       status: "new",
-    },
+      },
+    });
+    if (phase === "complete") await enqueueLeadAutomation(tx, created.id);
+    return created;
   });
-  if (phase === "complete") queueLeadAutomation(lead.id);
   return { success: true, lead_id: lead.id, phase, existing_count: existingCount };
 }
 
