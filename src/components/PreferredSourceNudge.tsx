@@ -3,7 +3,7 @@ import { CheckCircle2, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import { GoogleGLogo } from "@/components/GoogleGLogo";
-import { hasLockPromoResolved, LOCK_PROMO_RESOLVED_EVENT, scheduleAfterGate } from "@/lib/promptSequence";
+import { hasLockPromoResolved, LOCK_PROMO_RESOLVED_EVENT, scheduleAfterGate, signalGooglePromoResolved } from "@/lib/promptSequence";
 
 const STORAGE_KEY = "dc:preferred-source-nudge:v1";
 const GOOGLE_PREFERRED_SOURCE_URL = "https://google.com/preferences/source?q=dekhocampus.com";
@@ -43,8 +43,14 @@ export function PreferredSourceNudge() {
     }
 
     const stored = readStoredState();
-    if (stored.clickedAt) return;
-    if (stored.dismissedAt && Date.now() - stored.dismissedAt < 1000 * 60 * 60 * 24 * 14) return;
+    if (stored.clickedAt) {
+      signalGooglePromoResolved();
+      return;
+    }
+    if (stored.dismissedAt && Date.now() - stored.dismissedAt < 1000 * 60 * 60 * 24 * 14) {
+      signalGooglePromoResolved();
+      return;
+    }
 
     return scheduleAfterGate({
       ready: hasLockPromoResolved,
@@ -57,11 +63,13 @@ export function PreferredSourceNudge() {
 
   const dismiss = () => {
     writeStoredState({ ...readStoredState(), dismissedAt: Date.now() });
+    signalGooglePromoResolved();
     setVisible(false);
   };
 
   const markClicked = () => {
     writeStoredState({ ...readStoredState(), clickedAt: Date.now() });
+    signalGooglePromoResolved();
     setVisible(false);
   };
 

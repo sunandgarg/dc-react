@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { trackEvent } from "@/lib/analytics";
 import { getLastLeadTs, LEAD_SILENT_WINDOW_MS, markLeadSubmitted } from "@/lib/leadCapture";
+import { GOOGLE_PROMO_RESOLVED_EVENT, hasGooglePromoResolved, scheduleAfterGate } from "@/lib/promptSequence";
 
 /**
  * Persistent student-help lead popup.
@@ -60,7 +61,12 @@ export function PeriodicLeadPopup() {
     dismissCountRef.current = Number.isFinite(stored) ? stored : 0;
     const baseDelay = BASE_DELAY_MS * (dismissCountRef.current + 1);
     const remaining = cooldownRemaining();
-    schedule(Math.max(baseDelay, remaining + 250));
+    const stopGate = scheduleAfterGate({
+      ready: hasGooglePromoResolved,
+      event: GOOGLE_PROMO_RESOLVED_EVENT,
+      delay: Math.max(baseDelay, remaining + 250),
+      callback: () => schedule(0),
+    });
 
     // Cross-tab sync
     const onStorage = (e: StorageEvent) => {
@@ -80,6 +86,7 @@ export function PeriodicLeadPopup() {
     window.addEventListener("storage", onStorage);
     return () => {
       window.removeEventListener("storage", onStorage);
+      stopGate();
       clearTimer();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

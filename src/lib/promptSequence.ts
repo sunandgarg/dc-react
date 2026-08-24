@@ -2,6 +2,8 @@ export const COOKIE_CONSENT_KEY = "dc_cookie_consent_v1";
 export const COOKIE_RESOLVED_EVENT = "dc:cookie-consent-resolved";
 export const LOCK_PROMO_RESOLVED_KEY = "dc:lock-target-promo:resolved";
 export const LOCK_PROMO_RESOLVED_EVENT = "dc:lock-target-promo-resolved";
+export const GOOGLE_PROMO_RESOLVED_KEY = "dc:google-source-promo:resolved";
+export const GOOGLE_PROMO_RESOLVED_EVENT = "dc:google-source-promo-resolved";
 export const PROMPT_DELAY_MS = 30_000;
 
 export function hasCookieDecision() {
@@ -12,6 +14,10 @@ export function hasLockPromoResolved() {
   try { return sessionStorage.getItem(LOCK_PROMO_RESOLVED_KEY) === "1"; } catch { return false; }
 }
 
+export function hasGooglePromoResolved() {
+  try { return sessionStorage.getItem(GOOGLE_PROMO_RESOLVED_KEY) === "1"; } catch { return false; }
+}
+
 export function signalCookieResolved() {
   window.dispatchEvent(new Event(COOKIE_RESOLVED_EVENT));
 }
@@ -19,6 +25,12 @@ export function signalCookieResolved() {
 export function signalLockPromoResolved() {
   try { sessionStorage.setItem(LOCK_PROMO_RESOLVED_KEY, "1"); } catch { /* noop */ }
   window.dispatchEvent(new Event(LOCK_PROMO_RESOLVED_EVENT));
+}
+
+
+export function signalGooglePromoResolved() {
+  try { sessionStorage.setItem(GOOGLE_PROMO_RESOLVED_KEY, "1"); } catch { /* noop */ }
+  window.dispatchEvent(new Event(GOOGLE_PROMO_RESOLVED_EVENT));
 }
 
 export function scheduleAfterGate(options: {
