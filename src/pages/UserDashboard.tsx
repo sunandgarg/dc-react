@@ -21,6 +21,7 @@ import { DashboardSubUsers } from "@/components/dashboard/DashboardSubUsers";
 import { DashboardFavorites } from "@/components/dashboard/DashboardFavorites";
 import { DashboardTargets } from "@/components/dashboard/DashboardTargets";
 import { isSyntheticPhoneEmail } from "@/lib/authIdentity";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 const ALL_TABS = [
   { id: "dashboard", label: "Dashboard", icon: Home },
@@ -41,6 +42,7 @@ const AUTHOR_TABS = ["dashboard", "favourites", "profile", "documents", "setting
 export default function UserDashboard() {
   const { user, isLoading, isAdmin, signOut } = useAuth();
   const { data: profile } = useProfile();
+  const { data: userProfile } = useUserProfile();
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get("tab") || "dashboard";
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -75,6 +77,7 @@ export default function UserDashboard() {
   const profileAny = profile as any;
   const rawName: string =
     profileAny?.display_name ||
+    userProfile?.name ||
     (user.user_metadata as any)?.display_name ||
     (user.user_metadata as any)?.full_name ||
     "";
