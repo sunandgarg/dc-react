@@ -6,6 +6,8 @@ const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const MAX_POSTS_PER_RUN = 10;
 const MAX_DAILY_POSTS = 48;
 const MIN_INTERVAL_MINUTES = 30;
+const GEMINI_MAX_RETRIES = 2;
+const GEMINI_MAX_RETRY_DELAY_MS = 2_500;
 
 const cleanJson = (value) => String(value || "").replace(/^```json\s*|\s*```$/gi, "").trim();
 const slugify = (value) => String(value || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 100);
@@ -21,6 +23,44 @@ const stripCompetitorCredits = (value) => String(value || "")
   .replace(/<p[^>]*>(?:(?!<\/p>)[\s\S])*(collegedunia|collegedekho|shiksha|careers360|kollegeapply|getmyuni|pagalguy)(?:(?!<\/p>)[\s\S])*<\/p>/gi, "")
   .replace(/[\u2013\u2014]/g, "-")
   .trim();
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function parseRetryDelayMs(value) {
+  const text = String(value || "");
+  const seconds = text.match(/(\d+(?:\.\d+)?)s\b/i);
+  if (seconds) return Math.ceil(Number(seconds[1]) * 1000);
+  const millis = text.match(/retry in\s+(\d+(?:\.\d+)?)ms/i);
+  if (millis) return Math.ceil(Number(millis[1]));
+  return 0;
+}
+
+function geminiErrorMessage(status, payloadText) {
+  let providerMessage = payloadText;
+  try {
+    const payload = JSON.parse(payloadText);
+    providerMessage = payload?.error?.message || payloadText;
+  } catch {
+    providerMessage = payloadText;
+  }
+  const lower = providerMessage.toLowerCase();
+  if (status === 429 && (lower.includes("quota") || lower.includes("resource_exhausted"))) {
+    return {
+      code: "GEMINI_QUOTA_EXHAUSTED",
+      message: "Gemini quota is exhausted for this Google AI Studio project. Enable billing or wait for the quota reset, then retry.",
+    };
+  }
+  if (status === 429) {
+    return {
+      code: "GEMINI_RATE_LIMITED",
+      message: "Gemini is rate-limiting requests. Please wait a moment and retry.",
+    };
+  }
+  return {
+    code: "GEMINI_REQUEST_FAILED",
+    message: `Gemini request failed (${status}): ${providerMessage.slice(0, 300)}`,
+  };
+}
 
 async function provider(name) {
   return prisma.ai_providers.findFirst({ where: { provider_name: name }, orderBy: { updated_at: "desc" } });
@@ -88,17 +128,33 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
   const config = await aiConfig();
   if (!config.geminiKey) throw Object.assign(new Error("Gemini API key is not configured in DigitalOcean or Admin - AI Providers"), { status: 503, code: "GEMINI_NOT_CONFIGURED" });
   const model = normalizeGeminiModel(control?.provider === "gemini" && control?.model ? control.model : config.geminiModel);
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(config.geminiKey)}`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: "Return valid JSON only. Use factual, original language. Never use an em dash." }] },
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: { responseMimeType: "application/json", temperature: 0.45 },
-      ...(options.research ? { tools: [{ google_search: {} }, { url_context: {} }] } : {}),
-    }),
+  const requestBody = JSON.stringify({
+    systemInstruction: { parts: [{ text: "Return valid JSON only. Use factual, original language. Never use an em dash." }] },
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    generationConfig: { responseMimeType: "application/json", temperature: 0.45 },
+    ...(options.research ? { tools: [{ google_search: {} }, { url_context: {} }] } : {}),
   });
-  if (!response.ok) throw new Error(`Gemini request failed (${response.status}): ${(await response.text()).slice(0, 500)}`);
+  let response;
+  let providerText = "";
+  for (let attempt = 0; attempt <= GEMINI_MAX_RETRIES; attempt += 1) {
+    response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(config.geminiKey)}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: requestBody,
+    });
+    if (response.ok) break;
+    providerText = await response.text();
+    const retryAfter = Number(response.headers.get("retry-after") || 0) * 1000;
+    const hintedDelay = parseRetryDelayMs(providerText);
+    const retryable = [408, 429, 500, 502, 503, 504].includes(response.status);
+    if (!retryable || attempt === GEMINI_MAX_RETRIES) break;
+    const backoff = Math.min(GEMINI_MAX_RETRY_DELAY_MS, retryAfter || hintedDelay || 500 * (attempt + 1));
+    await sleep(backoff);
+  }
+  if (!response?.ok) {
+    const friendly = geminiErrorMessage(response?.status || 500, providerText);
+    throw Object.assign(new Error(friendly.message), { status: response?.status || 500, code: friendly.code });
+  }
   const payload = await response.json();
   const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("") || "{}";
   const result = JSON.parse(cleanJson(text));
@@ -109,6 +165,8 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
 export async function generateGeminiJson(prompt, feature, options) {
   return geminiJson(prompt, feature, options);
 }
+
+export const geminiQuotaHelpers = { normalizeGeminiModel, parseRetryDelayMs, geminiErrorMessage };
 
 async function uploadGeneratedImage(slug, prompt) {
   await assertAiEnabled("blog-cover");
