@@ -32,6 +32,25 @@ test("rejects unsafe upload types", async () => {
   await assert.rejects(() => checkedBody(request), (error) => error.status === 415 && error.code === "STORAGE_TYPE_NOT_ALLOWED");
 });
 
+test("accepts safe files wrapped by the Supabase multipart uploader", async () => {
+  const form = new FormData();
+  form.append("file", new Blob(["safe image"], { type: "image/svg+xml" }), "qa.svg");
+  const request = new Request("http://localhost/storage/v1/object/admin-uploads/qa.svg", {
+    method: "POST", body: form,
+  });
+  const body = await checkedBody(request);
+  assert.ok(body.byteLength > 0);
+});
+
+test("rejects unsafe files inside multipart uploads", async () => {
+  const form = new FormData();
+  form.append("file", new Blob(["<script></script>"], { type: "text/html" }), "qa.html");
+  const request = new Request("http://localhost/storage/v1/object/admin-uploads/qa.html", {
+    method: "POST", body: form,
+  });
+  await assert.rejects(() => checkedBody(request), (error) => error.status === 415 && error.code === "STORAGE_TYPE_NOT_ALLOWED");
+});
+
 test("rejects upload bodies over the configured limit", async () => {
   const previous = process.env.STORAGE_MAX_UPLOAD_BYTES;
   process.env.STORAGE_MAX_UPLOAD_BYTES = "4";

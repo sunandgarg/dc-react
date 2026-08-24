@@ -94,15 +94,29 @@ async function authorizeStorage(request, route) {
 
 async function checkedBody(request) {
   if (["GET", "HEAD"].includes(request.method)) return undefined;
-  const contentType = String(request.headers.get("content-type") || "").split(";", 1)[0].trim().toLowerCase();
+  const contentTypeHeader = String(request.headers.get("content-type") || "");
+  const contentType = contentTypeHeader.split(";", 1)[0].trim().toLowerCase();
   const isObjectUpload = ["POST", "PUT"].includes(request.method) && !contentType.includes("application/json");
   const maxBytes = Number(process.env.STORAGE_MAX_UPLOAD_BYTES || DEFAULT_MAX_UPLOAD_BYTES);
   const declaredBytes = Number(request.headers.get("content-length") || 0);
-  if (isObjectUpload && !allowedUploadTypes.has(contentType)) {
+  const isMultipartUpload = isObjectUpload && contentType === "multipart/form-data";
+  if (isObjectUpload && !isMultipartUpload && !allowedUploadTypes.has(contentType)) {
     throw Object.assign(new Error(`File type ${contentType || "unknown"} is not allowed`), { status: 415, code: "STORAGE_TYPE_NOT_ALLOWED" });
   }
   if (declaredBytes > maxBytes) {
     throw Object.assign(new Error(`Uploads cannot exceed ${Math.floor(maxBytes / 1024 / 1024)} MB`), { status: 413, code: "STORAGE_FILE_TOO_LARGE" });
+  }
+  if (isMultipartUpload) {
+    const form = await request.clone().formData().catch(() => null);
+    const files = form
+      ? [...form.values()].filter((value) => typeof value === "object" && typeof value.arrayBuffer === "function")
+      : [];
+    if (!files.length || files.some((file) => !allowedUploadTypes.has(String(file.type || "").toLowerCase()))) {
+      throw Object.assign(new Error("The multipart upload contains an unsupported file type"), { status: 415, code: "STORAGE_TYPE_NOT_ALLOWED" });
+    }
+    if (files.some((file) => Number(file.size || 0) > maxBytes)) {
+      throw Object.assign(new Error(`Uploads cannot exceed ${Math.floor(maxBytes / 1024 / 1024)} MB`), { status: 413, code: "STORAGE_FILE_TOO_LARGE" });
+    }
   }
   const body = Buffer.from(await request.arrayBuffer());
   if (body.byteLength > maxBytes) {
