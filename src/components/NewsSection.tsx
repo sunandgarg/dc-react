@@ -46,7 +46,9 @@ export function NewsSection() {
       excerpt: (a.description || "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim(),
       date: fmtDate(a.created_at),
       trending: (a.tags || []).includes("trending"),
-      image: a.featured_image || categoryEmoji(a.category || ""),
+      image: a.featured_image && !/\.svg(?:$|\?)/i.test(a.featured_image)
+        ? a.featured_image
+        : categoryEmoji(a.category || ""),
     }));
   }, [allArticles]);
 
@@ -89,7 +91,7 @@ export function NewsSection() {
               <Link to={`/news/${items[0].slug}`} className="lg:col-span-2 card-elevated p-6 group">
                 <div className="flex items-start gap-4">
                   {isImg(items[0].image) ? (
-                    <img src={items[0].image} alt={items[0].title} className="w-20 h-20 rounded-xl object-cover" />
+                    <img src={items[0].image} alt={items[0].title} width={80} height={80} loading="lazy" decoding="async" className="w-20 h-20 rounded-xl object-cover" />
                   ) : (<div className="text-5xl">{items[0].image}</div>)}
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-3">
@@ -114,7 +116,7 @@ export function NewsSection() {
                   <Link to={`/news/${item.slug}`} key={item.id} className="card-elevated p-4 group block">
                     <div className="flex items-start gap-3">
                       {isImg(item.image) ? (
-                        <img src={item.image} alt={item.title} className="w-10 h-10 rounded-lg object-cover" />
+                        <img src={item.image} alt={item.title} width={40} height={40} loading="lazy" decoding="async" className="w-10 h-10 rounded-lg object-cover" />
                       ) : (<span className="text-2xl">{item.image}</span>)}
                       <div className="flex-1 min-w-0">
                         <Badge variant="secondary" className={`text-xs mb-1 ${categoryColors[item.category] || ""}`}>{item.category}</Badge>

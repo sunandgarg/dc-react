@@ -286,13 +286,6 @@ export function LeadCaptureForm({
 
   const TwoStepFields = ({ dark = false, compact = false }: { dark?: boolean; compact?: boolean }) => (
     <>
-      <div className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold ${dark ? "bg-white/10 text-white" : "bg-muted/60 text-foreground"}`}>
-        <span className={`flex h-5 w-5 items-center justify-center rounded-full ${step === 1 ? "bg-primary text-primary-foreground" : "bg-emerald-600 text-white"}`}>{step === 1 ? "1" : "✓"}</span>
-        <span>Contact & verification</span>
-        <span className="text-current/40">→</span>
-        <span className={`flex h-5 w-5 items-center justify-center rounded-full ${step === 2 ? "bg-primary text-primary-foreground" : "bg-current/10"}`}>2</span>
-        <span>Preferences</span>
-      </div>
       {step === 1 ? (
         <>
           <div className="space-y-1">

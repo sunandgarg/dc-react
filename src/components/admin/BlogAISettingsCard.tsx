@@ -9,13 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type State = { text_model: string; image_model: string; image_quality: "low" | "medium" | "high"; gemini_key_set: boolean; openai_key_set: boolean };
-const defaults: State = { text_model: "gemini-3.5-flash-lite", image_model: "gpt-image-1", image_quality: "medium", gemini_key_set: false, openai_key_set: false };
+const defaults: State = { text_model: "gemini-2.5-flash-lite", image_model: "gpt-image-1", image_quality: "medium", gemini_key_set: false, openai_key_set: false };
 
 const TEXT_MODELS = [
-  { value: "gemini-3.5-flash-lite", label: "Gemini 3.5 Flash-Lite - lowest cost" },
-  { value: "gemini-3.6-flash", label: "Gemini 3.6 Flash" },
-  { value: "gemini-3.5-flash", label: "Gemini 3.5 Flash" },
-  { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite" },
+  { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash-Lite - lowest cost" },
   { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
   { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro" },
 ] as const;

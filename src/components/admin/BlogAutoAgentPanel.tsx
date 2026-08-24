@@ -71,7 +71,7 @@ const DEFAULT_SETTINGS: Settings = {
   daily_post_cap: 12,
   publish_status: "Published",
   model_provider: "gemini",
-  text_model: "gemini-3.5-flash-lite",
+  text_model: "gemini-2.5-flash-lite",
   word_limit: 1200,
   author_mode: "none",
   author_ids: [],
@@ -477,10 +477,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("text_model", event.target.value)}
               className="mt-2 h-9 w-full rounded-md border bg-background px-2 text-xs"
             >
-              <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite - lowest cost</option>
-              <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
-              <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
-              <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+              <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite - lowest cost</option>
             </select>
           )}
         </div>

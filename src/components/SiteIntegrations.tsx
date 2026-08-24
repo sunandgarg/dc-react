@@ -25,11 +25,20 @@ export function SiteIntegrations() {
       const map: Record<string, string> = {};
       for (const r of data) if (r.enabled && r.value) map[r.key] = r.value;
 
-      // Analytics pixels are non-critical. Keep them out of the LCP/INP window.
+      // Analytics pixels are non-critical. Start them after interaction, with a
+      // fallback for visitors who stay on a static page.
       await new Promise<void>((resolve) => {
-        const start = () => window.setTimeout(resolve, 2500);
-        if (document.readyState === "complete") start();
-        else window.addEventListener("load", start, { once: true });
+        let settled = false;
+        const events: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "scroll"];
+        const finish = () => {
+          if (settled) return;
+          settled = true;
+          events.forEach((event) => window.removeEventListener(event, finish));
+          window.clearTimeout(timer);
+          resolve();
+        };
+        events.forEach((event) => window.addEventListener(event, finish, { once: true, passive: true }));
+        const timer = window.setTimeout(finish, 15_000);
       });
       if (cancelled) return;
 

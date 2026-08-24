@@ -30,7 +30,7 @@ export function useDbArticles() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("articles")
-        .select("*")
+        .select("id,status,title,slug,description,vertical,category,author,featured_image,views,tags,is_active,featured_rank,created_at,updated_at")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
