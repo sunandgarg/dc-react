@@ -32,7 +32,7 @@ export async function applyBlogTextRuntimeControl(admin: any, feature: string, c
   if (control.provider) {
     if (control.model) config.textModel = control.model;
     else if (control.provider === "anthropic") config.textModel = "auto-sonnet";
-    else if (control.provider === "gemini") config.textModel = "gemini-3.5-flash";
+    else if (control.provider === "gemini") config.textModel = "gemini-3.6-flash";
     else if (control.provider === "openai") config.textModel = "gpt-5.6-luna";
     else if (control.provider === "xai") config.textModel = "grok-4.5";
   } else if (control.model) {

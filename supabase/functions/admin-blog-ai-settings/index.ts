@@ -23,7 +23,8 @@ function normalizeClaudeTextModel(value: unknown) {
 
 function normalizeTextModel(value: unknown) {
   const model = String(value || "").trim();
-  if (!model) return "gemini-3.5-flash-lite";
+  if (!model) return "gemini-3.6-flash";
+  if (model === "gemini-3.5-flash") return "gemini-3.6-flash";
   return inferTextProvider(model) === "anthropic" ? normalizeClaudeTextModel(model) : model;
 }
 

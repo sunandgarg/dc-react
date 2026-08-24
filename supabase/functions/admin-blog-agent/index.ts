@@ -557,7 +557,7 @@ Deno.serve(async (req) => {
       daily_post_cap: 12,
       publish_status: "Published",
       model_provider: "gemini",
-      text_model: "gemini-3.5-flash-lite",
+      text_model: "gemini-3.6-flash",
       word_limit: 1200,
       author_mode: "none",
       author_ids: [],
@@ -589,7 +589,7 @@ Deno.serve(async (req) => {
     // The provider selected in the blog-agent form is authoritative for this
     // workflow. Runtime Control Centre is applied afterwards as the deliberate
     // operational override/failover layer.
-    if (settings.model_provider === "gemini") blogAi.textModel = settings.text_model || "gemini-3.5-flash-lite";
+    if (settings.model_provider === "gemini") blogAi.textModel = settings.text_model === "gemini-3.5-flash" ? "gemini-3.6-flash" : settings.text_model || "gemini-3.6-flash";
     else if (settings.model_provider === "openai") blogAi.textModel = settings.text_model || "gpt-5.6-luna";
     else if (settings.model_provider === "anthropic" || settings.model_provider === "claude") blogAi.textModel = settings.text_model || "auto-haiku";
     else if (settings.model_provider === "xai") blogAi.textModel = settings.text_model || "grok-4.5";

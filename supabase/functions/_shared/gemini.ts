@@ -3,8 +3,9 @@
 // Google no longer exposes the 2.5 Flash family to this project's account cohort.
 // No Lovable AI Gateway. No admin provider rows. Single source of truth.
 
-export const GEMINI_MODEL = "gemini-3.5-flash";
+export const GEMINI_MODEL = "gemini-3.6-flash";
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
+const LEGACY_GEMINI_MODELS = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
@@ -26,6 +27,28 @@ async function assertGlobalAiEnabled() {
   if (rows?.[0]?.is_enabled === false) {
     throw new Error(`AI_STOPPED: ${rows[0].stop_reason || "All AI calls are paused by an administrator"}`);
   }
+}
+
+export function normalizeGeminiModel(value?: string): string {
+  const model = String(value || "").trim();
+  if (!model.startsWith("gemini-")) return GEMINI_MODEL;
+  return LEGACY_GEMINI_MODELS.has(model) ? GEMINI_MODEL : model;
+}
+
+function providerError(status: number, text: string) {
+  let message = text;
+  try {
+    const payload = JSON.parse(text);
+    message = payload?.error?.message || text;
+  } catch {
+    message = text;
+  }
+  const lower = message.toLowerCase();
+  if (status === 429 && (lower.includes("quota") || lower.includes("resource_exhausted"))) {
+    return "Gemini quota is exhausted for this Google AI Studio project. Enable billing or wait for the quota reset, then retry.";
+  }
+  if (status === 429) return "Gemini is rate-limiting requests. Please wait a moment and retry.";
+  return `Gemini request failed (${status}): ${message.slice(0, 300)}`;
 }
 
 // Convert OpenAI-style messages -> Gemini contents + systemInstruction
@@ -68,7 +91,7 @@ export async function geminiGenerate(opts: {
   model?: string;
 }): Promise<string> {
   await assertGlobalAiEnabled();
-  const model = opts.model || GEMINI_MODEL;
+  const model = normalizeGeminiModel(opts.model || GEMINI_MODEL);
   const url = `${GEMINI_BASE}/models/${model}:generateContent`;
   const resp = await fetch(url, {
     method: "POST",
@@ -80,7 +103,7 @@ export async function geminiGenerate(opts: {
   });
   if (!resp.ok) {
     const t = await resp.text();
-    throw new Error(`Gemini ${resp.status}: ${t}`);
+    throw new Error(providerError(resp.status, t));
   }
   const data = await resp.json();
   const parts = data?.candidates?.[0]?.content?.parts || [];
@@ -95,7 +118,7 @@ export async function geminiGroundedGenerate(opts: {
   model?: string;
 }): Promise<{ text: string; sourceUrls: string[] }> {
   await assertGlobalAiEnabled();
-  const model = opts.model || GEMINI_MODEL;
+  const model = normalizeGeminiModel(opts.model || GEMINI_MODEL);
   const url = `${GEMINI_BASE}/models/${model}:generateContent`;
   const body = toGeminiBody({ system: opts.system, prompt: opts.prompt });
   body.tools = [{ google_search: {} }];
@@ -109,7 +132,7 @@ export async function geminiGroundedGenerate(opts: {
   });
   if (!resp.ok) {
     const detail = await resp.text();
-    throw new Error(`Gemini grounded search ${resp.status}: ${detail}`);
+    throw new Error(providerError(resp.status, detail));
   }
   const data = await resp.json();
   const candidate = data?.candidates?.[0];
@@ -132,7 +155,7 @@ export async function geminiStreamSSE(opts: {
   model?: string;
 }): Promise<Response> {
   await assertGlobalAiEnabled();
-  const model = opts.model || GEMINI_MODEL;
+  const model = normalizeGeminiModel(opts.model || GEMINI_MODEL);
   const url = `${GEMINI_BASE}/models/${model}:streamGenerateContent?alt=sse`;
   const upstream = await fetch(url, {
     method: "POST",
@@ -144,7 +167,7 @@ export async function geminiStreamSSE(opts: {
   });
   if (!upstream.ok || !upstream.body) {
     const t = await upstream.text().catch(() => "");
-    throw new Error(`Gemini stream ${upstream.status}: ${t}`);
+    throw new Error(providerError(upstream.status, t));
   }
 
   const encoder = new TextEncoder();

@@ -1,8 +1,18 @@
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
-export const GEMINI_MODEL = "gemini-3.5-flash";
+export const GEMINI_MODEL = "gemini-3.6-flash";
 
 function apiKey() {
   return Deno.env.get("GEMINI_API_KEY") || Deno.env.get("GOOGLE_AI_API_KEY") || "";
+}
+
+function providerError(status: number, payload: any) {
+  const message = String(payload?.error?.message || "");
+  const lower = message.toLowerCase();
+  if (status === 429 && (lower.includes("quota") || lower.includes("resource_exhausted"))) {
+    return "Gemini quota is exhausted for this Google AI Studio project. Enable billing or wait for the quota reset, then retry.";
+  }
+  if (status === 429) return "Gemini is rate-limiting requests. Please wait a moment and retry.";
+  return message || `Gemini request failed (${status})`;
 }
 
 function toContents(messages: { role: string; content: string }[] = []) {
@@ -45,6 +55,6 @@ export async function geminiGenerate(opts: {
     body: JSON.stringify(body),
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data?.error?.message || `Gemini request failed (${response.status})`);
+  if (!response.ok) throw new Error(providerError(response.status, data));
   return data?.candidates?.[0]?.content?.parts?.map((part: { text?: string }) => part.text || "").join("") || "";
 }

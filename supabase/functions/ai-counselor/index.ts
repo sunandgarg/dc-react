@@ -148,7 +148,8 @@ Deno.serve(async (req) => {
     const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const control = await getAiRuntimeControl(sb, "counselor");
     if (control.provider && control.provider !== "gemini") throw new Error("Diya chat currently supports Gemini models only");
-    const model = control.model || Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash";
+    const configuredModel = control.model || Deno.env.get("GEMINI_MODEL") || "gemini-3.6-flash";
+    const model = configuredModel === "gemini-3.5-flash" ? "gemini-3.6-flash" : configuredModel;
     const collegesContext = await getCollegesContext(sb);
     const systemPrompt = BASE_SYSTEM_PROMPT + BASE_SYSTEM_PROMPT_TAIL + collegesContext;
     const inputTokens = Math.ceil((systemPrompt.length + JSON.stringify(messages || []).length) / 4);

@@ -304,7 +304,7 @@ Find 3-6 directly relevant sources when available. Generic courses may use regul
   try {
     grounded = await geminiGroundedGenerate({ ...request, model: "gemini-3.5-flash-lite" });
   } catch {
-    grounded = await geminiGroundedGenerate({ ...request, model: "gemini-3.5-flash" });
+    grounded = await geminiGroundedGenerate({ ...request, model: "gemini-3.6-flash" });
   }
   const parsed = parseJson(grounded.text);
   const officialUrl = normalizeUrl(parsed.official_url);
@@ -428,7 +428,7 @@ Return JSON only with this shape:
 Every updated field must have field_evidence except SEO fields derived directly from the cited record facts. Return the strongest official URL separately when one exists.`;
 
   if (provider === "gemini") {
-    const model = runtime.model || "gemini-3.5-flash-lite";
+    const model = runtime.model === "gemini-3.5-flash" ? "gemini-3.6-flash" : runtime.model || "gemini-3.5-flash-lite";
     if (!discoverySources.length && entityType === "courses") {
       discoverySources = fallbackCourseSources(row);
       researchDossier = `No course-specific URL was retrievable. Use only stable, non-sensitive course taxonomy and curriculum framing supported by Indian higher-education/regulator/open-learning sources: ${discoverySources.join(", ")}.`;
