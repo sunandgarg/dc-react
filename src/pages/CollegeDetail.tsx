@@ -40,6 +40,7 @@ import { CollegeContactSection } from "@/components/detail/CollegeContactSection
 import { CollegeReviews } from "@/components/detail/CollegeReviews";
 import { LatestNewsSection } from "@/components/detail/LatestNewsSection";
 import { RelatedCoursesExamsStrip } from "@/components/detail/RelatedCoursesExamsStrip";
+import { PartnerCollegeStrip } from "@/components/detail/PartnerCollegeStrip";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { RichSection } from "@/components/detail/RichSection";
@@ -710,6 +711,14 @@ export default function CollegeDetail() {
               )}
             </section>
 
+              <PartnerCollegeStrip
+                title={`Partner colleges near ${college.state || "India"}`}
+                subtitle="Priority partner options you can compare with this college."
+                excludeSlug={college.slug}
+                limit={4}
+                frame
+              />
+
             {/* News (dynamic from articles) - show only 4 with View All */}
 
             {/* FAQ */}
@@ -822,6 +831,8 @@ export default function CollegeDetail() {
                   </div>
                 </div>
               )}
+
+              <PartnerCollegeStrip title="Partner Colleges" excludeSlug={college.slug} limit={5} compact />
 
               <DynamicAdBanner variant="vertical" position="sidebar" page="colleges" itemSlug={college.slug} />
             </div>

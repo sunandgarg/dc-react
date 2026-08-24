@@ -99,6 +99,7 @@ export function useHomepageCategoryExams(category: string) {
   return useQuery({
     queryKey: ["homepage-category-exams", category],
     queryFn: async () => {
+      const categoryPattern = `%${category}%`;
       const selectedBase = () => supabase
         .from("exams")
         .select(HOMEPAGE_EXPLORE_EXAM_SELECT)
@@ -106,18 +107,19 @@ export function useHomepageCategoryExams(category: string) {
         .eq("show_in_explore_by_category", true)
         .order("explore_by_category_checked_at", { ascending: false, nullsFirst: false })
         .limit(5);
-      const [selectedPrimary, selectedAdditional] = await Promise.all([
-        selectedBase().ilike("category", category),
+      const [selectedPrimary, selectedAdditional] = await Promise.allSettled([
+        selectedBase().ilike("category", categoryPattern),
         selectedBase().contains("categories", [category]),
       ]);
-      const selectionUnavailable = isMissingExploreSelectionColumn(selectedPrimary.error)
-        || isMissingExploreSelectionColumn(selectedAdditional.error);
-      if (selectedPrimary.error && !selectionUnavailable) throw selectedPrimary.error;
-      if (selectedAdditional.error && !selectionUnavailable) throw selectedAdditional.error;
+      const selectedPrimaryResult = selectedPrimary.status === "fulfilled" ? selectedPrimary.value : { data: [], error: selectedPrimary.reason };
+      const selectedAdditionalResult = selectedAdditional.status === "fulfilled" ? selectedAdditional.value : { data: [], error: selectedAdditional.reason };
+      const selectionUnavailable = isMissingExploreSelectionColumn(selectedPrimaryResult.error)
+        || isMissingExploreSelectionColumn(selectedAdditionalResult.error);
+      if (selectedPrimaryResult.error && !selectionUnavailable) throw selectedPrimaryResult.error;
 
       const selected = new Map<string, HomepageExploreExam>();
       if (!selectionUnavailable) {
-        [...(selectedPrimary.data || []), ...(selectedAdditional.data || [])]
+        [...(selectedPrimaryResult.data || []), ...(selectedAdditionalResult.error ? [] : selectedAdditionalResult.data || [])]
           .forEach((row) => selected.set(row.id, row as HomepageExploreExam));
       }
       if (selected.size > 0) {
@@ -134,19 +136,32 @@ export function useHomepageCategoryExams(category: string) {
         .order("updated_at", { ascending: false, nullsFirst: false })
         .order("name")
         .limit(5);
-      const [fallbackPrimary, fallbackAdditional] = await Promise.all([
-        fallbackBase().ilike("category", category),
+      const [fallbackPrimary, fallbackAdditional] = await Promise.allSettled([
+        fallbackBase().ilike("category", categoryPattern),
         fallbackBase().contains("categories", [category]),
       ]);
-      if (fallbackPrimary.error) throw fallbackPrimary.error;
-      if (fallbackAdditional.error) throw fallbackAdditional.error;
+      const fallbackPrimaryResult = fallbackPrimary.status === "fulfilled" ? fallbackPrimary.value : { data: [], error: fallbackPrimary.reason };
+      const fallbackAdditionalResult = fallbackAdditional.status === "fulfilled" ? fallbackAdditional.value : { data: [], error: fallbackAdditional.reason };
+      if (fallbackPrimaryResult.error) throw fallbackPrimaryResult.error;
 
       const fallback = new Map<string, HomepageExploreExam>();
-      [...(fallbackPrimary.data || []), ...(fallbackAdditional.data || [])]
+      [...(fallbackPrimaryResult.data || []), ...(fallbackAdditionalResult.error ? [] : fallbackAdditionalResult.data || [])]
         .forEach((row) => fallback.set(row.id, row as HomepageExploreExam));
-      return [...fallback.values()]
+      const categoryRows = [...fallback.values()]
         .sort((a, b) => (a.priority ?? 101) - (b.priority ?? 101) || Date.parse(b.updated_at || "0") - Date.parse(a.updated_at || "0"))
         .slice(0, 5);
+      if (categoryRows.length > 0) return categoryRows;
+
+      const { data, error } = await supabase
+        .from("exams")
+        .select(HOMEPAGE_FALLBACK_EXAM_SELECT)
+        .eq("is_active", true)
+        .order("priority", { ascending: true, nullsFirst: false })
+        .order("updated_at", { ascending: false, nullsFirst: false })
+        .order("name")
+        .limit(5);
+      if (error) throw error;
+      return (data || []) as HomepageExploreExam[];
     },
     staleTime: 10 * 60_000,
   });

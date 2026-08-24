@@ -30,6 +30,7 @@ import { AuthorByline } from "@/components/AuthorByline";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { DynamicAdBanner } from "@/components/DynamicAdBanner";
 import { LinkedColleges } from "@/components/detail/LinkedColleges";
+import { PartnerCollegeStrip } from "@/components/detail/PartnerCollegeStrip";
 import { LinkedSyllabus } from "@/components/detail/LinkedSyllabus";
 import { FAQSection } from "@/components/FAQSection";
 import { buildDefaultFaqs } from "@/lib/defaultFaqs";
@@ -654,6 +655,13 @@ export default function CourseDetail() {
                 {collegesCount}+ colleges across India offer {courseName}. Tap any college to see fees, cut-offs and admissions.
               </p>
               <LinkedColleges by="course" slug={course.slug} emptyText={`No colleges linked to ${courseName} yet.`} />
+              <div className="mt-5">
+                <PartnerCollegeStrip
+                  title={`Partner colleges for ${courseName}`}
+                  subtitle="Partner colleges where our counselors can help you compare options and apply."
+                  limit={6}
+                />
+              </div>
             </section>
 
             {/* Cut Off - FIX: added w-full overflow-x-auto wrapper to prevent table blowout */}
@@ -749,6 +757,8 @@ export default function CourseDetail() {
                     ))}
                 </div>
               </div>
+
+              <PartnerCollegeStrip title="Partner Colleges" limit={5} compact />
 
               <DynamicAdBanner variant="vertical" position="sidebar" page="courses" itemSlug={slug} />
             </div>

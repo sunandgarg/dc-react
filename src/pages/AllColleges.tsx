@@ -104,6 +104,7 @@ export default function AllColleges() {
   const [selectedExams, setSelectedExams] = useState<string[]>(() => {
     return readMultiParam(searchParams, "exam");
   });
+  const showPartnerOnly = searchParams.get("partner") === "true";
 
   // Hydrate filters from URL/SEO slug whenever the URL changes
   // (so "MSc in Mumbai" → "BSc in Bangalore" navigation reapplies filters)
@@ -149,7 +150,8 @@ export default function AllColleges() {
     types: selectedTypes,
     approvals: selectedApprovals,
     naacGrades: selectedNaac,
-  }), [debouncedSearch, serverCategories, selectedState, selectedCity, selectedTypes, selectedApprovals, selectedNaac]);
+    partnerOnly: showPartnerOnly,
+  }), [debouncedSearch, serverCategories, selectedState, selectedCity, selectedTypes, selectedApprovals, selectedNaac, showPartnerOnly]);
   const {
     data: directoryPages,
     isLoading,
@@ -174,13 +176,15 @@ export default function AllColleges() {
     writeMultiParam(params, "naac", selectedNaac);
     writeMultiParam(params, "fee", selectedFeeRanges);
     writeMultiParam(params, "exam", selectedExams);
+    if (showPartnerOnly) params.set("partner", "true");
     if (selectedState) params.set("state", selectedState);
     if (selectedCity) params.set("city", selectedCity);
     const newPath = params.toString() ? `/colleges?${params.toString()}` : "/colleges";
     if (`${location.pathname}${location.search}` !== newPath) navigate(newPath, { replace: true });
-  }, [selectedStreams, selectedCourseGroups, selectedState, selectedCity, selectedTypes, selectedApprovals, selectedNaac, selectedFeeRanges, selectedExams, navigate, location.pathname, location.search]);
+  }, [selectedStreams, selectedCourseGroups, selectedState, selectedCity, selectedTypes, selectedApprovals, selectedNaac, selectedFeeRanges, selectedExams, showPartnerOnly, navigate, location.pathname, location.search]);
 
   const activeFilters = uniqueValues([
+    ...(showPartnerOnly ? ["Partner colleges"] : []),
     ...selectedStreams, ...selectedTypes, ...selectedApprovals,
     ...selectedNaac, ...selectedCourseGroups, ...selectedFeeRanges,
     ...selectedExams,
@@ -208,9 +212,10 @@ export default function AllColleges() {
       const matchNaac = selectedNaac.length === 0 || selectedNaac.includes(c.naac_grade);
       const matchFee = selectedFeeRanges.length === 0 || selectedFeeRanges.some((range) => feeRangeMatches(c.fees, range));
       const matchExam = !selectedExams.length || selectedExams.some((exam) => text.includes(exam.toLowerCase()));
-      return matchSearch && matchCategory && matchCourse && matchState && matchCity && matchType && matchApproval && matchNaac && matchFee && matchExam;
+      const matchPartner = !showPartnerOnly || c.is_partner === true;
+      return matchSearch && matchCategory && matchCourse && matchState && matchCity && matchType && matchApproval && matchNaac && matchFee && matchExam && matchPartner;
     });
-  }, [colleges, debouncedSearch, selectedStreams, selectedCourseGroups, selectedState, selectedCity, selectedTypes, selectedApprovals, selectedNaac, selectedFeeRanges, selectedExams]);
+  }, [colleges, debouncedSearch, selectedStreams, selectedCourseGroups, selectedState, selectedCity, selectedTypes, selectedApprovals, selectedNaac, selectedFeeRanges, selectedExams, showPartnerOnly]);
 
   // SEO-optimized heading
   const heading = useMemo(() => getCollegeHeading({
@@ -229,9 +234,11 @@ export default function AllColleges() {
     setSelectedStreams([]); setSelectedState(""); setSelectedCity("");
     setSelectedTypes([]); setSelectedApprovals([]); setSelectedNaac([]);
     setSelectedCourseGroups([]); setSelectedFeeRanges([]); setSelectedExams([]);
+    if (showPartnerOnly) navigate("/colleges", { replace: true });
   };
 
   const removeFilter = (f: string) => {
+    if (f === "Partner colleges") navigate("/colleges", { replace: true });
     setSelectedStreams(prev => prev.filter(x => x !== f));
     setSelectedTypes(prev => prev.filter(x => x !== f));
     setSelectedApprovals(prev => prev.filter(x => x !== f));

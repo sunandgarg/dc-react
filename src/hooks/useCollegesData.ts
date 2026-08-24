@@ -180,6 +180,7 @@ export function useHomepageCategoryColleges(category: string) {
   return useQuery({
     queryKey: ["homepage-category-colleges", category],
     queryFn: async () => {
+      const categoryPattern = `%${category}%`;
       const selectedBase = () => supabase
         .from("colleges")
         .select(HOMEPAGE_EXPLORE_COLLEGE_SELECT)
@@ -188,18 +189,19 @@ export function useHomepageCategoryColleges(category: string) {
         .order("explore_by_category_checked_at", { ascending: false, nullsFirst: false })
         .limit(5);
 
-      const [selectedPrimary, selectedAdditional] = await Promise.all([
-        selectedBase().ilike("category", category),
+      const [selectedPrimary, selectedAdditional] = await Promise.allSettled([
+        selectedBase().ilike("category", categoryPattern),
         selectedBase().contains("categories", [category]),
       ]);
-      const selectionUnavailable = isMissingExploreSelectionColumn(selectedPrimary.error)
-        || isMissingExploreSelectionColumn(selectedAdditional.error);
-      if (selectedPrimary.error && !selectionUnavailable) throw selectedPrimary.error;
-      if (selectedAdditional.error && !selectionUnavailable) throw selectedAdditional.error;
+      const selectedPrimaryResult = selectedPrimary.status === "fulfilled" ? selectedPrimary.value : { data: [], error: selectedPrimary.reason };
+      const selectedAdditionalResult = selectedAdditional.status === "fulfilled" ? selectedAdditional.value : { data: [], error: selectedAdditional.reason };
+      const selectionUnavailable = isMissingExploreSelectionColumn(selectedPrimaryResult.error)
+        || isMissingExploreSelectionColumn(selectedAdditionalResult.error);
+      if (selectedPrimaryResult.error && !selectionUnavailable) throw selectedPrimaryResult.error;
 
       const selected = new Map<string, HomepageExploreCollege>();
       if (!selectionUnavailable) {
-        [...(selectedPrimary.data || []), ...(selectedAdditional.data || [])]
+        [...(selectedPrimaryResult.data || []), ...(selectedAdditionalResult.error ? [] : selectedAdditionalResult.data || [])]
           .forEach((row) => selected.set(row.id, row as HomepageExploreCollege));
       }
 
@@ -216,19 +218,32 @@ export function useHomepageCategoryColleges(category: string) {
         .order("priority", { ascending: true, nullsFirst: false })
         .order("rating", { ascending: false, nullsFirst: false })
         .limit(5);
-      const [fallbackPrimary, fallbackAdditional] = await Promise.all([
-        fallbackBase().ilike("category", category),
+      const [fallbackPrimary, fallbackAdditional] = await Promise.allSettled([
+        fallbackBase().ilike("category", categoryPattern),
         fallbackBase().contains("categories", [category]),
       ]);
-      if (fallbackPrimary.error) throw fallbackPrimary.error;
-      if (fallbackAdditional.error) throw fallbackAdditional.error;
+      const fallbackPrimaryResult = fallbackPrimary.status === "fulfilled" ? fallbackPrimary.value : { data: [], error: fallbackPrimary.reason };
+      const fallbackAdditionalResult = fallbackAdditional.status === "fulfilled" ? fallbackAdditional.value : { data: [], error: fallbackAdditional.reason };
+      if (fallbackPrimaryResult.error) throw fallbackPrimaryResult.error;
 
       const fallback = new Map<string, HomepageExploreCollege>();
-      [...(fallbackPrimary.data || []), ...(fallbackAdditional.data || [])]
+      [...(fallbackPrimaryResult.data || []), ...(fallbackAdditionalResult.error ? [] : fallbackAdditionalResult.data || [])]
         .forEach((row) => fallback.set(row.id, row as HomepageExploreCollege));
-      return [...fallback.values()]
+      const categoryRows = [...fallback.values()]
         .sort((a, b) => (a.priority ?? 101) - (b.priority ?? 101) || (b.rating ?? 0) - (a.rating ?? 0))
         .slice(0, 5);
+      if (categoryRows.length > 0) return categoryRows;
+
+      const { data, error } = await supabase
+        .from("colleges")
+        .select(HOMEPAGE_FALLBACK_COLLEGE_SELECT)
+        .eq("is_active", true)
+        .order("is_partner", { ascending: false, nullsFirst: false })
+        .order("priority", { ascending: true, nullsFirst: false })
+        .order("rating", { ascending: false, nullsFirst: false })
+        .limit(5);
+      if (error) throw error;
+      return (data || []) as HomepageExploreCollege[];
     },
     staleTime: 10 * 60_000,
   });
@@ -405,6 +420,28 @@ export function useCollegesByCategory(category: string | undefined, excludeSlug?
     },
     enabled: !!category,
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function usePartnerColleges(limit = 8, excludeSlug?: string) {
+  return useQuery({
+    queryKey: ["partner-colleges", limit, excludeSlug],
+    queryFn: async () => {
+      let query = supabase
+        .from("colleges")
+        .select(PUBLIC_COLLEGE_CARD_SELECT)
+        .eq("is_active", true)
+        .eq("is_partner", true)
+        .order("priority", { ascending: true, nullsFirst: false })
+        .order("featured_rank", { ascending: true, nullsFirst: false })
+        .order("rating", { ascending: false, nullsFirst: false })
+        .limit(limit);
+      if (excludeSlug) query = query.neq("slug", excludeSlug);
+      const { data, error } = await query;
+      if (error) throw error;
+      return (data ?? []) as unknown as DbCollege[];
+    },
+    staleTime: 10 * 60 * 1000,
   });
 }
 

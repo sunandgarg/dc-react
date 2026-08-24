@@ -2,13 +2,13 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { DbCollege } from "@/hooks/useCollegesData";
 
-export const COLLEGE_DIRECTORY_SELECT = "id,short_id,slug,name,short_name,location,city,state,type,category,rating,reviews,fees,image,logo,tags,approvals,naac_grade,established,priority,featured_rank,affiliation_kind,parent_university_slug";
+export const COLLEGE_DIRECTORY_SELECT = "id,short_id,slug,name,short_name,location,city,state,type,category,rating,reviews,fees,image,logo,tags,approvals,naac_grade,established,priority,featured_rank,is_partner,affiliation_kind,parent_university_slug";
 // Keep the first paint and every subsequent "load more" interaction small.
 // Fifty rich cards created thousands of DOM nodes and dozens of composited
 // layers at once, which caused visible hitching while the directory scrolled.
 export const COLLEGE_DIRECTORY_PAGE_SIZE = 24;
 
-export type CollegeDirectoryItem = Pick<DbCollege, "id" | "slug" | "name" | "short_name" | "location" | "city" | "state" | "type" | "category" | "rating" | "reviews" | "fees" | "image" | "logo" | "tags" | "approvals" | "naac_grade" | "established" | "priority" | "featured_rank" | "affiliation_kind" | "parent_university_slug"> & { short_id?: number | null };
+export type CollegeDirectoryItem = Pick<DbCollege, "id" | "slug" | "name" | "short_name" | "location" | "city" | "state" | "type" | "category" | "rating" | "reviews" | "fees" | "image" | "logo" | "tags" | "approvals" | "naac_grade" | "established" | "priority" | "featured_rank" | "is_partner" | "affiliation_kind" | "parent_university_slug"> & { short_id?: number | null };
 
 export type CollegeDirectoryFilters = {
   search?: string;
@@ -18,6 +18,7 @@ export type CollegeDirectoryFilters = {
   types?: string[];
   approvals?: string[];
   naacGrades?: string[];
+  partnerOnly?: boolean;
 };
 
 function cleanSearch(value = "") {
@@ -42,6 +43,7 @@ async function fetchDirectoryPage(filters: CollegeDirectoryFilters, page: number
   if (filters.types?.length) query = query.in("type", filters.types);
   if (filters.approvals?.length) query = query.overlaps("approvals", filters.approvals);
   if (filters.naacGrades?.length) query = query.in("naac_grade", filters.naacGrades);
+  if (filters.partnerOnly) query = query.eq("is_partner", true);
 
   const { data, error } = await query
     .order("priority", { ascending: true, nullsFirst: false })

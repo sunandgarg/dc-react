@@ -28,6 +28,7 @@ import { RichText } from "@/components/detail/RichText";
 import { RichSection } from "@/components/detail/RichSection";
 import { PageSummary } from "@/components/detail/PageSummary";
 import { LinkedColleges } from "@/components/detail/LinkedColleges";
+import { PartnerCollegeStrip } from "@/components/detail/PartnerCollegeStrip";
 import { LinkedSyllabus } from "@/components/detail/LinkedSyllabus";
 import { ExamTrustBento } from "@/components/detail/ExamTrustBento";
 import { ExamAIInsight } from "@/components/detail/ExamAIInsight";
@@ -566,6 +567,13 @@ export default function ExamDetail() {
             {/* Accepting Colleges - always open per spec */}
             <RichSection id="colleges" title={<>Top Colleges Accepting this Exam</>} collapsible={false} defaultOpen>
               <LinkedColleges by="exam" slug={exam.slug} fallbackNames={exam.top_colleges || []} />
+              <div className="mt-5">
+                <PartnerCollegeStrip
+                  title={`Partner colleges for ${exam.short_name || exam.name}`}
+                  subtitle="Partner colleges to shortlist while preparing for this exam."
+                  limit={6}
+                />
+              </div>
             </RichSection>
 
             {/* News section removed per request */}
@@ -647,6 +655,8 @@ export default function ExamDetail() {
                   ))}
                 </div>
               </div>
+
+              <PartnerCollegeStrip title="Partner Colleges" limit={5} compact />
 
               <DynamicAdBanner variant="vertical" position="sidebar" page="exams" itemSlug={slug} />
             </div>
