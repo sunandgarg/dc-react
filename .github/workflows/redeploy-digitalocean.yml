@@ -1,0 +1,57 @@
+name: Redeploy DigitalOcean application
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dc-react-digitalocean-redeploy
+  cancel-in-progress: false
+
+jobs:
+  verify-and-redeploy:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Verify application
+        run: |
+          npm ci
+          npm --prefix backend ci
+          npm --prefix backend run prisma:generate
+          npm test
+          npm --prefix backend test
+          npm run build
+
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Redeploy current main without changing MySQL
+        env:
+          APP_ID: 5453d5a9-d498-426b-af43-2b3a93f0705c
+        run: |
+          DEPLOYMENT_ID=$(doctl apps create-deployment "$APP_ID" --output json | jq -r 'if type == "array" then .[0].id else .id end')
+          for attempt in $(seq 1 180); do
+            DEPLOYMENT=$(doctl apps get-deployment "$APP_ID" "$DEPLOYMENT_ID" --output json)
+            PHASE=$(jq -r 'if type == "array" then .[0].phase else .phase end' <<<"$DEPLOYMENT")
+            [ "$PHASE" = "ACTIVE" ] && break
+            case "$PHASE" in ERROR|CANCELED|SUPERSEDED) echo "$DEPLOYMENT"; exit 1 ;; esac
+            [ "$attempt" -eq 180 ] && exit 1
+            sleep 10
+          done
+
+      - name: Verify staging services
+        run: |
+          HEALTH=$(curl --fail --silent --show-error --max-time 20 https://test.dekhocampus.com/health)
+          jq -e '.ok == true and .backend == "node" and .database == "mysql" and .storage == true' <<<"$HEALTH"
+          curl --fail --silent --show-error --max-time 20 https://test.dekhocampus.com/ >/dev/null
