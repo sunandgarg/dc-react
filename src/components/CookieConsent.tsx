@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cookie, ShieldCheck, Settings2, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { COOKIE_CONSENT_KEY, signalCookieResolved } from "@/lib/promptSequence";
 
-const COOKIE_KEY = "dc_cookie_consent_v1";       // "accepted" | "essential" | "rejected"
+const COOKIE_KEY = COOKIE_CONSENT_KEY;             // "accepted" | "essential" | "rejected"
 const PROFILE_KEY = "dc_user_prefill_v1";
 const PREFS_KEY = "dc_cookie_prefs_v1";          // JSON {essential:true, prefill:bool, analytics:bool, marketing:bool}
 
@@ -72,6 +73,7 @@ export function CookieConsent() {
     localStorage.setItem(PREFS_KEY, JSON.stringify(finalPrefs));
     if (consent === "rejected") localStorage.removeItem(PROFILE_KEY);
     setOpen(false);
+    signalCookieResolved();
     // Log opt-in choice (best-effort, anonymous)
     try {
       const sid = localStorage.getItem("dc_session_id") || `s_${Date.now()}`;
@@ -89,7 +91,7 @@ export function CookieConsent() {
   };
 
   const acceptAll = () => persist("accepted", { essential: true, prefill: true, analytics: true, marketing: true });
-  const acceptEssential = () => persist("essential", { essential: true, prefill: prefs.prefill, analytics: false, marketing: false });
+  const acceptEssential = () => persist("essential", { essential: true, prefill: true, analytics: false, marketing: false });
   const saveCustom = () => persist(prefs.analytics || prefs.marketing ? "accepted" : "essential", prefs);
 
   const Toggle = ({ k, label, desc, locked }: { k: keyof Prefs; label: string; desc: string; locked?: boolean }) => (
@@ -144,7 +146,7 @@ export function CookieConsent() {
                   exit={{ height: 0, opacity: 0 }}
                   className="px-4 border-t border-border overflow-hidden"
                 >
-                  <Toggle k="essential" label="Essential" desc="Required for login, security and basic site functionality." locked />
+                  <Toggle k="essential" label="Essential" desc="Login sessions, security, consent choices, form progress, lead delivery, duplicate prevention and saved preferences." locked />
                   <Toggle k="prefill" label="Personalisation (prefill)" desc="Remember your name, mobile, state, city so forms are auto-filled." />
                   <Toggle k="analytics" label="Analytics" desc="Help us understand which pages and tools work best." />
                   <Toggle k="marketing" label="Marketing" desc="Show counselling offers most relevant to your interests." />

@@ -13,11 +13,9 @@ import { getPrefillCookie, savePrefillCookie } from "@/components/CookieConsent"
 import { useInlineOtp, isValidIndianMobile, PHONE_HINT, sanitizeIndianMobile } from "@/components/LeadInlineOtp";
 import { ProgramModeToggle, type ProgramMode } from "@/components/ProgramModeToggle";
 import { detectDeviceType, inferSourceCategory } from "@/lib/leadTracking";
-import { functionUrl } from "@/lib/backendMode";
 import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsentCheckbox";
 import { setLeadConsentPreference } from "@/lib/leadConsent";
-
-const LEAD_URL = functionUrl("save-lead");
+import { saveLeadPhase } from "@/lib/twoStepLead";
 
 const courseOptions = [
   "B.Tech / B.E.", "MBBS / BDS", "B.Com / BBA / MBA", "B.Sc / M.Sc",
@@ -39,6 +37,8 @@ export function AILeadForm({ isOpen, onClose, onSubmit }: AILeadFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [authorized, setAuthorized] = useState(true);
   const [programMode, setProgramMode] = useState<ProgramMode>("regular");
+  const [step, setStep] = useState<1 | 2>(1);
+  const [leadId, setLeadId] = useState<string | null>(null);
   const { data: locations } = useStatesAndCities();
   const { data: profile } = useUserProfile();
   const otp = useInlineOtp(formData.phone, "ai_chat");
@@ -65,12 +65,9 @@ export function AILeadForm({ isOpen, onClose, onSubmit }: AILeadFormProps) {
     savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city });
     const courseValue = formData.course === "Other" ? formData.otherCourse : formData.course;
     try {
-      await fetch(LEAD_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      await saveLeadPhase({
+          phase: "complete",
+          lead_id: leadId,
           name: formData.name, email: formData.email || null, phone: sanitizeIndianMobile(formData.phone),
           city: formData.city || null, state: formData.state || null,
           current_situation: courseValue || null,
@@ -82,7 +79,6 @@ export function AILeadForm({ isOpen, onClose, onSubmit }: AILeadFormProps) {
           consent_terms_accepted: authorized,
           consent_text: LEAD_CONSENT_TEXT,
           consent_at: new Date().toISOString(),
-        }),
       });
       setLeadConsentPreference(authorized);
       onSubmit({ name: formData.name, course: courseValue, state: formData.state, city: formData.city });
@@ -96,22 +92,53 @@ export function AILeadForm({ isOpen, onClose, onSubmit }: AILeadFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone || !formData.course || !formData.state || !formData.city) {
+    if (step === 1 && (!formData.name || !formData.email || !formData.phone)) {
       toast.error("Please complete all required details");
       return;
     }
-    if (!isValidIndianMobile(formData.phone)) {
+    if (step === 2 && (!formData.course || !formData.state || !formData.city)) {
+      toast.error("Please complete your course and location preferences");
+      return;
+    }
+    if (step === 1 && !isValidIndianMobile(formData.phone)) {
       toast.error(PHONE_HINT);
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.email && !emailRegex.test(formData.email)) {
+    if (step === 1 && formData.email && !emailRegex.test(formData.email)) {
       toast.error("Please enter a valid email address");
       return;
     }
     // If user clicked Get OTP, they must verify before submit.
-    if (otp.requested && !otp.verified) {
+    if (step === 1 && otp.requested && !otp.verified) {
       otp.markMissing();
+      return;
+    }
+    if (step === 1) {
+      setIsLoading(true);
+      try {
+        const saved = await saveLeadPhase({
+          phase: "identity",
+          name: formData.name,
+          email: formData.email,
+          phone: sanitizeIndianMobile(formData.phone),
+          source: "ai_chat_lead",
+          otp_verified: otp.verified,
+          device_type: detectDeviceType(),
+          source_category: inferSourceCategory("ai_chat_lead"),
+          consent_terms_accepted: authorized,
+          consent_text: LEAD_CONSENT_TEXT,
+          consent_at: new Date().toISOString(),
+        });
+        setLeadId(saved.lead_id);
+        setLeadConsentPreference(authorized);
+        savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone });
+        setStep(2);
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Could not save your details");
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
     await submitLead();
@@ -142,7 +169,7 @@ export function AILeadForm({ isOpen, onClose, onSubmit }: AILeadFormProps) {
             <img src={diyaAiLogo} alt="Diya AI" className="w-10 h-10 object-contain rounded-full bg-primary-foreground/20 p-1" />
             <div>
               <h3 className="font-bold text-primary-foreground">Start with Diya</h3>
-              <p className="text-[11px] text-primary-foreground/90">Three quick details for personalised guidance</p>
+              <p className="text-[11px] text-primary-foreground/90">Step {step} of 2 · personalised guidance</p>
             </div>
           </div>
           <button onClick={onClose} className="text-primary-foreground/80 hover:text-primary-foreground">
@@ -153,6 +180,8 @@ export function AILeadForm({ isOpen, onClose, onSubmit }: AILeadFormProps) {
         <form onSubmit={handleSubmit} className="p-5 space-y-3">
           <div className="rounded-2xl bg-emerald-50 px-3.5 py-2.5 text-xs font-semibold text-emerald-800 flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> Personalised guidance with a clear shortlist and next steps</div>
 
+          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"><span className={step === 1 ? "text-primary" : "text-emerald-600"}>{step === 1 ? "1" : "✓"} Contact</span><span>→</span><span className={step === 2 ? "text-primary" : ""}>2 Preferences</span></div>
+          {step === 1 ? <>
           {/* Name */}
           <div className="relative">
             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -202,6 +231,8 @@ export function AILeadForm({ isOpen, onClose, onSubmit }: AILeadFormProps) {
           </div>
 
 
+          <LeadConsentCheckbox checked={authorized} onCheckedChange={setAuthorized} />
+          </> : <>
           {/* Course select - required */}
           <div className="relative">
             <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -236,11 +267,11 @@ export function AILeadForm({ isOpen, onClose, onSubmit }: AILeadFormProps) {
             </div>
           </div>
 
-          <LeadConsentCheckbox checked={authorized} onCheckedChange={setAuthorized} />
+          </>}
 
           <Button type="submit" className="w-full bg-primary hover:bg-primary/90 rounded-xl h-11 text-sm" disabled={isLoading}>
             {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-            {isLoading ? "Saving..." : "Continue with Diya"}
+            {isLoading ? "Saving..." : step === 1 ? "Save & continue" : "Continue with Diya"}
           </Button>
           <p className="text-[10px] text-center text-muted-foreground">
             Your details stay secure. No spam, ever.

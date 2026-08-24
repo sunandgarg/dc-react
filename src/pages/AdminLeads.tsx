@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Download, Upload, Users, TrendingUp, Phone, Mail, Calendar as CalendarIcon, MapPin, Star, Flame, ChevronRight, ChevronDown, ChevronLeft, ChevronsLeft, ChevronsRight, Layers, FileText, MessageCircle, ArrowUpDown, ArrowUp, ArrowDown, Filter, ShieldCheck, Zap, Trophy, GraduationCap, Copy, ExternalLink, GitMerge, CheckSquare, Square, X as XIcon, Tag, Trash2 } from "lucide-react";
+import { Search, Download, Upload, Users, TrendingUp, Phone, Mail, Calendar as CalendarIcon, MapPin, Star, Flame, ChevronRight, ChevronDown, ChevronLeft, ChevronsLeft, ChevronsRight, Layers, FileText, MessageCircle, ArrowUpDown, ArrowUp, ArrowDown, Filter, ShieldCheck, Zap, Trophy, GraduationCap, Copy, ExternalLink, GitMerge, CheckSquare, Square, X as XIcon, Tag, Trash2, Maximize2, Minimize2 } from "lucide-react";
 import { format, subDays, isAfter } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -69,6 +69,14 @@ export default function AdminLeads() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showImport, setShowImport] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const close = (event: KeyboardEvent) => { if (event.key === "Escape") setIsFullscreen(false); };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [isFullscreen]);
 
   const deleteLeads = async (ids: string[], label: string) => {
     const uniqueIds = Array.from(new Set(ids)).filter(Boolean);
@@ -167,24 +175,37 @@ export default function AdminLeads() {
   const collegeSlugs = useMemo(() => Array.from(new Set(leads.map((l: any) => l.interested_college_slug).filter(Boolean))) as string[], [leads]);
   const categories = useMemo(() => Array.from(new Set(leads.map((l: any) => l.source_category).filter(Boolean))) as string[], [leads]);
 
-  // Duplicate detection: count occurrences keyed by normalized phone (fallback email)
-  const isSilentLead = (l: any) => {
-    const value = `${l.source || ""} ${l.source_category || ""}`.toLowerCase();
-    return ["silent", "behavioral", "intent", "engagement"].some((part) => value.includes(part));
-  };
-  const indiaDay = (value: string) => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
-  const dupKey = (l: any) => {
-    const p = (l.phone || "").replace(/\D/g, "").slice(-10);
-    const day = isSilentLead(l) && l.created_at ? `:${indiaDay(l.created_at)}` : "";
-    if (p.length === 10) return `p:${p}${day}`;
-    const e = (l.email || "").trim().toLowerCase();
-    return e ? `e:${e}${day}` : "";
-  };
+  // Join submissions when either normalized phone OR normalized email matches.
+  // Union-find also handles bridge cases where a later row connects two earlier identities.
+  const identityKeys = useMemo(() => {
+    const parent = leads.map((_: any, index: number) => index);
+    const find = (index: number): number => parent[index] === index ? index : (parent[index] = find(parent[index]));
+    const join = (left: number, right: number) => {
+      const a = find(left); const b = find(right);
+      if (a !== b) parent[b] = a;
+    };
+    const phones = new Map<string, number>();
+    const emails = new Map<string, number>();
+    leads.forEach((lead: any, index: number) => {
+      const phone = String(lead.phone || "").replace(/\D/g, "").slice(-10);
+      const email = String(lead.email || "").trim().toLowerCase();
+      if (phone.length === 10) {
+        if (phones.has(phone)) join(index, phones.get(phone)!);
+        else phones.set(phone, index);
+      }
+      if (email) {
+        if (emails.has(email)) join(index, emails.get(email)!);
+        else emails.set(email, index);
+      }
+    });
+    return new Map(leads.map((lead: any, index: number) => [lead.id, `person:${leads[find(index)]?.id || lead.id}`]));
+  }, [leads]);
+  const dupKey = useCallback((lead: any) => identityKeys.get(lead.id) || `id:${lead.id}`, [identityKeys]);
   const dupCounts = useMemo(() => {
     const m = new Map<string, number>();
     leads.forEach((l: any) => { const k = dupKey(l); if (k) m.set(k, (m.get(k) || 0) + 1); });
     return m;
-  }, [leads]);
+  }, [leads, dupKey]);
   const [dupOnly, setDupOnly] = useState(false);
   const [groupDup, setGroupDup] = useState(true);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -235,7 +256,7 @@ export default function AdminLeads() {
       }
       return true;
     });
-  }, [leads, search, sourceFilter, cityFilter, stateFilter, collegeFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, dupCounts]);
+  }, [leads, search, sourceFilter, cityFilter, stateFilter, collegeFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, dupCounts, dupKey]);
 
   // Reset to page 1 whenever filters change
   useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, sourceFilter, cityFilter, collegeFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, sortBy, sortDir, pageSize]);
@@ -320,6 +341,7 @@ export default function AdminLeads() {
 
   return (
     <AdminLayout title="Lead Manager">
+      <div className={isFullscreen ? "fixed inset-0 z-[100] overflow-auto bg-background p-4 md:p-6" : ""}>
       {/* ─── Header: title · Quick View · last sync · tools ─── */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex flex-wrap items-center gap-4">
@@ -372,6 +394,9 @@ export default function AdminLeads() {
           </Button>
           <Button onClick={exportCSV} variant="outline" size="sm" className="rounded-lg gap-1.5 h-9">
             <Download className="w-3.5 h-3.5" /> Export
+          </Button>
+          <Button onClick={() => setIsFullscreen((value) => !value)} variant="outline" size="icon" className="h-9 w-9 rounded-lg" title={isFullscreen ? "Exit full page (Esc)" : "Open full page"}>
+            {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </Button>
 
         </div>
@@ -705,7 +730,7 @@ export default function AdminLeads() {
                 const rows: { key: string; primary: any; instances: any[] }[] = [];
                 if (groupDup) {
                   groups.forEach((arr, key) => {
-                    arr.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+                    arr.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
                     rows.push({ key, primary: arr[0], instances: arr });
                   });
                   const order = new Map<string, number>();
@@ -821,15 +846,19 @@ export default function AdminLeads() {
                             <td></td>
                             <td colSpan={visibleCols.length} className="p-3">
 
-                              <div className="text-[11px] font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><FileText className="w-3 h-3" /> All {dn} submissions</div>
+                              <div className="text-[11px] font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><FileText className="w-3 h-3" /> Submission history · oldest first</div>
                               <div className="space-y-2">
-                                {instances.map((it) => (
+                                {instances.map((it, index) => (
                                   <div key={it.id} className="bg-card border border-border rounded-lg p-2 grid md:grid-cols-4 gap-2 text-[11px]">
+                                    <div className="md:col-span-4 flex items-center justify-between"><strong>#{index + 1} · {maskName(it.name) || "Unknown"}</strong><span className="text-muted-foreground">{it.created_at ? format(new Date(it.created_at), "MMM d, yyyy HH:mm") : "-"}</span></div>
+                                    <div><span className="text-muted-foreground">Phone:</span> {it.phone ? `+91 ${mask ? maskPhone(it.phone) : String(it.phone).replace(/\D/g, "").slice(-10)}` : "-"}</div>
+                                    <div><span className="text-muted-foreground">Email:</span> {it.email ? (mask ? maskEmail(it.email) : it.email) : "-"}</div>
+                                    <div><span className="text-muted-foreground">Course:</span> {it.current_situation || it.interested_course_slug || "-"}</div>
+                                    <div><span className="text-muted-foreground">Location:</span> {[it.city, it.state].filter(Boolean).join(", ") || "-"} · {it.program_mode || "unknown"}</div>
                                     <div><span className="text-muted-foreground">Source:</span> <Badge className={`text-[10px] border ${sourceColor(it.source || "")}`}>{it.source || "-"}</Badge></div>
                                     <div><span className="text-muted-foreground">CTA:</span> {it.cta || "-"}</div>
                                     <div className="md:col-span-2 truncate" title={it.page_url || ""}><span className="text-muted-foreground">Page:</span> {it.page_url || "-"}</div>
                                     <div className="md:col-span-3"><span className="text-muted-foreground">Query:</span> {it.initial_query || "-"}</div>
-                                    <div className="text-muted-foreground">{it.created_at ? format(new Date(it.created_at), "MMM d, HH:mm") : "-"}</div>
                                   </div>
                                 ))}
                               </div>
@@ -923,6 +952,7 @@ export default function AdminLeads() {
       />
       <LeadDetailDrawer lead={detailLead} onClose={() => setDetailLead(null)} onChanged={() => { /* react-query will refetch on next tick */ }} />
       {mergeRows && <MergeLeadsDialog leads={mergeRows} open={!!mergeRows} onClose={() => setMergeRows(null)} onMerged={() => { setSelectedIds(new Set()); setMergeRows(null); }} />}
+      </div>
     </AdminLayout>
 
   );

@@ -2,7 +2,7 @@ import { createHash, createHmac, randomBytes, randomInt, randomUUID, timingSafeE
 import { prisma } from "./db.mjs";
 
 const ACCESS_TTL_SECONDS = Number(process.env.AUTH_ACCESS_TTL_SECONDS || 3600);
-const REFRESH_TTL_SECONDS = Number(process.env.AUTH_REFRESH_TTL_SECONDS || 60 * 60 * 24 * 30);
+const REFRESH_TTL_SECONDS = Number(process.env.AUTH_REFRESH_TTL_SECONDS || 60 * 60 * 24 * 180);
 const OWNER_ADMIN_PHONES = new Set(["8700602524", "9990109393"]);
 
 export function isOwnerAdminPhone(phone) {

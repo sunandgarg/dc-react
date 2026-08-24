@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Target, X, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { COOKIE_RESOLVED_EVENT, hasCookieDecision, scheduleAfterGate, signalLockPromoResolved } from "@/lib/promptSequence";
 
 
 const DISMISS_KEY = "lock_target_promo_dismissed_v1";
@@ -14,9 +15,15 @@ export function LockTargetFloatingPromo() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const dismissed = sessionStorage.getItem(DISMISS_KEY);
-    if (dismissed) return;
-    const t = setTimeout(() => setOpen(true), 4500);
-    return () => clearTimeout(t);
+    if (dismissed) {
+      signalLockPromoResolved();
+      return;
+    }
+    return scheduleAfterGate({
+      ready: hasCookieDecision,
+      event: COOKIE_RESOLVED_EVENT,
+      callback: () => setOpen(true),
+    });
   }, []);
 
   // Hide on the lock-target page itself, dashboard, auth, and admin
@@ -40,6 +47,7 @@ export function LockTargetFloatingPromo() {
 
   function dismiss() {
     sessionStorage.setItem(DISMISS_KEY, "1");
+    signalLockPromoResolved();
     setOpen(false);
   }
 
@@ -57,7 +65,7 @@ export function LockTargetFloatingPromo() {
         >
           <X className="w-3.5 h-3.5" />
         </button>
-        <Link to={user ? "/target-dashboard" : "/lock-target"} onClick={() => sessionStorage.setItem(DISMISS_KEY, "1")} className="block">
+        <Link to={user ? "/target-dashboard" : "/lock-target"} onClick={() => { sessionStorage.setItem(DISMISS_KEY, "1"); signalLockPromoResolved(); }} className="block">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-primary">
               <Target className="w-4.5 h-4.5" strokeWidth={2.5} />

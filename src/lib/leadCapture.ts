@@ -38,7 +38,7 @@ export function isWithinSilentWindow(windowMs: number = LEAD_SILENT_WINDOW_MS) {
 export function hasPrefillIdentity(): boolean {
   const c = getPrefillCookie();
   const phone = normalizeIndianMobile(c.phone || "");
-  return !!c.name && phone.length === 10;
+  return !!c.name && phone.length === 10 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email || "");
 }
 
 export interface SilentLeadPayload {
@@ -68,12 +68,13 @@ export interface SilentLeadPayload {
 export async function silentSaveLead(payload: SilentLeadPayload): Promise<boolean> {
   const c = getPrefillCookie();
   const name = payload.name ?? c.name;
+  const email = payload.email ?? c.email ?? "";
   const phone = normalizeIndianMobile(payload.phone ?? c.phone ?? "");
-  if (!name || phone.length !== 10) return false;
+  if (!name || phone.length !== 10 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
 
   const body = {
     name,
-    email: payload.email ?? c.email ?? null,
+    email,
     phone,
     city: payload.city ?? c.city ?? null,
     state: payload.state ?? c.state ?? null,

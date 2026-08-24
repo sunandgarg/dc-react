@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, Newspaper, Sparkles, X } from "lucide-react";
+import { CheckCircle2, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
+import { GoogleGLogo } from "@/components/GoogleGLogo";
+import { hasLockPromoResolved, LOCK_PROMO_RESOLVED_EVENT, scheduleAfterGate } from "@/lib/promptSequence";
 
 const STORAGE_KEY = "dc:preferred-source-nudge:v1";
 const GOOGLE_PREFERRED_SOURCE_URL = "https://google.com/preferences/source?q=dekhocampus.com";
@@ -44,8 +46,11 @@ export function PreferredSourceNudge() {
     if (stored.clickedAt) return;
     if (stored.dismissedAt && Date.now() - stored.dismissedAt < 1000 * 60 * 60 * 24 * 14) return;
 
-    const timer = window.setTimeout(() => setVisible(true), 4200);
-    return () => window.clearTimeout(timer);
+    return scheduleAfterGate({
+      ready: hasLockPromoResolved,
+      event: LOCK_PROMO_RESOLVED_EVENT,
+      callback: () => setVisible(true),
+    });
   }, [pathname]);
 
   if (!visible) return null;
@@ -72,8 +77,8 @@ export function PreferredSourceNudge() {
           <X className="h-4 w-4" />
         </button>
         <div className="flex gap-3 pr-7">
-          <div className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-orange-500 text-white shadow-lg shadow-blue-600/20">
-            <Newspaper className="h-5 w-5" />
+          <div className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white shadow-lg shadow-blue-600/15 ring-1 ring-slate-200">
+            <GoogleGLogo className="h-7 w-7" />
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-1.5">

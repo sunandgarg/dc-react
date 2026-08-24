@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { SearchableSelect } from "@/components/SearchableSelect";
 import { useStatesAndCities } from "@/hooks/useLocations";
 import { useLeadFormSettings } from "@/hooks/useLeadFormSettings";
-import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { getPrefillCookie, savePrefillCookie } from "@/components/CookieConsent";
 import { IITAlumniBadge } from "@/components/IITAlumniBadge";
@@ -15,8 +14,8 @@ import { normalizeIndianMobile } from "@/lib/phone";
 import { functionUrl } from "@/lib/backendMode";
 import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsentCheckbox";
 import { setLeadConsentPreference } from "@/lib/leadConsent";
+import { saveLeadPhase } from "@/lib/twoStepLead";
 
-const LEAD_URL = functionUrl("save-lead");
 const OTP_URL = functionUrl("study-otp");
 
 // NOTE: Free-skip bypass intentionally removed. Every download MUST pass through OTP.
@@ -33,7 +32,8 @@ interface Props {
 }
 
 export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, meta, onDownloaded }: Props) {
-  const [step, setStep] = useState<"form" | "otp">("form");
+  const [step, setStep] = useState<"identity" | "otp" | "details">("identity");
+  const [leadId, setLeadId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", email: "", class: "", state: "", city: "" });
   const [otp, setOtp] = useState("");
@@ -75,12 +75,12 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
 
   const submitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || form.phone.length !== 10 || !form.state || !form.city) {
-      toast.error("Please fill all required fields");
+    if (!form.name || form.phone.length !== 10 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      toast.error("Please enter your name, email and a valid mobile number");
       return;
     }
     setLoading(true);
-    savePrefillCookie({ name: form.name, phone: form.phone, email: form.email, state: form.state, city: form.city, className: form.class });
+    savePrefillCookie({ name: form.name, phone: form.phone, email: form.email });
     try {
       const res = await fetch(OTP_URL, {
         method: "POST",
@@ -135,13 +135,13 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
     setOtpToken(null);
     setSentOtp(null);
     setResendCooldown(0);
-    setStep("form");
+    setStep("identity");
   };
 
-  const verifyAndDownload = async (e: React.FormEvent) => {
+  const verifyIdentity = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.length !== 6) { toast.error("Enter 6-digit OTP"); return; }
-    if (!otpToken) { toast.error("Please request OTP again"); setStep("form"); return; }
+    if (!otpToken) { toast.error("Please request OTP again"); setStep("identity"); return; }
     setLoading(true);
     try {
       const res = await fetch(OTP_URL, {
@@ -153,33 +153,54 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok || !json.success) throw new Error(json.error || "Invalid OTP");
-      // Save lead with otp_verified=true
-      await fetch(LEAD_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: form.name,
-          phone: form.phone,
-          email: form.email || null,
-          state: form.state,
-          city: form.city,
-          current_situation: form.class || "Class 8-12",
-          source,
-          otp_verified: true,
-          initial_query: meta ? JSON.stringify(meta) : `Downloaded: ${fileName}`,
-          consent_terms_accepted: consentAccepted,
-          consent_text: LEAD_CONSENT_TEXT,
-          consent_at: new Date().toISOString(),
-        }),
-      }).catch(() => {});
+      const saved = await saveLeadPhase({
+        phase: "identity",
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        source,
+        otp_verified: true,
+        initial_query: meta ? JSON.stringify(meta) : `Downloaded: ${fileName}`,
+        consent_terms_accepted: consentAccepted,
+        consent_text: LEAD_CONSENT_TEXT,
+        consent_at: new Date().toISOString(),
+      });
+      setLeadId(saved.lead_id);
       setLeadConsentPreference(consentAccepted);
-
-      toast.success("Verified! Starting download…");
-      triggerDownload();
+      toast.success("Mobile verified. Add your study preferences.");
+      setStep("details");
     } catch (err: any) {
       toast.error(err.message || "Verification failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const completeLeadAndDownload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!leadId || !form.class || !form.state || !form.city) {
+      toast.error("Please fill all study and location details");
+      return;
+    }
+    setLoading(true);
+    try {
+      await saveLeadPhase({
+        lead_id: leadId,
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        source,
+        current_situation: form.class,
+        interested_course_slug: form.class,
+        state: form.state,
+        city: form.city,
+        program_mode: "regular",
+      });
+      savePrefillCookie({ name: form.name, phone: form.phone, email: form.email, state: form.state, city: form.city, className: form.class });
+      toast.success("Verified! Starting download...");
+      triggerDownload();
+    } catch (err: any) {
+      toast.error(err.message || "Could not save your preferences");
     } finally {
       setLoading(false);
     }
@@ -200,7 +221,7 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
           <p className="text-[11px] text-primary-foreground/85">Helping students access free study material instantly.</p>
         </div>
 
-        {step === "form" ? (
+        {step === "identity" ? (
           <form onSubmit={submitForm} className="p-4 space-y-2.5">
             <Input placeholder="Your Name *" value={form.name} onChange={e => set("name", e.target.value)} required className="rounded-xl h-10" />
             <div className="flex items-center gap-0">
@@ -217,23 +238,15 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
                 className="rounded-l-none rounded-r-xl h-10"
               />
             </div>
-            <Input placeholder="Email" type="email" value={form.email} onChange={e => set("email", e.target.value)} className="rounded-xl h-10" />
-            <select value={form.class} onChange={e => set("class", e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-border bg-card text-sm h-10">
-              <option value="">Your Class</option>
-              {[8, 9, 10, 11, 12].map(c => <option key={c} value={`Class ${c}`}>Class {c}</option>)}
-            </select>
-            <div className="grid grid-cols-2 gap-2">
-              <SearchableSelect options={locations?.states || []} value={form.state} onChange={v => { set("state", v); set("city", ""); }} placeholder="State *" />
-              <SearchableSelect options={form.state ? (locations?.citiesByState[form.state] || []) : []} value={form.city} onChange={v => set("city", v)} placeholder={form.state ? "City *" : "Pick state"} />
-            </div>
+            <Input placeholder="Email *" type="email" value={form.email} onChange={e => set("email", e.target.value)} required className="rounded-xl h-10" />
             <LeadConsentCheckbox checked={consentAccepted} onCheckedChange={setConsentAccepted} compact />
             <Button type="submit" disabled={loading} className="w-full rounded-xl h-10 bg-primary text-primary-foreground">
               {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Sending OTP…</> : <>Send OTP & Continue</>}
             </Button>
             <p className="text-[10px] text-center text-muted-foreground">By continuing you agree to our T&C and authorize calls/SMS.</p>
           </form>
-        ) : (
-          <form onSubmit={verifyAndDownload} className="p-4 space-y-3">
+        ) : step === "otp" ? (
+          <form onSubmit={verifyIdentity} className="p-4 space-y-3">
             <div className="text-center">
               <ShieldCheck className="w-10 h-10 mx-auto text-primary mb-1" />
               <p className="text-sm font-semibold">Enter the 6-digit OTP</p>
@@ -242,7 +255,7 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
             </div>
             <Input value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="------" inputMode="numeric" maxLength={6} className="text-center tracking-[0.5em] text-lg h-12 rounded-xl" />
             <Button type="submit" disabled={loading} className="w-full rounded-xl h-10 bg-primary text-primary-foreground">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify & Download"}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify & Continue"}
             </Button>
             <div className="flex items-center justify-between text-xs">
               <button type="button" onClick={changeNumber} className="text-muted-foreground hover:text-foreground">
@@ -253,6 +266,24 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
                 {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend OTP"}
               </button>
             </div>
+          </form>
+        ) : (
+          <form onSubmit={completeLeadAndDownload} className="p-4 space-y-3">
+            <div>
+              <p className="text-sm font-semibold">Tell us what you are studying</p>
+              <p className="text-xs text-muted-foreground">This helps us recommend relevant material.</p>
+            </div>
+            <select value={form.class} onChange={e => set("class", e.target.value)} required className="w-full px-3 py-2.5 rounded-xl border border-border bg-card text-sm h-10">
+              <option value="">Your Class *</option>
+              {[8, 9, 10, 11, 12].map(c => <option key={c} value={`Class ${c}`}>Class {c}</option>)}
+            </select>
+            <div className="grid grid-cols-2 gap-2">
+              <SearchableSelect options={locations?.states || []} value={form.state} onChange={v => { set("state", v); set("city", ""); }} placeholder="State *" />
+              <SearchableSelect options={form.state ? (locations?.citiesByState[form.state] || []) : []} value={form.city} onChange={v => set("city", v)} placeholder={form.state ? "City *" : "Pick state"} />
+            </div>
+            <Button type="submit" disabled={loading} className="w-full rounded-xl h-10 bg-primary text-primary-foreground">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save & Download"}
+            </Button>
           </form>
         )}
       </DialogContent>

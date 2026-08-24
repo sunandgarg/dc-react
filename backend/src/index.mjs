@@ -3,6 +3,7 @@ import { handleRest, handleRpc } from "./rest.mjs";
 import { prisma } from "./db.mjs";
 import { handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp } from "./auth.mjs";
 import { handleStorage } from "./storage.mjs";
+import { queueLeadAutomation } from "./lead-automation.mjs";
 import { integrationStatus } from "./integration-status.mjs";
 
 const publicReadTables = new Set([
@@ -140,31 +141,56 @@ async function bootstrapPayload() {
 async function saveLead(request) {
   const input = await request.json().catch(() => ({}));
   const phone = String(input.phone || "").replace(/\D/g, "").slice(-10);
-  if (!input.name || !/^[6-9]\d{9}$/.test(phone)) throw new HttpError(400, "INVALID_LEAD", "Name and a valid 10-digit Indian mobile number are required");
+  const email = String(input.email || "").trim().toLowerCase();
+  if (!input.name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^[6-9]\d{9}$/.test(phone)) {
+    throw new HttpError(400, "INVALID_LEAD", "Name, email and a valid 10-digit Indian mobile number are required");
+  }
+  const phase = input.phase === "identity" ? "identity" : "complete";
+  if (input.lead_id) {
+    const result = await prisma.leads.updateMany({
+      where: { id: String(input.lead_id), phone },
+      data: {
+        current_situation: input.current_situation ? String(input.current_situation) : null,
+        city: input.city ? String(input.city).slice(0, 250) : null,
+        state: input.state ? String(input.state).slice(0, 250) : null,
+        interested_college_slug: input.interested_college_slug ? String(input.interested_college_slug) : null,
+        interested_course_slug: input.interested_course_slug ? String(input.interested_course_slug) : null,
+        interested_exam_slug: input.interested_exam_slug ? String(input.interested_exam_slug) : null,
+        program_mode: input.program_mode ? String(input.program_mode) : "unknown",
+        status: "new",
+        updated_at: new Date(),
+      },
+    });
+    if (!result.count) throw new HttpError(404, "LEAD_NOT_FOUND", "The saved lead could not be updated");
+    queueLeadAutomation(String(input.lead_id));
+    return { success: true, lead_id: String(input.lead_id), phase: "complete" };
+  }
+  const existingCount = await prisma.leads.count({ where: { OR: [{ phone }, { email }] } });
   const lead = await prisma.leads.create({
     data: {
       id: randomUUID(),
       name: String(input.name).slice(0, 250),
-      email: input.email ? String(input.email).slice(0, 320) : null,
+      email: email.slice(0, 320),
       phone,
-      city: input.city ? String(input.city).slice(0, 250) : null,
-      state: input.state ? String(input.state).slice(0, 250) : null,
-      current_situation: input.current_situation ? String(input.current_situation) : null,
+      city: phase === "complete" && input.city ? String(input.city).slice(0, 250) : null,
+      state: phase === "complete" && input.state ? String(input.state).slice(0, 250) : null,
+      current_situation: phase === "complete" && input.current_situation ? String(input.current_situation) : null,
       initial_query: input.initial_query ? String(input.initial_query) : null,
       source: input.source ? String(input.source) : "website",
       cta: input.cta ? String(input.cta) : null,
       page_url: input.page_url ? String(input.page_url) : null,
-      interested_college_slug: input.interested_college_slug ? String(input.interested_college_slug) : null,
-      interested_course_slug: input.interested_course_slug ? String(input.interested_course_slug) : null,
-      interested_exam_slug: input.interested_exam_slug ? String(input.interested_exam_slug) : null,
+      interested_college_slug: phase === "complete" && input.interested_college_slug ? String(input.interested_college_slug) : null,
+      interested_course_slug: phase === "complete" && input.interested_course_slug ? String(input.interested_course_slug) : null,
+      interested_exam_slug: phase === "complete" && input.interested_exam_slug ? String(input.interested_exam_slug) : null,
       otp_verified: Boolean(input.otp_verified),
-      program_mode: input.program_mode ? String(input.program_mode) : "unknown",
+      program_mode: phase === "complete" && input.program_mode ? String(input.program_mode) : "unknown",
       device_type: input.device_type ? String(input.device_type) : null,
       source_category: input.source_category ? String(input.source_category) : null,
       status: "new",
     },
   });
-  return { success: true, lead_id: lead.id };
+  if (phase === "complete") queueLeadAutomation(lead.id);
+  return { success: true, lead_id: lead.id, phase, existing_count: existingCount };
 }
 
 export async function handleRequest(request) {
