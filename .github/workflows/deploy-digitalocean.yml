@@ -2,6 +2,12 @@ name: Deploy production to DigitalOcean
 
 on:
   workflow_dispatch:
+    inputs:
+      copy_aws_database:
+        description: Replace DigitalOcean MySQL with the AWS snapshot
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -42,6 +48,7 @@ jobs:
           npm run build
 
       - uses: aws-actions/configure-aws-credentials@v4
+        if: ${{ inputs.copy_aws_database }}
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
@@ -122,6 +129,7 @@ jobs:
           rm -f /tmp/dc-react-app.yaml
 
       - name: Copy AWS MySQL into DigitalOcean
+        if: ${{ inputs.copy_aws_database }}
         id: migrate
         env:
           APP_ID: ${{ steps.app.outputs.id }}
