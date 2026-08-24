@@ -68,6 +68,7 @@ export default function AdminColleges() {
   const canCreate = isAdmin || can("colleges", "create");
   const canEdit = isAdmin || can("colleges", "edit");
   const [editing, setEditing] = useDraftState<Partial<DbCollege> | null>('admin.colleges.editing.v1', null);
+  const [editingBaseline, setEditingBaseline] = useState("");
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
   const [statusFilter, setStatusFilter] = useState<"all" | "Published" | "Draft">("all");
@@ -106,15 +107,19 @@ export default function AdminColleges() {
     const { data, error } = await supabase.from("colleges").select("*").eq("id", id).single();
     setLoadingEditId(null);
     if (error) { toast.error(`Could not open college: ${error.message}`); return; }
+    setEditingBaseline(JSON.stringify(data));
     setEditing(data as DbCollege);
   };
 
+  const openNewEditor = () => {
+    const value = { ...emptyCollege };
+    setEditingBaseline(JSON.stringify(value));
+    setEditing(value);
+  };
+  const hasEditingChanges = Boolean(editing && JSON.stringify(editing) !== editingBaseline);
+
   const handleSave = () => {
     if (!editing?.slug || !editing?.name) { toast.error("Slug and Name required"); return; }
-    if (editing.status === "Published" && !canPublish) {
-      toast.error("You don't have permission to publish. Save as Draft instead.");
-      return;
-    }
     // Hard clamp priority into 1..100 - out-of-range values are rejected before
     // hitting the DB so a stray "0" or "999" can never break sort order.
     const rawPriority = (editing as any).priority;
@@ -129,24 +134,15 @@ export default function AdminColleges() {
       return;
     }
     const desiredRank = (editing as any).featured_rank ?? null;
-    if (desiredRank != null && (desiredRank < 1 || desiredRank > 4)) {
-      toast.error("Featured slot must be 1-4 or empty");
+    if (desiredRank != null && (desiredRank < 1 || desiredRank > 5)) {
+      toast.error("Featured slot must be 1-5 or empty");
       return;
     }
-    const { featured_rank: _omit, ...payload } = editing as any;
+    const payload = { ...(editing as any) };
     payload.priority = priorityNum;
     payload.rating = rating;
     saveCollege.mutate(payload, {
-      onSuccess: async () => {
-        let id = (editing as any).id;
-        if (!id && editing.slug) {
-          const { data: row } = await supabase.from("colleges").select("id").eq("slug", editing.slug).maybeSingle();
-          id = row?.id;
-        }
-        if (id) {
-          const { error } = await (supabase as any).rpc("set_featured_rank", { _table: "colleges", _id: id, _rank: desiredRank });
-          if (error) toast.error(`Featured: ${error.message}`);
-        }
+      onSuccess: () => {
         setEditing(null);
         // No full reload - useSaveCollege already invalidates every cached
         // colleges query so listings refresh in place without a page refresh.
@@ -201,7 +197,7 @@ export default function AdminColleges() {
                 { key: "is_active", label: "Active", type: "boolean", width: 80 },
               ]}
             />}
-            {canCreate && <Button onClick={() => setEditing({ ...emptyCollege })} className="gap-2 rounded-xl shadow-sm">
+            {canCreate && <Button onClick={openNewEditor} className="gap-2 rounded-xl shadow-sm">
               <Plus className="h-4 w-4" /> Add College
             </Button>}
           </div>
@@ -354,12 +350,12 @@ export default function AdminColleges() {
                     <label className="text-xs font-medium text-muted-foreground">Status</label>
                     <select value={editing.status || "Draft"} onChange={(e) => update("status", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm h-9">
                       {STATUSES.map((s) => (
-                        <option key={s} value={s} disabled={s === "Published" && !canPublish}>
-                          {s}{s === "Published" && !canPublish ? " (no permission)" : ""}
+                        <option key={s} value={s}>
+                          {s}
                         </option>
                       ))}
                     </select>
-                    {!canPublish && <p className="text-[10px] text-muted-foreground mt-1">Only managers/admins can publish.</p>}
+                    {!canPublish && <p className="text-[10px] text-muted-foreground mt-1">Your selection is submitted to admin review before it becomes live.</p>}
                   </div>
                   <div><label className="text-xs font-medium text-muted-foreground">Name *</label><Input value={editing.name || ""} onChange={(e) => update("name", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="iit-delhi" className="rounded-lg h-9 text-sm" /></div>
@@ -796,9 +792,9 @@ export default function AdminColleges() {
 
               <div className="sticky bottom-0 z-20 -mx-1 flex justify-end gap-2 border-t border-border bg-background/95 px-1 py-3 backdrop-blur">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-xl">Cancel</Button>
-                <Button onClick={handleSave} disabled={saveCollege.isPending} className="rounded-xl">
-                  {saveCollege.isPending ? "Saving..." : "Save College"}
-                </Button>
+                {(canPublish || hasEditingChanges) && <Button onClick={handleSave} disabled={saveCollege.isPending || !hasEditingChanges} className="rounded-xl">
+                  {saveCollege.isPending ? "Saving..." : canPublish ? "Save College" : "Save as draft"}
+                </Button>}
               </div>
             </div>
           )}

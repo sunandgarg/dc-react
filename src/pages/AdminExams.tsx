@@ -92,6 +92,7 @@ export default function AdminExams() {
   const canCreate = isAdmin || can("exams", "create");
   const canEdit = isAdmin || can("exams", "edit");
   const [editing, setEditing] = useDraftState<Partial<DbExam> | null>('admin.exams.editing.v1', null);
+  const [editingBaseline, setEditingBaseline] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [visibleCount, setVisibleCount] = useState<number>(() => {
@@ -128,15 +129,16 @@ export default function AdminExams() {
 
   const handleSave = () => {
     if (!editing?.slug || !editing?.name) { toast.error("Slug and Name required"); return; }
-    const publishedStatuses = ["Applications Open", "Applications Closed"];
-    if (publishedStatuses.includes(editing.status || "") && !canPublish) {
-      toast.error("You don't have permission to publish. Use Upcoming/Exam Over instead.");
-      return;
-    }
     saveExam.mutate(editing as any, { onSuccess: () => setEditing(null) });
   };
 
   const update = (field: string, value: any) => setEditing((prev) => prev ? { ...prev, [field]: value } : prev);
+  const openEditor = (value: Partial<DbExam>) => {
+    const next = { ...value };
+    setEditingBaseline(JSON.stringify(next));
+    setEditing(next);
+  };
+  const hasEditingChanges = Boolean(editing && JSON.stringify(editing) !== editingBaseline);
 
   return (
     <AdminLayout title="Exams Manager">
@@ -165,7 +167,7 @@ export default function AdminExams() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={(e) => { setSearch(e.target.value); setVisibleCount(50); }} placeholder="Search exams by name, slug or full name..." className="pl-10 rounded-xl h-10" />
         </div>
-        {canCreate && <Button onClick={() => setEditing({ ...emptyExam })} className="rounded-xl gap-2">
+        {canCreate && <Button onClick={() => openEditor(emptyExam)} className="rounded-xl gap-2">
           <Plus className="w-4 h-4" /> Add Exam
         </Button>}
         {isAdmin && <BulkEditToggle
@@ -222,7 +224,7 @@ export default function AdminExams() {
               <div className="flex gap-1">
                 <a href={`/exams/${e.slug}`} target="_blank" rel="noreferrer"><Button variant="ghost" size="icon" className="w-8 h-8" title="Open public page"><ExternalLink className="w-3.5 h-3.5" /></Button></a>
                 {isAdmin && <RowDataIO row={e} base="exam" columns="*" />}
-                {canEdit && <Button variant="ghost" size="icon" onClick={() => setEditing({ ...e })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
+                {canEdit && <Button variant="ghost" size="icon" onClick={() => openEditor(e)} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="exams" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteExam.mutate(e.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
             </div>
@@ -260,16 +262,9 @@ export default function AdminExams() {
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">Status</label>
                     <select value={editing.status || "Upcoming"} onChange={(e) => update("status", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm h-9">
-                      {STATUSES.map((s) => {
-                        const restricted = (s === "Applications Open" || s === "Applications Closed") && !canPublish;
-                        return (
-                          <option key={s} value={s} disabled={restricted}>
-                            {s}{restricted ? " (no permission)" : ""}
-                          </option>
-                        );
-                      })}
+                      {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
-                    {!canPublish && <p className="text-[10px] text-muted-foreground mt-1">Only managers/admins can mark Applications Open/Closed.</p>}
+                    {!canPublish && <p className="text-[10px] text-muted-foreground mt-1">Your selection is submitted to admin review before it becomes live.</p>}
                   </div>
                   <div><label className="text-xs font-medium text-muted-foreground">Name *</label><Input value={editing.name || ""} onChange={(e) => update("name", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="jee-main-2026" className="rounded-lg h-9 text-sm" /></div>
@@ -458,9 +453,9 @@ export default function AdminExams() {
 
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-xl">Cancel</Button>
-                <Button onClick={handleSave} disabled={saveExam.isPending} className="rounded-xl">
-                  {saveExam.isPending ? "Saving..." : "Save Exam"}
-                </Button>
+                {(canPublish || hasEditingChanges) && <Button onClick={handleSave} disabled={saveExam.isPending || !hasEditingChanges} className="rounded-xl">
+                  {saveExam.isPending ? "Saving..." : canPublish ? "Save Exam" : "Save as draft"}
+                </Button>}
               </div>
             </div>
           )}

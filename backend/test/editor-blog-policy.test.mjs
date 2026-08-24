@@ -5,8 +5,9 @@ import { blogLimits } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 
 test("recognizes only the restricted content editor phone", () => {
-  assert.equal(isRestrictedEditorPhone("9818308623"), true);
-  assert.equal(isRestrictedEditorPhone("+91 98183 08623"), true);
+  assert.equal(isRestrictedEditorPhone("7428966263"), true);
+  assert.equal(isRestrictedEditorPhone("+91 74289 66263"), true);
+  assert.equal(isRestrictedEditorPhone("9818308623"), false);
   assert.equal(isRestrictedEditorPhone("8700602524"), false);
 });
 

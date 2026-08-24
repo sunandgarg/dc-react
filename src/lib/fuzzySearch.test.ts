@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSearchVariants, buildIlikeOr } from "./fuzzySearch";
+import { buildSearchVariants, buildIlikeOr, rankDirectoryResult } from "./fuzzySearch";
 
 describe("buildSearchVariants", () => {
   it("returns variants that overlap for b.tech / btech / bachelor of technology", () => {
@@ -18,6 +18,14 @@ describe("buildSearchVariants", () => {
     const v = buildSearchVariants("B.Tech");
     expect(v.length).toBeGreaterThan(1);
     expect(v.some((s) => s.toLowerCase() === "btech")).toBe(true);
+  });
+});
+
+describe("rankDirectoryResult", () => {
+  it("recognises institutional acronyms such as LPU", () => {
+    expect(rankDirectoryResult("lpu", "Lovely Professional University"))
+      .toBeGreaterThan(rankDirectoryResult("lpu", "Punjab Technical University"));
+    expect(rankDirectoryResult("lpu", "Lovely Professional University")).toBeGreaterThan(100);
   });
 });
 

@@ -151,7 +151,7 @@ export function useDbColleges() {
 }
 
 export function useFeaturedCollegeCards(slugs: string[]) {
-  const orderedSlugs = slugs.filter(Boolean);
+  const orderedSlugs = [...new Set(slugs.filter(Boolean))];
 
   return useQuery({
     queryKey: ["featured-college-cards", orderedSlugs],
@@ -258,7 +258,7 @@ export function useAdminCollegeList(filters: AdminCollegeListFilters) {
       if (filters.category) query = query.eq("category", filters.category);
       if (filters.state) query = query.eq("state", filters.state);
       if (search) {
-        query = query.or(`name.ilike.%${search}%,slug.ilike.%${search}%,city.ilike.%${search}%,state.ilike.%${search}%`);
+        query = query.or(`name.ilike.%${search}%,short_name.ilike.%${search}%,slug.ilike.%${search}%,city.ilike.%${search}%,state.ilike.%${search}%`);
       }
 
       const from = (page - 1) * pageSize;

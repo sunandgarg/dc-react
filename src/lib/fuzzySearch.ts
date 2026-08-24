@@ -64,6 +64,11 @@ export function rankDirectoryResult(query: string, name: string, subtitle = ""):
       .trim();
   const q = normalize(query);
   const haystack = normalize(`${name} ${subtitle}`);
+  const acronym = normalize(name)
+    .split(" ")
+    .filter((word) => word && !["of", "the", "and", "in", "at", "for"].includes(word))
+    .map((word) => word[0])
+    .join("");
   if (!q || !haystack) return 0;
 
   const importantTokens = q
@@ -78,5 +83,6 @@ export function rankDirectoryResult(query: string, name: string, subtitle = ""):
   if (haystack.includes(q)) score += 45;
   if (normalize(name) === q) score += 40;
   if (normalize(name).startsWith(q)) score += 30;
+  if (q.length >= 2 && acronym === q) score += 120;
   return score;
 }

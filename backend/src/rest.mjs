@@ -337,6 +337,15 @@ async function handlePost(table, request, url, context) {
   const prefer = String(request.headers.get("prefer") || "");
   const merge = prefer.includes("resolution=merge-duplicates");
   const conflictColumns = String(url.searchParams.get("on_conflict") || "").split(",").filter((column) => schemaMetadata[table].fields[column]);
+  if (context.stageReview) {
+    const staged = rows.map((row) => applyDefaults(table, row));
+    await recordContentReviews({ table, operation: "create", actorUserId: context.actorUserId, afterRows: staged });
+    return {
+      status: 202,
+      body: prefer.includes("return=representation") ? representationBody(request, staged) : null,
+      headers: { "x-dc-review-status": "pending" },
+    };
+  }
   const inserted = [];
   for (const row of rows) inserted.push(await insertRow(table, row, merge, conflictColumns));
   await recordContentReviews({ table, operation: "create", actorUserId: context.actorUserId, afterRows: inserted });
@@ -356,8 +365,16 @@ async function handlePatch(table, request, url, context) {
   const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId);
   let before = [];
   if (needsBefore) before = await prisma.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where}`, ...params.slice(columns.length));
-  await prisma.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
   const body = before.map((row) => ({ ...row, ...input }));
+  if (context.stageReview) {
+    await recordContentReviews({ table, operation: "update", actorUserId: context.actorUserId, beforeRows: before, afterRows: body });
+    return {
+      status: 202,
+      body: prefer.includes("return=representation") ? representationBody(request, body) : null,
+      headers: { "x-dc-review-status": "pending" },
+    };
+  }
+  await prisma.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
   await recordContentReviews({ table, operation: "update", actorUserId: context.actorUserId, beforeRows: before, afterRows: body });
   return { status: 200, body: prefer.includes("return=representation") ? representationBody(request, body) : null };
 }
@@ -420,24 +437,25 @@ export async function handleRpc(name, request) {
     const slugLike = `%${query.replaceAll(" ", "-")}%`;
     const rows = await prisma.$queryRawUnsafe(`
       SELECT entity_type, name, slug, subtitle, image_url, logo_url,
-             CASE WHEN LOWER(name) = ? THEN 1.0 WHEN LOWER(name) LIKE CONCAT(?, '%') THEN 0.98 ELSE 0.94 END AS score
+             CASE WHEN LOWER(name) = ? THEN 1.0 WHEN LOWER(search_alias) = ? THEN 0.995 WHEN LOWER(name) LIKE CONCAT(?, '%') THEN 0.98 ELSE 0.94 END AS score
       FROM (
         SELECT 'College' AS entity_type, name, slug, COALESCE(NULLIF(city, ''), NULLIF(state, ''), '') AS subtitle,
-               COALESCE(NULLIF(image, ''), logo, '') AS image_url, COALESCE(NULLIF(logo, ''), image, '') AS logo_url
-        FROM colleges WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(slug) LIKE ?)
+               COALESCE(NULLIF(image, ''), logo, '') AS image_url, COALESCE(NULLIF(logo, ''), image, '') AS logo_url,
+               COALESCE(short_name, '') AS search_alias
+        FROM colleges WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(short_name) LIKE ? OR LOWER(slug) LIKE ?)
         UNION ALL
-        SELECT 'Course', name, slug, COALESCE(NULLIF(level, ''), NULLIF(category, ''), 'Course'), COALESCE(image, ''), COALESCE(image, '')
-        FROM courses WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(slug) LIKE ?)
+        SELECT 'Course', name, slug, COALESCE(NULLIF(level, ''), NULLIF(category, ''), 'Course'), COALESCE(image, ''), COALESCE(image, ''), COALESCE(full_name, '')
+        FROM courses WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(full_name) LIKE ? OR LOWER(slug) LIKE ?)
         UNION ALL
-        SELECT 'Exam', name, slug, COALESCE(NULLIF(exam_type, ''), NULLIF(category, ''), 'Exam'), COALESCE(NULLIF(logo, ''), image, ''), COALESCE(NULLIF(logo, ''), image, '')
-        FROM exams WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(slug) LIKE ?)
+        SELECT 'Exam', name, slug, COALESCE(NULLIF(exam_type, ''), NULLIF(category, ''), 'Exam'), COALESCE(NULLIF(logo, ''), image, ''), COALESCE(NULLIF(logo, ''), image, ''), CONCAT_WS(' ', short_name, full_name)
+        FROM exams WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(short_name) LIKE ? OR LOWER(full_name) LIKE ? OR LOWER(slug) LIKE ?)
         UNION ALL
-        SELECT 'Career', name, slug, COALESCE(domain, 'Career'), COALESCE(image, ''), COALESCE(image, '')
+        SELECT 'Career', name, slug, COALESCE(domain, 'Career'), COALESCE(image, ''), COALESCE(image, ''), ''
         FROM career_profiles WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(slug) LIKE ?)
       ) candidates
       ORDER BY score DESC, LENGTH(name), name
       LIMIT ${limit}
-    `, query, query, like, slugLike, like, slugLike, like, slugLike, like, slugLike);
+    `, query, query, query, like, like, slugLike, like, like, slugLike, like, like, like, slugLike, like, slugLike);
     return { status: 200, body: jsonSafe(rows) };
   }
   if (name === "get_data_cleaning_coverage") {

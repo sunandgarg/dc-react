@@ -94,7 +94,7 @@ export default function AllExams() {
     filters: dbFilters,
     search: debouncedSearch || undefined,
     searchGroups: courseGroupSearch.length > 0 ? [{ terms: courseGroupSearch, fields: ["name", "full_name", "category", "exam_type"] }] : [],
-    searchFields: ["name", "full_name", "category", "exam_type", "level"],
+    searchFields: ["name", "short_name", "full_name", "slug", "category", "exam_type", "level"],
   });
 
   useEffect(() => {

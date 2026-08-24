@@ -122,21 +122,21 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
         const [colleges, courses, exams] = await Promise.all([
           supabase
             .from("colleges")
-            .select("name, slug, city, logo")
+            .select("name, short_name, slug, city, logo")
             .eq("is_active", true)
-            .or([orFor("name"), orFor("slug"), orFor("city"), orFor("state")].filter(Boolean).join(","))
+            .or([orFor("name"), orFor("short_name"), orFor("slug"), orFor("city"), orFor("state")].filter(Boolean).join(","))
             .limit(5),
           supabase
             .from("courses")
-            .select("name, slug, level, category, image")
+            .select("name, full_name, slug, level, category, image")
             .eq("is_active", true)
-            .or([orFor("name"), orFor("slug"), orFor("category")].filter(Boolean).join(","))
+            .or([orFor("name"), orFor("full_name"), orFor("slug"), orFor("category")].filter(Boolean).join(","))
             .limit(5),
           supabase
             .from("exams")
-            .select("name, slug, image, logo, exam_type, category")
+            .select("name, short_name, full_name, slug, image, logo, exam_type, category")
             .eq("is_active", true)
-            .or([orFor("name"), orFor("slug"), orFor("category")].filter(Boolean).join(","))
+            .or([orFor("name"), orFor("short_name"), orFor("full_name"), orFor("slug"), orFor("category")].filter(Boolean).join(","))
             .limit(5),
         ]);
         if (requestId.current !== currentRequest) return;
@@ -154,7 +154,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
             type: "College" as const,
             name: compactDisplayText(c.name, "Untitled college", 90),
             slug: c.slug,
-            location: compactDisplayText(c.city, "", 60),
+            location: compactDisplayText([c.short_name, c.city].filter(Boolean).join(" · "), "", 60),
             logo: c.logo || "",
           })),
           ...(courses.data || []).map((c) => ({

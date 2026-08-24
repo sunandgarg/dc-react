@@ -1,10 +1,10 @@
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { buildCollegeHref, parseSlugWithId } from "@/lib/entityUrls";
 import { useSEO } from "@/hooks/useSEO";
 import { motion } from "framer-motion";
-import { Star, MapPin, Calendar, GraduationCap, TrendingUp, Building, CheckCircle, Briefcase, BookOpen, Image as ImageIcon, Users, Award, Scale, Newspaper, HelpCircle, DollarSign, ExternalLink, Download, Phone, Shield, Globe, Landmark } from "lucide-react";
+import { Star, MapPin, Calendar, GraduationCap, TrendingUp, Building, CheckCircle, Briefcase, BookOpen, Image as ImageIcon, Users, Award, Scale, Newspaper, HelpCircle, DollarSign, ExternalLink, Download, Phone, Shield, Globe, Landmark, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -78,6 +78,7 @@ export default function CollegeDetail() {
   // URLs append the numeric short ID (for example, iit-delhi-10001).
   const collegeRelationSlug = college?.slug || parseSlugWithId(slug).slug;
   const [visibleCourseCount, setVisibleCourseCount] = useState(5);
+  const [courseSearch, setCourseSearch] = useState("");
   // Canonicalize URL to slug-with-id once the college resolves
   useEffect(() => {
     if (!college?.slug || !(college as any).short_id) return;
@@ -112,7 +113,15 @@ export default function CollegeDetail() {
     staleTime: 30 * 60 * 1000,
   });
 
-  const feeCourseSlugs = collegeFees
+  const filteredCollegeFees = useMemo(() => {
+    const query = courseSearch.trim().toLowerCase();
+    if (!query) return collegeFees;
+    return collegeFees.filter((fee: any) =>
+      [fee.course_name, fee.course_slug, fee.fee_type]
+        .some((value) => String(value || "").toLowerCase().includes(query)),
+    );
+  }, [collegeFees, courseSearch]);
+  const feeCourseSlugs = filteredCollegeFees
     .map((fee: any) => fee.course_slug)
     .filter((courseSlug: unknown): courseSlug is string => typeof courseSlug === "string" && courseSlug.length > 0);
   const visibleFeeCourseSlugs = feeCourseSlugs.slice(0, visibleCourseCount);
@@ -133,7 +142,7 @@ export default function CollegeDetail() {
 
   useEffect(() => {
     setVisibleCourseCount(5);
-  }, [collegeRelationSlug]);
+  }, [collegeRelationSlug, courseSearch]);
 
   useSEO({
     title: college ? (college.meta_title || `${college.name} - Admissions, Fees, Placements ${currentYear()}`) : undefined,
@@ -201,7 +210,7 @@ export default function CollegeDetail() {
 
     return COLLEGE_SECTIONS.filter((section) => has[section.id] ?? true);
   })();
-  const courseRowCount = coursesOfficiallyVerified ? collegeFees.length : 0;
+  const courseRowCount = coursesOfficiallyVerified ? filteredCollegeFees.length : 0;
   const nextCourseBatchSize = Math.min(5, Math.max(0, courseRowCount - visibleCourseCount));
 
   return (
@@ -373,6 +382,19 @@ export default function CollegeDetail() {
               {coursesOfficiallyVerified && college.course_fee_content && (
                 <div className="mb-4"><RichText html={college.course_fee_content} /></div>
               )}
+              {coursesOfficiallyVerified && collegeFees.length > 0 && (
+                <label className="relative mb-3 block max-w-xs">
+                  <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="search"
+                    value={courseSearch}
+                    onChange={(event) => setCourseSearch(event.target.value)}
+                    placeholder="Search courses"
+                    aria-label={`Search courses at ${college.name}`}
+                    className="h-8 w-full rounded-md border border-border bg-background pl-8 pr-3 text-xs outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
+                  />
+                </label>
+              )}
               <div className="dc-scroll-table">
                 <table id="college-course-fee-table" className="w-full text-sm min-w-[420px]">
                   <thead>
@@ -384,8 +406,8 @@ export default function CollegeDetail() {
                     </tr>
                   </thead>
                   <tbody>
-                    {coursesOfficiallyVerified && collegeFees.length > 0 ? (
-                      collegeFees.slice(0, visibleCourseCount).map((f) => {
+                    {coursesOfficiallyVerified && filteredCollegeFees.length > 0 ? (
+                      filteredCollegeFees.slice(0, visibleCourseCount).map((f) => {
                         const linked = feeCourseMetadata.find((c: any) => c.slug === f.course_slug);
                         return (
                           <tr key={f.id} className="border-b border-border last:border-0">
@@ -416,7 +438,7 @@ export default function CollegeDetail() {
                     ) : (
                       <tr>
                         <td colSpan={4} className="py-4 text-sm text-muted-foreground">
-                          Check the official college website for current courses and fees.
+                          {courseSearch.trim() ? "No courses match your search." : "Check the official college website for current courses and fees."}
                         </td>
                       </tr>
                     )}

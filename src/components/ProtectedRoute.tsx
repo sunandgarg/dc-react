@@ -31,7 +31,7 @@ export function ProtectedRoute({ children, requireAdmin = false, module }: Prote
   const onLeadPushArea =
     location.pathname.startsWith("/admin/lead-push") || location.pathname.startsWith("/admin/leads");
   const phone = String(user.phone || user.user_metadata?.phone || "").replace(/\D/g, "").slice(-10);
-  const isRestrictedContentEditor = phone === "9818308623";
+  const isRestrictedContentEditor = phone === "7428966263";
 
   const allowed =
     isAdmin ||

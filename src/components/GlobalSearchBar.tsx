@@ -95,25 +95,25 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
         const [colleges, courses, exams] = await Promise.all([
           supabase
             .from("colleges")
-            .select("name,slug,city,state,logo,image")
+            .select("name,short_name,slug,city,state,logo,image")
             .eq("is_active", true)
-            .or([orFor("name"), orFor("slug"), orFor("city"), orFor("state")].filter(Boolean).join(","))
+            .or([orFor("name"), orFor("short_name"), orFor("slug"), orFor("city"), orFor("state")].filter(Boolean).join(","))
             .limit(4),
           supabase
             .from("courses")
-            .select("name,slug,level,category,image")
+            .select("name,full_name,slug,level,category,image")
             .eq("is_active", true)
-            .or(orFor("name"))
+            .or([orFor("name"), orFor("full_name"), orFor("slug")].join(","))
             .limit(4),
           supabase
             .from("exams")
-            .select("name,slug,logo,image,exam_type,category")
+            .select("name,short_name,full_name,slug,logo,image,exam_type,category")
             .eq("is_active", true)
-            .or(orFor("name"))
+            .or([orFor("name"), orFor("short_name"), orFor("full_name"), orFor("slug")].join(","))
             .limit(3),
         ]);
         const fallback: DirectoryResult[] = [
-          ...(colleges.data || []).map((row) => ({ entity_type: "College" as const, name: compactDisplayText(row.name, "Untitled college", 90), slug: row.slug, subtitle: compactDisplayText(row.city || "", "", 60), image_url: row.logo || "" })),
+          ...(colleges.data || []).map((row) => ({ entity_type: "College" as const, name: compactDisplayText(row.name, "Untitled college", 90), slug: row.slug, subtitle: compactDisplayText([row.short_name, row.city].filter(Boolean).join(" · "), "", 60), image_url: row.logo || "" })),
           ...(courses.data || []).map((row) => ({ entity_type: "Course" as const, name: compactDisplayText(row.name, "Untitled course", 90), slug: row.slug, subtitle: compactDisplayText(row.level || row.category || "Course", "", 60), image_url: row.image || "" })),
           ...(exams.data || []).map((row) => ({ entity_type: "Exam" as const, name: compactDisplayText(row.name, "Untitled exam", 90), slug: row.slug, subtitle: compactDisplayText(row.exam_type || row.category || "Exam", "", 60), image_url: row.logo || row.image || "" })),
         ].sort((a, b) => rankDirectoryResult(query, b.name, b.subtitle) - rankDirectoryResult(query, a.name, a.subtitle));

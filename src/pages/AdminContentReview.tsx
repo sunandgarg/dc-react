@@ -61,7 +61,7 @@ export default function AdminContentReview() {
     });
     setSaving(false);
     if (error) return toast.error(error.message);
-    toast.success(nextStatus === "approved" ? "Change reviewed and approved" : "Change marked for correction");
+    toast.success(nextStatus === "approved" ? "Change approved and applied to MySQL" : "Change marked for correction");
     setNotes("");
     setSelectedId(null);
     await queryClient.invalidateQueries({ queryKey: ["content-reviews"] });
@@ -72,7 +72,7 @@ export default function AdminContentReview() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-foreground">Editor change review</h2>
-          <p className="text-xs text-muted-foreground">Audit manual changes across every content module before publishing.</p>
+          <p className="text-xs text-muted-foreground">Review staged editor changes. Approval applies them to MySQL.</p>
         </div>
         <div className="flex rounded-lg border bg-card p-1">
           {["pending", "approved", "needs_changes", "all"].map((item) => (
@@ -123,7 +123,7 @@ export default function AdminContentReview() {
               <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} placeholder="Optional note for the audit record" className="mt-1 w-full rounded-lg border bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
               <div className="mt-3 flex flex-wrap justify-end gap-2">
                 <Button variant="outline" disabled={saving} onClick={() => reviewItem("needs_changes")} className="gap-2"><MessageSquareWarning className="h-4 w-4" /> Needs changes</Button>
-                <Button disabled={saving} onClick={() => reviewItem("approved")} className="gap-2"><CheckCircle2 className="h-4 w-4" /> Approve review</Button>
+                <Button disabled={saving} onClick={() => reviewItem("approved")} className="gap-2"><CheckCircle2 className="h-4 w-4" /> Approve and apply</Button>
               </div>
             </div>}
           </>}

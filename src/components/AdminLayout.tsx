@@ -161,7 +161,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
   const isLeadPushOnly = !isAdmin && roles.includes("lead_push") && roles.length === 1;
   const isRestrictedModuleUser = !isAdmin && !isLeadPushOnly;
   const phone = String(user?.phone || user?.user_metadata?.phone || "").replace(/\D/g, "").slice(-10);
-  const isRestrictedContentEditor = phone === "9818308623";
+  const isRestrictedContentEditor = phone === "7428966263";
   const visible = useCallback((it: NavItem) => {
     if (isLeadPushOnly) {
       return it.href === "/admin/leads" || it.href.startsWith("/admin/lead-push") || it.href === "/admin";

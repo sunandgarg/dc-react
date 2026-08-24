@@ -53,13 +53,13 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
     const timeout = setTimeout(async () => {
       try {
         const [colleges, courses, exams] = await Promise.all([
-          supabase.from("colleges").select("name, slug, city, logo").eq("is_active", true).or(orFor("name")).limit(3),
-          supabase.from("courses").select("name, slug").eq("is_active", true).or(orFor("name")).limit(3),
-          supabase.from("exams").select("name, slug, logo").eq("is_active", true).or(orFor("name")).limit(3),
+          supabase.from("colleges").select("name, short_name, slug, city, logo").eq("is_active", true).or([orFor("name"), orFor("short_name"), orFor("slug")].join(",")).limit(3),
+          supabase.from("courses").select("name, full_name, slug").eq("is_active", true).or([orFor("name"), orFor("full_name"), orFor("slug")].join(",")).limit(3),
+          supabase.from("exams").select("name, short_name, full_name, slug, logo").eq("is_active", true).or([orFor("name"), orFor("short_name"), orFor("full_name"), orFor("slug")].join(",")).limit(3),
         ]);
 
         const results: SearchResult[] = [
-          ...(colleges.data || []).map(c => ({ type: "College" as const, name: compactDisplayText(c.name, "Untitled college", 90), slug: c.slug, location: compactDisplayText(c.city, "", 60), logo: c.logo || "" })),
+          ...(colleges.data || []).map(c => ({ type: "College" as const, name: compactDisplayText(c.name, "Untitled college", 90), slug: c.slug, location: compactDisplayText([c.short_name, c.city].filter(Boolean).join(" · "), "", 60), logo: c.logo || "" })),
           ...(courses.data || []).map(c => ({ type: "Course" as const, name: compactDisplayText(c.name, "Untitled course", 90), slug: c.slug, location: "" })),
           ...(exams.data || []).map(e => ({ type: "Exam" as const, name: compactDisplayText(e.name, "Untitled exam", 90), slug: e.slug, location: "", logo: e.logo || "" })),
         ];

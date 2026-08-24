@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "./db.mjs";
+import { prisma, quote, schemaMetadata } from "./db.mjs";
 
 const REVIEWED_TABLES = new Set([
   "articles", "article_categories", "article_links", "authors",
@@ -72,6 +72,72 @@ export async function recordContentReviews({ table, operation, actorUserId, befo
   }
 }
 
+function databaseValue(table, fieldName, value) {
+  if (value === null || value === undefined) return null;
+  const field = schemaMetadata[table].fields[fieldName];
+  if (field?.type === "Json") return typeof value === "string" ? value : JSON.stringify(value);
+  if (field?.type === "Boolean") return value ? 1 : 0;
+  if (field?.type === "BigInt") return String(value);
+  if (field?.type === "DateTime") {
+    if (field.format === "date") return String(value).slice(0, 10);
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : date.toISOString().replace("T", " ").replace("Z", "");
+  }
+  return value;
+}
+
+function parseReviewJson(value, fallback) {
+  if (value === null || value === undefined) return fallback;
+  if (typeof value !== "string") return value;
+  try { return JSON.parse(value); } catch { return fallback; }
+}
+
+async function applyApprovedReview(tx, review) {
+  const table = review.entity_type;
+  if (!REVIEWED_TABLES.has(table) || !schemaMetadata[table]) throw new Error("Review targets an unsupported resource");
+  const after = parseReviewJson(review.after_json, {});
+  const changed = parseReviewJson(review.changed_fields, []);
+  const fields = schemaMetadata[table].fields;
+
+  if (review.operation === "create") {
+    if (["colleges", "courses", "exams"].includes(table) && fields.short_id && after.short_id === undefined) {
+      const starts = { colleges: 10001, courses: 20001, exams: 30001 };
+      const maximum = await tx.$queryRawUnsafe(`SELECT MAX(\`short_id\`) AS maximum FROM ${quote(table)}`);
+      after.short_id = Math.max(starts[table], Number(maximum[0]?.maximum || starts[table] - 1) + 1);
+    }
+    const columns = Object.keys(after).filter((column) => fields[column]);
+    if (!columns.length) throw new Error("Reviewed create contains no writable fields");
+    const existing = after.id
+      ? await tx.$queryRawUnsafe(`SELECT 1 FROM ${quote(table)} WHERE \`id\` = ? LIMIT 1`, after.id)
+      : [];
+    if (existing.length) {
+      const updates = columns.filter((column) => !["id", "created_at"].includes(column));
+      await tx.$executeRawUnsafe(
+        `UPDATE ${quote(table)} SET ${updates.map((column) => `${quote(column)} = ?`).join(",")} WHERE \`id\` = ?`,
+        ...updates.map((column) => databaseValue(table, column, after[column])), after.id,
+      );
+      return;
+    }
+    await tx.$executeRawUnsafe(
+      `INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`,
+      ...columns.map((column) => databaseValue(table, column, after[column])),
+    );
+    return;
+  }
+
+  const columns = changed.filter((column) => fields[column] && !["id", "created_at", "updated_at", "short_id"].includes(column));
+  if (!columns.length) return;
+  const identityField = review.entity_id ? "id" : "slug";
+  const identityValue = review.entity_id || review.entity_slug;
+  if (!identityValue) throw new Error("Reviewed update has no stable entity identity");
+  const result = await tx.$executeRawUnsafe(
+    `UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${fields.updated_at ? ",`updated_at` = ?" : ""} WHERE ${quote(identityField)} = ?`,
+    ...columns.map((column) => databaseValue(table, column, after[column])),
+    ...(fields.updated_at ? [new Date()] : []), identityValue,
+  );
+  if (!result) throw new Error("The reviewed record no longer exists");
+}
+
 export async function handleContentReviews(request, reviewerId) {
   const url = new URL(request.url);
   if (request.method === "GET") {
@@ -96,11 +162,19 @@ export async function handleContentReviews(request, reviewerId) {
   if (request.method === "PATCH") {
     const body = await request.json().catch(() => ({}));
     const status = ["approved", "needs_changes"].includes(body.status) ? body.status : "approved";
-    await prisma.$executeRawUnsafe(
-      "UPDATE `content_change_reviews` SET `status` = ?, `reviewed_by` = ?, `review_notes` = ?, `reviewed_at` = ? WHERE `id` = ?",
-      status, reviewerId, String(body.review_notes || "").slice(0, 4000) || null, new Date(), String(body.id || ""),
-    );
-    return { success: true };
+    const reviewId = String(body.id || "");
+    await prisma.$transaction(async (tx) => {
+      const rows = await tx.$queryRawUnsafe("SELECT * FROM `content_change_reviews` WHERE `id` = ? FOR UPDATE", reviewId);
+      const review = rows[0];
+      if (!review) throw Object.assign(new Error("Review was not found"), { status: 404, code: "REVIEW_NOT_FOUND" });
+      if (review.status !== "pending") throw Object.assign(new Error("Review has already been decided"), { status: 409, code: "REVIEW_ALREADY_DECIDED" });
+      if (status === "approved") await applyApprovedReview(tx, review);
+      await tx.$executeRawUnsafe(
+        "UPDATE `content_change_reviews` SET `status` = ?, `reviewed_by` = ?, `review_notes` = ?, `reviewed_at` = ? WHERE `id` = ?",
+        status, reviewerId, String(body.review_notes || "").slice(0, 4000) || null, new Date(), reviewId,
+      );
+    });
+    return { success: true, applied: status === "approved" };
   }
   throw Object.assign(new Error("Method not allowed"), { status: 405, code: "METHOD_NOT_ALLOWED" });
 }
