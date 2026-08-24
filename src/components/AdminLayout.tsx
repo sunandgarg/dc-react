@@ -1,6 +1,6 @@
 import { type ElementType, type ReactNode, useCallback, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Megaphone, Star, Users, GraduationCap, BookOpen, FileText, HelpCircle, Newspaper, Lightbulb, Image, Handshake, Bot, Phone, Database, Scale, Map, Briefcase, ClipboardList, UserCircle, UserCheck, Building2, Award, Sparkles, MapPin, IndianRupee, Library, BarChart3, ChevronDown, Settings, FolderTree, RefreshCw, Network, Link2, ExternalLink, Home, Search, Menu, X, Rocket, PanelTop, DatabaseZap } from "lucide-react";
+import { LayoutDashboard, Megaphone, Star, Users, GraduationCap, BookOpen, FileText, HelpCircle, Newspaper, Lightbulb, Image, Handshake, Bot, Phone, Database, Scale, Map, Briefcase, ClipboardList, UserCircle, UserCheck, Building2, Award, Sparkles, MapPin, IndianRupee, Library, BarChart3, ChevronDown, Settings, FolderTree, RefreshCw, Network, Link2, ExternalLink, Home, Search, Menu, X, Rocket, PanelTop, DatabaseZap, GitCompareArrows } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Module } from "@/lib/rbac";
@@ -57,6 +57,7 @@ const groups: NavGroup[] = [
       { label: "Exams", href: "/admin/exams", icon: FileText, module: "exams" },
       { label: "Clean Data", href: "/admin/clean-data", icon: DatabaseZap, module: "content" },
       { label: "Articles", href: "/admin/articles", icon: Newspaper, module: "articles" },
+      { label: "Content Review", href: "/admin/content-review", icon: GitCompareArrows },
       { label: "Article Tags", href: "/admin/tags", icon: Sparkles, module: "articles" },
       { label: "Article Categories", href: "/admin/article-categories", icon: Sparkles, module: "articles" },
       { label: "Authors / Team", href: "/admin/authors", icon: UserCheck, module: "users" },
@@ -149,20 +150,26 @@ const groups: NavGroup[] = [
 ];
 
 interface AdminLayoutProps { children: ReactNode; title: string; }
+const RESTRICTED_CONTENT_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles"]);
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
   const location = useLocation();
-  const { isAdmin, canAccess, roles } = useAuth();
+  const { isAdmin, canAccess, roles, user } = useAuth();
   const [navSearch, setNavSearch] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   // Lead-Push-Only teammates see only Lead Push + All Leads (no other nav items).
   const isLeadPushOnly = !isAdmin && roles.includes("lead_push") && roles.length === 1;
+  const isRestrictedModuleUser = !isAdmin && !isLeadPushOnly;
+  const phone = String(user?.phone || user?.user_metadata?.phone || "").replace(/\D/g, "").slice(-10);
+  const isRestrictedContentEditor = phone === "9818308623";
   const visible = useCallback((it: NavItem) => {
     if (isLeadPushOnly) {
       return it.href === "/admin/leads" || it.href.startsWith("/admin/lead-push") || it.href === "/admin";
     }
+    if (isRestrictedContentEditor) return RESTRICTED_CONTENT_PATHS.has(it.href) && Boolean(it.module && canAccess(it.module));
+    if (isRestrictedModuleUser) return Boolean(it.module && canAccess(it.module));
     return !it.module || isAdmin || canAccess(it.module);
-  }, [isAdmin, isLeadPushOnly, canAccess]);
+  }, [isAdmin, isLeadPushOnly, isRestrictedContentEditor, isRestrictedModuleUser, canAccess]);
   const qc = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {
@@ -347,7 +354,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
 
         <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
           <div className="mx-auto w-full max-w-[1600px]">
-            <CleanDataShortcut pathname={location.pathname} />
+            {isAdmin && <CleanDataShortcut pathname={location.pathname} />}
             {children}
           </div>
         </main>

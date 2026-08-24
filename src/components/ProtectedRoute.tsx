@@ -10,6 +10,8 @@ interface ProtectedRouteProps {
   module?: Module;
 }
 
+const RESTRICTED_CONTENT_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles"]);
+
 export function ProtectedRoute({ children, requireAdmin = false, module }: ProtectedRouteProps) {
   const { user, isAdmin, roles, canAccess, isLoading } = useAuth();
   const location = useLocation();
@@ -28,11 +30,14 @@ export function ProtectedRoute({ children, requireAdmin = false, module }: Prote
   const isLeadPushUser = roles.includes("lead_push");
   const onLeadPushArea =
     location.pathname.startsWith("/admin/lead-push") || location.pathname.startsWith("/admin/leads");
+  const phone = String(user.phone || user.user_metadata?.phone || "").replace(/\D/g, "").slice(-10);
+  const isRestrictedContentEditor = phone === "9818308623";
 
   const allowed =
     isAdmin ||
     (isLeadPushUser && onLeadPushArea) ||
-    (module ? canAccess(module) : !requireAdmin);
+    (!isRestrictedContentEditor && (module ? canAccess(module) : !requireAdmin)) ||
+    (isRestrictedContentEditor && RESTRICTED_CONTENT_PATHS.has(location.pathname) && Boolean(module && canAccess(module)));
 
   if ((requireAdmin || module) && !allowed) {
     return (

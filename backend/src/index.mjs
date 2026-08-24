@@ -5,6 +5,9 @@ import { handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp } from 
 import { handleStorage } from "./storage.mjs";
 import { enqueueLeadAutomation } from "./lead-outbox.mjs";
 import { integrationStatus } from "./integration-status.mjs";
+import { handleContentReviews } from "./content-review.mjs";
+import { handleAiGenerate, handleBlogAiSettings, handleBlogStudio, runBlogAgent } from "./blog-ai.mjs";
+import { handleDataCleaner } from "./data-cleaner.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -76,26 +79,48 @@ async function isAdmin(userId) {
 }
 
 async function authorizeRest(table, request) {
-  if (["GET", "HEAD"].includes(request.method) && publicReadTables.has(table)) return request;
-  if (publicWriteTables.has(table) && request.method === "POST") return request;
+  if (["GET", "HEAD"].includes(request.method) && publicReadTables.has(table)) return { request, actorUserId: null };
+  if (publicWriteTables.has(table) && request.method === "POST") return { request, actorUserId: null };
 
   const identity = await resolveIdentity(request);
   if (!identity) throw new HttpError(401, "AUTH_REQUIRED", "A valid user session is required");
-  if (await isAdmin(identity.id)) return request;
+  if (await isAdmin(identity.id)) return { request, actorUserId: null };
+
+  if (["GET", "HEAD"].includes(request.method) && ["user_roles", "user_permissions"].includes(table)) {
+    const url = new URL(request.url);
+    url.searchParams.set("user_id", `eq.${identity.id}`);
+    return { request: new Request(url, request), actorUserId: null };
+  }
 
   const ownerColumn = ownedTables.get(table);
-  if (!ownerColumn) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+  if (!ownerColumn) {
+    const action = request.method === "POST"
+      ? (String(request.headers.get("prefer") || "").includes("resolution=merge-duplicates") ? "edit" : "create")
+      : request.method === "PATCH" ? "edit" : request.method === "DELETE" ? "delete" : "view";
+    const permission = await prisma.$queryRawUnsafe(
+      `SELECT 1 FROM \`user_permissions\`
+       WHERE \`user_id\` = ? AND (\`resource\` = ? OR \`module\` = ?)
+         AND ((? = 'view' AND \`can_view\` = 1)
+           OR (? = 'create' AND \`can_create\` = 1)
+           OR (? = 'edit' AND \`can_edit\` = 1)
+           OR (? = 'delete' AND \`can_delete\` = 1))
+       LIMIT 1`,
+      identity.id, table, table, action, action, action, action,
+    );
+    if (!permission.length) throw new HttpError(403, "PERMISSION_DENIED", `You do not have ${action} permission for ${table}`);
+    return { request, actorUserId: identity.id };
+  }
   if (request.method === "POST") {
     const input = await request.clone().json();
     const rows = Array.isArray(input) ? input : [input];
     if (rows.some((row) => row?.[ownerColumn] !== identity.id)) {
       throw new HttpError(403, "ROW_ACCESS_DENIED", `New ${table} rows must belong to the authenticated user`);
     }
-    return request;
+    return { request, actorUserId: null };
   }
   const url = new URL(request.url);
   url.searchParams.set(ownerColumn, `eq.${identity.id}`);
-  return new Request(url, request);
+  return { request: new Request(url, request), actorUserId: null };
 }
 
 async function authorizeRpc(name, request) {
@@ -243,8 +268,8 @@ export async function handleRequest(request) {
     }
     const restMatch = url.pathname.match(/^\/v1\/rest\/([A-Za-z0-9_]+)$/);
     if (restMatch) {
-      const authorizedRequest = await authorizeRest(restMatch[1], request);
-      const result = await handleRest(restMatch[1], authorizedRequest);
+      const authorization = await authorizeRest(restMatch[1], request);
+      const result = await handleRest(restMatch[1], authorization.request, { actorUserId: authorization.actorUserId });
       return json(result.status, result.body, requestId, request, result.headers);
     }
     const functionMatch = url.pathname.match(/^\/v1\/functions\/([A-Za-z0-9_-]+)$/);
@@ -257,6 +282,25 @@ export async function handleRequest(request) {
         const identity = await resolveIdentity(request);
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
         return json(200, await integrationStatus(), requestId, request, { "cache-control": "private, no-store" });
+      }
+      if (functionMatch[1] === "content-reviews") {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        return json(200, await handleContentReviews(request, identity.id), requestId, request, { "cache-control": "private, no-store" });
+      }
+      if (["admin-blog-ai-settings", "admin-blog-studio", "admin-blog-agent", "admin-ai-generate"].includes(functionMatch[1])) {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        const result = functionMatch[1] === "admin-blog-ai-settings" ? await handleBlogAiSettings(request, identity.id)
+          : functionMatch[1] === "admin-blog-studio" ? await handleBlogStudio(request)
+          : functionMatch[1] === "admin-blog-agent" ? await runBlogAgent(await request.json().catch(() => ({})))
+          : await handleAiGenerate(request);
+        return json(200, result, requestId, request, { "cache-control": "private, no-store" });
+      }
+      if (functionMatch[1] === "admin-data-cleaner") {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        return json(200, await handleDataCleaner(request, identity.id), requestId, request, { "cache-control": "private, no-store" });
       }
       return json(501, { code: "FUNCTION_NOT_MIGRATED", error: `Function ${functionMatch[1]} has no native Node handler` }, requestId, request);
     }

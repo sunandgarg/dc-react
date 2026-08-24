@@ -4,6 +4,7 @@ import logo from "@/assets/dekhocampus-logo-small.webp";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import { MegaMenu } from "@/components/MegaMenu";
 import { GlobalSearchBar } from "@/components/GlobalSearchBar";
 
@@ -35,7 +36,8 @@ const mobileNav = [
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { user, isAdmin, signOut, isLoading } = useAuth();
+  const { user, isAdmin, canAccess, signOut, isLoading } = useAuth();
+  const { data: profile } = useUserProfile();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -51,8 +53,14 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const displayName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User";
+  const displayName = profile?.name?.trim()
+    || user?.user_metadata?.display_name
+    || user?.user_metadata?.full_name
+    || user?.email?.split("@")[0]
+    || "User";
   const initial = displayName.charAt(0).toUpperCase();
+  const hasContentAdminAccess = isAdmin || ["colleges", "courses", "exams", "articles"].some((module) => canAccess(module as any));
+  const adminHref = isAdmin ? "/admin" : "/admin/colleges";
 
   const userMenuItems = [
     { label: "Dashboard", icon: Home, href: "/dashboard" },
@@ -74,11 +82,11 @@ export function Navbar() {
           <MegaMenu />
 
           <div className="flex items-center gap-2">
-            {isAdmin && (
-              <Link to="/admin">
+            {hasContentAdminAccess && (
+              <Link to={adminHref}>
                 <Button variant="outline" size="sm" className="hidden md:flex gap-2 rounded-xl border-amber-200 text-amber-600 hover:bg-amber-50">
                   <Shield className="w-4 h-4" />
-                  Admin
+                  {isAdmin ? "Admin" : "Content Admin"}
                 </Button>
               </Link>
             )}
@@ -203,14 +211,14 @@ export function Navbar() {
                   </Link>
                 )}
 
-                {isAdmin && (
+                {hasContentAdminAccess && (
                   <Link
-                    to="/admin"
+                    to={adminHref}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center gap-2 w-full px-4 py-3 text-sm font-medium text-amber-600 hover:bg-amber-50 rounded-xl transition-colors"
                   >
                     <Shield className="w-4 h-4" />
-                    Admin Panel
+                    {isAdmin ? "Admin Panel" : "Content Admin"}
                   </Link>
                 )}
 

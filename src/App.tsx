@@ -137,6 +137,7 @@ const AdminColleges = lazyRetry(() => import("./pages/AdminColleges"), "AdminCol
 const AdminCourses = lazyRetry(() => import("./pages/AdminCourses"), "AdminCourses");
 const AdminExams = lazyRetry(() => import("./pages/AdminExams"), "AdminExams");
 const AdminArticles = lazyRetry(() => import("./pages/AdminArticles"), "AdminArticles");
+const AdminContentReview = lazyRetry(() => import("./pages/AdminContentReview"), "AdminContentReview");
 const AdminDataCleaner = lazyRetry(() => import("./pages/AdminDataCleaner"), "AdminDataCleaner");
 const AdminDataCleanerPreview = lazyRetry(() => import("./pages/AdminDataCleanerPreview"), "AdminDataCleanerPreview");
 const AdminDocs = lazyRetry(() => import("./pages/AdminDocs"), "AdminDocs");
@@ -377,6 +378,7 @@ const App = () => (
               <Route path="/admin/url-shortener" element={<ProtectedRoute requireAdmin><AdminUrlShortener /></ProtectedRoute>} />
               <Route path="/admin/url-shortener/:tab" element={<ProtectedRoute requireAdmin><AdminUrlShortener /></ProtectedRoute>} />
               <Route path="/admin/articles" element={<ProtectedRoute module="articles"><AdminArticles /></ProtectedRoute>} />
+              <Route path="/admin/content-review" element={<ProtectedRoute requireAdmin><AdminContentReview /></ProtectedRoute>} />
               <Route path="/admin/clean-data" element={<ProtectedRoute module="content"><AdminDataCleaner /></ProtectedRoute>} />
               <Route path="/admin/clean-data/preview/:itemId" element={<ProtectedRoute module="content"><AdminDataCleanerPreview /></ProtectedRoute>} />
               <Route path="/admin/content" element={<ProtectedRoute module="content"><AdminContent /></ProtectedRoute>} />

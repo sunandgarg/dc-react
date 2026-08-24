@@ -65,6 +65,8 @@ export default function AdminColleges() {
   const deleteCollege = useDeleteCollege();
   const { can, isAdmin } = useAuth();
   const canPublish = isAdmin || can("colleges", "publish") || can("colleges", "edit");
+  const canCreate = isAdmin || can("colleges", "create");
+  const canEdit = isAdmin || can("colleges", "edit");
   const [editing, setEditing] = useDraftState<Partial<DbCollege> | null>('admin.colleges.editing.v1', null);
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
@@ -181,8 +183,8 @@ export default function AdminColleges() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <AIGenerateDialog entityType="colleges" table="colleges" />
-            <BulkEditToggle
+            {isAdmin && <AIGenerateDialog entityType="colleges" table="colleges" />}
+            {isAdmin && <BulkEditToggle
               table="colleges"
               searchKeys={["name","slug","city","state"]}
               columns={[
@@ -198,10 +200,10 @@ export default function AdminColleges() {
                 { key: "show_in_explore_by_category", label: "Homepage Explore", type: "boolean", width: 120 },
                 { key: "is_active", label: "Active", type: "boolean", width: 80 },
               ]}
-            />
-            <Button onClick={() => setEditing({ ...emptyCollege })} className="gap-2 rounded-xl shadow-sm">
+            />}
+            {canCreate && <Button onClick={() => setEditing({ ...emptyCollege })} className="gap-2 rounded-xl shadow-sm">
               <Plus className="h-4 w-4" /> Add College
-            </Button>
+            </Button>}
           </div>
         </div>
       </div>
@@ -257,7 +259,7 @@ export default function AdminColleges() {
         </div>
       </div>
 
-      <details className="group mb-4 rounded-2xl border border-border bg-card">
+      {isAdmin && <details className="group mb-4 rounded-2xl border border-border bg-card">
         <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-foreground">Advanced tools <span className="ml-1 text-xs font-normal text-muted-foreground">CSV import/export and featured placements</span></summary>
         <div className="space-y-3 border-t border-border p-4">
           <CSVTools
@@ -268,7 +270,7 @@ export default function AdminColleges() {
           />
           <FeaturedRankPanel table="colleges" detailPath={(slug) => `/colleges/${slug}`} />
         </div>
-      </details>
+      </details>}
 
       <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm" aria-label="College records">
         <div className="flex items-center justify-between border-b border-border bg-muted/30 px-4 py-3">
@@ -310,9 +312,9 @@ export default function AdminColleges() {
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
                     <OpenOnSiteButton href={`/colleges/${college.slug}`} />
-                    <Button variant="ghost" size="icon" disabled={loadingEditId === college.id} onClick={() => openEditor(college.id)} className="h-8 w-8" aria-label={`Edit ${college.name}`}>
+                    {canEdit && <Button variant="ghost" size="icon" disabled={loadingEditId === college.id} onClick={() => openEditor(college.id)} className="h-8 w-8" aria-label={`Edit ${college.name}`}>
                       {loadingEditId === college.id ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Pencil className="h-3.5 w-3.5" />}
-                    </Button>
+                    </Button>}
                     <PermGate module="colleges" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm(`Delete ${college.name}? This cannot be undone.`)) deleteCollege.mutate(college.id); }} className="h-8 w-8 text-destructive" aria-label={`Delete ${college.name}`}><Trash2 className="h-3.5 w-3.5" /></Button></PermGate>
                   </div>
                 </article>
@@ -340,11 +342,11 @@ export default function AdminColleges() {
           </DialogHeader>
           {editing && (
             <div className="space-y-4">
-              <OfficialDataFillButton
+              {isAdmin && <OfficialDataFillButton
                 entityType="colleges"
                 record={editing as Record<string, unknown>}
                 onApply={(updates) => setEditing((current) => current ? { ...current, ...updates } : current)}
-              />
+              />}
               {/* ── Basic Info ── */}
               <AdminFormSection title="Basic Information" icon={<Info className="w-4 h-4 text-primary" />}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

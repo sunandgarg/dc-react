@@ -64,18 +64,6 @@ type GeneratedArticle = { id: string; title: string; slug: string; featured_imag
 type Author = { id: string; name: string; designation?: string; photo?: string };
 
 const DRAFT_KEY = "dc:admin:blog-agent:draft:v1";
-const TEXT_MODEL_DEFAULTS: Record<string, string> = {
-  gemini: "gemini-3.5-flash-lite",
-  anthropic: "auto-haiku",
-  openai: "gpt-5.6-luna",
-  xai: "grok-4.5",
-};
-const IMAGE_MODEL_DEFAULTS: Record<string, string> = {
-  gemini: "gemini-3.1-flash-lite-image",
-  openai: "gpt-image-1",
-  xai: "grok-imagine-image",
-};
-
 const DEFAULT_SETTINGS: Settings = {
   enabled: false,
   interval_minutes: 60,
@@ -96,8 +84,8 @@ const DEFAULT_SETTINGS: Settings = {
   editorial_quality_target: 80,
   human_review_required: true,
   image_mode: "generated",
-  image_provider: "gemini",
-  image_model: "gemini-3.1-flash-lite-image",
+  image_provider: "openai",
+  image_model: "gpt-image-1",
   image_template_url: "",
   image_prompt_style: "Premium editorial, clean, credible, student-focused",
   include_logo: true,
@@ -157,7 +145,14 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       if (settingsData) {
         setSupportsAdvancedSettings(Object.prototype.hasOwnProperty.call(settingsData, "image_mode"));
         setSupportsGoogleTrendsSettings(Object.prototype.hasOwnProperty.call(settingsData, "google_trends_daily_enabled"));
-        setSettings({ ...DEFAULT_SETTINGS, ...settingsData });
+        setSettings({
+          ...DEFAULT_SETTINGS,
+          ...settingsData,
+          model_provider: "gemini",
+          text_model: String(settingsData.text_model || "").startsWith("gemini-") ? settingsData.text_model : DEFAULT_SETTINGS.text_model,
+          image_provider: "openai",
+          image_model: "gpt-image-1",
+        });
       }
       if (sourceData?.length) setSources(sourceData);
       setAuthors(authorData || []);
@@ -229,13 +224,14 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     setBusy(true);
     try {
       const nextRun = settings.enabled && !settings.next_run_at ? new Date().toISOString() : settings.next_run_at;
+      const normalizedSettings = { ...settings, model_provider: "gemini", image_provider: "openai" as const, image_model: "gpt-image-1" };
       const legacySettings = {
         enabled: settings.enabled,
         interval_minutes: settings.interval_minutes,
         posts_per_run: Math.min(3, settings.posts_per_run),
         daily_post_cap: settings.daily_post_cap,
         publish_status: settings.publish_status,
-        model_provider: settings.model_provider,
+        model_provider: "gemini",
         word_limit: settings.word_limit,
         author_mode: settings.author_mode,
         author_ids: settings.author_ids,
@@ -243,7 +239,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       };
       const settingsPayload = supportsAdvancedSettings
         ? {
-            ...settings,
+            ...normalizedSettings,
             ...(supportsGoogleTrendsSettings ? {} : {
               google_trends_daily_enabled: undefined,
               google_trends_daily_posts: undefined,
@@ -351,7 +347,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             <Badge variant={settings.enabled ? "default" : "secondary"}>{settings.enabled ? "Running" : "Paused"}</Badge>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Uses low-cost Gemini by default for source-aware editorial drafts and branded images. Gemini, OpenAI, Claude and Grok models, review gates, templates and image providers remain under your control.
+            Uses low-cost Gemini for source-aware editorial drafts and OpenAI only for optional blog cover images. Review gates, schedules and templates remain under your control.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -471,28 +467,9 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
           <Input type="number" min={1} max={48} value={settings.daily_post_cap} onChange={e => updateSetting("daily_post_cap", Number(e.target.value || 12))} className="mt-1" />
         </div>
         <div>
-          <Label className="text-xs">Blog AI providers</Label>
-          <div className="mt-1 flex flex-wrap gap-2">
-            {([
-              ["gemini", "Gemini"],
-              ["anthropic", "Claude"],
-              ["openai", "OpenAI"],
-              ["xai", "Grok / xAI"],
-            ] as const).map(([provider, label]) => (
-              <Button
-                key={provider}
-                type="button"
-                size="sm"
-                variant={settings.model_provider === provider ? "default" : "outline"}
-                onClick={() => setSettings((current) => ({ ...current, model_provider: provider, text_model: TEXT_MODEL_DEFAULTS[provider] }))}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
-          <p className="mt-1 text-[10px] text-muted-foreground">
-            Gemini is the default. Runtime Control Centre can override this choice for emergency routing.
-          </p>
+          <Label className="text-xs">Blog AI provider</Label>
+          <div className="mt-1"><Button type="button" size="sm" variant="default" disabled>Google Gemini</Button></div>
+          <p className="mt-1 text-[10px] text-muted-foreground">Gemini is fixed for text, research, data cleaning and admin AI generation.</p>
           {supportsAdvancedSettings && (
             <select
               aria-label="Blog text model"
@@ -500,23 +477,10 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("text_model", event.target.value)}
               className="mt-2 h-9 w-full rounded-md border bg-background px-2 text-xs"
             >
-              {settings.model_provider === "gemini" && <>
-                <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite - lowest cost</option>
-                <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
-                <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
-                <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</option>
-              </>}
-              {settings.model_provider === "openai" && <>
-                <option value="gpt-5.6-luna">GPT-5.6 Luna - high-volume</option>
-                <option value="gpt-5.6-terra">GPT-5.6 Terra - balanced</option>
-                <option value="gpt-5.6-sol">GPT-5.6 Sol - flagship</option>
-                <option value="gpt-4o-mini">GPT-4o mini - legacy low-cost</option>
-              </>}
-              {settings.model_provider === "anthropic" && <>
-                <option value="auto-haiku">Claude Haiku - lowest cost available</option>
-                <option value="auto-sonnet">Claude Sonnet - latest available</option>
-              </>}
-              {settings.model_provider === "xai" && <option value="grok-4.5">Grok 4.5</option>}
+              <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite - lowest cost</option>
+              <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
+              <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+              <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
             </select>
           )}
         </div>
@@ -609,8 +573,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             {settings.image_mode === "generated" && (
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
-                  <div><Label>Image provider</Label><select value={settings.image_provider} onChange={(event) => setSettings((current) => ({ ...current, image_provider: event.target.value as Settings["image_provider"], image_model: IMAGE_MODEL_DEFAULTS[event.target.value] }))} className="mt-1 h-10 w-full rounded-md border bg-background px-3"><option value="gemini">Gemini</option><option value="openai">OpenAI</option><option value="xai">Grok / xAI</option></select></div>
-                  <div><Label>Image model</Label><select value={settings.image_model} onChange={(event) => updateSetting("image_model", event.target.value)} className="mt-1 h-10 w-full rounded-md border bg-background px-3">{settings.image_provider === "gemini" && <><option value="gemini-3.1-flash-lite-image">Gemini 3.1 Flash Lite Image</option><option value="gemini-3.1-flash-image">Gemini 3.1 Flash Image</option><option value="gemini-3-pro-image">Gemini 3 Pro Image</option></>}{settings.image_provider === "openai" && <option value="gpt-image-1">GPT Image 1</option>}{settings.image_provider === "xai" && <option value="grok-imagine-image">Grok Imagine Image</option>}</select></div>
+                  <div><Label>Image provider</Label><select value="openai" disabled className="mt-1 h-10 w-full rounded-md border bg-background px-3"><option value="openai">OpenAI</option></select></div>
+                  <div><Label>Image model</Label><select value="gpt-image-1" disabled className="mt-1 h-10 w-full rounded-md border bg-background px-3"><option value="gpt-image-1">GPT Image 1</option></select></div>
                 </div>
                 <div><Label>Image art direction</Label><Textarea rows={4} value={settings.image_prompt_style} onChange={(event) => updateSetting("image_prompt_style", event.target.value)} className="mt-1" /></div>
               </div>

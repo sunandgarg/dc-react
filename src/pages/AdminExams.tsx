@@ -89,6 +89,8 @@ export default function AdminExams() {
   const deleteExam = useDeleteExam();
   const { can, isAdmin } = useAuth();
   const canPublish = isAdmin || can("exams", "publish") || can("exams", "edit");
+  const canCreate = isAdmin || can("exams", "create");
+  const canEdit = isAdmin || can("exams", "edit");
   const [editing, setEditing] = useDraftState<Partial<DbExam> | null>('admin.exams.editing.v1', null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -138,7 +140,7 @@ export default function AdminExams() {
 
   return (
     <AdminLayout title="Exams Manager">
-      <div className="mb-3"><AIGenerateDialog entityType="exams" table="exams" /></div>
+      {isAdmin && <div className="mb-3"><AIGenerateDialog entityType="exams" table="exams" /></div>}
       <AdminStatsBar
         stats={[
           { label: "Total", value: stats.total, icon: FileText, tone: "primary" },
@@ -149,24 +151,24 @@ export default function AdminExams() {
         ]}
       />
 
-      <div className="mb-3">
+      {isAdmin && <div className="mb-3">
         <CSVTools
           table="exams"
           filename="exams.csv"
           columns="*"
           typeHints={{ priority: "number", is_active: "boolean", show_in_explore_by_category: "boolean", is_top_exam: "boolean", negative_marking: "boolean", top_colleges: "array", syllabus: "array" }}
         />
-      </div>
+      </div>}
 
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={(e) => { setSearch(e.target.value); setVisibleCount(50); }} placeholder="Search exams by name, slug or full name..." className="pl-10 rounded-xl h-10" />
         </div>
-        <Button onClick={() => setEditing({ ...emptyExam })} className="rounded-xl gap-2">
+        {canCreate && <Button onClick={() => setEditing({ ...emptyExam })} className="rounded-xl gap-2">
           <Plus className="w-4 h-4" /> Add Exam
-        </Button>
-        <BulkEditToggle
+        </Button>}
+        {isAdmin && <BulkEditToggle
           table="exams"
           searchKeys={["name","slug","full_name","category"]}
           columns={[
@@ -180,7 +182,7 @@ export default function AdminExams() {
             { key: "show_in_explore_by_category", label: "Homepage Explore", type: "boolean", width: 120 },
             { key: "is_active", label: "Active", type: "boolean", width: 80 },
           ]}
-        />
+        />}
       </div>
 
       <QuickFilterPills
@@ -219,8 +221,8 @@ export default function AdminExams() {
               </div>
               <div className="flex gap-1">
                 <a href={`/exams/${e.slug}`} target="_blank" rel="noreferrer"><Button variant="ghost" size="icon" className="w-8 h-8" title="Open public page"><ExternalLink className="w-3.5 h-3.5" /></Button></a>
-                <RowDataIO row={e} base="exam" columns="*" />
-                <Button variant="ghost" size="icon" onClick={() => setEditing({ ...e })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>
+                {isAdmin && <RowDataIO row={e} base="exam" columns="*" />}
+                {canEdit && <Button variant="ghost" size="icon" onClick={() => setEditing({ ...e })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="exams" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteExam.mutate(e.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
             </div>
@@ -243,7 +245,7 @@ export default function AdminExams() {
           </DialogHeader>
           {editing && (
             <div className="space-y-4">
-              <OfficialDataFillButton
+              {isAdmin && <OfficialDataFillButton
                 entityType="exams"
                 record={editing as Record<string, unknown>}
                 onApply={(updates) => setEditing((current) => current ? {
@@ -251,7 +253,7 @@ export default function AdminExams() {
                   ...updates,
                   website: (updates.official_website as string) || current.website,
                 } : current)}
-              />
+              />}
               {/* ── Basic Info ── */}
               <AdminFormSection title="Basic Information" icon={<Info className="w-4 h-4 text-primary" />}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

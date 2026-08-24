@@ -3,11 +3,19 @@ import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { handleRequest } from "./index.mjs";
 import { startLeadOutboxWorker, stopLeadOutboxWorker } from "./lead-outbox.mjs";
+import { ensureContentReviewTable } from "./content-review.mjs";
+import { provisionExistingRestrictedEditor } from "./editor-access.mjs";
+import { startBlogAgentWorker, stopBlogAgentWorker } from "./blog-ai.mjs";
+import { startDataCleanerWorker, stopDataCleanerWorker } from "./data-cleaner.mjs";
 import { prisma } from "./db.mjs";
 
 const port = Number(process.env.PORT || 8787);
 const host = process.env.HOST || "0.0.0.0";
+await ensureContentReviewTable();
+await provisionExistingRestrictedEditor();
 await startLeadOutboxWorker();
+await startBlogAgentWorker();
+startDataCleanerWorker();
 
 const server = http.createServer(async (req, res) => {
   const origin = `http://${req.headers.host || `localhost:${port}`}`;
@@ -38,6 +46,8 @@ const server = http.createServer(async (req, res) => {
 async function shutdown(signal) {
   console.log(`Received ${signal}; stopping cleanly`);
   stopLeadOutboxWorker();
+  stopBlogAgentWorker();
+  stopDataCleanerWorker();
   server.close(async () => {
     await prisma.$disconnect();
     process.exit(0);

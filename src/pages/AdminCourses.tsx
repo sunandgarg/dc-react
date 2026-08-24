@@ -60,6 +60,8 @@ export default function AdminCourses() {
   const deleteCourse = useDeleteCourse();
   const { can, isAdmin } = useAuth();
   const canPublish = isAdmin || can("courses", "publish") || can("courses", "edit");
+  const canCreate = isAdmin || can("courses", "create");
+  const canEdit = isAdmin || can("courses", "edit");
   const [editing, setEditing] = useDraftState<Partial<DbCourse> | null>('admin.courses.editing.v1', null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "Published" | "Draft">("all");
@@ -108,7 +110,7 @@ export default function AdminCourses() {
 
   return (
     <AdminLayout title="Courses Manager">
-      <div className="mb-3"><AIGenerateDialog entityType="courses" table="courses" /></div>
+      {isAdmin && <div className="mb-3"><AIGenerateDialog entityType="courses" table="courses" /></div>}
       <AdminStatsBar
         stats={[
           { label: "Total", value: stats.total, icon: BookOpen, tone: "primary" },
@@ -119,24 +121,24 @@ export default function AdminCourses() {
         ]}
       />
 
-      <div className="mb-3">
+      {isAdmin && <div className="mb-3">
         <CSVTools
           table="courses"
           filename="courses.csv"
           columns="*"
           typeHints={{ fee: "number", low_fee: "number", high_fee: "number", colleges_count: "number", rating: "number", priority: "number", is_active: "boolean", show_in_explore_by_category: "boolean", top_exams: "array", careers: "array", subjects: "array", specializations: "array" }}
         />
-      </div>
+      </div>}
 
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={(e) => { setSearch(e.target.value); setVisibleCount(50); }} placeholder="Search courses by name, slug or full name..." className="pl-10 rounded-xl h-10" />
         </div>
-        <Button onClick={() => setEditing({ ...emptyCourse })} className="rounded-xl gap-2">
+        {canCreate && <Button onClick={() => setEditing({ ...emptyCourse })} className="rounded-xl gap-2">
           <Plus className="w-4 h-4" /> Add Course
-        </Button>
-        <BulkEditToggle
+        </Button>}
+        {isAdmin && <BulkEditToggle
           table="courses"
           searchKeys={["name","slug","full_name","category"]}
           columns={[
@@ -150,7 +152,7 @@ export default function AdminCourses() {
             { key: "show_in_explore_by_category", label: "Homepage Explore", type: "boolean", width: 120 },
             { key: "is_active", label: "Active", type: "boolean", width: 80 },
           ]}
-        />
+        />}
       </div>
 
       <QuickFilterPills
@@ -188,8 +190,8 @@ export default function AdminCourses() {
               </div>
               <div className="flex gap-1">
                 <a href={`/courses/${c.slug}`} target="_blank" rel="noreferrer"><Button variant="ghost" size="icon" className="w-8 h-8" title="Open public page"><ExternalLink className="w-3.5 h-3.5" /></Button></a>
-                <RowDataIO row={c} base="course" columns="*" />
-                <Button variant="ghost" size="icon" onClick={() => setEditing({ ...c })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>
+                {isAdmin && <RowDataIO row={c} base="course" columns="*" />}
+                {canEdit && <Button variant="ghost" size="icon" onClick={() => setEditing({ ...c })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="courses" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteCourse.mutate(c.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
             </div>
@@ -212,11 +214,11 @@ export default function AdminCourses() {
           </DialogHeader>
           {editing && (
             <div className="space-y-4">
-              <OfficialDataFillButton
+              {isAdmin && <OfficialDataFillButton
                 entityType="courses"
                 record={editing as Record<string, unknown>}
                 onApply={(updates) => setEditing((current) => current ? { ...current, ...updates } : current)}
-              />
+              />}
               {/* ── Basic Info ── */}
               <AdminFormSection title="Basic Information" icon={<Info className="w-4 h-4 text-primary" />}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

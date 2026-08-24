@@ -93,6 +93,8 @@ export default function AdminArticles() {
 
   const { can, isAdmin } = useAuth();
   const canPublish = isAdmin || can("articles", "publish") || can("articles", "edit");
+  const canCreate = isAdmin || can("articles", "create");
+  const canEdit = isAdmin || can("articles", "edit");
 
   const bulkUpdate = async (updates: Record<string, unknown>, label: string, ids = Array.from(selectedIds)) => {
     if (!ids.length) return toast.error("Select at least one article");
@@ -155,7 +157,7 @@ export default function AdminArticles() {
           const { data: row } = await supabase.from("articles").select("id").eq("slug", editing.slug).maybeSingle();
           id = row?.id;
         }
-        if (id) {
+        if (id && isAdmin) {
           const { error } = await (supabase as any).rpc("set_featured_rank", { _table: "articles", _id: id, _rank: desiredRank });
           if (error) toast.error(`Featured: ${error.message}`);
         }
@@ -168,18 +170,18 @@ export default function AdminArticles() {
 
   return (
     <AdminLayout title="Articles Manager">
-      <div className="mb-3 flex flex-wrap gap-2"><BlogStudioDialog onSaved={() => { void refetchArticles(); }} /><AIGenerateDialog entityType="articles" table="articles" /></div>
-      <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />
-      <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />
+      {isAdmin && <div className="mb-3 flex flex-wrap gap-2"><BlogStudioDialog onSaved={() => { void refetchArticles(); }} /><AIGenerateDialog entityType="articles" table="articles" /></div>}
+      {isAdmin && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />}
+      {isAdmin && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search articles..." className="pl-10 rounded-xl h-10" />
         </div>
-        <Button onClick={() => setEditing({ ...emptyArticle })} className="rounded-xl gap-2">
+        {canCreate && <Button onClick={() => setEditing({ ...emptyArticle })} className="rounded-xl gap-2">
           <Plus className="w-4 h-4" /> Add Article
-        </Button>
-        <BulkEditToggle
+        </Button>}
+        {isAdmin && <BulkEditToggle
           table="articles"
           searchKeys={["title","slug","author","category"]}
           columns={[
@@ -191,10 +193,10 @@ export default function AdminArticles() {
             { key: "is_active", label: "Active", type: "boolean", width: 80 },
             { key: "views", label: "Views", type: "number", width: 80 },
           ]}
-        />
+        />}
       </div>
 
-      <div className="mb-3 space-y-3 rounded-2xl border bg-card p-3 shadow-sm">
+      {isAdmin && <div className="mb-3 space-y-3 rounded-2xl border bg-card p-3 shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" variant="outline" onClick={() => setSelectedIds(selectedIds.size === filtered.length ? new Set() : new Set(filtered.map((article) => article.id)))} className="gap-2">
             {selectedIds.size === filtered.length && filtered.length ? <CheckSquare2 className="h-4 w-4" /> : <Square className="h-4 w-4" />} {selectedIds.size === filtered.length && filtered.length ? "Clear all" : `Select all filtered (${filtered.length})`}
@@ -239,9 +241,9 @@ export default function AdminArticles() {
         <p className="text-xs text-muted-foreground">
           Publish makes articles visible and active. Unpublish moves them to Draft and hides them from public article/news listings.
         </p>
-      </div>
+      </div>}
 
-      <div className="mb-4">
+      {isAdmin && <div className="mb-4">
         <CSVTools
           table="articles"
           filename="articles.csv"
@@ -249,9 +251,9 @@ export default function AdminArticles() {
           typeHints={{ tags: "array", views: "number", is_active: "boolean" }}
           onImported={() => { void refetchArticles(); }}
         />
-      </div>
+      </div>}
 
-      <FeaturedRankPanel table="articles" detailPath={(slug) => `/news/${slug}`} />
+      {isAdmin && <FeaturedRankPanel table="articles" detailPath={(slug) => `/news/${slug}`} />}
 
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground">Loading...</div>
@@ -259,14 +261,14 @@ export default function AdminArticles() {
         <div className="space-y-2">
           {filtered.map((a) => (
             <div key={a.id} className={`bg-card rounded-xl border p-4 flex items-center gap-4 ${selectedIds.has(a.id) ? "border-primary bg-primary/5" : "border-border"}`}>
-              <button type="button" onClick={() => setSelectedIds((current) => {
+              {isAdmin && <button type="button" onClick={() => setSelectedIds((current) => {
                 const next = new Set(current);
                 if (next.has(a.id)) next.delete(a.id);
                 else next.add(a.id);
                 return next;
               })} aria-label={`Select ${a.title}`}>
                 {selectedIds.has(a.id) ? <CheckSquare2 className="h-5 w-5 text-primary" /> : <Square className="h-5 w-5 text-muted-foreground" />}
-              </button>
+              </button>}
               {a.featured_image && <img src={a.featured_image} alt={a.title} className="w-16 h-10 rounded-lg object-cover hidden sm:block" />}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -278,7 +280,7 @@ export default function AdminArticles() {
               </div>
               <div className="flex gap-1">
                 <a href={`/news/${a.slug}`} target="_blank" rel="noopener noreferrer" title="Open public page" className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted text-muted-foreground hover:text-primary"><ExternalLink className="w-3.5 h-3.5" /></a>
-                <Button variant="ghost" size="icon" onClick={() => setEditing({ ...a })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>
+                {canEdit && <Button variant="ghost" size="icon" onClick={() => setEditing({ ...a })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="articles" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteArticle.mutate(a.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
             </div>

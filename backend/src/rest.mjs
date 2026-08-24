@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata, tableNames, jsonSafe } from "./db.mjs";
+import { recordContentReviews } from "./content-review.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
@@ -315,7 +316,7 @@ async function insertRow(table, input, merge, conflictColumns) {
   throw new Error(`Unable to allocate short_id for ${table}`);
 }
 
-async function handlePost(table, request, url) {
+async function handlePost(table, request, url, context) {
   const input = await request.json();
   const rows = Array.isArray(input) ? input : [input];
   const prefer = String(request.headers.get("prefer") || "");
@@ -323,10 +324,11 @@ async function handlePost(table, request, url) {
   const conflictColumns = String(url.searchParams.get("on_conflict") || "").split(",").filter((column) => schemaMetadata[table].fields[column]);
   const inserted = [];
   for (const row of rows) inserted.push(await insertRow(table, row, merge, conflictColumns));
+  await recordContentReviews({ table, operation: "create", actorUserId: context.actorUserId, afterRows: inserted });
   return { status: 201, body: prefer.includes("return=representation") ? representationBody(request, inserted) : null };
 }
 
-async function handlePatch(table, request, url) {
+async function handlePatch(table, request, url, context) {
   const input = await request.json();
   const allowed = schemaMetadata[table].fields;
   if (allowed.updated_at && input.updated_at === undefined) input.updated_at = new Date().toISOString();
@@ -335,10 +337,12 @@ async function handlePatch(table, request, url) {
   const where = buildWhere(table, url, params);
   if (!where) throw new Error("Refusing unfiltered update");
   const prefer = String(request.headers.get("prefer") || "");
+  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId);
   let before = [];
-  if (prefer.includes("return=representation")) before = await prisma.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where}`, ...params.slice(columns.length));
+  if (needsBefore) before = await prisma.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where}`, ...params.slice(columns.length));
   await prisma.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
   const body = before.map((row) => ({ ...row, ...input }));
+  await recordContentReviews({ table, operation: "update", actorUserId: context.actorUserId, beforeRows: before, afterRows: body });
   return { status: 200, body: prefer.includes("return=representation") ? representationBody(request, body) : null };
 }
 
@@ -352,13 +356,13 @@ async function handleDelete(table, request, url) {
   return { status: 200, body: prefer.includes("return=representation") ? representationBody(request, rows) : null };
 }
 
-export async function handleRest(table, request) {
+export async function handleRest(table, request, context = {}) {
   if (!tableNames.has(table)) return { status: 404, body: { code: "PGRST205", message: `Table ${table} is unavailable` } };
   const url = new URL(request.url);
   if (["GET", "HEAD"].includes(request.method)) return handleGet(table, request, url);
   if (schemaMetadata[table].ignored) return { status: 405, body: { code: "25006", message: `Resource ${table} is read-only` } };
-  if (request.method === "POST") return handlePost(table, request, url);
-  if (request.method === "PATCH") return handlePatch(table, request, url);
+  if (request.method === "POST") return handlePost(table, request, url, context);
+  if (request.method === "PATCH") return handlePatch(table, request, url, context);
   if (request.method === "DELETE") return handleDelete(table, request, url);
   return { status: 405, body: { message: "Method not allowed" } };
 }
