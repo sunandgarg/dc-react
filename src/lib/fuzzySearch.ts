@@ -83,6 +83,6 @@ export function rankDirectoryResult(query: string, name: string, subtitle = ""):
   if (haystack.includes(q)) score += 45;
   if (normalize(name) === q) score += 40;
   if (normalize(name).startsWith(q)) score += 30;
-  if (q.length >= 2 && acronym === q) score += 120;
+  if (q.length >= 2 && acronym === q) score += 200;
   return score;
 }

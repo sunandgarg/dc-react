@@ -25,6 +25,8 @@ describe("rankDirectoryResult", () => {
   it("recognises institutional acronyms such as LPU", () => {
     expect(rankDirectoryResult("lpu", "Lovely Professional University"))
       .toBeGreaterThan(rankDirectoryResult("lpu", "Punjab Technical University"));
+    expect(rankDirectoryResult("lpu", "Lovely Professional University"))
+      .toBeGreaterThan(rankDirectoryResult("lpu", "Lovely Professional University Admission - [LPU], Jalandhar"));
     expect(rankDirectoryResult("lpu", "Lovely Professional University")).toBeGreaterThan(100);
   });
 });
