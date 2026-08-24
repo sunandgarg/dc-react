@@ -14,6 +14,7 @@ import { normalizeIndianMobile } from "@/lib/phone";
 const ROLES: { value: AppRole; label: string; desc: string }[] = [
   { value: "admin", label: "Admin", desc: "Full access to everything" },
   { value: "manager", label: "Manager", desc: "Most modules, no destructive deletes" },
+  { value: "content", label: "Content Editor", desc: "All content tools; changes require admin review" },
   { value: "editor", label: "Editor", desc: "Content modules only" },
   { value: "contributor", label: "Contributor", desc: "Add & edit own articles only" },
   { value: "lead_push", label: "Lead Push Only", desc: "Sees only Lead Push + All Leads" },
@@ -23,6 +24,7 @@ const PERM_MODULES: Module[] = [
   "articles","colleges","courses","exams","study_material","leads","ads","banners",
   "promoted_programs","featured","applications","referrals","careers","companies",
   "placements","faculty","facilities","contacts","course_fees","partners","content","legal",
+  "authors","scholarships","jobs",
 ];
 const ACTIONS = [
   { key: "can_view", label: "View" },

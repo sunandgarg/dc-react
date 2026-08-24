@@ -64,7 +64,7 @@ export default function AdminColleges() {
   const saveCollege = useSaveCollege();
   const deleteCollege = useDeleteCollege();
   const { can, isAdmin } = useAuth();
-  const canPublish = isAdmin || can("colleges", "publish") || can("colleges", "edit");
+  const canPublish = isAdmin || can("colleges", "publish");
   const canCreate = isAdmin || can("colleges", "create");
   const canEdit = isAdmin || can("colleges", "edit");
   const [editing, setEditing] = useDraftState<Partial<DbCollege> | null>('admin.colleges.editing.v1', null);

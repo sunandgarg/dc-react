@@ -74,6 +74,20 @@ export function applyDefaults(table, row) {
   return result;
 }
 
+export function forceDraftPayload(table, input) {
+  const row = { ...input };
+  const fields = schemaMetadata[table]?.fields || {};
+  if (fields.is_active) row.is_active = false;
+  if (fields.is_published) row.is_published = false;
+  if (fields.published) row.published = false;
+  if (fields.published_at) row.published_at = null;
+  if (["articles", "colleges", "courses"].includes(table) && fields.status) row.status = "Draft";
+  if (table === "exams" && fields.status && ["Applications Open", "Applications Closed"].includes(String(row.status || ""))) {
+    row.status = "Upcoming";
+  }
+  return row;
+}
+
 export function nextShortIdValue(table, currentMax) {
   const start = SHORT_ID_STARTS[table];
   if (!start) return undefined;
@@ -318,7 +332,8 @@ async function insertRow(table, input, merge, conflictColumns) {
 
 async function handlePost(table, request, url, context) {
   const input = await request.json();
-  const rows = Array.isArray(input) ? input : [input];
+  const sourceRows = Array.isArray(input) ? input : [input];
+  const rows = context.forceDraft ? sourceRows.map((row) => forceDraftPayload(table, row)) : sourceRows;
   const prefer = String(request.headers.get("prefer") || "");
   const merge = prefer.includes("resolution=merge-duplicates");
   const conflictColumns = String(url.searchParams.get("on_conflict") || "").split(",").filter((column) => schemaMetadata[table].fields[column]);
@@ -329,7 +344,8 @@ async function handlePost(table, request, url, context) {
 }
 
 async function handlePatch(table, request, url, context) {
-  const input = await request.json();
+  const source = await request.json();
+  const input = context.forceDraft ? forceDraftPayload(table, source) : source;
   const allowed = schemaMetadata[table].fields;
   if (allowed.updated_at && input.updated_at === undefined) input.updated_at = new Date().toISOString();
   const columns = Object.keys(input).filter((column) => allowed[column]);

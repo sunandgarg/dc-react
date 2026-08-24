@@ -13,8 +13,20 @@ describe("RBAC capability matrix", () => {
     const roles: AppRole[] = ["manager"];
     expect(can(roles, "articles", "edit")).toBe(true);
     expect(can(roles, "articles", "delete")).toBe(false);
+    expect(can(roles, "articles", "publish")).toBe(true);
     expect(can(roles, "leads", "view")).toBe(true);
     expect(can(roles, "leads", "edit")).toBe(false);
+  });
+
+  it("content editor can manage all editorial modules but cannot publish", () => {
+    const roles: AppRole[] = ["content"];
+    expect(can(roles, "colleges", "edit")).toBe(true);
+    expect(can(roles, "course_fees", "create")).toBe(true);
+    expect(can(roles, "scholarships", "edit")).toBe(true);
+    expect(can(roles, "jobs", "edit")).toBe(true);
+    expect(can(roles, "articles", "publish")).toBe(false);
+    expect(can(roles, "articles", "delete")).toBe(false);
+    expect(can(roles, "leads", "view")).toBe(false);
   });
 
   it("editor has scoped access", () => {

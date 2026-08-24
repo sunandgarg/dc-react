@@ -88,7 +88,7 @@ export default function AdminExams() {
   const saveExam = useSaveExam();
   const deleteExam = useDeleteExam();
   const { can, isAdmin } = useAuth();
-  const canPublish = isAdmin || can("exams", "publish") || can("exams", "edit");
+  const canPublish = isAdmin || can("exams", "publish");
   const canCreate = isAdmin || can("exams", "create");
   const canEdit = isAdmin || can("exams", "edit");
   const [editing, setEditing] = useDraftState<Partial<DbExam> | null>('admin.exams.editing.v1', null);

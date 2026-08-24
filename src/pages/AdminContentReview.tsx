@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 type Review = {
   id: string;
-  entity_type: "colleges" | "courses" | "exams" | "articles";
+  entity_type: string;
   entity_id: string | null;
   entity_slug: string | null;
   entity_name: string | null;
@@ -72,7 +72,7 @@ export default function AdminContentReview() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-foreground">Editor change review</h2>
-          <p className="text-xs text-muted-foreground">Audit every manual change to colleges, courses, exams and articles.</p>
+          <p className="text-xs text-muted-foreground">Audit manual changes across every content module before publishing.</p>
         </div>
         <div className="flex rounded-lg border bg-card p-1">
           {["pending", "approved", "needs_changes", "all"].map((item) => (

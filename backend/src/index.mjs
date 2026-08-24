@@ -8,6 +8,7 @@ import { integrationStatus } from "./integration-status.mjs";
 import { handleContentReviews } from "./content-review.mjs";
 import { handleAiGenerate, handleBlogAiSettings, handleBlogStudio, runBlogAgent } from "./blog-ai.mjs";
 import { handleDataCleaner } from "./data-cleaner.mjs";
+import { canContentEditorAccess } from "./editor-access.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -97,8 +98,15 @@ async function authorizeRest(table, request) {
     const action = request.method === "POST"
       ? (String(request.headers.get("prefer") || "").includes("resolution=merge-duplicates") ? "edit" : "create")
       : request.method === "PATCH" ? "edit" : request.method === "DELETE" ? "delete" : "view";
+    const contentRole = await prisma.$queryRawUnsafe(
+      "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content' LIMIT 1",
+      identity.id,
+    );
+    if (contentRole.length && canContentEditorAccess(table, action)) {
+      return { request, actorUserId: identity.id, forceDraft: action !== "view" };
+    }
     const permission = await prisma.$queryRawUnsafe(
-      `SELECT 1 FROM \`user_permissions\`
+      `SELECT \`can_publish\` FROM \`user_permissions\`
        WHERE \`user_id\` = ? AND (\`resource\` = ? OR \`module\` = ?)
          AND ((? = 'view' AND \`can_view\` = 1)
            OR (? = 'create' AND \`can_create\` = 1)
@@ -108,7 +116,7 @@ async function authorizeRest(table, request) {
       identity.id, table, table, action, action, action, action,
     );
     if (!permission.length) throw new HttpError(403, "PERMISSION_DENIED", `You do not have ${action} permission for ${table}`);
-    return { request, actorUserId: identity.id };
+    return { request, actorUserId: identity.id, forceDraft: !Boolean(permission[0]?.can_publish) };
   }
   if (request.method === "POST") {
     const input = await request.clone().json();
@@ -269,7 +277,7 @@ export async function handleRequest(request) {
     const restMatch = url.pathname.match(/^\/v1\/rest\/([A-Za-z0-9_]+)$/);
     if (restMatch) {
       const authorization = await authorizeRest(restMatch[1], request);
-      const result = await handleRest(restMatch[1], authorization.request, { actorUserId: authorization.actorUserId });
+      const result = await handleRest(restMatch[1], authorization.request, authorization);
       return json(result.status, result.body, requestId, request, result.headers);
     }
     const functionMatch = url.pathname.match(/^\/v1\/functions\/([A-Za-z0-9_-]+)$/);

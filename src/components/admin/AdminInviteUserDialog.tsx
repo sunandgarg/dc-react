@@ -55,6 +55,7 @@ export function AdminInviteUserDialog({ onInvited }: { onInvited?: () => void })
               <SelectContent>
                 <SelectItem value="admin">Admin - full access</SelectItem>
                 <SelectItem value="manager">Manager - most modules, no destructive</SelectItem>
+                <SelectItem value="content">Content Editor - all content, admin review required</SelectItem>
                 <SelectItem value="editor">Editor - content modules only</SelectItem>
                 <SelectItem value="contributor">Contributor - own articles only</SelectItem>
               </SelectContent>

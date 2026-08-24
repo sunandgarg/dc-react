@@ -15,7 +15,7 @@ import { TeamPanel } from "@/components/admin/TeamPanel";
 import { isSyntheticPhoneEmail } from "@/lib/authIdentity";
 
 import { CSVTools } from "@/components/CSVTools";
-const ASSIGNABLE_ROLES: AppRole[] = ["admin", "manager", "editor", "contributor"];
+const ASSIGNABLE_ROLES: AppRole[] = ["admin", "manager", "content", "editor", "contributor"];
 
 export default function AdminUsers() {
   const [search, setSearch] = useState("");

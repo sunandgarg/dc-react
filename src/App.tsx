@@ -454,18 +454,18 @@ const App = () => (
               <Route path="/jobs/:slug" element={<JobDetail />} />
               <Route path="/vacancies" element={<AllJobs />} />
               <Route path="/vacancies/:slug" element={<JobDetail />} />
-              <Route path="/admin/jobs" element={<ProtectedRoute requireAdmin><AdminJobs /></ProtectedRoute>} />
-              <Route path="/admin/vacancies" element={<ProtectedRoute requireAdmin><AdminJobs /></ProtectedRoute>} />
+              <Route path="/admin/jobs" element={<ProtectedRoute module="jobs"><AdminJobs /></ProtectedRoute>} />
+              <Route path="/admin/vacancies" element={<ProtectedRoute module="jobs"><AdminJobs /></ProtectedRoute>} />
               <Route path="/admin/vacancy-applications" element={<ProtectedRoute requireAdmin><AdminJobApplications /></ProtectedRoute>} />
               <Route path="/compare" element={<ComparePage />} />
               <Route path="/scholarships" element={<Scholarships />} />
               <Route path="/scholarships/:slug" element={<ScholarshipDetail />} />
-              <Route path="/admin/scholarships" element={<ProtectedRoute requireAdmin><AdminScholarships /></ProtectedRoute>} />
+              <Route path="/admin/scholarships" element={<ProtectedRoute module="scholarships"><AdminScholarships /></ProtectedRoute>} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/about-us" element={<AboutUs />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/admin/about" element={<ProtectedRoute requireAdmin><AdminAbout /></ProtectedRoute>} />
-              <Route path="/admin/authors" element={<ProtectedRoute module="users"><AdminAuthors /></ProtectedRoute>} />
+              <Route path="/admin/authors" element={<ProtectedRoute module="authors"><AdminAuthors /></ProtectedRoute>} />
               <Route path="/author/:slug" element={<AuthorPage />} />
               <Route path="/admin/user-analytics" element={<ProtectedRoute requireAdmin><AdminUserAnalytics /></ProtectedRoute>} />
               <Route path="/admin/funnel" element={<ProtectedRoute requireAdmin><AdminFunnel /></ProtectedRoute>} />

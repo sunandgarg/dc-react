@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomBytes, randomInt, randomUUID, timingSafeEqual } from "node:crypto";
 import { prisma } from "./db.mjs";
-import { ensureRestrictedEditorAccess } from "./editor-access.mjs";
+import { acceptPendingTeamInvite, ensureRestrictedEditorAccess } from "./editor-access.mjs";
 
 const ACCESS_TTL_SECONDS = Number(process.env.AUTH_ACCESS_TTL_SECONDS || 3600);
 const REFRESH_TTL_SECONDS = Number(process.env.AUTH_REFRESH_TTL_SECONDS || 60 * 60 * 24 * 180);
@@ -172,6 +172,7 @@ export async function verifyPhoneOtp(request) {
       randomUUID(), user.id, "admin", new Date(),
     );
   }
+  await acceptPendingTeamInvite(user);
   await ensureRestrictedEditorAccess(user.id, phone);
   return { session: await issueSession(user), user: authUser(user) };
 }

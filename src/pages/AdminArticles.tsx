@@ -92,7 +92,7 @@ export default function AdminArticles() {
   }, [articles, normalizedSearch]);
 
   const { can, isAdmin } = useAuth();
-  const canPublish = isAdmin || can("articles", "publish") || can("articles", "edit");
+  const canPublish = isAdmin || can("articles", "publish");
   const canCreate = isAdmin || can("articles", "create");
   const canEdit = isAdmin || can("articles", "edit");
 

@@ -1,7 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "./db.mjs";
 
-const REVIEWED_TABLES = new Set(["colleges", "courses", "exams", "articles"]);
+const REVIEWED_TABLES = new Set([
+  "articles", "article_categories", "article_links", "authors",
+  "colleges", "college_contacts", "college_facilities", "college_few_links",
+  "college_programs", "college_quick_links", "college_resources", "college_semesters",
+  "college_subjects", "college_toppers", "college_universities",
+  "courses", "course_fees", "course_specializations", "exams",
+  "career_profiles", "career_course_links", "companies", "placement_records",
+  "faculty", "facilities_library", "scholarships", "jobs",
+  "study_board_links", "study_boards", "study_chapters", "study_resources",
+  "study_subjects", "study_toppers", "faqs", "popular_places",
+  "program_categories", "programs", "promoted_programs", "stream_categories",
+]);
 const IGNORED_FIELDS = new Set(["updated_at"]);
 
 function jsonValue(value) {

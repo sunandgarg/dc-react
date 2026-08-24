@@ -1,12 +1,12 @@
 // Centralized RBAC capability matrix
-export type AppRole = "admin" | "manager" | "editor" | "contributor" | "lead_push" | "user";
+export type AppRole = "admin" | "manager" | "content" | "editor" | "contributor" | "lead_push" | "user";
 export type Module =
   | "articles" | "colleges" | "courses" | "exams" | "study_material"
   | "leads" | "users" | "integrations" | "backup" | "ads" | "banners"
   | "promoted_programs" | "featured" | "ai_providers" | "otp_providers"
   | "applications" | "referrals" | "careers" | "companies" | "placements"
   | "faculty" | "facilities" | "contacts" | "course_fees" | "partners" | "cat_universe"
-  | "content" | "legal" | "sitemap" | "docs";
+  | "content" | "legal" | "sitemap" | "docs" | "authors" | "scholarships" | "jobs";
 
 export type Action = "view" | "create" | "edit" | "edit_own" | "delete" | "publish";
 
@@ -16,6 +16,7 @@ const VIEW: Action[] = ["view"];
 const CREATE_ONLY: Action[] = ["view", "create"]; // can add but not change after save
 const EDIT_OWN: Action[] = ["view", "create", "edit_own"]; // edit only their own
 const NO_DELETE: Action[] = ["view", "create", "edit", "edit_own"];
+const REVIEW_AND_PUBLISH: Action[] = ["view", "create", "edit", "edit_own", "publish"];
 
 type Matrix = Record<AppRole, Partial<Record<Module, Action[]>>>;
 
@@ -30,12 +31,21 @@ export const CAPABILITIES: Matrix = {
     ] as Module[]).map(m => [m, ALL])
   ),
   manager: {
+    articles: REVIEW_AND_PUBLISH, colleges: REVIEW_AND_PUBLISH, courses: REVIEW_AND_PUBLISH, exams: REVIEW_AND_PUBLISH,
+    study_material: REVIEW_AND_PUBLISH, leads: VIEW, applications: NO_DELETE, referrals: VIEW,
+    ads: REVIEW_AND_PUBLISH, banners: REVIEW_AND_PUBLISH, promoted_programs: REVIEW_AND_PUBLISH, featured: REVIEW_AND_PUBLISH,
+    careers: REVIEW_AND_PUBLISH, companies: REVIEW_AND_PUBLISH, placements: REVIEW_AND_PUBLISH, faculty: REVIEW_AND_PUBLISH,
+    facilities: REVIEW_AND_PUBLISH, contacts: REVIEW_AND_PUBLISH, course_fees: REVIEW_AND_PUBLISH,
+    partners: REVIEW_AND_PUBLISH, cat_universe: REVIEW_AND_PUBLISH, content: REVIEW_AND_PUBLISH, legal: REVIEW_AND_PUBLISH, sitemap: VIEW, docs: VIEW,
+    authors: REVIEW_AND_PUBLISH, scholarships: REVIEW_AND_PUBLISH, jobs: REVIEW_AND_PUBLISH,
+  },
+  content: {
     articles: NO_DELETE, colleges: NO_DELETE, courses: NO_DELETE, exams: NO_DELETE,
-    study_material: NO_DELETE, leads: VIEW, applications: NO_DELETE, referrals: VIEW,
-    ads: NO_DELETE, banners: NO_DELETE, promoted_programs: NO_DELETE, featured: NO_DELETE,
-    careers: NO_DELETE, companies: NO_DELETE, placements: NO_DELETE, faculty: NO_DELETE,
-    facilities: NO_DELETE, contacts: NO_DELETE, course_fees: NO_DELETE,
-    partners: NO_DELETE, cat_universe: NO_DELETE, content: NO_DELETE, legal: NO_DELETE, sitemap: VIEW, docs: VIEW,
+    study_material: NO_DELETE, careers: NO_DELETE, companies: NO_DELETE,
+    placements: NO_DELETE, faculty: NO_DELETE, facilities: NO_DELETE,
+    contacts: NO_DELETE, course_fees: NO_DELETE, content: NO_DELETE,
+    promoted_programs: NO_DELETE, authors: NO_DELETE, scholarships: NO_DELETE,
+    jobs: NO_DELETE,
   },
   editor: {
     articles: NO_DELETE, colleges: CREATE_ONLY, courses: VIEW, exams: VIEW,
@@ -51,7 +61,7 @@ export const CAPABILITIES: Matrix = {
 };
 
 export function highestRole(roles: AppRole[]): AppRole {
-  const order: AppRole[] = ["admin", "manager", "editor", "contributor", "user"];
+  const order: AppRole[] = ["admin", "manager", "content", "editor", "contributor", "lead_push", "user"];
   return order.find(r => roles.includes(r)) ?? "user";
 }
 

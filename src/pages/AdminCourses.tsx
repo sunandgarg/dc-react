@@ -59,7 +59,7 @@ export default function AdminCourses() {
   const saveCourse = useSaveCourse();
   const deleteCourse = useDeleteCourse();
   const { can, isAdmin } = useAuth();
-  const canPublish = isAdmin || can("courses", "publish") || can("courses", "edit");
+  const canPublish = isAdmin || can("courses", "publish");
   const canCreate = isAdmin || can("courses", "create");
   const canEdit = isAdmin || can("courses", "edit");
   const [editing, setEditing] = useDraftState<Partial<DbCourse> | null>('admin.courses.editing.v1', null);
