@@ -158,7 +158,15 @@ jobs:
           SQL="SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name IN ($TABLE_SQL) ORDER BY table_name"
           docker run --rm --network host -e MYSQL_PWD="$SOURCE_PASSWORD" "$IMAGE" mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" dc_react -Nse "$SQL" > /tmp/aws_tables.txt
           docker run --rm --network host -e MYSQL_PWD="$DO_PASSWORD" "$IMAGE" mysql --ssl-mode=REQUIRED -h "$DO_HOST" -P "$DO_PORT" -u "$DO_USER" "$DO_DB" -Nse "$SQL" > /tmp/do_tables.txt
-          diff -u /tmp/aws_tables.txt /tmp/do_tables.txt
+          missing_tables=$(comm -23 /tmp/aws_tables.txt /tmp/do_tables.txt || true)
+          if [ -n "$missing_tables" ]; then
+            printf 'DigitalOcean is missing AWS tables:\n%s\n' "$missing_tables"
+            exit 1
+          fi
+          extra_tables=$(comm -13 /tmp/aws_tables.txt /tmp/do_tables.txt || true)
+          if [ -n "$extra_tables" ]; then
+            printf 'DigitalOcean-only tables kept:\n%s\n' "$extra_tables"
+          fi
           printf 'table,aws_count,digitalocean_count\n' > /tmp/counts.csv
           while read -r table; do
             aws_count=$(docker run --rm --network host -e MYSQL_PWD="$SOURCE_PASSWORD" "$IMAGE" mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" dc_react -Nse "SELECT COUNT(*) FROM \`$table\`")
