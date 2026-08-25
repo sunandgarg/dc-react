@@ -13,6 +13,11 @@ on:
         required: false
         type: string
         default: ""
+      sync_missing_courses:
+        description: Copy missing AWS courses rows into DigitalOcean before auditing
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -92,6 +97,7 @@ jobs:
           SOURCE_HOST: ${{ steps.resources.outputs.source_host }}
           DO_DATABASE_ID: ${{ steps.resources.outputs.do_database_id }}
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          SYNC_MISSING_COURSES: ${{ inputs.sync_missing_courses && '1' || '0' }}
         run: |
           set -euo pipefail
           curl --fail --silent --show-error \
@@ -131,7 +137,7 @@ jobs:
           import os
           import shlex
 
-          names = ["AWS_REGION", "SOURCE_HOST", "DATABASE_SECRET", "DO_HOST", "DO_PORT", "DO_USER", "DO_PASSWORD", "DO_DB"]
+          names = ["AWS_REGION", "SOURCE_HOST", "DATABASE_SECRET", "DO_HOST", "DO_PORT", "DO_USER", "DO_PASSWORD", "DO_DB", "SYNC_MISSING_COURSES"]
           values = {name: shlex.quote(os.environ[name]) for name in names}
           tables = [
               "colleges", "courses", "exams", "articles", "authors", "scholarships",
@@ -149,6 +155,7 @@ jobs:
           DO_USER={DO_USER}
           DO_PASSWORD={DO_PASSWORD}
           DO_DB={DO_DB}
+          SYNC_MISSING_COURSES={SYNC_MISSING_COURSES}
           TABLE_SQL="{table_sql}"
           SOURCE_JSON=$(aws secretsmanager get-secret-value --region "$AWS_REGION" --secret-id "$DATABASE_SECRET" --query SecretString --output text)
           SOURCE_USER=$(jq -r .username <<<"$SOURCE_JSON")
@@ -157,6 +164,26 @@ jobs:
           docker pull "$IMAGE" >/dev/null
           SQL="SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name IN ($TABLE_SQL) ORDER BY table_name"
           docker run --rm --network host -e MYSQL_PWD="$SOURCE_PASSWORD" "$IMAGE" mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" dc_react -Nse "$SQL" > /tmp/aws_tables.txt
+          docker run --rm --network host -e MYSQL_PWD="$DO_PASSWORD" "$IMAGE" mysql --ssl-mode=REQUIRED -h "$DO_HOST" -P "$DO_PORT" -u "$DO_USER" "$DO_DB" -Nse "$SQL" > /tmp/do_tables.txt
+
+          if [ "$SYNC_MISSING_COURSES" = "1" ]; then
+            docker run --rm --network host -e MYSQL_PWD="$SOURCE_PASSWORD" "$IMAGE" mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" dc_react -Nse "SELECT slug FROM courses WHERE slug IS NOT NULL ORDER BY slug" > /tmp/aws_course_slugs.txt
+            docker run --rm --network host -e MYSQL_PWD="$DO_PASSWORD" "$IMAGE" mysql --ssl-mode=REQUIRED -h "$DO_HOST" -P "$DO_PORT" -u "$DO_USER" "$DO_DB" -Nse "SELECT slug FROM courses WHERE slug IS NOT NULL ORDER BY slug" > /tmp/do_course_slugs.txt
+            comm -23 /tmp/aws_course_slugs.txt /tmp/do_course_slugs.txt > /tmp/missing_course_slugs.txt || true
+            if [ -s /tmp/missing_course_slugs.txt ]; then
+              printf 'Syncing missing courses from AWS to DigitalOcean:\n'
+              cat /tmp/missing_course_slugs.txt
+              while read -r slug; do
+                case "$slug" in *"'"*|*"\""*|*"\\"*) echo "Unsafe slug for shell export: $slug"; exit 1 ;; esac
+                docker run --rm --network host -e MYSQL_PWD="$SOURCE_PASSWORD" "$IMAGE" \
+                  mysqldump --single-transaction --skip-lock-tables --skip-triggers --no-create-info --complete-insert --replace \
+                  -h "$SOURCE_HOST" -u "$SOURCE_USER" dc_react courses --where="slug = '$slug'" |
+                  docker run -i --rm --network host -e MYSQL_PWD="$DO_PASSWORD" "$IMAGE" \
+                    mysql --ssl-mode=REQUIRED -h "$DO_HOST" -P "$DO_PORT" -u "$DO_USER" "$DO_DB"
+              done < /tmp/missing_course_slugs.txt
+            fi
+          fi
+
           docker run --rm --network host -e MYSQL_PWD="$DO_PASSWORD" "$IMAGE" mysql --ssl-mode=REQUIRED -h "$DO_HOST" -P "$DO_PORT" -u "$DO_USER" "$DO_DB" -Nse "$SQL" > /tmp/do_tables.txt
           missing_tables=$(comm -23 /tmp/aws_tables.txt /tmp/do_tables.txt || true)
           if [ -n "$missing_tables" ]; then
