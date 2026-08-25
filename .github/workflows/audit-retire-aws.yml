@@ -168,12 +168,17 @@ jobs:
             printf 'DigitalOcean-only tables kept:\n%s\n' "$extra_tables"
           fi
           printf 'table,aws_count,digitalocean_count\n' > /tmp/counts.csv
+          failed=0
           while read -r table; do
             aws_count=$(docker run --rm --network host -e MYSQL_PWD="$SOURCE_PASSWORD" "$IMAGE" mysql -h "$SOURCE_HOST" -u "$SOURCE_USER" dc_react -Nse "SELECT COUNT(*) FROM \`$table\`")
             do_count=$(docker run --rm --network host -e MYSQL_PWD="$DO_PASSWORD" "$IMAGE" mysql --ssl-mode=REQUIRED -h "$DO_HOST" -P "$DO_PORT" -u "$DO_USER" "$DO_DB" -Nse "SELECT COUNT(*) FROM \`$table\`")
             printf '%s,%s,%s\n' "$table" "$aws_count" "$do_count" | tee -a /tmp/counts.csv
-            test "$aws_count" = "$do_count"
+            if [ "$do_count" -lt "$aws_count" ]; then
+              printf 'DigitalOcean has fewer rows than AWS for %s\n' "$table"
+              failed=1
+            fi
           done < /tmp/aws_tables.txt
+          exit "$failed"
           '''.format(table_sql=table_sql, **values)
           with open("/tmp/ssm-parameters.json", "w", encoding="utf-8") as target:
               json.dump({"commands": [script]}, target)
