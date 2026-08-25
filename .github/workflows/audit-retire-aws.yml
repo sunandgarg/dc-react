@@ -176,7 +176,7 @@ jobs:
               while read -r slug; do
                 case "$slug" in *"'"*|*"\""*|*"\\"*) echo "Unsafe slug for shell export: $slug"; exit 1 ;; esac
                 docker run --rm --network host -e MYSQL_PWD="$SOURCE_PASSWORD" "$IMAGE" \
-                  mysqldump --single-transaction --skip-lock-tables --skip-triggers --no-create-info --complete-insert --replace \
+                  mysqldump --single-transaction --skip-lock-tables --skip-add-locks --skip-triggers --no-create-info --complete-insert --replace --set-gtid-purged=OFF --no-tablespaces \
                   -h "$SOURCE_HOST" -u "$SOURCE_USER" dc_react courses --where="slug = '$slug'" |
                   docker run -i --rm --network host -e MYSQL_PWD="$DO_PASSWORD" "$IMAGE" \
                     mysql --ssl-mode=REQUIRED -h "$DO_HOST" -P "$DO_PORT" -u "$DO_USER" "$DO_DB"
