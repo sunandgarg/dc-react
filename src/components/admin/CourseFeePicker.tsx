@@ -16,6 +16,10 @@ interface FeeRow { id?: string; college_slug: string; course_slug: string; cours
 
 const FEE_TYPES = ["Annual", "Semester", "Total Course", "Monthly"];
 
+function isPendingReview(response: { status?: number | null }) {
+  return response.status === 202;
+}
+
 export function CourseFeePicker({ collegeSlug }: Props) {
   const qc = useQueryClient();
   const [rows, setRows] = useState<FeeRow[]>([]);
@@ -78,11 +82,12 @@ export function CourseFeePicker({ collegeSlug }: Props) {
     if (err) { toast.error(err); return; }
     if (!draft.course_slug) draft.course_slug = draft.course_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     const payload: any = { ...draft, fee_amount: Number(draft.fee_amount) };
-    const { error } = draft.id
+    const response = draft.id
       ? await (supabase as any).from("course_fees").update(payload).eq("id", draft.id)
       : await (supabase as any).from("course_fees").insert(payload);
+    const { error } = response;
     if (error) { toast.error(error.message); return; }
-    toast.success("Saved");
+    toast.success(isPendingReview(response) ? "Course fee draft submitted for admin review." : "Saved");
     setDraft(null);
     reload();
   };

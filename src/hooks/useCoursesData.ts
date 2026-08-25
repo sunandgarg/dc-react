@@ -3,6 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
 
+function isPendingReview(response: { status?: number | null }) {
+  return response.status === 202;
+}
+
 export type DbCourse = {
   id: string;
   slug: string;
@@ -200,20 +204,26 @@ export function useSaveCourse() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (course: Partial<DbCourse> & { slug: string; name: string }) => {
+      let pendingReview = false;
       if (course.id) {
         const { id, created_at, updated_at, ...rest } = course;
-        const { error } = await supabase.from("courses").update(rest).eq("id", id);
+        const response = await supabase.from("courses").update(rest).eq("id", id);
+        const { error } = response;
         if (error) throw error;
+        pendingReview = isPendingReview(response);
       } else {
         const { id, created_at, updated_at, ...rest } = course;
-        const { error } = await supabase.from("courses").insert(rest);
+        const response = await supabase.from("courses").insert(rest);
+        const { error } = response;
         if (error) throw error;
+        pendingReview = isPendingReview(response);
       }
+      return { pendingReview };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["db-courses"] });
       qc.invalidateQueries({ queryKey: ["homepage-category-courses"] });
-      toast.success("Course saved!");
+      toast.success(result.pendingReview ? "Course draft submitted for admin review." : "Course saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });

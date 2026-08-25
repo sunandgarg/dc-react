@@ -3,6 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
 
+function isPendingReview(response: { status?: number | null }) {
+  return response.status === 202;
+}
+
 export type DbCollege = {
   id: string;
   slug: string;
@@ -449,24 +453,30 @@ export function useSaveCollege() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (college: Partial<DbCollege> & { slug: string; name: string }) => {
+      let pendingReview = false;
       if (college.id) {
         const { id, created_at, updated_at, ...rest } = college;
-        const { error } = await supabase.from("colleges").update(rest).eq("id", id);
+        const response = await supabase.from("colleges").update(rest).eq("id", id);
+        const { error } = response;
         if (error) throw error;
+        pendingReview = isPendingReview(response);
       } else {
         const { id, created_at, updated_at, ...rest } = college;
-        const { error } = await supabase.from("colleges").insert(rest);
+        const response = await supabase.from("colleges").insert(rest);
+        const { error } = response;
         if (error) throw error;
+        pendingReview = isPendingReview(response);
       }
+      return { pendingReview };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       // Invalidate every cached colleges query so changes (priority, featured rank,
       // status, etc.) reflect everywhere without a hard refresh.
       qc.invalidateQueries({ predicate: (q) => {
         const k = q.queryKey?.[0];
         return typeof k === "string" && (k.startsWith("db-college") || k.startsWith("admin-colleges") || k.startsWith("infinite-college") || k === "featured-colleges" || k === "homepage-category-colleges");
       }});
-      toast.success("College saved!");
+      toast.success(result.pendingReview ? "College draft submitted for admin review." : "College saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });
