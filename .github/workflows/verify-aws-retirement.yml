@@ -1,0 +1,58 @@
+name: Verify AWS retirement
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'ap-south-1' }}
+  PROJECT_NAME: dc-react
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Report remaining AWS resources
+        run: |
+          set -u
+          aws sts get-caller-identity
+
+          check_stack() {
+            local name="$1"
+            local status
+            status=$(aws cloudformation describe-stacks --stack-name "$name" --query 'Stacks[0].StackStatus' --output text 2>/tmp/aws-error.txt)
+            local code=$?
+            if [ "$code" -eq 0 ]; then
+              echo "stack:$name:$status"
+            else
+              echo "stack:$name:not-found-or-inaccessible:$(tr '\n' ' ' </tmp/aws-error.txt)"
+            fi
+          }
+
+          check_stack "$PROJECT_NAME-low-cost-production"
+          check_stack "$PROJECT_NAME-production"
+          check_stack "$PROJECT_NAME-bootstrap"
+
+          if aws rds describe-db-instances --db-instance-identifier "$PROJECT_NAME-mysql" --query 'DBInstances[0].DBInstanceStatus' --output text 2>/tmp/aws-error.txt; then
+            echo "rds:$PROJECT_NAME-mysql:present"
+          else
+            echo "rds:$PROJECT_NAME-mysql:not-found-or-inaccessible:$(tr '\n' ' ' </tmp/aws-error.txt)"
+          fi
+
+          for repo in "$PROJECT_NAME-api" "$PROJECT_NAME-web"; do
+            if aws ecr describe-repositories --repository-names "$repo" --query 'repositories[0].repositoryName' --output text 2>/tmp/aws-error.txt; then
+              echo "ecr:$repo:present"
+            else
+              echo "ecr:$repo:not-found-or-inaccessible:$(tr '\n' ' ' </tmp/aws-error.txt)"
+            fi
+          done
