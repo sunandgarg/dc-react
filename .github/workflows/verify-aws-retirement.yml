@@ -24,6 +24,7 @@ jobs:
 
       - name: Report remaining AWS resources
         run: |
+          set +e
           set -u
           aws sts get-caller-identity
 
