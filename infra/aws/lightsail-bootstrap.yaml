@@ -1,0 +1,181 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: One-time GitHub OIDC trust for the isolated DekhoCampus Lightsail candidate.
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: dc-react
+    AllowedPattern: '[a-z0-9-]+'
+  GitHubRepository:
+    Type: String
+    Default: sunandgarg/dc-react
+
+Resources:
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: [sts.amazonaws.com]
+      ThumbprintList:
+        - 6938fd4d98bab03faadb97b34396831e3780aea1
+        - 1c58a3a8518e8759bf075b76b750d4f2df264fcd
+
+  DeploymentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${ProjectName}-github-deploy'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Ref GitHubOidcProvider
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub:
+                  - !Sub 'repo:${GitHubRepository}:*'
+      Policies:
+        - PolicyName: DeployOnlyLightsailCandidate
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: CandidateCloudFormation
+                Effect: Allow
+                Action:
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:CreateStack
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResource
+                  - cloudformation:DescribeStacks
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:GetTemplateSummary
+                  - cloudformation:UpdateStack
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:cloudformation:ap-south-1:${AWS::AccountId}:stack/${ProjectName}-lightsail-production/*'
+              - Sid: ValidateCandidateTemplate
+                Effect: Allow
+                Action: cloudformation:ValidateTemplate
+                Resource: '*'
+              - Sid: CandidateLightsail
+                Effect: Allow
+                Action:
+                  - lightsail:AttachStaticIp
+                  - lightsail:CloseInstancePublicPorts
+                  - lightsail:CreateInstances
+                  - lightsail:CreateRelationalDatabase
+                  - lightsail:CreateRelationalDatabaseSnapshot
+                  - lightsail:CreateStaticIp
+                  - lightsail:DeleteInstance
+                  - lightsail:DeleteRelationalDatabase
+                  - lightsail:DetachStaticIp
+                  - lightsail:GetInstance
+                  - lightsail:GetInstanceAccessDetails
+                  - lightsail:GetInstances
+                  - lightsail:GetInstanceState
+                  - lightsail:GetOperation
+                  - lightsail:GetOperations
+                  - lightsail:GetRelationalDatabase
+                  - lightsail:GetRelationalDatabaseParameters
+                  - lightsail:GetRelationalDatabases
+                  - lightsail:GetStaticIp
+                  - lightsail:GetStaticIps
+                  - lightsail:OpenInstancePublicPorts
+                  - lightsail:PutInstancePublicPorts
+                  - lightsail:RebootRelationalDatabase
+                  - lightsail:ReleaseStaticIp
+                  - lightsail:TagResource
+                  - lightsail:UntagResource
+                  - lightsail:UpdateRelationalDatabase
+                  - lightsail:UpdateRelationalDatabaseParameters
+                Resource: '*'
+              - Sid: CandidateStorageAndCdn
+                Effect: Allow
+                Action:
+                  - s3:CreateBucket
+                  - s3:DeleteBucket
+                  - s3:DeleteBucketPolicy
+                  - s3:GetBucketCors
+                  - s3:GetBucketEncryption
+                  - s3:GetBucketLifecycleConfiguration
+                  - s3:GetBucketLocation
+                  - s3:GetBucketPolicy
+                  - s3:GetBucketPublicAccessBlock
+                  - s3:GetBucketTagging
+                  - s3:GetBucketVersioning
+                  - s3:ListBucket
+                  - s3:PutBucketCors
+                  - s3:PutBucketEncryption
+                  - s3:PutBucketLifecycleConfiguration
+                  - s3:PutBucketPolicy
+                  - s3:PutBucketPublicAccessBlock
+                  - s3:PutBucketTagging
+                  - s3:PutBucketVersioning
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:s3:::${ProjectName}-*'
+              - Sid: CandidateCloudFront
+                Effect: Allow
+                Action:
+                  - cloudfront:CreateDistribution
+                  - cloudfront:CreateOriginAccessControl
+                  - cloudfront:DeleteDistribution
+                  - cloudfront:DeleteOriginAccessControl
+                  - cloudfront:GetDistribution
+                  - cloudfront:GetDistributionConfig
+                  - cloudfront:GetOriginAccessControl
+                  - cloudfront:GetOriginAccessControlConfig
+                  - cloudfront:ListTagsForResource
+                  - cloudfront:TagResource
+                  - cloudfront:UntagResource
+                  - cloudfront:UpdateDistribution
+                  - cloudfront:UpdateOriginAccessControl
+                Resource: '*'
+              - Sid: CandidateSecrets
+                Effect: Allow
+                Action:
+                  - secretsmanager:CreateSecret
+                  - secretsmanager:DeleteSecret
+                  - secretsmanager:DescribeSecret
+                  - secretsmanager:GetRandomPassword
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:PutSecretValue
+                  - secretsmanager:TagResource
+                  - secretsmanager:UntagResource
+                  - secretsmanager:UpdateSecret
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:secretsmanager:ap-south-1:${AWS::AccountId}:secret:${ProjectName}/lightsail/*'
+              - Sid: CandidateIam
+                Effect: Allow
+                Action:
+                  - iam:CreateAccessKey
+                  - iam:CreateUser
+                  - iam:DeleteAccessKey
+                  - iam:DeleteUser
+                  - iam:DeleteUserPolicy
+                  - iam:GetUser
+                  - iam:GetUserPolicy
+                  - iam:ListAccessKeys
+                  - iam:PutUserPolicy
+                  - iam:TagUser
+                  - iam:UntagUser
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:user/${ProjectName}-*'
+              - Sid: CandidateMonitoringAndBudget
+                Effect: Allow
+                Action:
+                  - budgets:CreateBudget
+                  - budgets:DeleteBudget
+                  - budgets:DescribeBudget
+                  - budgets:ModifyBudget
+                  - cloudwatch:DeleteAlarms
+                  - cloudwatch:DescribeAlarms
+                  - cloudwatch:PutMetricAlarm
+                Resource: '*'
+
+Outputs:
+  DeploymentRoleArn:
+    Value: !GetAtt DeploymentRole.Arn
