@@ -140,7 +140,6 @@ Resources:
                   - secretsmanager:CreateSecret
                   - secretsmanager:DeleteSecret
                   - secretsmanager:DescribeSecret
-                  - secretsmanager:GetRandomPassword
                   - secretsmanager:GetSecretValue
                   - secretsmanager:PutSecretValue
                   - secretsmanager:TagResource
@@ -148,6 +147,10 @@ Resources:
                   - secretsmanager:UpdateSecret
                 Resource:
                   - !Sub 'arn:${AWS::Partition}:secretsmanager:ap-south-1:${AWS::AccountId}:secret:${ProjectName}/lightsail/*'
+              - Sid: CandidateSecretPasswordGeneration
+                Effect: Allow
+                Action: secretsmanager:GetRandomPassword
+                Resource: '*'
               - Sid: CandidateIam
                 Effect: Allow
                 Action:
