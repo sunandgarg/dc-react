@@ -1,0 +1,28 @@
+name: Prepare apex launch on DigitalOcean
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  register-domains:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Register production domains without changing DNS
+        env:
+          APP_ID: 5453d5a9-d498-426b-af43-2b3a93f0705c
+        run: |
+          doctl apps get "$APP_ID" --output json | jq 'if type == "array" then .[0].spec else .spec end' > /tmp/app-spec.json
+          jq '.domains = [
+            {domain:"dekhocampus.com",type:"PRIMARY",zone:"dekhocampus.com"},
+            {domain:"www.dekhocampus.com",type:"ALIAS",zone:"dekhocampus.com"},
+            {domain:"test.dekhocampus.com",type:"ALIAS",zone:"dekhocampus.com"}
+          ]' /tmp/app-spec.json > /tmp/app-spec-updated.json
+          doctl apps update "$APP_ID" --spec /tmp/app-spec-updated.json --wait
+          doctl apps get "$APP_ID" --output json | jq 'if type == "array" then .[0].spec.domains else .spec.domains end'
