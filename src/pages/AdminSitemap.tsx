@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Download, RefreshCw, Copy } from "lucide-react";
+import { Download, RefreshCw, Copy, UploadCloud } from "lucide-react";
 import { buildCollegeHref, buildCourseHref, buildExamHref } from "@/lib/entityUrls";
 import { STRATEGY_SLUGS } from "@/lib/examStrategies";
 import { eligibilityComboSlugs, predictorComboSlugs } from "@/lib/seoSubSlugs";
@@ -225,7 +225,12 @@ export default function AdminSitemap() {
           ? `Built a sitemap index preview for ${unique.length.toLocaleString()} URLs across ${sitemapCount} chunk file(s). The production build writes sitemap.xml plus sitemap-1.xml, sitemap-2.xml, etc.`
           : `Built a full sitemap preview with ${unique.length.toLocaleString()} URLs.`,
       );
-      toast.success(`Built sitemap with ${unique.length.toLocaleString()} URLs`);
+      const { data, error } = await supabase.functions.invoke("publish-sitemap", {
+        body: { target: "https://dekhocampus.com" },
+      });
+      if (error) throw error;
+      setSummary((current) => `${current} Cloudflare Pages accepted the production deployment; its atomic release will replace the previous sitemap files.`);
+      toast.success(`Sitemap deployment queued for ${unique.length.toLocaleString()} URLs`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to build sitemap");
     } finally {
@@ -257,8 +262,10 @@ export default function AdminSitemap() {
             <Input value={origin} onChange={(event) => setOrigin(event.target.value)} />
           </div>
           <Button onClick={build} disabled={building}>
-            <RefreshCw className={`w-4 h-4 mr-1 ${building ? "animate-spin" : ""}`} />
-            {building ? "Building..." : "Build sitemap"}
+            {building
+              ? <RefreshCw className="w-4 h-4 mr-1 animate-spin" />
+              : <UploadCloud className="w-4 h-4 mr-1" />}
+            {building ? "Generating..." : "Generate and publish"}
           </Button>
         </div>
 
@@ -282,7 +289,7 @@ export default function AdminSitemap() {
             </div>
             <Textarea value={xml} readOnly className="font-mono text-xs min-h-[400px]" />
             <p className="text-xs text-muted-foreground">
-              Production build automatically writes the latest <code>sitemap.xml</code> and chunk files at the site root. Submit <code>/sitemap.xml</code> once in Search Console, then Google will keep reading the updated files.
+              Publishing queues an atomic Cloudflare Pages build. The new deployment replaces the old <code>sitemap.xml</code>, index and chunk files together. Submit <code>/sitemap.xml</code> once in Search Console, then Google will keep reading the updated files.
             </p>
           </>
         )}

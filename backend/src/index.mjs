@@ -9,6 +9,8 @@ import { handleContentReviews } from "./content-review.mjs";
 import { handleAiGenerate, handleBlogAiSettings, handleBlogStudio, runBlogAgent } from "./blog-ai.mjs";
 import { handleDataCleaner } from "./data-cleaner.mjs";
 import { canContentEditorAccess } from "./editor-access.mjs";
+import { storageConfig } from "./storage.mjs";
+import { publishSitemap } from "./sitemap-publish.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -248,7 +250,7 @@ export async function handleRequest(request) {
         backend: "node",
         database: "mysql",
         orm: "prisma",
-        storage: Boolean(process.env.SUPABASE_STORAGE_URL && process.env.SUPABASE_STORAGE_SERVICE_KEY),
+        storage: storageConfig().provider,
         requestId,
       }, requestId, request);
     } catch (error) {
@@ -290,6 +292,11 @@ export async function handleRequest(request) {
         const identity = await resolveIdentity(request);
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
         return json(200, await integrationStatus(), requestId, request, { "cache-control": "private, no-store" });
+      }
+      if (functionMatch[1] === "publish-sitemap") {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        return json(202, await publishSitemap(request), requestId, request, { "cache-control": "private, no-store" });
       }
       if (functionMatch[1] === "content-reviews") {
         const identity = await resolveIdentity(request);

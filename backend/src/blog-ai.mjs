@@ -1,5 +1,6 @@
 import { createHash, randomUUID, webcrypto } from "node:crypto";
 import { prisma, schemaMetadata } from "./db.mjs";
+import { uploadStorageObject } from "./storage.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
@@ -186,18 +187,10 @@ async function uploadGeneratedImage(slug, prompt) {
     if (!source.ok) throw new Error("OpenAI image result could not be downloaded");
     bytes = Buffer.from(await source.arrayBuffer());
   }
-  const storageUrl = String(process.env.SUPABASE_STORAGE_URL || "").replace(/\/$/, "");
-  const serviceKey = String(process.env.SUPABASE_STORAGE_SERVICE_KEY || "");
-  if (!storageUrl || !serviceKey) throw new Error("Supabase storage is not configured");
   const path = `blog-covers/${slug}-${Date.now()}.webp`;
-  const upload = await fetch(`${storageUrl}/storage/v1/object/admin-uploads/${path}`, {
-    method: "POST",
-    headers: { authorization: `Bearer ${serviceKey}`, apikey: serviceKey, "content-type": "image/webp", "cache-control": "max-age=31536000", "x-upsert": "false" },
-    body: bytes,
-  });
-  if (!upload.ok) throw new Error(`Supabase image upload failed (${upload.status}): ${(await upload.text()).slice(0, 400)}`);
+  const upload = await uploadStorageObject("admin-uploads", path, bytes, "image/webp", { cacheControl: "public,max-age=31536000,immutable" });
   await prisma.ai_usage_events.create({ data: { id: randomUUID(), provider: "openai", model: config.imageModel, feature: "blog-cover", operation: "image-generation", input_tokens: 0, output_tokens: 0, image_count: 1, estimated_cost_usd: 0, metadata: { slug } } }).catch(() => {});
-  return `${storageUrl}/storage/v1/object/public/admin-uploads/${path}`;
+  return upload.publicUrl;
 }
 
 async function researchSignals(limit = 12) {

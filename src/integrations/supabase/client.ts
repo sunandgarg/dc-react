@@ -7,7 +7,7 @@ import { normalizeJsonRequestBody } from '@/lib/typography';
 const resolvedApiUrl = apiBaseUrl();
 const localClientKey = 'dc-node-client';
 export const supabaseProjectUrl = resolvedApiUrl;
-const storageProjectUrl = String(import.meta.env.VITE_SUPABASE_STORAGE_URL || '').replace(/\/$/, '');
+const mediaBaseUrl = String(import.meta.env.VITE_MEDIA_BASE_URL || '').replace(/\/$/, '');
 
 function createNodeFetch(): typeof fetch {
   return (input, init) => {
@@ -46,42 +46,73 @@ const supabaseClient = createClient<Database>(resolvedApiUrl, localClientKey, {
   }
 });
 
-// Storage keeps using Supabase, while credentials and authorization stay on
-// the Node side. Storage mutations are sent through Node; generated public
-// URLs point directly at Supabase's CDN.
-const storageClient = storageProjectUrl
-  ? createClient<Database>(storageProjectUrl, 'dc-storage-proxy', {
-      global: {
-        fetch: async (input, init) => {
-          const original = typeof input === 'string'
-            ? input
-            : input instanceof URL
-              ? input.toString()
-              : input.url;
-          const url = new URL(original);
-          const headers = new Headers(
-            typeof Request !== 'undefined' && input instanceof Request ? input.headers : undefined,
-          );
-          if (init?.headers) new Headers(init.headers).forEach((value, key) => headers.set(key, value));
-          const { data: { session } } = await supabaseClient.auth.getSession();
-          if (session?.access_token) headers.set('authorization', `Bearer ${session.access_token}`);
-          else headers.delete('authorization');
+const encodeObjectPath = (value: string) => value.split('/').map(encodeURIComponent).join('/');
 
-          const isPublicStorageRead = (init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase() === 'GET'
-            && url.pathname.startsWith('/storage/v1/object/public/');
-          if (url.pathname.startsWith('/storage/v1/') && !isPublicStorageRead) {
-            return fetch(`${resolvedApiUrl}${url.pathname}${url.search}`, { ...init, headers });
-          }
-          return fetch(input, { ...init, headers });
-        },
+async function storageHeaders(extra?: HeadersInit) {
+  const headers = new Headers(extra);
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (session?.access_token) headers.set('authorization', `Bearer ${session.access_token}`);
+  return headers;
+}
+
+async function storageJson(response: Response) {
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) return { data: null, error: new Error(payload?.message || payload?.error || `Storage returned ${response.status}`) };
+  return { data: payload, error: null };
+}
+
+// Preserve the storage API used throughout the UI while Node authorizes S3
+// mutations and CloudFront serves public media directly.
+const storageCompatibility = {
+  from(bucket: string) {
+    const bucketPath = encodeURIComponent(bucket);
+    return {
+      async upload(path: string, body: Blob | ArrayBuffer | Uint8Array, options: { upsert?: boolean; contentType?: string; cacheControl?: string } = {}) {
+        const headers = await storageHeaders({
+          'content-type': options.contentType || (body instanceof Blob ? body.type : '') || 'application/octet-stream',
+          'x-upsert': String(Boolean(options.upsert)),
+          ...(options.cacheControl ? { 'cache-control': options.cacheControl } : {}),
+        });
+        return storageJson(await fetch(`${resolvedApiUrl}/storage/v1/object/${bucketPath}/${encodeObjectPath(path)}`, { method: 'POST', headers, body: body as BodyInit }));
       },
-      auth: { persistSession: false, autoRefreshToken: false },
-    })
-  : null;
+      async update(path: string, body: Blob | ArrayBuffer | Uint8Array, options: { contentType?: string; cacheControl?: string } = {}) {
+        const headers = await storageHeaders({
+          'content-type': options.contentType || (body instanceof Blob ? body.type : '') || 'application/octet-stream',
+          'x-upsert': 'true',
+          ...(options.cacheControl ? { 'cache-control': options.cacheControl } : {}),
+        });
+        return storageJson(await fetch(`${resolvedApiUrl}/storage/v1/object/${bucketPath}/${encodeObjectPath(path)}`, { method: 'PUT', headers, body: body as BodyInit }));
+      },
+      async list(prefix = '', options: { limit?: number; offset?: number; sortBy?: { column?: string; order?: string } } = {}) {
+        const headers = await storageHeaders({ 'content-type': 'application/json' });
+        return storageJson(await fetch(`${resolvedApiUrl}/storage/v1/object/list/${bucketPath}`, {
+          method: 'POST', headers, body: JSON.stringify({ prefix, limit: options.limit || 100, offset: options.offset || 0, sortBy: options.sortBy }),
+        }));
+      },
+      async remove(paths: string[]) {
+        const headers = await storageHeaders({ 'content-type': 'application/json' });
+        return storageJson(await fetch(`${resolvedApiUrl}/storage/v1/object/${bucketPath}`, { method: 'DELETE', headers, body: JSON.stringify({ prefixes: paths }) }));
+      },
+      getPublicUrl(path: string) {
+        return { data: { publicUrl: `${mediaBaseUrl}/${encodeURIComponent(bucket)}/${encodeObjectPath(path)}` } };
+      },
+      async createSignedUrl(path: string, expiresIn: number) {
+        const headers = await storageHeaders({ 'content-type': 'application/json' });
+        return storageJson(await fetch(`${resolvedApiUrl}/storage/v1/object/sign/${bucketPath}/${encodeObjectPath(path)}`, { method: 'POST', headers, body: JSON.stringify({ expiresIn }) }));
+      },
+      async download(path: string) {
+        const headers = await storageHeaders();
+        const response = await fetch(`${resolvedApiUrl}/storage/v1/object/authenticated/${bucketPath}/${encodeObjectPath(path)}`, { headers });
+        if (!response.ok) return { data: null, error: new Error(`Storage returned ${response.status}`) };
+        return { data: await response.blob(), error: null };
+      },
+    };
+  },
+};
 
 export const supabase = new Proxy(supabaseClient, {
   get(target, property, receiver) {
-    if (property === 'storage' && storageClient) return storageClient.storage;
+    if (property === 'storage') return storageCompatibility;
     if (property === 'functions') {
       return new Proxy(target.functions, {
         get(functions, functionProperty, functionReceiver) {

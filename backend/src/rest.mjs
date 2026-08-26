@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata, tableNames, jsonSafe } from "./db.mjs";
 import { recordContentReviews } from "./content-review.mjs";
+import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
@@ -49,6 +50,7 @@ function parseLiteral(value) {
 
 function normalizeForDatabase(value, field) {
   if (value === null || value === undefined) return null;
+  value = toStoredMediaKeys(value);
   if (field?.type === "Json") return typeof value === "string" ? value : JSON.stringify(value);
   if (field?.type === "Boolean") return value ? 1 : 0;
   if (field?.type === "BigInt") return String(value);
@@ -106,7 +108,7 @@ function decodeRow(table, row) {
       try { row[name] = JSON.parse(row[name]); } catch { /* retain legacy non-JSON text */ }
     }
   }
-  return row;
+  return toPublicMediaUrls(row);
 }
 
 function columnFor(table, rawColumn) {

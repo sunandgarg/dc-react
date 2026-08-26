@@ -1,0 +1,233 @@
+name: Deploy AWS Lightsail production candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      budget_email:
+        description: Email address for AWS budget alerts
+        required: true
+        type: string
+      migrate_database:
+        description: Copy the current DigitalOcean MySQL database (requires temporary allow-list change)
+        required: true
+        default: false
+        type: boolean
+      migrate_storage:
+        description: Copy Supabase Storage to private S3 and rewrite media URLs to object keys
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: dc-react-aws-lightsail-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-south-1
+  PROJECT_NAME: dc-react
+  STACK_NAME: dc-react-lightsail-production
+  DO_DATABASE_NAME: dc-react-mysql
+
+jobs:
+  verify-provision-migrate:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Verify application
+        run: |
+          npm ci
+          npm --prefix backend ci
+          npm --prefix backend run prisma:generate
+          npm test
+          npm --prefix backend test
+          npm run lint
+          npm run build
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Validate and deploy infrastructure
+        run: |
+          aws cloudformation validate-template --template-body file://infra/aws/lightsail-production.yaml >/dev/null
+          aws cloudformation deploy \
+            --stack-name "$STACK_NAME" \
+            --template-file infra/aws/lightsail-production.yaml \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              BudgetEmail='${{ inputs.budget_email }}' \
+              CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com'
+          aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+            --query 'Stacks[0].Outputs' --output json > /tmp/stack-outputs.json
+
+      - name: Store runtime secrets in AWS Secrets Manager
+        env:
+          AUTH_JWT_SECRET: ${{ secrets.AUTH_JWT_SECRET }}
+          SUPABASE_STORAGE_URL: ${{ vars.SUPABASE_STORAGE_URL }}
+          SUPABASE_STORAGE_SERVICE_KEY: ${{ secrets.SUPABASE_STORAGE_SERVICE_KEY }}
+          SMS_FAST2SMS_API_KEY: ${{ secrets.SMS_FAST2SMS_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLOUDFLARE_PAGES_DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}
+        run: |
+          jq -n \
+            --arg authJwtSecret "$AUTH_JWT_SECRET" \
+            --arg supabaseStorageUrl "$SUPABASE_STORAGE_URL" \
+            --arg supabaseStorageServiceKey "$SUPABASE_STORAGE_SERVICE_KEY" \
+            --arg smsFast2smsApiKey "$SMS_FAST2SMS_API_KEY" \
+            --arg geminiApiKey "$GEMINI_API_KEY" \
+            --arg openaiApiKey "$OPENAI_API_KEY" \
+            --arg cloudflarePagesDeployHookUrl "$CLOUDFLARE_PAGES_DEPLOY_HOOK_URL" \
+            '{authJwtSecret:$authJwtSecret,supabaseStorageUrl:$supabaseStorageUrl,supabaseStorageServiceKey:$supabaseStorageServiceKey,smsFast2smsApiKey:$smsFast2smsApiKey,geminiApiKey:$geminiApiKey,openaiApiKey:$openaiApiKey,cloudflarePagesDeployHookUrl:$cloudflarePagesDeployHookUrl}' \
+            > /tmp/runtime-secret.json
+          aws secretsmanager put-secret-value \
+            --secret-id "$PROJECT_NAME/lightsail/runtime" \
+            --secret-string file:///tmp/runtime-secret.json >/dev/null
+          rm -f /tmp/runtime-secret.json
+
+      - name: Prepare temporary SSH access
+        run: |
+          INSTANCE_NAME=$(jq -r '.[] | select(.OutputKey=="ApiInstanceName") | .OutputValue' /tmp/stack-outputs.json)
+          API_IP=$(jq -r '.[] | select(.OutputKey=="ApiPublicIp") | .OutputValue' /tmp/stack-outputs.json)
+          aws lightsail get-instance-access-details \
+            --instance-name "$INSTANCE_NAME" \
+            --protocol ssh \
+            --query 'accessDetails.privateKey' \
+            --output text > /tmp/lightsail-key.pem
+          chmod 600 /tmp/lightsail-key.pem
+          printf 'INSTANCE_NAME=%s\nAPI_IP=%s\n' "$INSTANCE_NAME" "$API_IP" >> "$GITHUB_ENV"
+          for attempt in $(seq 1 90); do
+            if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i /tmp/lightsail-key.pem "ubuntu@$API_IP" true; then
+              ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem "ubuntu@$API_IP" 'sudo cloud-init status --wait && sudo test -s /etc/dc-react.env'
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
+
+      - name: Backup and copy DigitalOcean MySQL
+        if: ${{ inputs.migrate_database }}
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        run: |
+          DATABASES=$(curl --fail --silent --show-error -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" 'https://api.digitalocean.com/v2/databases?per_page=100')
+          DATABASE_ID=$(jq -r --arg name "$DO_DATABASE_NAME" '.databases[]? | select(.name == $name) | .id' <<<"$DATABASES" | head -1)
+          test -n "$DATABASE_ID"
+          curl --fail --silent --show-error -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" > /tmp/do-firewall.json
+          RUNNER_IP=$(curl --fail --silent --show-error https://checkip.amazonaws.com | tr -d '\n')
+          jq --arg ip "$RUNNER_IP" '{rules: ([.rules[]? | {type,value}] + [{type:"ip_addr",value:$ip}] | unique_by([.type,.value]))}' /tmp/do-firewall.json > /tmp/do-firewall-temp.json
+          curl --fail --silent --show-error -X PUT -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" -H 'Content-Type: application/json' --data-binary @/tmp/do-firewall-temp.json "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" >/dev/null
+          trap 'jq "{rules:[.rules[]? | {type,value}]}" /tmp/do-firewall.json >/tmp/do-firewall-restore.json; curl --fail --silent --show-error -X PUT -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" -H "Content-Type: application/json" --data-binary @/tmp/do-firewall-restore.json "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" >/dev/null || true' EXIT
+          CONNECTION=$(curl --fail --silent --show-error -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" "https://api.digitalocean.com/v2/databases/$DATABASE_ID" | jq -c '.database.connection')
+          export MYSQL_PWD=$(jq -r .password <<<"$CONNECTION")
+          SOURCE_HOST=$(jq -r .host <<<"$CONNECTION")
+          SOURCE_PORT=$(jq -r .port <<<"$CONNECTION")
+          SOURCE_USER=$(jq -r .user <<<"$CONNECTION")
+          SOURCE_DB=$(jq -r .database <<<"$CONNECTION")
+          mysqldump --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
+            --single-transaction --quick --routines --triggers --events --set-gtid-purged=OFF --no-tablespaces "$SOURCE_DB" \
+            | gzip -9 > /tmp/dc-react-mysql.sql.gz
+          BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
+          aws s3 cp /tmp/dc-react-mysql.sql.gz "s3://$BUCKET/backups/mysql/pre-lightsail-$(date -u +%Y%m%dT%H%M%SZ).sql.gz" --sse AES256
+          scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem /tmp/dc-react-mysql.sql.gz "ubuntu@$API_IP:/tmp/dc-react-mysql.sql.gz"
+          ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem "ubuntu@$API_IP" 'sudo bash -s' <<'REMOTE'
+          set -euo pipefail
+          set -a
+          source /etc/dc-react.env
+          set +a
+          pm2 stop dc-react-api || true
+          gunzip -c /tmp/dc-react-mysql.sql.gz | MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" "$DB_NAME"
+          cd /opt/dc-react/app/backend
+          npm run db:setup:runtime
+          pm2 start dc-react-api || pm2 start src/server.mjs --name dc-react-api
+          pm2 save
+          rm -f /tmp/dc-react-mysql.sql.gz
+          REMOTE
+          rm -f /tmp/dc-react-mysql.sql.gz
+
+      - name: Configure runtime and migrate Supabase Storage to S3
+        env:
+          MIGRATE_STORAGE: ${{ inputs.migrate_storage }}
+        run: |
+          DISTRIBUTION=$(jq -r '.[] | select(.OutputKey=="MediaDistributionDomain") | .OutputValue' /tmp/stack-outputs.json)
+          ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem "ubuntu@$API_IP" "sudo bash -s -- '$DISTRIBUTION' '$MIGRATE_STORAGE'" <<'REMOTE'
+          set -euo pipefail
+          DISTRIBUTION="$1"
+          MIGRATE_STORAGE="$2"
+          DB_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/mysql --query SecretString --output text)
+          RUNTIME_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/runtime --query SecretString --output text)
+          DB_HOST=$(aws lightsail get-relational-database --relational-database-name dc-react-mysql-lightsail --query 'relationalDatabase.masterEndpoint.address' --output text)
+          DB_PORT=$(aws lightsail get-relational-database --relational-database-name dc-react-mysql-lightsail --query 'relationalDatabase.masterEndpoint.port' --output text)
+          set -a
+          source /etc/dc-react.env
+          set +a
+          BUCKET="$AWS_S3_BUCKET"
+          cat >/etc/dc-react.env <<ENV
+          NODE_ENV=production
+          NODE_OPTIONS=--max-old-space-size=640
+          HOST=127.0.0.1
+          PORT=8787
+          DB_HOST=$DB_HOST
+          DB_PORT=$DB_PORT
+          DB_USER=$(jq -r .username <<<"$DB_SECRET")
+          DB_PASSWORD=$(jq -r .password <<<"$DB_SECRET")
+          DB_NAME=$(jq -r .database <<<"$DB_SECRET")
+          AUTH_JWT_SECRET=$(jq -r .authJwtSecret <<<"$RUNTIME_SECRET")
+          AWS_REGION=ap-south-1
+          AWS_S3_BUCKET=$BUCKET
+          MEDIA_BASE_URL=https://$DISTRIBUTION
+          MEDIA_BUCKET_PREFIXES=admin-uploads,ad-images,user-documents
+          SUPABASE_STORAGE_URL=$(jq -r .supabaseStorageUrl <<<"$RUNTIME_SECRET")
+          SUPABASE_STORAGE_SERVICE_KEY=$(jq -r .supabaseStorageServiceKey <<<"$RUNTIME_SECRET")
+          SMS_FAST2SMS_API_KEY=$(jq -r .smsFast2smsApiKey <<<"$RUNTIME_SECRET")
+          GEMINI_API_KEY=$(jq -r .geminiApiKey <<<"$RUNTIME_SECRET")
+          OPENAI_API_KEY=$(jq -r .openaiApiKey <<<"$RUNTIME_SECRET")
+          CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r .cloudflarePagesDeployHookUrl <<<"$RUNTIME_SECRET")
+          CORS_ORIGIN=https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com
+          STORAGE_MAX_UPLOAD_BYTES=20971520
+          REQUEST_LOG=yes
+          ENV
+          chmod 600 /etc/dc-react.env
+          cd /opt/dc-react/app
+          git fetch origin main
+          git merge --ff-only origin/main
+          npm --prefix backend ci
+          npm --prefix backend run prisma:generate
+          set -a
+          source /etc/dc-react.env
+          set +a
+          if [ "$MIGRATE_STORAGE" = "true" ]; then
+            export STORAGE_MIGRATION_MANIFEST=/tmp/s3-migration-manifest.json
+            npm --prefix backend run storage:migrate:s3 -- --rewrite-database
+            aws s3 cp /tmp/s3-migration-manifest.json "s3://$BUCKET/backups/storage/migration-manifest.json" --sse AES256
+          fi
+          pm2 reload dc-react-api --update-env
+          pm2 save
+          REMOTE
+
+      - name: Verify private storage and API
+        run: |
+          BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
+          PUBLIC_BLOCK=$(aws s3api get-public-access-block --bucket "$BUCKET")
+          jq -e '.PublicAccessBlockConfiguration | .BlockPublicAcls and .IgnorePublicAcls and .BlockPublicPolicy and .RestrictPublicBuckets' <<<"$PUBLIC_BLOCK"
+          for attempt in $(seq 1 60); do
+            HEALTH=$(curl --fail --silent --show-error --max-time 10 "http://$API_IP/health" || true)
+            if jq -e '.ok == true and .database == "mysql" and .storage == "s3"' <<<"$HEALTH" >/dev/null 2>&1; then break; fi
+            [ "$attempt" -eq 60 ] && { echo "$HEALTH"; exit 1; }
+            sleep 10
+          done
+          rm -f /tmp/lightsail-key.pem /tmp/stack-outputs.json
