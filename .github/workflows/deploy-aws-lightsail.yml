@@ -183,8 +183,9 @@ jobs:
                     --property=ExecMainStatus || true
                   if ! sudo test -s /etc/dc-react.env; then
                     sudo sed -i "s/mysql-client/default-mysql-client/g" /var/lib/cloud/instance/scripts/part-001
+                    install -m 600 /dev/null /tmp/dc-react-bootstrap-repair.log
                     if ! sudo timeout 900 bash /var/lib/cloud/instance/scripts/part-001 \
-                      >/var/log/dc-react-bootstrap-repair.log 2>&1; then
+                      >/tmp/dc-react-bootstrap-repair.log 2>&1; then
                       for command in curl git nginx mysql node npm aws jq pm2; do
                         if command -v "$command" >/dev/null 2>&1; then
                           echo "bootstrap-command:$command=ready"
