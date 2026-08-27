@@ -182,7 +182,7 @@ jobs:
                     --property=Result \
                     --property=ExecMainStatus || true
                   if ! sudo test -s /etc/dc-react.env; then
-                    sudo sed -i "s/mysql-client/default-mysql-client/g" /var/lib/cloud/instance/scripts/part-001
+                    sudo sed -E -i "s/(default-)*mysql-client/default-mysql-client/g" /var/lib/cloud/instance/scripts/part-001
                     install -m 600 /dev/null /tmp/dc-react-bootstrap-repair.log
                     if ! sudo timeout 900 bash /var/lib/cloud/instance/scripts/part-001 \
                       >/tmp/dc-react-bootstrap-repair.log 2>&1; then
