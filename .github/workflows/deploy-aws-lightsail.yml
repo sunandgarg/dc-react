@@ -533,6 +533,17 @@ jobs:
 
       - name: Publish build sitemap seed to private S3
         run: |
+          aws lightsail get-instance-access-details \
+            --instance-name "$INSTANCE_NAME" \
+            --protocol ssh \
+            --output json > /tmp/lightsail-access-refresh.json
+          jq -r '.accessDetails.privateKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey
+          jq -r '.accessDetails.certKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey-cert.pub
+          SSH_USER=$(jq -r '.accessDetails.username' /tmp/lightsail-access-refresh.json)
+          SSH_IP=$(jq -r '.accessDetails.ipAddress' /tmp/lightsail-access-refresh.json)
+          chmod 600 /tmp/tempkey
+          chmod 644 /tmp/tempkey-cert.pub
+          rm -f /tmp/lightsail-access-refresh.json
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
           test -n "$BUCKET"
           tar -czf /tmp/dc-sitemap-seed.tar.gz dist/sitemap.xml dist/sitemap-index.xml dist/sitemap-[0-9]*.xml
@@ -560,6 +571,17 @@ jobs:
 
       - name: Publish complete MySQL sitemap generation
         run: |
+          aws lightsail get-instance-access-details \
+            --instance-name "$INSTANCE_NAME" \
+            --protocol ssh \
+            --output json > /tmp/lightsail-access-refresh.json
+          jq -r '.accessDetails.privateKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey
+          jq -r '.accessDetails.certKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey-cert.pub
+          SSH_USER=$(jq -r '.accessDetails.username' /tmp/lightsail-access-refresh.json)
+          SSH_IP=$(jq -r '.accessDetails.ipAddress' /tmp/lightsail-access-refresh.json)
+          chmod 600 /tmp/tempkey
+          chmod 644 /tmp/tempkey-cert.pub
+          rm -f /tmp/lightsail-access-refresh.json
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
             "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
           set -euo pipefail
