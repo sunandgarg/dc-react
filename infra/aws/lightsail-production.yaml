@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: DekhoCampus low-cost production API, MySQL, private S3, and CloudFront.
+Description: DekhoCampus low-cost production API, MySQL, private S3, and optional CloudFront.
 
 Parameters:
   ProjectName:
@@ -28,9 +28,18 @@ Parameters:
     Type: String
     Default: mysql_8_0
     AllowedPattern: '[a-z0-9_]+'
+  EnableCloudFront:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+  InitialMediaBaseUrl:
+    Type: String
+    Default: http://127.0.0.1/storage/v1/object/public
 
 Conditions:
+  UseCloudFront: !Equals [!Ref EnableCloudFront, 'true']
   HasMediaDomain: !And
+    - !Condition UseCloudFront
     - !Not [!Equals [!Ref MediaDomain, '']]
     - !Not [!Equals [!Ref MediaCertificateArn, '']]
 
@@ -127,6 +136,7 @@ Resources:
 
   CloudFrontOac:
     Type: AWS::CloudFront::OriginAccessControl
+    Condition: UseCloudFront
     Properties:
       OriginAccessControlConfig:
         Name: !Sub '${ProjectName}-media-oac'
@@ -137,6 +147,7 @@ Resources:
 
   MediaDistribution:
     Type: AWS::CloudFront::Distribution
+    Condition: UseCloudFront
     Properties:
       DistributionConfig:
         Enabled: true
@@ -175,15 +186,18 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-          - Sid: AllowCloudFrontReadOnly
-            Effect: Allow
-            Principal:
-              Service: cloudfront.amazonaws.com
-            Action: s3:GetObject
-            Resource: !Sub '${MediaBucket.Arn}/*'
-            Condition:
-              StringEquals:
-                AWS:SourceArn: !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${MediaDistribution}'
+          - !If
+            - UseCloudFront
+            - Sid: AllowCloudFrontReadOnly
+              Effect: Allow
+              Principal:
+                Service: cloudfront.amazonaws.com
+              Action: s3:GetObject
+              Resource: !Sub '${MediaBucket.Arn}/*'
+              Condition:
+                StringEquals:
+                  AWS:SourceArn: !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${MediaDistribution}'
+            - !Ref 'AWS::NoValue'
           - Sid: RequireTls
             Effect: Deny
             Principal: '*'
@@ -303,7 +317,7 @@ Resources:
           AWS_S3_BUCKET=${MediaBucket}
           AWS_ACCESS_KEY_ID=${ApplicationAccessKey}
           AWS_SECRET_ACCESS_KEY=${ApplicationAccessKey.SecretAccessKey}
-          MEDIA_BASE_URL=https://${MediaDistribution.DomainName}
+          MEDIA_BASE_URL=${InitialMediaBaseUrl}
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r '.cloudflarePagesDeployHookUrl // empty' <<<"$RUNTIME_SECRET")
           CORS_ORIGIN=${CorsOrigins}
           STORAGE_MAX_UPLOAD_BYTES=20971520
@@ -429,9 +443,16 @@ Outputs:
     Value: !Sub '${ProjectName}-mysql-lightsail'
   MediaBucketName:
     Value: !Ref MediaBucket
+  MediaBaseUrl:
+    Value: !If
+      - UseCloudFront
+      - !Sub 'https://${MediaDistribution.DomainName}'
+      - !Sub 'http://${ApiStaticIp.IpAddress}/storage/v1/object/public'
   MediaDistributionId:
+    Condition: UseCloudFront
     Value: !Ref MediaDistribution
   MediaDistributionDomain:
+    Condition: UseCloudFront
     Value: !GetAtt MediaDistribution.DomainName
   ApplicationAccessKeyId:
     Value: !Ref ApplicationAccessKey

@@ -99,6 +99,8 @@ jobs:
             --parameter-overrides \
               BudgetEmail='${{ inputs.budget_email }}' \
               RelationalDatabaseBlueprintId="$DB_BLUEPRINT_ID" \
+              EnableCloudFront='false' \
+              InitialMediaBaseUrl='http://127.0.0.1/storage/v1/object/public' \
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com'
           aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
             --query 'Stacks[0].Outputs' --output json > /tmp/stack-outputs.json
@@ -199,10 +201,11 @@ jobs:
         env:
           MIGRATE_STORAGE: ${{ inputs.migrate_storage }}
         run: |
-          DISTRIBUTION=$(jq -r '.[] | select(.OutputKey=="MediaDistributionDomain") | .OutputValue' /tmp/stack-outputs.json)
-          ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem "ubuntu@$API_IP" "sudo bash -s -- '$DISTRIBUTION' '$MIGRATE_STORAGE'" <<'REMOTE'
+          MEDIA_BASE_URL=$(jq -r '.[] | select(.OutputKey=="MediaBaseUrl") | .OutputValue' /tmp/stack-outputs.json)
+          test -n "$MEDIA_BASE_URL"
+          ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem "ubuntu@$API_IP" "sudo bash -s -- '$MEDIA_BASE_URL' '$MIGRATE_STORAGE'" <<'REMOTE'
           set -euo pipefail
-          DISTRIBUTION="$1"
+          MEDIA_BASE_URL="$1"
           MIGRATE_STORAGE="$2"
           DB_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/mysql --query SecretString --output text)
           RUNTIME_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/runtime --query SecretString --output text)
@@ -225,7 +228,7 @@ jobs:
           AUTH_JWT_SECRET=$(jq -r .authJwtSecret <<<"$RUNTIME_SECRET")
           AWS_REGION=ap-south-1
           AWS_S3_BUCKET=$BUCKET
-          MEDIA_BASE_URL=https://$DISTRIBUTION
+          MEDIA_BASE_URL=$MEDIA_BASE_URL
           MEDIA_BUCKET_PREFIXES=admin-uploads,ad-images,user-documents
           SUPABASE_STORAGE_URL=$(jq -r .supabaseStorageUrl <<<"$RUNTIME_SECRET")
           SUPABASE_STORAGE_SERVICE_KEY=$(jq -r .supabaseStorageServiceKey <<<"$RUNTIME_SECRET")
