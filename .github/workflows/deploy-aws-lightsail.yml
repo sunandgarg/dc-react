@@ -182,16 +182,25 @@ jobs:
                     --property=Result \
                     --property=ExecMainStatus || true
                   if ! sudo test -s /etc/dc-react.env; then
+                    install -m 600 /dev/null /tmp/dc-react-bootstrap.sh
+                    sudo awk 'length($0) > 1000 && $0 ~ /^[A-Za-z0-9+\/=]+$/ { print; exit }' \
+                      /var/lib/cloud/instance/scripts/part-001 | base64 --decode \
+                      >/tmp/dc-react-bootstrap.sh || true
+                    if ! test -s /tmp/dc-react-bootstrap.sh; then
+                      sudo cp /var/lib/cloud/instance/scripts/part-001 /tmp/dc-react-bootstrap.sh
+                      sudo chown "$USER:$USER" /tmp/dc-react-bootstrap.sh
+                      chmod 600 /tmp/dc-react-bootstrap.sh
+                    fi
                     sudo sed -E -i \
                       -e "s/(default-)*mysql-client/mysql-client/g" \
                       -e "s/apt-get( -o DPkg::Lock::Timeout=120)* update/apt-get -o DPkg::Lock::Timeout=120 update/g" \
                       -e "s/apt-get( -o DPkg::Lock::Timeout=120)* install/apt-get -o DPkg::Lock::Timeout=120 install/g" \
-                      /var/lib/cloud/instance/scripts/part-001
+                      /tmp/dc-react-bootstrap.sh
                     install -m 600 /dev/null /tmp/dc-react-bootstrap-repair.log
-                    if ! sudo timeout 900 bash /var/lib/cloud/instance/scripts/part-001 \
+                    if ! sudo timeout 900 bash /tmp/dc-react-bootstrap.sh \
                       >/tmp/dc-react-bootstrap-repair.log 2>&1; then
                       if ! command -v nginx >/dev/null 2>&1; then
-                        grep -E "^(bash:|/var/lib/cloud/instance/scripts/part-001:|apt-get:|E:|Err:|W:|N:|Hit:|Get:|Ign:|Reading package|Building dependency|Package )" \
+                        grep -E "^(bash:|apt-get:|E:|Err:|W:|N:|Hit:|Get:|Ign:|Reading package|Building dependency|Package )" \
                           /tmp/dc-react-bootstrap-repair.log | tail -20 || true
                       fi
                       for command in curl git nginx mysql node npm aws jq pm2; do
@@ -208,8 +217,10 @@ jobs:
                           echo "bootstrap-path:$path=missing"
                         fi
                       done
+                      rm -f /tmp/dc-react-bootstrap.sh
                       exit 1
                     fi
+                    rm -f /tmp/dc-react-bootstrap.sh /tmp/dc-react-bootstrap-repair.log
                   fi
                 fi
                 sudo test -s /etc/dc-react.env

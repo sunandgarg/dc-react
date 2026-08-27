@@ -271,8 +271,7 @@ Resources:
             FromPort: 443
             ToPort: 443
             Protocol: tcp
-      UserData:
-        Fn::Base64: !Sub |
+      UserData: !Sub |
           #!/usr/bin/env bash
           set -euo pipefail
           export DEBIAN_FRONTEND=noninteractive
