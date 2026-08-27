@@ -291,14 +291,15 @@ jobs:
           mysqldump --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
             --single-transaction --quick --routines --triggers --events --set-gtid-purged=OFF --no-tablespaces "$SOURCE_DB" \
             | gzip -9 > /tmp/dc-react-mysql.sql.gz
-          BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
-          aws s3 cp /tmp/dc-react-mysql.sql.gz "s3://$BUCKET/backups/mysql/pre-lightsail-$(date -u +%Y%m%dT%H%M%SZ).sql.gz" --sse AES256
           scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey /tmp/dc-react-mysql.sql.gz "$SSH_USER@$SSH_IP:/tmp/dc-react-mysql.sql.gz"
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
           set -euo pipefail
           set -a
           source /etc/dc-react.env
           set +a
+          aws s3 cp /tmp/dc-react-mysql.sql.gz \
+            "s3://$AWS_S3_BUCKET/backups/mysql/pre-lightsail-$(date -u +%Y%m%dT%H%M%SZ).sql.gz" \
+            --sse AES256
           pm2 stop dc-react-api || true
           gunzip -c /tmp/dc-react-mysql.sql.gz | MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" "$DB_NAME"
           cd /opt/dc-react/app/backend
