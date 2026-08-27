@@ -28,13 +28,13 @@ function populatedDb(coreCount = 1) {
 function memoryRepository() {
   const objects = new Map([
     ["system-sitemaps/public/sitemap.xml", { body: '<?xml version="1.0"?><urlset><url><loc>https://dekhocampus.com/</loc><priority>1.0</priority></url></urlset>' }],
-    ["system-sitemaps/generations/old-generation/sitemap-1.xml", { body: "old" }],
+    ["system-sitemaps/generations/old-generation/sitemap-1.xml", { body: "old", lastModified: new Date("2026-01-01T00:00:00Z") }],
   ]);
   return {
     objects,
     async get(key) { return objects.get(key) || null; },
-    async put(key, body, contentType) { objects.set(key, { body, contentType }); },
-    async list(prefix) { return [...objects.keys()].filter((key) => key.startsWith(prefix)); },
+    async put(key, body, contentType) { objects.set(key, { body, contentType, lastModified: new Date("2026-08-28T00:00:00Z") }); },
+    async list(prefix) { return [...objects.entries()].filter(([key]) => key.startsWith(prefix)).map(([key, value]) => ({ key, lastModified: value.lastModified })); },
     async delete(keys) { keys.forEach((key) => objects.delete(key)); },
   };
 }
@@ -51,6 +51,7 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   const result = await publishSitemap(request({ target: "https://dekhocampus.com" }), {
     prismaClient: populatedDb(),
     repository,
+    now: new Date("2026-08-28T00:00:00Z").getTime(),
   });
   assert.equal(result.status, "published");
   assert.ok(result.url_count > 20);
@@ -67,5 +68,19 @@ test("published sitemap files are served with XML cache headers", async () => {
   const response = await readPublishedSitemap(new Request("https://example.com/sitemap.xml"), { repository });
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type"), /xml/);
+  assert.match(await response.text(), /<urlset>/);
+});
+
+test("missing submitted generation chunks fall back to the current matching chunk", async () => {
+  const repository = memoryRepository();
+  const currentGeneration = "11111111-1111-4111-8111-111111111111";
+  repository.objects.set("system-sitemaps/public/sitemap.xml", {
+    body: `<?xml version="1.0"?><sitemapindex><sitemap><loc>https://dekhocampus.com/sitemap-files/${currentGeneration}/sitemap-1.xml</loc></sitemap></sitemapindex>`,
+  });
+  repository.objects.set(`system-sitemaps/generations/${currentGeneration}/sitemap-1.xml`, {
+    body: '<?xml version="1.0"?><urlset><url><loc>https://dekhocampus.com/</loc></url></urlset>',
+  });
+  const response = await readPublishedSitemap(new Request("https://dekhocampus.com/sitemap-files/22222222-2222-4222-8222-222222222222/sitemap-1.xml"), { repository });
+  assert.equal(response.status, 200);
   assert.match(await response.text(), /<urlset>/);
 });

@@ -7,6 +7,7 @@ const CORE_TABLES = ["colleges", "courses", "exams", "articles"];
 const PUBLISH_TARGET = "https://dekhocampus.com";
 const SITEMAP_PREFIX = "system-sitemaps";
 const CHUNK_SIZE = 45_000;
+const GENERATION_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 const COLLEGE_TABS = ["overview", "highlights", "courses-fees", "admission", "placements", "cutoff", "rankings", "scholarship", "hostel", "facilities", "faculty", "gallery", "reviews", "news", "faq"];
 const COURSE_TABS = ["overview", "highlights", "eligibility", "syllabus", "fees", "admission", "career", "placements", "specializations", "top-exams", "top-colleges", "cutoff", "faq"];
 const EXAM_TABS = ["overview", "dates", "eligibility", "pattern", "syllabus", "application", "admit-card", "result", "counselling", "cutoff", "preparation", "faq"];
@@ -107,7 +108,7 @@ function objectRepository() {
       let continuationToken;
       do {
         const result = await config.client.send(new ListObjectsV2Command({ Bucket: config.bucket, Prefix: prefix, ContinuationToken: continuationToken }));
-        objects.push(...(result.Contents || []).map((item) => item.Key));
+        objects.push(...(result.Contents || []).map((item) => ({ key: item.Key, lastModified: item.LastModified })));
         continuationToken = result.IsTruncated ? result.NextContinuationToken : undefined;
       } while (continuationToken);
       return objects;
@@ -132,7 +133,15 @@ export async function readPublishedSitemap(request, options = {}) {
   const key = publicKey(new URL(request.url).pathname);
   if (!key) return null;
   const repository = options.repository || objectRepository();
-  const object = await repository.get(key);
+  let object = await repository.get(key);
+  if (!object && key.startsWith(`${SITEMAP_PREFIX}/generations/`)) {
+    const filename = key.split("/").at(-1);
+    const root = await repository.get(`${SITEMAP_PREFIX}/public/sitemap.xml`);
+    const currentPath = root?.body.match(new RegExp(`<loc>[^<]*/sitemap-files/[a-f0-9-]{36}/(${filename.replace(".", "\\.")})</loc>`, "i"))?.[0]
+      ?.match(/<loc>([^<]+)<\/loc>/i)?.[1];
+    const currentKey = currentPath ? publicKey(new URL(currentPath, PUBLISH_TARGET).pathname) : null;
+    if (currentKey) object = await repository.get(currentKey);
+  }
   if (!object) return new Response("Sitemap not generated", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
   return new Response(request.method === "HEAD" ? null : object.body, {
     status: 200,
@@ -284,7 +293,11 @@ export async function publishSitemap(request, options = {}) {
     let removedObjects = 0;
     if (typeof repository.list === "function" && typeof repository.delete === "function") {
       const currentPrefix = `${SITEMAP_PREFIX}/generations/${generation}/`;
-      const staleKeys = (await repository.list(`${SITEMAP_PREFIX}/generations/`)).filter((key) => !key.startsWith(currentPrefix));
+      const retentionCutoff = (options.now || Date.now()) - GENERATION_RETENTION_MS;
+      const staleKeys = (await repository.list(`${SITEMAP_PREFIX}/generations/`))
+        .map((item) => typeof item === "string" ? { key: item } : item)
+        .filter((item) => !item.key.startsWith(currentPrefix) && item.lastModified && new Date(item.lastModified).getTime() < retentionCutoff)
+        .map((item) => item.key);
       await repository.delete(staleKeys);
       removedObjects = staleKeys.length;
     }
