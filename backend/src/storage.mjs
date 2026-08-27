@@ -240,7 +240,6 @@ async function s3Storage(request, route, config) {
     return jsonResponse(200, { signedUrl, signedURL: signedUrl });
   }
   if (["GET", "HEAD"].includes(request.method) && key) {
-    if (route.modifier === "public") return Response.redirect(publicMediaUrl(route.bucket, route.objectPath), 302);
     const result = await config.client.send(new GetObjectCommand({ Bucket: config.bucket, Key: key, Range: request.headers.get("range") || undefined }));
     const headers = new Headers({
       "content-type": result.ContentType || "application/octet-stream",
@@ -287,7 +286,7 @@ export async function handleStorage(request) {
     throw Object.assign(new Error("Unsupported storage route"), { status: 404, code: "STORAGE_ROUTE_NOT_FOUND" });
   }
   const route = routeDetails(url.pathname);
-  const isPublicRead = request.method === "GET" && url.pathname.startsWith("/storage/v1/object/public/");
+  const isPublicRead = ["GET", "HEAD"].includes(request.method) && url.pathname.startsWith("/storage/v1/object/public/");
   if (!isPublicRead) await authorizeStorage(request, route);
   const config = storageConfig();
   return config.provider === "s3" ? s3Storage(request, route, config) : proxySupabaseStorage(request, config);
