@@ -181,6 +181,20 @@ jobs:
                     --property=SubState \
                     --property=Result \
                     --property=ExecMainStatus || true
+                  for command in curl git nginx mysql node npm aws jq pm2; do
+                    if command -v "$command" >/dev/null 2>&1; then
+                      echo "bootstrap-command:$command=ready"
+                    else
+                      echo "bootstrap-command:$command=missing"
+                    fi
+                  done
+                  for path in /opt/dc-react/app /opt/dc-react/app/backend /etc/dc-react.env /etc/nginx/sites-enabled/dc-react; do
+                    if sudo test -e "$path"; then
+                      echo "bootstrap-path:$path=ready"
+                    else
+                      echo "bootstrap-path:$path=missing"
+                    fi
+                  done
                   exit 1
                 fi
                 sudo test -s /etc/dc-react.env
