@@ -97,6 +97,13 @@ export function nextShortIdValue(table, currentMax) {
   return Math.max(start, Number(currentMax) + 1);
 }
 
+export function resolveConflictColumns(table, requestedColumns = "") {
+  const explicit = String(requestedColumns)
+    .split(",")
+    .filter((column) => schemaMetadata[table].fields[column]);
+  return explicit.length ? explicit : schemaMetadata[table].primaryKeys;
+}
+
 function isDuplicateKeyError(error) {
   const detail = `${error?.message || ""} ${error?.meta?.message || ""} ${error?.meta?.code || ""}`;
   return error?.code === "P2002" || /duplicate entry|\b1062\b/i.test(detail);
@@ -338,7 +345,9 @@ async function handlePost(table, request, url, context) {
   const rows = context.forceDraft ? sourceRows.map((row) => forceDraftPayload(table, row)) : sourceRows;
   const prefer = String(request.headers.get("prefer") || "");
   const merge = prefer.includes("resolution=merge-duplicates");
-  const conflictColumns = String(url.searchParams.get("on_conflict") || "").split(",").filter((column) => schemaMetadata[table].fields[column]);
+  const conflictColumns = merge
+    ? resolveConflictColumns(table, url.searchParams.get("on_conflict") || "")
+    : [];
   if (context.stageReview) {
     const staged = rows.map((row) => applyDefaults(table, row));
     await recordContentReviews({ table, operation: "create", actorUserId: context.actorUserId, afterRows: staged });
