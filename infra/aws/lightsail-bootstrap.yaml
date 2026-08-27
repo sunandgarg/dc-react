@@ -92,6 +92,10 @@ Resources:
                   - lightsail:PutInstancePublicPorts
                   - lightsail:RebootRelationalDatabase
                   - lightsail:ReleaseStaticIp
+                  - lightsail:StartInstance
+                  - lightsail:StartRelationalDatabase
+                  - lightsail:StopInstance
+                  - lightsail:StopRelationalDatabase
                   - lightsail:TagResource
                   - lightsail:UntagResource
                   - lightsail:UpdateRelationalDatabase
