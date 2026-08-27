@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,7 +54,7 @@ export default function AdminLandingPages() {
   const { data: pages = [], isLoading } = useQuery({
     queryKey: ["admin-landing-pages"],
     queryFn: async () => {
-      const { data } = await (supabase as any).from("landing_pages").select("*").order("created_at", { ascending: false });
+      const { data } = await (backendClient as any).from("landing_pages").select("*").order("created_at", { ascending: false });
       return data || [];
     },
   });
@@ -67,8 +67,8 @@ export default function AdminLandingPages() {
     const payload = { ...editing };
     delete payload.created_at; delete payload.updated_at;
     const { error } = editing.id
-      ? await (supabase as any).from("landing_pages").update(payload).eq("id", editing.id)
-      : await (supabase as any).from("landing_pages").insert(payload);
+      ? await (backendClient as any).from("landing_pages").update(payload).eq("id", editing.id)
+      : await (backendClient as any).from("landing_pages").insert(payload);
     if (error) return toast.error(error.message);
     toast.success("Saved"); setEditing(null);
     qc.invalidateQueries({ queryKey: ["admin-landing-pages"] });
@@ -77,7 +77,7 @@ export default function AdminLandingPages() {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this landing page?")) return;
-    await (supabase as any).from("landing_pages").delete().eq("id", id);
+    await (backendClient as any).from("landing_pages").delete().eq("id", id);
     toast.success("Deleted");
     qc.invalidateQueries({ queryKey: ["admin-landing-pages"] });
   };

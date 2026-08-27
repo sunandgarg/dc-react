@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Settings2 } from "lucide-react";
@@ -39,7 +39,7 @@ export function PermissionEditor({ userId }: { userId: string }) {
     queryKey: ["user_permissions", userId],
     enabled: open,
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("user_permissions")
         .select("id,user_id,resource,can_view,can_create,can_edit,can_publish,can_delete")
         .eq("user_id", userId);
@@ -57,11 +57,11 @@ export function PermissionEditor({ userId }: { userId: string }) {
       const updated = { ...existing, [col]: nextValue };
       // If all flags become false, drop the row entirely.
       if (!updated.can_view && !updated.can_create && !updated.can_edit && !updated.can_publish && !updated.can_delete) {
-        const { error } = await (supabase as any)
+        const { error } = await (backendClient as any)
           .from("user_permissions").delete().eq("id", existing.id);
         if (error) return toast.error(error.message);
       } else {
-        const { error } = await (supabase as any)
+        const { error } = await (backendClient as any)
           .from("user_permissions")
           .update({ [col]: nextValue, updated_at: new Date().toISOString() })
           .eq("id", existing.id);
@@ -79,7 +79,7 @@ export function PermissionEditor({ userId }: { userId: string }) {
         can_publish: col === "can_publish" ? nextValue : false,
         can_delete: col === "can_delete" ? nextValue : false,
       };
-      const { error } = await (supabase as any).from("user_permissions").insert(payload);
+      const { error } = await (backendClient as any).from("user_permissions").insert(payload);
       if (error) return toast.error(error.message);
     }
     qc.invalidateQueries({ queryKey: ["user_permissions", userId] });

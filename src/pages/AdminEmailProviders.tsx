@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -35,7 +35,7 @@ export default function AdminEmailProviders() {
   const { data: providers, isLoading } = useQuery({
     queryKey: ["email-providers"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("email_providers" as any).select("*").order("created_at", { ascending: true });
+      const { data, error } = await backendClient.from("email_providers" as any).select("*").order("created_at", { ascending: true });
       if (error) throw error;
       return (data || []) as unknown as EmailProvider[];
     },
@@ -43,7 +43,7 @@ export default function AdminEmailProviders() {
 
   const addAws = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("email_providers" as any).insert({
+      const { error } = await backendClient.from("email_providers" as any).insert({
         provider_name: "aws_ses",
         display_name: "AWS SES (Email)",
         region: "ap-south-1",
@@ -58,7 +58,7 @@ export default function AdminEmailProviders() {
 
   const save = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<EmailProvider> }) => {
-      const { error } = await supabase.from("email_providers" as any).update(updates as any).eq("id", id);
+      const { error } = await backendClient.from("email_providers" as any).update(updates as any).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["email-providers"] }); toast.success("Saved"); },
@@ -70,8 +70,8 @@ export default function AdminEmailProviders() {
       if (next && (!provider.api_key || !provider.api_secret || !provider.region || !provider.from_email)) {
         throw new Error("Add Access Key, Secret, Region and From Email before activating.");
       }
-      if (next) await supabase.from("email_providers" as any).update({ is_active: false } as any).neq("id", provider.id);
-      const { error } = await supabase.from("email_providers" as any).update({ is_active: next } as any).eq("id", provider.id);
+      if (next) await backendClient.from("email_providers" as any).update({ is_active: false } as any).neq("id", provider.id);
+      const { error } = await backendClient.from("email_providers" as any).update({ is_active: next } as any).eq("id", provider.id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["email-providers"] }); toast.success("Updated"); },
@@ -79,7 +79,7 @@ export default function AdminEmailProviders() {
   });
 
   const del = useMutation({
-    mutationFn: async (id: string) => { const { error } = await supabase.from("email_providers" as any).delete().eq("id", id); if (error) throw error; },
+    mutationFn: async (id: string) => { const { error } = await backendClient.from("email_providers" as any).delete().eq("id", id); if (error) throw error; },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["email-providers"] }); toast.success("Deleted"); },
   });
 
@@ -87,7 +87,7 @@ export default function AdminEmailProviders() {
     if (!testTo) return toast.error("Enter a test email address");
     setTesting(true);
     try {
-      const { data, error } = await (supabase as any).functions.invoke("send-email", {
+      const { data, error } = await (backendClient as any).functions.invoke("send-email", {
         body: { to: testTo, subject: "DekhoCampus test email", text: "This is a test email from your AWS SES integration." },
       });
       if (error || data?.error) throw new Error(error?.message || data?.error || "Failed");

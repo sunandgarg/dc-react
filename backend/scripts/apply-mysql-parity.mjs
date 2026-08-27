@@ -178,6 +178,24 @@ async function existingIndexColumns(table) {
   return indexes;
 }
 
+async function ensureHomepageExploreSchema(report) {
+  for (const table of ["colleges", "courses", "exams"]) {
+    if (!await columnInfo(table, "show_in_explore_by_category")) {
+      await prisma.$executeRawUnsafe(`ALTER TABLE ${quote(table)} ADD COLUMN \`show_in_explore_by_category\` BOOLEAN NOT NULL DEFAULT FALSE`);
+      report.createdRuntimeColumns.push(`${table}.show_in_explore_by_category`);
+    }
+    if (!await columnInfo(table, "explore_by_category_checked_at")) {
+      await prisma.$executeRawUnsafe(`ALTER TABLE ${quote(table)} ADD COLUMN \`explore_by_category_checked_at\` DATETIME(3) NULL`);
+      report.createdRuntimeColumns.push(`${table}.explore_by_category_checked_at`);
+    }
+    const name = `ix_${table}_homepage_explore`;
+    if (!await indexExists(table, name)) {
+      await prisma.$executeRawUnsafe(`CREATE INDEX ${quote(name)} ON ${quote(table)} (\`show_in_explore_by_category\`, \`explore_by_category_checked_at\`)`);
+      report.createdReferenceIndexes.push(name);
+    }
+  }
+}
+
 async function makeReferenceIndexes(report) {
   for (const line of postgresSchemaReference.split("\n")) {
     const match = line.match(/^CREATE INDEX (\w+) ON public\.(\w+) USING btree \((.*)\);$/);
@@ -343,8 +361,9 @@ async function createViews() {
   `);
 }
 
-const report = { createdUnique: [], createdReferenceIndexes: [], createdForeignKeyIndexes: [], createdForeignKeys: [], createdTriggers: [], existing: [], skipped: [], views: [] };
+const report = { createdRuntimeColumns: [], createdUnique: [], createdReferenceIndexes: [], createdForeignKeyIndexes: [], createdForeignKeys: [], createdTriggers: [], existing: [], skipped: [], views: [] };
 try {
+  await ensureHomepageExploreSchema(report);
   for (const [table, ...columns] of uniqueIndexes) await makeUniqueIndex(table, columns, report);
   await makeReferenceIndexes(report);
   await makeForeignKeyIndexes(report);

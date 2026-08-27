@@ -10,7 +10,7 @@ import { DownloadGate } from "@/components/study/DownloadGate";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { SubjectNewsSection } from "@/components/study/SubjectNewsSection";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 export default function StudySubject() {
   const { classSlug, boardSlug, subjectSlug, chapterSlug } = useParams<{ classSlug: string; boardSlug: string; subjectSlug: string; chapterSlug?: string }>();
@@ -380,12 +380,12 @@ function ChapterArticles({ chapterId, chapterSlug }: { chapterId: string; chapte
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const [linkRes, tagRes] = await Promise.all([
-        (supabase as any)
+        (backendClient as any)
           .from("article_links")
           .select("article_id, articles!inner(id,slug,title,description,featured_image,is_active)")
           .eq("entity_type", "study_chapter")
           .eq("entity_slug", chapterId),
-        supabase
+        backendClient
           .from("articles")
           .select("id,slug,title,description,featured_image,is_active")
           .eq("is_active", true)

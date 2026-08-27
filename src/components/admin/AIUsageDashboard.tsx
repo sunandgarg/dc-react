@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Badge } from "@/components/ui/badge";
 import { BrainCircuit, CalendarDays, Coins, Image, MessageSquareText } from "lucide-react";
 
@@ -14,8 +14,8 @@ export function AIUsageDashboard({ compact = false }: Props) {
     queryFn: async () => {
       const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);
       const [events, budgets] = await Promise.all([
-        (supabase as any).from("ai_usage_events").select("provider,model,feature,input_tokens,output_tokens,image_count,estimated_cost_usd,created_at").gte("created_at", monthStart.toISOString()).order("created_at", { ascending: false }).limit(10000),
-        (supabase as any).from("ai_budget_settings").select("provider,monthly_budget_usd,baseline_spend_usd"),
+        (backendClient as any).from("ai_usage_events").select("provider,model,feature,input_tokens,output_tokens,image_count,estimated_cost_usd,created_at").gte("created_at", monthStart.toISOString()).order("created_at", { ascending: false }).limit(10000),
+        (backendClient as any).from("ai_budget_settings").select("provider,monthly_budget_usd,baseline_spend_usd"),
       ]);
       if (events.error) throw events.error;
       if (budgets.error) throw budgets.error;

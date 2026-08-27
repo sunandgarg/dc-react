@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { autoTrackRoute, getVisitorId, mergeVisitorIntoUser, setIntentUserId, trackIntent } from "@/lib/intentTracking";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 /**
  * Boots the visitor identity, mirrors route changes into intent_events for
@@ -17,7 +17,7 @@ export function IntentTrackingProvider({ children }: { children: React.ReactNode
   useEffect(() => {
     const vid = getVisitorId();
     try {
-      (supabase as any).from("intent_visitors").upsert({
+      (backendClient as any).from("intent_visitors").upsert({
         visitor_id: vid,
         last_seen_at: new Date().toISOString(),
         device_type: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? "mobile" : "desktop",

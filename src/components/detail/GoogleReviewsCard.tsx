@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Star, ExternalLink } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 interface Review {
   author_name: string;
@@ -30,7 +30,7 @@ export function GoogleReviewsCard({ entityType, entitySlug, entityName, rating, 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("google_reviews_seed")
         .select("author_name, avatar_url, rating, body, posted_at")
         .eq("entity_type", entityType)

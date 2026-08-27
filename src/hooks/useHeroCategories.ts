@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import iconCollege from "@/assets/cat-college-small.webp";
 import iconCourse from "@/assets/cat-course-small.webp";
 import iconExam from "@/assets/cat-exam-small.webp";
@@ -23,7 +23,7 @@ export function useHeroCategories() {
   const query = useQuery({
     queryKey: ["hero-categories"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("hero_categories")
         .select("key,label,image_url,href,tint,is_active,display_order")
         .eq("is_active", true)

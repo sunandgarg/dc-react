@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -46,7 +46,7 @@ const CLEANER_MODELS: Record<string, Array<{ value: string; label: string }>> = 
 };
 
 async function invokeCleaner(body: Record<string, unknown>) {
-  const { data, error } = await supabase.functions.invoke("admin-data-cleaner", { body });
+  const { data, error } = await backendClient.functions.invoke("admin-data-cleaner", { body });
   if (error) {
     let message = error.message;
     try {
@@ -109,7 +109,7 @@ export default function AdminDataCleaner() {
   const cleanerRuntime = useQuery({
     queryKey: ["ai-runtime-control", "data-cleaner"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("ai_runtime_controls")
         .select("*")
         .eq("feature", "data-cleaner")
@@ -128,7 +128,7 @@ export default function AdminDataCleaner() {
   const counts = useQuery({
     queryKey: ["data-cleaner-counts"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).rpc("get_data_cleaning_coverage");
+      const { data, error } = await (backendClient as any).rpc("get_data_cleaning_coverage");
       if (error) throw error;
       return Object.fromEntries((data || []).map((row: any) => [row.entity_type, {
         total: Number(row.total_records || 0),
@@ -146,7 +146,7 @@ export default function AdminDataCleaner() {
   const jobs = useQuery({
     queryKey: ["data-cleaning-jobs"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("data_cleaning_jobs").select("*").order("created_at", { ascending: false }).limit(30);
+      const { data, error } = await (backendClient as any).from("data_cleaning_jobs").select("*").order("created_at", { ascending: false }).limit(30);
       if (error) throw error;
       return data || [];
     },
@@ -162,7 +162,7 @@ export default function AdminDataCleaner() {
     queryKey: ["data-cleaning-items", activeJob?.id],
     enabled: !!activeJob?.id,
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("data_cleaning_items").select("*").eq("job_id", activeJob.id).order("updated_at", { ascending: false }).limit(150);
+      const { data, error } = await (backendClient as any).from("data_cleaning_items").select("*").eq("job_id", activeJob.id).order("updated_at", { ascending: false }).limit(150);
       if (error) throw error;
       return data || [];
     },
@@ -172,7 +172,7 @@ export default function AdminDataCleaner() {
   const exclusions = useQuery({
     queryKey: ["data-cleaning-exclusions"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("data_cleaning_exclusions").select("*").order("created_at", { ascending: false });
+      const { data, error } = await (backendClient as any).from("data_cleaning_exclusions").select("*").order("created_at", { ascending: false });
       if (error) throw error;
       return data || [];
     },
@@ -183,7 +183,7 @@ export default function AdminDataCleaner() {
     enabled: excludeSearch.trim().length >= 2,
     queryFn: async () => {
       const entity = ENTITY_OPTIONS.find((option) => option.id === excludeType)!;
-      const { data, error } = await (supabase as any).from(entity.table).select(`id,slug,${entity.name}`).ilike(entity.name, `%${excludeSearch.trim()}%`).limit(20);
+      const { data, error } = await (backendClient as any).from(entity.table).select(`id,slug,${entity.name}`).ilike(entity.name, `%${excludeSearch.trim()}%`).limit(20);
       if (error) throw error;
       return (data || []).map((row: any) => ({ ...row, entity_name: row[entity.name] }));
     },
@@ -210,7 +210,7 @@ export default function AdminDataCleaner() {
       // ai_runtime_controls grants authenticated admins SELECT + UPDATE.
       // Using UPSERT also requires INSERT permission, so an existing row could
       // be displayed correctly while every provider change was rejected.
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("ai_runtime_controls")
         .update(payload)
         .eq("feature", "data-cleaner")
@@ -251,7 +251,7 @@ export default function AdminDataCleaner() {
   };
 
   const addExclusion = async (row: any) => {
-    const { error } = await (supabase as any).from("data_cleaning_exclusions").upsert({
+    const { error } = await (backendClient as any).from("data_cleaning_exclusions").upsert({
       entity_type: excludeType, entity_id: String(row.id), entity_slug: row.slug,
       entity_name: row.entity_name, reason: "Excluded in Clean Data admin",
     }, { onConflict: "entity_type,entity_id" });
@@ -262,7 +262,7 @@ export default function AdminDataCleaner() {
   };
 
   const removeExclusion = async (id: string) => {
-    const { error } = await (supabase as any).from("data_cleaning_exclusions").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("data_cleaning_exclusions").delete().eq("id", id);
     if (error) return toast.error(error.message);
     await qc.invalidateQueries({ queryKey: ["data-cleaning-exclusions"] });
   };

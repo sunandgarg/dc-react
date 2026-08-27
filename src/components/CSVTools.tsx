@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Download, Upload, X, FileSpreadsheet, AlertTriangle, CheckCircle2, History, FileJson, FilePlus } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toCSV, downloadCSV, parseCSV, coerceRow } from "@/lib/csv";
 import { downloadJSON, parseJSONImport, buildFilename, rowsToJSON } from "@/lib/adminIO";
 import { discoverTable, sniffSchema, inferSchemaFromRows, STRIPPED } from "@/lib/adminIOAuto";
@@ -81,7 +81,7 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
     const all: any[] = [];
     let from = 0;
     while (true) {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from(table as any)
         .select((columnsProp as string[]).join(","))
         .range(from, from + 999);
@@ -209,7 +209,7 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
     let lastError: any = null;
     for (let i = 0; i < valid.length; i += CHUNK) {
       const slice = valid.slice(i, i + CHUNK);
-      const { error } = await supabase.from(table as any).upsert(slice as any, { onConflict: upsertKey });
+      const { error } = await backendClient.from(table as any).upsert(slice as any, { onConflict: upsertKey });
       if (error) { lastError = error; break; }
       done += slice.length;
     }
@@ -242,7 +242,7 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
       }
       const missing = required.filter((k) => row[k] === undefined || String(row[k]).trim() === "");
       if (missing.length) throw new Error(`Missing required: ${missing.join(", ")}`);
-      const { error } = await supabase.from(table as any).upsert([row] as any, { onConflict: upsertKey });
+      const { error } = await backendClient.from(table as any).upsert([row] as any, { onConflict: upsertKey });
       if (error) throw error;
       pushHistory({ at: new Date().toISOString(), table, count: 1, ok: true, fmt: "single" });
       toast.success(`Imported 1 ${table} row`);

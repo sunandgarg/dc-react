@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
@@ -17,7 +17,7 @@ export default function AllCareers() {
   const [q, setQ] = useState("");
 
   useEffect(() => {
-    supabase.from("career_profiles").select("*").eq("is_active", true).order("display_order")
+    backendClient.from("career_profiles").select("*").eq("is_active", true).order("display_order")
       .then(({ data }) => { setItems(data || []); setLoading(false); });
   }, []);
 

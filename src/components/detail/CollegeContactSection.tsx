@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { MapPin, Phone, Mail, Globe, Lock, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -31,7 +31,7 @@ export function CollegeContactSection({ collegeSlug, collegeName }: { collegeSlu
   });
 
   useEffect(() => {
-    (supabase as any)
+    (backendClient as any)
       .from("college_contacts")
       .select("*")
       .eq("college_slug", collegeSlug)

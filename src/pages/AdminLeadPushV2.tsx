@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { LeadPushModule } from "@/components/leadpush/LeadPushModule";
 import { useToast } from "@/hooks/use-toast";
 import { AdminLayout } from "@/components/AdminLayout";
@@ -126,9 +126,9 @@ export default function AdminLeadPushV2() {
 
   const refresh = useCallback(async () => {
     const [u, b, l] = await Promise.all([
-      (supabase as any).from("universities").select("*").order("created_at", { ascending: false }),
-      (supabase as any).from("upload_batches").select("*").order("created_at", { ascending: false }).limit(200),
-      (supabase as any).from("api_logs").select("*").order("created_at", { ascending: false }).limit(200),
+      (backendClient as any).from("universities").select("*").order("created_at", { ascending: false }),
+      (backendClient as any).from("upload_batches").select("*").order("created_at", { ascending: false }).limit(200),
+      (backendClient as any).from("api_logs").select("*").order("created_at", { ascending: false }).limit(200),
     ]);
     setUniversities(u.data || []);
     setBatches(b.data || []);
@@ -139,13 +139,13 @@ export default function AdminLeadPushV2() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this university?")) return;
-    const { error } = await (supabase as any).from("universities").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("universities").delete().eq("id", id);
     if (error) toast({ title: "Delete failed", description: error.message, variant: "destructive" });
     else { toast({ title: "Deleted" }); refresh(); }
   };
 
   const handleAddSave = async (f: UniversityFormData) => {
-    const { error } = await (supabase as any).from("universities").insert(formToRow(f));
+    const { error } = await (backendClient as any).from("universities").insert(formToRow(f));
     if (error) {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
       throw error;
@@ -155,7 +155,7 @@ export default function AdminLeadPushV2() {
   };
 
   const handleEditSave = async (f: UniversityEditData) => {
-    const { error } = await (supabase as any).from("universities").update(formToRow(f)).eq("id", f.id);
+    const { error } = await (backendClient as any).from("universities").update(formToRow(f)).eq("id", f.id);
     if (error) {
       toast({ title: "Update failed", description: error.message, variant: "destructive" });
       return;
@@ -177,7 +177,7 @@ export default function AdminLeadPushV2() {
       const withoutId = slice.filter((row) => !row.id);
 
       const { error: upsertError } = withId.length
-        ? await (supabase as any).from("universities").upsert(withId, { onConflict: "id" })
+        ? await (backendClient as any).from("universities").upsert(withId, { onConflict: "id" })
         : { error: null };
       if (upsertError) {
         toast({ title: "Bulk import failed", description: upsertError.message, variant: "destructive" });
@@ -186,7 +186,7 @@ export default function AdminLeadPushV2() {
       }
 
       const { error } = withoutId.length
-        ? await (supabase as any).from("universities").insert(withoutId)
+        ? await (backendClient as any).from("universities").insert(withoutId)
         : { error: null };
       if (error) {
         toast({ title: "Bulk import failed", description: error.message, variant: "destructive" });

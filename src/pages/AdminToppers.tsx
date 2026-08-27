@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,7 +52,7 @@ export default function AdminToppers() {
   const { data: boards = [] } = useQuery({
     queryKey: ["admin-study-boards"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("study_boards").select("*").order("display_order");
+      const { data, error } = await backendClient.from("study_boards").select("*").order("display_order");
       if (error) throw error;
       return data ?? [];
     },
@@ -61,7 +61,7 @@ export default function AdminToppers() {
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-toppers", classNum, boardSlug],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_toppers" as any)
         .select("*")
         .eq("class_num", classNum)
@@ -85,7 +85,7 @@ export default function AdminToppers() {
   const remove = async (i: number) => {
     const row = drafts[i];
     if (row.id) {
-      const { error } = await supabase.from("study_toppers" as any).delete().eq("id", row.id);
+      const { error } = await backendClient.from("study_toppers" as any).delete().eq("id", row.id);
       if (error) return toast.error(error.message);
     }
     setDrafts(d => d.filter((_, idx) => idx !== i));
@@ -94,7 +94,7 @@ export default function AdminToppers() {
 
   const saveAll = async () => {
     const toUpsert = drafts.filter(d => d.name.trim());
-    const { error } = await supabase.from("study_toppers" as any).upsert(toUpsert as any);
+    const { error } = await backendClient.from("study_toppers" as any).upsert(toUpsert as any);
     if (error) return toast.error(error.message);
     toast.success(`Saved ${toUpsert.length} toppers`);
     qc.invalidateQueries({ queryKey: ["admin-toppers", classNum, boardSlug] });

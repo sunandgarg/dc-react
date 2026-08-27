@@ -5,7 +5,7 @@ import { StudyMaterialQuickTagger } from "../StudyMaterialQuickTagger";
 // In-memory fake article_links store keyed by article_id
 const store: Record<string, { entity_type: string; entity_slug: string }[]> = {};
 
-vi.mock("@/integrations/supabase/client", () => {
+vi.mock("@/integrations/backend/client", () => {
   function tableApi(table: string) {
     const _filters: any = {};
     let _select = "*";
@@ -43,7 +43,7 @@ vi.mock("@/integrations/supabase/client", () => {
     return api;
   }
   return {
-    supabase: {
+    backendClient: {
       from: (table: string) => {
         const api = tableApi(table);
         return {

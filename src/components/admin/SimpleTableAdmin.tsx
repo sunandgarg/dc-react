@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RichTextEditor } from "@/components/RichTextEditor";
@@ -53,7 +53,7 @@ export function SimpleTableAdmin({ table, fields, titleKey = "name", subtitleKey
 
   const load = async () => {
     setLoading(true);
-    let q = (supabase as any).from(table).select("*");
+    let q = (backendClient as any).from(table).select("*");
     if (orderBy) q = q.order(orderBy.column, { ascending: orderBy.ascending ?? true });
     const { data, error } = await q;
     if (error) toast.error(error.message); else setRows(data || []);
@@ -74,8 +74,8 @@ export function SimpleTableAdmin({ table, fields, titleKey = "name", subtitleKey
       if (payload[k] === "") payload[k] = null;
     });
     const { error } = editing.id
-      ? await (supabase as any).from(table).update(payload).eq("id", editing.id)
-      : await (supabase as any).from(table).insert(payload);
+      ? await (backendClient as any).from(table).update(payload).eq("id", editing.id)
+      : await (backendClient as any).from(table).insert(payload);
     if (error) { toast.error(error.message); return; }
     toast.success("Saved");
     setEditing(null);
@@ -85,7 +85,7 @@ export function SimpleTableAdmin({ table, fields, titleKey = "name", subtitleKey
 
   const remove = async (id: string) => {
     if (!confirm("Delete this item?")) return;
-    const { error } = await (supabase as any).from(table).delete().eq("id", id);
+    const { error } = await (backendClient as any).from(table).delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
       toast.success("Deleted");

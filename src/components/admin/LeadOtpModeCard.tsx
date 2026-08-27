@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ShieldCheck, ShieldOff, FlaskConical, Loader2, Phone, MessageSquare, Layers, Plus, Eye, EyeOff, Trash2, Save, ExternalLink, CheckCircle2, AlertCircle, Settings2 } from "lucide-react";
 import { useLeadFormSettings, useUpdateLeadOtpMode, useUpdateLeadChannel, useUpdateFormOverride, LEAD_FORM_KEYS, type LeadOtpMode, type LeadChannelPreference } from "@/hooks/useLeadFormSettings";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -48,7 +48,7 @@ export function LeadOtpModeCard() {
   const { data: providers, isLoading: provLoading } = useQuery({
     queryKey: ["otp-providers-overview"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("otp_providers")
         .select("id, channel, provider_name, display_name, api_key, api_secret, sender_id, base_url, template_id, is_active, icon_emoji, config_json")
         .order("channel", { ascending: true });
@@ -63,10 +63,10 @@ export function LeadOtpModeCard() {
         throw new Error("Add the Fast2SMS Authorization Key before activating it.");
       }
       if (is_active) {
-        const { error: clearError } = await supabase.from("otp_providers").update({ is_active: false }).eq("channel", provider.channel);
+        const { error: clearError } = await backendClient.from("otp_providers").update({ is_active: false }).eq("channel", provider.channel);
         if (clearError) throw clearError;
       }
-      const { error } = await supabase.from("otp_providers").update({ is_active }).eq("id", provider.id);
+      const { error } = await backendClient.from("otp_providers").update({ is_active }).eq("id", provider.id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["otp-providers-overview"] }),
@@ -75,7 +75,7 @@ export function LeadOtpModeCard() {
 
   const deleteProv = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("otp_providers").delete().eq("id", id);
+      const { error } = await backendClient.from("otp_providers").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -99,7 +99,7 @@ export function LeadOtpModeCard() {
 
   const createProv = useMutation({
     mutationFn: async (channel: "sms" | "whatsapp") => {
-      const { error } = await supabase.from("otp_providers").insert({
+      const { error } = await backendClient.from("otp_providers").insert({
         ...newP,
         channel,
         icon_emoji: channel === "whatsapp" ? "💬" : newP.provider_name === "fast2sms" ? "⚡" : "📱",

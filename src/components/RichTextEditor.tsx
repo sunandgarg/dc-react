@@ -189,14 +189,14 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
     if (!rawFile) return;
     setUploading(true);
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
+      const { backendClient } = await import("@/integrations/backend/client");
       const { optimizeImageFile } = await import("@/lib/imageOptimizer");
       const file = await optimizeImageFile(rawFile);
       const ext = file.name.split(".").pop() || "webp";
       const path = `editor/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const { error } = await supabase.storage.from("admin-uploads").upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+      const { error } = await backendClient.storage.from("admin-uploads").upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
       if (error) throw error;
-      const { data: pub } = supabase.storage.from("admin-uploads").getPublicUrl(path);
+      const { data: pub } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
       setImgUrl(pub.publicUrl);
     } catch (e: any) {
       alert(e.message || "Upload failed");
@@ -208,16 +208,16 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
     if (!files || !files.length) return;
     setDocUploading(true);
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
+      const { backendClient } = await import("@/integrations/backend/client");
       const { optimizeImageFile } = await import("@/lib/imageOptimizer");
       const urls: string[] = [];
       for (const raw of Array.from(files)) {
         const file = await optimizeImageFile(raw);
         const ext = file.name.split(".").pop() || "webp";
         const path = `editor/doc-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-        const { error } = await supabase.storage.from("admin-uploads").upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+        const { error } = await backendClient.storage.from("admin-uploads").upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
         if (error) throw error;
-        const { data: pub } = supabase.storage.from("admin-uploads").getPublicUrl(path);
+        const { data: pub } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
         urls.push(pub.publicUrl);
       }
       setDocImages((prev) => [...prev, ...urls]);

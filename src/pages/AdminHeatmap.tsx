@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
@@ -13,7 +13,7 @@ export default function AdminHeatmap() {
     queryKey: ["heatmap", path, days],
     queryFn: async () => {
       const since = new Date(Date.now() - days * 86400000).toISOString();
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("user_events")
         .select("x, y, vw, vh, event_type")
         .eq("path", path)

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpenCheck, CalendarClock, CheckCircle2, Loader2, Pause, Play, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -76,7 +76,7 @@ export function EntityResearchBlogPanel({ onArticlesCreated }: { onArticlesCreat
   const { data: results = [], isFetching } = useQuery({
     queryKey: ["entity-article-options", entityType, debouncedSearch],
     queryFn: async () => {
-      let query = (supabase as any).from(TABLES[entityType]).select("slug,name").eq("is_active", true).order("name").limit(40);
+      let query = (backendClient as any).from(TABLES[entityType]).select("slug,name").eq("is_active", true).order("name").limit(40);
       if (debouncedSearch) query = query.ilike("name", `%${debouncedSearch.replace(/[%_,]/g, " ")}%`);
       const { data, error } = await query;
       if (error) throw error;
@@ -88,7 +88,7 @@ export function EntityResearchBlogPanel({ onArticlesCreated }: { onArticlesCreat
   const { data: schedules = [], isLoading: schedulesLoading } = useQuery({
     queryKey: ["entity-article-schedules"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("entity_article_schedules").select("*").order("created_at", { ascending: false });
+      const { data, error } = await (backendClient as any).from("entity_article_schedules").select("*").order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as Schedule[];
     },
@@ -98,7 +98,7 @@ export function EntityResearchBlogPanel({ onArticlesCreated }: { onArticlesCreat
   const { data: publications = [] } = useQuery({
     queryKey: ["entity-article-publications"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("entity_article_publications")
+      const { data, error } = await (backendClient as any).from("entity_article_publications")
         .select("id,schedule_id,article_id,topic_kind,generated_for_date,created_at,articles(title,slug,status)")
         .order("created_at", { ascending: false })
         .limit(100);
@@ -150,7 +150,7 @@ export function EntityResearchBlogPanel({ onArticlesCreated }: { onArticlesCreat
         human_review_required: item.human_review_required,
         next_run_at: new Date().toISOString(),
       }));
-      const { error } = await (supabase as any).from("entity_article_schedules").upsert(rows, { onConflict: "entity_type,entity_slug" });
+      const { error } = await (backendClient as any).from("entity_article_schedules").upsert(rows, { onConflict: "entity_type,entity_slug" });
       if (error) throw error;
       toast.success(`${rows.length} entity schedule(s) activated`);
       setSelected([]);
@@ -164,7 +164,7 @@ export function EntityResearchBlogPanel({ onArticlesCreated }: { onArticlesCreat
 
   const updateSchedule = async (schedule: Schedule, values: Partial<Schedule>) => {
     setBusyId(schedule.id);
-    const { error } = await (supabase as any).from("entity_article_schedules").update(values).eq("id", schedule.id);
+    const { error } = await (backendClient as any).from("entity_article_schedules").update(values).eq("id", schedule.id);
     setBusyId("");
     if (error) return toast.error(error.message);
     await refresh();
@@ -173,7 +173,7 @@ export function EntityResearchBlogPanel({ onArticlesCreated }: { onArticlesCreat
   const deleteSchedule = async (schedule: Schedule) => {
     if (!window.confirm(`Remove the article schedule for ${schedule.entity_name}? Existing articles will remain.`)) return;
     setBusyId(schedule.id);
-    const { error } = await (supabase as any).from("entity_article_schedules").delete().eq("id", schedule.id);
+    const { error } = await (backendClient as any).from("entity_article_schedules").delete().eq("id", schedule.id);
     setBusyId("");
     if (error) return toast.error(error.message);
     toast.success("Schedule removed; existing articles were kept");
@@ -183,7 +183,7 @@ export function EntityResearchBlogPanel({ onArticlesCreated }: { onArticlesCreat
   const runSchedule = async (schedule: Schedule, remainingToday = false) => {
     setBusyId(schedule.id);
     try {
-      const { data, error } = await supabase.functions.invoke("admin-blog-agent", {
+      const { data, error } = await backendClient.functions.invoke("admin-blog-agent", {
         body: { trigger_type: "manual", mode: "entity_schedule", schedule_id: schedule.id, generate_remaining_today: remainingToday },
       });
       if (error || data?.error) throw error || new Error(data.error);

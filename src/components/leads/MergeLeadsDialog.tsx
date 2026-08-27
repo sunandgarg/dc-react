@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { Loader2, GitMerge, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
@@ -22,15 +22,15 @@ export function MergeLeadsDialog({ leads, open, onClose, onMerged }: { leads: an
     try {
       // Move notes from duplicates onto primary
       const dupIds = duplicates.map((d) => d.id);
-      await (supabase as any).from("lead_notes").update({ lead_id: primary.id }).in("lead_id", dupIds);
+      await (backendClient as any).from("lead_notes").update({ lead_id: primary.id }).in("lead_id", dupIds);
       // Log merge
-      await (supabase as any).from("lead_notes").insert({
+      await (backendClient as any).from("lead_notes").insert({
         lead_id: primary.id, kind: "note",
         body: `Merged ${duplicates.length} duplicate lead${duplicates.length === 1 ? "" : "s"}: ${duplicates.map((d) => `${d.name || d.phone || d.id.slice(0, 6)}`).join(", ")}`,
         meta: { merged_from: dupIds },
       });
       // Delete duplicates
-      const { error } = await (supabase as any).from("leads").delete().in("id", dupIds);
+      const { error } = await (backendClient as any).from("leads").delete().in("id", dupIds);
       if (error) throw error;
       toast.success(`Merged ${duplicates.length} duplicate${duplicates.length === 1 ? "" : "s"} into ${primary.name || "lead"}`);
       onMerged();

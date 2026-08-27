@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -53,7 +53,7 @@ export function EntityMultiPicker({ articleId }: Props) {
     loadedTypesRef.current.add(active);
     (async () => {
       const orderCol = ["scholarships", "articles"].includes(t.table) ? "title" : "name";
-      const { data: rows } = await (supabase as any).from(t.table).select(t.selectCols).order(orderCol).limit(200);
+      const { data: rows } = await (backendClient as any).from(t.table).select(t.selectCols).order(orderCol).limit(200);
       setData((d) => ({ ...d, [active]: ((rows as any[]) || []).map((r) => t.format(r)) }));
     })();
   }, [active]);
@@ -69,7 +69,7 @@ export function EntityMultiPicker({ articleId }: Props) {
       const nameCol = ["scholarships", "articles"].includes(t.table) ? "title" : "name";
       const orFilter = `${nameCol}.ilike.%${q}%,slug.ilike.%${q}%`;
       try {
-        const { data: rows, error } = await (supabase as any)
+        const { data: rows, error } = await (backendClient as any)
           .from(t.table)
           .select(t.selectCols)
           .or(orFilter)
@@ -88,7 +88,7 @@ export function EntityMultiPicker({ articleId }: Props) {
 
   const reload = async () => {
     if (!articleId) return;
-    const { data } = await (supabase as any).from("article_links").select("*").eq("article_id", articleId);
+    const { data } = await (backendClient as any).from("article_links").select("*").eq("article_id", articleId);
     setLinks(data || []);
   };
   useEffect(() => { reload(); }, [articleId]);
@@ -99,9 +99,9 @@ export function EntityMultiPicker({ articleId }: Props) {
   const toggle = async (type: EntityType, id: string) => {
     const existing = links.find((l) => l.entity_type === type && l.entity_slug === id);
     if (existing) {
-      await (supabase as any).from("article_links").delete().eq("id", existing.id);
+      await (backendClient as any).from("article_links").delete().eq("id", existing.id);
     } else {
-      const { error } = await (supabase as any)
+      const { error } = await (backendClient as any)
         .from("article_links")
         .insert({ article_id: articleId, entity_type: type, entity_slug: id });
       if (error) return toast.error(error.message);
@@ -159,7 +159,7 @@ export function EntityMultiPicker({ articleId }: Props) {
               const toAdd = filtered.filter(e => !linked.has(e.id));
               if (!toAdd.length) return;
               const rows = toAdd.map(e => ({ article_id: articleId, entity_type: active, entity_slug: e.id }));
-              const { error } = await (supabase as any).from("article_links").insert(rows);
+              const { error } = await (backendClient as any).from("article_links").insert(rows);
               if (error) toast.error(error.message); else { toast.success(`Tagged ${toAdd.length}`); reload(); }
             }}
           >Select all visible</button>
@@ -169,7 +169,7 @@ export function EntityMultiPicker({ articleId }: Props) {
             onClick={async () => {
               const ids = links.filter(l => l.entity_type === active).map(l => l.id);
               if (!ids.length) return;
-              await (supabase as any).from("article_links").delete().in("id", ids);
+              await (backendClient as any).from("article_links").delete().in("id", ids);
               reload();
             }}
           >Clear {TYPES.find(t => t.key === active)?.label}</button>
@@ -211,12 +211,12 @@ export function EntityMultiPicker({ articleId }: Props) {
                   const nameCol = ["scholarships","articles"].includes(meta.table) ? "title" : "name";
                   const insertRow: any = { slug, [nameCol]: q };
                   if (meta.table === "articles") { insertRow.status = "Draft"; insertRow.is_active = true; }
-                  const { error } = await (supabase as any).from(meta.table).insert(insertRow);
+                  const { error } = await (backendClient as any).from(meta.table).insert(insertRow);
                   if (error) { toast.error(error.message); return; }
-                  await (supabase as any).from("article_links")
+                  await (backendClient as any).from("article_links")
                     .insert({ article_id: articleId, entity_type: active, entity_slug: slug });
                   toast.success(`Created "${q}" - refine details in its admin page`);
-                  const { data: newRows } = await (supabase as any).from(meta.table).select(meta.selectCols).order("name").limit(2000);
+                  const { data: newRows } = await (backendClient as any).from(meta.table).select(meta.selectCols).order("name").limit(2000);
                   setData({ ...data, [active]: ((newRows as any[]) || []).map((r) => meta.format(r)) });
                   reload();
                   setSearch({ ...search, [active]: "" });

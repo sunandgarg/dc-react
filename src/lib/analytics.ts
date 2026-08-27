@@ -62,10 +62,10 @@ export function trackEvent(name: LpEventName | string, params: AnalyticsParams =
   try {
     if (typeof name === "string" && name.startsWith("lp_popup_")) {
       // Lazy import keeps the compatibility client out of the initial bundle path.
-      import("@/integrations/supabase/client").then(({ supabase }) => {
+      import("@/integrations/backend/client").then(({ backendClient }) => {
         let sid = "anon";
         try { sid = localStorage.getItem("dc_session_id") || "anon"; } catch {}
-        (supabase as any).from("user_events").insert({
+        (backendClient as any).from("user_events").insert({
           session_id: sid,
           event_type: name,
           path: typeof location !== "undefined" ? location.pathname : null,
@@ -76,7 +76,7 @@ export function trackEvent(name: LpEventName | string, params: AnalyticsParams =
     }
     // Persist CTA click events (Apply/Talk/Brochure/etc) for the admin conversion dashboard.
     if (name === "cta_click") {
-      import("@/integrations/supabase/client").then(({ supabase }) => {
+      import("@/integrations/backend/client").then(({ backendClient }) => {
         let sid = "anon";
         try {
           sid = localStorage.getItem("dc_session_id") || "";
@@ -86,7 +86,7 @@ export function trackEvent(name: LpEventName | string, params: AnalyticsParams =
           }
         } catch {}
         const p = params as any;
-        (supabase as any).from("cta_events").insert({
+        (backendClient as any).from("cta_events").insert({
           page: String(p.page || "unknown"),
           cta: String(p.cta || "unknown"),
           entity_slug: p.college_slug || p.course_slug || p.exam_slug || p.program_slug || p.slug || null,

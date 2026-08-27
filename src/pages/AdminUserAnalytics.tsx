@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +35,7 @@ export default function AdminUserAnalytics() {
   const { data: sessions = [], isLoading } = useQuery({
     queryKey: ["admin-user-sessions"],
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("user_sessions")
         .select("*")
         .order("last_seen_at", { ascending: false })
@@ -49,7 +49,7 @@ export default function AdminUserAnalytics() {
   const { data: leadIndex = {} } = useQuery({
     queryKey: ["admin-recent-leads-map"],
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("leads")
         .select("name, phone, email, created_at")
         .order("created_at", { ascending: false })
@@ -84,7 +84,7 @@ export default function AdminUserAnalytics() {
     queryKey: ["admin-session-events", selected],
     enabled: !!selected,
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("user_events")
         .select("*")
         .eq("session_id", selected)
@@ -99,10 +99,10 @@ export default function AdminUserAnalytics() {
     queryFn: async () => {
       const since = new Date(Date.now() - 86400000).toISOString();
       const [s1, s2, s3, s4] = await Promise.all([
-        (supabase as any).from("user_sessions").select("*", { count: "exact", head: true }).gte("started_at", since),
-        (supabase as any).from("user_events").select("*", { count: "exact", head: true }).gte("created_at", since),
-        (supabase as any).from("user_sessions").select("*", { count: "exact", head: true }).not("user_id", "is", null),
-        (supabase as any).from("user_sessions").select("*", { count: "exact", head: true }).not("lead_phone", "is", null),
+        (backendClient as any).from("user_sessions").select("*", { count: "exact", head: true }).gte("started_at", since),
+        (backendClient as any).from("user_events").select("*", { count: "exact", head: true }).gte("created_at", since),
+        (backendClient as any).from("user_sessions").select("*", { count: "exact", head: true }).not("user_id", "is", null),
+        (backendClient as any).from("user_sessions").select("*", { count: "exact", head: true }).not("lead_phone", "is", null),
       ]);
       return { sessionsToday: s1.count ?? 0, eventsToday: s2.count ?? 0, loggedIn: s3.count ?? 0, withLead: s4.count ?? 0 };
     },
@@ -111,7 +111,7 @@ export default function AdminUserAnalytics() {
   const summarize = async (sid: string) => {
     setLoadingSummary(true);
     try {
-      const { data, error } = await supabase.functions.invoke("summarize-user-session", { body: { session_id: sid } });
+      const { data, error } = await backendClient.functions.invoke("summarize-user-session", { body: { session_id: sid } });
       if (error) throw error;
       setSummary((s) => ({ ...s, [sid]: (data as any)?.summary || "(no summary)" }));
       toast.success("AI summary generated");

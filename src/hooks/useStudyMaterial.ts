@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 const STALE = 10 * 60 * 1000;
 
@@ -8,7 +8,7 @@ export function useStudyBoards() {
     queryKey: ["study-boards"],
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_boards")
         .select("*")
         .eq("is_active", true)
@@ -25,7 +25,7 @@ export function useStudySubjects(classNum?: number, boardSlug?: string) {
     enabled: !!classNum && !!boardSlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_subjects")
         .select("*")
         .eq("class_num", classNum!)
@@ -44,7 +44,7 @@ export function useStudySubject(classNum?: number, boardSlug?: string, subjectSl
     enabled: !!classNum && !!boardSlug && !!subjectSlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_subjects")
         .select("*")
         .eq("class_num", classNum!)
@@ -63,7 +63,7 @@ export function useStudyChapters(subjectId?: string) {
     enabled: !!subjectId,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_chapters")
         .select("*")
         .eq("subject_id", subjectId!)
@@ -81,7 +81,7 @@ export function useStudyResources(opts: { chapterId?: string; subjectId?: string
     enabled: !!(opts.chapterId || opts.subjectId),
     staleTime: STALE,
     queryFn: async () => {
-      let q = supabase.from("study_resources").select("*").eq("is_active", true);
+      let q = backendClient.from("study_resources").select("*").eq("is_active", true);
       if (opts.chapterId) q = q.eq("chapter_id", opts.chapterId);
       else if (opts.subjectId) q = q.eq("subject_id", opts.subjectId).is("chapter_id", null);
       const { data, error } = await q.order("year", { ascending: false }).order("display_order");
@@ -99,7 +99,7 @@ export function useAllSubjectResources(subjectId?: string) {
     enabled: !!subjectId,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_resources")
         .select("*")
         .eq("subject_id", subjectId!)
@@ -119,7 +119,7 @@ export function useStudyToppers(classNum?: number, boardSlug?: string) {
     enabled: !!classNum && !!boardSlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_toppers" as any)
         .select("*")
         .eq("class_num", classNum!)

@@ -31,7 +31,7 @@ import { FeaturedRankPicker } from "@/components/admin/FeaturedRankPicker";
 import { FeaturedRankPanel } from "@/components/admin/FeaturedRankPanel";
 import { FaqInlineEditor } from "@/components/admin/FaqInlineEditor";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Link } from "react-router-dom";
 import { useDraftState } from "@/hooks/useDraftState";
 
@@ -43,7 +43,7 @@ function useArticleCategories() {
     queryKey: ["article_categories"],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("article_categories")
         .select("slug, name, display_order, is_active")
         .eq("is_active", true)
@@ -102,7 +102,7 @@ export default function AdminArticles() {
       return toast.error("You do not have permission to publish articles.");
     }
     setBulkBusy(true);
-    const { error } = await (supabase as any).from("articles").update(updates).in("id", ids);
+    const { error } = await (backendClient as any).from("articles").update(updates).in("id", ids);
     setBulkBusy(false);
     if (error) return toast.error(error.message);
     toast.success(`${label}: ${ids.length} article(s)`);
@@ -129,7 +129,7 @@ export default function AdminArticles() {
   const bulkDelete = async (ids = Array.from(selectedIds)) => {
     if (!ids.length || !confirm(`Delete ${ids.length} selected article(s)? This cannot be undone.`)) return;
     setBulkBusy(true);
-    const { error } = await (supabase as any).from("articles").delete().in("id", ids);
+    const { error } = await (backendClient as any).from("articles").delete().in("id", ids);
     setBulkBusy(false);
     if (error) return toast.error(error.message);
     toast.success(`Deleted ${ids.length} article(s)`);
@@ -154,11 +154,11 @@ export default function AdminArticles() {
       onSuccess: async () => {
         let id = (editing as any).id;
         if (!id && editing.slug) {
-          const { data: row } = await supabase.from("articles").select("id").eq("slug", editing.slug).maybeSingle();
+          const { data: row } = await backendClient.from("articles").select("id").eq("slug", editing.slug).maybeSingle();
           id = row?.id;
         }
         if (id && isAdmin) {
-          const { error } = await (supabase as any).rpc("set_featured_rank", { _table: "articles", _id: id, _rank: desiredRank });
+          const { error } = await (backendClient as any).rpc("set_featured_rank", { _table: "articles", _id: id, _rank: desiredRank });
           if (error) toast.error(`Featured: ${error.message}`);
         }
         setEditing(null);
@@ -377,7 +377,7 @@ export default function AdminArticles() {
                       onClick={async () => {
                         if (!editing.slug || !editing.title) { toast.error("Add Title and Slug first"); return; }
                         const payload = { ...editing, status: editing.status || "Draft" } as any;
-                        const { data, error } = await supabase
+                        const { data, error } = await backendClient
                           .from("articles")
                           .upsert(payload, { onConflict: "slug" })
                           .select()

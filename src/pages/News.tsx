@@ -9,7 +9,7 @@ import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { Link, useSearchParams, useParams, useNavigate } from "react-router-dom";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { DynamicAdBanner } from "@/components/DynamicAdBanner";
 
 const categories = [
@@ -174,7 +174,7 @@ export default function News() {
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("articles")
         .select(ARTICLE_COLS)
         .eq("is_active", true)
@@ -198,7 +198,7 @@ export default function News() {
     placeholderData: keepPreviousData,
     staleTime: 60 * 1000,
     queryFn: async () => {
-      let q = supabase
+      let q = backendClient
         .from("articles")
         .select(ARTICLE_COLS)
         .eq("is_active", true)

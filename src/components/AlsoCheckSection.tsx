@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import * as Icons from "lucide-react";
 import { Sparkles } from "lucide-react";
 import { currentYear } from "@/lib/currentYear";
@@ -70,7 +70,7 @@ export function AlsoCheckSection({ className = "", variant = "grid" }: { classNa
   const { data: dbModulesData = [] } = useQuery<Module[]>({
     queryKey: ["also-check-modules"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("also_check_modules")
         .select("*")
         .eq("enabled", true)

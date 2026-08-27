@@ -14,7 +14,7 @@ import {
   columnMappingToPayloadFields,
   downloadSampleCSV,
 } from "./PayloadFieldsEditor";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { UniversityImportExport } from "./UniversityImportExport";
 import { MultiPushDefaultsEditor } from "./MultiPushDefaultsEditor";
 import {
@@ -156,7 +156,7 @@ export function EditUniversityModal({ isOpen, university, onClose, onSave }: Edi
       setSampleCsvContent(university.sampleCsvContent || "");
 
       // Load default values from university (fetched from DB)
-      supabase.from('universities').select('default_values').eq('id', university.id).single().then(({ data }) => {
+      backendClient.from('universities').select('default_values').eq('id', university.id).single().then(({ data }) => {
         if (data?.default_values && typeof data.default_values === 'object') {
           setDefaultValues(data.default_values as Record<string, string>);
         }
@@ -250,7 +250,7 @@ export function EditUniversityModal({ isOpen, university, onClose, onSave }: Edi
 
     try {
       const columnMapping = payloadFieldsToColumnMapping(payloadFields);
-      const { data, error } = await supabase.functions.invoke("test-api", {
+      const { data, error } = await backendClient.functions.invoke("test-api", {
         body: {
           apiUrl: formData.apiUrl,
           secretKey: formData.secretKey,
@@ -338,7 +338,7 @@ export function EditUniversityModal({ isOpen, university, onClose, onSave }: Edi
 
     // Save default_values to DB directly
     const cleanDefaults = Object.fromEntries(Object.entries(defaultValues).filter(([_, v]) => v.trim()));
-    supabase.from('universities').update({ default_values: cleanDefaults }).eq('id', university.id);
+    backendClient.from('universities').update({ default_values: cleanDefaults }).eq('id', university.id);
 
     onSave({
       id: university.id,

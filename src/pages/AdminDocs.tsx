@@ -68,7 +68,7 @@ backend/src/
 ├── server.mjs          # Node HTTP server
 ├── rest.mjs            # MySQL-backed REST compatibility API
 ├── auth.mjs            # Native access/refresh tokens and OTP
-└── storage.mjs         # Authorized Supabase Storage proxy
+└── storage.mjs         # Authorized DekhoCampus API Storage proxy
 \`\`\``,
     },
     {

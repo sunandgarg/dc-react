@@ -1,1 +1,0 @@
-UPDATE public.program_categories SET name='Online MBA' WHERE slug='mba';

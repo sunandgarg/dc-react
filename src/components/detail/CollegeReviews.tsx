@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,7 +41,7 @@ export function CollegeReviews({ collegeSlug, collegeName, fallbackRating = 0, f
     queryKey: ["college_reviews", collegeSlug, user?.id],
     queryFn: async () => {
       // RLS returns approved + own pending
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("college_reviews")
         .select("*")
         .eq("college_slug", collegeSlug)
@@ -185,14 +185,14 @@ function ReportDialog({ review, user, onClose }: { review: Review | null; user: 
     if (!review) return;
     if (reason.trim().length < 5) return toast.error("Please describe the issue (min 5 chars).");
     setSaving(true);
-    const { error } = await (supabase as any).from("review_reports").insert({
+    const { error } = await (backendClient as any).from("review_reports").insert({
       review_id: review.id,
       reporter_user_id: user?.id || null,
       reporter_name: user?.user_metadata?.display_name || user?.email || "Guest",
       reason: reason.trim().slice(0, 500),
     });
     // Best-effort increment counter (admin will moderate)
-    await (supabase as any).from("college_reviews").update({
+    await (backendClient as any).from("college_reviews").update({
       report_count: (review as any).report_count ? (review as any).report_count + 1 : 1,
       last_report_reason: reason.trim().slice(0, 200),
     }).eq("id", review.id);
@@ -256,7 +256,7 @@ function ReviewForm({
       return;
     }
     setSaving(true);
-    const { error } = await (supabase as any).from("college_reviews").insert({
+    const { error } = await (backendClient as any).from("college_reviews").insert({
       college_slug: collegeSlug,
       user_id: user.id,
       reviewer_name: user.user_metadata?.display_name || user.email || "Student",

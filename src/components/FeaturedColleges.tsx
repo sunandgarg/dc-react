@@ -10,7 +10,7 @@ import { useDbColleges } from "@/hooks/useCollegesData";
 import { useFeaturedColleges } from "@/hooks/useFeaturedColleges";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { ApplyButton } from "@/components/ApplyButton";
 
 function formatAdmissionDeadline(value?: string | null) {
@@ -27,7 +27,7 @@ export function FeaturedColleges() {
     queryKey: ["homepage-featured-college-cards", featuredSlugs],
     enabled: !!featuredSlugs?.length,
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("colleges").select("id,slug,name,short_name,location,city,state,type,category,rating,reviews,fees,image,logo,tags,established,approvals,naac_grade,is_active,status,priority,featured_rank,apply_cta_mode,apply_url,admission_deadline").in("slug", featuredSlugs!).eq("is_active", true);
+      const { data, error } = await (backendClient as any).from("colleges").select("id,slug,name,short_name,location,city,state,type,category,rating,reviews,fees,image,logo,tags,established,approvals,naac_grade,is_active,status,priority,featured_rank,apply_cta_mode,apply_url,admission_deadline").in("slug", featuredSlugs!).eq("is_active", true);
       if (error) throw error;
       const order = new Map(featuredSlugs!.map((slug, index) => [slug, index]));
       return (data || []).sort((a: any, b: any) => (order.get(a.slug) || 0) - (order.get(b.slug) || 0));

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -122,7 +122,7 @@ function LevelBlock({ level }: { level: Level }) {
     queryKey: ["edu-entries", user?.id, level],
     enabled: !!user?.id,
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("user_education_entries")
         .select("*")
         .eq("user_id", user!.id)
@@ -151,10 +151,10 @@ function LevelBlock({ level }: { level: Level }) {
     mutationFn: async (e: Entry) => {
       const payload = { ...e, user_id: user!.id, level };
       if (e.id) {
-        const { error } = await (supabase as any).from("user_education_entries").update(payload).eq("id", e.id);
+        const { error } = await (backendClient as any).from("user_education_entries").update(payload).eq("id", e.id);
         if (error) throw error;
       } else {
-        const { error } = await (supabase as any).from("user_education_entries").insert(payload);
+        const { error } = await (backendClient as any).from("user_education_entries").insert(payload);
         if (error) throw error;
       }
     },
@@ -167,7 +167,7 @@ function LevelBlock({ level }: { level: Level }) {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("user_education_entries").delete().eq("id", id);
+      const { error } = await (backendClient as any).from("user_education_entries").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

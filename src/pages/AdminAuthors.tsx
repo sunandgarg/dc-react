@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -46,7 +46,7 @@ export default function AdminAuthors() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await (supabase as any).from("authors").select("*").order("display_order");
+    const { data } = await (backendClient as any).from("authors").select("*").order("display_order");
     setAuthors((data as Author[]) || []);
     setLoading(false);
   };
@@ -57,8 +57,8 @@ export default function AdminAuthors() {
     if (!editing.name) { toast.error("Name required"); return; }
     const payload = { ...editing, slug: editing.slug || slugify(editing.name) };
     const { error } = editing.id
-      ? await (supabase as any).from("authors").update(payload).eq("id", editing.id)
-      : await (supabase as any).from("authors").insert(payload);
+      ? await (backendClient as any).from("authors").update(payload).eq("id", editing.id)
+      : await (backendClient as any).from("authors").insert(payload);
     if (error) return toast.error(error.message);
     toast.success("Saved");
     setEditing(null); load();
@@ -66,7 +66,7 @@ export default function AdminAuthors() {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this author? Linked content will keep existing entries but show no author.")) return;
-    const { error } = await (supabase as any).from("authors").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("authors").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted"); load();
   };

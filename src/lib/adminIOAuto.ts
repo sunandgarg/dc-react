@@ -7,7 +7,7 @@
  *  - Auto-infer typeHints from real row data so CSV round-trips don't lose
  *    arrays/booleans/numbers/json blobs.
  */
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 export const STRIPPED = new Set<string>(["id", "created_at", "updated_at", "priority_updated_at"]);
 
@@ -51,7 +51,7 @@ export async function discoverTable(table: string, pageSize = 1000): Promise<{ r
   const all: any[] = [];
   let from = 0;
   while (true) {
-    const { data, error } = await supabase
+    const { data, error } = await backendClient
       .from(table as any)
       .select("*")
       .range(from, from + pageSize - 1);
@@ -64,7 +64,7 @@ export async function discoverTable(table: string, pageSize = 1000): Promise<{ r
   }
   // Always inspect at least one row even when table is empty (sample columns by select * limit 1)
   if (all.length === 0) {
-    const { data } = await supabase.from(table as any).select("*").limit(1);
+    const { data } = await backendClient.from(table as any).select("*").limit(1);
     return { rows: [], schema: inferSchemaFromRows(data || []) };
   }
   return { rows: all, schema: inferSchemaFromRows(all) };
@@ -72,7 +72,7 @@ export async function discoverTable(table: string, pageSize = 1000): Promise<{ r
 
 /** Cheap one-row schema sniff (for templates / import preview). */
 export async function sniffSchema(table: string): Promise<AutoSchema> {
-  const { data, error } = await supabase.from(table as any).select("*").limit(50);
+  const { data, error } = await backendClient.from(table as any).select("*").limit(50);
   if (error) throw error;
   return inferSchemaFromRows(data || []);
 }

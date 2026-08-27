@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useSEO } from "@/hooks/useSEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +47,7 @@ export default function LandingPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["landing_page", slug],
     queryFn: async () => {
-      const { data } = await (supabase as any).from("landing_pages").select("*").eq("slug", slug).eq("is_active", true).maybeSingle();
+      const { data } = await (backendClient as any).from("landing_pages").select("*").eq("slug", slug).eq("is_active", true).maybeSingle();
       return data as LP | null;
     },
   });
@@ -108,7 +108,7 @@ export default function LandingPage() {
       utm_campaign: params.get("utm_campaign"), utm_content: params.get("utm_content"),
       utm_term: params.get("utm_term"), gclid: params.get("gclid"), fbclid: params.get("fbclid"),
     };
-    const { error } = await (supabase as any).from("landing_page_leads").insert({
+    const { error } = await (backendClient as any).from("landing_page_leads").insert({
       landing_slug: slug, ...form, phone, ...utm,
       referrer: document.referrer, page_url: window.location.href, consent: consentAccepted,
     });

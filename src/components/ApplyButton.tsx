@@ -12,7 +12,7 @@ import { useStatesAndCities } from "@/hooks/useLocations";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { getPrefillCookie, savePrefillCookie } from "@/components/CookieConsent";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { hasPrefillIdentity, isWithinSilentWindow, silentSaveLead, markLeadSubmitted } from "@/lib/leadCapture";
 import { trackEvent } from "@/lib/analytics";
@@ -109,7 +109,7 @@ export function ApplyButton({ collegeSlug, collegeName, courseSlug = "", classNa
     if (!open || !collegeSlug) return;
     let cancelled = false;
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("course_fees")
         .select("course_name")
         .eq("college_slug", collegeSlug);
@@ -166,7 +166,7 @@ export function ApplyButton({ collegeSlug, collegeName, courseSlug = "", classNa
       });
         // 2. Also insert a college_applications row (legacy table powers dashboard)
         try {
-          await supabase.from("college_applications").insert({
+          await backendClient.from("college_applications").insert({
             user_id: user?.id,
             name, email, phone, city: city || "", state: state || "",
             college_slug: collegeSlug, college_name: collegeName,
@@ -195,7 +195,7 @@ export function ApplyButton({ collegeSlug, collegeName, courseSlug = "", classNa
     }
     setLoading(true);
     try {
-      const { error } = await supabase.from("college_applications").insert({
+      const { error } = await backendClient.from("college_applications").insert({
         user_id: user?.id,
         name: form.name,
         email: form.email || null,

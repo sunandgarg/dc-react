@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Image, Loader2, Newspaper, Save, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +32,7 @@ export function BlogAISettingsCard() {
   const [busy, setBusy] = useState(false);
 
   const load = async () => {
-    const { data, error } = await supabase.functions.invoke("admin-blog-ai-settings", { method: "GET" });
+    const { data, error } = await backendClient.functions.invoke("admin-blog-ai-settings", { method: "GET" });
     if (!error && data && !data.error) setSettings({ ...defaults, ...data, text_model: normalizeTextModel(data.text_model), image_model: "gpt-image-1" });
   };
   useEffect(() => { void load(); }, []);
@@ -40,7 +40,7 @@ export function BlogAISettingsCard() {
   const save = async () => {
     setBusy(true);
     try {
-      const { data, error } = await supabase.functions.invoke("admin-blog-ai-settings", { body: { gemini_api_key: geminiKey, openai_api_key: openaiKey, text_model: settings.text_model, image_model: settings.image_model, image_quality: settings.image_quality } });
+      const { data, error } = await backendClient.functions.invoke("admin-blog-ai-settings", { body: { gemini_api_key: geminiKey, openai_api_key: openaiKey, text_model: settings.text_model, image_model: settings.image_model, image_quality: settings.image_quality } });
       if (error || data?.error) throw error || new Error(data.error);
       setGeminiKey(""); setOpenaiKey(""); await load(); toast.success("Blog AI providers saved securely");
     } catch (error: any) { toast.error(error.message || "Could not save blog AI settings"); }

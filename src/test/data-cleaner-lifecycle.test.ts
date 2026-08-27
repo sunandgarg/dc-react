@@ -3,23 +3,23 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 
 describe("Clean Data lifecycle and review workflow", () => {
-  const migration = readFileSync(resolve(process.cwd(), "supabase/migrations/20260726001000_data_cleaner_pass_tracking.sql"), "utf8");
-  const cleaner = readFileSync(resolve(process.cwd(), "supabase/functions/admin-data-cleaner/index.ts"), "utf8");
+  const schema = readFileSync(resolve(process.cwd(), "backend/prisma/schema.prisma"), "utf8");
+  const cleaner = readFileSync(resolve(process.cwd(), "backend/src/data-cleaner.mjs"), "utf8");
   const admin = readFileSync(resolve(process.cwd(), "src/pages/AdminDataCleaner.tsx"), "utf8");
   const preview = readFileSync(resolve(process.cwd(), "src/pages/AdminDataCleanerPreview.tsx"), "utf8");
 
   it("tracks attempts separately from successful applied cleanups", () => {
-    expect(migration).toMatch(/data_clean_attempts/);
-    expect(migration).toMatch(/data_clean_successes/);
-    expect(migration).toMatch(/data_clean_state/);
-    expect(cleaner).toMatch(/checked_no_change/);
+    expect(schema).toMatch(/data_clean_attempts/);
+    expect(schema).toMatch(/data_clean_successes/);
+    expect(schema).toMatch(/data_clean_state/);
+    expect(cleaner).toMatch(/status = !safe \? "skipped"/);
     expect(cleaner).toMatch(/awaiting_review/);
   });
 
   it("queues only the least-completed pass and blocks a new pass during review", () => {
-    expect(migration).toMatch(/t\.data_clean_attempts = \(/);
-    expect(migration).toMatch(/min\(candidate\.data_clean_attempts\)/);
-    expect(migration).toMatch(/pending\.data_clean_state = ''awaiting_review''/);
+    expect(cleaner).toMatch(/COALESCE\(t\.\\`data_clean_attempts\\`,0\) = \(SELECT MIN/);
+    expect(cleaner).toMatch(/candidate\.\\`data_clean_attempts\\`/);
+    expect(cleaner).toMatch(/<> 'awaiting_review'/);
   });
 
   it("opens a dedicated split before-and-after comparison", () => {
@@ -32,6 +32,6 @@ describe("Clean Data lifecycle and review workflow", () => {
 
   it("does not show an evidence percentage when no change was supported", () => {
     expect(admin).toMatch(/item\.changed_fields\?\.length > 0/);
-    expect(cleaner).toMatch(/confidence: verified\.sources\.length \? confidence : null/);
+    expect(cleaner).toMatch(/changed\.length > 0 && sourceUrls\.length > 0/);
   });
 });

@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { truncateUrl } from '@/utils/base62';
 import { format } from 'date-fns';
 
@@ -31,7 +31,7 @@ export const UrlHealthCheck = memo(function UrlHealthCheck() {
   const fetchUrls = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from('url_mappings')
         .select('id, short_code, original_url, is_healthy, last_checked_at, clicks')
         .order('clicks', { ascending: false })
@@ -76,7 +76,7 @@ export const UrlHealthCheck = memo(function UrlHealthCheck() {
       const isHealthy = await checkUrlHealth(url.original_url);
       
       // Update in database
-      await (supabase as any)
+      await (backendClient as any)
         .from('url_mappings')
         .update({
           is_healthy: isHealthy,

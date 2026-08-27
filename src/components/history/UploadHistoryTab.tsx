@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, Fragment } from "react";
 import { Search, Calendar, FileText, CheckCircle2, XCircle, Clock, RefreshCw, Filter, Building2, ChevronDown, ChevronUp, BarChart3 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { format } from "date-fns";
 import { DataRetentionNotice } from "@/components/ui/DataRetentionNotice";
 
@@ -63,7 +63,7 @@ export function UploadHistoryTab({ universities }: UploadHistoryTabProps) {
       }
       setLoading(true);
       try {
-        let query = supabase
+        let query = backendClient
           .from("upload_batches")
           .select("id, university_id, file_name, total_leads, success_count, fail_count, duplicate_count, status, created_at, completed_at")
           .order("created_at", { ascending: false });

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ export function DashboardSubUsers() {
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["sub_users", user?.id],
     enabled: !!user,
-    queryFn: async () => (await (supabase as any).from("sub_users").select("*").eq("parent_user_id", user!.id).order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await (backendClient as any).from("sub_users").select("*").eq("parent_user_id", user!.id).order("created_at", { ascending: false })).data ?? [],
   });
 
   const reset = () => { setName(""); setEmail(""); setPhone(""); };
@@ -44,7 +44,7 @@ export function DashboardSubUsers() {
     if (phone && !/^\d{10}$/.test(phone)) return toast.error("Phone must be 10 digits");
     if (email && !/^[^@]+@[^@]+\.[^@]+$/.test(email)) return toast.error("Invalid email");
     setSaving(true);
-    const { error } = await (supabase as any).from("sub_users").insert({
+    const { error } = await (backendClient as any).from("sub_users").insert({
       parent_user_id: user.id,
       type,
       role: type === "team" ? "manager" : "viewer",
@@ -61,7 +61,7 @@ export function DashboardSubUsers() {
 
   const remove = async (id: string) => {
     if (!confirm("Remove this sub-user?")) return;
-    const { error } = await (supabase as any).from("sub_users").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("sub_users").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Removed");
     qc.invalidateQueries({ queryKey: ["sub_users", user?.id] });

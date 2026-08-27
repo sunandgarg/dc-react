@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useDashboardData";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { 
@@ -50,7 +50,7 @@ export default function UserDashboard() {
 
   useEffect(() => {
     if (!user) return;
-    (supabase as any).from("authors").select("id").eq("user_id", user.id).maybeSingle()
+    (backendClient as any).from("authors").select("id").eq("user_id", user.id).maybeSingle()
       .then(({ data }: any) => setIsLinkedAuthor(!!data));
   }, [user]);
 

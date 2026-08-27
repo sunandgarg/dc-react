@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 
@@ -31,7 +31,7 @@ export function SlugSearchInput({ table, value, onChange, placeholder, label }: 
   useEffect(() => {
     if (!open || query.length < 1) { setResults([]); return; }
     const t = setTimeout(async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from(table)
         .select("slug,name")
         .ilike("name", `%${query}%`)

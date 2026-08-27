@@ -7,7 +7,7 @@ import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Target, Sparkles, Calendar, Trophy, Share2, Download, Lock, Plus, BookOpen, AlertTriangle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { downloadRoadmapPDF, type RoadmapData } from "@/lib/targetRoadmapPdf";
@@ -41,7 +41,7 @@ export default function TargetDashboard() {
       return;
     }
     (async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("target_roadmaps")
         .select("*")
         .eq("user_id", user.id)
@@ -55,14 +55,14 @@ export default function TargetDashboard() {
 
   async function makePrimary(id: string) {
     if (!user) return;
-    await supabase.from("target_roadmaps").update({ is_primary: false }).eq("user_id", user.id);
-    await supabase.from("target_roadmaps").update({ is_primary: true }).eq("id", id);
+    await backendClient.from("target_roadmaps").update({ is_primary: false }).eq("user_id", user.id);
+    await backendClient.from("target_roadmaps").update({ is_primary: true }).eq("id", id);
     setRows((prev) => prev.map((r) => ({ ...r, is_primary: r.id === id })));
     toast.success("Primary target updated");
   }
 
   async function removeRow(id: string) {
-    await supabase.from("target_roadmaps").delete().eq("id", id);
+    await backendClient.from("target_roadmaps").delete().eq("id", id);
     setRows((prev) => prev.filter((r) => r.id !== id));
     toast.success("Removed");
   }

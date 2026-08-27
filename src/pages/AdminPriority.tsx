@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -55,7 +55,7 @@ function PriorityTable({ entity }: { entity: Entity }) {
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-priority", entity],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from(entity)
         .select("id, name, slug, priority, category, city, state, image, logo")
         .order("priority", { ascending: true, nullsFirst: false })
@@ -98,7 +98,7 @@ function PriorityTable({ entity }: { entity: Entity }) {
     const value = draft[id];
     if (value === undefined) return;
     const safe = Math.max(1, Math.min(100, Math.round(value)));
-    const { error } = await supabase.from(entity).update({ priority: safe }).eq("id", id);
+    const { error } = await backendClient.from(entity).update({ priority: safe }).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success(`Priority set to ${safe}`);
     setDraft(d => { const { [id]: _, ...rest } = d; return rest; });
@@ -109,7 +109,7 @@ function PriorityTable({ entity }: { entity: Entity }) {
     if (!dirtyIds.length) return;
     const updates = dirtyIds.map((id) => {
       const safe = Math.max(1, Math.min(100, Math.round(draft[id])));
-      return supabase.from(entity).update({ priority: safe }).eq("id", id);
+      return backendClient.from(entity).update({ priority: safe }).eq("id", id);
     });
     const results = await Promise.all(updates);
     const failed = results.filter((r) => r.error);

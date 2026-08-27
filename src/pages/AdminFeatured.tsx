@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAllFeaturedColleges } from "@/hooks/useFeaturedColleges";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,7 +62,7 @@ export default function AdminFeatured() {
     queryKey: ["admin-featured-college-names", featuredSlugs],
     enabled: featuredSlugs.length > 0,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("colleges")
         .select("slug,name,short_name,city,state,logo,image,status,is_active")
         .in("slug", featuredSlugs);
@@ -83,7 +83,7 @@ export default function AdminFeatured() {
     setSaving(true);
 
     try {
-      const { data: existing, error: lookupError } = await supabase
+      const { data: existing, error: lookupError } = await backendClient
         .from("featured_colleges")
         .select("id")
         .eq("college_slug", form.college_slug)
@@ -101,8 +101,8 @@ export default function AdminFeatured() {
       };
 
       const { error } = existing?.id
-        ? await supabase.from("featured_colleges").update(payload).eq("id", existing.id)
-        : await supabase.from("featured_colleges").insert(payload);
+        ? await backendClient.from("featured_colleges").update(payload).eq("id", existing.id)
+        : await backendClient.from("featured_colleges").insert(payload);
       if (error) throw error;
       toast({ title: existing?.id ? "Featured college updated" : "Featured college added" });
       queryClient.invalidateQueries({ queryKey: ["admin-featured-colleges"] });
@@ -118,7 +118,7 @@ export default function AdminFeatured() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Remove this featured college?")) return;
-    const { error } = await supabase.from("featured_colleges").delete().eq("id", id);
+    const { error } = await backendClient.from("featured_colleges").delete().eq("id", id);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
@@ -129,7 +129,7 @@ export default function AdminFeatured() {
   };
 
   const handleToggle = async (id: string, active: boolean) => {
-    await supabase.from("featured_colleges").update({ is_active: active }).eq("id", id);
+    await backendClient.from("featured_colleges").update({ is_active: active }).eq("id", id);
     queryClient.invalidateQueries({ queryKey: ["admin-featured-colleges"] });
     queryClient.invalidateQueries({ queryKey: ["featured-colleges"] });
   };
@@ -140,7 +140,7 @@ export default function AdminFeatured() {
       toast({ title: "Priority must be a whole number from 1 to 999", variant: "destructive" });
       return;
     }
-    const { error } = await supabase.from("featured_colleges").update({ display_order: next }).eq("id", id);
+    const { error } = await backendClient.from("featured_colleges").update({ display_order: next }).eq("id", id);
     if (error) {
       toast({ title: "Could not save priority", description: error.message, variant: "destructive" });
       return;

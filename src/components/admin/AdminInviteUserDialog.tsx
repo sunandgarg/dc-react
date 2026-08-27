@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UserPlus, Copy } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { normalizeIndianMobile } from "@/lib/phone";
 
 export function AdminInviteUserDialog({ onInvited }: { onInvited?: () => void }) {
@@ -20,7 +20,7 @@ export function AdminInviteUserDialog({ onInvited }: { onInvited?: () => void })
   const submit = async () => {
     if (!email && !phone) return toast.error("Provide email or 10-digit phone");
     setBusy(true);
-    const { data, error } = await (supabase as any).functions.invoke("admin-invite-user", {
+    const { data, error } = await (backendClient as any).functions.invoke("admin-invite-user", {
       body: { email: email || undefined, phone: phone || undefined, role, display_name: name },
     });
     setBusy(false);

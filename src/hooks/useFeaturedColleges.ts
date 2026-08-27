@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { ensureBootstrap } from "@/lib/bootstrap";
 
 interface FeaturedCollege {
@@ -28,7 +28,7 @@ export function useFeaturedColleges(category?: string, state?: string) {
     queryFn: async () => {
       const boot = await ensureBootstrap();
       if (boot?.featured_colleges) return uniqueFeatured(boot.featured_colleges as FeaturedCollege[], true);
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("featured_colleges")
         .select("*")
         .eq("is_active", true)
@@ -55,7 +55,7 @@ export function useAllFeaturedColleges() {
   return useQuery({
     queryKey: ["admin-featured-colleges"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("featured_colleges")
         .select("*")
         .order("display_order", { ascending: true });

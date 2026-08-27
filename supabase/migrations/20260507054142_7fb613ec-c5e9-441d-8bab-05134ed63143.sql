@@ -1,1 +1,0 @@
-ALTER TABLE public.promoted_programs ADD COLUMN IF NOT EXISTS image_url text NOT NULL DEFAULT '';

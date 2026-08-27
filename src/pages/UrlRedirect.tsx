@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { AlertCircle } from 'lucide-react';
 import { restUrl } from '@/lib/backendMode';
 
@@ -48,7 +48,7 @@ export default function UrlRedirect() {
       if (!code) { setError('Invalid URL'); return; }
 
       try {
-        let query = (supabase as any)
+        let query = (backendClient as any)
           .from('url_mappings')
           .select('id, original_url, is_active, expires_at, user_tracking')
           .eq('short_code', code);
@@ -63,7 +63,7 @@ export default function UrlRedirect() {
 
         // Broader fallback
         if (!mapping && !header) {
-          const { data } = await (supabase as any)
+          const { data } = await (backendClient as any)
             .from('url_mappings')
             .select('id, original_url, is_active, expires_at, user_tracking')
             .eq('short_code', code)
@@ -74,7 +74,7 @@ export default function UrlRedirect() {
         if (!mapping) {
           // Check if it could be a header
           if (params.codeOrHeader && !header) {
-            const { data: headerMatches } = await (supabase as any)
+            const { data: headerMatches } = await (backendClient as any)
               .from('url_mappings')
               .select('id')
               .eq('header', params.codeOrHeader.toUpperCase())

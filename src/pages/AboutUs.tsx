@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -20,7 +20,7 @@ export default function AboutUs() {
 
   useEffect(() => {
     const load = async () => {
-      const s: any = supabase;
+      const s: any = backendClient;
       const [page, stats, values, founders, team, milestones, press] = await Promise.all([
         s.from("about_page").select("*").maybeSingle(),
         s.from("about_stats").select("*").eq("is_active", true).order("display_order"),

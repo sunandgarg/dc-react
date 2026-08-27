@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Search, Link2, X } from "lucide-react";
 
 type EntityKey =
@@ -51,7 +51,7 @@ export function InternalLinkPicker({ open, onClose, onPick }: Props) {
     const cfg = ENTITIES.find((e) => e.key === entity)!;
     (async () => {
       try {
-        const { data } = await (supabase as any)
+        const { data } = await (backendClient as any)
           .from(cfg.table)
           .select("*")
           .ilike(entity === "board" ? "title" : entity === "college_subject" ? "name" : "name", `%${q}%` as any)

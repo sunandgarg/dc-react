@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { ensureBootstrap } from "@/lib/bootstrap";
 
@@ -43,7 +43,7 @@ export function useHeroSettings() {
       if (boot && "hero_settings" in boot) {
         return normalizeHeroSettings((boot.hero_settings ?? null) as HeroSettings | null);
       }
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("hero_settings")
         .select("*")
         .order("updated_at", { ascending: false })
@@ -63,7 +63,7 @@ export function useUpdateHeroSettings() {
   return useMutation({
     mutationFn: async (patch: Partial<HeroSettings> & { id: string }) => {
       const { id, ...rest } = patch;
-      const { error } = await (supabase as any).from("hero_settings").update(rest).eq("id", id);
+      const { error } = await (backendClient as any).from("hero_settings").update(rest).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

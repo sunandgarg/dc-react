@@ -2,13 +2,13 @@ import { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Download, Upload, Database, AlertTriangle, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { downloadJSON } from "@/lib/adminIO";
 
 async function fetchPinnedFullDatabaseExport(pin: string) {
-  const { data, error } = await (supabase.rpc as any)("admin_full_database_export", {
+  const { data, error } = await (backendClient.rpc as any)("admin_full_database_export", {
     input_pin: pin,
   });
   if (error) throw error;
@@ -89,9 +89,9 @@ export default function AdminBackup() {
         if (mode === "replace") {
           append(`Clearing ${t}...`);
           // Try delete with id filter, fall back to a universally-true predicate for tables without id
-          let delErr = (await supabase.from(t as any).delete().not("id", "is", null)).error;
+          let delErr = (await backendClient.from(t as any).delete().not("id", "is", null)).error;
           if (delErr) {
-            const alt = await supabase.from(t as any).delete().gte("created_at", "1900-01-01");
+            const alt = await backendClient.from(t as any).delete().gte("created_at", "1900-01-01");
             delErr = alt.error;
           }
           if (delErr) {
@@ -107,11 +107,11 @@ export default function AdminBackup() {
         for (let i = 0; i < rows.length; i += chunkSize) {
           const chunk = rows.slice(i, i + chunkSize);
           const op = hasId
-            ? supabase.from(t as any).upsert(chunk, { onConflict: "id", ignoreDuplicates: false })
-            : supabase.from(t as any).insert(chunk);
+            ? backendClient.from(t as any).upsert(chunk, { onConflict: "id", ignoreDuplicates: false })
+            : backendClient.from(t as any).insert(chunk);
           const { error } = await op;
           if (error) {
-            const { error: insErr } = await supabase.from(t as any).insert(chunk);
+            const { error: insErr } = await backendClient.from(t as any).insert(chunk);
             if (insErr) {
               failed += chunk.length;
               append(`  ✗ ${t} chunk: ${insErr.message}`);

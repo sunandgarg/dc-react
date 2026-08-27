@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -9,7 +9,7 @@ export function useProfile() {
   return useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("profiles")
         .select("*")
         .eq("user_id", user!.id)
@@ -26,7 +26,7 @@ export function useUpdateProfile() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (updates: Record<string, any>) => {
-      const { error } = await (supabase as any)
+      const { error } = await (backendClient as any)
         .from("profiles")
         .update(updates)
         .eq("user_id", user!.id);
@@ -66,7 +66,7 @@ export function useReferrals() {
   return useQuery({
     queryKey: ["referrals", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("referrals")
         .select("*")
         .eq("referrer_id", user!.id)
@@ -88,7 +88,7 @@ export function useCreateReferral() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (data: Omit<Referral, "id" | "referrer_id" | "status" | "reward_amount" | "reward_paid" | "admin_notes" | "created_at" | "updated_at">) => {
-      const { error } = await supabase.from("referrals").insert({
+      const { error } = await backendClient.from("referrals").insert({
         ...data,
         referrer_id: user!.id,
         desired_colleges: JSON.stringify(data.desired_colleges),
@@ -119,7 +119,7 @@ export function useUserDocuments() {
   return useQuery({
     queryKey: ["user-documents", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("user_documents")
         .select("*")
         .eq("user_id", user!.id)
@@ -139,16 +139,16 @@ export function useUploadDocument() {
       const ext = file.name.split(".").pop();
       const path = `${user!.id}/${docType}_${Date.now()}.${ext}`;
       
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError } = await backendClient.storage
         .from("user-documents")
         .upload(path, file);
       if (uploadError) throw uploadError;
 
-      const { data: urlData } = supabase.storage
+      const { data: urlData } = backendClient.storage
         .from("user-documents")
         .getPublicUrl(path);
 
-      const { error: dbError } = await supabase.from("user_documents").insert({
+      const { error: dbError } = await backendClient.from("user_documents").insert({
         user_id: user!.id,
         doc_type: docType,
         file_name: file.name,
@@ -172,9 +172,9 @@ export function useDeleteDocument() {
       // Extract path from URL
       const urlParts = doc.file_url.split("/user-documents/");
       if (urlParts[1]) {
-        await supabase.storage.from("user-documents").remove([urlParts[1]]);
+        await backendClient.storage.from("user-documents").remove([urlParts[1]]);
       }
-      const { error } = await supabase.from("user_documents").delete().eq("id", doc.id);
+      const { error } = await backendClient.from("user_documents").delete().eq("id", doc.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -191,7 +191,7 @@ export function useWalletBalance() {
   return useQuery({
     queryKey: ["wallet-balance", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("wallet_transactions")
         .select("type, amount, status")
         .eq("user_id", user!.id)
@@ -213,7 +213,7 @@ export function useWalletTransactions() {
   return useQuery({
     queryKey: ["wallet-transactions", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("wallet_transactions")
         .select("*")
         .eq("user_id", user!.id)

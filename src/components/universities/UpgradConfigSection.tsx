@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Info, AlertCircle, CheckCircle2, Loader2, Play } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 
 /**
@@ -267,7 +267,7 @@ export function UpgradConfigSection({
     };
 
     try {
-      const { data, error } = await supabase.functions.invoke("process-lead", {
+      const { data, error } = await backendClient.functions.invoke("process-lead", {
         body: {
           universityId: "test-upgrad",
           batchId: `test-${Date.now()}`,

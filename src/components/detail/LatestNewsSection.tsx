@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Calendar, ChevronRight, Newspaper } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useDbArticles } from "@/hooks/useArticlesData";
 
 interface Props {
@@ -20,7 +20,7 @@ export function LatestNewsSection({ entityName, entityType, entitySlug }: Props)
 
   useEffect(() => {
     if (!entitySlug) return;
-    (supabase as any)
+    (backendClient as any)
       .from("article_links")
       .select("article_id")
       .eq("entity_type", entityType)

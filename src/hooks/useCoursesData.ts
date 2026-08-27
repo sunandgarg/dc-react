@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
 
@@ -72,7 +72,7 @@ export function useDbCourses() {
   return useQuery({
     queryKey: ["db-courses"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("courses")
         .select("*")
         .eq("is_active", true)
@@ -91,7 +91,7 @@ export function useHomepageCategoryCourses(category: string) {
     queryKey: ["homepage-category-courses", category],
     queryFn: async () => {
       const categoryPattern = `%${category}%`;
-      const selectedBase = () => supabase
+      const selectedBase = () => backendClient
         .from("courses")
         .select(HOMEPAGE_EXPLORE_COURSE_SELECT)
         .eq("is_active", true)
@@ -119,7 +119,7 @@ export function useHomepageCategoryCourses(category: string) {
           .slice(0, 5);
       }
 
-      const fallbackBase = () => supabase
+      const fallbackBase = () => backendClient
         .from("courses")
         .select(HOMEPAGE_FALLBACK_COURSE_SELECT)
         .eq("is_active", true)
@@ -143,7 +143,7 @@ export function useHomepageCategoryCourses(category: string) {
         .slice(0, 5);
       if (categoryRows.length > 0) return categoryRows;
 
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("courses")
         .select(HOMEPAGE_FALLBACK_COURSE_SELECT)
         .eq("is_active", true)
@@ -162,7 +162,7 @@ export function useAllDbCourses() {
   return useQuery({
     queryKey: ["db-courses-all"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("courses")
         .select("*")
         .order("priority", { ascending: true, nullsFirst: false })
@@ -184,10 +184,10 @@ export function useDbCourse(slugOrSlugId: string | undefined) {
       const id = m ? Number(m[2]) : null;
       const slug = m ? m[1] : slugOrSlugId;
       if (id) {
-        const { data } = await supabase.from("courses").select("*").eq("short_id", id).maybeSingle();
+        const { data } = await backendClient.from("courses").select("*").eq("short_id", id).maybeSingle();
         if (data) return data as DbCourse;
       }
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("courses")
         .select("*")
         .eq("slug", slug)
@@ -208,14 +208,14 @@ export function useSaveCourse() {
       if (course.id) {
         const { id, created_at, updated_at, ...rest } = course;
         delete rest.short_id;
-        const response = await supabase.from("courses").update(rest).eq("id", id);
+        const response = await backendClient.from("courses").update(rest).eq("id", id);
         const { error } = response;
         if (error) throw error;
         pendingReview = isPendingReview(response);
       } else {
         const { id, created_at, updated_at, ...rest } = course;
         delete rest.short_id;
-        const response = await supabase.from("courses").insert(rest);
+        const response = await backendClient.from("courses").insert(rest);
         const { error } = response;
         if (error) throw error;
         pendingReview = isPendingReview(response);
@@ -235,7 +235,7 @@ export function useDeleteCourse() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("courses").delete().eq("id", id);
+      const { error } = await backendClient.from("courses").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

@@ -1,1 +1,0 @@
-ALTER TABLE public.colleges ADD COLUMN IF NOT EXISTS admission_deadline timestamptz;

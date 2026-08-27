@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { indianStates, citiesByState, priorityStates } from "@/data/indianLocations";
 
 // Keep priority states (Delhi NCR, Haryana, UP, ...) at the top, the rest alphabetical.
@@ -25,7 +25,7 @@ export function useStatesAndCities() {
   return useQuery({
     queryKey: ["states-cities"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("states_cities")
         .select("state, city")
         .eq("is_active", true)

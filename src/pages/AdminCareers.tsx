@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +36,7 @@ export default function AdminCareers() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("career_profiles").select("*").order("display_order");
+    const { data } = await backendClient.from("career_profiles").select("*").order("display_order");
     setItems(data || []); setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -61,14 +61,14 @@ export default function AdminCareers() {
     };
     const { id, ...rest } = payload;
     const { error } = id
-      ? await supabase.from("career_profiles").update(rest).eq("id", id)
-      : await supabase.from("career_profiles").insert(rest);
+      ? await backendClient.from("career_profiles").update(rest).eq("id", id)
+      : await backendClient.from("career_profiles").insert(rest);
     if (error) return toast.error(error.message);
 
     // Sync career_course_links so courses surface this career under "Career Paths"
     try {
       const desired: string[] = payload.related_courses || [];
-      const { data: existing } = await (supabase as any)
+      const { data: existing } = await (backendClient as any)
         .from("career_course_links")
         .select("id, course_slug")
         .eq("career_slug", payload.slug);
@@ -76,12 +76,12 @@ export default function AdminCareers() {
       const toAdd = desired.filter((s) => s && !existingSlugs.has(s));
       const toRemove = (existing || []).filter((r: any) => !desired.includes(r.course_slug));
       if (toAdd.length) {
-        await (supabase as any).from("career_course_links").insert(
+        await (backendClient as any).from("career_course_links").insert(
           toAdd.map((course_slug) => ({ career_slug: payload.slug, course_slug }))
         );
       }
       if (toRemove.length) {
-        await (supabase as any).from("career_course_links").delete().in("id", toRemove.map((r: any) => r.id));
+        await (backendClient as any).from("career_course_links").delete().in("id", toRemove.map((r: any) => r.id));
       }
     } catch (e: any) {
       console.warn("career_course_links sync failed", e?.message);
@@ -92,7 +92,7 @@ export default function AdminCareers() {
 
   const remove = async (id: string) => {
     if (!confirm("Delete?")) return;
-    await supabase.from("career_profiles").delete().eq("id", id);
+    await backendClient.from("career_profiles").delete().eq("id", id);
     toast.success("Deleted"); load();
   };
 

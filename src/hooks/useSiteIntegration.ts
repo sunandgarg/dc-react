@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { ensureBootstrap } from "@/lib/bootstrap";
 
 type Row = { key: string; value: string | null; enabled: boolean };
@@ -9,7 +9,7 @@ const ALL_KEY = ["site-integrations", "all"] as const;
 async function fetchAll(): Promise<Row[]> {
   const boot = await ensureBootstrap();
   if (boot?.site_integrations) return boot.site_integrations as Row[];
-  const { data } = await (supabase as any)
+  const { data } = await (backendClient as any)
     .from("site_integrations")
     .select("key,value,enabled");
   return (data ?? []) as Row[];

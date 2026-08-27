@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { useSiteIntegration, useSiteIntegrationEnabled } from "@/hooks/useSiteIntegration";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { UploadOrUrlField } from "@/components/UploadOrUrlField";
 
 import { CSVTools } from "@/components/CSVTools";
@@ -56,7 +56,7 @@ export default function AdminBanners() {
   };
 
   const updateSectionSetting = async (key: string, label: string, value: string, enabled = true) => {
-    const { error } = await (supabase as any).from("site_integrations").upsert({
+    const { error } = await (backendClient as any).from("site_integrations").upsert({
       key,
       label,
       category: "website",

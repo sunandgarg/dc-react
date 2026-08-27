@@ -1,6 +1,6 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Link } from "react-router-dom";
 import { Building2, Link2, Upload, Layers, Globe, Activity, History, Trash2, Zap, ArrowRight } from "lucide-react";
 
@@ -20,10 +20,10 @@ export default function AdminLeadPushHub() {
     queryKey: ["lp_hub_stats"],
     queryFn: async () => {
       const [u, today, ok, pend] = await Promise.all([
-        supabase.from("lp_universities" as any).select("id", { count: "exact", head: true }),
-        supabase.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
-        supabase.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).eq("status", "success"),
-        supabase.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).eq("status", "pending"),
+        backendClient.from("lp_universities" as any).select("id", { count: "exact", head: true }),
+        backendClient.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
+        backendClient.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).eq("status", "success"),
+        backendClient.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).eq("status", "pending"),
       ]);
       const okC = ok.count || 0;
       const todayC = today.count || 0;

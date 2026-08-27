@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 const STALE = 10 * 60 * 1000;
 
@@ -18,7 +18,7 @@ export function useAllResources() {
     queryKey: ["resources-browse-all"],
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_resources")
         .select(
           "id,title,description,resource_type,year,file_url,download_count,chapter_id,subject_id,study_subjects:subject_id(slug,name,class_num,board_slug,icon_emoji),study_chapters:chapter_id(slug,name,chapter_number)"
@@ -38,7 +38,7 @@ export function useDistinctSubjects() {
     queryKey: ["resources-distinct-subjects"],
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_subjects")
         .select("slug,name,class_num,board_slug,icon_emoji")
         .eq("is_active", true)

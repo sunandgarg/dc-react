@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,7 +39,7 @@ function BoardsTab() {
   const qc = useQueryClient();
   const { data: boards = [] } = useQuery({
     queryKey: ["admin-boards"],
-    queryFn: async () => (await supabase.from("study_boards").select("*").order("display_order")).data ?? [],
+    queryFn: async () => (await backendClient.from("study_boards").select("*").order("display_order")).data ?? [],
   });
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("📚");
@@ -47,18 +47,18 @@ function BoardsTab() {
 
   const add = async () => {
     if (!name) return toast.error("Name required");
-    const { error } = await supabase.from("study_boards").insert({ name, slug: slugify(name), icon_emoji: emoji, image_url: imageUrl } as any);
+    const { error } = await backendClient.from("study_boards").insert({ name, slug: slugify(name), icon_emoji: emoji, image_url: imageUrl } as any);
     if (error) return toast.error(error.message);
     toast.success("Added"); setName(""); setImageUrl(""); qc.invalidateQueries({ queryKey: ["admin-boards"] });
   };
   const updateImage = async (id: string, url: string) => {
-    const { error } = await (supabase as any).from("study_boards").update({ image_url: url }).eq("id", id);
+    const { error } = await (backendClient as any).from("study_boards").update({ image_url: url }).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Logo updated"); qc.invalidateQueries({ queryKey: ["admin-boards"] });
   };
   const del = async (id: string) => {
     if (!confirm("Delete board?")) return;
-    await supabase.from("study_boards").delete().eq("id", id);
+    await backendClient.from("study_boards").delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["admin-boards"] });
   };
 
@@ -98,16 +98,16 @@ function SubjectsTab() {
   const qc = useQueryClient();
   const [classNum, setClassNum] = useState(10);
   const [boardSlug, setBoardSlug] = useState("cbse");
-  const { data: boards = [] } = useQuery({ queryKey: ["admin-boards"], queryFn: async () => (await supabase.from("study_boards").select("*").order("display_order")).data ?? [] });
+  const { data: boards = [] } = useQuery({ queryKey: ["admin-boards"], queryFn: async () => (await backendClient.from("study_boards").select("*").order("display_order")).data ?? [] });
   const { data: subjects = [] } = useQuery({
     queryKey: ["admin-subjects", classNum, boardSlug],
-    queryFn: async () => (await supabase.from("study_subjects").select("*").eq("class_num", classNum).eq("board_slug", boardSlug).order("display_order")).data ?? [],
+    queryFn: async () => (await backendClient.from("study_subjects").select("*").eq("class_num", classNum).eq("board_slug", boardSlug).order("display_order")).data ?? [],
   });
   const [form, setForm] = useState<{ name: string; emoji: string; description: string; author_id: string | null }>({ name: "", emoji: "📖", description: "", author_id: null });
 
   const add = async () => {
     if (!form.name) return toast.error("Name required");
-    const { error } = await supabase.from("study_subjects").insert({
+    const { error } = await backendClient.from("study_subjects").insert({
       class_num: classNum, board_slug: boardSlug, name: form.name, slug: slugify(form.name),
       icon_emoji: form.emoji, description: form.description, author_id: form.author_id,
     } as any);
@@ -117,7 +117,7 @@ function SubjectsTab() {
   };
   const del = async (id: string) => {
     if (!confirm("Delete subject (and its chapters/resources)?")) return;
-    await supabase.from("study_subjects").delete().eq("id", id);
+    await backendClient.from("study_subjects").delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["admin-subjects"] });
   };
 
@@ -160,22 +160,22 @@ function ChaptersTab() {
   const [classNum, setClassNum] = useState(10);
   const [boardSlug, setBoardSlug] = useState("cbse");
   const [subjectId, setSubjectId] = useState("");
-  const { data: boards = [] } = useQuery({ queryKey: ["admin-boards"], queryFn: async () => (await supabase.from("study_boards").select("*").order("display_order")).data ?? [] });
+  const { data: boards = [] } = useQuery({ queryKey: ["admin-boards"], queryFn: async () => (await backendClient.from("study_boards").select("*").order("display_order")).data ?? [] });
   const { data: subjects = [] } = useQuery({
     queryKey: ["admin-subjects", classNum, boardSlug],
-    queryFn: async () => (await supabase.from("study_subjects").select("*").eq("class_num", classNum).eq("board_slug", boardSlug).order("display_order")).data ?? [],
+    queryFn: async () => (await backendClient.from("study_subjects").select("*").eq("class_num", classNum).eq("board_slug", boardSlug).order("display_order")).data ?? [],
   });
   const { data: chapters = [] } = useQuery({
     queryKey: ["admin-chapters", subjectId],
     enabled: !!subjectId,
-    queryFn: async () => (await supabase.from("study_chapters").select("*").eq("subject_id", subjectId).order("chapter_number")).data ?? [],
+    queryFn: async () => (await backendClient.from("study_chapters").select("*").eq("subject_id", subjectId).order("chapter_number")).data ?? [],
   });
   const [form, setForm] = useState({ name: "", num: 1 });
 
   const add = async () => {
     if (!subjectId) return toast.error("Pick a subject");
     if (!form.name) return toast.error("Chapter name required");
-    const { error } = await supabase.from("study_chapters").insert({
+    const { error } = await backendClient.from("study_chapters").insert({
       subject_id: subjectId, name: form.name, slug: slugify(form.name), chapter_number: form.num,
     });
     if (error) return toast.error(error.message);
@@ -184,7 +184,7 @@ function ChaptersTab() {
   };
   const del = async (id: string) => {
     if (!confirm("Delete chapter?")) return;
-    await supabase.from("study_chapters").delete().eq("id", id);
+    await backendClient.from("study_chapters").delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["admin-chapters", subjectId] });
   };
 
@@ -231,20 +231,20 @@ function ResourcesTab() {
   const [boardSlug, setBoardSlug] = useState("cbse");
   const [subjectId, setSubjectId] = useState("");
   const [chapterId, setChapterId] = useState(""); // empty = subject-level (combined pack)
-  const { data: boards = [] } = useQuery({ queryKey: ["admin-boards"], queryFn: async () => (await supabase.from("study_boards").select("*").order("display_order")).data ?? [] });
+  const { data: boards = [] } = useQuery({ queryKey: ["admin-boards"], queryFn: async () => (await backendClient.from("study_boards").select("*").order("display_order")).data ?? [] });
   const { data: subjects = [] } = useQuery({
     queryKey: ["admin-subjects", classNum, boardSlug],
-    queryFn: async () => (await supabase.from("study_subjects").select("*").eq("class_num", classNum).eq("board_slug", boardSlug).order("display_order")).data ?? [],
+    queryFn: async () => (await backendClient.from("study_subjects").select("*").eq("class_num", classNum).eq("board_slug", boardSlug).order("display_order")).data ?? [],
   });
   const { data: chapters = [] } = useQuery({
     queryKey: ["admin-chapters", subjectId], enabled: !!subjectId,
-    queryFn: async () => (await supabase.from("study_chapters").select("*").eq("subject_id", subjectId).order("chapter_number")).data ?? [],
+    queryFn: async () => (await backendClient.from("study_chapters").select("*").eq("subject_id", subjectId).order("chapter_number")).data ?? [],
   });
   const { data: resources = [] } = useQuery({
     queryKey: ["admin-resources", subjectId, chapterId],
     enabled: !!subjectId,
     queryFn: async () => {
-      let q = supabase.from("study_resources").select("*").eq("subject_id", subjectId);
+      let q = backendClient.from("study_resources").select("*").eq("subject_id", subjectId);
       if (chapterId) q = q.eq("chapter_id", chapterId);
       else q = q.is("chapter_id", null);
       return (await q.order("year", { ascending: false })).data ?? [];
@@ -258,7 +258,7 @@ function ResourcesTab() {
     if (!form.title) return toast.error("Title required");
     if (!form.file_url && !form.content_html && form.content_images.length === 0)
       return toast.error("Add at least a PDF, some text, or an image");
-    const { error } = await supabase.from("study_resources").insert({
+    const { error } = await backendClient.from("study_resources").insert({
       subject_id: subjectId,
       chapter_id: chapterId || null,
       resource_type: form.resource_type,
@@ -274,7 +274,7 @@ function ResourcesTab() {
   };
   const del = async (id: string) => {
     if (!confirm("Delete resource?")) return;
-    await supabase.from("study_resources").delete().eq("id", id);
+    await backendClient.from("study_resources").delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["admin-resources"] });
   };
 

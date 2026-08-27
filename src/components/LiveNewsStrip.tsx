@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Newspaper } from "lucide-react";
 
 function shortTitle(title: string) {
@@ -20,7 +20,7 @@ export function LiveNewsStrip() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("articles")
         .select("id,slug,title")
         .eq("status", "Published")

@@ -61,6 +61,10 @@ async function serveAsset(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.hostname === "www.dekhocampus.com") {
+      url.hostname = "dekhocampus.com";
+      return Response.redirect(url.toString(), 308);
+    }
     try {
       return isApiRequest(url.pathname) ? await proxyToApi(request) : await serveAsset(request, env);
     } catch (error) {

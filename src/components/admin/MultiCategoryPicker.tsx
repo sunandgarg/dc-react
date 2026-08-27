@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Check } from "lucide-react";
 
 interface Props {
@@ -20,7 +20,7 @@ export function MultiCategoryPicker({ value, onChange, primary, label = "Additio
     queryKey: ["stream_categories_active"],
     staleTime: 10 * 60 * 1000,
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("stream_categories")
         .select("slug,label,emoji,display_order,is_active")
         .eq("is_active", true)

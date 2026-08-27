@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useToast } from "@/hooks/use-toast";
 
 const TIME_OPTIONS = [
@@ -40,7 +40,7 @@ function PurgeUniversityCacheViewInner({ universities }: Props) {
     async (days: number) => {
       setPurging("running");
       try {
-        const { data, error } = await supabase.functions.invoke("purge-university-cache", {
+        const { data, error } = await backendClient.functions.invoke("purge-university-cache", {
           body: { university_id: selectedUni, days },
         });
         if (error) throw error;

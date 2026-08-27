@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { X, Send, User, Mail, Phone, MapPin, BookOpen, Tag, Loader2, CheckCircle2, XCircle, AlertTriangle, Settings2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { columnMappingToPayloadFields } from '@/components/universities/PayloadFieldsEditor';
 
 interface CustomColumn {
@@ -301,7 +301,7 @@ export function SingleLeadForm({ university, onClose, onSuccess }: SingleLeadFor
 
     try {
       // Create a single-lead batch
-      const { data: batch, error: batchError } = await supabase
+      const { data: batch, error: batchError } = await backendClient
         .from('upload_batches')
         .insert({
           university_id: university.id,
@@ -336,7 +336,7 @@ export function SingleLeadForm({ university, onClose, onSuccess }: SingleLeadFor
       });
 
       // Process lead directly. Lead Push does not store individual lead rows.
-      const { data: processResult, error: processError } = await supabase.functions.invoke('process-lead', {
+      const { data: processResult, error: processError } = await backendClient.functions.invoke('process-lead', {
         body: {
           universityId: university.id,
           batchId: batch.id,
@@ -361,7 +361,7 @@ export function SingleLeadForm({ university, onClose, onSuccess }: SingleLeadFor
       const normalizedResponse = normalizeSingleLeadResponse(processResult?.response);
       const isSuccess = normalizedStatus === 'Success';
       const isDuplicate = normalizedStatus === 'Duplicate';
-      await supabase
+      await backendClient
         .from('upload_batches')
         .update({ 
           status: 'completed',

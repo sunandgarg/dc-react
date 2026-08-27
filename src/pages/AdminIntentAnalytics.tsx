@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,7 @@ export default function AdminIntentAnalytics() {
     (async () => {
       setLoading(true);
       const agg = async (filter: Record<string, string>, field: string): Promise<Row[]> => {
-        let q: any = supabase.from("intent_events").select(field).not(field, "is", null).limit(5000);
+        let q: any = backendClient.from("intent_events").select(field).not(field, "is", null).limit(5000);
         for (const [k, v] of Object.entries(filter)) q = q.eq(k, v);
         const { data } = await q;
         const map = new Map<string, number>();
@@ -30,7 +30,7 @@ export default function AdminIntentAnalytics() {
       };
 
       const aggScore = async (col: string): Promise<Row[]> => {
-        const { data } = await supabase.from("intent_lead_scores").select(col)
+        const { data } = await backendClient.from("intent_lead_scores").select(col)
           .gte("score", 71).not(col, "is", null).limit(5000);
         const map = new Map<string, number>();
         for (const r of (data as any[]) || []) {
@@ -47,7 +47,7 @@ export default function AdminIntentAnalytics() {
         aggScore("top_course_slug"),
         agg({ event_type: "fee_viewed" }, "college_slug"),
         (async () => {
-          const { data } = await supabase.from("intent_lead_scores").select("top_college_slug")
+          const { data } = await backendClient.from("intent_lead_scores").select("top_college_slug")
             .eq("category", "admission_ready").not("top_college_slug", "is", null).limit(2000);
           const map = new Map<string, number>();
           for (const r of (data as any[]) || []) {

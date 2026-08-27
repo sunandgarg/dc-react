@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { functionUrl } from "@/lib/backendMode";
 
 const SEND_OTP_URL = functionUrl("send-otp");
@@ -26,7 +26,7 @@ export async function requestPhoneOtp(phoneDigits: string, action: "send" | "res
 }
 
 export async function exchangePhoneOtpForSession(phoneDigits: string, verifiedOtp: string) {
-  const { data, error } = await supabase.functions.invoke("phone-auth", {
+  const { data, error } = await backendClient.functions.invoke("phone-auth", {
     body: { phone: `+91${phoneDigits}`, otp: verifiedOtp },
   });
 
@@ -35,7 +35,7 @@ export async function exchangePhoneOtpForSession(phoneDigits: string, verifiedOt
   }
 
   if (data?.session?.access_token && data?.session?.refresh_token) {
-    const { error: sessionError } = await supabase.auth.setSession({
+    const { error: sessionError } = await backendClient.auth.setSession({
       access_token: data.session.access_token,
       refresh_token: data.session.refresh_token,
     });
@@ -47,7 +47,7 @@ export async function exchangePhoneOtpForSession(phoneDigits: string, verifiedOt
     throw new Error("Could not start secure phone login.");
   }
 
-  const { error: verifyError } = await supabase.auth.verifyOtp({
+  const { error: verifyError } = await backendClient.auth.verifyOtp({
     token_hash: data.token_hash,
     type: (data.type || "magiclink") as any,
   });

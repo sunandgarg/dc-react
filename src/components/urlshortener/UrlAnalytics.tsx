@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend } from 'recharts';
 import { TrendingUp, MousePointer2, Link2, Users, Globe, Monitor, Smartphone, Tablet } from 'lucide-react';
@@ -31,7 +31,7 @@ export const UrlAnalytics = memo(function UrlAnalytics() {
 
       try {
         // Fetch URL stats
-        const { data: urlsData } = await (supabase as any)
+        const { data: urlsData } = await (backendClient as any)
           .from('url_mappings')
           .select('id, clicks, is_active, created_at');
 
@@ -47,7 +47,7 @@ export const UrlAnalytics = memo(function UrlAnalytics() {
         
         // Fetch titles for top URLs
         const topIds = topPerformers.map(u => u.id);
-        const { data: urlDetails } = await (supabase as any)
+        const { data: urlDetails } = await (backendClient as any)
           .from('url_mappings')
           .select('id, short_code, title, clicks')
           .in('id', topIds);
@@ -55,7 +55,7 @@ export const UrlAnalytics = memo(function UrlAnalytics() {
         setTopUrls(urlDetails || []);
 
         // Fetch click analytics
-        const { data: clicks } = await (supabase as any)
+        const { data: clicks } = await (backendClient as any)
           .from('url_clicks')
           .select('clicked_at, device_type, country')
           .gte('clicked_at', startDate.toISOString());

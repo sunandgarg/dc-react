@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Landmark, ArrowRight, ShieldCheck, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { buildCollegeHref } from "@/lib/entityUrls";
 import type { DbCollege } from "@/hooks/useCollegesData";
 
@@ -84,7 +84,7 @@ export function CollegeAffiliationCard({ college }: Props) {
     queryKey: ["college-parent-university", parentSlug],
     queryFn: async () => {
       if (!parentSlug) return null;
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("colleges")
         .select("slug, name, short_name, city, state, logo, image, naac_grade, type, short_id")
         .eq("slug", parentSlug)
@@ -99,7 +99,7 @@ export function CollegeAffiliationCard({ college }: Props) {
   const { data: children } = useQuery({
     queryKey: ["university-affiliated-colleges", college.slug],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("colleges")
         .select("slug, name, short_name, city, state, logo, image, short_id")
         .eq("parent_university_slug", college.slug)

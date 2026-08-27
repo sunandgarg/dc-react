@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Save, Search, X } from "lucide-react";
@@ -31,7 +31,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   const reload = async () => {
     if (!collegeSlug) return;
     setLoading(true);
-    const { data } = await (supabase as any).from("course_fees").select("*").eq("college_slug", collegeSlug).order("course_name");
+    const { data } = await (backendClient as any).from("course_fees").select("*").eq("college_slug", collegeSlug).order("course_name");
     setRows(data || []);
     setLoading(false);
     qc.invalidateQueries({ queryKey: ["college_fees", collegeSlug] });
@@ -40,7 +40,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   useEffect(() => { reload(); }, [collegeSlug]);
 
   useEffect(() => {
-    (supabase as any).from("courses").select("slug,name,full_name,category").eq("is_active", true).order("name").limit(500).then(({ data }: any) => setCourses(data || []));
+    (backendClient as any).from("courses").select("slug,name,full_name,category").eq("is_active", true).order("name").limit(500).then(({ data }: any) => setCourses(data || []));
   }, []);
 
   const matches = useMemo(() => {
@@ -83,8 +83,8 @@ export function CourseFeePicker({ collegeSlug }: Props) {
     if (!draft.course_slug) draft.course_slug = draft.course_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     const payload: any = { ...draft, fee_amount: Number(draft.fee_amount) };
     const response = draft.id
-      ? await (supabase as any).from("course_fees").update(payload).eq("id", draft.id)
-      : await (supabase as any).from("course_fees").insert(payload);
+      ? await (backendClient as any).from("course_fees").update(payload).eq("id", draft.id)
+      : await (backendClient as any).from("course_fees").insert(payload);
     const { error } = response;
     if (error) { toast.error(error.message); return; }
     toast.success(isPendingReview(response) ? "Course fee draft submitted for admin review." : "Saved");
@@ -94,7 +94,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
 
   const remove = async (id?: string) => {
     if (!id || !confirm("Delete this fee row?")) return;
-    const { error } = await (supabase as any).from("course_fees").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("course_fees").delete().eq("id", id);
     if (error) toast.error(error.message); else { toast.success("Deleted"); reload(); }
   };
 

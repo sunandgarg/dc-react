@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Calendar, ChevronRight } from "lucide-react";
 import { useDbArticles } from "@/hooks/useArticlesData";
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 interface WhatsNewSectionProps {
   entityName: string;
@@ -17,7 +17,7 @@ export function WhatsNewSection({ entityName, entityType, entitySlug, category }
 
   useEffect(() => {
     if (!entitySlug) return;
-    (supabase as any)
+    (backendClient as any)
       .from("article_links")
       .select("article_id")
       .eq("entity_type", entityType)

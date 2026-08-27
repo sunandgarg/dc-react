@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -39,7 +39,7 @@ export default function AdminLogs() {
 
   const load = async (silent = false) => {
     if (!silent) setLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await backendClient
       .from("system_logs")
       .select("*")
       .order("created_at", { ascending: false })
@@ -74,7 +74,7 @@ export default function AdminLogs() {
 
   const clearAll = async () => {
     if (!confirm("Delete ALL system logs? This cannot be undone.")) return;
-    const { error } = await supabase.from("system_logs").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    const { error } = await backendClient.from("system_logs").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     if (error) toast.error(error.message);
     else { toast.success("Logs cleared"); load(); }
   };

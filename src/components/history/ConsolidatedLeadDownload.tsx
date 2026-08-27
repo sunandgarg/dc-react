@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
@@ -35,7 +35,7 @@ export function ConsolidatedLeadDownload({ universities }: ConsolidatedLeadDownl
     if (!selectedUniversity) return;
 
     try {
-      let query = supabase
+      let query = backendClient
         .from('upload_batches')
         .select('total_leads, success_count, fail_count, duplicate_count')
         .eq('university_id', selectedUniversity);
@@ -65,7 +65,7 @@ export function ConsolidatedLeadDownload({ universities }: ConsolidatedLeadDownl
 
     setLoading(true);
     try {
-      let query = supabase
+      let query = backendClient
         .from('upload_batches')
         .select('id, file_name, total_leads, success_count, fail_count, duplicate_count, status, created_at, completed_at')
         .eq('university_id', selectedUniversity)

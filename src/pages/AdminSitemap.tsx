@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -57,7 +57,7 @@ function sitemapIndexXml(origin: string, totalUrls: number) {
 async function fetchAllRows(table: string, select: string, configure?: (query: any) => any, optional = false) {
   const rows: any[] = [];
   for (let from = 0; ; from += PAGE_SIZE) {
-    let query = supabase.from(table as any).select(select);
+    let query = backendClient.from(table as any).select(select);
     if (configure) query = configure(query);
     const { data, error } = await query.range(from, from + PAGE_SIZE - 1);
     if (error) {
@@ -225,7 +225,7 @@ export default function AdminSitemap() {
           ? `Built a sitemap index preview for ${unique.length.toLocaleString()} URLs across ${sitemapCount} chunk file(s). The production build writes sitemap.xml plus sitemap-1.xml, sitemap-2.xml, etc.`
           : `Built a full sitemap preview with ${unique.length.toLocaleString()} URLs.`,
       );
-      const { data, error } = await supabase.functions.invoke("publish-sitemap", {
+      const { data, error } = await backendClient.functions.invoke("publish-sitemap", {
         body: { target: "https://dekhocampus.com" },
       });
       if (error) throw error;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Loader2, ShieldCheck, WandSparkles } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 
 type SupportedEntity = "colleges" | "courses" | "exams";
@@ -20,7 +20,7 @@ export function OfficialDataFillButton({ entityType, record, onApply }: Official
     if (!name) return toast.error("Enter the name first");
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("admin-data-cleaner", {
+      const { data, error } = await backendClient.functions.invoke("admin-data-cleaner", {
         body: { action: "enrich_draft", entity_type: entityType, record },
       });
       if (error) {

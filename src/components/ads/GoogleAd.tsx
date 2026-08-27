@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useAdsenseSettings, useAdUnits, useAdsAllowed, pickAdUnit } from "@/hooks/useAdsense";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 interface GoogleAdProps {
   placement: string; // homepage | article | sidebar | footer | header | search | study | course | custom
@@ -40,7 +40,7 @@ export function GoogleAd({ placement, position, pageKey, className = "", style }
       // Impression event
       try {
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
-        (supabase as any)
+        (backendClient as any)
           .from("ad_analytics_events")
           .insert({
             ad_unit_id: unit.id,
@@ -80,7 +80,7 @@ export function GoogleAd({ placement, position, pageKey, className = "", style }
   const trackClick = () => {
     try {
       const isMobile = window.matchMedia("(max-width: 768px)").matches;
-      (supabase as any)
+      (backendClient as any)
         .from("ad_analytics_events")
         .insert({
           ad_unit_id: unit.id,

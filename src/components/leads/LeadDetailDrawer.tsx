@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Phone, Mail, MessageCircle, Copy, MapPin, Calendar, Tag, ExternalLink, Sparkles, StickyNote, ActivitySquare, Send, User, Loader2 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { leadConsentLabel } from "@/lib/leadConsent";
@@ -40,7 +40,7 @@ export function LeadDetailDrawer({ lead, onClose, onChanged }: { lead: any | nul
     if (!lead?.id) { setNotes([]); return; }
     setLoading(true);
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("lead_notes")
         .select("*")
         .eq("lead_id", lead.id)
@@ -55,8 +55,8 @@ export function LeadDetailDrawer({ lead, onClose, onChanged }: { lead: any | nul
   const sb = statusBadge(status);
 
   const log = async (kind: string, body: string, meta: any = {}) => {
-    await (supabase as any).from("lead_notes").insert({ lead_id: lead.id, author_id: user?.id ?? null, kind, body, meta });
-    const { data } = await (supabase as any).from("lead_notes").select("*").eq("lead_id", lead.id).order("created_at", { ascending: false });
+    await (backendClient as any).from("lead_notes").insert({ lead_id: lead.id, author_id: user?.id ?? null, kind, body, meta });
+    const { data } = await (backendClient as any).from("lead_notes").select("*").eq("lead_id", lead.id).order("created_at", { ascending: false });
     setNotes((data as Note[]) || []);
   };
 
@@ -69,7 +69,7 @@ export function LeadDetailDrawer({ lead, onClose, onChanged }: { lead: any | nul
 
   const changeStatus = async (next: string) => {
     setStatus(next);
-    const { error } = await (supabase as any).from("leads").update({ status: next }).eq("id", lead.id);
+    const { error } = await (backendClient as any).from("leads").update({ status: next }).eq("id", lead.id);
     if (error) { toast.error("Could not update status"); return; }
     await log("status_change", `Status → ${LEAD_STATUSES.find((s) => s.value === next)?.label || next}`, { from: lead.status, to: next });
     toast.success("Status updated");

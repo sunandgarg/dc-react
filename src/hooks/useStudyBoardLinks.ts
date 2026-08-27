@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 const STALE = 10 * 60 * 1000;
 
@@ -9,7 +9,7 @@ export function useStudyBoardLinks(classNum?: number, boardSlug?: string) {
     enabled: !!classNum && !!boardSlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("study_board_links" as any)
         .select("*")
         .eq("class_num", classNum!)

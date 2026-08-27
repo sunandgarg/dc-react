@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { RefreshCw, Clock, Zap, Save, ExternalLink, KeyRound, Lock, Gauge } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 
@@ -57,7 +57,7 @@ export function UniversityInfoPanel({ university, onRateLimitUpdate }: Universit
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("universities")
         .select("daily_lead_limit, daily_pushed_count, daily_count_reset_at")
         .eq("id", university.id)
@@ -95,7 +95,7 @@ export function UniversityInfoPanel({ university, onRateLimitUpdate }: Universit
         return;
       }
 
-      const { data } = await supabase.from('app_settings').select('value').eq('key', 'rate_limit_config').maybeSingle();
+      const { data } = await backendClient.from('app_settings').select('value').eq('key', 'rate_limit_config').maybeSingle();
       if (cancelled) return;
       let config: RateLimitConfig | null = null;
       if (data?.value) {
@@ -122,7 +122,7 @@ export function UniversityInfoPanel({ university, onRateLimitUpdate }: Universit
     if (isLocked) return;
     setIsSaving(true);
     try {
-      const { error } = await supabase
+      const { error } = await backendClient
         .from("universities")
         .update({ leads_per_minute: leadsPerMinute })
         .eq("id", university.id);
@@ -142,7 +142,7 @@ export function UniversityInfoPanel({ university, onRateLimitUpdate }: Universit
     try {
       const trimmed = dllInput.trim();
       const newLimit = trimmed === "" ? null : Math.max(0, parseInt(trimmed, 10) || 0);
-      const { error } = await supabase
+      const { error } = await backendClient
         .from("universities")
         .update({ daily_lead_limit: newLimit })
         .eq("id", university.id);

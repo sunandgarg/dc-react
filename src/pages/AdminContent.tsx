@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +47,7 @@ function FAQManager() {
   const { data: faqs, isLoading } = useQuery({
     queryKey: ["admin-faqs"],
     queryFn: async () => {
-      const { data } = await supabase.from("faqs").select("*").order("display_order");
+      const { data } = await backendClient.from("faqs").select("*").order("display_order");
       return data ?? [];
     },
   });
@@ -75,10 +75,10 @@ function FAQManager() {
       item_slug: form.item_slug.trim() || null,
     };
     if (editId) {
-      await supabase.from("faqs").update(payload).eq("id", editId);
+      await backendClient.from("faqs").update(payload).eq("id", editId);
       toast({ title: "✅ FAQ updated" });
     } else {
-      await supabase.from("faqs").insert(payload);
+      await backendClient.from("faqs").insert(payload);
       toast({ title: "✅ FAQ created" });
     }
     queryClient.invalidateQueries({ queryKey: ["admin-faqs"] });
@@ -88,7 +88,7 @@ function FAQManager() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this FAQ?")) return;
-    await supabase.from("faqs").delete().eq("id", id);
+    await backendClient.from("faqs").delete().eq("id", id);
     queryClient.invalidateQueries({ queryKey: ["admin-faqs"] });
     queryClient.invalidateQueries({ queryKey: ["faqs"] });
     toast({ title: "🗑️ FAQ deleted" });
@@ -208,7 +208,7 @@ function PlacesManager() {
   const { data: places } = useQuery({
     queryKey: ["admin-places"],
     queryFn: async () => {
-      const { data } = await supabase.from("popular_places").select("*").order("display_order");
+      const { data } = await backendClient.from("popular_places").select("*").order("display_order");
       return data ?? [];
     },
   });
@@ -235,10 +235,10 @@ function PlacesManager() {
       image_url: form.image_url.trim() || null,
     };
     if (editId) {
-      await supabase.from("popular_places").update(payload).eq("id", editId);
+      await backendClient.from("popular_places").update(payload).eq("id", editId);
       toast({ title: "✅ Place updated" });
     } else {
-      await supabase.from("popular_places").insert(payload);
+      await backendClient.from("popular_places").insert(payload);
       toast({ title: "✅ Place created" });
     }
     queryClient.invalidateQueries({ queryKey: ["admin-places"] });
@@ -248,7 +248,7 @@ function PlacesManager() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this place?")) return;
-    await supabase.from("popular_places").delete().eq("id", id);
+    await backendClient.from("popular_places").delete().eq("id", id);
     queryClient.invalidateQueries({ queryKey: ["admin-places"] });
     queryClient.invalidateQueries({ queryKey: ["popular-places"] });
     toast({ title: "🗑️ Place deleted" });

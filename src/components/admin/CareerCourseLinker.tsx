@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Plus, Trash2 } from "lucide-react";
@@ -19,13 +19,13 @@ export function CareerCourseLinker({ courseSlug }: Props) {
 
   const reload = async () => {
     if (!courseSlug) return;
-    const { data } = await (supabase as any).from("career_course_links").select("id,career_slug").eq("course_slug", courseSlug);
+    const { data } = await (backendClient as any).from("career_course_links").select("id,career_slug").eq("course_slug", courseSlug);
     setLinked(data || []);
   };
 
   useEffect(() => { reload(); }, [courseSlug]);
   useEffect(() => {
-    (supabase as any).from("career_profiles").select("slug,name,domain,icon_emoji").eq("is_active", true).order("name").then(({ data }: any) => setCareers(data || []));
+    (backendClient as any).from("career_profiles").select("slug,name,domain,icon_emoji").eq("is_active", true).order("name").then(({ data }: any) => setCareers(data || []));
   }, []);
 
   const linkedSlugs = useMemo(() => new Set(linked.map(l => l.career_slug)), [linked]);
@@ -37,12 +37,12 @@ export function CareerCourseLinker({ courseSlug }: Props) {
 
   const add = async (career: CareerLite) => {
     setSearch("");
-    const { error } = await (supabase as any).from("career_course_links").insert({ course_slug: courseSlug, career_slug: career.slug });
+    const { error } = await (backendClient as any).from("career_course_links").insert({ course_slug: courseSlug, career_slug: career.slug });
     if (error) toast.error(error.message); else { toast.success("Linked"); reload(); }
   };
 
   const remove = async (id: string) => {
-    const { error } = await (supabase as any).from("career_course_links").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("career_course_links").delete().eq("id", id);
     if (error) toast.error(error.message); else { toast.success("Unlinked"); reload(); }
   };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { functionUrl } from '@/lib/backendMode';
 import { Copy, Check, Key, RefreshCw, Eye, EyeOff, Code, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -23,7 +23,7 @@ export function UniversityApiPanel({ universityId, universityName }: UniversityA
 
   const fetchApiKey = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from('university_api_keys')
         .select('api_key')
         .eq('university_id', universityId)
@@ -34,7 +34,7 @@ export function UniversityApiPanel({ universityId, universityName }: UniversityA
       
       if (!data) {
         // Create new API key
-        const { data: newKey, error: createError } = await supabase
+        const { data: newKey, error: createError } = await backendClient
           .from('university_api_keys')
           .insert({ university_id: universityId, name: 'Default API Key' })
           .select('api_key')
@@ -58,13 +58,13 @@ export function UniversityApiPanel({ universityId, universityName }: UniversityA
     setRegenerating(true);
     try {
       // Deactivate old key
-      await supabase
+      await backendClient
         .from('university_api_keys')
         .update({ is_active: false })
         .eq('university_id', universityId);
 
       // Create new key
-      const { data: newKey, error } = await supabase
+      const { data: newKey, error } = await backendClient
         .from('university_api_keys')
         .insert({ university_id: universityId, name: 'Default API Key' })
         .select('api_key')

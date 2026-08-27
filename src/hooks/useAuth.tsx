@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback, useRef } from "react";
-import { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { Session, User } from "@/integrations/backend/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AppRole, can, canAccessModule, Module, Action } from "@/lib/rbac";
 
 interface AuthContextType {
@@ -36,8 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadRoles = useCallback(async (user: User) => {
     try {
       const [rolesRes, permsRes] = await Promise.all([
-        supabase.from("user_roles").select("role").eq("user_id", user.id),
-        (supabase as any)
+        backendClient.from("user_roles").select("role").eq("user_id", user.id),
+        (backendClient as any)
           .from("user_permissions")
           .select("module,action,allow,resource,can_view,can_create,can_edit,can_delete,can_publish")
           .eq("user_id", user.id),
@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription } } = backendClient.auth.onAuthStateChange(
       (event, newSession) => {
         setSession(newSession);
         if (newSession?.user) {
@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
     );
-    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
+    backendClient.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       setSession(initialSession);
       if (initialSession?.user) {
         await loadRoles(initialSession.user);
@@ -106,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await backendClient.auth.signOut();
     loadedUserId.current = null;
     setSession(null); setIsAdmin(false); setRoles([]);
   };

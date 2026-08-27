@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -17,7 +17,7 @@ export function useFavorites() {
     staleTime: 60_000,
     queryFn: async (): Promise<FavoriteRow[]> => {
       if (!user?.id) return [];
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("user_favorites")
         .select("id, college_slug, created_at")
         .eq("user_id", user.id)
@@ -35,7 +35,7 @@ export function useToggleFavorite() {
     mutationFn: async ({ collegeSlug, isFav }: { collegeSlug: string; isFav: boolean }) => {
       if (!user?.id) throw new Error("login_required");
       if (isFav) {
-        const { error } = await (supabase as any)
+        const { error } = await (backendClient as any)
           .from("user_favorites")
           .delete()
           .eq("user_id", user.id)
@@ -43,7 +43,7 @@ export function useToggleFavorite() {
         if (error) throw error;
         return { removed: true };
       } else {
-        const { error } = await (supabase as any)
+        const { error } = await (backendClient as any)
           .from("user_favorites")
           .insert({ user_id: user.id, college_slug: collegeSlug });
         if (error) throw error;

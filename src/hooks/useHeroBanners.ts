@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { ensureBootstrap, resetBootstrap } from "@/lib/bootstrap";
 
 export interface HeroBanner {
@@ -21,7 +21,7 @@ export function useHeroBanners() {
     queryFn: async () => {
       const boot = await ensureBootstrap();
       if (boot?.hero_banners) return boot.hero_banners as HeroBanner[];
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("hero_banners" as any)
         .select("*")
         .eq("is_active", true)
@@ -37,7 +37,7 @@ export function useAllHeroBanners() {
   return useQuery({
     queryKey: ["hero-banners-all"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("hero_banners" as any)
         .select("*")
         .order("display_order", { ascending: true });
@@ -52,13 +52,13 @@ export function useUpsertHeroBanner() {
   return useMutation({
     mutationFn: async (banner: Partial<HeroBanner> & { image_url: string }) => {
       if (banner.id) {
-        const { error } = await supabase
+        const { error } = await backendClient
           .from("hero_banners" as any)
           .update(banner as any)
           .eq("id", banner.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { error } = await backendClient
           .from("hero_banners" as any)
           .insert(banner as any);
         if (error) throw error;
@@ -76,7 +76,7 @@ export function useDeleteHeroBanner() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { error } = await backendClient
         .from("hero_banners" as any)
         .delete()
         .eq("id", id);

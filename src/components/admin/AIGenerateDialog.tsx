@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sparkles, Loader2, CheckCircle2, PlusCircle, RefreshCw, ShieldCheck, Cpu, Search, ImageIcon, Link2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { slugify } from "@/lib/slugify";
 
 type EntityType = "colleges" | "courses" | "exams" | "scholarships" | "careers" | "articles"
@@ -21,7 +21,7 @@ interface Props {
   label?: string;
 }
 
-/** Friendly model menu. Static fallbacks (Lovable AI Gateway) + any providers the
+/** Friendly model menu. Static fallbacks plus any providers the
  *  admin has saved keys for in Admin → AI Providers. When a provider with a key
  *  exists for ChatGPT / Claude / Grok / Gemini, that direct provider is used. */
 type ModelOption = { value: string; label: string; hint: string; tone: string };
@@ -83,10 +83,10 @@ export function AIGenerateDialog({ entityType, table, upsertKey = "slug", onDone
 
   useEffect(() => {
     if (!open) return;
-    (supabase as any).from("authors").select("id,name,designation").eq("is_active", true).order("display_order")
+    (backendClient as any).from("authors").select("id,name,designation").eq("is_active", true).order("display_order")
       .then(({ data }: any) => setAuthors(data || []));
     // Load saved provider keys → append direct-key options at the front
-    (supabase as any).from("ai_providers").select("provider_name,display_name,api_key_encrypted,default_model,icon_emoji")
+    (backendClient as any).from("ai_providers").select("provider_name,display_name,api_key_encrypted,default_model,icon_emoji")
       .then(({ data }: any) => {
         const live: ModelOption[] = (data || [])
           .filter((p: any) => p.api_key_encrypted && p.api_key_encrypted.length > 4)
@@ -125,7 +125,7 @@ export function AIGenerateDialog({ entityType, table, upsertKey = "slug", onDone
     }
     setBusy(true); setItems([]);
     try {
-      const { data, error } = await supabase.functions.invoke("admin-ai-generate", {
+      const { data, error } = await backendClient.functions.invoke("admin-ai-generate", {
         body: {
           entity_type: entityType,
           topic: topic.trim() || undefined,
@@ -186,7 +186,7 @@ export function AIGenerateDialog({ entityType, table, upsertKey = "slug", onDone
             status: articleRow.status === "published" ? "Published" : articleRow.status === "draft" ? "Draft" : articleRow.status || status,
             tags: Array.from(new Set([...(Array.isArray(articleRow.tags) ? articleRow.tags : []), automaticResearch ? "research-assisted" : "ai-assisted"])),
           };
-          const { data: article, error } = await (supabase as any)
+          const { data: article, error } = await (backendClient as any)
             .from(table)
             .upsert(normalized, { onConflict: upsertKey, ignoreDuplicates: false })
             .select("id")
@@ -196,7 +196,7 @@ export function AIGenerateDialog({ entityType, table, upsertKey = "slug", onDone
           const suggestions = Array.isArray(entity_suggestions) ? entity_suggestions : [];
           for (const suggestion of suggestions) {
             if (!suggestion?.entity_type || !suggestion?.entity_slug) continue;
-            await (supabase as any).from("article_links").upsert({
+            await (backendClient as any).from("article_links").upsert({
               article_id: article.id,
               entity_type: suggestion.entity_type,
               entity_slug: suggestion.entity_slug,
@@ -211,7 +211,7 @@ export function AIGenerateDialog({ entityType, table, upsertKey = "slug", onDone
       let written = 0;
       for (let i = 0; i < payload.length; i += chunk) {
         const batch = payload.slice(i, i + chunk);
-        const { error } = await (supabase as any).from(table).upsert(batch, { onConflict: upsertKey, ignoreDuplicates: false });
+        const { error } = await (backendClient as any).from(table).upsert(batch, { onConflict: upsertKey, ignoreDuplicates: false });
         if (error) throw error;
         written += batch.length;
       }

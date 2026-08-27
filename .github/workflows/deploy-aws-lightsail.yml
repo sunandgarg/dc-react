@@ -1,4 +1,4 @@
-name: Deploy AWS Lightsail production candidate
+name: Deploy AWS Lightsail production
 
 on:
   workflow_dispatch:
@@ -7,21 +7,6 @@ on:
         description: Email address for AWS budget alerts
         required: true
         type: string
-      migrate_database:
-        description: Copy the current DigitalOcean MySQL database (requires temporary allow-list change)
-        required: true
-        default: false
-        type: boolean
-      migrate_storage:
-        description: Copy Supabase Storage to private S3 and rewrite media URLs to object keys
-        required: true
-        default: false
-        type: boolean
-      resume_database_import:
-        description: Import an already staged database dump from the candidate instance
-        required: true
-        default: false
-        type: boolean
 
 permissions:
   contents: read
@@ -35,7 +20,6 @@ env:
   AWS_REGION: ap-south-1
   PROJECT_NAME: dc-react
   STACK_NAME: dc-react-lightsail-production
-  DO_DATABASE_NAME: dc-react-mysql
 
 jobs:
   verify-provision-migrate:
@@ -125,7 +109,7 @@ jobs:
               SshAllowedCidr="$RUNNER_IP/32" \
               EnableCloudFront='false' \
               InitialMediaBaseUrl='https://dekhocampus.com/storage/v1/object/public' \
-              CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com'
+              CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com'
           aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
             --query 'Stacks[0].Outputs' --output json > /tmp/stack-outputs.json
 
@@ -139,8 +123,6 @@ jobs:
       - name: Store runtime secrets in AWS Secrets Manager
         env:
           AUTH_JWT_SECRET: ${{ secrets.AUTH_JWT_SECRET }}
-          SUPABASE_STORAGE_URL: ${{ vars.SUPABASE_STORAGE_URL }}
-          SUPABASE_STORAGE_SERVICE_KEY: ${{ secrets.SUPABASE_STORAGE_SERVICE_KEY }}
           SMS_FAST2SMS_API_KEY: ${{ secrets.SMS_FAST2SMS_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -148,13 +130,11 @@ jobs:
         run: |
           jq -n \
             --arg authJwtSecret "$AUTH_JWT_SECRET" \
-            --arg supabaseStorageUrl "$SUPABASE_STORAGE_URL" \
-            --arg supabaseStorageServiceKey "$SUPABASE_STORAGE_SERVICE_KEY" \
             --arg smsFast2smsApiKey "$SMS_FAST2SMS_API_KEY" \
             --arg geminiApiKey "$GEMINI_API_KEY" \
             --arg openaiApiKey "$OPENAI_API_KEY" \
             --arg cloudflarePagesDeployHookUrl "$CLOUDFLARE_PAGES_DEPLOY_HOOK_URL" \
-            '{authJwtSecret:$authJwtSecret,supabaseStorageUrl:$supabaseStorageUrl,supabaseStorageServiceKey:$supabaseStorageServiceKey,smsFast2smsApiKey:$smsFast2smsApiKey,geminiApiKey:$geminiApiKey,openaiApiKey:$openaiApiKey,cloudflarePagesDeployHookUrl:$cloudflarePagesDeployHookUrl}' \
+            '{authJwtSecret:$authJwtSecret,smsFast2smsApiKey:$smsFast2smsApiKey,geminiApiKey:$geminiApiKey,openaiApiKey:$openaiApiKey,cloudflarePagesDeployHookUrl:$cloudflarePagesDeployHookUrl}' \
             > /tmp/runtime-secret.json
           aws secretsmanager put-secret-value \
             --secret-id "$PROJECT_NAME/lightsail/runtime" \
@@ -291,157 +271,8 @@ jobs:
           REMOTE
           rm -f /tmp/application-credentials.json
 
-      - name: Backup and copy DigitalOcean MySQL
-        if: ${{ inputs.migrate_database }}
-        env:
-          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-        run: |
-          DATABASES=$(curl --fail --silent --show-error -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" 'https://api.digitalocean.com/v2/databases?per_page=100')
-          DATABASE_ID=$(jq -r --arg name "$DO_DATABASE_NAME" '.databases[]? | select(.name == $name) | .id' <<<"$DATABASES" | head -1)
-          test -n "$DATABASE_ID"
-          curl --fail --silent --show-error -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" > /tmp/do-firewall.json
-          RUNNER_IP=$(curl --fail --silent --show-error https://checkip.amazonaws.com | tr -d '\n')
-          jq --arg ip "$RUNNER_IP" '{rules: ([.rules[]? | {type,value}] + [{type:"ip_addr",value:$ip}] | unique_by([.type,.value]))}' /tmp/do-firewall.json > /tmp/do-firewall-temp.json
-          curl --fail --silent --show-error -X PUT -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" -H 'Content-Type: application/json' --data-binary @/tmp/do-firewall-temp.json "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" >/dev/null
-          SOURCE_LOCK_PID=""
-          cleanup_source() {
-            if [ -n "$SOURCE_LOCK_PID" ] && kill -0 "$SOURCE_LOCK_PID" 2>/dev/null; then
-              kill "$SOURCE_LOCK_PID" 2>/dev/null || true
-              wait "$SOURCE_LOCK_PID" 2>/dev/null || true
-            fi
-            jq '{rules:[.rules[]? | {type,value}]}' /tmp/do-firewall.json >/tmp/do-firewall-restore.json
-            curl --fail --silent --show-error -X PUT -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" -H 'Content-Type: application/json' --data-binary @/tmp/do-firewall-restore.json "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" >/dev/null || true
-          }
-          trap cleanup_source EXIT
-          CONNECTION=$(curl --fail --silent --show-error -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" "https://api.digitalocean.com/v2/databases/$DATABASE_ID" | jq -c '.database.connection')
-          export MYSQL_PWD=$(jq -r .password <<<"$CONNECTION")
-          SOURCE_HOST=$(jq -r .host <<<"$CONNECTION")
-          SOURCE_PORT=$(jq -r .port <<<"$CONNECTION")
-          SOURCE_USER=$(jq -r .user <<<"$CONNECTION")
-          SOURCE_DB=$(jq -r .database <<<"$CONNECTION")
-          mysql --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
-            --batch --skip-column-names \
-            -e "SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '$SOURCE_DB' AND TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME" \
-            > /tmp/dc-react-source-tables.txt
-          : > /tmp/dc-react-source-counts.sql
-          while IFS= read -r table; do
-            test -n "$table"
-            printf "SELECT '%s', COUNT(*) FROM \`%s\`;\n" "$table" "$table" >> /tmp/dc-react-source-counts.sql
-          done < /tmp/dc-react-source-tables.txt
 
-          # Freeze writes only while taking the exact counts and matching dump.
-          mysql --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
-            --batch --skip-column-names --unbuffered "$SOURCE_DB" \
-            -e "FLUSH TABLES WITH READ LOCK; SELECT 'SOURCE_LOCKED'; SELECT SLEEP(1800);" \
-            > /tmp/dc-react-source-lock.log 2>&1 &
-          SOURCE_LOCK_PID=$!
-          for attempt in $(seq 1 60); do
-            grep -q '^SOURCE_LOCKED$' /tmp/dc-react-source-lock.log && break
-            if ! kill -0 "$SOURCE_LOCK_PID" 2>/dev/null; then
-              cat /tmp/dc-react-source-lock.log >&2
-              exit 1
-            fi
-            [ "$attempt" -eq 60 ] && { echo 'Timed out acquiring the DigitalOcean read lock.' >&2; exit 1; }
-            sleep 1
-          done
-          mysql --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
-            --batch --skip-column-names "$SOURCE_DB" \
-            < /tmp/dc-react-source-counts.sql > /tmp/dc-react-source-row-counts.tsv
-          test -s /tmp/dc-react-source-row-counts.tsv
-          refresh_lightsail_access() {
-            aws lightsail get-instance-access-details \
-              --instance-name "$INSTANCE_NAME" \
-              --protocol ssh \
-              --output json > /tmp/lightsail-access-refresh.json
-            jq -r '.accessDetails.privateKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey
-            jq -r '.accessDetails.certKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey-cert.pub
-            SSH_USER=$(jq -r '.accessDetails.username' /tmp/lightsail-access-refresh.json)
-            SSH_IP=$(jq -r '.accessDetails.ipAddress' /tmp/lightsail-access-refresh.json)
-            chmod 600 /tmp/tempkey
-            chmod 644 /tmp/tempkey-cert.pub
-            rm -f /tmp/lightsail-access-refresh.json
-          }
-          mysqldump --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
-            --single-transaction --skip-lock-tables --quick --routines --triggers --events --set-gtid-purged=OFF --no-tablespaces "$SOURCE_DB" \
-            | gzip -1 > /tmp/dc-react-mysql.sql.gz
-          kill "$SOURCE_LOCK_PID" 2>/dev/null || true
-          wait "$SOURCE_LOCK_PID" 2>/dev/null || true
-          SOURCE_LOCK_PID=""
-          refresh_lightsail_access
-          scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
-            /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv \
-            "$SSH_USER@$SSH_IP:/tmp/"
-          refresh_lightsail_access
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
-          set -euo pipefail
-          set -a
-          source /etc/dc-react.env
-          set +a
-          restart_api() {
-            cd /opt/dc-react/app/backend
-            pm2 start dc-react-api >/dev/null 2>&1 || pm2 start src/server.mjs --name dc-react-api >/dev/null
-            pm2 save >/dev/null
-          }
-          trap restart_api EXIT
-          aws s3 cp /tmp/dc-react-mysql.sql.gz \
-            "s3://$AWS_S3_BUCKET/backups/mysql/pre-lightsail-$(date -u +%Y%m%dT%H%M%SZ).sql.gz" \
-            --sse AES256
-          pm2 stop dc-react-api || true
-          gunzip -c /tmp/dc-react-mysql.sql.gz \
-            | sed -E 's/DEFINER=`[^`]*`@`[^`]*`[[:space:]]*//g' \
-            | MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" "$DB_NAME"
-          TABLES_VERIFIED=0
-          ROWS_VERIFIED=0
-          while IFS=$'\t' read -r TABLE EXPECTED; do
-            test -n "$TABLE"
-            ACTUAL=$(MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" \
-              --batch --skip-column-names "$DB_NAME" -e "SELECT COUNT(*) FROM \`$TABLE\`")
-            if [ "$ACTUAL" != "$EXPECTED" ]; then
-              echo "Database parity failed for $TABLE: DigitalOcean=$EXPECTED AWS=$ACTUAL" >&2
-              exit 1
-            fi
-            TABLES_VERIFIED=$((TABLES_VERIFIED + 1))
-            ROWS_VERIFIED=$((ROWS_VERIFIED + ACTUAL))
-          done </tmp/dc-react-source-row-counts.tsv
-          echo "Database parity verified: $TABLES_VERIFIED tables and $ROWS_VERIFIED rows"
-          aws s3 cp /tmp/dc-react-source-row-counts.tsv \
-            "s3://$AWS_S3_BUCKET/backups/mysql/latest-source-row-counts.tsv" --sse AES256
-          cd /opt/dc-react/app/backend
-          npm run db:setup:runtime
-          rm -f /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv
-          trap - EXIT
-          restart_api
-          REMOTE
-          rm -f /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv /tmp/dc-react-source-tables.txt \
-            /tmp/dc-react-source-counts.sql /tmp/dc-react-source-lock.log
-
-      - name: Resume staged database import
-        if: ${{ inputs.resume_database_import }}
-        run: |
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
-          set -euo pipefail
-          set -a
-          source /etc/dc-react.env
-          set +a
-          test -s /tmp/dc-react-mysql.sql.gz
-          restart_api() {
-            cd /opt/dc-react/app/backend
-            pm2 start dc-react-api >/dev/null 2>&1 || pm2 start src/server.mjs --name dc-react-api >/dev/null
-            pm2 save >/dev/null
-          }
-          trap restart_api EXIT
-          pm2 stop dc-react-api || true
-          gunzip -c /tmp/dc-react-mysql.sql.gz \
-            | sed -E 's/DEFINER=`[^`]*`@`[^`]*`[[:space:]]*//g' \
-            | MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" "$DB_NAME"
-          cd /opt/dc-react/app/backend
-          npm run db:setup:runtime
-          rm -f /tmp/dc-react-mysql.sql.gz
-          REMOTE
-
-      - name: Configure runtime and migrate Supabase Storage to S3
-        env:
-          MIGRATE_STORAGE: ${{ inputs.migrate_storage }}
+      - name: Configure AWS runtime
         run: |
           MEDIA_BASE_URL=$(jq -r '.[] | select(.OutputKey=="MediaBaseUrl") | .OutputValue' /tmp/stack-outputs.json)
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
@@ -450,11 +281,10 @@ jobs:
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
             -i /tmp/tempkey "$SSH_USER@$SSH_IP" \
-            "sudo bash -s -- '$MEDIA_BASE_URL' '$MIGRATE_STORAGE' '$BUCKET'" <<'REMOTE'
+            "sudo bash -s -- '$MEDIA_BASE_URL' '$BUCKET'" <<'REMOTE'
           set -euo pipefail
           MEDIA_BASE_URL="$1"
-          MIGRATE_STORAGE="$2"
-          BUCKET="$3"
+          BUCKET="$2"
           DB_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/mysql --query SecretString --output text)
           RUNTIME_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/runtime --query SecretString --output text)
           DB_HOST=$(aws lightsail get-relational-database --relational-database-name dc-react-mysql-lightsail --query 'relationalDatabase.masterEndpoint.address' --output text)
@@ -485,16 +315,10 @@ jobs:
           GEMINI_API_KEY=$(jq -r .geminiApiKey <<<"$RUNTIME_SECRET")
           OPENAI_API_KEY=$(jq -r .openaiApiKey <<<"$RUNTIME_SECRET")
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r .cloudflarePagesDeployHookUrl <<<"$RUNTIME_SECRET")
-          CORS_ORIGIN=https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com
+          CORS_ORIGIN=https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com
           STORAGE_MAX_UPLOAD_BYTES=20971520
           REQUEST_LOG=yes
           ENV
-          if [ "$MIGRATE_STORAGE" = "true" ]; then
-            cat >>"$ENV_FILE" <<ENV
-          SUPABASE_STORAGE_URL=$(jq -r .supabaseStorageUrl <<<"$RUNTIME_SECRET")
-          SUPABASE_STORAGE_SERVICE_KEY=$(jq -r .supabaseStorageServiceKey <<<"$RUNTIME_SECRET")
-          ENV
-          fi
           install -m 600 "$ENV_FILE" /etc/dc-react.env
           rm -f "$ENV_FILE"
           cd /opt/dc-react/app
@@ -505,15 +329,8 @@ jobs:
           set -a
           source /etc/dc-react.env
           set +a
-          if [ "$MIGRATE_STORAGE" = "true" ]; then
-            export STORAGE_MIGRATION_MANIFEST=/tmp/s3-migration-manifest.json
-            MIGRATION_STATUS=0
-            npm --prefix backend run storage:migrate:s3 -- --rewrite-database || MIGRATION_STATUS=$?
-            if test -s "$STORAGE_MIGRATION_MANIFEST"; then
-              aws s3 cp "$STORAGE_MIGRATION_MANIFEST" "s3://$BUCKET/backups/storage/migration-manifest.json" --sse AES256
-            fi
-            test "$MIGRATION_STATUS" -eq 0
-          fi
+          npm --prefix backend run db:setup:runtime
+          npm --prefix backend run verify:integrations
           pm2 reload dc-react-api --update-env
           pm2 save
           if ! command -v certbot >/dev/null 2>&1; then
@@ -521,6 +338,9 @@ jobs:
             apt-get -o DPkg::Lock::Timeout=120 install -y certbot python3-certbot-nginx
           fi
           sed -i -E 's/server_name [^;]*;/server_name aws-origin.dekhocampus.com ec2-3-7-27-134.ap-south-1.compute.amazonaws.com;/' /etc/nginx/sites-available/dc-react
+          if ! grep -q 'return 308 https://dekhocampus.com/;' /etc/nginx/sites-available/dc-react; then
+            sed -i '/^[[:space:]]*location \/ {$/i\          location = / {\n            return 308 https://dekhocampus.com/;\n          }' /etc/nginx/sites-available/dc-react
+          fi
           nginx -t
           systemctl reload nginx
           certbot --nginx \

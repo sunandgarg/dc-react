@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle2, Camera, Upload } from "lucide-react";
 import { isStrictIndianMobile, normalizeIndianMobile } from "@/lib/phone";
@@ -48,7 +48,7 @@ export default function Onboarding() {
     if (!user?.id || prefilled) return;
     let cancelled = false;
     (async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("profiles")
         .select("display_name, email, phone, education_status, class_12_percentage, profile_image_url, onboarding_completed")
         .eq("user_id", user.id)
@@ -96,9 +96,9 @@ export default function Onboarding() {
     try {
       const ext = file.name.split(".").pop() || "jpg";
       const path = `user-avatars/${user.id}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("admin-uploads").upload(path, file, { upsert: true, contentType: file.type });
+      const { error: upErr } = await backendClient.storage.from("admin-uploads").upload(path, file, { upsert: true, contentType: file.type });
       if (upErr) throw upErr;
-      const { data } = supabase.storage.from("admin-uploads").getPublicUrl(path);
+      const { data } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
       update("profile_image_url", data.publicUrl);
       toast({ title: "Photo uploaded" });
     } catch (e: any) {
@@ -137,11 +137,11 @@ export default function Onboarding() {
       };
       if (askPercentage) payload.class_12_percentage = form.class_12_percentage.trim();
 
-      const { error } = await supabase.from("profiles").update(payload).eq("user_id", user!.id);
+      const { error } = await backendClient.from("profiles").update(payload).eq("user_id", user!.id);
       if (error) throw error;
-      const { data: check } = await supabase.from("profiles").select("user_id").eq("user_id", user!.id).maybeSingle();
+      const { data: check } = await backendClient.from("profiles").select("user_id").eq("user_id", user!.id).maybeSingle();
       if (!check) {
-        const { error: insErr } = await supabase.from("profiles").insert(payload);
+        const { error: insErr } = await backendClient.from("profiles").insert(payload);
         if (insErr) throw insErr;
       }
       await queryClient.invalidateQueries({ queryKey: ["profile"] });

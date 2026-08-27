@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,7 +33,7 @@ export default function AdminAlsoCheck() {
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-also-check"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("also_check_modules").select("*").order("sort_order", { ascending: true });
+      const { data, error } = await (backendClient as any).from("also_check_modules").select("*").order("sort_order", { ascending: true });
       if (error) throw error;
       return (data ?? []) as Module[];
     },
@@ -41,7 +41,7 @@ export default function AdminAlsoCheck() {
 
   const updateM = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<Module> }) => {
-      const { error } = await (supabase as any).from("also_check_modules").update(updates).eq("id", id);
+      const { error } = await (backendClient as any).from("also_check_modules").update(updates).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -55,7 +55,7 @@ export default function AdminAlsoCheck() {
 
   const createM = useMutation({
     mutationFn: async (row: Partial<Module>) => {
-      const { error } = await (supabase as any).from("also_check_modules").insert(row);
+      const { error } = await (backendClient as any).from("also_check_modules").insert(row);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -70,7 +70,7 @@ export default function AdminAlsoCheck() {
 
   const deleteM = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("also_check_modules").delete().eq("id", id);
+      const { error } = await (backendClient as any).from("also_check_modules").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

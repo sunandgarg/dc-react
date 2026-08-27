@@ -41,7 +41,7 @@ function toInternalPath(href: string | undefined): string | null {
     if (/^https?:\/\//i.test(href)) {
       const u = new URL(href);
       const sameOrigin = u.origin === window.location.origin;
-      const isOurDomain = /(^|\.)dekhocampus\.com$/i.test(u.hostname) || /\.lovable\.app$/i.test(u.hostname);
+      const isOurDomain = /(^|\.)dekhocampus\.com$/i.test(u.hostname);
       if (sameOrigin || isOurDomain) {
         const path = u.pathname + u.search + u.hash;
         if (INTERNAL_PREFIXES.some((p) => path.startsWith(p))) return path;

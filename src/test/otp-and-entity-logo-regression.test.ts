@@ -22,24 +22,24 @@ describe("OTP latency and entity logo regressions", () => {
       "src/components/LeadInlineOtp.tsx",
       "src/components/LeadOtpVerify.tsx",
       "src/components/landing/ExamAdBlocks.tsx",
-      "supabase/functions/phone-auth/index.ts",
     ]) {
       expect(read(path)).not.toMatch(/provider_name:\s*"fast2sms"/);
     }
   });
 
   it("does not derive an auth password from the user's phone number", () => {
-    const phoneAuthFunction = read("supabase/functions/phone-auth/index.ts");
-    expect(phoneAuthFunction).toContain("crypto.getRandomValues");
+    const phoneAuthFunction = read("backend/src/auth.mjs");
+    expect(phoneAuthFunction).toContain("randomInt(100000, 1000000)");
     expect(phoneAuthFunction).not.toContain("secure2026");
     expect(phoneAuthFunction).not.toContain("passwordForPhone");
   });
 
-  it("enables real production OTP delivery in the database migration", () => {
-    const migration = read("supabase/migrations/20260730155000_enable_production_otp.sql");
-    expect(migration).toContain("'on'");
-    expect(migration).toContain("'delivery_mode', 'production'");
-    expect(migration).toContain("'fast2sms_route', 'smart_otp'");
+  it("requires the active MySQL Fast2SMS provider and AWS-injected credential in production", () => {
+    const auth = read("backend/src/auth.mjs");
+    expect(auth).toContain('provider_name: "fast2sms", channel: "sms", is_active: true');
+    expect(auth).toContain("process.env.SMS_FAST2SMS_API_KEY");
+    expect(auth).toContain('process.env.NODE_ENV === "production"');
+    expect(auth).toContain('code: "SMS_NOT_CONFIGURED"');
   });
 
   it("uses contained logo-first images in college comparison and exam cards", () => {

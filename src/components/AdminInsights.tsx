@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Users, GraduationCap, FileText, BookOpen, Briefcase, Activity, Megaphone, Globe } from "lucide-react";
@@ -34,7 +34,7 @@ function useCount(table: string) {
   return useQuery({
     queryKey: [`count-${table}`],
     queryFn: async () => {
-      const { count } = await supabase.from(table as any).select("*", { count: "exact", head: true });
+      const { count } = await backendClient.from(table as any).select("*", { count: "exact", head: true });
       return count ?? 0;
     },
   });
@@ -68,35 +68,35 @@ export function AdminInsights() {
   const leadsRange = useQuery({
     queryKey: ["leads-range", range, since],
     queryFn: async () => {
-      const { data } = await supabase.from("leads").select("created_at,source").gte("created_at", since).limit(5000);
+      const { data } = await backendClient.from("leads").select("created_at,source").gte("created_at", since).limit(5000);
       return data || [];
     },
   });
   const lpLeads = useQuery({
     queryKey: ["lp-leads-range", range, since],
     queryFn: async () => {
-      const { data } = await (supabase as any).from("landing_page_leads").select("created_at,landing_slug").gte("created_at", since).limit(5000);
+      const { data } = await (backendClient as any).from("landing_page_leads").select("created_at,landing_slug").gte("created_at", since).limit(5000);
       return data || [];
     },
   });
   const apps = useQuery({
     queryKey: ["apps-range", range, since],
     queryFn: async () => {
-      const { data } = await supabase.from("college_applications").select("created_at,status").gte("created_at", since).limit(5000);
+      const { data } = await backendClient.from("college_applications").select("created_at,status").gte("created_at", since).limit(5000);
       return data || [];
     },
   });
   const signups = useQuery({
     queryKey: ["signups-range", range, since],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("created_at").gte("created_at", since).limit(5000);
+      const { data } = await backendClient.from("profiles").select("created_at").gte("created_at", since).limit(5000);
       return data || [];
     },
   });
   const referrals = useQuery({
     queryKey: ["referrals-range", range, since],
     queryFn: async () => {
-      const { data } = await (supabase as any).from("referrals").select("created_at,status").gte("created_at", since).limit(5000);
+      const { data } = await (backendClient as any).from("referrals").select("created_at,status").gte("created_at", since).limit(5000);
       return data || [];
     },
   });

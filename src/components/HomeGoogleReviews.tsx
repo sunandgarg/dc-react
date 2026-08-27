@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Star, ExternalLink } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { functionUrl } from "@/lib/backendMode";
 
 interface Review {
@@ -26,7 +26,7 @@ export function HomeGoogleReviews() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const intRes: any = await (supabase as any).from("site_integrations")
+      const intRes: any = await (backendClient as any).from("site_integrations")
         .select("key, value, enabled").in("key", ["google_review_url", "google_places_site_id"]);
       const map = new Map((intRes.data ?? []).map((r: any) => [r.key, r]));
       const urlRow: any = map.get("google_review_url");

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 export function SiteIntegrations() {
   const location = useLocation();
@@ -20,7 +20,7 @@ export function SiteIntegrations() {
     let cancelled = false;
     const cleanupFns: Array<() => void> = [];
     (async () => {
-      const { data } = await supabase.from("site_integrations").select("key,value,enabled");
+      const { data } = await backendClient.from("site_integrations").select("key,value,enabled");
       if (cancelled || !data) return;
       const map: Record<string, string> = {};
       for (const r of data) if (r.enabled && r.value) map[r.key] = r.value;

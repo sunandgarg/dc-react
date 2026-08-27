@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,7 @@ export default function AdminCtaConversions() {
     let cancelled = false;
     setLoading(true);
     (async () => {
-      let q = (supabase as any)
+      let q = (backendClient as any)
         .from("cta_events")
         .select("id,page,cta,entity_slug,session_id,path,utm_source,created_at")
         .order("created_at", { ascending: false })

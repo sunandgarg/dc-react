@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -63,8 +63,8 @@ export default function AdminPromotedPrograms() {
   const reload = async () => {
     setLoading(true);
     const [{ data: pData }, { data: cData }] = await Promise.all([
-      (supabase as any).from("promoted_programs").select("*").order("display_order"),
-      (supabase as any).from("program_categories").select("slug,name,icon_emoji").eq("is_active", true).order("display_order"),
+      (backendClient as any).from("promoted_programs").select("*").order("display_order"),
+      (backendClient as any).from("program_categories").select("slug,name,icon_emoji").eq("is_active", true).order("display_order"),
     ]);
     const programRows = pData || [];
     setRows(programRows);
@@ -143,8 +143,8 @@ export default function AdminPromotedPrograms() {
     };
     if (!supportsMultiCategory) delete (rest as any).category_slugs;
     const { error } = id
-      ? await (supabase as any).from("promoted_programs").update(rest).eq("id", id)
-      : await (supabase as any).from("promoted_programs").insert(rest);
+      ? await (backendClient as any).from("promoted_programs").update(rest).eq("id", id)
+      : await (backendClient as any).from("promoted_programs").insert(rest);
     if (error) { toast.error(error.message); return; }
     toast.success("Saved");
     setEditing(null);
@@ -153,7 +153,7 @@ export default function AdminPromotedPrograms() {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this program?")) return;
-    const { error } = await (supabase as any).from("promoted_programs").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("promoted_programs").delete().eq("id", id);
     if (error) toast.error(error.message); else { toast.success("Deleted"); reload(); }
   };
 

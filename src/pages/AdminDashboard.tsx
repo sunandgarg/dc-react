@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 const formatNumber = (value: number) => new Intl.NumberFormat("en-IN", { notation: value > 99_999 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
 
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
   const { data: leadsCount } = useQuery({
     queryKey: ["leads-count"],
     queryFn: async () => {
-      const { count, error } = await supabase.from("leads").select("*", { count: "exact", head: true });
+      const { count, error } = await backendClient.from("leads").select("*", { count: "exact", head: true });
       if (error) throw error;
       return count ?? 0;
     },
@@ -45,7 +45,7 @@ export default function AdminDashboard() {
   const { data: referralsCount } = useQuery({
     queryKey: ["referrals-count"],
     queryFn: async () => {
-      const { count, error } = await supabase.from("referrals").select("*", { count: "exact", head: true });
+      const { count, error } = await backendClient.from("referrals").select("*", { count: "exact", head: true });
       if (error) throw error;
       return count ?? 0;
     },

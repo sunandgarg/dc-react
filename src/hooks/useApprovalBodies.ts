@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 
 export type ApprovalBody = {
@@ -16,7 +16,7 @@ export function useApprovalBodies() {
   return useQuery({
     queryKey: ["approval_bodies"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("approval_bodies")
         .select("*")
         .eq("is_active", true)
@@ -32,7 +32,7 @@ export function useAllApprovalBodies() {
   return useQuery({
     queryKey: ["approval_bodies_all"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("approval_bodies").select("*").order("display_order");
+      const { data, error } = await (backendClient as any).from("approval_bodies").select("*").order("display_order");
       if (error) throw error;
       return (data || []) as ApprovalBody[];
     },
@@ -46,10 +46,10 @@ export function useSaveApprovalBody() {
     mutationFn: async (b: Partial<ApprovalBody> & { code: string; name: string }) => {
       if (b.id) {
         const { id, ...rest } = b;
-        const { error } = await (supabase as any).from("approval_bodies").update(rest).eq("id", id);
+        const { error } = await (backendClient as any).from("approval_bodies").update(rest).eq("id", id);
         if (error) throw error;
       } else {
-        const { error } = await (supabase as any).from("approval_bodies").insert(b);
+        const { error } = await (backendClient as any).from("approval_bodies").insert(b);
         if (error) throw error;
       }
     },
@@ -66,7 +66,7 @@ export function useDeleteApprovalBody() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("approval_bodies").delete().eq("id", id);
+      const { error } = await (backendClient as any).from("approval_bodies").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

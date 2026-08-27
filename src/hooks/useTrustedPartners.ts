@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { ensureBootstrap } from "@/lib/bootstrap";
 
 export interface TrustedPartner {
@@ -19,7 +19,7 @@ export function useTrustedPartners() {
     queryFn: async () => {
       const boot = await ensureBootstrap();
       if (boot?.trusted_partners) return boot.trusted_partners as TrustedPartner[];
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("trusted_partners" as any)
         .select("*")
         .eq("is_active", true)
@@ -35,7 +35,7 @@ export function useAllTrustedPartners() {
   return useQuery({
     queryKey: ["trusted-partners-all"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("trusted_partners" as any)
         .select("*")
         .order("display_order", { ascending: true });
@@ -50,10 +50,10 @@ export function useUpsertTrustedPartner() {
   return useMutation({
     mutationFn: async (partner: Partial<TrustedPartner> & { name: string }) => {
       if (partner.id) {
-        const { error } = await supabase.from("trusted_partners" as any).update(partner as any).eq("id", partner.id);
+        const { error } = await backendClient.from("trusted_partners" as any).update(partner as any).eq("id", partner.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("trusted_partners" as any).insert(partner as any);
+        const { error } = await backendClient.from("trusted_partners" as any).insert(partner as any);
         if (error) throw error;
       }
     },
@@ -65,7 +65,7 @@ export function useDeleteTrustedPartner() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("trusted_partners" as any).delete().eq("id", id);
+      const { error } = await backendClient.from("trusted_partners" as any).delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["trusted-partners"] }),

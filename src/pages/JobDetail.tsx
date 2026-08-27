@@ -2,7 +2,7 @@ import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
@@ -18,7 +18,7 @@ export default function JobDetail() {
   const { data: j, isLoading } = useQuery<any>({
     queryKey: ["vacancy", slug],
     queryFn: async () => {
-      const { data } = await supabase.from("jobs" as any).select("*").eq("slug", slug as string).maybeSingle();
+      const { data } = await backendClient.from("jobs" as any).select("*").eq("slug", slug as string).maybeSingle();
       return data as any;
     },
     enabled: !!slug,

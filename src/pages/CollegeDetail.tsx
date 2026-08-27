@@ -41,7 +41,7 @@ import { CollegeReviews } from "@/components/detail/CollegeReviews";
 import { LatestNewsSection } from "@/components/detail/LatestNewsSection";
 import { RelatedCoursesExamsStrip } from "@/components/detail/RelatedCoursesExamsStrip";
 import { PartnerCollegeStrip } from "@/components/detail/PartnerCollegeStrip";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { RichSection } from "@/components/detail/RichSection";
 import { RichText } from "@/components/detail/RichText";
@@ -102,7 +102,7 @@ export default function CollegeDetail() {
   const { data: collegeFees = [] } = useQuery({
     queryKey: ["college_fees", collegeRelationSlug],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("course_fees")
         .select("id,course_slug,course_name,fee_amount,fee_type")
         .eq("college_slug", collegeRelationSlug)
@@ -129,7 +129,7 @@ export default function CollegeDetail() {
   const { data: feeCourseMetadata = [] } = useQuery({
     queryKey: ["college-fee-course-metadata", collegeRelationSlug, visibleFeeCourseSlugs],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("courses")
         .select("slug,name,duration,avg_fees")
         .eq("is_active", true)

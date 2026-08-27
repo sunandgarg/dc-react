@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Badge } from "@/components/ui/badge";
 import { GraduationCap, FileText, ArrowRight } from "lucide-react";
 
@@ -26,10 +26,10 @@ export function RelatedCoursesExamsStrip({ courseSlugs = [], examSlugs = [], col
     (async () => {
       const [c, e] = await Promise.all([
         cs.length
-          ? supabase.from("courses").select("slug, name, image, category").in("slug", cs)
+          ? backendClient.from("courses").select("slug, name, image, category").in("slug", cs)
           : Promise.resolve({ data: [] as any[] }),
         es.length
-          ? supabase.from("exams").select("slug, name, image, category").in("slug", es)
+          ? backendClient.from("exams").select("slug, name, image, category").in("slug", es)
           : Promise.resolve({ data: [] as any[] }),
       ]);
       if (cancelled) return;

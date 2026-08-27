@@ -1,7 +1,7 @@
 // Background Processor - Handles processing even when tab is hidden
 
 import type { UploadEntity, UploadLeadEntity, BackgroundTask } from './types';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 
 type ProcessorCallback = (event: ProcessorEvent) => void;
 const MAX_STORED_RESPONSE_CHARS = 500;
@@ -121,7 +121,7 @@ class BackgroundProcessor {
           if (sig === 'pause') { controlState = 'pause'; return; }
           const task = this.activeTasks.get(upload.slug);
           if (!task || task.status !== 'running') { controlState = 'pause'; return; }
-          const { data } = await supabase
+          const { data } = await backendClient
             .from('upload_batches')
             .select('is_paused, is_cancelled')
             .eq('id', upload.id)
@@ -155,7 +155,7 @@ class BackgroundProcessor {
       const snapshot = completedCount;
       lastFlushed = snapshot;
       try {
-        await supabase
+        await backendClient
           .from('upload_batches')
           .update({ current_lead_index: snapshot, processed_count: snapshot })
           .eq('id', upload.id);
@@ -187,7 +187,7 @@ class BackgroundProcessor {
 
         // Fire lead-row update + counter RPC in parallel; don't serialize.
         await Promise.all([
-          supabase
+          backendClient
             .from('leads')
             .update({
               status: result.success ? 'success' : 'failed',
@@ -195,7 +195,7 @@ class BackgroundProcessor {
               processed_at: new Date().toISOString(),
             })
             .eq('id', lead.id),
-          supabase.rpc(
+          backendClient.rpc(
             result.success ? 'increment_batch_success' : 'increment_batch_fail',
             { batch_uuid: upload.id },
           ),
@@ -264,7 +264,7 @@ class BackgroundProcessor {
     _signal?: AbortSignal,
   ): Promise<{ success: boolean; response: string }> {
     try {
-      const { data, error } = await supabase.functions.invoke('process-lead', {
+      const { data, error } = await backendClient.functions.invoke('process-lead', {
         body: {
           leadId: lead.id,
           universityId: upload.universityId,
@@ -357,7 +357,7 @@ class BackgroundProcessor {
       task.progress = 100;
     }
 
-    await supabase
+    await backendClient
       .from('upload_batches')
       .update({
         status: 'completed',

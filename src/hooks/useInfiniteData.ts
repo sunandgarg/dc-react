@@ -7,7 +7,7 @@
  */
 import { useRef, useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import type { SearchGroup } from "@/lib/listingFilters";
 
 const BATCH_SIZE = 18;
@@ -57,7 +57,7 @@ export function useInfiniteData({
       JSON.stringify(extraOrders),
     ],
     queryFn: async ({ pageParam = 0 }) => {
-      let q: any = supabase
+      let q: any = backendClient
         .from(table)
         .select("*")
         .eq("is_active", true)

@@ -77,8 +77,8 @@ export function CookieConsent() {
     // Log opt-in choice (best-effort, anonymous)
     try {
       const sid = localStorage.getItem("dc_session_id") || `s_${Date.now()}`;
-      import("@/integrations/supabase/client").then(({ supabase }) =>
-        (supabase as any).from("user_consent").insert({
+      import("@/integrations/backend/client").then(({ backendClient }) =>
+        (backendClient as any).from("user_consent").insert({
           session_id: sid,
           essential: finalPrefs.essential,
           analytics: finalPrefs.analytics,

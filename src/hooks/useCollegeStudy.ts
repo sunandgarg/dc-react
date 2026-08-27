@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 const STALE = 10 * 60 * 1000;
 
@@ -8,7 +8,7 @@ export function useCollegePrograms() {
     queryKey: ["college-programs"],
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_programs" as any)
         .select("*")
         .eq("is_active", true)
@@ -25,7 +25,7 @@ export function useCollegeProgram(slug?: string) {
     enabled: !!slug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_programs" as any)
         .select("*")
         .eq("slug", slug!)
@@ -42,7 +42,7 @@ export function useCollegeUniversities(programSlug?: string) {
     enabled: !!programSlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_universities" as any)
         .select("*")
         .eq("program_slug", programSlug!)
@@ -60,7 +60,7 @@ export function useCollegeUniversity(programSlug?: string, universitySlug?: stri
     enabled: !!programSlug && !!universitySlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_universities" as any)
         .select("*")
         .eq("program_slug", programSlug!)
@@ -78,7 +78,7 @@ export function useCollegeSemesters(programSlug?: string, universitySlug?: strin
     enabled: !!programSlug && !!universitySlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_semesters" as any)
         .select("*")
         .eq("program_slug", programSlug!)
@@ -97,7 +97,7 @@ export function useCollegeSubjects(programSlug?: string, universitySlug?: string
     enabled: !!programSlug && !!universitySlug && !!semesterNum,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_subjects" as any)
         .select("*")
         .eq("program_slug", programSlug!)
@@ -117,7 +117,7 @@ export function useCollegeSubject(programSlug?: string, universitySlug?: string,
     enabled: !!programSlug && !!universitySlug && !!semesterNum && !!subjectSlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_subjects" as any)
         .select("*")
         .eq("program_slug", programSlug!)
@@ -137,7 +137,7 @@ export function useCollegeResources(subjectId?: string) {
     enabled: !!subjectId,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_resources" as any)
         .select("*")
         .eq("subject_id", subjectId!)
@@ -155,7 +155,7 @@ export function useCollegeQuickLinks(programSlug?: string, universitySlug?: stri
     enabled: !!programSlug && !!universitySlug,
     staleTime: STALE,
     queryFn: async () => {
-      let q = supabase
+      let q = backendClient
         .from("college_quick_links" as any)
         .select("*")
         .eq("program_slug", programSlug!)
@@ -176,7 +176,7 @@ export function useCollegeFewLinks(programSlug?: string, universitySlug?: string
     enabled: !!programSlug && !!universitySlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_few_links" as any)
         .select("*")
         .eq("program_slug", programSlug!)
@@ -195,7 +195,7 @@ export function useCollegeToppers(programSlug?: string, universitySlug?: string)
     enabled: !!programSlug && !!universitySlug,
     staleTime: STALE,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_toppers" as any)
         .select("*")
         .eq("program_slug", programSlug!)

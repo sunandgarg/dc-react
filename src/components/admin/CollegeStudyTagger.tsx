@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -34,7 +34,7 @@ export function CollegeStudyTagger({ articleId, onDone }: Props) {
   const { data: links = [] } = useQuery({
     queryKey: ["article-college-links", articleId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("article_links")
         .select("*")
         .eq("article_id", articleId)
@@ -64,10 +64,10 @@ export function CollegeStudyTagger({ articleId, onDone }: Props) {
     const existing = links.find((l) => l.entity_type === entity_type && l.entity_slug === entity_slug);
     try {
       if (existing) {
-        const { error } = await supabase.from("article_links").delete().eq("id", existing.id);
+        const { error } = await backendClient.from("article_links").delete().eq("id", existing.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("article_links").insert({ article_id: articleId, entity_type, entity_slug });
+        const { error } = await backendClient.from("article_links").insert({ article_id: articleId, entity_type, entity_slug });
         if (error) throw error;
       }
       await refresh();
@@ -91,7 +91,7 @@ export function CollegeStudyTagger({ articleId, onDone }: Props) {
       if (toInsert.length === 0) {
         toast.message(`All ${label} already linked.`);
       } else {
-        const { error } = await supabase.from("article_links").insert(toInsert);
+        const { error } = await backendClient.from("article_links").insert(toInsert);
         if (error) throw error;
         toast.success(`Linked all ${label} (${toInsert.length})`);
         await refresh();
@@ -116,7 +116,7 @@ export function CollegeStudyTagger({ articleId, onDone }: Props) {
       if (ids.length === 0) {
         toast.message(`No linked ${label} to remove.`);
       } else {
-        const { error } = await supabase.from("article_links").delete().in("id", ids);
+        const { error } = await backendClient.from("article_links").delete().in("id", ids);
         if (error) throw error;
         toast.success(`Unlinked all ${label} (${ids.length})`);
         await refresh();

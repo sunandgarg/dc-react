@@ -1,6 +1,6 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,7 +41,7 @@ export default function AdminReferrals() {
   const { data: referrals, isLoading } = useQuery({
     queryKey: ["admin-referrals"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("referrals")
         .select(`
           *,
@@ -60,14 +60,14 @@ export default function AdminReferrals() {
       if (reward_amount !== undefined) updates.reward_amount = parseFloat(reward_amount);
       if (reward_paid !== undefined) updates.reward_paid = reward_paid;
 
-      const { error } = await supabase
+      const { error } = await backendClient
         .from("referrals")
         .update(updates)
         .eq("id", id);
       if (error) throw error;
 
       if (status === "paid") {
-        const { error: txError } = await supabase
+        const { error: txError } = await backendClient
           .from("wallet_transactions")
           .insert({
             user_id: selectedReferral.referrer_id,

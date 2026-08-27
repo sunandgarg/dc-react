@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Search, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 interface CollegeRow {
   slug: string;
@@ -26,7 +26,7 @@ export function CompareCollegesTool() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("colleges")
         .select("slug,name,short_name,city,state,fees,placement,ranking,rating,naac_grade")
         .order("rating", { ascending: false })

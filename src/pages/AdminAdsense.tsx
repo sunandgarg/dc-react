@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { Save, Eye, MousePointerClick, TrendingUp, Settings as SettingsIcon, Megaphone, BarChart3 } from "lucide-react";
 import { useDraftState } from "@/hooks/useDraftState";
@@ -21,7 +21,7 @@ function SetupTab() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("adsense_settings")
         .select("*")
         .order("created_at", { ascending: true })
@@ -29,7 +29,7 @@ function SetupTab() {
         .maybeSingle();
       if (data) setRow(data);
       else {
-        const { data: created } = await (supabase as any)
+        const { data: created } = await (backendClient as any)
           .from("adsense_settings")
           .insert({})
           .select()
@@ -52,7 +52,7 @@ function SetupTab() {
     if (!payload.verification_meta && payload.client_id) {
       payload.verification_meta = payload.client_id;
     }
-    const { error } = await (supabase as any)
+    const { error } = await (backendClient as any)
       .from("adsense_settings")
       .update(payload)
       .eq("id", id);
@@ -181,7 +181,7 @@ function StatsTab() {
   useEffect(() => {
     (async () => {
       const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("ad_analytics_events")
         .select("event_type, ad_unit_id")
         .gte("created_at", since);
@@ -199,7 +199,7 @@ function StatsTab() {
       const ids = Object.keys(byUnit);
       const names: Record<string, string> = {};
       if (ids.length) {
-        const { data: us } = await (supabase as any).from("ad_units").select("id,name").in("id", ids);
+        const { data: us } = await (backendClient as any).from("ad_units").select("id,name").in("id", ids);
         (us || []).forEach((u: any) => (names[u.id] = u.name));
       }
       const top = Object.entries(byUnit)

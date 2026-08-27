@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { X, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -25,7 +25,7 @@ export function FeaturedRankPanel({ table, detailPath }: Props) {
         table === "articles"
           ? "id,slug,title,featured_image,featured_rank"
           : "id,slug,name,image,featured_rank";
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from(table)
         .select(cols)
         .not("featured_rank", "is", null)
@@ -35,7 +35,7 @@ export function FeaturedRankPanel({ table, detailPath }: Props) {
   });
 
   const remove = async (id: string) => {
-    const { error } = await (supabase as any).rpc("clear_featured_rank", { _table: table, _id: id });
+    const { error } = await (backendClient as any).rpc("clear_featured_rank", { _table: table, _id: id });
     if (error) { toast.error(error.message); return; }
     toast.success("Removed from featured");
     qc.invalidateQueries({ queryKey: ["featured-rank", table] });

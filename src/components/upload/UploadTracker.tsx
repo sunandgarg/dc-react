@@ -16,7 +16,7 @@ import {
   AlertTriangle,
   Download
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { useToast } from '@/hooks/use-toast';
 import { generateSlug } from '@/lib/datastore/slug-utils';
 import { format } from 'date-fns';
@@ -96,7 +96,7 @@ export function UploadTracker({ universities, onViewBatch }: UploadTrackerProps)
   const fetchBatches = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from('upload_batches')
         .select('id, university_id, file_name, total_leads, success_count, fail_count, duplicate_count, status, is_paused, is_cancelled, processed_count, current_lead_index, created_at, completed_at, error_message')
         .order('created_at', { ascending: false })
@@ -160,7 +160,7 @@ export function UploadTracker({ universities, onViewBatch }: UploadTrackerProps)
   const handlePauseResume = async (batch: UploadBatch) => {
     try {
       const newPausedState = !batch.isPaused;
-      const { error } = await supabase
+      const { error } = await backendClient
         .from('upload_batches')
         .update({ 
           is_paused: newPausedState,

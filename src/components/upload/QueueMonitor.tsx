@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -94,7 +94,7 @@ function QueueMonitorInner() {
           return;
         }
 
-        let query = supabase
+        let query = backendClient
           .from("upload_batches")
           .select(QUEUE_BATCH_COLUMNS)
           .order("created_at", { ascending: false })
@@ -111,7 +111,7 @@ function QueueMonitorInner() {
         const uniIds = [...new Set((data || []).map((b) => b.university_id).filter(Boolean))];
         let uniMap = new Map<string, string>();
         if (uniIds.length > 0) {
-          const { data: universities } = await supabase.from("universities").select("id, name").in("id", uniIds);
+          const { data: universities } = await backendClient.from("universities").select("id, name").in("id", uniIds);
           uniMap = new Map((universities || []).map((u) => [u.id, u.name]));
         }
 
@@ -119,7 +119,7 @@ function QueueMonitorInner() {
         if (isAdmin) {
           const userIds = [...new Set((data || []).map((b) => b.user_id).filter(Boolean))];
           if (userIds.length > 0) {
-            const { data: profiles } = await supabase.from("profiles").select("id, email").in("id", userIds);
+            const { data: profiles } = await backendClient.from("profiles").select("id, email").in("id", userIds);
             userMap = new Map((profiles || []).map((p) => [p.id, p.email || "Unknown"]));
           }
         }
@@ -226,7 +226,7 @@ function QueueMonitorInner() {
     async (batchId: string, updates: Record<string, unknown>, successTitle: string) => {
       setProcessingId(batchId);
       try {
-        const { error } = await supabase.from("upload_batches").update(updates).eq("id", batchId);
+        const { error } = await backendClient.from("upload_batches").update(updates).eq("id", batchId);
         if (error) throw error;
         toast({ title: successTitle });
         fetchBatches(true);
@@ -277,13 +277,13 @@ function QueueMonitorInner() {
       setProcessingId(batch.id);
       try {
         if (!batch.is_cancelled && batch.status !== "completed" && batch.status !== "cancelled") {
-          await supabase
+          await backendClient
             .from("upload_batches")
             .update({ status: "cancelled", is_cancelled: true, is_paused: false, completed_at: new Date().toISOString() })
             .eq("id", batch.id);
         }
 
-        const { error } = await supabase.from("upload_batches").delete().eq("id", batch.id);
+        const { error } = await backendClient.from("upload_batches").delete().eq("id", batch.id);
         if (error) throw error;
         toast({ title: "Task deleted" });
         fetchBatches(true);

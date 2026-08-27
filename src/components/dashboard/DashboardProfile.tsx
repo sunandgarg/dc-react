@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Check, X, Loader2, Lock, Gift, Camera, Upload } from "lucide-react";
 import { useStatesAndCities } from "@/hooks/useLocations";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { HigherEducationSection } from "@/components/dashboard/HigherEducationSection";
 import { isSyntheticPhoneEmail } from "@/lib/authIdentity";
@@ -136,9 +136,9 @@ export function DashboardProfile() {
     try {
       const ext = file.name.split(".").pop() || "jpg";
       const path = `user-avatars/${user.id}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("admin-uploads").upload(path, file, { upsert: true, contentType: file.type });
+      const { error: upErr } = await backendClient.storage.from("admin-uploads").upload(path, file, { upsert: true, contentType: file.type });
       if (upErr) throw upErr;
-      const { data } = supabase.storage.from("admin-uploads").getPublicUrl(path);
+      const { data } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
       await updateProfile.mutateAsync({ profile_image_url: data.publicUrl });
     } catch (e: any) {
       toast.error(e?.message || "Upload failed");

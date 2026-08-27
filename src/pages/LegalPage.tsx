@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SEO } from "@/components/SEO";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,7 +14,7 @@ export default function LegalPage() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    supabase.from("legal_pages").select("*").eq("slug", slug).eq("is_active", true).maybeSingle()
+    backendClient.from("legal_pages").select("*").eq("slug", slug).eq("is_active", true).maybeSingle()
       .then(({ data }) => { if (!cancelled) { setPage(data); setLoading(false); } });
     return () => { cancelled = true; };
   }, [slug]);

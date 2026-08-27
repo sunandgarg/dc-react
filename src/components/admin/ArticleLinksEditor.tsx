@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +42,7 @@ export function ArticleLinksEditor({
   const [bulk, setBulk] = useState("");
 
   const load = async () => {
-    const { data } = await (supabase as any)
+    const { data } = await (backendClient as any)
       .from("article_links").select("*").eq(ownerColumn, ownerId);
     setLinks(data || []);
   };
@@ -53,7 +53,7 @@ export function ArticleLinksEditor({
     if (!s) return;
     if (links.some(l => l.entity_type === type && l.entity_slug === s)) return;
     const payload: Record<string, any> = { [ownerColumn]: ownerId, entity_type: type, entity_slug: s };
-    const { error } = await (supabase as any).from("article_links").insert(payload);
+    const { error } = await (backendClient as any).from("article_links").insert(payload);
     if (error) toast.error(error.message);
   };
 
@@ -68,7 +68,7 @@ export function ArticleLinksEditor({
   };
 
   const remove = async (id: string) => {
-    await (supabase as any).from("article_links").delete().eq("id", id);
+    await (backendClient as any).from("article_links").delete().eq("id", id);
     load();
   };
 

@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Loader2, Power, ShieldCheck, Square } from "lucide-react";
 import { toast } from "sonner";
 
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -63,7 +63,7 @@ export function AIRuntimeControls() {
   const { data = [], isLoading } = useQuery({
     queryKey: ["ai-runtime-controls"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("ai_runtime_controls").select("*").order("feature");
+      const { data, error } = await (backendClient as any).from("ai_runtime_controls").select("*").order("feature");
       if (error) throw error;
       return (data || []) as Control[];
     },
@@ -71,7 +71,7 @@ export function AIRuntimeControls() {
 
   const update = useMutation({
     mutationFn: async ({ feature, values }: { feature: string; values: Partial<Control> }) => {
-      const { error } = await (supabase as any).from("ai_runtime_controls").update({ ...values, updated_at: new Date().toISOString() }).eq("feature", feature);
+      const { error } = await (backendClient as any).from("ai_runtime_controls").update({ ...values, updated_at: new Date().toISOString() }).eq("feature", feature);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -83,7 +83,7 @@ export function AIRuntimeControls() {
 
   const emergency = useMutation({
     mutationFn: async (stopped: boolean) => {
-      const { error } = await (supabase as any).rpc("set_ai_emergency_stop", {
+      const { error } = await (backendClient as any).rpc("set_ai_emergency_stop", {
         _stopped: stopped,
         _reason: stopped ? "Emergency stop from Admin - AI Providers" : null,
       });

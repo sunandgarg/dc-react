@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,7 +12,7 @@ import { Plus, Trash2, Save } from "lucide-react";
 import { UploadOrUrlField } from "@/components/UploadOrUrlField";
 
 import { CSVTools } from "@/components/CSVTools";
-const s: any = supabase;
+const s: any = backendClient;
 
 function PageEditor() {
   const [page, setPage] = useState<any>({});

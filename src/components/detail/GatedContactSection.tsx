@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { MapPin, Phone, Mail, Globe, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -20,7 +20,7 @@ export function GatedContactSection({ collegeSlug, collegeName }: { collegeSlug:
   });
 
   useEffect(() => {
-    (supabase as any).from("college_contacts").select("*").eq("college_slug", collegeSlug).maybeSingle().then(({ data }: any) => setC(data));
+    (backendClient as any).from("college_contacts").select("*").eq("college_slug", collegeSlug).maybeSingle().then(({ data }: any) => setC(data));
   }, [collegeSlug]);
 
   useEffect(() => { if (user) setUnlocked(true); }, [user]);

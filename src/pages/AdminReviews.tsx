@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,16 +18,16 @@ export default function AdminReviews() {
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["admin_college_reviews"],
-    queryFn: async () => (await (supabase as any).from("college_reviews").select("*").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await (backendClient as any).from("college_reviews").select("*").order("created_at", { ascending: false })).data ?? [],
   });
 
   const { data: reports = [] } = useQuery({
     queryKey: ["admin_review_reports"],
-    queryFn: async () => (await (supabase as any).from("review_reports").select("*").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await (backendClient as any).from("review_reports").select("*").order("created_at", { ascending: false })).data ?? [],
   });
 
   const setStatus = async (id: string, status: "approved" | "rejected") => {
-    const { error } = await (supabase as any).from("college_reviews").update({ status }).eq("id", id);
+    const { error } = await (backendClient as any).from("college_reviews").update({ status }).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success(`Review ${status}`);
     qc.invalidateQueries({ queryKey: ["admin_college_reviews"] });
@@ -35,14 +35,14 @@ export default function AdminReviews() {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this review permanently?")) return;
-    const { error } = await (supabase as any).from("college_reviews").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("college_reviews").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
     qc.invalidateQueries({ queryKey: ["admin_college_reviews"] });
   };
 
   const resolveReport = async (id: string) => {
-    const { error } = await (supabase as any).from("review_reports").update({ status: "resolved" }).eq("id", id);
+    const { error } = await (backendClient as any).from("review_reports").update({ status: "resolved" }).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Report resolved");
     qc.invalidateQueries({ queryKey: ["admin_review_reports"] });

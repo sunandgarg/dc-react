@@ -13,8 +13,8 @@ vi.mock("@/hooks/useArticlesData", () => ({
   }),
 }));
 
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: {
+vi.mock("@/integrations/backend/client", () => ({
+  backendClient: {
     from: () => ({
       select: () => ({
         eq: () => ({ eq: () => ({ data: [], error: null }) }),

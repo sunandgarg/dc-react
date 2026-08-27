@@ -1,6 +1,6 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -78,7 +78,7 @@ export function BulkEditGrid({
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["bulk-edit", table, pageSize, normalizedQ, searchKeys.join("|")],
     queryFn: async () => {
-      let query = (supabase as any)
+      let query = (backendClient as any)
         .from(table)
         .select(selectCols.join(","))
         .order(orderBy.column, { ascending: orderBy.ascending ?? false });
@@ -127,7 +127,7 @@ export function BulkEditGrid({
     setSaving(true);
     try {
       const updates = dirtyIds.map((id) =>
-        (supabase as any).from(table).update(draft[id]).eq("id", id)
+        (backendClient as any).from(table).update(draft[id]).eq("id", id)
       );
       const results = await Promise.all(updates);
       const failed = results.filter((r: any) => r.error);

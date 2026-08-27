@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ export function CareerScopeSection() {
   const { data, isLoading } = useQuery({
     queryKey: ["home-careers"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("career_profiles")
         .select("slug,name,domain,short_description,avg_salary,growth,icon_emoji,image,is_featured,display_order")
         .eq("is_active", true)

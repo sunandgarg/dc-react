@@ -18,11 +18,17 @@ export async function integrationStatus() {
       native_auth: configured(process.env.AUTH_JWT_SECRET),
       google_oauth: configured(process.env.GOOGLE_CLIENT_ID),
       s3_storage: configured(process.env.AWS_S3_BUCKET) && configured(process.env.MEDIA_BASE_URL),
-      supabase_storage_rollback: configured(process.env.SUPABASE_STORAGE_URL) && configured(process.env.SUPABASE_STORAGE_SERVICE_KEY),
       sms: configured(process.env.SMS_WEBHOOK_URL) || configured(process.env.SMS_FAST2SMS_API_KEY),
     },
     site: siteRows.map((row) => ({ key: row.key, label: row.label, category: row.category, configured: configured(row.value), enabled: Boolean(row.enabled) })),
-    ai: aiRows.map((row) => ({ provider_name: row.provider_name, display_name: row.display_name, configured: configured(row.api_key_encrypted), default_model: row.default_model, active: Boolean(row.is_active) })),
+    ai: aiRows.map((row) => {
+      const runtimeKey = row.provider_name === "gemini"
+        ? process.env.GEMINI_API_KEY
+        : row.provider_name === "openai"
+          ? process.env.OPENAI_API_KEY
+          : "";
+      return { provider_name: row.provider_name, display_name: row.display_name, configured: configured(runtimeKey) || configured(row.api_key_encrypted), default_model: row.default_model, active: Boolean(row.is_active) };
+    }),
     otp: otpRows.map((row) => ({
       provider_name: row.provider_name,
       display_name: row.display_name,

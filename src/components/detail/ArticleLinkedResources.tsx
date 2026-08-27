@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Badge } from "@/components/ui/badge";
 import { Building2, GraduationCap, FileText, Briefcase, Award, Newspaper, BookOpen } from "lucide-react";
 
@@ -34,7 +34,7 @@ export function ArticleLinkedResources({ articleId, tags = [] }: Props) {
     let cancelled = false;
     setLoading(true);
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("article_links").select("entity_type, entity_slug").eq("article_id", articleId);
       if (cancelled) return;
       if (!data?.length) { setRows([]); setStudyChips([]); setLoading(false); return; }
@@ -60,7 +60,7 @@ export function ArticleLinkedResources({ articleId, tags = [] }: Props) {
       const fetched = await Promise.all(
         Object.entries(byType).map(async ([t, slugs]) => {
           const m = META[t];
-          const { data: ents } = await (supabase as any).from(m.table!)
+          const { data: ents } = await (backendClient as any).from(m.table!)
             .select(`slug, ${m.nameCol}, ${m.imgCol}`).in("slug", slugs);
           return ((ents || []) as any[]).map((e) => ({
             entity_type: t, entity_slug: e.slug, name: e[m.nameCol!], img: e[m.imgCol!], href: m.route(e.slug),
@@ -73,7 +73,7 @@ export function ArticleLinkedResources({ articleId, tags = [] }: Props) {
       const subjIds = studyUuidSlugs.filter(s => s.type === "study_subject").map(s => s.slug);
       const chapIds = studyUuidSlugs.filter(s => s.type === "study_chapter").map(s => s.slug);
       if (subjIds.length) {
-        const { data: subs } = await (supabase as any)
+        const { data: subs } = await (backendClient as any)
           .from("study_subjects").select("id, slug, name, class_num, board_slug").in("id", subjIds);
         (subs || []).forEach((s: any) => resolvedStudyUuid.push({
           label: `Class ${s.class_num} ${(s.board_slug || "").toUpperCase()} · ${s.name}`,
@@ -81,11 +81,11 @@ export function ArticleLinkedResources({ articleId, tags = [] }: Props) {
         }));
       }
       if (chapIds.length) {
-        const { data: chs } = await (supabase as any)
+        const { data: chs } = await (backendClient as any)
           .from("study_chapters").select("id, slug, title, subject_id").in("id", chapIds);
         const sids = Array.from(new Set((chs || []).map((c: any) => c.subject_id)));
         const { data: subs2 } = sids.length
-          ? await (supabase as any).from("study_subjects").select("id, slug, class_num, board_slug, name").in("id", sids)
+          ? await (backendClient as any).from("study_subjects").select("id, slug, class_num, board_slug, name").in("id", sids)
           : { data: [] as any[] };
         const subMap = new Map<string, any>((subs2 || []).map((s: any) => [s.id, s]));
         (chs || []).forEach((c: any) => {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,12 +35,12 @@ export function LeadIntentDrawer({ leadId, leadPhone, leadName, onClose }: Props
       setLoading(true);
       setScore(null); setTimeline([]); setPrediction(null);
       // 1. Find intent_lead_scores row by lead_id
-      const { data: s } = await supabase
+      const { data: s } = await backendClient
         .from("intent_lead_scores").select("*").eq("lead_id", leadId).maybeSingle();
       setScore(s);
       if (s) {
         const col = s.subject_type === "user" ? "user_id" : "visitor_id";
-        const { data: ev } = await supabase.from("intent_events")
+        const { data: ev } = await backendClient.from("intent_events")
           .select("occurred_at,event_type,college_slug,course_slug,page_url,city,state")
           .eq(col, s.subject_id)
           .order("occurred_at", { ascending: false })
@@ -55,7 +55,7 @@ export function LeadIntentDrawer({ leadId, leadPhone, leadName, onClose }: Props
   const runPrediction = async (id: string, mode: "heuristic" | "ai") => {
     setAiLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("predict-lead-intent", { body: { lead_score_id: id, mode } });
+      const { data, error } = await backendClient.functions.invoke("predict-lead-intent", { body: { lead_score_id: id, mode } });
       if (error) throw error;
       setPrediction(data);
     } catch (e: any) {

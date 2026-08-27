@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { X, Search, Check } from "lucide-react";
@@ -20,7 +20,7 @@ export function UserPicker({ value, onChange, label = "Linked User Account" }: P
   const selected = profiles.find((p) => p.user_id === value);
 
   useEffect(() => {
-    (supabase as any)
+    (backendClient as any)
       .from("profiles")
       .select("user_id, display_name, email, phone, avatar_url")
       .order("display_name")

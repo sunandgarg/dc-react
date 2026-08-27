@@ -4,7 +4,7 @@ import { CheckCircle2, FileDiff, MessageSquareWarning } from "lucide-react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 
 type Review = {
@@ -37,7 +37,7 @@ export default function AdminContentReview() {
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["content-reviews", status],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("content-reviews", {
+      const { data, error } = await backendClient.functions.invoke("content-reviews", {
         method: "GET",
       });
       if (error) throw error;
@@ -55,7 +55,7 @@ export default function AdminContentReview() {
   const reviewItem = async (nextStatus: "approved" | "needs_changes") => {
     if (!selected) return;
     setSaving(true);
-    const { error } = await supabase.functions.invoke("content-reviews", {
+    const { error } = await backendClient.functions.invoke("content-reviews", {
       method: "PATCH",
       body: { id: selected.id, status: nextStatus, review_notes: notes },
     });

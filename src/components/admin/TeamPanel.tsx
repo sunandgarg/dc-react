@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ export function TeamPanel() {
   const { data: invites = [], isLoading } = useQuery({
     queryKey: ["team_invites"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("team_invites")
         .select("*")
         .order("created_at", { ascending: false });
@@ -32,7 +32,7 @@ export function TeamPanel() {
 
   const revoke = async (id: string) => {
     if (!confirm("Revoke this team member? They will lose admin-panel access on next login.")) return;
-    const { error } = await (supabase as any)
+    const { error } = await (backendClient as any)
       .from("team_invites")
       .update({ status: "revoked" })
       .eq("id", id);
@@ -42,7 +42,7 @@ export function TeamPanel() {
   };
 
   const reactivate = async (id: string) => {
-    const { error } = await (supabase as any)
+    const { error } = await (backendClient as any)
       .from("team_invites")
       .update({ status: "pending", accepted_user_id: null })
       .eq("id", id);

@@ -6,7 +6,7 @@ import { localStorageAdapter } from './localstorage-adapter';
 import { memoryAdapter } from './memory-adapter';
 import { backgroundProcessor } from './background-processor';
 import { generateUniqueSlug, generateUploadSlug } from './slug-utils';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import type {
   UniversityEntity,
   UploadEntity,
@@ -302,7 +302,7 @@ class DataStore {
 
     try {
       // Fetch universities from server
-      const { data: serverUniversities, error } = await supabase
+      const { data: serverUniversities, error } = await backendClient
         .from('universities')
         .select('id,name,api_url,college_id,secret_key,source,medium,campaign,leads_per_minute,api_type,column_mapping,created_at,updated_at')
         .order('created_at', { ascending: false });

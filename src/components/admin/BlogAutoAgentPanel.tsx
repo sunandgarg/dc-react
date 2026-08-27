@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bot, CheckCircle2, CirclePause, Clock, ExternalLink, ImageIcon, Loader2, OctagonX, Play, Plus, RotateCcw, Save, Sparkles, Square, Timer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -111,7 +111,7 @@ function normalizeImageSettingUrl(value: unknown) {
   if (!raw) return "";
   if (/^(https?:|data:|blob:)/i.test(raw)) return raw;
   if (raw.startsWith("//")) return `https:${raw}`;
-  if (/^(dekhocampus\.com|www\.dekhocampus\.com|[a-z0-9-]+\.supabase\.co)\//i.test(raw)) return `https://${raw}`;
+  if (/^(dekhocampus\.com|www\.dekhocampus\.com|[a-z0-9-]+\.backendClient\.co)\//i.test(raw)) return `https://${raw}`;
   return raw;
 }
 
@@ -133,12 +133,12 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     if (showLoader) setLoading(true);
     try {
       const [{ data: settingsData }, { data: sourceData }, { data: runData }, { data: authorData }] = await Promise.all([
-        (supabase as any).from("blog_auto_agent_settings")
+        (backendClient as any).from("blog_auto_agent_settings")
           .select("*")
           .eq("id", "default").maybeSingle(),
-        (supabase as any).from("blog_research_sources").select("*").order("display_order"),
-        (supabase as any).from("blog_auto_agent_runs").select("*").order("started_at", { ascending: false }).limit(5),
-        (supabase as any).from("authors").select("id,name,designation,photo").eq("is_active", true).order("display_order"),
+        (backendClient as any).from("blog_research_sources").select("*").order("display_order"),
+        (backendClient as any).from("blog_auto_agent_runs").select("*").order("started_at", { ascending: false }).limit(5),
+        (backendClient as any).from("authors").select("id,name,designation,photo").eq("is_active", true).order("display_order"),
       ]);
       if (settingsData) {
         setSupportsAdvancedSettings(Object.prototype.hasOwnProperty.call(settingsData, "image_mode"));
@@ -158,7 +158,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         setRuns(runData);
         const ids = Array.from(new Set(runData.flatMap((run: Run) => run.created_article_ids || [])));
         if (ids.length) {
-          const { data } = await (supabase as any).from("articles")
+          const { data } = await (backendClient as any).from("articles")
             .select("id,title,slug,featured_image,status,description")
             .in("id", ids);
           setGeneratedArticles(data || []);
@@ -247,16 +247,16 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             next_run_at: nextRun,
           }
         : legacySettings;
-      const { error } = await (supabase as any).from("blog_auto_agent_settings").upsert(
+      const { error } = await (backendClient as any).from("blog_auto_agent_settings").upsert(
         { id: "default", ...settingsPayload },
         { onConflict: "id" },
       );
       if (error) throw error;
       for (const [index, source] of sources.entries()) {
-        await (supabase as any).from("blog_research_sources").upsert({ ...source, display_order: (index + 1) * 10 }, { onConflict: "url" });
+        await (backendClient as any).from("blog_research_sources").upsert({ ...source, display_order: (index + 1) * 10 }, { onConflict: "url" });
       }
       if (removedSourceIds.length) {
-        const { error: deleteError } = await (supabase as any).from("blog_research_sources").delete().in("id", removedSourceIds);
+        const { error: deleteError } = await (backendClient as any).from("blog_research_sources").delete().in("id", removedSourceIds);
         if (deleteError) throw deleteError;
         setRemovedSourceIds([]);
       }
@@ -293,7 +293,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
   const runNow = async () => {
     setBusy(true);
     try {
-      const invocation = supabase.functions.invoke("admin-blog-agent", { body: { trigger_type: "manual" } });
+      const invocation = backendClient.functions.invoke("admin-blog-agent", { body: { trigger_type: "manual" } });
       // The run row is created immediately. Start polling it while the long AI
       // request continues, and keep that state recoverable after navigation.
       window.setTimeout(() => { void load(false); }, 800);
@@ -315,7 +315,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     if (!currentRun) return;
     setBusy(true);
     try {
-      const { data, error } = await supabase.functions.invoke("admin-blog-agent", {
+      const { data, error } = await backendClient.functions.invoke("admin-blog-agent", {
         body: { action, run_id: currentRun.id },
       });
       if (error || data?.error) throw error || new Error(data.error);

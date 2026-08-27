@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, X, Plus, Loader2 } from "lucide-react";
@@ -30,7 +30,7 @@ export function CollegeSubjectMultiSearch({ value, onChange, label }: Props) {
     const missing = value.filter((id) => id && !labels[id]);
     if (!missing.length) return;
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("college_subjects")
         .select("id, name, code, semester_num, program_slug")
         .in("id", missing);
@@ -47,7 +47,7 @@ export function CollegeSubjectMultiSearch({ value, onChange, label }: Props) {
     if (!term) { setRows([]); setLoading(false); return; }
     setLoading(true);
     const t = setTimeout(async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("college_subjects")
         .select("id, name, code, semester_num, program_slug, university_slug")
         .or(`name.ilike.%${term}%,code.ilike.%${term}%`)

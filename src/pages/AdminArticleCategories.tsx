@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -24,7 +24,7 @@ export default function AdminArticleCategories() {
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["article_categories_admin"],
     queryFn: async () =>
-      ((await (supabase as any).from("article_categories").select("*").order("display_order")).data ?? []) as Cat[],
+      ((await (backendClient as any).from("article_categories").select("*").order("display_order")).data ?? []) as Cat[],
   });
 
   const [editing, setEditing] = useDraftState<Partial<Cat> | null>('admin.article-categories.editing.v1', null);
@@ -39,8 +39,8 @@ export default function AdminArticleCategories() {
       is_active: editing.is_active !== false,
     };
     const { error } = isNew
-      ? await (supabase as any).from("article_categories").insert(payload)
-      : await (supabase as any).from("article_categories").update(payload).eq("id", editing.id!);
+      ? await (backendClient as any).from("article_categories").insert(payload)
+      : await (backendClient as any).from("article_categories").update(payload).eq("id", editing.id!);
     if (error) return toast.error(error.message);
     toast.success(isNew ? "Category added" : "Category updated");
     setEditing(null);
@@ -50,7 +50,7 @@ export default function AdminArticleCategories() {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this category?")) return;
-    const { error } = await (supabase as any).from("article_categories").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("article_categories").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
     qc.invalidateQueries({ queryKey: ["article_categories_admin"] });

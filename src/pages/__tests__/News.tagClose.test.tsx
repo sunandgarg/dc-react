@@ -20,8 +20,8 @@ vi.mock("@tanstack/react-query", async () => {
   };
 });
 
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { from: () => ({ select: () => ({ eq: () => ({}) }) }) },
+vi.mock("@/integrations/backend/client", () => ({
+  backendClient: { from: () => ({ select: () => ({ eq: () => ({}) }) }) },
 }));
 
 function Probe() {

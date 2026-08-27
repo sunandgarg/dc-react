@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, BriefcaseBusiness, FileText, GraduationCap, Search, Sparkles, X } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { buildIlikeOr, buildSearchVariants, rankDirectoryResult } from "@/lib/fuzzySearch";
 import { compactDisplayText, displayText } from "@/lib/displayText";
 
@@ -59,7 +59,7 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
     setLoading(true);
     const timer = window.setTimeout(async () => {
       try {
-        const rpc = await (supabase as any).rpc("search_directory_fast", {
+        const rpc = await (backendClient as any).rpc("search_directory_fast", {
           p_query: normalizedQuery,
           p_limit: 10,
         });
@@ -93,19 +93,19 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
         const fallbackVariants = variants.slice(0, 3);
         const orFor = (column: string) => buildIlikeOr(column, fallbackVariants);
         const [colleges, courses, exams] = await Promise.all([
-          supabase
+          backendClient
             .from("colleges")
             .select("name,short_name,slug,city,state,logo,image")
             .eq("is_active", true)
             .or([orFor("name"), orFor("short_name"), orFor("slug"), orFor("city"), orFor("state")].filter(Boolean).join(","))
             .limit(4),
-          supabase
+          backendClient
             .from("courses")
             .select("name,full_name,slug,level,category,image")
             .eq("is_active", true)
             .or([orFor("name"), orFor("full_name"), orFor("slug")].join(","))
             .limit(4),
-          supabase
+          backendClient
             .from("exams")
             .select("name,short_name,full_name,slug,logo,image,exam_type,category")
             .eq("is_active", true)

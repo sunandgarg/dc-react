@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { UserCheck, ChevronLeft, ChevronRight, GraduationCap, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfessionalAvatar } from "@/components/ProfessionalAvatar";
@@ -22,7 +22,7 @@ export function FacultySection({ collegeSlug }: { collegeSlug: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    (supabase as any)
+    (backendClient as any)
       .from("faculty")
       .select("*")
       .eq("college_slug", collegeSlug)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -31,11 +31,11 @@ export default function AuthorPage() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data: a } = await (supabase as any).from("authors").select("*").eq("slug", slug).maybeSingle();
+      const { data: a } = await (backendClient as any).from("authors").select("*").eq("slug", slug).maybeSingle();
       setAuthor(a as Author | null);
       if (a?.id) {
         const results = await Promise.all(SOURCES.map(s =>
-          (supabase as any).from(s.table).select("slug,name,title,description,short_description,image,featured_image,created_at").eq("author_id", a.id).limit(50)
+          (backendClient as any).from(s.table).select("slug,name,title,description,short_description,image,featured_image,created_at").eq("author_id", a.id).limit(50)
         ));
         const next: Record<string, any[]> = {};
         SOURCES.forEach((s, i) => { next[s.table] = (results[i].data as any[]) || []; });

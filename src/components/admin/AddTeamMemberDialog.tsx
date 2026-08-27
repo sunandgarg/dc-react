@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AppRole, Module } from "@/lib/rbac";
 import { normalizeIndianMobile } from "@/lib/phone";
 
@@ -69,7 +69,7 @@ export function AddTeamMemberDialog({ onSaved }: { onSaved?: () => void }) {
       return;
     }
     setBusy(true);
-    const { error } = await (supabase as any).from("team_invites").insert({
+    const { error } = await (backendClient as any).from("team_invites").insert({
       email: cleanEmail || null,
       phone: cleanPhone || null,
       display_name: name || null,

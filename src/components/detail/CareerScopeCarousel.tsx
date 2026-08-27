@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, TrendingUp, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { ProfessionalAvatar } from "@/components/ProfessionalAvatar";
 
 interface Props {
@@ -61,10 +61,10 @@ export function CareerScopeCarousel({ courseSlug, careers, courseName }: Props) 
     let cancel = false;
     (async () => {
       if (!courseSlug) { setLinked([]); return; }
-      const { data: links } = await (supabase as any).from("career_course_links").select("career_slug").eq("course_slug", courseSlug);
+      const { data: links } = await (backendClient as any).from("career_course_links").select("career_slug").eq("course_slug", courseSlug);
       const slugs = (links || []).map((l: any) => l.career_slug);
       if (slugs.length === 0) { if (!cancel) setLinked([]); return; }
-      const { data: profiles } = await (supabase as any).from("career_profiles").select("slug,name,domain,icon_emoji,image").in("slug", slugs);
+      const { data: profiles } = await (backendClient as any).from("career_profiles").select("slug,name,domain,icon_emoji,image").in("slug", slugs);
       if (!cancel) setLinked(profiles || []);
     })();
     return () => { cancel = true; };

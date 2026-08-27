@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -216,20 +216,20 @@ export default function AdminMarketingAutomation() {
 
   const { data: rules = [], refetch: refetchRules } = useQuery<Rule[]>({
     queryKey: ["lp_automation_rules"],
-    queryFn: async () => ((await supabase.from("lp_automation_rules" as any).select("*").order("priority")).data || []) as any,
+    queryFn: async () => ((await backendClient.from("lp_automation_rules" as any).select("*").order("priority")).data || []) as any,
   });
   const { data: unis = [] } = useQuery<Uni[]>({
     queryKey: ["lp_universities_marketing"],
-    queryFn: async () => ((await supabase.from("universities" as any).select("id,name,api_url,api_type,column_mapping,default_values,leads_per_minute").order("name")).data || []).map((u: any) => ({ ...u, is_active: true })) as any,
+    queryFn: async () => ((await backendClient.from("universities" as any).select("id,name,api_url,api_type,column_mapping,default_values,leads_per_minute").order("name")).data || []).map((u: any) => ({ ...u, is_active: true })) as any,
   });
   const { data: logs = [] } = useQuery<any[]>({
     queryKey: ["lp_push_logs_recent"],
-    queryFn: async () => ((await supabase.from("lp_push_logs" as any).select("*").order("created_at", { ascending: false }).limit(80)).data || []) as any,
+    queryFn: async () => ((await backendClient.from("lp_push_logs" as any).select("*").order("created_at", { ascending: false }).limit(80)).data || []) as any,
     refetchInterval: 15000,
   });
   const { data: recentLeads = [] } = useQuery<any[]>({
     queryKey: ["leads_all_for_routing"],
-    queryFn: async () => ((await supabase.from("leads").select(LEAD_SELECT).order("created_at", { ascending: false }).limit(1000)).data || []) as any,
+    queryFn: async () => ((await backendClient.from("leads").select(LEAD_SELECT).order("created_at", { ascending: false }).limit(1000)).data || []) as any,
   });
 
   const uniMap = useMemo(() => new Map(unis.map((u) => [u.id, u])), [unis]);
@@ -284,7 +284,7 @@ export default function AdminMarketingAutomation() {
   }, [recentLeads, search]);
 
   const createRule = async () => {
-    const { data, error } = await supabase.from("lp_automation_rules" as any).insert({
+    const { data, error } = await backendClient.from("lp_automation_rules" as any).insert({
       name: `New Routing Rule ${rules.length + 1}`,
       description: "", priority: 100, is_active: true, auto_dispatch: true, match_all: false,
       match_cities: [], match_states: [], match_courses: [], match_sources: [], match_ctas: [],
@@ -297,12 +297,12 @@ export default function AdminMarketingAutomation() {
   };
 
   const toggleActive = async (r: Rule, key: "is_active" | "auto_dispatch") => {
-    await supabase.from("lp_automation_rules" as any).update({ [key]: !r[key] } as any).eq("id", r.id);
+    await backendClient.from("lp_automation_rules" as any).update({ [key]: !r[key] } as any).eq("id", r.id);
     refetchRules();
   };
   const removeRule = async (id: string) => {
     if (!confirm("Delete this routing rule?")) return;
-    await supabase.from("lp_automation_rules" as any).delete().eq("id", id);
+    await backendClient.from("lp_automation_rules" as any).delete().eq("id", id);
     refetchRules();
     toast.success("Deleted");
   };
@@ -640,21 +640,21 @@ function useRuleOptions() {
   const { data: courses = [] } = useQuery<Opt[]>({
     queryKey: ["lp_opts_courses"],
     queryFn: async () => {
-      const { data } = await supabase.from("courses").select("slug,name").order("name").limit(2000);
+      const { data } = await backendClient.from("courses").select("slug,name").order("name").limit(2000);
       return (data || []).map((c: any) => ({ value: c.slug, label: c.name, hint: c.slug }));
     },
   });
   const { data: colleges = [] } = useQuery<Opt[]>({
     queryKey: ["lp_opts_colleges"],
     queryFn: async () => {
-      const { data } = await supabase.from("colleges").select("slug,name,city,state").order("name").limit(3000);
+      const { data } = await backendClient.from("colleges").select("slug,name,city,state").order("name").limit(3000);
       return (data || []).map((c: any) => ({ value: c.slug, label: c.name, hint: [c.city, c.state].filter(Boolean).join(", ") }));
     },
   });
   const { data: leadFacets = { cities: [], states: [], sources: [], ctas: [] } } = useQuery<any>({
     queryKey: ["lp_opts_lead_facets"],
     queryFn: async () => {
-      const { data } = await supabase.from("leads").select("city,state,source,cta").limit(5000);
+      const { data } = await backendClient.from("leads").select("city,state,source,cta").limit(5000);
       const cities = new Set<string>(), states = new Set<string>(), sources = new Set<string>(), ctas = new Set<string>();
       (data || []).forEach((l: any) => {
         if (l.city) cities.add(l.city);
@@ -678,7 +678,7 @@ function RuleEditor({ rule, unis, onClose }: { rule: Rule; unis: Uni[]; onClose:
 
   const save = async () => {
     setSaving(true);
-    const { error } = await supabase.from("lp_automation_rules" as any).update({
+    const { error } = await backendClient.from("lp_automation_rules" as any).update({
       name: r.name, description: r.description, priority: r.priority, is_active: r.is_active, auto_dispatch: r.auto_dispatch,
       match_all: r.match_all, match_cities: r.match_cities, match_states: r.match_states, match_courses: r.match_courses,
       match_sources: r.match_sources, match_ctas: r.match_ctas, match_fields: r.match_fields || {}, university_ids: r.university_ids,
@@ -944,7 +944,7 @@ function PrefillEditor({ rule, unis, onSaved }: { rule: Rule; unis: Uni[]; onSav
   };
   const save = async () => {
     setSaving(true);
-    const { error } = await supabase.from("lp_automation_rules" as any).update({ prefills } as any).eq("id", rule.id);
+    const { error } = await backendClient.from("lp_automation_rules" as any).update({ prefills } as any).eq("id", rule.id);
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Prefills saved");
@@ -1144,7 +1144,7 @@ function LiveTester({ rules, unis, recentLeads, selectedLead }: { rules: Rule[];
 
   const run = useCallback(async (dryRun = true) => {
     setBusy(true); setResult(null);
-    const { data, error } = await supabase.functions.invoke("lp-dispatch-lead", { body: { lead, dry_run: dryRun } });
+    const { data, error } = await backendClient.functions.invoke("lp-dispatch-lead", { body: { lead, dry_run: dryRun } });
     setBusy(false);
     if (error) return toast.error(error.message);
     setResult(data);

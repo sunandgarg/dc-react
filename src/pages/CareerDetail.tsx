@@ -2,7 +2,7 @@ import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
@@ -23,7 +23,7 @@ export default function CareerDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.from("career_profiles").select("*").eq("slug", slug).maybeSingle()
+    backendClient.from("career_profiles").select("*").eq("slug", slug).maybeSingle()
       .then(({ data }) => { setC(data); setLoading(false); });
   }, [slug]);
 

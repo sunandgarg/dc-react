@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, TrendingUp, Target, Sparkles, Globe, Heart } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { silentSaveLead } from "@/lib/leadCapture";
 import { DekhoCampusAILoader } from "@/components/tools/DekhoCampusAILoader";
@@ -54,7 +54,7 @@ export default function CollegePredictor() {
   const { data: exams = [] } = useQuery({
     queryKey: ["predictor-exams"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("exams")
         .select("slug,name,short_name,category")
         .eq("is_active", true)
@@ -89,7 +89,7 @@ export default function CollegePredictor() {
   const { data: colleges = [], isLoading } = useQuery({
     queryKey: ["predictor-colleges", examSlug, state],
     queryFn: async () => {
-      let q = supabase
+      let q = backendClient
         .from("colleges")
         .select("slug,name,short_name,location,state,category,rating,fees,image,related_exams")
         .eq("is_active", true);
@@ -106,7 +106,7 @@ export default function CollegePredictor() {
   const { data: cityColleges = [] } = useQuery({
     queryKey: ["predictor-city-colleges", state],
     queryFn: async () => {
-      let q = supabase
+      let q = backendClient
         .from("colleges")
         .select("slug,name,short_name,location,state,category,rating,fees,image,related_exams")
         .eq("is_active", true);
@@ -159,14 +159,14 @@ export default function CollegePredictor() {
     try {
       setAiLoading(true);
       setAiResult(null);
-      let q = supabase
+      let q = backendClient
         .from("colleges")
         .select("slug,name,short_name,location,state,category,rating,fees,image,related_exams")
         .eq("is_active", true);
       if (selectedExam?.category) q = q.eq("category", selectedExam.category);
       if (state) q = q.eq("state", state);
       const { data: cols } = await q.order("rating", { ascending: false, nullsFirst: false }).limit(30);
-      const { data, error } = await supabase.functions.invoke("predict-colleges", {
+      const { data, error } = await backendClient.functions.invoke("predict-colleges", {
         body: { exam: selectedExam?.name || examSlug, rank: rankNum, category, state: state || null, colleges: cols ?? [], includeWeb: true },
       });
       if (!error && data) setAiResult(data as AiResult);

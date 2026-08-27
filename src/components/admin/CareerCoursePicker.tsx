@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus, X } from "lucide-react";
@@ -24,14 +24,14 @@ export function CareerCoursePicker({ careerSlug }: Props) {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from("courses").select("slug, name, category").order("name").limit(2000);
+      const { data } = await backendClient.from("courses").select("slug, name, category").order("name").limit(2000);
       setCourses((data as Course[]) || []);
     })();
   }, []);
 
   const reload = async () => {
     if (!careerSlug) return;
-    const { data } = await (supabase as any).from("career_course_links").select("*").eq("career_slug", careerSlug);
+    const { data } = await (backendClient as any).from("career_course_links").select("*").eq("career_slug", careerSlug);
     setLinks(data || []);
   };
   useEffect(() => { reload(); }, [careerSlug]);
@@ -41,9 +41,9 @@ export function CareerCoursePicker({ careerSlug }: Props) {
   const toggle = async (slug: string) => {
     const existing = links.find((l) => l.course_slug === slug);
     if (existing) {
-      await (supabase as any).from("career_course_links").delete().eq("id", existing.id);
+      await (backendClient as any).from("career_course_links").delete().eq("id", existing.id);
     } else {
-      const { error } = await (supabase as any)
+      const { error } = await (backendClient as any)
         .from("career_course_links")
         .insert({ career_slug: careerSlug, course_slug: slug });
       if (error) return toast.error(error.message);

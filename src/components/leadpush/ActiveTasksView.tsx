@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
@@ -66,7 +66,7 @@ function ActiveTasksViewInner() {
   const fetchTasks = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from('upload_batches')
         .select(ACTIVE_TASK_BATCH_COLUMNS)
         .in('status', ['processing', 'pending', 'paused', 'scheduled'])
@@ -79,7 +79,7 @@ function ActiveTasksViewInner() {
       const uniIds = [...new Set((data || []).map(b => b.university_id).filter(Boolean))];
       const uncachedUniIds = uniIds.filter(id => !uniCache.has(id));
       if (uncachedUniIds.length > 0) {
-        const { data: unis } = await supabase.from('universities').select('id, name').in('id', uncachedUniIds);
+        const { data: unis } = await backendClient.from('universities').select('id, name').in('id', uncachedUniIds);
         (unis || []).forEach(u => uniCache.set(u.id, u.name));
       }
 
@@ -87,7 +87,7 @@ function ActiveTasksViewInner() {
       const userIds = [...new Set((data || []).map(b => b.user_id).filter(Boolean))];
       const uncachedUserIds = userIds.filter(id => !userCache.has(id));
       if (uncachedUserIds.length > 0) {
-        const { data: profiles } = await supabase.from('profiles').select('id, email').in('id', uncachedUserIds);
+        const { data: profiles } = await backendClient.from('profiles').select('id, email').in('id', uncachedUserIds);
         (profiles || []).forEach(p => userCache.set(p.id, p.email || 'Unknown'));
       }
 
@@ -108,20 +108,20 @@ function ActiveTasksViewInner() {
   }, [toast]);
 
   const handlePause = useCallback(async (batchId: string) => {
-    await supabase.from('upload_batches').update({ is_paused: true, status: 'paused' }).eq('id', batchId);
+    await backendClient.from('upload_batches').update({ is_paused: true, status: 'paused' }).eq('id', batchId);
     toast({ title: 'Paused', description: 'Batch paused successfully' });
     fetchTasks();
   }, [toast, fetchTasks]);
 
   const handleResume = useCallback(async (batchId: string) => {
-    await supabase.from('upload_batches').update({ is_paused: false, status: 'processing' }).eq('id', batchId);
-    supabase.functions.invoke('process-queue', { body: { batchId } }).catch(() => {});
+    await backendClient.from('upload_batches').update({ is_paused: false, status: 'processing' }).eq('id', batchId);
+    backendClient.functions.invoke('process-queue', { body: { batchId } }).catch(() => {});
     toast({ title: 'Resumed', description: 'Batch resumed' });
     fetchTasks();
   }, [toast, fetchTasks]);
 
   const handleStop = useCallback(async (batchId: string) => {
-    await supabase.from('upload_batches').update({ status: 'cancelled', is_cancelled: true, completed_at: new Date().toISOString() }).eq('id', batchId);
+    await backendClient.from('upload_batches').update({ status: 'cancelled', is_cancelled: true, completed_at: new Date().toISOString() }).eq('id', batchId);
     toast({ title: 'Stopped', description: 'Batch cancelled' });
     fetchTasks();
   }, [toast, fetchTasks]);

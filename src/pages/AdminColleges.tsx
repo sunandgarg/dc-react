@@ -32,7 +32,7 @@ import { FeaturedRankPicker } from "@/components/admin/FeaturedRankPicker";
 import { FeaturedRankPanel } from "@/components/admin/FeaturedRankPanel";
 import { AdminPageSizePicker } from "@/components/admin/AdminPageSizePicker";
 import { OfficialDataFillButton } from "@/components/admin/OfficialDataFillButton";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { slugify } from "@/lib/slugify";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -104,7 +104,7 @@ export default function AdminColleges() {
 
   const openEditor = async (id: string) => {
     setLoadingEditId(id);
-    const { data, error } = await supabase.from("colleges").select("*").eq("id", id).single();
+    const { data, error } = await backendClient.from("colleges").select("*").eq("id", id).single();
     setLoadingEditId(null);
     if (error) { toast.error(`Could not open college: ${error.message}`); return; }
     setEditingBaseline(JSON.stringify(data));

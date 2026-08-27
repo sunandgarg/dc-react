@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -38,7 +38,7 @@ export default function AdminOtpProviders() {
   const { data: providers, isLoading } = useQuery({
     queryKey: ["otp-providers"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("otp_providers")
         .select("*")
         .order("channel", { ascending: true });
@@ -49,7 +49,7 @@ export default function AdminOtpProviders() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<OtpProvider> }) => {
-      const { error } = await supabase.from("otp_providers").update(updates).eq("id", id);
+      const { error } = await backendClient.from("otp_providers").update(updates).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -61,7 +61,7 @@ export default function AdminOtpProviders() {
 
   const createMutation = useMutation({
     mutationFn: async (p: typeof newP) => {
-      const { error } = await supabase.from("otp_providers").insert(p as any);
+      const { error } = await backendClient.from("otp_providers").insert(p as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -75,7 +75,7 @@ export default function AdminOtpProviders() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("otp_providers").delete().eq("id", id);
+      const { error } = await backendClient.from("otp_providers").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -101,13 +101,13 @@ export default function AdminOtpProviders() {
         throw new Error("Add MSG91 Auth Key (API Key) and DLT Template ID before activating it.");
       }
       if (next) {
-        const { error: clearError } = await supabase
+        const { error: clearError } = await backendClient
           .from("otp_providers")
           .update({ is_active: false })
           .eq("channel", provider.channel);
         if (clearError) throw clearError;
       }
-      const { error } = await supabase
+      const { error } = await backendClient
         .from("otp_providers")
         .update({ is_active: next })
         .eq("id", provider.id);
@@ -122,7 +122,7 @@ export default function AdminOtpProviders() {
 
   const createFast2SmsMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("otp_providers").insert({
+      const { error } = await backendClient.from("otp_providers").insert({
         channel: "sms",
         provider_name: "fast2sms",
         display_name: "OTP Integration with Fast2SMS",
@@ -146,7 +146,7 @@ export default function AdminOtpProviders() {
 
   const createMsg91Mutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("otp_providers").insert({
+      const { error } = await backendClient.from("otp_providers").insert({
         channel: "sms",
         provider_name: "msg91",
         display_name: "OTP Integration with MSG91",
@@ -651,7 +651,7 @@ function MasterOtpSwitch() {
   const { data: settings } = useQuery({
     queryKey: ["lead-form-settings-otp-mode"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("lead_form_settings")
         .select("id, otp_mode")
         .eq("singleton", true)
@@ -665,13 +665,13 @@ function MasterOtpSwitch() {
     mutationFn: async (enabled: boolean) => {
       const nextMode = enabled ? "on" : "off";
       if (settings?.id) {
-        const { error } = await supabase
+        const { error } = await backendClient
           .from("lead_form_settings")
           .update({ otp_mode: nextMode })
           .eq("id", settings.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { error } = await backendClient
           .from("lead_form_settings")
           .insert({ singleton: true, otp_mode: nextMode } as any);
         if (error) throw error;

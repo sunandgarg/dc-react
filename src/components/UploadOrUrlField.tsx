@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Upload, Loader2, X, FileText, ImageIcon, ExternalLink, Wand2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { ImageHint, type ImagePresetKey } from "@/components/ImageHint";
 import { optimizeImageFile, optimizeRemoteImage } from "@/lib/imageOptimizer";
@@ -58,13 +58,13 @@ export function UploadOrUrlField({
       const ext = file.name.split(".").pop() || "bin";
       const safeBase = file.name.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9-_]/g, "-").slice(0, 40);
       const path = `${folder}/${Date.now()}-${safeBase}.${ext}`;
-      const { error } = await supabase.storage.from("admin-uploads").upload(path, file, {
+      const { error } = await backendClient.storage.from("admin-uploads").upload(path, file, {
         cacheControl: "3600",
         upsert: false,
         contentType: file.type || undefined,
       });
       if (error) throw error;
-      const { data } = supabase.storage.from("admin-uploads").getPublicUrl(path);
+      const { data } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
       onChange(data.publicUrl);
       toast.success(kind === "image" ? (quality.hd ? "Uploaded (HD original)" : "Uploaded (optimized to WebP)") : "Uploaded");
     } catch (err: any) {
@@ -94,12 +94,12 @@ export function UploadOrUrlField({
         return;
       }
       const path = `${folder}/${Date.now()}-url-optimized.webp`;
-      const { error } = await supabase.storage.from("admin-uploads").upload(path, optimized, {
+      const { error } = await backendClient.storage.from("admin-uploads").upload(path, optimized, {
         cacheControl: "3600",
         contentType: "image/webp",
       });
       if (error) throw error;
-      const { data } = supabase.storage.from("admin-uploads").getPublicUrl(path);
+      const { data } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
       onChange(data.publicUrl);
       toast.success("URL optimized to WebP");
     } catch (err: any) {
@@ -293,12 +293,12 @@ export function MultiFileField({
       }
       const ext = file.name.split(".").pop() || "pdf";
       const path = `${folder}/${Date.now()}-${itemLabel.replace(/[^a-zA-Z0-9-_]/g, "-")}.${ext}`;
-      const { error } = await supabase.storage.from("admin-uploads").upload(path, file, {
+      const { error } = await backendClient.storage.from("admin-uploads").upload(path, file, {
         cacheControl: "3600",
         contentType: file.type || undefined,
       });
       if (error) throw error;
-      const { data } = supabase.storage.from("admin-uploads").getPublicUrl(path);
+      const { data } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
       addEntry(data.publicUrl);
       toast.success("Uploaded");
     } catch (err: any) {

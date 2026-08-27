@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import {
   CAT_UNIVERSE_DEFAULT_CUTOFFS,
   CAT_UNIVERSE_DEFAULT_MODULES,
@@ -24,11 +24,11 @@ type CatUniversePayload = {
 
 async function loadCatUniverse(): Promise<CatUniversePayload> {
   const results = await Promise.allSettled([
-    (supabase as any).from("cat_universe_settings").select("*").eq("slug", "default").maybeSingle(),
-    (supabase as any).from("cat_universe_sections").select("*").order("display_order", { ascending: true }),
-    (supabase as any).from("cat_universe_modules").select("*").order("display_order", { ascending: true }),
-    (supabase as any).from("cat_universe_resources").select("*").order("display_order", { ascending: true }),
-    (supabase as any).from("cat_universe_cutoffs").select("*").order("display_order", { ascending: true }),
+    (backendClient as any).from("cat_universe_settings").select("*").eq("slug", "default").maybeSingle(),
+    (backendClient as any).from("cat_universe_sections").select("*").order("display_order", { ascending: true }),
+    (backendClient as any).from("cat_universe_modules").select("*").order("display_order", { ascending: true }),
+    (backendClient as any).from("cat_universe_resources").select("*").order("display_order", { ascending: true }),
+    (backendClient as any).from("cat_universe_cutoffs").select("*").order("display_order", { ascending: true }),
   ]);
 
   const settingsResult = results[0].status === "fulfilled" ? results[0].value : null;

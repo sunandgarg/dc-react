@@ -18,9 +18,9 @@ vi.mock("@tanstack/react-query", async () => {
   };
 });
 
-// Supabase chain - unused since useQuery is mocked, but the import is resolved
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { from: () => ({ select: () => ({ eq: () => ({}) }) }) },
+// DekhoCampus API chain - unused since useQuery is mocked, but the import is resolved
+vi.mock("@/integrations/backend/client", () => ({
+  backendClient: { from: () => ({ select: () => ({ eq: () => ({}) }) }) },
 }));
 
 function LocationProbe() {

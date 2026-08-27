@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { toPublicMediaUrls, toStoredMediaKeys } from "../src/media-values.mjs";
 
-test("stores CloudFront and legacy Supabase media as provider-neutral keys", () => {
+test("stores public media as provider-neutral keys", () => {
   const previous = process.env.MEDIA_BASE_URL;
   process.env.MEDIA_BASE_URL = "https://cdn-legacy.dekhocampus.com";
   try {
@@ -11,7 +11,7 @@ test("stores CloudFront and legacy Supabase media as provider-neutral keys", () 
       "admin-uploads/college/logo.webp",
     );
     assert.equal(
-      toStoredMediaKeys("https://example.supabase.co/storage/v1/object/public/admin-uploads/college/logo.webp"),
+      toStoredMediaKeys("https://dekhocampus.com/storage/v1/object/public/admin-uploads/college/logo.webp"),
       "admin-uploads/college/logo.webp",
     );
   } finally {

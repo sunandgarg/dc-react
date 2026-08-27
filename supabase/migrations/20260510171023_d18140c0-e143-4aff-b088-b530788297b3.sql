@@ -1,1 +1,0 @@
-ALTER TABLE public.hero_banners ADD COLUMN IF NOT EXISTS subtitle text;

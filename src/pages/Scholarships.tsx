@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
@@ -13,7 +13,7 @@ export default function Scholarships() {
   const [items, setItems] = useState<any[]>([]);
   useEffect(() => {
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("scholarships").select("*").eq("is_active", true)
         .order("display_order", { ascending: true });
       setItems(data || []);

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 type Row = { event_type: string; metadata: any; created_at: string };
 const EVENTS = ["lp_popup_open", "lp_popup_dismiss", "lp_popup_submit"] as const;
@@ -13,7 +13,7 @@ export default function AdminPopupAnalytics() {
     queryKey: ["popup-analytics", days],
     queryFn: async () => {
       const since = new Date(Date.now() - days * 86_400_000).toISOString();
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("user_events")
         .select("event_type, metadata, created_at")
         .in("event_type", EVENTS as any)

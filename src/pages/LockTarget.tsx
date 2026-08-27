@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Target, Download, Sparkles, Calendar, BookOpen, AlertTriangle, Trophy, Lock, Flame, Share2, Check, LayoutDashboard, Zap, CalendarCheck } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { silentSaveLead } from "@/lib/leadCapture";
 import { DekhoCampusAILoader } from "@/components/tools/DekhoCampusAILoader";
 import { downloadRoadmapPDF, type RoadmapData } from "@/lib/targetRoadmapPdf";
@@ -81,7 +81,7 @@ export default function LockTarget() {
     const token = searchParams.get("s");
     if (!token) return;
     (async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("target_roadmaps")
         .select("*")
         .eq("share_token", token)
@@ -109,7 +109,7 @@ export default function LockTarget() {
   useEffect(() => {
     if (!user || readOnlyShare) return;
     (async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("profiles")
         .select("preferred_stream,state,city,class_10_percentage,class_12_percentage,education_status,current_status")
         .eq("user_id", user.id)
@@ -156,7 +156,7 @@ export default function LockTarget() {
     try {
       setAiLoading(true);
       setRoadmap(null);
-      const { data, error } = await supabase.functions.invoke("target-roadmap", {
+      const { data, error } = await backendClient.functions.invoke("target-roadmap", {
         body: {
           targetCollege: targetCollege.trim(),
           targetCourse: targetCourse.trim() || null,
@@ -174,7 +174,7 @@ export default function LockTarget() {
         // Save for logged-in users → enables dashboard + shareable link
         if (user) {
           try {
-            const { data: saved } = await supabase
+            const { data: saved } = await backendClient
               .from("target_roadmaps")
               .insert({
                 user_id: user.id,
@@ -197,7 +197,7 @@ export default function LockTarget() {
               setSavedId(saved.id);
               setShareToken(saved.share_token);
               // Demote previous primary roadmaps for this user
-              await supabase
+              await backendClient
                 .from("target_roadmaps")
                 .update({ is_primary: false })
                 .eq("user_id", user.id)

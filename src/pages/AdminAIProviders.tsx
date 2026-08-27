@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -64,7 +64,7 @@ export default function AdminAIProviders() {
   const { data: providers, isLoading } = useQuery({
     queryKey: ["ai-providers"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("ai_providers")
         .select("*")
         .order("display_name");
@@ -75,7 +75,7 @@ export default function AdminAIProviders() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<AIProvider> }) => {
-      const { error } = await supabase
+      const { error } = await backendClient
         .from("ai_providers")
         .update(updates)
         .eq("id", id);
@@ -92,7 +92,7 @@ export default function AdminAIProviders() {
 
   const createMutation = useMutation({
     mutationFn: async (p: typeof newProvider) => {
-      const { error } = await supabase.from("ai_providers").insert(p as any);
+      const { error } = await backendClient.from("ai_providers").insert(p as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -106,7 +106,7 @@ export default function AdminAIProviders() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("ai_providers").delete().eq("id", id);
+      const { error } = await backendClient.from("ai_providers").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -119,7 +119,7 @@ export default function AdminAIProviders() {
   const handleToggleExclusive = async (provider: AIProvider) => {
     // When activating, deactivate all others (only one active provider at a time for AI counselor)
     if (!provider.is_active) {
-      await supabase.from("ai_providers").update({ is_active: false } as any).neq("id", provider.id);
+      await backendClient.from("ai_providers").update({ is_active: false } as any).neq("id", provider.id);
     }
     updateMutation.mutate({ id: provider.id, updates: { is_active: !provider.is_active } });
   };

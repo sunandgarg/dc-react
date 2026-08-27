@@ -3,7 +3,7 @@ import { Download, Lock, Phone, FileText, CheckCircle2, RefreshCw } from "lucide
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { trackEvent, trackLeadConversion } from "@/lib/analytics";
 import { normalizeIndianMobile } from "@/lib/phone";
@@ -218,7 +218,7 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
     if (!/^[6-9]\d{9}$/.test(phone)) return toast.error("Enter a valid 10-digit Indian mobile number");
     if (gate === "form" && !name.trim()) return toast.error("Name is required");
     setBusy(true);
-    const { error } = await (supabase as any).from("landing_page_leads").insert({
+    const { error } = await (backendClient as any).from("landing_page_leads").insert({
       landing_slug: slug, name: name || phone, phone,
       page_url: window.location.href, referrer: document.referrer, consent: consentAccepted,
       utm_content: source,
@@ -287,7 +287,7 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
     const result = await response.json().catch(() => ({}));
     const verified = response.ok && result.verified;
     if (verified) {
-      await (supabase as any).from("landing_page_leads").insert({
+      await (backendClient as any).from("landing_page_leads").insert({
         landing_slug: slug, name: name || phone, phone,
         page_url: window.location.href, referrer: document.referrer, consent: consentAccepted,
         utm_content: source,

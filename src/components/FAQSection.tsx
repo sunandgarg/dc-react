@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { motion } from "framer-motion";
 import { HelpCircle } from "lucide-react";
 import {
@@ -24,7 +24,7 @@ export function FAQSection({ page = "homepage", itemSlug, title = "Frequently As
   const { data: dbFaqs } = useQuery({
     queryKey: ["faqs", page, itemSlug],
     queryFn: async () => {
-      let q = supabase
+      let q = backendClient
         .from("faqs")
         .select("*")
         .eq("is_active", true)

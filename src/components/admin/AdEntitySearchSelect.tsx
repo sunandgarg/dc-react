@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, GraduationCap, Loader2, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 type AdEntityPage = "colleges" | "courses" | "exams" | "articles";
 
@@ -55,7 +55,7 @@ export function AdEntitySearchSelect({ page, value, onChange, error }: Props) {
     if (!value) return;
     let cancelled = false;
     void (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from(meta.table)
         .select(page === "colleges" ? `slug,${meta.labelColumn},short_name,city,state,logo,is_active,status` : `slug,${meta.labelColumn}`)
         .eq("slug", value)
@@ -69,7 +69,7 @@ export function AdEntitySearchSelect({ page, value, onChange, error }: Props) {
     if (!open) return;
     const timer = window.setTimeout(async () => {
       setLoading(true);
-      let request = (supabase as any)
+      let request = (backendClient as any)
         .from(meta.table)
         .select(meta.select)
         .order(meta.labelColumn, { ascending: true })
@@ -84,7 +84,7 @@ export function AdEntitySearchSelect({ page, value, onChange, error }: Props) {
           .filter((part) => part.length >= 3 && !["college", "university", "institute", "school", "of", "and", "the"].includes(part.toLowerCase()))
           .sort((a, b) => b.length - a.length)[0];
         if (fallbackTerm) {
-          const fallback = await (supabase as any)
+          const fallback = await (backendClient as any)
             .from(meta.table)
             .select(meta.select)
             .or(`${meta.labelColumn}.ilike.%${fallbackTerm}%,slug.ilike.%${fallbackTerm}%`)

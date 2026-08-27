@@ -5,7 +5,7 @@ import { GraduationCap, Calendar, Download, MapPin, ArrowRight } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { DekhoLogoInline } from "@/components/DekhoLogoInline";
 import { getProgramCategoryIcon } from "@/lib/programCategoryImages";
@@ -35,7 +35,7 @@ export function TrendingPrograms() {
   const { data: programs, isLoading } = useQuery({
     queryKey: ["promoted-programs"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("promoted_programs")
         .select("*")
         .eq("is_active", true)
@@ -49,7 +49,7 @@ export function TrendingPrograms() {
   const { data: categories } = useQuery({
     queryKey: ["program-categories"],
     queryFn: async (): Promise<ProgramCategory[]> => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("program_categories")
         .select("id,slug,name,icon_emoji,icon_url")
         .eq("is_active", true)

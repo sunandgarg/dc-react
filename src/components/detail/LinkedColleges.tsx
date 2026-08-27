@@ -2,7 +2,7 @@ import { buildCollegeHref } from "@/lib/entityUrls";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Building, Star } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { slugify } from "@/lib/slugify";
 
@@ -26,7 +26,7 @@ export function LinkedColleges({ by, slug, fallbackNames = [], emptyText }: Prop
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("colleges")
         .select("slug,name,short_name,city,state,rating,logo")
         .contains(col, [slug])

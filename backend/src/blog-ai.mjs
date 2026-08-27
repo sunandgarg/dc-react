@@ -1,4 +1,4 @@
-import { createHash, randomUUID, webcrypto } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { prisma, schemaMetadata } from "./db.mjs";
 import { uploadStorageObject } from "./storage.mjs";
 
@@ -123,17 +123,6 @@ export async function ensureSupportedAiModels() {
   ]);
 }
 
-async function decryptLegacy(value) {
-  if (!value || !String(value).startsWith("v1.")) return "";
-  const serviceKey = String(process.env.SUPABASE_STORAGE_SERVICE_KEY || "");
-  if (!serviceKey) return "";
-  const [, iv64, data64] = String(value).split(".");
-  const digest = createHash("sha256").update(`dekhocampus-blog-ai:${serviceKey}`).digest();
-  const key = await webcrypto.subtle.importKey("raw", digest, "AES-GCM", false, ["decrypt"]);
-  const decrypted = await webcrypto.subtle.decrypt({ name: "AES-GCM", iv: Buffer.from(iv64, "base64") }, key, Buffer.from(data64, "base64"));
-  return Buffer.from(decrypted).toString("utf8");
-}
-
 async function aiConfig() {
   const [gemini, openai, blog] = await Promise.all([
     provider("gemini"),
@@ -144,7 +133,7 @@ async function aiConfig() {
   return {
     geminiKey: String(process.env.GEMINI_API_KEY || gemini?.api_key_encrypted || "").trim(),
     geminiModel: configuredGeminiModel,
-    openaiKey: String(process.env.OPENAI_API_KEY || openai?.api_key_encrypted || await decryptLegacy(blog?.openai_api_key_ciphertext).catch(() => "")).trim(),
+    openaiKey: String(process.env.OPENAI_API_KEY || openai?.api_key_encrypted || "").trim(),
     imageModel: DEFAULT_OPENAI_IMAGE_MODEL,
     imageQuality: ["low", "medium", "high"].includes(blog?.image_quality) ? blog.image_quality : "medium",
   };
@@ -161,7 +150,7 @@ async function assertAiEnabled(feature) {
 async function geminiJson(prompt, feature = "blog-studio", options = {}) {
   const control = await assertAiEnabled(feature);
   const config = await aiConfig();
-  if (!config.geminiKey) throw Object.assign(new Error("Gemini API key is not configured in DigitalOcean or Admin - AI Providers"), { status: 503, code: "GEMINI_NOT_CONFIGURED" });
+  if (!config.geminiKey) throw Object.assign(new Error("Gemini API key is not configured in AWS or Admin - AI Providers"), { status: 503, code: "GEMINI_NOT_CONFIGURED" });
   const model = normalizeGeminiModel(control?.provider === "gemini" && control?.model ? control.model : config.geminiModel);
   const requestBody = JSON.stringify({
     systemInstruction: { parts: [{ text: "Return valid JSON only. Use factual, original language. Never use an em dash." }] },

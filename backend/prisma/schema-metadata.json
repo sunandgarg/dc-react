@@ -6711,6 +6711,22 @@
         "format": "timestamp with time zone",
         "default": null,
         "foreignKey": null
+      },
+      "show_in_explore_by_category": {
+        "type": "Boolean",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "boolean",
+        "default": false,
+        "foreignKey": null
+      },
+      "explore_by_category_checked_at": {
+        "type": "DateTime",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "timestamp with time zone",
+        "default": null,
+        "foreignKey": null
       }
     },
     "ignored": false
@@ -7409,6 +7425,22 @@
         "primaryKey": false,
         "format": "integer",
         "default": 0,
+        "foreignKey": null
+      },
+      "show_in_explore_by_category": {
+        "type": "Boolean",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "boolean",
+        "default": false,
+        "foreignKey": null
+      },
+      "explore_by_category_checked_at": {
+        "type": "DateTime",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "timestamp with time zone",
+        "default": null,
         "foreignKey": null
       }
     },
@@ -9221,6 +9253,22 @@
         "primaryKey": false,
         "format": "integer",
         "default": 0,
+        "foreignKey": null
+      },
+      "show_in_explore_by_category": {
+        "type": "Boolean",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "boolean",
+        "default": false,
+        "foreignKey": null
+      },
+      "explore_by_category_checked_at": {
+        "type": "DateTime",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "timestamp with time zone",
+        "default": null,
         "foreignKey": null
       }
     },

@@ -9,7 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { truncateUrl, formatClicks } from '@/utils/base62';
 import { format } from 'date-fns';
 import { UrlQrCodeModal } from './UrlQrCodeModal';
@@ -54,7 +54,7 @@ export const UrlDashboard = memo(function UrlDashboard({ onRefreshRef }: UrlDash
       const currentPage = reset ? 0 : page;
       if (reset) setPage(0);
 
-      let query = (supabase as any)
+      let query = (backendClient as any)
         .from('url_mappings')
         .select('*')
         .order(sortBy, { ascending: false })
@@ -116,7 +116,7 @@ export const UrlDashboard = memo(function UrlDashboard({ onRefreshRef }: UrlDash
     if (!confirm('Are you sure you want to delete this URL? This cannot be undone.')) return;
 
     try {
-      const { error } = await (supabase as any)
+      const { error } = await (backendClient as any)
         .from('url_mappings')
         .delete()
         .eq('id', url.id);
@@ -132,7 +132,7 @@ export const UrlDashboard = memo(function UrlDashboard({ onRefreshRef }: UrlDash
 
   const handleToggleActive = async (url: UrlMapping) => {
     try {
-      const { error } = await (supabase as any)
+      const { error } = await (backendClient as any)
         .from('url_mappings')
         .update({ is_active: !url.is_active })
         .eq('id', url.id);

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { MapPin, Building } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -7,7 +7,7 @@ export function PopularPlaces() {
   const { data: places } = useQuery({
     queryKey: ["popular-places"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("popular_places")
         .select("*")
         .eq("is_active", true)

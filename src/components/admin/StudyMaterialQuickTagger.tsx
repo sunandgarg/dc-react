@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, GraduationCap, Loader2, Check } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { currentYear } from "@/lib/currentYear";
 
@@ -68,7 +68,7 @@ export function StudyMaterialQuickTagger({ tags, onChange, articleId }: Props) {
   const [selChapters, setSelChapters] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    (supabase as any).from("study_boards").select("slug,name").eq("is_active", true).order("display_order")
+    (backendClient as any).from("study_boards").select("slug,name").eq("is_active", true).order("display_order")
       .then(({ data }: any) => { if (data?.length) setBoards(data); });
   }, []);
 
@@ -79,7 +79,7 @@ export function StudyMaterialQuickTagger({ tags, onChange, articleId }: Props) {
     setErrorMsg(null);
     (async () => {
       try {
-        const { data, error } = await (supabase as any)
+        const { data, error } = await (backendClient as any)
           .from("article_links")
           .select("entity_type, entity_slug")
           .eq("article_id", articleId)
@@ -95,7 +95,7 @@ export function StudyMaterialQuickTagger({ tags, onChange, articleId }: Props) {
         setSelSubjects(subs);
         setSelChapters(chs);
         if (subs.size) {
-          const { data: subjRow, error: subjErr } = await (supabase as any)
+          const { data: subjRow, error: subjErr } = await (backendClient as any)
             .from("study_subjects")
             .select("class_num, board_slug")
             .eq("id", Array.from(subs)[0])
@@ -116,7 +116,7 @@ export function StudyMaterialQuickTagger({ tags, onChange, articleId }: Props) {
 
   useEffect(() => {
     setChaptersBySubject({});
-    (supabase as any).from("study_subjects")
+    (backendClient as any).from("study_subjects")
       .select("id,slug,name")
       .eq("class_num", classNum).eq("board_slug", board).eq("is_active", true)
       .order("display_order")
@@ -128,7 +128,7 @@ export function StudyMaterialQuickTagger({ tags, onChange, articleId }: Props) {
     const missing = Array.from(selSubjects).filter(id => !chaptersBySubject[id]);
     if (!missing.length) return;
     (async () => {
-      const { data } = await (supabase as any).from("study_chapters")
+      const { data } = await (backendClient as any).from("study_chapters")
         .select("id,slug,name,subject_id")
         .in("subject_id", missing).eq("is_active", true).order("chapter_number");
       const next = { ...chaptersBySubject };
@@ -178,7 +178,7 @@ export function StudyMaterialQuickTagger({ tags, onChange, articleId }: Props) {
       onChange(Array.from(newTags));
 
       if (articleId && (selSubjects.size || selChapters.size)) {
-        const { data: existing, error: readErr } = await (supabase as any)
+        const { data: existing, error: readErr } = await (backendClient as any)
           .from("article_links")
           .select("entity_type, entity_slug")
           .eq("article_id", articleId)
@@ -195,7 +195,7 @@ export function StudyMaterialQuickTagger({ tags, onChange, articleId }: Props) {
           if (!existingKeys.has(k)) rows.push({ article_id: articleId, entity_type: "study_chapter", entity_slug: id });
         });
         if (rows.length) {
-          const { error } = await (supabase as any).from("article_links").insert(rows);
+          const { error } = await (backendClient as any).from("article_links").insert(rows);
           if (error && !String(error.message).toLowerCase().includes("duplicate")) {
             throw error;
           }

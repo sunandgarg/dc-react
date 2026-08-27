@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, X, Plus, Loader2 } from "lucide-react";
@@ -57,7 +57,7 @@ export function EntitySlugMultiSearch({ kind, value, onChange, label, placeholde
     const missing = value.filter((s) => s && !labels[s]);
     if (!missing.length) return;
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from(meta.table)
         .select(`slug, ${meta.nameCol}`)
         .in("slug", missing);
@@ -81,7 +81,7 @@ export function EntitySlugMultiSearch({ kind, value, onChange, label, placeholde
     setLoading(true);
     const ac = new AbortController();
     const t = setTimeout(async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from(meta.table)
         .select(meta.cols)
         .or(`${meta.nameCol}.ilike.%${term}%,slug.ilike.%${term}%`)

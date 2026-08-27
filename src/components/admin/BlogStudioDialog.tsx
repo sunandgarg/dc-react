@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Sparkles, Loader2, Image as ImageIcon, BookOpenCheck } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { slugify } from "@/lib/slugify";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -32,7 +32,7 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
     if (!topic.trim()) return toast.error("Enter a blog topic");
     setBusy(true);
     try {
-      const { data, error } = await supabase.functions.invoke("admin-blog-studio", {
+      const { data, error } = await backendClient.functions.invoke("admin-blog-studio", {
         body: {
           topic,
           word_limit: wordLimit,
@@ -55,7 +55,7 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
     if (!draft) return;
     setBusy(true);
     try {
-      const { data: article, error } = await (supabase as any).from("articles").upsert({
+      const { data: article, error } = await (backendClient as any).from("articles").upsert({
         title: draft.title, slug: slugify(draft.slug), description: draft.description, content: draft.content_html,
         meta_title: draft.meta_title, meta_description: draft.meta_description, meta_keywords: draft.meta_keywords,
         tags: draft.tags || [], featured_image: draft.featured_image, status: "Draft", is_active: true,
@@ -63,7 +63,7 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
       if (error) throw error;
       for (const suggestion of draft.entity_suggestions || []) {
         if (selected.has(`${suggestion.entity_type}:${suggestion.entity_slug}`)) {
-          await (supabase as any).from("article_links").upsert({ article_id: article.id, entity_type: suggestion.entity_type, entity_slug: suggestion.entity_slug }, { onConflict: "article_id,entity_type,entity_slug" });
+          await (backendClient as any).from("article_links").upsert({ article_id: article.id, entity_type: suggestion.entity_type, entity_slug: suggestion.entity_slug }, { onConflict: "article_id,entity_type,entity_slug" });
         }
       }
       toast.success("Editorial draft, cover choice and selected links saved");

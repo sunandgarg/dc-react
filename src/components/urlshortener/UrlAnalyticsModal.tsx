@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, Globe, Monitor, Smartphone, Tablet } from 'lucide-react';
@@ -45,7 +45,7 @@ export const UrlAnalyticsModal = memo(function UrlAnalyticsModal({ url, open, on
       const days = parseInt(dateRange);
       const startDate = subDays(new Date(), days);
       
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from('url_clicks')
         .select('clicked_at, referrer, country, city, device_type, browser')
         .eq('url_id', url.id)

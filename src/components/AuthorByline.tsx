@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { UserCheck } from "lucide-react";
 
 interface Props {
@@ -15,7 +15,7 @@ export function AuthorByline({ authorId, fallbackName, className = "" }: Props) 
 
   useEffect(() => {
     if (!authorId) { setA(null); return; }
-    (supabase as any)
+    (backendClient as any)
       .from("authors")
       .select("name,slug,photo,designation")
       .eq("id", authorId)

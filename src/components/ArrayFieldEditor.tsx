@@ -3,7 +3,7 @@ import { Plus, X, Upload, Images, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 
 interface ArrayFieldEditorProps {
@@ -37,9 +37,9 @@ export function ArrayFieldEditor({ label, values, onChange, placeholder, suggest
         if (file.size > 5 * 1024 * 1024) { toast.error(`${file.name} > 5MB, skipped`); continue; }
         const ext = file.name.split(".").pop() || "jpg";
         const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-        const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type });
+        const { error } = await backendClient.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type });
         if (error) { toast.error(error.message); continue; }
-        const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
+        const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
         uploaded.push(pub.publicUrl);
       }
       if (uploaded.length) {
@@ -55,7 +55,7 @@ export function ArrayFieldEditor({ label, values, onChange, placeholder, suggest
   const loadLibrary = async () => {
     setLibLoading(true);
     try {
-      const { data, error } = await supabase.storage.from(bucket).list(folder, {
+      const { data, error } = await backendClient.storage.from(bucket).list(folder, {
         limit: 200, sortBy: { column: "created_at", order: "desc" },
       });
       if (error) throw error;
@@ -63,7 +63,7 @@ export function ArrayFieldEditor({ label, values, onChange, placeholder, suggest
         .filter((f) => !f.name.startsWith("."))
         .map((f) => {
           const path = `${folder}/${f.name}`;
-          const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
+          const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
           return { name: f.name, url: pub.publicUrl };
         });
       setLibItems(items);

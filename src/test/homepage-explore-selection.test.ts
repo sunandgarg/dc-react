@@ -14,9 +14,9 @@ describe("homepage Explore by Category selection", () => {
     read("src/pages/AdminCourses.tsx"),
     read("src/pages/AdminExams.tsx"),
   ];
-  const migration = read(
-    "supabase/migrations/20260730093000_homepage_explore_category_selection.sql",
-  );
+  const schema = read("backend/prisma/schema.prisma");
+  const rest = read("backend/src/rest.mjs");
+  const parity = read("backend/scripts/apply-mysql-parity.mjs");
 
   it("uses category-scoped homepage hooks instead of loading complete entity datasets", () => {
     expect(categorySection).toMatch(/useHomepageCategoryColleges/);
@@ -48,17 +48,15 @@ describe("homepage Explore by Category selection", () => {
     }
   });
 
-  it("adds timestamp-maintained fields and partial indexes for all entity tables", () => {
+  it("adds timestamp-maintained fields and MySQL indexes for all entity tables", () => {
     for (const table of ["colleges", "courses", "exams"]) {
-      expect(migration).toContain(`ALTER TABLE public.${table}`);
-      expect(migration).toContain(
-        `DROP TRIGGER IF EXISTS ${table}_set_explore_by_category_checked_at`,
-      );
-      expect(migration).toContain(`${table}_homepage_explore_category_idx`);
+      expect(schema).toContain(`ix_${table}_homepage_explore`);
     }
-    expect(migration).toMatch(
-      /show_in_explore_by_category boolean NOT NULL DEFAULT false/g,
-    );
-    expect(migration).toMatch(/explore_by_category_checked_at timestamptz/g);
+    expect(schema.match(/show_in_explore_by_category\s+Boolean\s+@default\(false\)/g)).toHaveLength(3);
+    expect(schema.match(/explore_by_category_checked_at\s+DateTime\?/g)).toHaveLength(3);
+    expect(rest).toMatch(/stampHomepageExploreSelection/);
+    expect(rest).toMatch(/explore_by_category_checked_at: new Date\(\)\.toISOString\(\)/);
+    expect(parity).toMatch(/ensureHomepageExploreSchema/);
+    expect(parity).toMatch(/ADD COLUMN \\`show_in_explore_by_category\\` BOOLEAN NOT NULL DEFAULT FALSE/);
   });
 });

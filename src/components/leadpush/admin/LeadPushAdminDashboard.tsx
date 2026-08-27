@@ -5,7 +5,7 @@ import {
   Gauge, Activity, Clock, Search, TrendingUp, Trophy, Flame, Zap,
   Target, Sparkles, Ban, ChevronRight, CalendarRange,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -132,8 +132,8 @@ export default function LeadPushAdminDashboard() {
     setDetailCum([]);
     setDetailLoading(true);
     const [d, c] = await Promise.all([
-      supabase.from("lead_push_daily_stats").select("*").eq("university_id", uni.id).order("stat_date", { ascending: false }),
-      supabase.from("lead_push_cumulative_stats").select("*").eq("university_id", uni.id),
+      backendClient.from("lead_push_daily_stats").select("*").eq("university_id", uni.id).order("stat_date", { ascending: false }),
+      backendClient.from("lead_push_cumulative_stats").select("*").eq("university_id", uni.id),
     ]);
     setDetailRows((d.data as DailyStat[]) || []);
     setDetailCum((c.data as CumStat[]) || []);
@@ -143,13 +143,13 @@ export default function LeadPushAdminDashboard() {
   const load = async (rk: RangeKey = range, cf = customFrom, ct = customTo) => {
     setLoading(true);
     const { from, to } = rangeToDates(rk, cf, ct);
-    let dailyQ = supabase.from("lead_push_daily_stats").select("*");
+    let dailyQ = backendClient.from("lead_push_daily_stats").select("*");
     if (from) dailyQ = dailyQ.gte("stat_date", from);
     if (to) dailyQ = dailyQ.lte("stat_date", to);
     const [u, d, c] = await Promise.all([
-      supabase.from("universities").select("id, name, daily_lead_limit, daily_pushed_count, daily_count_reset_at, status").order("name"),
+      backendClient.from("universities").select("id, name, daily_lead_limit, daily_pushed_count, daily_count_reset_at, status").order("name"),
       dailyQ,
-      supabase.from("lead_push_cumulative_stats").select("*"),
+      backendClient.from("lead_push_cumulative_stats").select("*"),
     ]);
     const nextU = (u.data as University[]) || [];
     const nextD = (d.data as DailyStat[]) || [];

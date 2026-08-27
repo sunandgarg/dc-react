@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, Upload, Lock, AlertTriangle, CheckCircle, Camera, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useStatesAndCities } from "@/hooks/useLocations";
 import { normalizeIndianMobile } from "@/lib/phone";
 

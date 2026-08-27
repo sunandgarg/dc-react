@@ -160,7 +160,7 @@ export function validateLeads(leads: Lead[], config?: LeadValidationConfig): {
 export async function checkDatabaseDuplicates(
   leads: Lead[],
   universityId: string,
-  supabase: any
+  backendClient: any
 ): Promise<{ duplicates: { email: string; mobile: string; existingId: string }[]; emails: Set<string>; mobiles: Set<string> }> {
   const emails = leads.map(l => l.email?.trim().toLowerCase()).filter(Boolean);
   const mobiles = leads.map(l => l.mobile?.replace(/[\s\-().+]/g, '')).filter(Boolean);
@@ -178,7 +178,7 @@ export async function checkDatabaseDuplicates(
     conditions.push(`mobile.in.(${mobiles.join(',')})`);
   }
 
-  const { data: existingLeads, error } = await supabase
+  const { data: existingLeads, error } = await backendClient
     .from('leads')
     .select('id, email, mobile')
     .eq('university_id', universityId)

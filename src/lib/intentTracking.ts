@@ -8,7 +8,7 @@
  * Anonymous visitors get a stable UUID in localStorage; on sign-in we call
  * the `intent_merge_visitor` RPC to roll their history into the user record.
  */
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 const VISITOR_KEY  = "dc_intent_visitor_v1";
 const SESSION_KEY  = "dc_session_id";
@@ -122,7 +122,7 @@ async function flush() {
   flushTimer = null;
   if (!queue.length) return;
   const batch = queue.splice(0, queue.length);
-  try { await (supabase as any).from("intent_events").insert(batch); }
+  try { await (backendClient as any).from("intent_events").insert(batch); }
   catch (_) { /* swallow - never block UI */ }
 }
 
@@ -190,7 +190,7 @@ export async function mergeVisitorIntoUser(userId: string) {
   const visitor = getVisitorId();
   if (!visitor || !userId) return;
   try {
-    await (supabase as any).rpc("intent_merge_visitor", {
+    await (backendClient as any).rpc("intent_merge_visitor", {
       _visitor_id: visitor,
       _user_id:    userId,
     });

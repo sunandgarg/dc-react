@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,11 +24,11 @@ export default function AdminUsers() {
 
   const toggleRole = async (userId: string, role: AppRole, hasIt: boolean) => {
     if (hasIt) {
-      const { error } = await supabase.from("user_roles").delete().eq("user_id", userId).eq("role", role);
+      const { error } = await backendClient.from("user_roles").delete().eq("user_id", userId).eq("role", role);
       if (error) return toast.error(error.message);
       toast.success(`Removed ${role}`);
     } else {
-      const { error } = await supabase.from("user_roles").insert({ user_id: userId, role });
+      const { error } = await backendClient.from("user_roles").insert({ user_id: userId, role });
       if (error) return toast.error(error.message);
       toast.success(`Granted ${role}`);
     }
@@ -39,10 +39,10 @@ export default function AdminUsers() {
     queryKey: ["admin-users"],
     queryFn: async () => {
       const [profilesRes, rolesRes, leadsRes, appsRes] = await Promise.all([
-        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
-        supabase.from("user_roles").select("user_id, role"),
-        supabase.from("leads").select("phone, email, source, created_at"),
-        supabase.from("college_applications").select("user_id, college_name, created_at"),
+        backendClient.from("profiles").select("*").order("created_at", { ascending: false }),
+        backendClient.from("user_roles").select("user_id, role"),
+        backendClient.from("leads").select("phone, email, source, created_at"),
+        backendClient.from("college_applications").select("user_id, college_name, created_at"),
       ]);
 
       const rolesMap = new Map<string, string[]>();

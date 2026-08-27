@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, GraduationCap, BookOpen, FileText, ClipboardList, Star, Newspaper, MapPin, ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { buildSearchVariants, buildIlikeOr } from "@/lib/fuzzySearch";
 import { compactDisplayText, displayText } from "@/lib/displayText";
 
@@ -53,9 +53,9 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
     const timeout = setTimeout(async () => {
       try {
         const [colleges, courses, exams] = await Promise.all([
-          supabase.from("colleges").select("name, short_name, slug, city, logo").eq("is_active", true).or([orFor("name"), orFor("short_name"), orFor("slug")].join(",")).limit(3),
-          supabase.from("courses").select("name, full_name, slug").eq("is_active", true).or([orFor("name"), orFor("full_name"), orFor("slug")].join(",")).limit(3),
-          supabase.from("exams").select("name, short_name, full_name, slug, logo").eq("is_active", true).or([orFor("name"), orFor("short_name"), orFor("full_name"), orFor("slug")].join(",")).limit(3),
+          backendClient.from("colleges").select("name, short_name, slug, city, logo").eq("is_active", true).or([orFor("name"), orFor("short_name"), orFor("slug")].join(",")).limit(3),
+          backendClient.from("courses").select("name, full_name, slug").eq("is_active", true).or([orFor("name"), orFor("full_name"), orFor("slug")].join(",")).limit(3),
+          backendClient.from("exams").select("name, short_name, full_name, slug, logo").eq("is_active", true).or([orFor("name"), orFor("short_name"), orFor("full_name"), orFor("slug")].join(",")).limit(3),
         ]);
 
         const results: SearchResult[] = [

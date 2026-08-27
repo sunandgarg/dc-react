@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +27,7 @@ export default function AdminTagsManager() {
   const { data: articles = [], isLoading } = useQuery({
     queryKey: ["admin-articles-tags"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("articles")
         .select("id,title,slug,tags,category,is_active,created_at")
         .order("created_at", { ascending: false })
@@ -66,7 +66,7 @@ export default function AdminTagsManager() {
         const next = action === "add"
           ? Array.from(new Set([...current, tagToApply]))
           : current.filter(t => t !== tagToApply);
-        return supabase.from("articles").update({ tags: next }).eq("id", id);
+        return backendClient.from("articles").update({ tags: next }).eq("id", id);
       });
       const results = await Promise.all(updates);
       const err = results.find(r => r.error)?.error;

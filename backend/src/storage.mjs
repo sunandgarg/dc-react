@@ -41,16 +41,11 @@ export function storageConfig() {
   const bucket = String(process.env.AWS_S3_BUCKET || "").trim();
   const region = String(process.env.AWS_REGION || "ap-south-1").trim();
   const mediaBaseUrl = String(process.env.MEDIA_BASE_URL || "").replace(/\/$/, "");
-  if (bucket && mediaBaseUrl) {
-    s3Client ||= new S3Client({ region });
-    return { provider: "s3", bucket, region, mediaBaseUrl, client: s3Client };
-  }
-  const baseUrl = String(process.env.SUPABASE_STORAGE_URL || "").replace(/\/$/, "");
-  const serviceKey = String(process.env.SUPABASE_STORAGE_SERVICE_KEY || "");
-  if (!baseUrl || !serviceKey) {
+  if (!bucket || !mediaBaseUrl) {
     throw Object.assign(new Error("Object storage is not configured"), { status: 503, code: "STORAGE_NOT_CONFIGURED" });
   }
-  return { provider: "supabase", baseUrl, serviceKey };
+  s3Client ||= new S3Client({ region });
+  return { provider: "s3", bucket, region, mediaBaseUrl, client: s3Client };
 }
 
 export function storageObjectKey(bucket, objectPath) {
@@ -59,46 +54,28 @@ export function storageObjectKey(bucket, objectPath) {
 
 export function publicMediaUrl(bucket, objectPath) {
   const config = storageConfig();
-  if (config.provider === "s3") {
-    return `${config.mediaBaseUrl}/${storageObjectKey(bucket, objectPath).split("/").map(encodeURIComponent).join("/")}`;
-  }
-  return `${config.baseUrl}/storage/v1/object/public/${encodeURIComponent(bucket)}/${String(objectPath).split("/").map(encodeURIComponent).join("/")}`;
+  return `${config.mediaBaseUrl}/${storageObjectKey(bucket, objectPath).split("/").map(encodeURIComponent).join("/")}`;
 }
 
 export async function uploadStorageObject(bucket, objectPath, body, contentType, options = {}) {
   const config = storageConfig();
-  if (config.provider === "s3") {
-    const key = storageObjectKey(bucket, objectPath);
-    if (!options.upsert) {
-      try {
-        await config.client.send(new HeadObjectCommand({ Bucket: config.bucket, Key: key }));
-        throw Object.assign(new Error("Object already exists"), { status: 409, code: "STORAGE_OBJECT_EXISTS" });
-      } catch (error) {
-        if (error?.$metadata?.httpStatusCode !== 404 && error?.name !== "NotFound") throw error;
-      }
+  const key = storageObjectKey(bucket, objectPath);
+  if (!options.upsert) {
+    try {
+      await config.client.send(new HeadObjectCommand({ Bucket: config.bucket, Key: key }));
+      throw Object.assign(new Error("Object already exists"), { status: 409, code: "STORAGE_OBJECT_EXISTS" });
+    } catch (error) {
+      if (error?.$metadata?.httpStatusCode !== 404 && error?.name !== "NotFound") throw error;
     }
-    await config.client.send(new PutObjectCommand({
-      Bucket: config.bucket,
-      Key: key,
-      Body: body,
-      ContentType: contentType,
-      CacheControl: options.cacheControl || (String(contentType).startsWith("image/") ? "public,max-age=31536000,immutable" : "public,max-age=3600"),
-      ServerSideEncryption: "AES256",
-    }));
-    return { key, publicUrl: publicMediaUrl(bucket, objectPath) };
   }
-  const response = await fetch(`${config.baseUrl}/storage/v1/object/${encodeURIComponent(bucket)}/${String(objectPath).split("/").map(encodeURIComponent).join("/")}`, {
-    method: options.upsert ? "PUT" : "POST",
-    headers: {
-      authorization: `Bearer ${config.serviceKey}`,
-      apikey: config.serviceKey,
-      "content-type": contentType,
-      "cache-control": options.cacheControl || "max-age=3600",
-      "x-upsert": String(Boolean(options.upsert)),
-    },
-    body,
-  });
-  if (!response.ok) throw Object.assign(new Error(`Storage upload failed (${response.status}): ${(await response.text()).slice(0, 300)}`), { status: response.status });
+  await config.client.send(new PutObjectCommand({
+    Bucket: config.bucket,
+    Key: key,
+    Body: body,
+    ContentType: contentType,
+    CacheControl: options.cacheControl || (String(contentType).startsWith("image/") ? "public,max-age=31536000,immutable" : "public,max-age=3600"),
+    ServerSideEncryption: "AES256",
+  }));
   return { key: storageObjectKey(bucket, objectPath), publicUrl: publicMediaUrl(bucket, objectPath) };
 }
 
@@ -253,30 +230,6 @@ async function s3Storage(request, route, config) {
   return jsonResponse(405, { message: "Storage method is not supported" });
 }
 
-async function proxySupabaseStorage(request, config) {
-  const { baseUrl, serviceKey } = config;
-  const sourceUrl = new URL(request.url);
-  const headers = new Headers();
-  for (const name of ["cache-control", "content-type", "range", "x-upsert"]) {
-    const value = request.headers.get(name);
-    if (value) headers.set(name, value);
-  }
-  headers.set("apikey", serviceKey);
-  headers.set("authorization", `Bearer ${serviceKey}`);
-
-  const response = await fetch(`${baseUrl}${sourceUrl.pathname}${sourceUrl.search}`, {
-    method: request.method,
-    headers,
-    body: await checkedBody(request),
-  });
-  const responseHeaders = new Headers();
-  for (const name of ["cache-control", "content-disposition", "content-length", "content-range", "content-type", "etag", "last-modified"]) {
-    const value = response.headers.get(name);
-    if (value) responseHeaders.set(name, value);
-  }
-  return new Response(response.body, { status: response.status, headers: responseHeaders });
-}
-
 export async function handleStorage(request) {
   const url = new URL(request.url);
   if (!url.pathname.startsWith("/storage/v1/")) return null;
@@ -289,7 +242,7 @@ export async function handleStorage(request) {
   const isPublicRead = ["GET", "HEAD"].includes(request.method) && url.pathname.startsWith("/storage/v1/object/public/");
   if (!isPublicRead) await authorizeStorage(request, route);
   const config = storageConfig();
-  return config.provider === "s3" ? s3Storage(request, route, config) : proxySupabaseStorage(request, config);
+  return s3Storage(request, route, config);
 }
 
 export const storagePolicyInternals = { checkedBody, ownsPath, routeDetails };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Save, Pencil, X, HelpCircle, Sparkles, ArrowUp, ArrowDown } from "lucide-react";
@@ -38,7 +38,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
   const reload = async () => {
     if (!itemSlug) { setRows([]); return; }
     setLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await backendClient
       .from("faqs").select("*")
       .eq("page", page).eq("item_slug", itemSlug)
       .order("display_order", { ascending: true });
@@ -49,7 +49,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
     // Flush buffered FAQs once the slug is available
     if (itemSlug && buffer.length > 0) {
       const payload = buffer.map((b, i) => ({ ...b, display_order: (data?.length || 0) + i, page, item_slug: itemSlug }));
-      const { error: insErr } = await supabase.from("faqs").insert(payload);
+      const { error: insErr } = await backendClient.from("faqs").insert(payload);
       if (insErr) toast.error(`FAQ buffer flush failed: ${insErr.message}`);
       else { toast.success(`Saved ${buffer.length} buffered FAQ${buffer.length === 1 ? "" : "s"}`); setBuffer([]); }
     }
@@ -70,8 +70,8 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
     }
     const payload: any = { ...draft, page, item_slug: itemSlug };
     const { error } = draft.id
-      ? await supabase.from("faqs").update(payload).eq("id", draft.id)
-      : await supabase.from("faqs").insert(payload);
+      ? await backendClient.from("faqs").update(payload).eq("id", draft.id)
+      : await backendClient.from("faqs").insert(payload);
     if (error) {
       const msg = error.message.includes("row-level security")
         ? "Permission denied. You must be signed in as an admin to edit FAQs."
@@ -85,7 +85,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this FAQ?")) return;
-    const { error } = await supabase.from("faqs").delete().eq("id", id);
+    const { error } = await backendClient.from("faqs").delete().eq("id", id);
     if (error) toast.error(error.message);
     else { toast.success("Deleted"); reload(); }
   };
@@ -96,8 +96,8 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
     const a = rows[idx], b = rows[j];
     // Swap display_order persistently
     const ops = await Promise.all([
-      supabase.from("faqs").update({ display_order: b.display_order }).eq("id", a.id),
-      supabase.from("faqs").update({ display_order: a.display_order }).eq("id", b.id),
+      backendClient.from("faqs").update({ display_order: b.display_order }).eq("id", a.id),
+      backendClient.from("faqs").update({ display_order: a.display_order }).eq("id", b.id),
     ]);
     const err = ops.find(o => o.error)?.error;
     if (err) toast.error(err.message); else reload();
@@ -114,7 +114,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
       question: f.question, answer: f.answer,
       display_order: startOrder + i, is_active: true,
     }));
-    const { error } = await supabase.from("faqs").insert(payload);
+    const { error } = await backendClient.from("faqs").insert(payload);
     if (error) toast.error(error.message);
     else { toast.success(`Added ${tpl.length} ${currentYear()} default FAQs`); reload(); }
   };

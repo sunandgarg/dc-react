@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { decodeAdLocation, encodeAdLocation, useAllAds } from "@/hooks/useAds";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -194,14 +194,14 @@ export default function AdminAds() {
     const ext = file.name.split(".").pop();
     const fileName = `ad-${Date.now()}.${ext}`;
 
-    const { error } = await supabase.storage.from("ad-images").upload(fileName, file);
+    const { error } = await backendClient.storage.from("ad-images").upload(fileName, file);
     if (error) {
       toast({ title: "Upload failed", description: error.message, variant: "destructive" });
       setUploading(false);
       return;
     }
 
-    const { data: urlData } = supabase.storage.from("ad-images").getPublicUrl(fileName);
+    const { data: urlData } = backendClient.storage.from("ad-images").getPublicUrl(fileName);
     setForm({ ...form, image_url: urlData.publicUrl });
     setUploading(false);
     toast({ title: "✅ Image uploaded!" });
@@ -247,11 +247,11 @@ export default function AdminAds() {
     };
     try {
       if (editingId) {
-        const { error } = await supabase.from("ads").update(payload).eq("id", editingId);
+        const { error } = await backendClient.from("ads").update(payload).eq("id", editingId);
         if (error) throw error;
         toast({ title: "✅ Ad updated!" });
       } else {
-        const { error } = await supabase.from("ads").insert(payload);
+        const { error } = await backendClient.from("ads").insert(payload);
         if (error) throw error;
         toast({ title: "✅ Ad created!" });
       }
@@ -266,7 +266,7 @@ export default function AdminAds() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this ad? This cannot be undone.")) return;
-    const { error } = await supabase.from("ads").delete().eq("id", id);
+    const { error } = await backendClient.from("ads").delete().eq("id", id);
     if (!error) {
       toast({ title: "🗑️ Ad deleted" });
       resetBootstrap();
@@ -276,7 +276,7 @@ export default function AdminAds() {
   };
 
   const handleToggle = async (id: string, active: boolean) => {
-    await supabase.from("ads").update({ is_active: active }).eq("id", id);
+    await backendClient.from("ads").update({ is_active: active }).eq("id", id);
     resetBootstrap();
     queryClient.invalidateQueries({ queryKey: ["admin-ads"] });
     queryClient.invalidateQueries({ queryKey: ["ads"] });

@@ -1,7 +1,7 @@
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -41,9 +41,9 @@ export default function ScholarshipDetail() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await (supabase as any).from("scholarships").select("*").eq("slug", slug).maybeSingle();
+      const { data } = await (backendClient as any).from("scholarships").select("*").eq("slug", slug).maybeSingle();
       setS(data);
-      const { data: rel } = await (supabase as any)
+      const { data: rel } = await (backendClient as any)
         .from("scholarships").select("*").neq("slug", slug).limit(6);
       setRelated(rel || []);
     })();

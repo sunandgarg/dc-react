@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,7 +46,7 @@ export default function AdminLeadIntelligence() {
 
   const load = async () => {
     setLoading(true);
-    let q = supabase.from("intent_lead_scores").select("*").order("score", { ascending: false }).limit(500);
+    let q = backendClient.from("intent_lead_scores").select("*").order("score", { ascending: false }).limit(500);
     if (filters.category !== "all") q = q.eq("category", filters.category);
     if (filters.college) q = q.eq("top_college_slug", filters.college);
     if (filters.course)  q = q.eq("top_course_slug",  filters.course);
@@ -64,12 +64,12 @@ export default function AdminLeadIntelligence() {
     const visitorIds = list.filter((r: ScoreRow) => r.subject_type === "visitor").map((r: ScoreRow) => r.subject_id);
     const map: Record<string, any> = {};
     if (userIds.length) {
-      const { data: profs } = await supabase.from("profiles").select("user_id,display_name,email,phone,city,state").in("user_id", userIds);
+      const { data: profs } = await backendClient.from("profiles").select("user_id,display_name,email,phone,city,state").in("user_id", userIds);
       for (const p of profs || []) {
         map[`user:${p.user_id}`] = { name: p.display_name, email: p.email, phone: p.phone, city: p.city, state: p.state };
       }
       // overlay with latest lead row by phone match (best-effort)
-      const { data: ulds } = await supabase.from("leads").select("name,email,phone,city,state,interested_course_slug,source,created_at").in("phone", (profs||[]).map((p:any)=>p.phone).filter(Boolean)).order("created_at",{ascending:false}).limit(500);
+      const { data: ulds } = await backendClient.from("leads").select("name,email,phone,city,state,interested_course_slug,source,created_at").in("phone", (profs||[]).map((p:any)=>p.phone).filter(Boolean)).order("created_at",{ascending:false}).limit(500);
       for (const l of ulds || []) {
         const owner = (profs||[]).find((p:any)=> p.phone && p.phone === l.phone);
         if (owner) {
@@ -84,7 +84,7 @@ export default function AdminLeadIntelligence() {
     }
     setEnrich(map);
 
-    const { data: all } = await supabase.from("intent_lead_scores").select("category");
+    const { data: all } = await backendClient.from("intent_lead_scores").select("category");
     const s = { total: 0, cold: 0, warm: 0, hot: 0, admission_ready: 0 };
     for (const r of (all as any[]) || []) {
       s.total++;
@@ -118,7 +118,7 @@ export default function AdminLeadIntelligence() {
     setSelected(row);
     setPrediction(null);
     const col = row.subject_type === "user" ? "user_id" : "visitor_id";
-    const { data } = await supabase.from("intent_events")
+    const { data } = await backendClient.from("intent_events")
       .select("occurred_at,event_type,college_slug,course_slug,page_url")
       .eq(col, row.subject_id)
       .order("occurred_at", { ascending: false })
@@ -131,7 +131,7 @@ export default function AdminLeadIntelligence() {
   const runPrediction = async (id: string, mode: "heuristic" | "ai") => {
     setAiLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("predict-lead-intent", { body: { lead_score_id: id, mode } });
+      const { data, error } = await backendClient.functions.invoke("predict-lead-intent", { body: { lead_score_id: id, mode } });
       if (error) throw error;
       setPrediction(data);
     } catch (e: any) {
@@ -141,7 +141,7 @@ export default function AdminLeadIntelligence() {
 
   const exportCsv = async () => {
     try {
-      const { data: session } = await supabase.auth.getSession();
+      const { data: session } = await backendClient.auth.getSession();
       const url = functionUrl("intent-export-csv");
       const res = await fetch(url, {
         method: "POST",

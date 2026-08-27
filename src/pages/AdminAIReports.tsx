@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +33,7 @@ export default function AdminAIReports() {
   const { data: reports = [], isLoading } = useQuery({
     queryKey: ["admin_ai_content_reports"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from("ai_content_reports")
         .select("*")
         .order("created_at", { ascending: false });
@@ -45,7 +45,7 @@ export default function AdminAIReports() {
   const setStatus = async (id: string, status: string) => {
     const patch: any = { status };
     if (notes[id] !== undefined) patch.admin_notes = notes[id];
-    const { error } = await (supabase as any).from("ai_content_reports").update(patch).eq("id", id);
+    const { error } = await (backendClient as any).from("ai_content_reports").update(patch).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success(`Marked ${status}`);
     qc.invalidateQueries({ queryKey: ["admin_ai_content_reports"] });
@@ -53,7 +53,7 @@ export default function AdminAIReports() {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this report permanently?")) return;
-    const { error } = await (supabase as any).from("ai_content_reports").delete().eq("id", id);
+    const { error } = await (backendClient as any).from("ai_content_reports").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
     qc.invalidateQueries({ queryKey: ["admin_ai_content_reports"] });

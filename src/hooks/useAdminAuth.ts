@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { useAuth } from './useAuth';
 
 interface AdminAuthState {
@@ -109,7 +109,7 @@ export function useAdminAuth(): AdminAuthState & { refetch: () => Promise<void> 
     try {
       // Ensure a profile exists for this user
       const { data: existingProfile, error: profileReadError } = await withTimeout(
-        supabase
+        backendClient
         .from('profiles')
         .select('id')
         .eq('id', user.id)
@@ -123,7 +123,7 @@ export function useAdminAuth(): AdminAuthState & { refetch: () => Promise<void> 
       }
 
       if (!existingProfile) {
-        supabase
+        backendClient
           .from('profiles')
           .insert({
             id: user.id,
@@ -140,8 +140,8 @@ export function useAdminAuth(): AdminAuthState & { refetch: () => Promise<void> 
       // Check if user has admin role
       const [{ data: hasAdminRole, error: roleError }, { data: approvedData, error: approvedError }] = await withTimeout(
         Promise.all([
-          supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' }),
-          supabase.rpc('is_user_approved', { _user_id: user.id }),
+          backendClient.rpc('has_role', { _user_id: user.id, _role: 'admin' }),
+          backendClient.rpc('is_user_approved', { _user_id: user.id }),
         ]),
         ADMIN_AUTH_TIMEOUT_MS,
         'Admin permission lookup timed out.',
@@ -196,7 +196,7 @@ export function useAdminAuth(): AdminAuthState & { refetch: () => Promise<void> 
     }
   }, [authLoading, user?.id]);
 
-  // Keep approval and role changes fresh without depending on Supabase Realtime.
+  // Keep approval and role changes fresh without depending on DekhoCampus API Realtime.
   useEffect(() => {
     if (!user) return;
     const timer = window.setInterval(() => { void checkAdminStatus(false); }, 30_000);

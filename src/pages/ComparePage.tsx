@@ -6,7 +6,7 @@ import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { Button } from "@/components/ui/button";
 import { GitCompareArrows, Plus, X, ArrowRight } from "lucide-react";
 import { useCompare } from "@/contexts/CompareContext";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useSEO } from "@/hooks/useSEO";
 
 interface Row { slug: string; name: string; short_name?: string; image?: string; city?: string; state?: string; fees?: string; placement?: string; ranking?: string; rating?: number; naac_grade?: string; type?: string; established?: number; courses_count?: number; }
@@ -44,7 +44,7 @@ export default function ComparePage() {
       if (!items.length) { setRows([]); setLoading(false); return; }
       setLoading(true);
       const slugs = items.map((i) => i.slug);
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("colleges")
         .select("slug,name,short_name,image,city,state,fees,placement,ranking,rating,naac_grade,type,established,courses_count")
         .in("slug", slugs);
@@ -59,7 +59,7 @@ export default function ComparePage() {
   useEffect(() => {
     if (!allOpen) return;
     (async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("colleges")
         .select("slug,name,short_name,image,city,state")
         .order("rating", { ascending: false })

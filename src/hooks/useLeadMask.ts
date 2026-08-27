@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "./useAuth";
 
 /**
@@ -14,7 +14,7 @@ export function useLeadMask() {
     let cancelled = false;
     (async () => {
       if (!user || isAdmin) { setMask(false); return; }
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("profiles")
         .select("mask_leads")
         .eq("user_id", user.id)

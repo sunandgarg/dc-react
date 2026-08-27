@@ -1,1 +1,0 @@
-ALTER TABLE public.promoted_programs ADD COLUMN IF NOT EXISTS tag text NOT NULL DEFAULT 'IIT';

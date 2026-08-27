@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 
 interface LogRow {
@@ -39,7 +39,7 @@ function LogsConsole() {
 
   const load = async (silent = false) => {
     if (!silent) setLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await backendClient
       .from("system_logs")
       .select("*")
       .order("created_at", { ascending: false })

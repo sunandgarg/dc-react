@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { ensureBootstrap } from "@/lib/bootstrap";
 import { getPrefillCookie } from "@/components/CookieConsent";
 import { citiesByState } from "@/data/indianLocations";
@@ -146,7 +146,7 @@ export function useAds(options?: {
     queryFn: async () => {
       const boot = await ensureBootstrap();
       if (boot?.ads) return boot.ads as Ad[];
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("ads")
         .select("*")
         .eq("is_active", true)
@@ -173,7 +173,7 @@ export function useAllAds() {
   return useQuery({
     queryKey: ["admin-ads"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("ads")
         .select("*")
         .order("created_at", { ascending: false });

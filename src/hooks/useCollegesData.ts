@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
 
@@ -97,7 +97,7 @@ type HomepageExploreCollege = Pick<DbCollege, "id" | "slug" | "name" | "short_na
 const COLLEGE_PAGE_SIZE = 1000;
 
 async function fetchActiveColleges(): Promise<DbCollege[]> {
-  const { data, error } = await supabase
+  const { data, error } = await backendClient
     .from("colleges")
     .select(PUBLIC_COLLEGE_CARD_SELECT)
     .eq("is_active", true)
@@ -117,7 +117,7 @@ async function fetchAllColleges(): Promise<DbCollege[]> {
   const colleges: DbCollege[] = [];
 
   for (let from = 0; ; from += COLLEGE_PAGE_SIZE) {
-    const { data, error } = await supabase
+    const { data, error } = await backendClient
       .from("colleges")
       .select("*")
       .order("priority", { ascending: true, nullsFirst: false })
@@ -161,7 +161,7 @@ export function useFeaturedCollegeCards(slugs: string[]) {
     queryKey: ["featured-college-cards", orderedSlugs],
     queryFn: async () => {
       if (!orderedSlugs.length) return [] as DbCollege[];
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("colleges")
         .select(PUBLIC_COLLEGE_CARD_SELECT)
         .eq("is_active", true)
@@ -185,7 +185,7 @@ export function useHomepageCategoryColleges(category: string) {
     queryKey: ["homepage-category-colleges", category],
     queryFn: async () => {
       const categoryPattern = `%${category}%`;
-      const selectedBase = () => supabase
+      const selectedBase = () => backendClient
         .from("colleges")
         .select(HOMEPAGE_EXPLORE_COLLEGE_SELECT)
         .eq("is_active", true)
@@ -215,7 +215,7 @@ export function useHomepageCategoryColleges(category: string) {
           .slice(0, 5);
       }
 
-      const fallbackBase = () => supabase
+      const fallbackBase = () => backendClient
         .from("colleges")
         .select(HOMEPAGE_FALLBACK_COLLEGE_SELECT)
         .eq("is_active", true)
@@ -238,7 +238,7 @@ export function useHomepageCategoryColleges(category: string) {
         .slice(0, 5);
       if (categoryRows.length > 0) return categoryRows;
 
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("colleges")
         .select(HOMEPAGE_FALLBACK_COLLEGE_SELECT)
         .eq("is_active", true)
@@ -269,7 +269,7 @@ export function useAdminCollegeList(filters: AdminCollegeListFilters) {
   return useQuery({
     queryKey: ["admin-colleges-list-v2", page, pageSize, search, filters.status ?? "all", filters.category ?? "", filters.state ?? ""],
     queryFn: async () => {
-      let query = supabase
+      let query = backendClient
         .from("colleges")
         .select(ADMIN_COLLEGE_LIST_SELECT, { count: "exact" });
 
@@ -301,11 +301,11 @@ export function useAdminCollegeStats() {
     queryKey: ["admin-colleges-stats-v2"],
     queryFn: async () => {
       const [total, published, draft, active, inactive] = await Promise.all([
-        supabase.from("colleges").select("id", { count: "exact", head: true }),
-        supabase.from("colleges").select("id", { count: "exact", head: true }).eq("status", "Published"),
-        supabase.from("colleges").select("id", { count: "exact", head: true }).eq("status", "Draft"),
-        supabase.from("colleges").select("id", { count: "exact", head: true }).eq("is_active", true),
-        supabase.from("colleges").select("id", { count: "exact", head: true }).eq("is_active", false),
+        backendClient.from("colleges").select("id", { count: "exact", head: true }),
+        backendClient.from("colleges").select("id", { count: "exact", head: true }).eq("status", "Published"),
+        backendClient.from("colleges").select("id", { count: "exact", head: true }).eq("status", "Draft"),
+        backendClient.from("colleges").select("id", { count: "exact", head: true }).eq("is_active", true),
+        backendClient.from("colleges").select("id", { count: "exact", head: true }).eq("is_active", false),
       ]);
       const failed = [total, published, draft, active, inactive].find((result) => result.error);
       if (failed?.error) throw failed.error;
@@ -380,10 +380,10 @@ export function useDbCollege(slugOrSlugId: string | undefined) {
 
       // Try id first (canonical), then slug fallback.
       if (id) {
-        const { data } = await supabase.from("colleges").select("*").eq("short_id", id).maybeSingle();
+        const { data } = await backendClient.from("colleges").select("*").eq("short_id", id).maybeSingle();
         if (data) return applyCollegeFallbacks(data as DbCollege);
       }
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("colleges")
         .select("*")
         .eq("slug", slug)
@@ -401,7 +401,7 @@ export function useCollegesByState(state: string | undefined, excludeSlug?: stri
   return useQuery({
     queryKey: ["db-colleges-state", state, excludeSlug],
     queryFn: async () => {
-      let q = supabase.from("colleges").select("*").eq("state", state!).eq("is_active", true).limit(6);
+      let q = backendClient.from("colleges").select("*").eq("state", state!).eq("is_active", true).limit(6);
       if (excludeSlug) q = q.neq("slug", excludeSlug);
       const { data, error } = await q;
       if (error) throw error;
@@ -416,7 +416,7 @@ export function useCollegesByCategory(category: string | undefined, excludeSlug?
   return useQuery({
     queryKey: ["db-colleges-category", category, excludeSlug],
     queryFn: async () => {
-      let q = supabase.from("colleges").select("*").eq("category", category!).eq("is_active", true).limit(6);
+      let q = backendClient.from("colleges").select("*").eq("category", category!).eq("is_active", true).limit(6);
       if (excludeSlug) q = q.neq("slug", excludeSlug);
       const { data, error } = await q;
       if (error) throw error;
@@ -431,7 +431,7 @@ export function usePartnerColleges(limit = 8, excludeSlug?: string) {
   return useQuery({
     queryKey: ["partner-colleges", limit, excludeSlug],
     queryFn: async () => {
-      let query = supabase
+      let query = backendClient
         .from("colleges")
         .select(PUBLIC_COLLEGE_CARD_SELECT)
         .eq("is_active", true)
@@ -456,13 +456,13 @@ export function useSaveCollege() {
       let pendingReview = false;
       if (college.id) {
         const { id, created_at, updated_at, ...rest } = college;
-        const response = await supabase.from("colleges").update(rest).eq("id", id);
+        const response = await backendClient.from("colleges").update(rest).eq("id", id);
         const { error } = response;
         if (error) throw error;
         pendingReview = isPendingReview(response);
       } else {
         const { id, created_at, updated_at, ...rest } = college;
-        const response = await supabase.from("colleges").insert(rest);
+        const response = await backendClient.from("colleges").insert(rest);
         const { error } = response;
         if (error) throw error;
         pendingReview = isPendingReview(response);
@@ -486,7 +486,7 @@ export function useDeleteCollege() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("colleges").delete().eq("id", id);
+      const { error } = await backendClient.from("colleges").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

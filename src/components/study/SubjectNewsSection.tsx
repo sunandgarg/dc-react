@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Newspaper, ChevronRight, Calendar, Lightbulb, NotebookPen, ArrowDownAZ, Clock } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 interface Props {
   subjectSlug: string;
@@ -24,7 +24,7 @@ export function SubjectNewsSection({ subjectSlug, subjectName, subjectId }: Prop
     queryFn: async () => {
       const tags = [subjectSlug, `${subjectSlug}-tricks`, `${subjectSlug}-notes`];
       const [tagRes, linkRes] = await Promise.all([
-        supabase
+        backendClient
           .from("articles")
           .select("id,slug,title,description,featured_image,category,tags,created_at,author")
           .eq("is_active", true)
@@ -32,7 +32,7 @@ export function SubjectNewsSection({ subjectSlug, subjectName, subjectId }: Prop
           .order("created_at", { ascending: false })
           .limit(40),
         subjectId
-          ? (supabase as any)
+          ? (backendClient as any)
               .from("article_links")
               .select("article_id, articles!inner(id,slug,title,description,featured_image,category,tags,created_at,author,is_active)")
               .eq("entity_type", "study_subject")

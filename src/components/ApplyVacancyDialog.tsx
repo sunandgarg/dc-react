@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,7 +48,7 @@ export function ApplyVacancyDialog({ job, trigger }: Props) {
       company: job?.company,
       source: "website",
     };
-    const { error } = await supabase.from("job_applications" as any).insert(payload);
+    const { error } = await backendClient.from("job_applications" as any).insert(payload);
     setSubmitting(false);
     if (error) { toast.error(error.message); return; }
     setSubmitted(true);

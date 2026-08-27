@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +22,7 @@ export default function AdminJobApplications() {
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("job_applications" as any).select("*").order("created_at", { ascending: false });
+    const { data, error } = await backendClient.from("job_applications" as any).select("*").order("created_at", { ascending: false });
     if (error) toast.error(error.message);
     setApps((data as any) || []);
     setLoading(false);
@@ -31,7 +31,7 @@ export default function AdminJobApplications() {
   useEffect(() => { load(); }, []);
 
   const setStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from("job_applications" as any).update({ status }).eq("id", id);
+    const { error } = await backendClient.from("job_applications" as any).update({ status }).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Updated");
     setApps(a => a.map(x => x.id === id ? { ...x, status } : x));
@@ -39,14 +39,14 @@ export default function AdminJobApplications() {
   };
 
   const saveNotes = async (id: string, admin_notes: string) => {
-    const { error } = await supabase.from("job_applications" as any).update({ admin_notes }).eq("id", id);
+    const { error } = await backendClient.from("job_applications" as any).update({ admin_notes }).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Notes saved");
   };
 
   const remove = async (id: string) => {
     if (!confirm("Delete this application?")) return;
-    const { error } = await supabase.from("job_applications" as any).delete().eq("id", id);
+    const { error } = await backendClient.from("job_applications" as any).delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
     setApps(a => a.filter(x => x.id !== id));

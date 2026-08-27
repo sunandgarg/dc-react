@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { GraduationCap, BookOpen, ArrowRight } from "lucide-react";
 
 interface Props {
@@ -26,7 +26,7 @@ export function LinkedSyllabus({ classes = [], subjectIds = [], title }: Props) 
   useEffect(() => {
     if (!subjectIds.length) { setSubjects([]); return; }
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("college_subjects")
         .select("id, name, code, semester_num, slug, program_slug, university_slug")
         .in("id", subjectIds);

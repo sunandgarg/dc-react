@@ -11,7 +11,7 @@ import { Calendar, Search, ChevronRight, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { currentYear } from "@/lib/currentYear";
 
@@ -84,7 +84,7 @@ export default function ExamCalendar() {
   const { data: exams = [], isLoading } = useQuery({
     queryKey: ["exam-calendar", year],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("exams")
         .select("slug,name,short_name,category,exam_date,application_start_date,application_end_date,result_date,registration_url,logo,image,mode")
         .eq("is_active", true);

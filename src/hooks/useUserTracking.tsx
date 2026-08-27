@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { restUrl } from "@/lib/backendMode";
 
@@ -80,7 +80,7 @@ async function flush() {
   flushTimer = null;
   if (!queue.length) return;
   const batch = queue.splice(0, queue.length);
-  try { await (supabase as any).from("user_events").insert(batch); } catch {}
+  try { await (backendClient as any).from("user_events").insert(batch); } catch {}
 }
 
 if (typeof window !== "undefined") {
@@ -139,7 +139,7 @@ export function UserTrackingProvider({ children }: { children: React.ReactNode }
     });
 
     const prefill = getProfilePrefill();
-    (supabase as any).from("user_sessions").upsert({
+    (backendClient as any).from("user_sessions").upsert({
       session_id: sessionIdRef.current,
       user_id: user?.id ?? null,
       last_seen_at: new Date().toISOString(),

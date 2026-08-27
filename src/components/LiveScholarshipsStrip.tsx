@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Award } from "lucide-react";
 
 interface Scholarship {
@@ -18,7 +18,7 @@ export function LiveScholarshipsStrip() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("scholarships")
         .select("id,slug,title,amount,deadline,apply_url")
         .eq("is_active", true)

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { ensureBootstrap } from "@/lib/bootstrap";
 
 export type LeadOtpMode = "on" | "off" | "test";
@@ -33,7 +33,7 @@ export function useLeadFormSettings() {
       if (boot && "lead_form_settings" in boot) {
         return (boot.lead_form_settings ?? DEFAULT) as LeadFormSettings;
       }
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("lead_form_settings" as any)
         .select("id, otp_mode, channel_preference, form_overrides, updated_at")
         .eq("singleton", true)
@@ -49,7 +49,7 @@ export function useUpdateLeadOtpMode() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (mode: LeadOtpMode) => {
-      const { error } = await supabase
+      const { error } = await backendClient
         .from("lead_form_settings" as any)
         .update({ otp_mode: mode })
         .eq("singleton", true);
@@ -63,7 +63,7 @@ export function useUpdateLeadChannel() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (channel: LeadChannelPreference) => {
-      const { error } = await supabase
+      const { error } = await backendClient
         .from("lead_form_settings" as any)
         .update({ channel_preference: channel })
         .eq("singleton", true);
@@ -77,7 +77,7 @@ export function useUpdateFormOverride() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ formKey, channel }: { formKey: string; channel: LeadChannelPreference | null }) => {
-      const { data: current, error: readErr } = await supabase
+      const { data: current, error: readErr } = await backendClient
         .from("lead_form_settings" as any)
         .select("form_overrides")
         .eq("singleton", true)
@@ -86,7 +86,7 @@ export function useUpdateFormOverride() {
       const overrides = { ...((current as any)?.form_overrides || {}) } as Record<string, LeadChannelPreference>;
       if (channel === null) delete overrides[formKey];
       else overrides[formKey] = channel;
-      const { error } = await supabase
+      const { error } = await backendClient
         .from("lead_form_settings" as any)
         .update({ form_overrides: overrides })
         .eq("singleton", true);

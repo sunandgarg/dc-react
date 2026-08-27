@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +24,7 @@ export default function AdminApplications() {
   const { data: apps = [], isLoading } = useQuery({
     queryKey: ["admin-applications"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("college_applications")
         .select("*")
         .order("created_at", { ascending: false });
@@ -47,7 +47,7 @@ export default function AdminApplications() {
   });
 
   const updateStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from("college_applications").update({ status }).eq("id", id);
+    const { error } = await backendClient.from("college_applications").update({ status }).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Updated");
     qc.invalidateQueries({ queryKey: ["admin-applications"] });
@@ -57,7 +57,7 @@ export default function AdminApplications() {
     const uniqueIds = Array.from(new Set(ids)).filter(Boolean);
     if (!uniqueIds.length || !confirm(`Delete ${uniqueIds.length} ${label}? This cannot be undone.`)) return;
     setDeleteBusy(true);
-    const { error } = await supabase.from("college_applications").delete().in("id", uniqueIds);
+    const { error } = await backendClient.from("college_applications").delete().in("id", uniqueIds);
     setDeleteBusy(false);
     if (error) return toast.error(error.message);
     toast.success(`Deleted ${uniqueIds.length} ${label}`);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ export default function AdminLegalPages() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("legal_pages").select("*").order("title");
+    const { data } = await backendClient.from("legal_pages").select("*").order("title");
     setPages((data || []) as LegalPage[]);
     if (data?.length && !selectedId) setSelectedId(data[0].id);
     setLoading(false);
@@ -49,7 +49,7 @@ export default function AdminLegalPages() {
   const save = async () => {
     if (!selected) return;
     setSaving(true);
-    const { error } = await supabase.from("legal_pages").update({
+    const { error } = await backendClient.from("legal_pages").update({
       title: selected.title, slug: selected.slug, content: selected.content,
       meta_title: selected.meta_title, meta_description: selected.meta_description,
       is_active: selected.is_active,
@@ -61,7 +61,7 @@ export default function AdminLegalPages() {
   const create = async () => {
     const slug = prompt("URL slug (e.g. shipping-policy):");
     if (!slug) return;
-    const { data, error } = await supabase.from("legal_pages").insert({
+    const { data, error } = await backendClient.from("legal_pages").insert({
       slug, title: slug.replace(/-/g, " "), content: "", meta_title: "", meta_description: "",
     }).select().single();
     if (error) return toast.error(error.message);
@@ -71,7 +71,7 @@ export default function AdminLegalPages() {
 
   const remove = async () => {
     if (!selected || !confirm(`Delete "${selected.title}"?`)) return;
-    const { error } = await supabase.from("legal_pages").delete().eq("id", selected.id);
+    const { error } = await backendClient.from("legal_pages").delete().eq("id", selected.id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
     setSelectedId(null);

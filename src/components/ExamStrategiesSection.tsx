@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useCarouselNav, CarouselControls } from "@/components/CarouselControls";
 import {
   FileDown, Lightbulb, Calendar, CalendarClock, Clock, Timer,
@@ -88,7 +88,7 @@ function useTopExams() {
     queryKey: ["top-exams-strategies"],
     staleTime: 10 * 60 * 1000,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("exams")
         .select("slug,name,short_name,logo,image,category")
         .eq("is_active", true)

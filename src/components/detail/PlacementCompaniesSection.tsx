@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Award } from "lucide-react";
 
 interface Rec { id: string; company_name: string; package_lpa: number; year: string; role: string; hires_count: number; }
@@ -7,7 +7,7 @@ interface Rec { id: string; company_name: string; package_lpa: number; year: str
 export function PlacementCompaniesSection({ collegeSlug, courseSlug }: { collegeSlug?: string; courseSlug?: string }) {
   const [items, setItems] = useState<Rec[]>([]);
   useEffect(() => {
-    let q = (supabase as any).from("placement_records").select("*");
+    let q = (backendClient as any).from("placement_records").select("*");
     if (collegeSlug) q = q.eq("college_slug", collegeSlug);
     if (courseSlug) q = q.eq("course_slug", courseSlug);
     q.order("package_lpa", { ascending: false }).then(({ data }: any) => setItems(data || []));

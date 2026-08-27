@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 export interface FeeRow {
   course_name: string;
@@ -10,7 +10,7 @@ export interface FeeRow {
 }
 
 export async function fetchCourseFees(collegeSlug: string): Promise<FeeRow[]> {
-  const { data } = await (supabase as any)
+  const { data } = await (backendClient as any)
     .from("course_fees")
     .select("course_name, course_slug, fee_amount, fee_type, year")
     .eq("college_slug", collegeSlug)

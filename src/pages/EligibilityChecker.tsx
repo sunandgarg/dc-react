@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Sparkles, MapPin, Star, Globe, Heart } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { silentSaveLead } from "@/lib/leadCapture";
 import { DekhoCampusAILoader } from "@/components/tools/DekhoCampusAILoader";
@@ -91,11 +91,11 @@ export default function EligibilityChecker() {
     queryKey: ["eligibility-boundary", stream, state],
     queryFn: async () => {
       const baseCols = "slug,name,short_name,location,state,category,rating,fees,image,is_partner,priority";
-      let streamQ = supabase
+      let streamQ = backendClient
         .from("colleges").select(baseCols).eq("is_active", true).eq("category", stream);
       if (state) streamQ = streamQ.eq("state", state);
 
-      let partnerQ = supabase
+      let partnerQ = backendClient
         .from("colleges").select(baseCols).eq("is_active", true).eq("is_partner", true);
       if (state) partnerQ = partnerQ.eq("state", state);
 
@@ -109,7 +109,7 @@ export default function EligibilityChecker() {
       // Fallback: if state-scoped partners returned nothing, pull global partners
       let partners = (partnerRes.data ?? []) as College[];
       if (state && partners.length === 0) {
-        const { data } = await supabase
+        const { data } = await backendClient
           .from("colleges").select(baseCols).eq("is_active", true).eq("is_partner", true)
           .order("priority", { ascending: true, nullsFirst: false })
           .order("rating", { ascending: false, nullsFirst: false }).limit(12);
@@ -132,7 +132,7 @@ export default function EligibilityChecker() {
   const { data: cityColleges = [] } = useQuery({
     queryKey: ["eligibility-city-colleges", state],
     queryFn: async () => {
-      let q = supabase
+      let q = backendClient
         .from("colleges")
         .select("slug,name,short_name,location,state,category,rating,fees,image,is_partner,priority")
         .eq("is_active", true);
@@ -199,7 +199,7 @@ export default function EligibilityChecker() {
       setAiResult(null);
       // Reuse the boundary fetch (partners + stream colleges) - no extra DB hit.
       const cols = boundary?.all ?? [];
-      const { data, error } = await supabase.functions.invoke("check-eligibility", {
+      const { data, error } = await backendClient.functions.invoke("check-eligibility", {
         body: { stream: streamMeta.label, percent: pct, state: state || null, category, exams: streamMeta.exams, colleges: cols, includeWeb: true },
       });
       if (!error && data) setAiResult(data as AiResult);

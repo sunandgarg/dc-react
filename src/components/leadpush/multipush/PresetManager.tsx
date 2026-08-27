@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface PresetManagerProps {
@@ -36,9 +36,9 @@ export const PresetManager = memo(function PresetManager({
     }
     if (isDefault) {
       // unset other defaults
-      await supabase.from('multi_push_presets').update({ is_default: false }).eq('is_default', true);
+      await backendClient.from('multi_push_presets').update({ is_default: false }).eq('is_default', true);
     }
-    const { error } = await supabase.from('multi_push_presets').insert({
+    const { error } = await backendClient.from('multi_push_presets').insert({
       name: name.trim(),
       university_ids: selectedIds,
       is_default: isDefault,
@@ -55,7 +55,7 @@ export const PresetManager = memo(function PresetManager({
   };
 
   const deletePreset = async (id: string) => {
-    await supabase.from('multi_push_presets').delete().eq('id', id);
+    await backendClient.from('multi_push_presets').delete().eq('id', id);
     onChange();
   };
 

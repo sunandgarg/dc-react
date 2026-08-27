@@ -5,7 +5,6 @@ import { extname, join } from "node:path";
 
 const roots = [
   "src",
-  "supabase/functions",
   "scripts",
   "data/college-official-enrichment",
 ];

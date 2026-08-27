@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Flag, ShieldAlert, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,8 +30,8 @@ export function AIDisclaimer({ source, content, excerpt, context, compact }: AID
     }
     setBusy(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await (supabase as any).from("ai_content_reports").insert({
+      const { data: { user } } = await backendClient.auth.getUser();
+      const { error } = await (backendClient as any).from("ai_content_reports").insert({
         source,
         reason: reason.trim(),
         full_content: content?.slice(0, 8000) ?? null,

@@ -9,7 +9,7 @@ import { UploadOrUrlField } from "@/components/UploadOrUrlField";
 import { Switch } from "@/components/ui/switch";
 import { useSiteIntegration, useSiteIntegrationEnabled } from "@/hooks/useSiteIntegration";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 
 const MODES: HeroSettings["overlay_mode"][] = ["none", "dark", "light", "tint", "gradient"];
@@ -36,7 +36,7 @@ export default function AdminHeroSettings() {
   const addImage = () => setField("image_urls", [...draft.image_urls, ""]);
   const removeImage = (i: number) => setField("image_urls", draft.image_urls.filter((_, j) => j !== i));
   const saveTextGradient = async (key: string, label: string, value: string, enabled = true) => {
-    const { error } = await (supabase as any).from("site_integrations").upsert({
+    const { error } = await (backendClient as any).from("site_integrations").upsert({
       key,
       label,
       category: "website",

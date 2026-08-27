@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, GraduationCap, BookOpen, FileText, Briefcase, Stethoscope, Palette, Sparkles, Trophy, Scale, Award, NotebookPen, Newspaper } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { STREAM_CATEGORIES } from "@/lib/streamCategories";
 
 interface Section {
@@ -18,9 +18,9 @@ function useMegaMenuData() {
     staleTime: 30 * 60 * 1000,
     queryFn: async () => {
       const [c, co, e] = await Promise.all([
-        supabase.from("colleges").select("name,slug,category,state,city").eq("is_active", true).order("rating", { ascending: false }).limit(300),
-        supabase.from("courses").select("name,slug,category,level").eq("is_active", true).limit(300),
-        supabase.from("exams").select("name,slug,category,is_top_exam").eq("is_active", true).order("is_top_exam", { ascending: false }).limit(150),
+        backendClient.from("colleges").select("name,slug,category,state,city").eq("is_active", true).order("rating", { ascending: false }).limit(300),
+        backendClient.from("courses").select("name,slug,category,level").eq("is_active", true).limit(300),
+        backendClient.from("exams").select("name,slug,category,is_top_exam").eq("is_active", true).order("is_top_exam", { ascending: false }).limit(150),
       ]);
       return { colleges: c.data ?? [], courses: co.data ?? [], exams: e.data ?? [] };
     },

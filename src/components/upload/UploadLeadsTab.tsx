@@ -31,7 +31,7 @@ import { LeadPreviewTable } from "./LeadPreviewTable";
 import { UniversityInfoPanel } from "./UniversityInfoPanel";
 import { SingleLeadForm } from "./SingleLeadForm";
 import { Alert } from "../Alert";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useUploadStatePersistence } from "@/hooks/useUploadStatePersistence";
 import { appCache } from "@/hooks/useAppCache";
 
@@ -669,7 +669,7 @@ export function UploadLeadsTab({
     isPollingInFlightRef.current = true;
 
     try {
-      const { data: batch } = await supabase
+      const { data: batch } = await backendClient
         .from("upload_batches")
         .select("success_count, duplicate_count, fail_count, status, is_paused, is_cancelled, total_leads")
         .eq("id", pollBatchId)
@@ -1710,7 +1710,7 @@ export function UploadLeadsTab({
 
     setIsCheckingDuplicates(true);
     try {
-      const { emails, mobiles } = await checkDatabaseDuplicates(leads, selectedUniversity.id, supabase);
+      const { emails, mobiles } = await checkDatabaseDuplicates(leads, selectedUniversity.id, backendClient);
 
       const duplicateIndices = new Set<number>();
       leads.forEach((lead, index) => {
@@ -1799,7 +1799,7 @@ export function UploadLeadsTab({
     if (!selectedUniversity) return null;
 
     // Don't save CSV data to reduce storage usage
-    const { data, error } = await supabase
+    const { data, error } = await backendClient
       .from("upload_batches")
       .insert({
         university_id: selectedUniversity.id,
@@ -1911,7 +1911,7 @@ export function UploadLeadsTab({
 
       // Mark batch complete
       if (processingRef.current) {
-        await supabase
+        await backendClient
           .from("upload_batches")
           .update({
             status: "completed",
@@ -2006,7 +2006,7 @@ export function UploadLeadsTab({
     try {
       const apiConfig = precomputedApiConfig || getApiConfig();
 
-      const { data, error } = await supabase.functions.invoke("process-lead", {
+      const { data, error } = await backendClient.functions.invoke("process-lead", {
         body: {
           universityId: selectedUniversity.id,
           batchId: batchIdParam,
@@ -2064,7 +2064,7 @@ export function UploadLeadsTab({
     }));
 
     try {
-      const { data, error } = await supabase.functions.invoke("process-lead", {
+      const { data, error } = await backendClient.functions.invoke("process-lead", {
         body: { tasks, concurrency: 1 },
         signal,
       });
@@ -2088,7 +2088,7 @@ export function UploadLeadsTab({
   };
 
   const checkBatchStatus = async (batchIdToCheck: string): Promise<{ isPaused: boolean; isCancelled: boolean }> => {
-    const { data } = await supabase
+    const { data } = await backendClient
       .from("upload_batches")
       .select("is_paused, is_cancelled")
       .eq("id", batchIdToCheck)
@@ -2127,7 +2127,7 @@ export function UploadLeadsTab({
     setIsPaused(true);
     setAlert({ type: "info", message: "Processing paused. Click resume to continue." });
     if (batchId) {
-      supabase.from("upload_batches").update({ is_paused: true, status: "paused" }).eq("id", batchId).then();
+      backendClient.from("upload_batches").update({ is_paused: true, status: "paused" }).eq("id", batchId).then();
     }
   };
 
@@ -2136,7 +2136,7 @@ export function UploadLeadsTab({
     setIsPaused(false);
     setAlert(null);
     if (batchId) {
-      await supabase.from("upload_batches").update({ is_paused: false, status: "processing" }).eq("id", batchId);
+      await backendClient.from("upload_batches").update({ is_paused: false, status: "processing" }).eq("id", batchId);
     }
   };
 
@@ -2155,7 +2155,7 @@ export function UploadLeadsTab({
     }
     setAlert({ type: "info", message: "Processing stopped. Remaining leads cancelled." });
     if (batchId) {
-      supabase.from("upload_batches").update({ status: "cancelled", is_cancelled: true }).eq("id", batchId).then();
+      backendClient.from("upload_batches").update({ status: "cancelled", is_cancelled: true }).eq("id", batchId).then();
     }
   };
 

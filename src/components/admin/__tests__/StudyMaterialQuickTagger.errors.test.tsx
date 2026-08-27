@@ -10,7 +10,7 @@ const cfg: {
   store: Record<string, { entity_type: string; entity_slug: string }[]>;
 } = { preloadError: null, insertError: null, insertDelay: 0, store: {} };
 
-vi.mock("@/integrations/supabase/client", () => {
+vi.mock("@/integrations/backend/client", () => {
   function tableApi(table: string) {
     const _filters: any = {};
     let _inFilter: { col: string; vals: any[] } | null = null;
@@ -50,7 +50,7 @@ vi.mock("@/integrations/supabase/client", () => {
     return api;
   }
   return {
-    supabase: {
+    backendClient: {
       from: (table: string) => {
         const api = tableApi(table);
         return {

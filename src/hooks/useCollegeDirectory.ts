@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import type { DbCollege } from "@/hooks/useCollegesData";
 
 export const COLLEGE_DIRECTORY_SELECT = "id,short_id,slug,name,short_name,location,city,state,type,category,rating,reviews,fees,image,logo,tags,approvals,naac_grade,established,priority,featured_rank,is_partner,affiliation_kind,parent_university_slug";
@@ -29,7 +29,7 @@ async function fetchDirectoryPage(filters: CollegeDirectoryFilters, page: number
   const from = page * COLLEGE_DIRECTORY_PAGE_SIZE;
   const search = cleanSearch(filters.search);
 
-  let query = supabase
+  let query = backendClient
     .from("colleges")
     .select(COLLEGE_DIRECTORY_SELECT)
     .eq("is_active", true);

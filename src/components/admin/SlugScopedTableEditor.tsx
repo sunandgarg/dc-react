@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Save, Pencil, X } from "lucide-react";
@@ -48,7 +48,7 @@ export function SlugScopedTableEditor({
   const reload = async () => {
     if (!scopeValue) { setRows([]); return; }
     setLoading(true);
-    let q = (supabase as any).from(table).select("*").eq(scopeColumn, scopeValue);
+    let q = (backendClient as any).from(table).select("*").eq(scopeColumn, scopeValue);
     if (orderColumn) q = q.order(orderColumn, { ascending: true });
     const { data, error } = await q;
     if (error) toast.error(error.message);
@@ -63,8 +63,8 @@ export function SlugScopedTableEditor({
     const payload = { ...draft, [scopeColumn]: scopeValue };
     Object.keys(payload).forEach(k => { if (payload[k] === "") payload[k] = null; });
     const { error } = draft.id
-      ? await (supabase as any).from(table).update(payload).eq("id", draft.id)
-      : await (supabase as any).from(table).insert(payload);
+      ? await (backendClient as any).from(table).update(payload).eq("id", draft.id)
+      : await (backendClient as any).from(table).insert(payload);
     if (error) { toast.error(error.message); return; }
     toast.success("Saved");
     setDraft(null);
@@ -73,7 +73,7 @@ export function SlugScopedTableEditor({
 
   const remove = async (id: string) => {
     if (!confirm("Delete?")) return;
-    const { error } = await (supabase as any).from(table).delete().eq("id", id);
+    const { error } = await (backendClient as any).from(table).delete().eq("id", id);
     if (error) toast.error(error.message);
     else { toast.success("Deleted"); reload(); }
   };

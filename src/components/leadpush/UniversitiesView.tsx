@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { UniversityExportButton } from "./UniversityExport";
 import { BulkImportExport, UniversityExportData } from "@/components/universities/UniversityImportExport";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -94,7 +94,7 @@ export function UniversitiesView({ universities, onAdd, onEdit, onDelete, onBulk
       return;
     }
     setSavingDll(true);
-    const { error } = await supabase.from("universities").update({ daily_lead_limit: newLimit }).eq("id", dllUni.id);
+    const { error } = await backendClient.from("universities").update({ daily_lead_limit: newLimit }).eq("id", dllUni.id);
     setSavingDll(false);
     if (error) {
       toast({ title: "Failed", description: error.message, variant: "destructive" });
@@ -108,7 +108,7 @@ export function UniversitiesView({ universities, onAdd, onEdit, onDelete, onBulk
   const toggleStatus = async (uni: any) => {
     const next = (uni.status === "disabled") ? "live" : "disabled";
     setTogglingId(uni.id);
-    const { error } = await supabase.from("universities").update({ status: next }).eq("id", uni.id);
+    const { error } = await backendClient.from("universities").update({ status: next }).eq("id", uni.id);
     setTogglingId(null);
     if (error) {
       toast({ title: "Failed", description: error.message, variant: "destructive" });

@@ -1044,7 +1044,10 @@ model colleges {
   editorial_human_reviewed         Boolean   @default(false)
   editorial_readiness_failures     Json
   editorial_last_evidence_check_at DateTime? @db.DateTime(3)
+  show_in_explore_by_category      Boolean   @default(false)
+  explore_by_category_checked_at   DateTime? @db.DateTime(3)
 
+  @@index([show_in_explore_by_category, explore_by_category_checked_at], map: "ix_colleges_homepage_explore")
   @@map("colleges")
 }
 
@@ -1084,70 +1087,73 @@ model course_specializations {
 }
 
 model courses {
-  id                      String    @id @default(uuid()) @db.Char(36)
-  slug                    String    @db.LongText
-  name                    String    @db.LongText
-  full_name               String    @db.LongText
-  category                String    @db.LongText
-  duration                String    @db.LongText
-  level                   String    @db.LongText
-  colleges_count          Int       @default(0)
-  avg_fees                String    @db.LongText
-  avg_salary              String    @db.LongText
-  growth                  String    @db.LongText
-  description             String    @db.LongText
-  eligibility             String    @db.LongText
-  top_exams               Json
-  careers                 Json
-  subjects                Json
-  image                   String    @db.LongText
-  mode                    String    @db.LongText
-  specializations         Json
-  is_active               Boolean   @default(true)
-  created_at              DateTime  @default(now()) @db.DateTime(3)
-  updated_at              DateTime  @default(now()) @db.DateTime(3)
-  status                  String    @db.LongText
-  short_description       String    @db.LongText
-  domain                  String    @db.LongText
-  duration_type           String    @db.LongText
-  study_type              String    @db.LongText
-  rating                  Decimal   @default(0) @db.Decimal(65, 20)
-  fee_type                String    @db.LongText
-  fee                     Decimal   @default(0) @db.Decimal(65, 20)
-  low_fee                 Decimal   @default(0) @db.Decimal(65, 20)
-  high_fee                Decimal   @default(0) @db.Decimal(65, 20)
-  syllabus_pdf_url        String    @db.LongText
-  about_content           String    @db.LongText
-  scope_content           String    @db.LongText
-  subjects_content        String    @db.LongText
-  placements_content      String    @db.LongText
-  admission_process       String    @db.LongText
-  fees_content            String    @db.LongText
-  cutoff_content          String    @db.LongText
-  specialization_content  String    @db.LongText
-  recruiters_content      String    @db.LongText
-  syllabus_content        String    @db.LongText
-  meta_title              String    @db.LongText
-  meta_description        String    @db.LongText
-  meta_keywords           String    @db.LongText
-  youtube_video_url       String    @db.LongText
-  categories              Json
-  priority                Int       @default(50)
-  author_id               String?   @db.Char(36)
-  page_summary            String?   @db.LongText
-  linked_school_classes   Json
-  linked_college_subjects Json
-  short_id                Int
-  official_website        String?   @db.LongText
-  data_verified_at        DateTime? @db.DateTime(3)
-  data_source_urls        Json
-  data_quality_score      Int       @default(0)
-  data_clean_attempts     Int       @default(0)
-  data_clean_successes    Int       @default(0)
-  data_last_checked_at    DateTime? @db.DateTime(3)
-  data_clean_state        String    @db.LongText
-  ai_clean_pass_count     Int       @default(0)
+  id                             String    @id @default(uuid()) @db.Char(36)
+  slug                           String    @db.LongText
+  name                           String    @db.LongText
+  full_name                      String    @db.LongText
+  category                       String    @db.LongText
+  duration                       String    @db.LongText
+  level                          String    @db.LongText
+  colleges_count                 Int       @default(0)
+  avg_fees                       String    @db.LongText
+  avg_salary                     String    @db.LongText
+  growth                         String    @db.LongText
+  description                    String    @db.LongText
+  eligibility                    String    @db.LongText
+  top_exams                      Json
+  careers                        Json
+  subjects                       Json
+  image                          String    @db.LongText
+  mode                           String    @db.LongText
+  specializations                Json
+  is_active                      Boolean   @default(true)
+  created_at                     DateTime  @default(now()) @db.DateTime(3)
+  updated_at                     DateTime  @default(now()) @db.DateTime(3)
+  status                         String    @db.LongText
+  short_description              String    @db.LongText
+  domain                         String    @db.LongText
+  duration_type                  String    @db.LongText
+  study_type                     String    @db.LongText
+  rating                         Decimal   @default(0) @db.Decimal(65, 20)
+  fee_type                       String    @db.LongText
+  fee                            Decimal   @default(0) @db.Decimal(65, 20)
+  low_fee                        Decimal   @default(0) @db.Decimal(65, 20)
+  high_fee                       Decimal   @default(0) @db.Decimal(65, 20)
+  syllabus_pdf_url               String    @db.LongText
+  about_content                  String    @db.LongText
+  scope_content                  String    @db.LongText
+  subjects_content               String    @db.LongText
+  placements_content             String    @db.LongText
+  admission_process              String    @db.LongText
+  fees_content                   String    @db.LongText
+  cutoff_content                 String    @db.LongText
+  specialization_content         String    @db.LongText
+  recruiters_content             String    @db.LongText
+  syllabus_content               String    @db.LongText
+  meta_title                     String    @db.LongText
+  meta_description               String    @db.LongText
+  meta_keywords                  String    @db.LongText
+  youtube_video_url              String    @db.LongText
+  categories                     Json
+  priority                       Int       @default(50)
+  author_id                      String?   @db.Char(36)
+  page_summary                   String?   @db.LongText
+  linked_school_classes          Json
+  linked_college_subjects        Json
+  short_id                       Int
+  official_website               String?   @db.LongText
+  data_verified_at               DateTime? @db.DateTime(3)
+  data_source_urls               Json
+  data_quality_score             Int       @default(0)
+  data_clean_attempts            Int       @default(0)
+  data_clean_successes           Int       @default(0)
+  data_last_checked_at           DateTime? @db.DateTime(3)
+  data_clean_state               String    @db.LongText
+  ai_clean_pass_count            Int       @default(0)
+  show_in_explore_by_category    Boolean   @default(false)
+  explore_by_category_checked_at DateTime? @db.DateTime(3)
 
+  @@index([show_in_explore_by_category, explore_by_category_checked_at], map: "ix_courses_homepage_explore")
   @@map("courses")
 }
 
@@ -1353,78 +1359,81 @@ model entity_article_schedules {
 }
 
 model exams {
-  id                      String    @id @default(uuid()) @db.Char(36)
-  slug                    String    @db.LongText
-  name                    String    @db.LongText
-  full_name               String    @db.LongText
-  category                String    @db.LongText
-  level                   String    @db.LongText
-  exam_date               String    @db.LongText
-  applicants              String    @db.LongText
-  eligibility             String    @db.LongText
-  mode                    String    @db.LongText
-  description             String    @db.LongText
-  important_dates         Json
-  syllabus                Json
-  top_colleges            Json
-  image                   String    @db.LongText
-  registration_url        String    @db.LongText
-  duration                String    @db.LongText
-  exam_type               String    @db.LongText
-  language                String    @db.LongText
-  frequency               String    @db.LongText
-  application_mode        String    @db.LongText
-  status                  String    @db.LongText
-  is_active               Boolean   @default(true)
-  created_at              DateTime  @default(now()) @db.DateTime(3)
-  updated_at              DateTime  @default(now()) @db.DateTime(3)
-  short_name              String    @db.LongText
-  logo                    String    @db.LongText
-  application_start_date  String    @db.LongText
-  application_end_date    String    @db.LongText
-  result_date             String    @db.LongText
-  website                 String    @db.LongText
-  negative_marking        Boolean   @default(false)
-  seats                   String    @db.LongText
-  age_limit               String    @db.LongText
-  sample_paper_url        String    @db.LongText
-  summary_content         String    @db.LongText
-  application_process     String    @db.LongText
-  exam_pattern            String    @db.LongText
-  cutoff_content          String    @db.LongText
-  preparation_tips        String    @db.LongText
-  counselling_content     String    @db.LongText
-  center_content          String    @db.LongText
-  question_paper          String    @db.LongText
-  gender_wise             String    @db.LongText
-  result_content          String    @db.LongText
-  cast_wise_fee           String    @db.LongText
-  dates_content           String    @db.LongText
-  meta_title              String    @db.LongText
-  meta_description        String    @db.LongText
-  meta_keywords           String    @db.LongText
-  is_top_exam             Boolean   @default(false)
-  youtube_video_url       String    @db.LongText
-  question_papers         Json
-  brochure_url            String    @db.LongText
-  how_to_apply_video_url  String?   @db.LongText
-  categories              Json
-  priority                Int       @default(50)
-  author_id               String?   @db.Char(36)
-  page_summary            String?   @db.LongText
-  linked_school_classes   Json
-  linked_college_subjects Json
-  short_id                Int
-  official_website        String?   @db.LongText
-  data_verified_at        DateTime? @db.DateTime(3)
-  data_source_urls        Json
-  data_quality_score      Int       @default(0)
-  data_clean_attempts     Int       @default(0)
-  data_clean_successes    Int       @default(0)
-  data_last_checked_at    DateTime? @db.DateTime(3)
-  data_clean_state        String    @db.LongText
-  ai_clean_pass_count     Int       @default(0)
+  id                             String    @id @default(uuid()) @db.Char(36)
+  slug                           String    @db.LongText
+  name                           String    @db.LongText
+  full_name                      String    @db.LongText
+  category                       String    @db.LongText
+  level                          String    @db.LongText
+  exam_date                      String    @db.LongText
+  applicants                     String    @db.LongText
+  eligibility                    String    @db.LongText
+  mode                           String    @db.LongText
+  description                    String    @db.LongText
+  important_dates                Json
+  syllabus                       Json
+  top_colleges                   Json
+  image                          String    @db.LongText
+  registration_url               String    @db.LongText
+  duration                       String    @db.LongText
+  exam_type                      String    @db.LongText
+  language                       String    @db.LongText
+  frequency                      String    @db.LongText
+  application_mode               String    @db.LongText
+  status                         String    @db.LongText
+  is_active                      Boolean   @default(true)
+  created_at                     DateTime  @default(now()) @db.DateTime(3)
+  updated_at                     DateTime  @default(now()) @db.DateTime(3)
+  short_name                     String    @db.LongText
+  logo                           String    @db.LongText
+  application_start_date         String    @db.LongText
+  application_end_date           String    @db.LongText
+  result_date                    String    @db.LongText
+  website                        String    @db.LongText
+  negative_marking               Boolean   @default(false)
+  seats                          String    @db.LongText
+  age_limit                      String    @db.LongText
+  sample_paper_url               String    @db.LongText
+  summary_content                String    @db.LongText
+  application_process            String    @db.LongText
+  exam_pattern                   String    @db.LongText
+  cutoff_content                 String    @db.LongText
+  preparation_tips               String    @db.LongText
+  counselling_content            String    @db.LongText
+  center_content                 String    @db.LongText
+  question_paper                 String    @db.LongText
+  gender_wise                    String    @db.LongText
+  result_content                 String    @db.LongText
+  cast_wise_fee                  String    @db.LongText
+  dates_content                  String    @db.LongText
+  meta_title                     String    @db.LongText
+  meta_description               String    @db.LongText
+  meta_keywords                  String    @db.LongText
+  is_top_exam                    Boolean   @default(false)
+  youtube_video_url              String    @db.LongText
+  question_papers                Json
+  brochure_url                   String    @db.LongText
+  how_to_apply_video_url         String?   @db.LongText
+  categories                     Json
+  priority                       Int       @default(50)
+  author_id                      String?   @db.Char(36)
+  page_summary                   String?   @db.LongText
+  linked_school_classes          Json
+  linked_college_subjects        Json
+  short_id                       Int
+  official_website               String?   @db.LongText
+  data_verified_at               DateTime? @db.DateTime(3)
+  data_source_urls               Json
+  data_quality_score             Int       @default(0)
+  data_clean_attempts            Int       @default(0)
+  data_clean_successes           Int       @default(0)
+  data_last_checked_at           DateTime? @db.DateTime(3)
+  data_clean_state               String    @db.LongText
+  ai_clean_pass_count            Int       @default(0)
+  show_in_explore_by_category    Boolean   @default(false)
+  explore_by_category_checked_at DateTime? @db.DateTime(3)
 
+  @@index([show_in_explore_by_category, explore_by_category_checked_at], map: "ix_exams_homepage_explore")
   @@map("exams")
 }
 

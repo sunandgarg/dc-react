@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Heart, MapPin, Newspaper, ExternalLink } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useFavorites, useToggleFavorite } from "@/hooks/useFavorites";
 
 export function DashboardFavorites() {
@@ -13,7 +13,7 @@ export function DashboardFavorites() {
     queryKey: ["fav-colleges", slugs],
     enabled: slugs.length > 0,
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("colleges")
         .select("slug, name, short_name, image, city, state, category")
         .in("slug", slugs);
@@ -25,14 +25,14 @@ export function DashboardFavorites() {
     queryKey: ["fav-news", slugs],
     enabled: slugs.length > 0,
     queryFn: async () => {
-      const { data: links } = await (supabase as any)
+      const { data: links } = await (backendClient as any)
         .from("article_links")
         .select("article_id, entity_slug")
         .eq("entity_type", "college")
         .in("entity_slug", slugs);
       const ids = Array.from(new Set((links || []).map((l: any) => l.article_id)));
       if (ids.length === 0) return [];
-      const { data: arts } = await (supabase as any)
+      const { data: arts } = await (backendClient as any)
         .from("articles")
         .select("id, slug, title, featured_image, category, updated_at, created_at")
         .in("id", ids)

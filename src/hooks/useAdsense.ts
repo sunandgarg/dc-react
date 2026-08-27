@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 
 export interface AdsenseSettings {
@@ -63,7 +63,7 @@ export function useAdsenseSettings() {
   return useQuery({
     queryKey: ["adsense-settings"],
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("adsense_settings")
         .select("*")
         .order("created_at", { ascending: true })
@@ -79,7 +79,7 @@ export function useAdUnits() {
   return useQuery({
     queryKey: ["ad-units", "active"],
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("ad_units")
         .select("*")
         .eq("is_active", true)
@@ -94,7 +94,7 @@ export function useAdScripts() {
   return useQuery({
     queryKey: ["ad-scripts", "active"],
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      const { data } = await (backendClient as any)
         .from("ad_scripts")
         .select("*")
         .eq("is_active", true);

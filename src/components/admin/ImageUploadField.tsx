@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Upload, Link as LinkIcon, X, Images, Loader2, Sparkles, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { ImageHint, type ImagePresetKey } from "@/components/ImageHint";
@@ -33,7 +33,7 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
   const loadLibrary = async () => {
     setLibLoading(true);
     try {
-      const { data, error } = await supabase.storage.from(bucket).list(folder, {
+      const { data, error } = await backendClient.storage.from(bucket).list(folder, {
         limit: 200, sortBy: { column: "created_at", order: "desc" },
       });
       if (error) throw error;
@@ -41,7 +41,7 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
         .filter((f) => !f.name.startsWith("."))
         .map((f) => {
           const path = `${folder}/${f.name}`;
-          const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
+          const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
           return { name: f.name, url: pub.publicUrl };
         });
       setLibItems(items);
@@ -62,9 +62,9 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
       if (file.size > 8 * 1024 * 1024) { toast.error("File must be under 8 MB"); setUploading(false); return; }
       const ext = file.name.split(".").pop() || "jpg";
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type });
+      const { error } = await backendClient.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type });
       if (error) throw error;
-      const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
+      const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
       onChange(pub.publicUrl);
       toast.success(quality.hd ? "Uploaded (HD original)" : "Uploaded (WebP)");
     } catch (e: any) {
@@ -91,13 +91,13 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
       }
       const ext = file.name.split(".").pop() || (quality.hd ? "jpg" : "webp");
       const path = `${folder}/${Date.now()}-linked-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const { error } = await supabase.storage.from(bucket).upload(path, file, {
+      const { error } = await backendClient.storage.from(bucket).upload(path, file, {
         upsert: false,
         contentType: file.type,
         cacheControl: "31536000",
       });
       if (error) throw error;
-      const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
+      const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
       onChange(pub.publicUrl);
       toast.success(quality.hd ? "HD original saved to your storage" : "Linked image optimized and saved");
     } catch (e: any) {

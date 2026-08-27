@@ -5,6 +5,12 @@ import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
+const HOMEPAGE_EXPLORE_TABLES = new Set(["colleges", "courses", "exams"]);
+
+function stampHomepageExploreSelection(table, input) {
+  if (!HOMEPAGE_EXPLORE_TABLES.has(table) || input?.show_in_explore_by_category === undefined) return input;
+  return { ...input, explore_by_category_checked_at: new Date().toISOString() };
+}
 
 function splitDepth(value, separator = ",") {
   const parts = [];
@@ -350,7 +356,7 @@ async function insertRow(table, input, merge, conflictColumns) {
 
 async function handlePost(table, request, url, context) {
   const input = await request.json();
-  const sourceRows = Array.isArray(input) ? input : [input];
+  const sourceRows = (Array.isArray(input) ? input : [input]).map((row) => stampHomepageExploreSelection(table, row));
   const rows = context.forceDraft ? sourceRows.map((row) => forceDraftPayload(table, row)) : sourceRows;
   const prefer = String(request.headers.get("prefer") || "");
   const merge = prefer.includes("resolution=merge-duplicates");
@@ -373,7 +379,7 @@ async function handlePost(table, request, url, context) {
 }
 
 async function handlePatch(table, request, url, context) {
-  const source = await request.json();
+  const source = stampHomepageExploreSelection(table, await request.json());
   const input = context.forceDraft ? forceDraftPayload(table, source) : source;
   const allowed = schemaMetadata[table].fields;
   if (allowed.updated_at && input.updated_at === undefined) input.updated_at = new Date().toISOString();

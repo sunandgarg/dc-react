@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Badge } from "@/components/ui/badge";
 import { Link2 } from "lucide-react";
 
@@ -24,7 +24,7 @@ export function LinksSummary({ articleId, tags = [] }: Props) {
   useEffect(() => {
     if (!articleId) { setRows([]); return; }
     (async () => {
-      const { data } = await (supabase as any).from("article_links").select("entity_type,entity_slug").eq("article_id", articleId);
+      const { data } = await (backendClient as any).from("article_links").select("entity_type,entity_slug").eq("article_id", articleId);
       setRows(data || []);
     })();
   }, [articleId]);
@@ -42,7 +42,7 @@ export function LinksSummary({ articleId, tags = [] }: Props) {
 
         // Special-case: study_subject / study_chapter store UUIDs, resolve to slug+name
         if (t === "study_subject") {
-          const { data } = await (supabase as any)
+          const { data } = await (backendClient as any)
             .from("study_subjects")
             .select("id, slug, name, class_number, study_boards(slug)")
             .in("id", missing);
@@ -53,7 +53,7 @@ export function LinksSummary({ articleId, tags = [] }: Props) {
           continue;
         }
         if (t === "study_chapter") {
-          const { data } = await (supabase as any)
+          const { data } = await (backendClient as any)
             .from("study_chapters")
             .select("id, slug, name, study_subjects(slug, class_number, study_boards(slug))")
             .in("id", missing);
@@ -69,7 +69,7 @@ export function LinksSummary({ articleId, tags = [] }: Props) {
 
         const meta = TYPE_META[t];
         if (!meta?.table) continue;
-        const { data } = await (supabase as any).from(meta.table)
+        const { data } = await (backendClient as any).from(meta.table)
           .select(`slug, ${meta.nameCol}, ${meta.imgCol}`)
           .in("slug", missing).limit(missing.length);
         (data || []).forEach((r: any) => {

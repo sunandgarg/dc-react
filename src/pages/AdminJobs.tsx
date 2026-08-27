@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,7 +59,7 @@ export default function AdminJobs() {
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("jobs" as any).select("*").order("posted_at", { ascending: false });
+    const { data, error } = await backendClient.from("jobs" as any).select("*").order("posted_at", { ascending: false });
     if (error) toast.error(error.message);
     setJobs((data as any) || []);
     setLoading(false);
@@ -79,8 +79,8 @@ export default function AdminJobs() {
     };
     delete payload.id;
     const op = (form as any).id
-      ? supabase.from("jobs" as any).update(payload).eq("id", (form as any).id)
-      : supabase.from("jobs" as any).insert(payload);
+      ? backendClient.from("jobs" as any).update(payload).eq("id", (form as any).id)
+      : backendClient.from("jobs" as any).insert(payload);
     const { error } = await op;
     if (error) { toast.error(error.message); return; }
     toast.success("Saved");
@@ -90,7 +90,7 @@ export default function AdminJobs() {
 
   const onDelete = async (id: string) => {
     if (!confirm("Delete this job?")) return;
-    const { error } = await supabase.from("jobs" as any).delete().eq("id", id);
+    const { error } = await backendClient.from("jobs" as any).delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success("Deleted"); load();
   };

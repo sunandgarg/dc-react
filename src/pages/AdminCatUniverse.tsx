@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { useCatUniverseData } from "@/hooks/useCatUniverse";
 import { CAT_UNIVERSE_DEFAULT_SETTINGS } from "@/lib/catUniverse";
 
@@ -39,7 +39,7 @@ export default function AdminCatUniverse() {
 
   const saveSettings = async () => {
     setSaving(true);
-    const { error } = await (supabase as any)
+    const { error } = await (backendClient as any)
       .from("cat_universe_settings")
       .upsert(settings, { onConflict: "slug" });
     setSaving(false);

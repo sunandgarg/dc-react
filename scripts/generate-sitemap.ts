@@ -1,7 +1,6 @@
 /** Production sitemap generator: public routes, live records and crawl-safe filter landings. */
 import { writeFileSync } from "fs";
 import { resolve } from "path";
-import { createClient } from "@supabase/supabase-js";
 import { loadEnv } from "vite";
 import { buildCollegeHref, buildCourseHref, buildExamHref } from "../src/lib/entityUrls";
 import { eligibilityComboSlugs, predictorComboSlugs } from "../src/lib/seoSubSlugs";
@@ -56,27 +55,58 @@ interface SitemapEntry {
 
 const STATIC: SitemapEntry[] = STATIC_SITEMAP_ROUTES;
 
-function nodeApiFetch(input: RequestInfo | URL, init?: RequestInit) {
-  const original = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
-  const url = new URL(original);
-  const headers = new Headers(init?.headers);
-  if (headers.get("Authorization") === "Bearer dc-sitemap-client") headers.delete("Authorization");
-  if (url.pathname.startsWith("/rest/v1/")) {
-    url.pathname = `/v1/rest/${url.pathname.slice("/rest/v1/".length)}`;
+class SitemapQuery implements PromiseLike<{ data: any[] | null; error: Error | null }> {
+  private filters: Array<[string, string]> = [];
+  private from = 0;
+  private to = PAGE_SIZE - 1;
+
+  constructor(private table: string, private columns: string) {}
+
+  eq(column: string, value: unknown) {
+    this.filters.push([column, `eq.${String(value)}`]);
+    return this;
   }
-  return fetch(url, { ...init, headers });
+
+  not(column: string, operator: string, value: unknown) {
+    this.filters.push([column, `not.${operator}.${String(value)}`]);
+    return this;
+  }
+
+  range(from: number, to: number) {
+    this.from = from;
+    this.to = to;
+    return this;
+  }
+
+  private async execute() {
+    try {
+      const url = new URL(`/v1/rest/${encodeURIComponent(this.table)}`, API_URL);
+      url.searchParams.set("select", this.columns);
+      url.searchParams.set("offset", String(this.from));
+      url.searchParams.set("limit", String(Math.max(0, this.to - this.from + 1)));
+      this.filters.forEach(([column, value]) => url.searchParams.append(column, value));
+      const response = await fetch(url);
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) return { data: null, error: new Error(payload?.message || `HTTP ${response.status}`) };
+      return { data: Array.isArray(payload) ? payload : [], error: null };
+    } catch (cause) {
+      return { data: null, error: cause instanceof Error ? cause : new Error(String(cause)) };
+    }
+  }
+
+  then<TResult1 = { data: any[] | null; error: Error | null }, TResult2 = never>(
+    onfulfilled?: ((value: { data: any[] | null; error: Error | null }) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
+  ): PromiseLike<TResult1 | TResult2> {
+    return this.execute().then(onfulfilled, onrejected);
+  }
 }
 
-const api = API_URL ? createClient(API_URL, "dc-sitemap-client", {
-  global: { fetch: nodeApiFetch },
-  auth: { persistSession: false, autoRefreshToken: false },
-}) : null;
-
 async function fetchRows(table: string, select: string, configure?: (query: any) => any): Promise<any[]> {
-  if (!api) return [];
+  if (!API_URL) return [];
   const rows: any[] = [];
   for (let from = 0; ; from += PAGE_SIZE) {
-    let query = api.from(table).select(select);
+    let query = new SitemapQuery(table, select);
     if (configure) query = configure(query);
     const { data, error } = await query.range(from, from + PAGE_SIZE - 1);
     if (error) {

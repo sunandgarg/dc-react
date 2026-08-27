@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { format } from 'date-fns';
 
 interface ApiKey {
@@ -60,7 +60,7 @@ export const UrlApiAccess = memo(function UrlApiAccess() {
   const fetchKeys = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from('url_api_keys')
         .select('*')
         .order('created_at', { ascending: false });
@@ -85,14 +85,14 @@ export const UrlApiAccess = memo(function UrlApiAccess() {
     }
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await backendClient.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const rawKey = generateApiKey();
       const keyHash = await hashKey(rawKey);
       const keyPrefix = rawKey.substring(0, 8);
 
-      const { error } = await (supabase as any)
+      const { error } = await (backendClient as any)
         .from('url_api_keys')
         .insert({
           user_id: user.id,
@@ -117,7 +117,7 @@ export const UrlApiAccess = memo(function UrlApiAccess() {
     if (!confirm('Are you sure you want to delete this API key? This cannot be undone.')) return;
 
     try {
-      const { error } = await (supabase as any)
+      const { error } = await (backendClient as any)
         .from('url_api_keys')
         .delete()
         .eq('id', id);
@@ -132,7 +132,7 @@ export const UrlApiAccess = memo(function UrlApiAccess() {
 
   const handleToggleActive = async (key: ApiKey) => {
     try {
-      const { error } = await (supabase as any)
+      const { error } = await (backendClient as any)
         .from('url_api_keys')
         .update({ is_active: !key.is_active })
         .eq('id', key.id);

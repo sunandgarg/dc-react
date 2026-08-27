@@ -1,7 +1,7 @@
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,7 @@ export default function PremiumProgramDetail() {
     if (!slug) return;
     (async () => {
       setLoading(true);
-      const { data } = await (supabase as any).from("promoted_programs").select("*").eq("slug", slug).maybeSingle();
+      const { data } = await (backendClient as any).from("promoted_programs").select("*").eq("slug", slug).maybeSingle();
       setProgram(data);
       setLoading(false);
     })();

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -82,7 +82,7 @@ export default function AdminLeads() {
     const uniqueIds = Array.from(new Set(ids)).filter(Boolean);
     if (!uniqueIds.length || !confirm(`Delete ${uniqueIds.length} ${label}? This cannot be undone.`)) return;
     setDeleteBusy(true);
-    const { error } = await (supabase as any).from("leads").delete().in("id", uniqueIds);
+    const { error } = await (backendClient as any).from("leads").delete().in("id", uniqueIds);
     setDeleteBusy(false);
     if (error) return toast.error(error.message);
     toast.success(`Deleted ${uniqueIds.length} ${label}`);
@@ -160,7 +160,7 @@ export default function AdminLeads() {
       const rows: any[] = [];
       const batchSize = 1000;
       for (let from = 0; ; from += batchSize) {
-        const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false }).range(from, from + batchSize - 1);
+        const { data, error } = await backendClient.from("leads").select("*").order("created_at", { ascending: false }).range(from, from + batchSize - 1);
         if (error) throw error;
         rows.push(...(data || []));
         if (!data || data.length < batchSize) break;

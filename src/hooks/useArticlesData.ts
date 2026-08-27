@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 
 export type DbArticle = {
@@ -28,7 +28,7 @@ export function useDbArticles() {
   return useQuery({
     queryKey: ["db-articles"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("articles")
         .select("id,status,title,slug,description,vertical,category,author,featured_image,views,tags,is_active,featured_rank,created_at,updated_at")
         .eq("is_active", true)
@@ -59,7 +59,7 @@ export function useAllDbArticles(search?: string) {
       const rows: DbArticle[] = [];
 
       for (let from = 0; ; from += pageSize) {
-        let query = supabase
+        let query = backendClient
           .from("articles")
           .select("*")
           .order("created_at", { ascending: false });
@@ -101,7 +101,7 @@ export function useDbArticle(slug: string | undefined) {
   return useQuery({
     queryKey: ["db-article", slug],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await backendClient
         .from("articles")
         .select("*")
         .eq("slug", slug!)
@@ -128,11 +128,11 @@ export function useSaveArticle() {
       const normalized = { ...article, slug: cleanSlug || article.slug };
       if (normalized.id) {
         const { id, created_at, updated_at, ...rest } = normalized;
-        const { error } = await supabase.from("articles").update(rest).eq("id", id);
+        const { error } = await backendClient.from("articles").update(rest).eq("id", id);
         if (error) throw error;
       } else {
         const { id, created_at, updated_at, ...rest } = normalized;
-        const { error } = await supabase.from("articles").insert(rest);
+        const { error } = await backendClient.from("articles").insert(rest);
         if (error) throw error;
       }
     },
@@ -149,7 +149,7 @@ export function useDeleteArticle() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("articles").delete().eq("id", id);
+      const { error } = await backendClient.from("articles").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

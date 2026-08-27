@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 export function AuthorPicker({ value, onChange, label = "Author" }: Props) {
   const [authors, setAuthors] = useState<{ id: string; name: string; designation: string }[]>([]);
   useEffect(() => {
-    (supabase as any).from("authors").select("id,name,designation").eq("is_active", true).order("display_order")
+    (backendClient as any).from("authors").select("id,name,designation").eq("is_active", true).order("display_order")
       .then(({ data }: any) => setAuthors(data || []));
   }, []);
   return (

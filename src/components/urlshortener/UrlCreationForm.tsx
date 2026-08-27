@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 import { isValidUrl } from '@/utils/base62';
 
 const LENGTH_OPTIONS = ['4', '5', '6', '7', '8'];
@@ -49,7 +49,7 @@ export const UrlCreationForm = memo(function UrlCreationForm({ onUrlCreated }: U
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await (supabase as any)
+        const { data } = await (backendClient as any)
           .from('custom_domains')
           .select('id, domain')
           .eq('status', 'verified')
@@ -132,13 +132,13 @@ export const UrlCreationForm = memo(function UrlCreationForm({ onUrlCreated }: U
 
     setIsLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await backendClient.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const shortCode = getFinalCode();
       const headerValue = header.trim().toUpperCase() || null;
       
-      let query = (supabase as any)
+      let query = (backendClient as any)
         .from('url_mappings')
         .select('id')
         .eq('short_code', shortCode);
@@ -163,7 +163,7 @@ export const UrlCreationForm = memo(function UrlCreationForm({ onUrlCreated }: U
 
       const domainToStore = selectedDomain !== 'auto' ? selectedDomain : null;
 
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (backendClient as any)
         .from('url_mappings')
         .insert({
           original_url: originalUrl.trim(),

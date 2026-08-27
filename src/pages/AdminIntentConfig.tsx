@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,8 +23,8 @@ export default function AdminIntentConfig() {
   const load = async () => {
     setLoading(true);
     const [w, h] = await Promise.all([
-      supabase.from("intent_event_weights").select("*").order("weight", { ascending: false }),
-      supabase.from("intent_university_webhooks").select("*").order("name"),
+      backendClient.from("intent_event_weights").select("*").order("weight", { ascending: false }),
+      backendClient.from("intent_university_webhooks").select("*").order("name"),
     ]);
     setWeights(((w.data as any[]) || []) as Weight[]);
     setHooks(((h.data as any[]) || []) as Hook[]);
@@ -33,7 +33,7 @@ export default function AdminIntentConfig() {
   useEffect(() => { load(); }, []);
 
   const saveWeight = async (row: Weight) => {
-    const { error } = await supabase.from("intent_event_weights")
+    const { error } = await backendClient.from("intent_event_weights")
       .update({ weight: row.weight, is_active: row.is_active, label: row.label, category: row.category })
       .eq("event_type", row.event_type);
     if (error) return toast({ title: "Save failed", description: error.message, variant: "destructive" });
@@ -43,18 +43,18 @@ export default function AdminIntentConfig() {
     const event_type = prompt("Event type key (e.g. fee_viewed)")?.trim();
     if (!event_type) return;
     const label = prompt("Label", event_type) || event_type;
-    const { error } = await supabase.from("intent_event_weights").insert({ event_type, label, weight: 5, is_active: true } as any);
+    const { error } = await backendClient.from("intent_event_weights").insert({ event_type, label, weight: 5, is_active: true } as any);
     if (error) return toast({ title: "Insert failed", description: error.message, variant: "destructive" });
     load();
   };
   const delWeight = async (event_type: string) => {
     if (!confirm("Delete weight?")) return;
-    await supabase.from("intent_event_weights").delete().eq("event_type", event_type);
+    await backendClient.from("intent_event_weights").delete().eq("event_type", event_type);
     load();
   };
 
   const saveHook = async (row: Hook) => {
-    const { error } = await supabase.from("intent_university_webhooks")
+    const { error } = await backendClient.from("intent_university_webhooks")
       .update({ name: row.name, college_slug: row.college_slug, university_slug: row.university_slug,
         webhook_url: row.webhook_url, secret: row.secret, threshold_score: row.threshold_score, is_active: row.is_active })
       .eq("id", row.id);
@@ -62,7 +62,7 @@ export default function AdminIntentConfig() {
     toast({ title: "Saved" });
   };
   const addHook = async () => {
-    const { error } = await supabase.from("intent_university_webhooks").insert({
+    const { error } = await backendClient.from("intent_university_webhooks").insert({
       name: "New Partner", webhook_url: "https://example.com/webhook", threshold_score: 80, is_active: false,
     } as any);
     if (error) return toast({ title: "Insert failed", description: error.message, variant: "destructive" });
@@ -70,7 +70,7 @@ export default function AdminIntentConfig() {
   };
   const delHook = async (id: string) => {
     if (!confirm("Delete webhook?")) return;
-    await supabase.from("intent_university_webhooks").delete().eq("id", id);
+    await backendClient.from("intent_university_webhooks").delete().eq("id", id);
     load();
   };
 

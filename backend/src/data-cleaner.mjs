@@ -78,7 +78,7 @@ async function processNextJob() {
       const config = ENTITIES[entityType];
       if (!config || processed >= maximum) continue;
       const remaining = maximum - processed;
-      const rows = await prisma.$queryRawUnsafe(`SELECT t.* FROM ${quote(config.table)} t LEFT JOIN \`data_cleaning_exclusions\` e ON e.\`entity_type\` = ? AND e.\`entity_id\` = t.\`id\` WHERE e.\`id\` IS NULL ORDER BY COALESCE(t.\`data_clean_attempts\`,0), t.\`updated_at\` ASC LIMIT ${remaining}`, entityType);
+      const rows = await prisma.$queryRawUnsafe(`SELECT t.* FROM ${quote(config.table)} t LEFT JOIN \`data_cleaning_exclusions\` e ON e.\`entity_type\` = ? AND e.\`entity_id\` = t.\`id\` WHERE e.\`id\` IS NULL AND COALESCE(t.\`data_clean_state\`,'') <> 'awaiting_review' AND COALESCE(t.\`data_clean_attempts\`,0) = (SELECT MIN(COALESCE(candidate.\`data_clean_attempts\`,0)) FROM ${quote(config.table)} candidate WHERE COALESCE(candidate.\`data_clean_state\`,'') <> 'awaiting_review') ORDER BY t.\`updated_at\` ASC LIMIT ${remaining}`, entityType);
       for (const row of rows) {
         const state = await prisma.data_cleaning_jobs.findUnique({ where: { id: job.id }, select: { status: true } });
         if (!state || state.status === "paused" || state.status === "cancelled") return;
@@ -148,4 +148,3 @@ export function stopDataCleanerWorker() {
   if (timer) clearInterval(timer);
   timer = undefined;
 }
-

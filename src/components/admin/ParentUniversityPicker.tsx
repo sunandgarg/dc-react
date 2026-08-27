@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Search, X, Landmark, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 
 interface UniversityOption {
   slug: string;
@@ -40,7 +40,7 @@ export function ParentUniversityPicker({ value, onChange, excludeSlug }: ParentU
     if (!value) { setSelected(null); return; }
     if (selected?.slug === value) return;
     (async () => {
-      const { data } = await supabase
+      const { data } = await backendClient
         .from("colleges")
         .select("slug, name, short_name, city, state")
         .eq("slug", value)
@@ -54,7 +54,7 @@ export function ParentUniversityPicker({ value, onChange, excludeSlug }: ParentU
     let cancelled = false;
     (async () => {
       setLoading(true);
-      let q = supabase
+      let q = backendClient
         .from("colleges")
         .select("slug, name, short_name, city, state")
         .order("name")

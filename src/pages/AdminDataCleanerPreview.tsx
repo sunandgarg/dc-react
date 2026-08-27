@@ -6,7 +6,7 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 
 const MEDIA_FIELDS = new Set([
@@ -15,7 +15,7 @@ const MEDIA_FIELDS = new Set([
 ]);
 
 async function invokeCleaner(body: Record<string, unknown>) {
-  const { data, error } = await supabase.functions.invoke("admin-data-cleaner", { body });
+  const { data, error } = await backendClient.functions.invoke("admin-data-cleaner", { body });
   if (error) {
     let message = error.message;
     try {
@@ -60,7 +60,7 @@ export default function AdminDataCleanerPreview() {
     queryKey: ["data-cleaning-preview", itemId],
     enabled: !!itemId,
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("data_cleaning_items").select("*").eq("id", itemId).single();
+      const { data, error } = await (backendClient as any).from("data_cleaning_items").select("*").eq("id", itemId).single();
       if (error) throw error;
       return data;
     },

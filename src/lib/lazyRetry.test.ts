@@ -12,7 +12,7 @@ describe("chunk load recovery", () => {
 
   it("does not misclassify ordinary API failures as stale chunks", () => {
     expect(isChunkLoadError(new TypeError("Failed to fetch"))).toBe(false);
-    expect(isChunkLoadError(new Error("Supabase request failed"))).toBe(false);
+    expect(isChunkLoadError(new Error("DekhoCampus API request failed"))).toBe(false);
   });
 
   it("adds a cache buster while preserving route state", () => {

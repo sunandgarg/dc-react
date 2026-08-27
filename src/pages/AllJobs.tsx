@@ -2,7 +2,7 @@ import { useMemo, useState, useDeferredValue, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
@@ -16,7 +16,7 @@ import { Briefcase, MapPin, IndianRupee, Search, Clock } from "lucide-react";
 const LIST_COLS = "id,slug,title,company,company_logo,location,category,job_type,salary,experience,is_featured,is_remote,short_description,skills,posted_at";
 
 async function fetchVacancies() {
-  const { data, error } = await supabase
+  const { data, error } = await backendClient
     .from("jobs" as any)
     .select(LIST_COLS)
     .eq("is_active", true)
@@ -60,7 +60,7 @@ export default function AllJobs() {
     qc.prefetchQuery({
       queryKey: ["vacancy", slug],
       queryFn: async () => {
-        const { data } = await supabase.from("jobs" as any).select("*").eq("slug", slug).maybeSingle();
+        const { data } = await backendClient.from("jobs" as any).select("*").eq("slug", slug).maybeSingle();
         return data;
       },
       staleTime: 5 * 60 * 1000,

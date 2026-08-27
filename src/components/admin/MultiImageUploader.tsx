@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client";
+import { backendClient } from "@/integrations/backend/client";
 import { Upload, X, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { optimizeImageFile } from "@/lib/imageOptimizer";
@@ -52,9 +52,9 @@ export function MultiImageUploader({ label, value, onChange, folder = "images", 
         if (file.size > 8 * 1024 * 1024) { toast.error(`${file.name} > 8MB skipped`); continue; }
         const ext = file.name.split(".").pop() || "jpg";
         const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-        const { error } = await supabase.storage.from(bucket).upload(path, file, { contentType: file.type });
+        const { error } = await backendClient.storage.from(bucket).upload(path, file, { contentType: file.type });
         if (error) { toast.error(error.message); continue; }
-        const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
+        const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
         next.push(pub.publicUrl);
         nextNames.push("");
       }

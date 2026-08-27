@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { backendClient } from '@/integrations/backend/client';
 
 interface UTMLinksViewProps {
   universities: any[];
@@ -46,7 +46,7 @@ export function UTMLinksView({ universities, onRefresh }: UTMLinksViewProps) {
 
   const saveUtmLink = useCallback(async (uniId: string) => {
     setSaving(true);
-    const { error } = await supabase
+    const { error } = await backendClient
       .from('universities')
       .update({ utm_link: editValue.trim() || null })
       .eq('id', uniId);
