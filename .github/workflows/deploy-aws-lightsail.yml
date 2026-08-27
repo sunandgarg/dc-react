@@ -63,6 +63,18 @@ jobs:
       - name: Validate and deploy infrastructure
         run: |
           aws cloudformation validate-template --template-body file://infra/aws/lightsail-production.yaml >/dev/null
+          if ! aws cloudformation describe-stacks --stack-name "$STACK_NAME" >/dev/null 2>&1; then
+            for secret in "$PROJECT_NAME/lightsail/mysql" "$PROJECT_NAME/lightsail/runtime"; do
+              if aws secretsmanager describe-secret --secret-id "$secret" >/dev/null 2>&1; then
+                echo "Deleting orphaned candidate secret: $secret"
+                aws secretsmanager delete-secret --secret-id "$secret" --force-delete-without-recovery >/dev/null
+                for attempt in $(seq 1 30); do
+                  if ! aws secretsmanager describe-secret --secret-id "$secret" >/dev/null 2>&1; then break; fi
+                  sleep 2
+                done
+              fi
+            done
+          fi
           DB_BLUEPRINT_ID=$(aws lightsail get-relational-database-blueprints \
             --query "blueprints[?engine=='mysql'] | sort_by(@,&engineVersion)[-1].blueprintId" \
             --output text)
