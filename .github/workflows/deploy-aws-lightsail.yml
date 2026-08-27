@@ -430,8 +430,12 @@ jobs:
           set +a
           if [ "$MIGRATE_STORAGE" = "true" ]; then
             export STORAGE_MIGRATION_MANIFEST=/tmp/s3-migration-manifest.json
-            npm --prefix backend run storage:migrate:s3 -- --rewrite-database
-            aws s3 cp /tmp/s3-migration-manifest.json "s3://$BUCKET/backups/storage/migration-manifest.json" --sse AES256
+            MIGRATION_STATUS=0
+            npm --prefix backend run storage:migrate:s3 -- --rewrite-database || MIGRATION_STATUS=$?
+            if test -s "$STORAGE_MIGRATION_MANIFEST"; then
+              aws s3 cp "$STORAGE_MIGRATION_MANIFEST" "s3://$BUCKET/backups/storage/migration-manifest.json" --sse AES256
+            fi
+            test "$MIGRATION_STATUS" -eq 0
           fi
           pm2 reload dc-react-api --update-env
           pm2 save

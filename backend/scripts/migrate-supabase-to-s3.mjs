@@ -13,6 +13,7 @@ const targetBucket = String(process.env.AWS_S3_BUCKET || "");
 const region = String(process.env.AWS_REGION || "ap-south-1");
 const manifestPath = process.env.STORAGE_MIGRATION_MANIFEST || "work/s3-migration-manifest.json";
 const concurrency = Math.min(20, Math.max(1, Number(process.env.STORAGE_MIGRATION_CONCURRENCY || 8)));
+const maxAttempts = Math.min(8, Math.max(1, Number(process.env.STORAGE_MIGRATION_MAX_ATTEMPTS || 5)));
 const countsOnly = process.argv.includes("--counts-only");
 const rewriteDatabase = process.argv.includes("--rewrite-database");
 
@@ -28,6 +29,23 @@ function reportProgress() {
   if (processed > 0 && processed % 1000 === 0) {
     console.log(JSON.stringify({ processed, migrated: report.migrated, skipped: report.skipped, errors: report.errors.length }));
   }
+}
+
+function retryDelay(attempt) {
+  return Math.min(8000, 500 * (2 ** (attempt - 1))) + Math.floor(Math.random() * 250);
+}
+
+async function migrateObjectWithRetry(bucket, object) {
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await migrateObject(bucket, object);
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxAttempts) await new Promise((resolve) => setTimeout(resolve, retryDelay(attempt)));
+    }
+  }
+  throw lastError;
 }
 
 async function sourceJson(path, init = {}) {
@@ -119,7 +137,10 @@ try {
   for (const bucket of buckets) {
     const objects = await listBucketObjects(bucket.id);
     report.buckets[bucket.id] = { objects: objects.length, bytes: objects.reduce((sum, object) => sum + Number(object.metadata?.size || 0), 0) };
-    if (!countsOnly) await runPool(objects.map((object) => ({ ...object, key: `${bucket.id}/${object.objectPath}` })), (object) => migrateObject(bucket.id, object));
+    if (!countsOnly) await runPool(
+      objects.map((object) => ({ ...object, key: `${bucket.id}/${object.objectPath}` })),
+      (object) => migrateObjectWithRetry(bucket.id, object),
+    );
   }
   if (rewriteDatabase && !report.errors.length) report.databaseRowsRewritten = await rewriteMediaUrls();
 } finally {
