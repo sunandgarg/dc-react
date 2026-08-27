@@ -303,7 +303,16 @@ jobs:
           RUNNER_IP=$(curl --fail --silent --show-error https://checkip.amazonaws.com | tr -d '\n')
           jq --arg ip "$RUNNER_IP" '{rules: ([.rules[]? | {type,value}] + [{type:"ip_addr",value:$ip}] | unique_by([.type,.value]))}' /tmp/do-firewall.json > /tmp/do-firewall-temp.json
           curl --fail --silent --show-error -X PUT -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" -H 'Content-Type: application/json' --data-binary @/tmp/do-firewall-temp.json "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" >/dev/null
-          trap 'jq "{rules:[.rules[]? | {type,value}]}" /tmp/do-firewall.json >/tmp/do-firewall-restore.json; curl --fail --silent --show-error -X PUT -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" -H "Content-Type: application/json" --data-binary @/tmp/do-firewall-restore.json "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" >/dev/null || true' EXIT
+          SOURCE_LOCK_PID=""
+          cleanup_source() {
+            if [ -n "$SOURCE_LOCK_PID" ] && kill -0 "$SOURCE_LOCK_PID" 2>/dev/null; then
+              kill "$SOURCE_LOCK_PID" 2>/dev/null || true
+              wait "$SOURCE_LOCK_PID" 2>/dev/null || true
+            fi
+            jq '{rules:[.rules[]? | {type,value}]}' /tmp/do-firewall.json >/tmp/do-firewall-restore.json
+            curl --fail --silent --show-error -X PUT -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" -H 'Content-Type: application/json' --data-binary @/tmp/do-firewall-restore.json "https://api.digitalocean.com/v2/databases/$DATABASE_ID/firewall" >/dev/null || true
+          }
+          trap cleanup_source EXIT
           CONNECTION=$(curl --fail --silent --show-error -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" "https://api.digitalocean.com/v2/databases/$DATABASE_ID" | jq -c '.database.connection')
           export MYSQL_PWD=$(jq -r .password <<<"$CONNECTION")
           SOURCE_HOST=$(jq -r .host <<<"$CONNECTION")
@@ -314,13 +323,30 @@ jobs:
             --batch --skip-column-names \
             -e "SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '$SOURCE_DB' AND TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME" \
             > /tmp/dc-react-source-tables.txt
-          : > /tmp/dc-react-source-row-counts.tsv
+          : > /tmp/dc-react-source-counts.sql
           while IFS= read -r table; do
             test -n "$table"
-            count=$(mysql --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
-              --batch --skip-column-names "$SOURCE_DB" -e "SELECT COUNT(*) FROM \`$table\`")
-            printf '%s\t%s\n' "$table" "$count" >> /tmp/dc-react-source-row-counts.tsv
+            printf "SELECT '%s', COUNT(*) FROM \`%s\`;\n" "$table" "$table" >> /tmp/dc-react-source-counts.sql
           done < /tmp/dc-react-source-tables.txt
+
+          # Freeze writes only while taking the exact counts and matching dump.
+          mysql --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
+            --batch --skip-column-names --unbuffered "$SOURCE_DB" \
+            -e "FLUSH TABLES WITH READ LOCK; SELECT 'SOURCE_LOCKED'; SELECT SLEEP(1800);" \
+            > /tmp/dc-react-source-lock.log 2>&1 &
+          SOURCE_LOCK_PID=$!
+          for attempt in $(seq 1 60); do
+            grep -q '^SOURCE_LOCKED$' /tmp/dc-react-source-lock.log && break
+            if ! kill -0 "$SOURCE_LOCK_PID" 2>/dev/null; then
+              cat /tmp/dc-react-source-lock.log >&2
+              exit 1
+            fi
+            [ "$attempt" -eq 60 ] && { echo 'Timed out acquiring the DigitalOcean read lock.' >&2; exit 1; }
+            sleep 1
+          done
+          mysql --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
+            --batch --skip-column-names "$SOURCE_DB" \
+            < /tmp/dc-react-source-counts.sql > /tmp/dc-react-source-row-counts.tsv
           test -s /tmp/dc-react-source-row-counts.tsv
           refresh_lightsail_access() {
             aws lightsail get-instance-access-details \
@@ -336,8 +362,11 @@ jobs:
             rm -f /tmp/lightsail-access-refresh.json
           }
           mysqldump --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
-            --single-transaction --quick --routines --triggers --events --set-gtid-purged=OFF --no-tablespaces "$SOURCE_DB" \
+            --single-transaction --skip-lock-tables --quick --routines --triggers --events --set-gtid-purged=OFF --no-tablespaces "$SOURCE_DB" \
             | gzip -1 > /tmp/dc-react-mysql.sql.gz
+          kill "$SOURCE_LOCK_PID" 2>/dev/null || true
+          wait "$SOURCE_LOCK_PID" 2>/dev/null || true
+          SOURCE_LOCK_PID=""
           refresh_lightsail_access
           scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
             /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv \
@@ -348,6 +377,12 @@ jobs:
           set -a
           source /etc/dc-react.env
           set +a
+          restart_api() {
+            cd /opt/dc-react/app/backend
+            pm2 start dc-react-api >/dev/null 2>&1 || pm2 start src/server.mjs --name dc-react-api >/dev/null
+            pm2 save >/dev/null
+          }
+          trap restart_api EXIT
           aws s3 cp /tmp/dc-react-mysql.sql.gz \
             "s3://$AWS_S3_BUCKET/backups/mysql/pre-lightsail-$(date -u +%Y%m%dT%H%M%SZ).sql.gz" \
             --sse AES256
@@ -373,11 +408,12 @@ jobs:
             "s3://$AWS_S3_BUCKET/backups/mysql/latest-source-row-counts.tsv" --sse AES256
           cd /opt/dc-react/app/backend
           npm run db:setup:runtime
-          pm2 start dc-react-api || pm2 start src/server.mjs --name dc-react-api
-          pm2 save
           rm -f /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv
+          trap - EXIT
+          restart_api
           REMOTE
-          rm -f /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv /tmp/dc-react-source-tables.txt
+          rm -f /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv /tmp/dc-react-source-tables.txt \
+            /tmp/dc-react-source-counts.sql /tmp/dc-react-source-lock.log
 
       - name: Resume staged database import
         if: ${{ inputs.resume_database_import }}
