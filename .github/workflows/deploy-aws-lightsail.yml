@@ -183,7 +183,7 @@ jobs:
                     --property=ExecMainStatus || true
                   if ! sudo test -s /etc/dc-react.env; then
                     install -m 600 /dev/null /tmp/dc-react-bootstrap.sh
-                    sudo awk 'length($0) > 1000 && $0 ~ /^[A-Za-z0-9+\/=]+$/ { print; exit }' \
+                    sudo awk "length(\$0) > 1000 && \$0 ~ /^[A-Za-z0-9+\/=]+$/ { print; exit }" \
                       /var/lib/cloud/instance/scripts/part-001 | base64 --decode \
                       >/tmp/dc-react-bootstrap.sh || true
                     if ! test -s /tmp/dc-react-bootstrap.sh; then
