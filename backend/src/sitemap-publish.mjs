@@ -281,7 +281,14 @@ export async function publishSitemap(request, options = {}) {
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap-index.xml`, indexXml);
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap.xml`, indexXml);
     await repository.put(`${SITEMAP_PREFIX}/public/manifest.json`, JSON.stringify({ generation, url_count: entries.length, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() }), "application/json; charset=utf-8");
-    return { success: true, status: "published", target: PUBLISH_TARGET, generation, url_count: entries.length, chunk_count: chunks.length, source_counts: counts, sitemap_url: `${PUBLISH_TARGET}/sitemap.xml`, requested_at: new Date().toISOString() };
+    let removedObjects = 0;
+    if (typeof repository.list === "function" && typeof repository.delete === "function") {
+      const currentPrefix = `${SITEMAP_PREFIX}/generations/${generation}/`;
+      const staleKeys = (await repository.list(`${SITEMAP_PREFIX}/generations/`)).filter((key) => !key.startsWith(currentPrefix));
+      await repository.delete(staleKeys);
+      removedObjects = staleKeys.length;
+    }
+    return { success: true, status: "published", target: PUBLISH_TARGET, generation, url_count: entries.length, chunk_count: chunks.length, removed_objects: removedObjects, source_counts: counts, sitemap_url: `${PUBLISH_TARGET}/sitemap.xml`, requested_at: new Date().toISOString() };
   } finally {
     publishing = false;
   }

@@ -468,6 +468,32 @@ jobs:
           REMOTE
           rm -f /tmp/dc-sitemap-seed.tar.gz
 
+      - name: Publish complete MySQL sitemap generation
+        run: |
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
+          set -euo pipefail
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app/backend
+          node --input-type=module <<'NODE'
+          const { publishSitemap } = await import("./src/sitemap-publish.mjs");
+          const { prisma } = await import("./src/db.mjs");
+          try {
+            const request = new Request("http://localhost/v1/functions/publish-sitemap", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ target: "https://dekhocampus.com" }),
+            });
+            const result = await publishSitemap(request);
+            console.log(JSON.stringify(result));
+          } finally {
+            await prisma.$disconnect();
+          }
+          NODE
+          REMOTE
+
       - name: Verify private storage and API
         run: |
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)

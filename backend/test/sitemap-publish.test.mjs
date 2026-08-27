@@ -28,11 +28,14 @@ function populatedDb(coreCount = 1) {
 function memoryRepository() {
   const objects = new Map([
     ["system-sitemaps/public/sitemap.xml", { body: '<?xml version="1.0"?><urlset><url><loc>https://dekhocampus.com/</loc><priority>1.0</priority></url></urlset>' }],
+    ["system-sitemaps/generations/old-generation/sitemap-1.xml", { body: "old" }],
   ]);
   return {
     objects,
     async get(key) { return objects.get(key) || null; },
     async put(key, body, contentType) { objects.set(key, { body, contentType }); },
+    async list(prefix) { return [...objects.keys()].filter((key) => key.startsWith(prefix)); },
+    async delete(keys) { keys.forEach((key) => objects.delete(key)); },
   };
 }
 
@@ -55,6 +58,8 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   const index = repository.objects.get("system-sitemaps/public/sitemap.xml").body;
   assert.match(index, new RegExp(`/sitemap-files/${result.generation}/sitemap-1\\.xml`));
   assert.ok(repository.objects.has(`system-sitemaps/generations/${result.generation}/sitemap-1.xml`));
+  assert.equal(result.removed_objects, 1);
+  assert.equal(repository.objects.has("system-sitemaps/generations/old-generation/sitemap-1.xml"), false);
 });
 
 test("published sitemap files are served with XML cache headers", async () => {
