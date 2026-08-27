@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { applyDefaults, nextShortIdValue, resolveConflictColumns } from "../src/rest.mjs";
+import { applyDefaults, decodeRow, nextShortIdValue, resolveConflictColumns } from "../src/rest.mjs";
+
+test("returns MySQL decimal fields as JSON numbers", () => {
+  const row = decodeRow("colleges", { rating: { toNumber: () => 4.75 } });
+  assert.equal(row.rating, 4.75);
+});
 
 test("applies empty arrays for required PostgreSQL array fields", () => {
   const college = applyDefaults("colleges", { name: "QA College", slug: "qa-college" });

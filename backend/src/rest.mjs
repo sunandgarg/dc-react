@@ -109,10 +109,13 @@ function isDuplicateKeyError(error) {
   return error?.code === "P2002" || /duplicate entry|\b1062\b/i.test(detail);
 }
 
-function decodeRow(table, row) {
+export function decodeRow(table, row) {
   for (const [name, field] of Object.entries(schemaMetadata[table].fields)) {
     if (field.type === "Json" && typeof row[name] === "string") {
       try { row[name] = JSON.parse(row[name]); } catch { /* retain legacy non-JSON text */ }
+    }
+    if (field.type === "Decimal" && row[name] !== null && row[name] !== undefined) {
+      row[name] = typeof row[name]?.toNumber === "function" ? row[name].toNumber() : Number(row[name]);
     }
   }
   return toPublicMediaUrls(row);
