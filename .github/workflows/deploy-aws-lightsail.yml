@@ -90,7 +90,18 @@ jobs:
             --query "blueprints[?engine=='mysql'] | sort_by(@,&engineVersion)[-1].blueprintId" \
             --output text)
           test -n "$DB_BLUEPRINT_ID"
+          INSTANCE_BUNDLE_ID=$(aws lightsail get-bundles --include-inactive \
+            --query 'bundles[?isActive == `true` && ramSizeInGb == `1.0` && cpuCount == `2` && price == `7.0`].bundleId | [0]' \
+            --output text)
+          if [ -z "$INSTANCE_BUNDLE_ID" ] || [ "$INSTANCE_BUNDLE_ID" = "None" ]; then
+            echo "No active 1 GB, 2-vCPU, USD 7 Lightsail bundle exists in $AWS_REGION. Refusing a costlier plan."
+            aws lightsail get-bundles --include-inactive \
+              --query 'bundles[?isActive == `true` && ramSizeInGb == `1.0`].[bundleId,cpuCount,ramSizeInGb,price]' \
+              --output table
+            exit 1
+          fi
           echo "Using Lightsail MySQL blueprint: $DB_BLUEPRINT_ID"
+          echo "Using Lightsail API bundle: $INSTANCE_BUNDLE_ID (1 GB, 2 vCPU, USD 7/month)"
           aws cloudformation deploy \
             --stack-name "$STACK_NAME" \
             --template-file infra/aws/lightsail-production.yaml \
@@ -99,6 +110,7 @@ jobs:
             --parameter-overrides \
               BudgetEmail='${{ inputs.budget_email }}' \
               RelationalDatabaseBlueprintId="$DB_BLUEPRINT_ID" \
+              InstanceBundleId="$INSTANCE_BUNDLE_ID" \
               EnableCloudFront='false' \
               InitialMediaBaseUrl='http://127.0.0.1/storage/v1/object/public' \
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com'

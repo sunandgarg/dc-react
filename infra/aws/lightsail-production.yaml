@@ -28,6 +28,10 @@ Parameters:
     Type: String
     Default: mysql_8_0
     AllowedPattern: '[a-z0-9_]+'
+  InstanceBundleId:
+    Type: String
+    Default: micro_3_0
+    AllowedPattern: '[a-z0-9_]+'
   EnableCloudFront:
     Type: String
     Default: 'true'
@@ -243,7 +247,7 @@ Resources:
       InstanceName: !Sub '${ProjectName}-api-lightsail'
       AvailabilityZone: ap-south-1a
       BlueprintId: ubuntu_24_04
-      BundleId: micro_3_0
+      BundleId: !Ref InstanceBundleId
       Networking:
         Ports:
           - AccessDirection: inbound

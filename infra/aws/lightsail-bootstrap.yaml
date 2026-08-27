@@ -76,6 +76,7 @@ Resources:
                   - lightsail:DetachStaticIp
                   - lightsail:GetInstance
                   - lightsail:GetInstanceAccessDetails
+                  - lightsail:GetBundles
                   - lightsail:GetInstances
                   - lightsail:GetInstanceState
                   - lightsail:GetOperation
