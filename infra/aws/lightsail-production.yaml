@@ -32,6 +32,10 @@ Parameters:
     Type: String
     Default: micro_3_0
     AllowedPattern: '[a-z0-9_]+'
+  SshAllowedCidr:
+    Type: String
+    Default: 127.0.0.1/32
+    AllowedPattern: '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}/(?:[0-9]|[12][0-9]|3[0-2])$'
   EnableCloudFront:
     Type: String
     Default: 'true'
@@ -197,7 +201,11 @@ Resources:
               Principal:
                 Service: cloudfront.amazonaws.com
               Action: s3:GetObject
-              Resource: !Sub '${MediaBucket.Arn}/*'
+              Resource:
+                - !Sub '${MediaBucket.Arn}/admin-uploads/*'
+                - !Sub '${MediaBucket.Arn}/ad-images/*'
+                - !Sub '${MediaBucket.Arn}/legacy-public-assets/*'
+                - !Sub '${MediaBucket.Arn}/study-material/*'
               Condition:
                 StringEquals:
                   AWS:SourceArn: !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${MediaDistribution}'
@@ -257,9 +265,11 @@ Resources:
       Networking:
         Ports:
           - AccessDirection: inbound
-            AccessFrom: anywhere
+            AccessFrom: Custom
             AccessType: Public
             CommonName: SSH
+            Cidrs:
+              - !Ref SshAllowedCidr
             FromPort: 22
             ToPort: 22
             Protocol: tcp

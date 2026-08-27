@@ -107,6 +107,12 @@ jobs:
           fi
           echo "Using Lightsail MySQL blueprint: $DB_BLUEPRINT_ID"
           echo "Using Lightsail API bundle: $INSTANCE_BUNDLE_ID (1 GB, 2 vCPU, USD 7/month)"
+          RUNNER_IP=$(curl -fsS https://checkip.amazonaws.com | tr -d '[:space:]')
+          if ! [[ "$RUNNER_IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+            echo "Could not determine a valid GitHub runner IPv4 address."
+            exit 1
+          fi
+          echo "Restricting deployment SSH access to the current GitHub runner."
           aws cloudformation deploy \
             --stack-name "$STACK_NAME" \
             --template-file infra/aws/lightsail-production.yaml \
@@ -116,6 +122,7 @@ jobs:
               BudgetEmail='${{ inputs.budget_email }}' \
               RelationalDatabaseBlueprintId="$DB_BLUEPRINT_ID" \
               InstanceBundleId="$INSTANCE_BUNDLE_ID" \
+              SshAllowedCidr="$RUNNER_IP/32" \
               EnableCloudFront='false' \
               InitialMediaBaseUrl='https://dekhocampus-aws-candidate.pages.dev/storage/v1/object/public' \
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com'
