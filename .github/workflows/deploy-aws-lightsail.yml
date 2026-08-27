@@ -387,6 +387,8 @@ jobs:
           AUTH_JWT_SECRET=$(jq -r .authJwtSecret <<<"$RUNTIME_SECRET")
           AWS_REGION=ap-south-1
           AWS_S3_BUCKET=$BUCKET
+          AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
           MEDIA_BASE_URL=$MEDIA_BASE_URL
           MEDIA_BUCKET_PREFIXES=admin-uploads,ad-images,user-documents
           SUPABASE_STORAGE_URL=$(jq -r .supabaseStorageUrl <<<"$RUNTIME_SECRET")

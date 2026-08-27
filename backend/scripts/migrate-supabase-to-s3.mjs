@@ -5,6 +5,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { HeadObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { PrismaClient } from "@prisma/client";
 import "../src/database-url.mjs";
+import { listSupabaseStorageObjects } from "../src/supabase-storage-listing.mjs";
 
 const sourceUrl = String(process.env.SUPABASE_STORAGE_URL || "").replace(/\/$/, "");
 const sourceSecret = String(process.env.SUPABASE_STORAGE_SERVICE_KEY || "");
@@ -28,27 +29,15 @@ async function sourceJson(path, init = {}) {
   return response.json();
 }
 
-async function listFolder(bucket, prefix = "", seen = new Set()) {
-  const normalized = prefix.replace(/^\/+|\/+$/g, "");
-  if (seen.has(normalized)) return [];
-  seen.add(normalized);
-  const entries = [];
-  for (let offset = 0; ; offset += 1000) {
-    const page = await sourceJson(`/storage/v1/object/list/${encodeURIComponent(bucket)}`, {
+async function listBucketObjects(bucket) {
+  return listSupabaseStorageObjects({
+    bucket,
+    listPage: ({ prefix, limit, offset }) => sourceJson(`/storage/v1/object/list/${encodeURIComponent(bucket)}`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ prefix: normalized, limit: 1000, offset, sortBy: { column: "name", order: "asc" } }),
-    });
-    entries.push(...page);
-    if (page.length < 1000) break;
-  }
-  const objects = [];
-  for (const entry of entries) {
-    const objectPath = normalized ? `${normalized}/${entry.name}` : entry.name;
-    if (entry.id || entry.metadata) objects.push({ ...entry, objectPath });
-    else objects.push(...await listFolder(bucket, objectPath, seen));
-  }
-  return objects;
+      body: JSON.stringify({ prefix, limit, offset, sortBy: { column: "name", order: "asc" } }),
+    }),
+  });
 }
 
 async function migrateObject(bucket, object) {
@@ -114,7 +103,7 @@ async function rewriteMediaUrls() {
 try {
   const buckets = await sourceJson("/storage/v1/bucket");
   for (const bucket of buckets) {
-    const objects = await listFolder(bucket.id);
+    const objects = await listBucketObjects(bucket.id);
     report.buckets[bucket.id] = { objects: objects.length, bytes: objects.reduce((sum, object) => sum + Number(object.metadata?.size || 0), 0) };
     if (!countsOnly) await runPool(objects.map((object) => ({ ...object, key: `${bucket.id}/${object.objectPath}` })), (object) => migrateObject(bucket.id, object));
   }
