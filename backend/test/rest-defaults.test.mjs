@@ -7,6 +7,20 @@ test("returns MySQL decimal fields as JSON numbers", () => {
   assert.equal(row.rating, 4.75);
 });
 
+test("canonicalizes imported storage URLs at the API boundary", () => {
+  const previous = process.env.MEDIA_BASE_URL;
+  process.env.MEDIA_BASE_URL = "https://dekhocampus.com/storage/v1/object/public";
+  try {
+    const row = decodeRow("career_profiles", {
+      image: "https://old-media.example/storage/v1/object/public/admin-uploads/careers/photo.webp",
+    });
+    assert.equal(row.image, "https://dekhocampus.com/storage/v1/object/public/admin-uploads/careers/photo.webp");
+  } finally {
+    if (previous === undefined) delete process.env.MEDIA_BASE_URL;
+    else process.env.MEDIA_BASE_URL = previous;
+  }
+});
+
 test("applies empty arrays for required PostgreSQL array fields", () => {
   const college = applyDefaults("colleges", { name: "QA College", slug: "qa-college" });
 

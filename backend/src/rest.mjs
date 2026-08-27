@@ -125,7 +125,7 @@ export function decodeRow(table, row) {
       row[name] = typeof row[name]?.toNumber === "function" ? row[name].toNumber() : Number(row[name]);
     }
   }
-  return toPublicMediaUrls(row);
+  return toPublicMediaUrls(toStoredMediaKeys(row));
 }
 
 function columnFor(table, rawColumn) {

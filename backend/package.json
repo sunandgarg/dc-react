@@ -10,6 +10,7 @@
     "db:push": "node --env-file-if-exists=.env.local ./node_modules/prisma/build/index.js db push",
     "db:setup:runtime": "node scripts/setup-runtime-database.mjs",
     "db:parity": "node --env-file-if-exists=.env.local scripts/apply-mysql-parity.mjs",
+    "db:normalize:media": "node scripts/normalize-external-media.mjs",
     "verify:integrations": "node scripts/verify-production-integrations.mjs"
   },
   "dependencies": {

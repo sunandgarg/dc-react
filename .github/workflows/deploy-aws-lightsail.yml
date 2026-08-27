@@ -330,6 +330,7 @@ jobs:
           source /etc/dc-react.env
           set +a
           npm --prefix backend run db:setup:runtime
+          npm --prefix backend run db:normalize:media
           npm --prefix backend run verify:integrations
           pm2 reload dc-react-api --update-env
           pm2 save
