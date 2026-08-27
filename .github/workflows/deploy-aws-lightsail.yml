@@ -191,7 +191,7 @@ jobs:
                     if ! sudo timeout 900 bash /var/lib/cloud/instance/scripts/part-001 \
                       >/tmp/dc-react-bootstrap-repair.log 2>&1; then
                       if ! command -v nginx >/dev/null 2>&1; then
-                        grep -E "^(E:|Err:|W:.*(failed|error)|.*(Unable to locate|Could not get lock|no installation candidate|Temporary failure|Failed to fetch|Malformed|invalid))" \
+                        grep -E "^(bash:|/var/lib/cloud/instance/scripts/part-001:|apt-get:|E:|Err:|W:|N:|Hit:|Get:|Ign:|Reading package|Building dependency|Package )" \
                           /tmp/dc-react-bootstrap-repair.log | tail -20 || true
                       fi
                       for command in curl git nginx mysql node npm aws jq pm2; do
