@@ -17,6 +17,11 @@ on:
         required: true
         default: false
         type: boolean
+      resume_database_import:
+        description: Import an already staged database dump from the candidate instance
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -316,7 +321,9 @@ jobs:
             "s3://$AWS_S3_BUCKET/backups/mysql/pre-lightsail-$(date -u +%Y%m%dT%H%M%SZ).sql.gz" \
             --sse AES256
           pm2 stop dc-react-api || true
-          gunzip -c /tmp/dc-react-mysql.sql.gz | MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" "$DB_NAME"
+          gunzip -c /tmp/dc-react-mysql.sql.gz \
+            | sed -E 's/DEFINER=`[^`]*`@`[^`]*`[[:space:]]*//g' \
+            | MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" "$DB_NAME"
           cd /opt/dc-react/app/backend
           npm run db:setup:runtime
           pm2 start dc-react-api || pm2 start src/server.mjs --name dc-react-api
@@ -324,6 +331,30 @@ jobs:
           rm -f /tmp/dc-react-mysql.sql.gz
           REMOTE
           rm -f /tmp/dc-react-mysql.sql.gz
+
+      - name: Resume staged database import
+        if: ${{ inputs.resume_database_import }}
+        run: |
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
+          set -euo pipefail
+          set -a
+          source /etc/dc-react.env
+          set +a
+          test -s /tmp/dc-react-mysql.sql.gz
+          restart_api() {
+            cd /opt/dc-react/app/backend
+            pm2 start dc-react-api >/dev/null 2>&1 || pm2 start src/server.mjs --name dc-react-api >/dev/null
+            pm2 save >/dev/null
+          }
+          trap restart_api EXIT
+          pm2 stop dc-react-api || true
+          gunzip -c /tmp/dc-react-mysql.sql.gz \
+            | sed -E 's/DEFINER=`[^`]*`@`[^`]*`[[:space:]]*//g' \
+            | MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" "$DB_NAME"
+          cd /opt/dc-react/app/backend
+          npm run db:setup:runtime
+          rm -f /tmp/dc-react-mysql.sql.gz
+          REMOTE
 
       - name: Configure runtime and migrate Supabase Storage to S3
         env:
