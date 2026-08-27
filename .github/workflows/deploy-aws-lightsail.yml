@@ -63,6 +63,17 @@ jobs:
       - name: Validate and deploy infrastructure
         run: |
           aws cloudformation validate-template --template-body file://infra/aws/lightsail-production.yaml >/dev/null
+          if aws cloudformation describe-stacks --stack-name "$STACK_NAME" >/dev/null 2>&1; then
+            STACK_STATUS=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].StackStatus' --output text)
+            if [ "$STACK_STATUS" = "ROLLBACK_COMPLETE" ]; then
+              echo "Removing failed candidate stack before a clean retry. Previous failures:"
+              aws cloudformation describe-stack-events --stack-name "$STACK_NAME" \
+                --query "StackEvents[?ResourceStatus=='CREATE_FAILED'].[Timestamp,LogicalResourceId,ResourceType,ResourceStatusReason]" \
+                --output table || true
+              aws cloudformation delete-stack --stack-name "$STACK_NAME"
+              aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
+            fi
+          fi
           if ! aws cloudformation describe-stacks --stack-name "$STACK_NAME" >/dev/null 2>&1; then
             for secret in "$PROJECT_NAME/lightsail/mysql" "$PROJECT_NAME/lightsail/runtime"; do
               if aws secretsmanager describe-secret --secret-id "$secret" >/dev/null 2>&1; then
@@ -91,6 +102,13 @@ jobs:
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com'
           aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
             --query 'Stacks[0].Outputs' --output json > /tmp/stack-outputs.json
+
+      - name: Report infrastructure failure details
+        if: ${{ failure() }}
+        run: |
+          aws cloudformation describe-stack-events --stack-name "$STACK_NAME" \
+            --query "StackEvents[?ResourceStatus=='CREATE_FAILED' || ResourceStatus=='UPDATE_FAILED' || ResourceStatus=='ROLLBACK_FAILED'].[Timestamp,LogicalResourceId,ResourceType,ResourceStatus,ResourceStatusReason]" \
+            --output table || true
 
       - name: Store runtime secrets in AWS Secrets Manager
         env:
