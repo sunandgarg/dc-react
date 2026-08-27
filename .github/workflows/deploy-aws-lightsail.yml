@@ -516,7 +516,7 @@ jobs:
             apt-get -o DPkg::Lock::Timeout=120 update
             apt-get -o DPkg::Lock::Timeout=120 install -y certbot python3-certbot-nginx
           fi
-          sed -i 's/server_name _;/server_name aws-origin.dekhocampus.com;/' /etc/nginx/sites-available/dc-react
+          sed -i -E 's/server_name [^;]*;/server_name aws-origin.dekhocampus.com ec2-3-7-27-134.ap-south-1.compute.amazonaws.com;/' /etc/nginx/sites-available/dc-react
           nginx -t
           systemctl reload nginx
           certbot --nginx \
@@ -590,11 +590,9 @@ jobs:
           PUBLIC_BLOCK=$(aws s3api get-public-access-block --bucket "$BUCKET")
           jq -e '.PublicAccessBlockConfiguration | .BlockPublicAcls and .IgnorePublicAcls and .BlockPublicPolicy and .RestrictPublicBuckets' <<<"$PUBLIC_BLOCK"
           for attempt in $(seq 1 60); do
-            HEALTH=$(curl --fail --silent --show-error --max-time 10 "http://$API_IP/health" || true)
+            HEALTH=$(curl --fail --silent --show-error --max-time 10 "https://aws-origin.dekhocampus.com/health" || true)
             if jq -e '.ok == true and .database == "mysql" and .storage == "s3"' <<<"$HEALTH" >/dev/null 2>&1; then break; fi
             [ "$attempt" -eq 60 ] && { echo "$HEALTH"; exit 1; }
             sleep 10
           done
-          curl --fail --silent --show-error --max-time 20 https://aws-origin.dekhocampus.com/health \
-            | jq -e '.ok == true and .database == "mysql" and .storage == "s3"' >/dev/null
           rm -f /tmp/tempkey /tmp/tempkey-cert.pub /tmp/stack-outputs.json
