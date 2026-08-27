@@ -38,7 +38,7 @@ Parameters:
     AllowedValues: ['true', 'false']
   InitialMediaBaseUrl:
     Type: String
-    Default: http://127.0.0.1/storage/v1/object/public
+    Default: https://dekhocampus-aws-candidate.pages.dev/storage/v1/object/public
 
 Conditions:
   UseCloudFront: !Equals [!Ref EnableCloudFront, 'true']
@@ -327,6 +327,7 @@ Resources:
           AWS_ACCESS_KEY_ID=${ApplicationAccessKeyV2}
           AWS_SECRET_ACCESS_KEY=${ApplicationAccessKeyV2.SecretAccessKey}
           MEDIA_BASE_URL=${InitialMediaBaseUrl}
+          MEDIA_BUCKET_PREFIXES=admin-uploads,ad-images,legacy-public-assets,study-material,user-documents
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r '.cloudflarePagesDeployHookUrl // empty' <<<"$RUNTIME_SECRET")
           CORS_ORIGIN=${CorsOrigins}
           STORAGE_MAX_UPLOAD_BYTES=20971520
@@ -456,7 +457,7 @@ Outputs:
     Value: !If
       - UseCloudFront
       - !Sub 'https://${MediaDistribution.DomainName}'
-      - !Sub 'http://${ApiStaticIp.IpAddress}/storage/v1/object/public'
+      - !Ref InitialMediaBaseUrl
   MediaDistributionId:
     Condition: UseCloudFront
     Value: !Ref MediaDistribution

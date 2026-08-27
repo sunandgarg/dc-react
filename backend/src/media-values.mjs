@@ -1,4 +1,10 @@
-const DEFAULT_BUCKETS = ["admin-uploads", "ad-images", "user-documents"];
+const DEFAULT_BUCKETS = [
+  "admin-uploads",
+  "ad-images",
+  "legacy-public-assets",
+  "study-material",
+  "user-documents",
+];
 
 function mediaBaseUrl() {
   return String(process.env.MEDIA_BASE_URL || "").replace(/\/$/, "");

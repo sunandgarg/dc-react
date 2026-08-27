@@ -34,6 +34,14 @@ test("expands known object keys only when returning API data", () => {
     assert.equal(value.website, "https://university.example/admissions");
     assert.equal(value.description, "ordinary/path/text");
     assert.equal(value.nested[0], "https://cdn-legacy.dekhocampus.com/user-documents/user/transcript.pdf");
+    assert.equal(
+      toPublicMediaUrls("legacy-public-assets/sanitized/college.webp"),
+      "https://cdn-legacy.dekhocampus.com/legacy-public-assets/sanitized/college.webp",
+    );
+    assert.equal(
+      toPublicMediaUrls("study-material/notes/physics.pdf"),
+      "https://cdn-legacy.dekhocampus.com/study-material/notes/physics.pdf",
+    );
   } finally {
     if (previous === undefined) delete process.env.MEDIA_BASE_URL;
     else process.env.MEDIA_BASE_URL = previous;

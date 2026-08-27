@@ -117,7 +117,7 @@ jobs:
               RelationalDatabaseBlueprintId="$DB_BLUEPRINT_ID" \
               InstanceBundleId="$INSTANCE_BUNDLE_ID" \
               EnableCloudFront='false' \
-              InitialMediaBaseUrl='http://127.0.0.1/storage/v1/object/public' \
+              InitialMediaBaseUrl='https://dekhocampus-aws-candidate.pages.dev/storage/v1/object/public' \
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com'
           aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
             --query 'Stacks[0].Outputs' --output json > /tmp/stack-outputs.json
@@ -407,7 +407,7 @@ jobs:
           AWS_ACCESS_KEY_ID=$APP_ACCESS_KEY_ID
           AWS_SECRET_ACCESS_KEY=$APP_SECRET_ACCESS_KEY
           MEDIA_BASE_URL=$MEDIA_BASE_URL
-          MEDIA_BUCKET_PREFIXES=admin-uploads,ad-images,user-documents
+          MEDIA_BUCKET_PREFIXES=admin-uploads,ad-images,legacy-public-assets,study-material,user-documents
           SUPABASE_STORAGE_URL=$(jq -r .supabaseStorageUrl <<<"$RUNTIME_SECRET")
           SUPABASE_STORAGE_SERVICE_KEY=$(jq -r .supabaseStorageServiceKey <<<"$RUNTIME_SECRET")
           SMS_FAST2SMS_API_KEY=$(jq -r .smsFast2smsApiKey <<<"$RUNTIME_SECRET")
