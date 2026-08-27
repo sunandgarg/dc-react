@@ -374,7 +374,10 @@ jobs:
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
           test -n "$MEDIA_BASE_URL"
           test -n "$BUCKET"
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey "$SSH_USER@$SSH_IP" "sudo bash -s -- '$MEDIA_BASE_URL' '$MIGRATE_STORAGE' '$BUCKET'" <<'REMOTE'
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
+            -i /tmp/tempkey "$SSH_USER@$SSH_IP" \
+            "sudo bash -s -- '$MEDIA_BASE_URL' '$MIGRATE_STORAGE' '$BUCKET'" <<'REMOTE'
           set -euo pipefail
           MEDIA_BASE_URL="$1"
           MIGRATE_STORAGE="$2"

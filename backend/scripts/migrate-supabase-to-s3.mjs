@@ -23,6 +23,13 @@ const s3 = new S3Client({ region });
 const prisma = rewriteDatabase ? new PrismaClient() : null;
 const report = { startedAt: new Date().toISOString(), sourceUrl, targetBucket, buckets: {}, migrated: 0, skipped: 0, bytes: 0, errors: [] };
 
+function reportProgress() {
+  const processed = report.migrated + report.skipped + report.errors.length;
+  if (processed > 0 && processed % 1000 === 0) {
+    console.log(JSON.stringify({ processed, migrated: report.migrated, skipped: report.skipped, errors: report.errors.length }));
+  }
+}
+
 async function sourceJson(path, init = {}) {
   const response = await fetch(`${sourceUrl}${path}`, { ...init, headers: { ...headers, ...init.headers } });
   if (!response.ok) throw new Error(`${path}: ${response.status} ${(await response.text()).slice(0, 300)}`);
@@ -48,6 +55,7 @@ async function migrateObject(bucket, object) {
     if (Number(existing.ContentLength) === expectedSize && existing.Metadata?.source === "supabase") {
       report.skipped += 1;
       report.bytes += expectedSize;
+      reportProgress();
       return;
     }
   } catch (error) {
@@ -69,6 +77,7 @@ async function migrateObject(bucket, object) {
   }));
   report.migrated += 1;
   report.bytes += bytes.byteLength;
+  reportProgress();
 }
 
 async function runPool(items, worker) {
@@ -76,7 +85,12 @@ async function runPool(items, worker) {
   await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, async () => {
     while (cursor < items.length) {
       const item = items[cursor++];
-      try { await worker(item); } catch (error) { report.errors.push({ key: item.key || item.objectPath, message: error instanceof Error ? error.message : String(error) }); }
+      try {
+        await worker(item);
+      } catch (error) {
+        report.errors.push({ key: item.key || item.objectPath, message: error instanceof Error ? error.message : String(error) });
+        reportProgress();
+      }
     }
   }));
 }
