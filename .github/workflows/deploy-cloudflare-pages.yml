@@ -1,0 +1,59 @@
+name: Deploy Cloudflare Pages production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dc-react-cloudflare-pages-production
+  cancel-in-progress: false
+
+jobs:
+  verify-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build production frontend
+        run: |
+          npm ci
+          npm test
+          npm run lint
+          SITEMAP_API_URL=https://aws-origin.dekhocampus.com npm run build
+          test -s dist/_worker.js
+          EXPECTED_ASSET=$(basename "$(find dist/assets -maxdepth 1 -type f -name 'index-*.js' | head -1)")
+          test -n "$EXPECTED_ASSET"
+          echo "EXPECTED_ASSET=$EXPECTED_ASSET" >> "$GITHUB_ENV"
+
+      - name: Trigger Cloudflare Pages production build
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}
+        run: |
+          test -n "$DEPLOY_HOOK_URL"
+          curl --fail --silent --show-error --request POST "$DEPLOY_HOOK_URL" \
+            --output /tmp/cloudflare-deployment.json
+          jq -e '.success == true or .id != null or .deployment_id != null' /tmp/cloudflare-deployment.json >/dev/null
+
+      - name: Verify published frontend and AWS proxy
+        run: |
+          for attempt in $(seq 1 90); do
+            HTML=$(curl --fail --silent --show-error --max-time 20 \
+              https://dekhocampus-aws-candidate.pages.dev/ || true)
+            if grep -Fq "/assets/$EXPECTED_ASSET" <<<"$HTML"; then break; fi
+            [ "$attempt" -eq 90 ] && { echo "Cloudflare did not publish $EXPECTED_ASSET" >&2; exit 1; }
+            sleep 10
+          done
+          curl --fail --silent --show-error --max-time 20 \
+            https://dekhocampus-aws-candidate.pages.dev/health \
+            | jq -e '.ok == true and .database == "mysql" and .storage == "s3"' >/dev/null
+          curl --fail --silent --show-error --max-time 20 \
+            https://dekhocampus-aws-candidate.pages.dev/sitemap.xml >/dev/null
