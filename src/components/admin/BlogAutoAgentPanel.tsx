@@ -104,8 +104,6 @@ const DEFAULT_SOURCES: Source[] = [
   { name: "DekhoCampus", url: "https://dekhocampus.com/news", source_type: "own", is_active: true },
 ];
 
-const COMPETITOR_SOURCE_PATTERN = /(collegedekho|college\s*dekho|collegedunia|college\s*dunia|shiksha|careers\s*360|careers360|kollege\s*apply|kollegeapply|getmyuni|pagalguy)/i;
-
 const IMAGE_URL_SETTING_KEYS = new Set<keyof Settings>(["image_template_url", "logo_url"]);
 
 function normalizeImageSettingUrl(value: unknown) {
@@ -249,7 +247,10 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             next_run_at: nextRun,
           }
         : legacySettings;
-      const { error } = await (supabase as any).from("blog_auto_agent_settings").upsert({ id: "default", ...settingsPayload });
+      const { error } = await (supabase as any).from("blog_auto_agent_settings").upsert(
+        { id: "default", ...settingsPayload },
+        { onConflict: "id" },
+      );
       if (error) throw error;
       for (const [index, source] of sources.entries()) {
         await (supabase as any).from("blog_research_sources").upsert({ ...source, display_order: (index + 1) * 10 }, { onConflict: "url" });
@@ -275,10 +276,6 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     try {
       const parsed = new URL(url);
       if (!/^https?:$/.test(parsed.protocol)) throw new Error("Use an http or https URL");
-      if (COMPETITOR_SOURCE_PATTERN.test(`${name} ${url}`)) {
-        toast.error("Competitor sources are blocked. Add an official, regulator, government, or public-news source instead.");
-        return;
-      }
       if (!name) throw new Error("Enter a source name");
       if (sources.some((source) => source.url.toLowerCase() === parsed.toString().toLowerCase())) throw new Error("This source is already listed");
       setSources((current) => [...current, { name, url: parsed.toString(), source_type: sourceDraft.source_type, is_active: true }]);
@@ -605,7 +602,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
           <div className="grid gap-2 md:grid-cols-[1fr_2fr_150px_auto]">
             <Input aria-label="Research source name" value={sourceDraft.name} onChange={(event) => setSourceDraft((current) => ({ ...current, name: event.target.value }))} placeholder="Source name" />
             <Input aria-label="Research source URL" value={sourceDraft.url} onChange={(event) => setSourceDraft((current) => ({ ...current, url: event.target.value }))} placeholder="https://example.gov.in/updates" />
-            <select aria-label="Research source type" value={sourceDraft.source_type} onChange={(event) => setSourceDraft((current) => ({ ...current, source_type: event.target.value as Source["source_type"] }))} className="h-10 rounded-md border bg-background px-3 text-sm"><option value="official">Official / regulator</option><option value="public_signal">Public signal</option><option value="own">DekhoCampus</option></select>
+            <select aria-label="Research source type" value={sourceDraft.source_type} onChange={(event) => setSourceDraft((current) => ({ ...current, source_type: event.target.value as Source["source_type"] }))} className="h-10 rounded-md border bg-background px-3 text-sm"><option value="official">Official / regulator</option><option value="public_signal">Public signal</option><option value="competitor">Competitor gap research</option><option value="own">DekhoCampus</option></select>
             <Button type="button" variant="outline" onClick={addSource} className="gap-2"><Plus className="h-4 w-4" /> Add</Button>
           </div>
         </div>

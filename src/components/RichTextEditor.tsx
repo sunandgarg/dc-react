@@ -79,7 +79,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
   return (
     <div ref={wrapperRef} className={fullscreen ? "fixed inset-0 z-[100] bg-background p-4 flex flex-col" : ""}>
       {label && !bare && <label className="text-xs font-medium text-muted-foreground">{label}</label>}
-      <div className={`mt-1 rounded-lg border border-border bg-card overflow-hidden focus-within:ring-2 focus-within:ring-ring/40 ${fullscreen ? "flex-1 flex flex-col" : ""}`}>
+      <div className={`mt-1 rounded-lg border border-border bg-card focus-within:ring-2 focus-within:ring-ring/40 ${fullscreen ? "flex-1 flex flex-col" : ""}`}>
         <Toolbar editor={editor} fullscreen={fullscreen} setFullscreen={setFullscreen} previewMode={previewMode} setPreviewMode={setPreviewMode} />
         <div className={fullscreen ? "flex-1 overflow-y-auto" : ""} style={!fullscreen ? { maxHeight: `${Math.max(rows, 4) * 32 + 60}px`, overflowY: "auto" } : undefined}>
           {previewMode ? (
@@ -275,7 +275,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
           <ChevronDown className="w-3 h-3" />
         </button>
         {tableOpen && (
-          <div className="absolute left-0 top-full mt-1 z-50 bg-card border border-border rounded-lg shadow-lg p-2 w-48">
+          <div className="absolute right-0 top-full mt-1 z-50 max-h-72 w-52 overflow-y-auto rounded-lg border border-border bg-card p-2 shadow-lg">
             <button type="button" className="w-full text-left text-xs px-2 py-1.5 hover:bg-muted rounded" onClick={() => insertTable(3, 3)}>Insert 3×3 table</button>
             <button type="button" className="w-full text-left text-xs px-2 py-1.5 hover:bg-muted rounded" onClick={() => insertTable(2, 4)}>Insert 2×4 table</button>
             <button type="button" className="w-full text-left text-xs px-2 py-1.5 hover:bg-muted rounded" onClick={() => insertTable(5, 5)}>Insert 5×5 table</button>

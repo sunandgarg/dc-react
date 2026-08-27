@@ -9,7 +9,10 @@ const API_PREFIXES = [
 ];
 
 function isApiRequest(pathname) {
-  return pathname === "/health" || API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  return pathname === "/health"
+    || /^\/sitemap(?:-index|-\d+)?\.xml$/.test(pathname)
+    || pathname.startsWith("/sitemap-files/")
+    || API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
 function withSecurityHeaders(response) {

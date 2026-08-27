@@ -10,7 +10,7 @@ import { handleAiGenerate, handleBlogAiSettings, handleBlogStudio, runBlogAgent 
 import { handleDataCleaner } from "./data-cleaner.mjs";
 import { canContentEditorAccess } from "./editor-access.mjs";
 import { storageConfig } from "./storage.mjs";
-import { publishSitemap } from "./sitemap-publish.mjs";
+import { publishSitemap, readPublishedSitemap } from "./sitemap-publish.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -260,6 +260,8 @@ export async function handleRequest(request) {
   }
 
   try {
+    const sitemapResponse = await readPublishedSitemap(request);
+    if (sitemapResponse) return sitemapResponse;
     const authResult = await handleAuth(request);
     if (authResult) return json(authResult.status, authResult.body, requestId, request);
     const storageResult = await handleStorage(request);
@@ -296,7 +298,7 @@ export async function handleRequest(request) {
       if (functionMatch[1] === "publish-sitemap") {
         const identity = await resolveIdentity(request);
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
-        return json(202, await publishSitemap(request), requestId, request, { "cache-control": "private, no-store" });
+        return json(200, await publishSitemap(request), requestId, request, { "cache-control": "private, no-store" });
       }
       if (functionMatch[1] === "content-reviews") {
         const identity = await resolveIdentity(request);

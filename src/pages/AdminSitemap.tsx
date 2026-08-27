@@ -229,7 +229,8 @@ export default function AdminSitemap() {
         body: { target: "https://dekhocampus.com" },
       });
       if (error) throw error;
-      setSummary((current) => `${current} Cloudflare Pages accepted the production deployment; its atomic release will replace the previous sitemap files.`);
+      const published = data as any;
+      setSummary((current) => `${current} Published ${Number(published?.url_count || unique.length).toLocaleString()} URLs in ${Number(published?.chunk_count || sitemapCount).toLocaleString()} AWS-backed chunk file(s). The sitemap index is now live at dekhocampus.com/sitemap.xml.`);
       toast.success(`Sitemap deployment queued for ${unique.length.toLocaleString()} URLs`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to build sitemap");
@@ -289,7 +290,7 @@ export default function AdminSitemap() {
             </div>
             <Textarea value={xml} readOnly className="font-mono text-xs min-h-[400px]" />
             <p className="text-xs text-muted-foreground">
-              Publishing queues an atomic Cloudflare Pages build. The new deployment replaces the old <code>sitemap.xml</code>, index and chunk files together. Submit <code>/sitemap.xml</code> once in Search Console, then Google will keep reading the updated files.
+              Publishing builds from live MySQL data, writes immutable sitemap chunks to private AWS S3, and atomically replaces <code>/sitemap.xml</code>. Submit that one URL in Search Console; Google will follow the current chunk files automatically.
             </p>
           </>
         )}

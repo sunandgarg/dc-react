@@ -25,6 +25,40 @@ const stripCompetitorCredits = (value) => String(value || "")
   .replace(/[\u2013\u2014]/g, "-")
   .trim();
 
+const TITLE_STOP_WORDS = new Set(["a", "an", "and", "at", "by", "for", "from", "in", "of", "on", "the", "to", "with"]);
+export const normalizeArticleTitle = (value) => String(value || "")
+  .toLowerCase()
+  .replace(/&/g, " and ")
+  .replace(/[^a-z0-9]+/g, " ")
+  .trim()
+  .replace(/\s+/g, " ");
+
+function titleTokens(value) {
+  return new Set(normalizeArticleTitle(value).split(" ").filter((token) => token.length > 1 && !TITLE_STOP_WORDS.has(token)));
+}
+
+export function articleTitleSimilarity(left, right) {
+  const normalizedLeft = normalizeArticleTitle(left);
+  const normalizedRight = normalizeArticleTitle(right);
+  if (!normalizedLeft || !normalizedRight) return 0;
+  if (normalizedLeft === normalizedRight) return 1;
+  const leftTokens = titleTokens(normalizedLeft);
+  const rightTokens = titleTokens(normalizedRight);
+  if (!leftTokens.size || !rightTokens.size) return 0;
+  const intersection = [...leftTokens].filter((token) => rightTokens.has(token)).length;
+  const union = new Set([...leftTokens, ...rightTokens]).size;
+  const jaccard = intersection / union;
+  const containment = intersection / Math.min(leftTokens.size, rightTokens.size);
+  return Math.max(jaccard, containment >= 0.9 ? containment * 0.95 : 0);
+}
+
+export function findDuplicateArticleTitle(candidate, existing, threshold = 0.82) {
+  return existing.find((article) => (
+    slugify(article.slug || article.title) === slugify(candidate.slug || candidate.title || candidate)
+    || articleTitleSimilarity(article.title, candidate.title || candidate) >= threshold
+  )) || null;
+}
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function parseRetryDelayMs(value) {
@@ -278,8 +312,8 @@ export async function handleAiGenerate(request) {
 async function saveGeneratedArticle(topic, settings, signals, schedule = null) {
   const generated = await generateDraft(topic, { wordLimit: settings.word_limit, imageMode: settings.image_mode, signals });
   const draft = generated.draft;
-  const existing = await prisma.articles.findFirst({ where: { OR: [{ slug: draft.slug }, { title: draft.title }] }, select: { id: true } });
-  if (existing) return null;
+  const existing = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { id: true, slug: true, title: true } });
+  if (findDuplicateArticleTitle(draft, existing)) return null;
   const article = await prisma.articles.create({ data: {
     id: randomUUID(), status: settings.human_review_required ? "Draft" : settings.publish_status,
     title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: "DekhoCampus Editorial", featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: true, data_source_urls: generated.research_sources, data_clean_state: "not_checked",
@@ -386,13 +420,20 @@ export async function runBlogAgent(body = {}) {
   try {
     const signals = await researchSignals(20);
     await assertRunActive(run.id, executionToken);
-    const recent = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 500, select: { title: true, slug: true } });
+    const recent = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { title: true, slug: true } });
     const entityInstruction = entityContext
       ? `Generate only for this ${entityContext.schedule.entity_type}: ${JSON.stringify({ name: entityContext.schedule.entity_name, slug: entityContext.schedule.entity_slug, facts: entityContext.entity, topic_focus: entityContext.schedule.topic_focus })}. Prefer a timely verified update; otherwise create an evergreen student guide. Every topic must be specifically useful for this entity.`
       : "Cover the strongest Indian education opportunities across admissions, exams, counselling, scholarships, careers and college decisions.";
-    const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 2, 4)} original Indian education article opportunities. ${entityInstruction} Existing titles to avoid: ${JSON.stringify(recent)}. Competitor material is gap research only; do not copy or credit it. Return {topics:[{title,angle,category,tags}]}.`, "blog-agent");
+    const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 3, 6)} original Indian education article opportunities. ${entityInstruction} Existing DekhoCampus titles to avoid: ${JSON.stringify(recent)}. Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Return {topics:[{title,angle,category,tags}]}.`, "blog-agent", { research: true });
     await assertRunActive(run.id, executionToken);
-    const topics = (Array.isArray(result.topics) ? result.topics : []).filter((topic) => topic.title).slice(0, postCount);
+    const topics = [];
+    const comparedTitles = [...recent];
+    for (const topic of Array.isArray(result.topics) ? result.topics : []) {
+      if (!topic.title || findDuplicateArticleTitle(topic, comparedTitles)) continue;
+      topics.push(topic);
+      comparedTitles.push({ title: topic.title, slug: slugify(topic.title) });
+      if (topics.length >= postCount) break;
+    }
     await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { progress: 30, current_step: `Writing ${topics.length} article(s)`, selected_topics: topics, sources: signals.map(({ signal, ...source }) => source) } });
     const ids = [];
     for (const topic of topics) {

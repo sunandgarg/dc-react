@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { applyDefaults, decodeRow, nextShortIdValue, resolveConflictColumns } from "../src/rest.mjs";
+import { applyDefaults, decodeRow, nextShortIdValue, normalizeForDatabase, resolveConflictColumns } from "../src/rest.mjs";
 
 test("returns MySQL decimal fields as JSON numbers", () => {
   const row = decodeRow("colleges", { rating: { toNumber: () => 4.75 } });
@@ -35,4 +35,9 @@ test("uses primary keys for upserts without an explicit conflict target", () => 
 
 test("preserves an explicit upsert conflict target", () => {
   assert.deepEqual(resolveConflictColumns("blog_research_sources", "url"), ["url"]);
+});
+
+test("stores blank optional dates as null for MySQL", () => {
+  assert.equal(normalizeForDatabase("", { type: "DateTime", nullable: true, format: "date" }), null);
+  assert.equal(normalizeForDatabase("2026-08-27", { type: "DateTime", nullable: true, format: "date" }), "2026-08-27");
 });

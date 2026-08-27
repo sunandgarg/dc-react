@@ -207,12 +207,14 @@ export function useSaveCourse() {
       let pendingReview = false;
       if (course.id) {
         const { id, created_at, updated_at, ...rest } = course;
+        delete rest.short_id;
         const response = await supabase.from("courses").update(rest).eq("id", id);
         const { error } = response;
         if (error) throw error;
         pendingReview = isPendingReview(response);
       } else {
         const { id, created_at, updated_at, ...rest } = course;
+        delete rest.short_id;
         const response = await supabase.from("courses").insert(rest);
         const { error } = response;
         if (error) throw error;

@@ -48,13 +48,14 @@ function parseLiteral(value) {
   return raw.replace(/^"|"$/g, "").replaceAll('\\"', '"');
 }
 
-function normalizeForDatabase(value, field) {
+export function normalizeForDatabase(value, field) {
   if (value === null || value === undefined) return null;
   value = toStoredMediaKeys(value);
   if (field?.type === "Json") return typeof value === "string" ? value : JSON.stringify(value);
   if (field?.type === "Boolean") return value ? 1 : 0;
   if (field?.type === "BigInt") return String(value);
   if (field?.type === "DateTime") {
+    if (field.nullable && String(value).trim() === "") return null;
     if (field.format === "date") return String(value).slice(0, 10);
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? value : date.toISOString().replace("T", " ").replace("Z", "");
@@ -314,12 +315,17 @@ async function insertRow(table, input, merge, conflictColumns) {
   if (merge && conflictColumns.length) {
     const conflictValues = conflictColumns.map((column) => normalizeForDatabase(row[column], allowed[column]));
     if (conflictValues.every((value) => value !== undefined)) {
-      const existing = await prisma.$queryRawUnsafe(`SELECT 1 FROM ${quote(table)} WHERE ${conflictColumns.map((column) => `${quote(column)} = ?`).join(" AND ")} LIMIT 1`, ...conflictValues);
-      if (existing.length) {
-        const updates = providedColumns.filter((column) => !conflictColumns.includes(column));
-        if (updates.length) await prisma.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${updates.map((column) => `${quote(column)} = ?`).join(",")} WHERE ${conflictColumns.map((column) => `${quote(column)} = ?`).join(" AND ")}`, ...updates.map((column) => normalizeForDatabase(row[column], allowed[column])), ...conflictValues);
-        return row;
-      }
+      const columns = providedColumns;
+      const values = columns.map((column) => normalizeForDatabase(row[column], allowed[column]));
+      const updates = columns.filter((column) => !conflictColumns.includes(column));
+      const duplicateClause = updates.length
+        ? updates.map((column) => `${quote(column)} = VALUES(${quote(column)})`).join(",")
+        : `${quote(conflictColumns[0])} = VALUES(${quote(conflictColumns[0])})`;
+      await prisma.$executeRawUnsafe(
+        `INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")}) ON DUPLICATE KEY UPDATE ${duplicateClause}`,
+        ...values,
+      );
+      return row;
     }
   }
 

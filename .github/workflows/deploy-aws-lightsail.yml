@@ -441,6 +441,18 @@ jobs:
           pm2 save
           REMOTE
 
+      - name: Publish build sitemap seed to private S3
+        run: |
+          BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
+          test -n "$BUCKET"
+          for file in dist/sitemap.xml dist/sitemap-index.xml dist/sitemap-*.xml; do
+            test -s "$file"
+            aws s3 cp "$file" "s3://$BUCKET/system-sitemaps/public/$(basename "$file")" \
+              --content-type 'application/xml; charset=utf-8' \
+              --cache-control 'public,max-age=300,must-revalidate' \
+              --sse AES256
+          done
+
       - name: Verify private storage and API
         run: |
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)

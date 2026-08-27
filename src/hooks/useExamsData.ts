@@ -253,15 +253,17 @@ export function useSaveExam() {
     mutationFn: async (exam: Partial<DbExam> & { slug: string; name: string }) => {
       const payload = {
         ...exam,
-        important_dates: JSON.stringify(exam.important_dates ?? []),
-        question_papers: JSON.stringify(exam.question_papers ?? []),
+        important_dates: exam.important_dates ?? [],
+        question_papers: exam.question_papers ?? [],
       };
       if (exam.id) {
         const { id, created_at, updated_at, ...rest } = payload;
+        delete rest.short_id;
         const { error } = await supabase.from("exams").update(rest as any).eq("id", id);
         if (error) throw error;
       } else {
         const { id, created_at, updated_at, ...rest } = payload;
+        delete rest.short_id;
         const { error } = await supabase.from("exams").insert(rest as any);
         if (error) throw error;
       }
