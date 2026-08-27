@@ -445,13 +445,28 @@ jobs:
         run: |
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
           test -n "$BUCKET"
-          for file in dist/sitemap.xml dist/sitemap-index.xml dist/sitemap-*.xml; do
+          tar -czf /tmp/dc-sitemap-seed.tar.gz dist/sitemap.xml dist/sitemap-index.xml dist/sitemap-[0-9]*.xml
+          scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            /tmp/dc-sitemap-seed.tar.gz "$SSH_USER@$SSH_IP:/tmp/dc-sitemap-seed.tar.gz"
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            "$SSH_USER@$SSH_IP" "sudo bash -s -- '$BUCKET'" <<'REMOTE'
+          set -euo pipefail
+          BUCKET="$1"
+          set -a
+          source /etc/dc-react.env
+          set +a
+          WORK_DIR=$(mktemp -d)
+          trap 'rm -rf "$WORK_DIR" /tmp/dc-sitemap-seed.tar.gz' EXIT
+          tar -xzf /tmp/dc-sitemap-seed.tar.gz -C "$WORK_DIR"
+          for file in "$WORK_DIR"/dist/sitemap.xml "$WORK_DIR"/dist/sitemap-index.xml "$WORK_DIR"/dist/sitemap-[0-9]*.xml; do
             test -s "$file"
             aws s3 cp "$file" "s3://$BUCKET/system-sitemaps/public/$(basename "$file")" \
               --content-type 'application/xml; charset=utf-8' \
               --cache-control 'public,max-age=300,must-revalidate' \
               --sse AES256
           done
+          REMOTE
+          rm -f /tmp/dc-sitemap-seed.tar.gz
 
       - name: Verify private storage and API
         run: |
