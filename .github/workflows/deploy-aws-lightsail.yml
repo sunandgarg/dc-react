@@ -63,6 +63,11 @@ jobs:
       - name: Validate and deploy infrastructure
         run: |
           aws cloudformation validate-template --template-body file://infra/aws/lightsail-production.yaml >/dev/null
+          DB_BLUEPRINT_ID=$(aws lightsail get-relational-database-blueprints \
+            --query "blueprints[?engine=='mysql'] | sort_by(@,&engineVersion)[-1].blueprintId" \
+            --output text)
+          test -n "$DB_BLUEPRINT_ID"
+          echo "Using Lightsail MySQL blueprint: $DB_BLUEPRINT_ID"
           aws cloudformation deploy \
             --stack-name "$STACK_NAME" \
             --template-file infra/aws/lightsail-production.yaml \
@@ -70,6 +75,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --parameter-overrides \
               BudgetEmail='${{ inputs.budget_email }}' \
+              RelationalDatabaseBlueprintId="$DB_BLUEPRINT_ID" \
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com'
           aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
             --query 'Stacks[0].Outputs' --output json > /tmp/stack-outputs.json

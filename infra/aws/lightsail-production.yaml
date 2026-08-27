@@ -24,6 +24,10 @@ Parameters:
   BudgetEmail:
     Type: String
     AllowedPattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+  RelationalDatabaseBlueprintId:
+    Type: String
+    Default: mysql_8_0
+    AllowedPattern: '[a-z0-9_]+'
 
 Conditions:
   HasMediaDomain: !And
@@ -62,7 +66,7 @@ Resources:
     Properties:
       RelationalDatabaseName: !Sub '${ProjectName}-mysql-lightsail'
       AvailabilityZone: ap-south-1a
-      RelationalDatabaseBlueprintId: mysql_8_0
+      RelationalDatabaseBlueprintId: !Ref RelationalDatabaseBlueprintId
       RelationalDatabaseBundleId: micro_2_0
       MasterDatabaseName: dc_react
       MasterUsername: dc_admin

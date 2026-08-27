@@ -79,6 +79,8 @@ Resources:
                   - lightsail:GetInstanceState
                   - lightsail:GetOperation
                   - lightsail:GetOperations
+                  - lightsail:GetRelationalDatabaseBlueprints
+                  - lightsail:GetRelationalDatabaseBundles
                   - lightsail:GetRelationalDatabase
                   - lightsail:GetRelationalDatabaseParameters
                   - lightsail:GetRelationalDatabases
@@ -107,6 +109,7 @@ Resources:
                   - s3:GetBucketPublicAccessBlock
                   - s3:GetBucketTagging
                   - s3:GetBucketVersioning
+                  - s3:GetEncryptionConfiguration
                   - s3:ListBucket
                   - s3:PutBucketCors
                   - s3:PutBucketEncryption
@@ -115,6 +118,7 @@ Resources:
                   - s3:PutBucketPublicAccessBlock
                   - s3:PutBucketTagging
                   - s3:PutBucketVersioning
+                  - s3:PutEncryptionConfiguration
                 Resource:
                   - !Sub 'arn:${AWS::Partition}:s3:::${ProjectName}-*'
               - Sid: CandidateCloudFront
