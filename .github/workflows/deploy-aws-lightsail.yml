@@ -431,6 +431,18 @@ jobs:
           NODE
           REMOTE
 
+      - name: Run reversible production admin CRUD regression
+        run: |
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
+          set -euo pipefail
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app
+          PUBLIC_BASE_URL=https://dekhocampus.com npm --prefix backend run verify:production-crud
+          REMOTE
+
       - name: Verify private storage and API
         run: |
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
