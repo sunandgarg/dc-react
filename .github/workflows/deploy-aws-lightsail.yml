@@ -181,21 +181,27 @@ jobs:
                     --property=SubState \
                     --property=Result \
                     --property=ExecMainStatus || true
-                  for command in curl git nginx mysql node npm aws jq pm2; do
-                    if command -v "$command" >/dev/null 2>&1; then
-                      echo "bootstrap-command:$command=ready"
-                    else
-                      echo "bootstrap-command:$command=missing"
+                  if ! sudo test -s /etc/dc-react.env; then
+                    sudo sed -i "s/mysql-client/default-mysql-client/g" /var/lib/cloud/instance/scripts/part-001
+                    if ! sudo timeout 900 bash /var/lib/cloud/instance/scripts/part-001 \
+                      >/var/log/dc-react-bootstrap-repair.log 2>&1; then
+                      for command in curl git nginx mysql node npm aws jq pm2; do
+                        if command -v "$command" >/dev/null 2>&1; then
+                          echo "bootstrap-command:$command=ready"
+                        else
+                          echo "bootstrap-command:$command=missing"
+                        fi
+                      done
+                      for path in /opt/dc-react/app /opt/dc-react/app/backend /etc/dc-react.env /etc/nginx/sites-enabled/dc-react; do
+                        if sudo test -e "$path"; then
+                          echo "bootstrap-path:$path=ready"
+                        else
+                          echo "bootstrap-path:$path=missing"
+                        fi
+                      done
+                      exit 1
                     fi
-                  done
-                  for path in /opt/dc-react/app /opt/dc-react/app/backend /etc/dc-react.env /etc/nginx/sites-enabled/dc-react; do
-                    if sudo test -e "$path"; then
-                      echo "bootstrap-path:$path=ready"
-                    else
-                      echo "bootstrap-path:$path=missing"
-                    fi
-                  done
-                  exit 1
+                  fi
                 fi
                 sudo test -s /etc/dc-react.env
               '
