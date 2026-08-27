@@ -310,6 +310,18 @@ jobs:
           SOURCE_PORT=$(jq -r .port <<<"$CONNECTION")
           SOURCE_USER=$(jq -r .user <<<"$CONNECTION")
           SOURCE_DB=$(jq -r .database <<<"$CONNECTION")
+          mysql --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
+            --batch --skip-column-names \
+            -e "SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '$SOURCE_DB' AND TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME" \
+            > /tmp/dc-react-source-tables.txt
+          : > /tmp/dc-react-source-row-counts.tsv
+          while IFS= read -r table; do
+            test -n "$table"
+            count=$(mysql --ssl-mode=REQUIRED -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" \
+              --batch --skip-column-names "$SOURCE_DB" -e "SELECT COUNT(*) FROM \`$table\`")
+            printf '%s\t%s\n' "$table" "$count" >> /tmp/dc-react-source-row-counts.tsv
+          done < /tmp/dc-react-source-tables.txt
+          test -s /tmp/dc-react-source-row-counts.tsv
           refresh_lightsail_access() {
             aws lightsail get-instance-access-details \
               --instance-name "$INSTANCE_NAME" \
@@ -327,7 +339,9 @@ jobs:
             --single-transaction --quick --routines --triggers --events --set-gtid-purged=OFF --no-tablespaces "$SOURCE_DB" \
             | gzip -1 > /tmp/dc-react-mysql.sql.gz
           refresh_lightsail_access
-          scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey /tmp/dc-react-mysql.sql.gz "$SSH_USER@$SSH_IP:/tmp/dc-react-mysql.sql.gz"
+          scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv \
+            "$SSH_USER@$SSH_IP:/tmp/"
           refresh_lightsail_access
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
           set -euo pipefail
@@ -341,13 +355,29 @@ jobs:
           gunzip -c /tmp/dc-react-mysql.sql.gz \
             | sed -E 's/DEFINER=`[^`]*`@`[^`]*`[[:space:]]*//g' \
             | MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" "$DB_NAME"
+          TABLES_VERIFIED=0
+          ROWS_VERIFIED=0
+          while IFS=$'\t' read -r TABLE EXPECTED; do
+            test -n "$TABLE"
+            ACTUAL=$(MYSQL_PWD="$DB_PASSWORD" mysql --ssl-mode=REQUIRED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" \
+              --batch --skip-column-names "$DB_NAME" -e "SELECT COUNT(*) FROM \`$TABLE\`")
+            if [ "$ACTUAL" != "$EXPECTED" ]; then
+              echo "Database parity failed for $TABLE: DigitalOcean=$EXPECTED AWS=$ACTUAL" >&2
+              exit 1
+            fi
+            TABLES_VERIFIED=$((TABLES_VERIFIED + 1))
+            ROWS_VERIFIED=$((ROWS_VERIFIED + ACTUAL))
+          done </tmp/dc-react-source-row-counts.tsv
+          echo "Database parity verified: $TABLES_VERIFIED tables and $ROWS_VERIFIED rows"
+          aws s3 cp /tmp/dc-react-source-row-counts.tsv \
+            "s3://$AWS_S3_BUCKET/backups/mysql/latest-source-row-counts.tsv" --sse AES256
           cd /opt/dc-react/app/backend
           npm run db:setup:runtime
           pm2 start dc-react-api || pm2 start src/server.mjs --name dc-react-api
           pm2 save
-          rm -f /tmp/dc-react-mysql.sql.gz
+          rm -f /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv
           REMOTE
-          rm -f /tmp/dc-react-mysql.sql.gz
+          rm -f /tmp/dc-react-mysql.sql.gz /tmp/dc-react-source-row-counts.tsv /tmp/dc-react-source-tables.txt
 
       - name: Resume staged database import
         if: ${{ inputs.resume_database_import }}

@@ -142,6 +142,16 @@ try {
       (object) => migrateObjectWithRetry(bucket.id, object),
     );
   }
+  const sourceObjects = Object.values(report.buckets).reduce((sum, bucket) => sum + bucket.objects, 0);
+  const processedObjects = report.migrated + report.skipped + report.errors.length;
+  report.coverage = {
+    sourceObjects,
+    processedObjects,
+    verified: countsOnly || (sourceObjects === processedObjects && report.errors.length === 0),
+  };
+  if (!report.coverage.verified) {
+    throw new Error(`Storage coverage mismatch: processed ${processedObjects} of ${sourceObjects} source objects`);
+  }
   if (rewriteDatabase && !report.errors.length) report.databaseRowsRewritten = await rewriteMediaUrls();
 } finally {
   if (prisma) await prisma.$disconnect();
@@ -149,5 +159,5 @@ try {
 
 report.finishedAt = new Date().toISOString();
 await writeFile(manifestPath, `${JSON.stringify(report, null, 2)}\n`).catch(() => {});
-console.log(JSON.stringify({ buckets: report.buckets, migrated: report.migrated, skipped: report.skipped, bytes: report.bytes, errors: report.errors.length, databaseRowsRewritten: report.databaseRowsRewritten || 0 }));
+console.log(JSON.stringify({ buckets: report.buckets, migrated: report.migrated, skipped: report.skipped, bytes: report.bytes, errors: report.errors.length, coverage: report.coverage, databaseRowsRewritten: report.databaseRowsRewritten || 0 }));
 if (report.errors.length) process.exitCode = 1;
