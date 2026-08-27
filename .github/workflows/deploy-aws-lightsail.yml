@@ -168,7 +168,18 @@ jobs:
           printf 'INSTANCE_NAME=%s\nAPI_IP=%s\nSSH_USER=%s\n' "$INSTANCE_NAME" "$API_IP" "$SSH_USER" >> "$GITHUB_ENV"
           for attempt in $(seq 1 90); do
             if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o CertificateFile=/tmp/lightsail-cert.pem -i /tmp/lightsail-key.pem "$SSH_USER@$API_IP" true; then
-              ssh -o StrictHostKeyChecking=no -o CertificateFile=/tmp/lightsail-cert.pem -i /tmp/lightsail-key.pem "$SSH_USER@$API_IP" 'sudo cloud-init status --wait && sudo test -s /etc/dc-react.env'
+              ssh -o StrictHostKeyChecking=no -o CertificateFile=/tmp/lightsail-cert.pem -i /tmp/lightsail-key.pem "$SSH_USER@$API_IP" '
+                if ! sudo timeout 120 cloud-init status --wait; then
+                  sudo cloud-init status --long || true
+                  sudo systemctl show cloud-final \
+                    --property=ActiveState \
+                    --property=SubState \
+                    --property=Result \
+                    --property=ExecMainStatus || true
+                  exit 1
+                fi
+                sudo test -s /etc/dc-react.env
+              '
               exit 0
             fi
             sleep 10
