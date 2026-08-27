@@ -186,7 +186,12 @@ jobs:
                     --property=SubState \
                     --property=Result \
                     --property=ExecMainStatus || true
-                  if ! sudo test -s /etc/dc-react.env; then
+                  if ! command -v nginx >/dev/null 2>&1 \
+                    || ! command -v mysql >/dev/null 2>&1 \
+                    || ! command -v node >/dev/null 2>&1 \
+                    || ! command -v aws >/dev/null 2>&1 \
+                    || ! sudo test -d /opt/dc-react/app/backend \
+                    || ! sudo test -e /etc/nginx/sites-enabled/dc-react; then
                     install -m 600 /dev/null /tmp/dc-react-bootstrap.sh
                     sudo awk "length(\$0) > 1000 && \$0 ~ /^[A-Za-z0-9+\/=]+$/ { print; exit }" \
                       /var/lib/cloud/instance/scripts/part-001 | base64 --decode \
@@ -228,7 +233,12 @@ jobs:
                     rm -f /tmp/dc-react-bootstrap.sh /tmp/dc-react-bootstrap-repair.log
                   fi
                 fi
-                sudo test -s /etc/dc-react.env
+                command -v nginx >/dev/null
+                command -v mysql >/dev/null
+                command -v node >/dev/null
+                command -v aws >/dev/null
+                sudo test -d /opt/dc-react/app/backend
+                sudo test -e /etc/nginx/sites-enabled/dc-react
               '
               exit 0
             fi
@@ -361,24 +371,24 @@ jobs:
           MIGRATE_STORAGE: ${{ inputs.migrate_storage }}
         run: |
           MEDIA_BASE_URL=$(jq -r '.[] | select(.OutputKey=="MediaBaseUrl") | .OutputValue' /tmp/stack-outputs.json)
+          BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
           test -n "$MEDIA_BASE_URL"
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey "$SSH_USER@$SSH_IP" "sudo bash -s -- '$MEDIA_BASE_URL' '$MIGRATE_STORAGE'" <<'REMOTE'
+          test -n "$BUCKET"
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey "$SSH_USER@$SSH_IP" "sudo bash -s -- '$MEDIA_BASE_URL' '$MIGRATE_STORAGE' '$BUCKET'" <<'REMOTE'
           set -euo pipefail
           MEDIA_BASE_URL="$1"
           MIGRATE_STORAGE="$2"
+          BUCKET="$3"
           DB_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/mysql --query SecretString --output text)
           RUNTIME_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/runtime --query SecretString --output text)
           DB_HOST=$(aws lightsail get-relational-database --relational-database-name dc-react-mysql-lightsail --query 'relationalDatabase.masterEndpoint.address' --output text)
           DB_PORT=$(aws lightsail get-relational-database --relational-database-name dc-react-mysql-lightsail --query 'relationalDatabase.masterEndpoint.port' --output text)
-          set -a
-          source /etc/dc-react.env
-          set +a
-          BUCKET="$AWS_S3_BUCKET"
           APP_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
           APP_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
           test -n "$APP_ACCESS_KEY_ID"
           test -n "$APP_SECRET_ACCESS_KEY"
-          cat >/etc/dc-react.env <<ENV
+          ENV_FILE=$(mktemp)
+          cat >"$ENV_FILE" <<ENV
           NODE_ENV=production
           NODE_OPTIONS=--max-old-space-size=640
           HOST=127.0.0.1
@@ -405,7 +415,8 @@ jobs:
           STORAGE_MAX_UPLOAD_BYTES=20971520
           REQUEST_LOG=yes
           ENV
-          chmod 600 /etc/dc-react.env
+          install -m 600 "$ENV_FILE" /etc/dc-react.env
+          rm -f "$ENV_FILE"
           cd /opt/dc-react/app
           git fetch origin main
           git merge --ff-only origin/main
