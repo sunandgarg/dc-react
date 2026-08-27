@@ -231,6 +231,44 @@ jobs:
           done
           exit 1
 
+      - name: Install rotated application credentials
+        run: |
+          CREDENTIALS_SECRET=$(jq -r '.[] | select(.OutputKey=="ApplicationCredentialsSecretArn") | .OutputValue' /tmp/stack-outputs.json)
+          test -n "$CREDENTIALS_SECRET"
+          aws secretsmanager get-secret-value \
+            --secret-id "$CREDENTIALS_SECRET" \
+            --query SecretString \
+            --output text > /tmp/application-credentials.json
+          jq -e '.accessKeyId != "" and .secretAccessKey != ""' /tmp/application-credentials.json >/dev/null
+          chmod 600 /tmp/application-credentials.json
+          scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            /tmp/application-credentials.json "$SSH_USER@$SSH_IP:/tmp/application-credentials.json"
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
+          set -euo pipefail
+          ACCESS_KEY_ID=$(jq -r .accessKeyId /tmp/application-credentials.json)
+          SECRET_ACCESS_KEY=$(jq -r .secretAccessKey /tmp/application-credentials.json)
+          install -d -m 700 /root/.aws
+          umask 077
+          {
+            printf '[default]\n'
+            printf 'aws_access_key_id=%s\n' "$ACCESS_KEY_ID"
+            printf 'aws_secret_access_key=%s\n' "$SECRET_ACCESS_KEY"
+          } >/root/.aws/credentials
+          ENV_FILE=$(mktemp)
+          while IFS= read -r line; do
+            case "$line" in
+              AWS_ACCESS_KEY_ID=*) printf 'AWS_ACCESS_KEY_ID=%s\n' "$ACCESS_KEY_ID" ;;
+              AWS_SECRET_ACCESS_KEY=*) printf 'AWS_SECRET_ACCESS_KEY=%s\n' "$SECRET_ACCESS_KEY" ;;
+              *) printf '%s\n' "$line" ;;
+            esac
+          done </etc/dc-react.env >"$ENV_FILE"
+          install -m 600 "$ENV_FILE" /etc/dc-react.env
+          rm -f "$ENV_FILE" /tmp/application-credentials.json
+          aws sts get-caller-identity >/dev/null
+          REMOTE
+          rm -f /tmp/application-credentials.json
+
       - name: Backup and copy DigitalOcean MySQL
         if: ${{ inputs.migrate_database }}
         env:

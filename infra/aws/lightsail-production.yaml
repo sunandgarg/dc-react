@@ -235,10 +235,16 @@ Resources:
                 Action: [lightsail:GetRelationalDatabase]
                 Resource: '*'
 
-  ApplicationAccessKey:
+  ApplicationAccessKeyV2:
     Type: AWS::IAM::AccessKey
     Properties:
       UserName: !Ref ApplicationUser
+
+  ApplicationCredentialsSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '${ProjectName}/lightsail/application-credentials'
+      SecretString: !Sub '{"accessKeyId":"${ApplicationAccessKeyV2}","secretAccessKey":"${ApplicationAccessKeyV2.SecretAccessKey}"}'
 
   ApiInstance:
     Type: AWS::Lightsail::Instance
@@ -292,8 +298,8 @@ Resources:
           install -d -m 700 /root/.aws /opt/${ProjectName}
           cat >/root/.aws/credentials <<'CREDS'
           [default]
-          aws_access_key_id=${ApplicationAccessKey}
-          aws_secret_access_key=${ApplicationAccessKey.SecretAccessKey}
+          aws_access_key_id=${ApplicationAccessKeyV2}
+          aws_secret_access_key=${ApplicationAccessKeyV2.SecretAccessKey}
           CREDS
           chmod 600 /root/.aws/credentials
           aws configure set region ${AWS::Region}
@@ -318,8 +324,8 @@ Resources:
           AUTH_JWT_SECRET=$(jq -r .authJwtSecret <<<"$RUNTIME_SECRET")
           AWS_REGION=${AWS::Region}
           AWS_S3_BUCKET=${MediaBucket}
-          AWS_ACCESS_KEY_ID=${ApplicationAccessKey}
-          AWS_SECRET_ACCESS_KEY=${ApplicationAccessKey.SecretAccessKey}
+          AWS_ACCESS_KEY_ID=${ApplicationAccessKeyV2}
+          AWS_SECRET_ACCESS_KEY=${ApplicationAccessKeyV2.SecretAccessKey}
           MEDIA_BASE_URL=${InitialMediaBaseUrl}
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r '.cloudflarePagesDeployHookUrl // empty' <<<"$RUNTIME_SECRET")
           CORS_ORIGIN=${CorsOrigins}
@@ -458,4 +464,6 @@ Outputs:
     Condition: UseCloudFront
     Value: !GetAtt MediaDistribution.DomainName
   ApplicationAccessKeyId:
-    Value: !Ref ApplicationAccessKey
+    Value: !Ref ApplicationAccessKeyV2
+  ApplicationCredentialsSecretArn:
+    Value: !Ref ApplicationCredentialsSecret
