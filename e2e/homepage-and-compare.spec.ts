@@ -3,11 +3,14 @@ import { test, expect } from "@playwright/test";
 test.describe("Homepage Google Reviews", () => {
   test("review chip and 'View all' link open admin-configured URL in new tab", async ({ page }) => {
     await page.goto("/");
-    const links = page.locator('a[href*="g.co"], a[href*="google.com/maps"], a[href*="dekhocampus"]');
-    await expect(links.first()).toBeVisible({ timeout: 15_000 });
-    const href = await links.first().getAttribute("href");
-    expect(href).toBeTruthy();
-    expect(await links.first().getAttribute("target")).toBe("_blank");
+    const reviewLink = page.getByRole("link", { name: /view all reviews on google/i });
+    for (let step = 0; step < 20 && await reviewLink.count() === 0; step += 1) {
+      await page.mouse.wheel(0, 900);
+      await page.waitForTimeout(100);
+    }
+    await expect(reviewLink).toBeVisible({ timeout: 15_000 });
+    await expect(reviewLink).toHaveAttribute("href", /^(https:\/\/g\.co\/|https:\/\/(?:www\.)?google\.com\/maps)/);
+    await expect(reviewLink).toHaveAttribute("target", "_blank");
   });
 });
 

@@ -24,12 +24,18 @@ jobs:
           cache: npm
 
       - name: Build production frontend
+        env:
+          VITE_API_URL: ""
+          VITE_AWS_API_URL: ""
+          VITE_MEDIA_BASE_URL: /storage/v1/object/public
+          SITEMAP_API_URL: https://aws-origin.dekhocampus.com
         run: |
           npm ci
           npm test
           npm run lint
-          SITEMAP_API_URL=https://aws-origin.dekhocampus.com npm run build
+          npm run build
           test -s dist/_worker.js
+          ! grep -R -Fq "127.0.0.1:8787" dist/assets
           EXPECTED_ASSET=$(basename "$(find dist/assets -maxdepth 1 -type f -name 'index-*.js' | head -1)")
           test -n "$EXPECTED_ASSET"
           echo "EXPECTED_ASSET=$EXPECTED_ASSET" >> "$GITHUB_ENV"

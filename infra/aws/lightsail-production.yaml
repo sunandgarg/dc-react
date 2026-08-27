@@ -42,7 +42,7 @@ Parameters:
     AllowedValues: ['true', 'false']
   InitialMediaBaseUrl:
     Type: String
-    Default: https://dekhocampus-aws-candidate.pages.dev/storage/v1/object/public
+    Default: https://dekhocampus.com/storage/v1/object/public
 
 Conditions:
   UseCloudFront: !Equals [!Ref EnableCloudFront, 'true']

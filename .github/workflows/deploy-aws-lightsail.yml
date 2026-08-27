@@ -124,7 +124,7 @@ jobs:
               InstanceBundleId="$INSTANCE_BUNDLE_ID" \
               SshAllowedCidr="$RUNNER_IP/32" \
               EnableCloudFront='false' \
-              InitialMediaBaseUrl='https://dekhocampus-aws-candidate.pages.dev/storage/v1/object/public' \
+              InitialMediaBaseUrl='https://dekhocampus.com/storage/v1/object/public' \
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://legacy.dekhocampus.com,https://dekhocampus.com,https://www.dekhocampus.com'
           aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
             --query 'Stacks[0].Outputs' --output json > /tmp/stack-outputs.json
