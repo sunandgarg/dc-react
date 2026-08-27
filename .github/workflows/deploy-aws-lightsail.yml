@@ -156,13 +156,19 @@ jobs:
           aws lightsail get-instance-access-details \
             --instance-name "$INSTANCE_NAME" \
             --protocol ssh \
-            --query 'accessDetails.privateKey' \
-            --output text > /tmp/lightsail-key.pem
-          chmod 600 /tmp/lightsail-key.pem
-          printf 'INSTANCE_NAME=%s\nAPI_IP=%s\n' "$INSTANCE_NAME" "$API_IP" >> "$GITHUB_ENV"
+            --output json > /tmp/lightsail-access.json
+          jq -r '.accessDetails.privateKey' /tmp/lightsail-access.json > /tmp/lightsail-key.pem
+          jq -r '.accessDetails.certKey' /tmp/lightsail-access.json > /tmp/lightsail-cert.pem
+          SSH_USER=$(jq -r '.accessDetails.username' /tmp/lightsail-access.json)
+          test -s /tmp/lightsail-key.pem
+          test -s /tmp/lightsail-cert.pem
+          test -n "$SSH_USER"
+          chmod 600 /tmp/lightsail-key.pem /tmp/lightsail-cert.pem
+          rm -f /tmp/lightsail-access.json
+          printf 'INSTANCE_NAME=%s\nAPI_IP=%s\nSSH_USER=%s\n' "$INSTANCE_NAME" "$API_IP" "$SSH_USER" >> "$GITHUB_ENV"
           for attempt in $(seq 1 90); do
-            if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i /tmp/lightsail-key.pem "ubuntu@$API_IP" true; then
-              ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem "ubuntu@$API_IP" 'sudo cloud-init status --wait && sudo test -s /etc/dc-react.env'
+            if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o CertificateFile=/tmp/lightsail-cert.pem -i /tmp/lightsail-key.pem "$SSH_USER@$API_IP" true; then
+              ssh -o StrictHostKeyChecking=no -o CertificateFile=/tmp/lightsail-cert.pem -i /tmp/lightsail-key.pem "$SSH_USER@$API_IP" 'sudo cloud-init status --wait && sudo test -s /etc/dc-react.env'
               exit 0
             fi
             sleep 10
@@ -193,8 +199,8 @@ jobs:
             | gzip -9 > /tmp/dc-react-mysql.sql.gz
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
           aws s3 cp /tmp/dc-react-mysql.sql.gz "s3://$BUCKET/backups/mysql/pre-lightsail-$(date -u +%Y%m%dT%H%M%SZ).sql.gz" --sse AES256
-          scp -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem /tmp/dc-react-mysql.sql.gz "ubuntu@$API_IP:/tmp/dc-react-mysql.sql.gz"
-          ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem "ubuntu@$API_IP" 'sudo bash -s' <<'REMOTE'
+          scp -o StrictHostKeyChecking=no -o CertificateFile=/tmp/lightsail-cert.pem -i /tmp/lightsail-key.pem /tmp/dc-react-mysql.sql.gz "$SSH_USER@$API_IP:/tmp/dc-react-mysql.sql.gz"
+          ssh -o StrictHostKeyChecking=no -o CertificateFile=/tmp/lightsail-cert.pem -i /tmp/lightsail-key.pem "$SSH_USER@$API_IP" 'sudo bash -s' <<'REMOTE'
           set -euo pipefail
           set -a
           source /etc/dc-react.env
@@ -215,7 +221,7 @@ jobs:
         run: |
           MEDIA_BASE_URL=$(jq -r '.[] | select(.OutputKey=="MediaBaseUrl") | .OutputValue' /tmp/stack-outputs.json)
           test -n "$MEDIA_BASE_URL"
-          ssh -o StrictHostKeyChecking=no -i /tmp/lightsail-key.pem "ubuntu@$API_IP" "sudo bash -s -- '$MEDIA_BASE_URL' '$MIGRATE_STORAGE'" <<'REMOTE'
+          ssh -o StrictHostKeyChecking=no -o CertificateFile=/tmp/lightsail-cert.pem -i /tmp/lightsail-key.pem "$SSH_USER@$API_IP" "sudo bash -s -- '$MEDIA_BASE_URL' '$MIGRATE_STORAGE'" <<'REMOTE'
           set -euo pipefail
           MEDIA_BASE_URL="$1"
           MIGRATE_STORAGE="$2"
@@ -281,4 +287,4 @@ jobs:
             [ "$attempt" -eq 60 ] && { echo "$HEALTH"; exit 1; }
             sleep 10
           done
-          rm -f /tmp/lightsail-key.pem /tmp/stack-outputs.json
+          rm -f /tmp/lightsail-key.pem /tmp/lightsail-cert.pem /tmp/stack-outputs.json
