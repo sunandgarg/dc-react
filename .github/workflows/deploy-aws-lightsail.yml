@@ -476,6 +476,23 @@ jobs:
           fi
           pm2 reload dc-react-api --update-env
           pm2 save
+          if ! command -v certbot >/dev/null 2>&1; then
+            apt-get -o DPkg::Lock::Timeout=120 update
+            apt-get -o DPkg::Lock::Timeout=120 install -y certbot python3-certbot-nginx
+          fi
+          sed -i 's/server_name _;/server_name aws-origin.dekhocampus.com;/' /etc/nginx/sites-available/dc-react
+          nginx -t
+          systemctl reload nginx
+          certbot --nginx \
+            --domain aws-origin.dekhocampus.com \
+            --non-interactive \
+            --agree-tos \
+            --email chetanhanugarg@gmail.com \
+            --redirect \
+            --keep-until-expiring
+          systemctl enable --now certbot.timer
+          curl --fail --silent --show-error --max-time 20 https://aws-origin.dekhocampus.com/health \
+            | jq -e '.ok == true and .database == "mysql" and .storage == "s3"' >/dev/null
           REMOTE
 
       - name: Publish build sitemap seed to private S3
@@ -542,4 +559,6 @@ jobs:
             [ "$attempt" -eq 60 ] && { echo "$HEALTH"; exit 1; }
             sleep 10
           done
+          curl --fail --silent --show-error --max-time 20 https://aws-origin.dekhocampus.com/health \
+            | jq -e '.ok == true and .database == "mysql" and .storage == "s3"' >/dev/null
           rm -f /tmp/tempkey /tmp/tempkey-cert.pub /tmp/stack-outputs.json

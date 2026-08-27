@@ -1,4 +1,4 @@
-const API_ORIGIN = "http://ec2-3-7-27-134.ap-south-1.compute.amazonaws.com";
+const API_ORIGIN = "https://aws-origin.dekhocampus.com";
 
 const API_PREFIXES = [
   "/auth/v1/",
