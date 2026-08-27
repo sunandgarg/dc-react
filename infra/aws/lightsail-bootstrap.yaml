@@ -120,6 +120,7 @@ Resources:
                   - s3:PutBucketTagging
                   - s3:PutBucketVersioning
                   - s3:PutEncryptionConfiguration
+                  - s3:PutLifecycleConfiguration
                 Resource:
                   - !Sub 'arn:${AWS::Partition}:s3:::${ProjectName}-*'
               - Sid: CandidateCloudFront
