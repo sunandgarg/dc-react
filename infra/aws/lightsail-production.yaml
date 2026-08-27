@@ -276,8 +276,8 @@ Resources:
           #!/usr/bin/env bash
           set -euo pipefail
           export DEBIAN_FRONTEND=noninteractive
-          apt-get update
-          apt-get install -y ca-certificates curl git nginx default-mysql-client unzip jq
+          apt-get -o DPkg::Lock::Timeout=120 update
+          apt-get -o DPkg::Lock::Timeout=120 install -y ca-certificates curl git nginx mysql-client unzip jq
           curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
           apt-get install -y nodejs
           npm install -g pm2
