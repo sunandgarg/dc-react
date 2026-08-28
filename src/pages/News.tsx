@@ -59,16 +59,16 @@ const LatestCard = memo(function LatestCard({ a, eager }: { a: Article; eager: b
   return (
     <Link to={`/news/${a.slug}`} className="group">
       <div className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="h-44 bg-muted overflow-hidden">
+        <div className="aspect-video bg-white overflow-hidden">
           {a.featured_image ? (
             <img
               src={a.featured_image}
-              alt=""
+              alt={a.title}
               width={400}
-              height={176}
+              height={225}
               loading={eager ? "eager" : "lazy"}
               decoding="async"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-contain"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
@@ -96,7 +96,7 @@ const SidebarItem = memo(function SidebarItem({ a }: { a: Article }) {
     <Link to={`/news/${a.slug}`} className="flex gap-3 group">
       <div className="w-24 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
         {a.featured_image ? (
-          <img src={a.featured_image} alt="" width={96} height={80} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+          <img src={a.featured_image} alt={a.title} width={96} height={80} loading="lazy" decoding="async" className="w-full h-full object-contain bg-white" />
         ) : (
           <div className="w-full h-full bg-primary/10 flex items-center justify-center"><FileText className="w-6 h-6 text-primary/30" /></div>
         )}
@@ -317,7 +317,7 @@ export default function News() {
                           height={400}
                           fetchPriority="high"
                           decoding="async"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain bg-white"
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center"><Newspaper className="w-16 h-16 text-primary/30" /></div>
