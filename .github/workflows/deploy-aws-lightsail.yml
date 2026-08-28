@@ -443,6 +443,41 @@ jobs:
           PUBLIC_BASE_URL=https://dekhocampus.com npm --prefix backend run verify:production-crud
           REMOTE
 
+      - name: Verify full-field core entity create and edit on public UI
+        run: |
+          npx playwright install --with-deps chromium
+
+          run_core_phase() {
+            ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+              "$SSH_USER@$SSH_IP" "sudo bash -s -- '$1'" <<'REMOTE'
+          set -euo pipefail
+          phase="$1"
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app
+          PUBLIC_BASE_URL=https://dekhocampus.com npm --prefix backend run verify:production-core -- "$phase"
+          REMOTE
+          }
+
+          cleanup_core_records() {
+            run_core_phase cleanup || true
+          }
+          trap cleanup_core_records EXIT
+
+          run_core_phase prepare
+          scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            "$SSH_USER@$SSH_IP:/tmp/dc-core-entity-regression.json" /tmp/dc-core-create.json
+          PUBLIC_BASE_URL=https://dekhocampus.com node scripts/verify-core-entity-ui.mjs /tmp/dc-core-create.json create
+
+          run_core_phase edit
+          scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            "$SSH_USER@$SSH_IP:/tmp/dc-core-entity-regression.json" /tmp/dc-core-edit.json
+          PUBLIC_BASE_URL=https://dekhocampus.com node scripts/verify-core-entity-ui.mjs /tmp/dc-core-edit.json edit
+
+          run_core_phase cleanup
+          trap - EXIT
+
       - name: Verify private storage and API
         run: |
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)

@@ -1,34 +1,31 @@
-import { useState } from "react";
-import { Filter } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { FilterAccordionGroup, FilterGroupConfig } from "@/components/FilterAccordion";
 
 interface MobileFilterSheetProps {
   filters: FilterGroupConfig[];
   activeCount: number;
   onClearAll: () => void;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   resultCount?: number;
 }
 
 export function MobileFilterSheet({ filters, activeCount, onClearAll, open, onOpenChange, resultCount }: MobileFilterSheetProps) {
-  const [internalOpen, setInternalOpen] = useState(false);
-  const isControlled = open !== undefined;
-  const isOpen = isControlled ? open : internalOpen;
-  const setOpen = isControlled ? (onOpenChange || (() => {})) : setInternalOpen;
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches && open) onOpenChange(false);
+    };
+
+    closeOnDesktop();
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, [onOpenChange, open]);
 
   return (
-    <Sheet open={isOpen} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button variant="outline" size="sm" className="hidden lg:flex rounded-xl gap-2 h-9 text-xs">
-          <Filter className="w-3.5 h-3.5" />
-          Filters
-          {activeCount > 0 && <Badge className="bg-primary text-primary-foreground text-[10px] px-1.5 h-4">{activeCount}</Badge>}
-        </Button>
-      </SheetTrigger>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
         className="z-[90] h-[min(92dvh,760px)] max-h-[calc(100dvh-env(safe-area-inset-top)-0.75rem)] overflow-hidden p-0 flex flex-col rounded-t-2xl"
@@ -54,7 +51,7 @@ export function MobileFilterSheet({ filters, activeCount, onClearAll, open, onOp
           ))}
         </div>
         <div className="p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] border-t border-border flex-shrink-0 bg-background">
-          <Button className="w-full rounded-xl h-11" onClick={() => setOpen(false)}>
+          <Button className="w-full rounded-xl h-11" onClick={() => onOpenChange(false)}>
             {typeof resultCount === "number" ? `Show ${resultCount} results` : "Apply Filters"}
           </Button>
         </div>

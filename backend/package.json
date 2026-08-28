@@ -12,7 +12,8 @@
     "db:parity": "node --env-file-if-exists=.env.local scripts/apply-mysql-parity.mjs",
     "db:normalize:media": "node scripts/normalize-external-media.mjs",
     "verify:integrations": "node scripts/verify-production-integrations.mjs",
-    "verify:production-crud": "node scripts/production-crud-regression.mjs"
+    "verify:production-crud": "node scripts/production-crud-regression.mjs",
+    "verify:production-core": "node scripts/production-core-entity-regression.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.887.0",
