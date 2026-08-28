@@ -230,7 +230,9 @@ async function publicRow(table, id) {
 
 async function deleteById(table, id) {
   const result = await handleRest(table, requestFor(table, "DELETE", { id, prefer: "" }));
-  if (result.status !== 204) throw new Error(`${table} cleanup returned ${result.status}`);
+  if (![200, 204].includes(result.status)) throw new Error(`${table} cleanup returned ${result.status}`);
+  const check = await handleRest(table, requestFor(table, "GET", { id, prefer: "" }));
+  if (check.status !== 406) throw new Error(`${table} record remained after cleanup`);
 }
 
 async function cleanupStale() {
