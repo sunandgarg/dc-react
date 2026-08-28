@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -29,12 +29,12 @@ export function CareerCoursePicker({ careerSlug }: Props) {
     })();
   }, []);
 
-  const reload = async () => {
+  const reload = useCallback(async () => {
     if (!careerSlug) return;
     const { data } = await (backendClient as any).from("career_course_links").select("*").eq("career_slug", careerSlug);
     setLinks(data || []);
-  };
-  useEffect(() => { reload(); }, [careerSlug]);
+  }, [careerSlug]);
+  useEffect(() => { void reload(); }, [reload]);
 
   const linkedSet = useMemo(() => new Set(links.map((l) => l.course_slug)), [links]);
 

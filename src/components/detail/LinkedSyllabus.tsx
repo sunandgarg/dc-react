@@ -22,17 +22,19 @@ interface SubjectRow {
 /** Public render: clickable cards for linked school classes + college subjects. */
 export function LinkedSyllabus({ classes = [], subjectIds = [], title }: Props) {
   const [subjects, setSubjects] = useState<SubjectRow[]>([]);
+  const subjectIdsKey = subjectIds.join(",");
 
   useEffect(() => {
-    if (!subjectIds.length) { setSubjects([]); return; }
+    const requestedSubjectIds = subjectIdsKey ? subjectIdsKey.split(",") : [];
+    if (!requestedSubjectIds.length) { setSubjects([]); return; }
     (async () => {
       const { data } = await (backendClient as any)
         .from("college_subjects")
         .select("id, name, code, semester_num, slug, program_slug, university_slug")
-        .in("id", subjectIds);
+        .in("id", requestedSubjectIds);
       setSubjects((data as SubjectRow[]) || []);
     })();
-  }, [subjectIds.join(",")]);
+  }, [subjectIdsKey]);
 
   if (!classes.length && !subjectIds.length) return null;
 

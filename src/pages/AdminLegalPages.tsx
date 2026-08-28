@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -31,14 +31,14 @@ export default function AdminLegalPages() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     const { data } = await backendClient.from("legal_pages").select("*").order("title");
     setPages((data || []) as LegalPage[]);
-    if (data?.length && !selectedId) setSelectedId(data[0].id);
+    if (data?.length) setSelectedId((current) => current || data[0].id);
     setLoading(false);
-  };
-  useEffect(() => { load(); }, []);
+  }, [setSelectedId]);
+  useEffect(() => { load(); }, [load]);
 
   const selected = pages.find(p => p.id === selectedId);
 

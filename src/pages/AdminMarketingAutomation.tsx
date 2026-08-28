@@ -869,7 +869,7 @@ function PrefillEditor({ rule, unis, onSaved }: { rule: Rule; unis: Uni[]; onSav
   const scenarios = useMemo(() => buildScenarios(rule, courseLabels), [rule, courseLabels]);
 
   const [prefills, setPrefills] = useState<Rule["prefills"]>(rule.prefills || {});
-  useEffect(() => { setPrefills(rule.prefills || {}); }, [rule.id]);
+  useEffect(() => { setPrefills(rule.prefills || {}); }, [rule.id, rule.prefills]);
   const [saving, setSaving] = useState(false);
   const [activeUni, setActiveUni] = useState(targets[0]?.id || "");
   const [activeScenario, setActiveScenario] = useState("*");

@@ -125,8 +125,8 @@ export default function EligibilityChecker() {
     staleTime: 5 * 60_000,
   });
 
-  const colleges = boundary?.stream ?? [];
-  const partnerColleges = boundary?.partners ?? [];
+  const colleges = useMemo(() => boundary?.stream ?? [], [boundary?.stream]);
+  const partnerColleges = useMemo(() => boundary?.partners ?? [], [boundary?.partners]);
 
   // City/state-only fallback list for low-score path (no AI hit)
   const { data: cityColleges = [] } = useQuery({

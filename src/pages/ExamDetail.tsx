@@ -120,7 +120,7 @@ export default function ExamDetail() {
       document.getElementById(strategy.focusSection)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 350);
     return () => clearTimeout(t);
-  }, [strategy?.slug, exam?.slug]);
+  }, [exam, strategy]);
 
   if (isLoading) {
     return (

@@ -659,7 +659,7 @@ export function UploadLeadsTab({
       lastUrlProcessingStateRef.current = slugState;
       onProcessingStateChange(slugState);
     }
-  }, [isProcessing, isPaused, startTime, batchId, leads.length, processedCount]);
+  }, [isProcessing, isPaused, startTime, batchId, leads.length, processedCount, persistence, onProcessingStateChange]);
 
   // ========== POLLING: Real-time batch & lead status sync from DB ==========
   // Uses refs to avoid stale closures - this function is stable and never recreated
@@ -759,7 +759,7 @@ export function UploadLeadsTab({
         }
       }
     }
-  }, [safeUniversities, persistedState.selectedUniversityId]);
+  }, [safeUniversities, persistedState.selectedUniversityId, selectedUniversity, onSelectUniversity]);
 
   const setLeads = useCallback(
     (newLeads: Lead[]) => {
@@ -884,7 +884,7 @@ export function UploadLeadsTab({
     [persistence],
   );
 
-  const normalizeUpgradMobile = (value: string) => {
+  const normalizeUpgradMobile = useCallback((value: string) => {
     const rawMobile = (value || "").toString().trim();
     let countryCode = "+91";
     let number = rawMobile.replace(/\D/g, "");
@@ -898,9 +898,17 @@ export function UploadLeadsTab({
       number = number.slice(1);
     }
     return { countryCode, number };
-  };
+  }, []);
 
-  const normalizeUpgradLead = (lead: Lead): Lead => {
+  const slugifyUpgradCourse = useCallback((value: string) =>
+    (value || "")
+      .toString()
+      .trim()
+      .toLowerCase()
+      .replace(/[\s_]+/g, "-")
+      .replace(/[^a-z0-9-]/g, ""), []);
+
+  const normalizeUpgradLead = useCallback((lead: Lead): Lead => {
     if ((selectedUniversity?.api_type || "") !== "upgrad") return lead;
     const phone = normalizeUpgradMobile(lead["phone.number"] || lead.mobile || "");
     const programOfInterest = slugifyUpgradCourse(lead.programOfInterest || lead.course || lead.specialization || "");
@@ -920,20 +928,12 @@ export function UploadLeadsTab({
       "extraFields.chatLink": lead["extraFields.chatLink"] || "haptik.com/1234567",
       emailTemplateSuffix: lead.emailTemplateSuffix || "in",
     };
-  };
+  }, [normalizeUpgradMobile, selectedUniversity?.api_type, slugifyUpgradCourse]);
 
-  const slugifyUpgradCourse = (value: string) =>
-    (value || "")
-      .toString()
-      .trim()
-      .toLowerCase()
-      .replace(/[\s_]+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
+  const isLeadSquaredCustomUiPublisher = useCallback((apiUrl?: string) =>
+    (apiUrl || "").toLowerCase().includes("customui.leadsquared.com"), []);
 
-  const isLeadSquaredCustomUiPublisher = (apiUrl?: string) =>
-    (apiUrl || "").toLowerCase().includes("customui.leadsquared.com");
-
-  const addFirstAvailablePayloadAlias = (payload: Record<string, string>, aliases: string[]) => {
+  const addFirstAvailablePayloadAlias = useCallback((payload: Record<string, string>, aliases: string[]) => {
     const existingValue = aliases
       .map((key) => payload[key])
       .find((value) => value !== undefined && value !== null && String(value).trim() !== "");
@@ -945,15 +945,15 @@ export function UploadLeadsTab({
         payload[key] = String(existingValue);
       }
     });
-  };
+  }, []);
 
-  const addAcademicPayloadAliases = (payload: Record<string, string>) => {
+  const addAcademicPayloadAliases = useCallback((payload: Record<string, string>) => {
     addFirstAvailablePayloadAlias(payload, ["campus", "Campus"]);
     addFirstAvailablePayloadAlias(payload, ["course", "Course"]);
     addFirstAvailablePayloadAlias(payload, ["specialization", "Specialization", "Specialisation", "specialisation"]);
-  };
+  }, [addFirstAvailablePayloadAlias]);
 
-  const canonicalizePayloadField = (payload: Record<string, string>, canonicalKey: string, aliases: string[]) => {
+  const canonicalizePayloadField = useCallback((payload: Record<string, string>, canonicalKey: string, aliases: string[]) => {
     const existingValue = [canonicalKey, ...aliases]
       .map((key) => payload[key])
       .find((value) => value !== undefined && value !== null && String(value).trim() !== "");
@@ -965,9 +965,9 @@ export function UploadLeadsTab({
     aliases.forEach((key) => {
       if (key !== canonicalKey) delete payload[key];
     });
-  };
+  }, []);
 
-  const normalizeMerittoNoPaperFormsPayload = (payload: Record<string, string>) => {
+  const normalizeMerittoNoPaperFormsPayload = useCallback((payload: Record<string, string>) => {
     addFirstAvailablePayloadAlias(payload, ["campus", "Campus"]);
     canonicalizePayloadField(payload, "course", ["Course"]);
     canonicalizePayloadField(payload, "specialization", [
@@ -977,9 +977,9 @@ export function UploadLeadsTab({
       "specializationName",
       "specialization_name",
     ]);
-  };
+  }, [addFirstAvailablePayloadAlias, canonicalizePayloadField]);
 
-  const normalizeCustomUiPublisherPayload = (payload: unknown) => {
+  const normalizeCustomUiPublisherPayload = useCallback((payload: unknown) => {
     if (!isLeadSquaredCustomUiPublisher(selectedUniversity?.api_url) || Array.isArray(payload) || !payload || typeof payload !== "object") {
       return payload;
     }
@@ -987,7 +987,7 @@ export function UploadLeadsTab({
     const normalized = { ...(payload as Record<string, string>) };
     addAcademicPayloadAliases(normalized);
     return normalized;
-  };
+  }, [addAcademicPayloadAliases, isLeadSquaredCustomUiPublisher, selectedUniversity?.api_url]);
 
   const normalizeLeadSquaredTrackingFields = (payload: Record<string, string>) => {
     const sourceValue = payload.leadSource || payload.source || "";
@@ -1003,11 +1003,11 @@ export function UploadLeadsTab({
     if (campaignValue) payload.leadCampaign = campaignValue;
   };
 
-  const ensureLeadSquaredTrackingFields = (payload: Record<string, string>) => {
+  const ensureLeadSquaredTrackingFields = useCallback((payload: Record<string, string>) => {
     if (!payload.leadSource && selectedUniversity?.source) payload.leadSource = selectedUniversity.source;
     if (!payload.leadMedium && selectedUniversity?.medium) payload.leadMedium = selectedUniversity.medium;
     if (!payload.leadCampaign && selectedUniversity?.campaign) payload.leadCampaign = selectedUniversity.campaign;
-  };
+  }, [selectedUniversity?.campaign, selectedUniversity?.medium, selectedUniversity?.source]);
 
   const buildLeadSquaredAttributePayload = (payload: Record<string, string>) =>
     Object.entries(payload)
@@ -1030,7 +1030,7 @@ export function UploadLeadsTab({
       })
       .map(([key, value]) => ({ Attribute: key, Value: String(value) }));
 
-  const buildMappedPayloadPreview = (lead: Lead): string => {
+  const buildMappedPayloadPreview = useCallback((lead: Lead): string => {
     if (!selectedUniversity) return "";
 
     const apiType = selectedUniversity.api_type || "nopaperforms";
@@ -1299,7 +1299,13 @@ export function UploadLeadsTab({
     const normalizedPayload = normalizeCustomUiPublisherPayload(payload);
     const finalPayload = selectedUniversity.payload_wrapper === "array" ? [normalizedPayload] : normalizedPayload;
     return JSON.stringify(finalPayload, null, 2);
-  };
+  }, [
+    ensureLeadSquaredTrackingFields,
+    normalizeCustomUiPublisherPayload,
+    normalizeMerittoNoPaperFormsPayload,
+    normalizeUpgradMobile,
+    selectedUniversity,
+  ]);
 
   const handleUniversityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const uni = safeUniversities.find((u) => u.id === e.target.value);
@@ -2099,7 +2105,7 @@ export function UploadLeadsTab({
     };
   };
 
-  const processLeads = useCallback(async () => {
+  const processLeads = async () => {
     if (!selectedUniversity || leads.length === 0) return;
 
     if (!sourceLabel.trim()) {
@@ -2120,7 +2126,7 @@ export function UploadLeadsTab({
       message: `Queuing ${leads.length} leads for background processing...`,
     });
     await startBackgroundProcessing();
-  }, [selectedUniversity, leads, startBackgroundProcessing, sourceLabel]);
+  };
 
   const pauseProcessing = async () => {
     pausedRef.current = true;

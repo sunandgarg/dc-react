@@ -105,7 +105,7 @@ export function SingleLeadForm({ university, onClose, onSuccess }: SingleLeadFor
   }, [payloadFields]);
 
   // Initialize form data with all required fields
-  const getInitialFormData = () => {
+  const getInitialFormData = useCallback(() => {
     const initial: Record<string, string> = {
       name: '',
       email: '',
@@ -130,7 +130,7 @@ export function SingleLeadForm({ university, onClose, onSuccess }: SingleLeadFor
     });
 
     return initial;
-  };
+  }, [customInputFields, university]);
 
   const [formData, setFormData] = useState<Record<string, string>>(getInitialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -141,7 +141,7 @@ export function SingleLeadForm({ university, onClose, onSuccess }: SingleLeadFor
   // Update form when university changes
   useEffect(() => {
     setFormData(getInitialFormData());
-  }, [university.id]);
+  }, [getInitialFormData, university.id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

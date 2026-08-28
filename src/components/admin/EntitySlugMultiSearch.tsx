@@ -104,7 +104,7 @@ export function EntitySlugMultiSearch({ kind, value, onChange, label, placeholde
       setLoading(false);
     }, 220);
     return () => { clearTimeout(t); ac.abort(); };
-  }, [q, kind]);
+  }, [q, kind, meta.table, meta.cols, meta.nameCol]);
 
   const toggle = (slug: string, lbl?: string) => {
     if (value.includes(slug)) {

@@ -185,15 +185,16 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
   const activeRun = runs.find((run) => run.status === "running");
   const pausedRun = runs.find((run) => run.status === "paused");
   const currentRun = activeRun || pausedRun;
+  const activeRunId = activeRun?.id;
 
   useEffect(() => {
-    if (!activeRun) return;
+    if (!activeRunId) return;
     const timer = window.setInterval(() => {
       setNow(Date.now());
       void load(false);
     }, 3000);
     return () => window.clearInterval(timer);
-  }, [activeRun?.id]);
+  }, [activeRunId]);
 
   useEffect(() => {
     if (loading) return;

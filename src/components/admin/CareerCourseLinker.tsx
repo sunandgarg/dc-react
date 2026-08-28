@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,13 +17,13 @@ export function CareerCourseLinker({ courseSlug }: Props) {
   const [careers, setCareers] = useState<CareerLite[]>([]);
   const [search, setSearch] = useState("");
 
-  const reload = async () => {
+  const reload = useCallback(async () => {
     if (!courseSlug) return;
     const { data } = await (backendClient as any).from("career_course_links").select("id,career_slug").eq("course_slug", courseSlug);
     setLinked(data || []);
-  };
+  }, [courseSlug]);
 
-  useEffect(() => { reload(); }, [courseSlug]);
+  useEffect(() => { void reload(); }, [reload]);
   useEffect(() => {
     (backendClient as any).from("career_profiles").select("slug,name,domain,icon_emoji").eq("is_active", true).order("name").then(({ data }: any) => setCareers(data || []));
   }, []);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { backendClient } from "@/integrations/backend/client";
 import { Badge } from "@/components/ui/badge";
@@ -25,9 +25,12 @@ export function ArticleLinkedResources({ articleId, tags = [] }: Props) {
   const [rows, setRows] = useState<Row[]>([]);
   const [studyChips, setStudyChips] = useState<{ label: string; href: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const tagStudyChips = tags
-    .filter((t) => /^class-\d+/.test(t))
-    .map((t) => ({ label: t, href: `/study-material?tag=${encodeURIComponent(t)}` }));
+  const tagStudyChips = useMemo(
+    () => tags
+      .filter((t) => /^class-\d+/.test(t))
+      .map((t) => ({ label: t, href: `/study-material?tag=${encodeURIComponent(t)}` })),
+    [tags],
+  );
 
   useEffect(() => {
     if (!articleId) { setLoading(false); return; }
@@ -115,7 +118,7 @@ export function ArticleLinkedResources({ articleId, tags = [] }: Props) {
       if (!cancelled) { setRows(fetched.flat()); setStudyChips(deduped); setLoading(false); }
     })();
     return () => { cancelled = true; };
-  }, [articleId]);
+  }, [articleId, tagStudyChips]);
 
   if (loading) {
     return (

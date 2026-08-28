@@ -17,10 +17,12 @@ export function RelatedCoursesExamsStrip({ courseSlugs = [], examSlugs = [], col
   const [courses, setCourses] = useState<Row[]>([]);
   const [exams, setExams] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const courseSlugsKey = courseSlugs.join(",");
+  const examSlugsKey = examSlugs.join(",");
 
   useEffect(() => {
-    const cs = (courseSlugs || []).filter(Boolean);
-    const es = (examSlugs || []).filter(Boolean);
+    const cs = courseSlugsKey.split(",").filter(Boolean);
+    const es = examSlugsKey.split(",").filter(Boolean);
     if (!cs.length && !es.length) { setLoading(false); return; }
     let cancelled = false;
     (async () => {
@@ -38,7 +40,7 @@ export function RelatedCoursesExamsStrip({ courseSlugs = [], examSlugs = [], col
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [courseSlugs.join(","), examSlugs.join(",")]);
+  }, [courseSlugsKey, examSlugsKey]);
 
   if (loading) {
     return (

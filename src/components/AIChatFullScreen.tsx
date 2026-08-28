@@ -202,20 +202,6 @@ export function AIChatFullScreen({ isOpen, onClose, initialMessage, leadData, on
     }
   }, [isOpen, leadData, initialMessage]);
 
-  // When lead data arrives after form
-  useEffect(() => {
-    if (leadData?.name && isOpen && hasInit.current && !hasCollectedLead) {
-      setHasCollectedLead(true);
-      const infoMsg = `Great! Here's what I know about you:\n\n👤 **Name:** ${leadData.name}\n📚 **Course Interest:** ${leadData.course || "Not specified"}\n📍 **Location:** ${leadData.city ? `${leadData.city}, ${leadData.state}` : leadData.state || "India"}\n\nI'll use this to give you personalized recommendations! Pick a question below or ask me anything:`;
-      setMessages(prev => [...prev, { role: "assistant", content: infoMsg }]);
-      
-      if (pendingQuery) {
-        setTimeout(() => streamChat(pendingQuery), 500);
-        setPendingQuery(null);
-      }
-    }
-  }, [leadData, isOpen, hasCollectedLead]);
-
   useEffect(() => {
     if (!isOpen) hasInit.current = false;
   }, [isOpen]);
@@ -295,6 +281,20 @@ export function AIChatFullScreen({ isOpen, onClose, initialMessage, leadData, on
       setIsLoading(false);
     }
   }, [messages, leadData]);
+
+  // Continue the pending question once the lead form supplies verified details.
+  useEffect(() => {
+    if (leadData?.name && isOpen && hasInit.current && !hasCollectedLead) {
+      setHasCollectedLead(true);
+      const infoMsg = `Great! Here's what I know about you:\n\n👤 **Name:** ${leadData.name}\n📚 **Course Interest:** ${leadData.course || "Not specified"}\n📍 **Location:** ${leadData.city ? `${leadData.city}, ${leadData.state}` : leadData.state || "India"}\n\nI'll use this to give you personalized recommendations! Pick a question below or ask me anything:`;
+      setMessages(prev => [...prev, { role: "assistant", content: infoMsg }]);
+
+      if (pendingQuery) {
+        window.setTimeout(() => void streamChat(pendingQuery), 500);
+        setPendingQuery(null);
+      }
+    }
+  }, [hasCollectedLead, isOpen, leadData, pendingQuery, streamChat]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

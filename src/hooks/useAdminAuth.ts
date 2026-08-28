@@ -187,21 +187,21 @@ export function useAdminAuth(): AdminAuthState & { refetch: () => Promise<void> 
       isInitialCheckDoneRef.current = true;
       setState(fallbackState);
     }
-  }, [user?.id, user?.email]);
+  }, [user]);
 
   // Initial check - only when auth loading finishes and user changes
   useEffect(() => {
     if (!authLoading) {
       checkAdminStatus(true);
     }
-  }, [authLoading, user?.id]);
+  }, [authLoading, checkAdminStatus, user?.id]);
 
   // Keep approval and role changes fresh without depending on DekhoCampus API Realtime.
   useEffect(() => {
     if (!user) return;
     const timer = window.setInterval(() => { void checkAdminStatus(false); }, 30_000);
     return () => window.clearInterval(timer);
-  }, [user?.id, checkAdminStatus]);
+  }, [checkAdminStatus, user]);
 
   return {
     ...state,

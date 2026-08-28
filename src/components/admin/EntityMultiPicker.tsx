@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -86,12 +86,12 @@ export function EntityMultiPicker({ articleId }: Props) {
     return () => { clearTimeout(handle); ac.abort(); };
   }, [search, active]);
 
-  const reload = async () => {
+  const reload = useCallback(async () => {
     if (!articleId) return;
     const { data } = await (backendClient as any).from("article_links").select("*").eq("article_id", articleId);
     setLinks(data || []);
-  };
-  useEffect(() => { reload(); }, [articleId]);
+  }, [articleId]);
+  useEffect(() => { void reload(); }, [reload]);
 
   const linkedFor = (type: string) =>
     new Set(links.filter((l) => l.entity_type === type).map((l) => l.entity_slug));

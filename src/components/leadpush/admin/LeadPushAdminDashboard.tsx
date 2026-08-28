@@ -140,7 +140,7 @@ export default function LeadPushAdminDashboard() {
     setDetailLoading(false);
   };
 
-  const load = async (rk: RangeKey = range, cf = customFrom, ct = customTo) => {
+  const load = useCallback(async (rk: RangeKey = range, cf = customFrom, ct = customTo) => {
     setLoading(true);
     const { from, to } = rangeToDates(rk, cf, ct);
     let dailyQ = backendClient.from("lead_push_daily_stats").select("*");
@@ -158,9 +158,9 @@ export default function LeadPushAdminDashboard() {
     setUniversities(nextU); setDaily(nextD); setCumulative(nextC); setFetchedAt(stamp);
     writeCache({ universities: nextU, daily: nextD, cumulative: nextC, fetchedAt: stamp });
     setLoading(false);
-  };
+  }, [customFrom, customTo, range]);
 
-  useEffect(() => { if (!cached) load(); }, []);
+  useEffect(() => { if (!cached) load(); }, [cached, load]);
 
   const onRangeChange = (rk: RangeKey) => {
     setRange(rk);

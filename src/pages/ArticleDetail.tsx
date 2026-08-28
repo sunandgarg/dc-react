@@ -138,7 +138,7 @@ export default function ArticleDetail() {
       const list: string[] = JSON.parse(localStorage.getItem(`dc_saved_articles_${user.id}`) || "[]");
       setSaved(list.includes(article.slug));
     } catch { setSaved(false); }
-  }, [user?.id, article?.slug]);
+  }, [article, user]);
 
 
   const recommendations = useMemo(() => {

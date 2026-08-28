@@ -63,7 +63,7 @@ export function AdEntitySearchSelect({ page, value, onChange, error }: Props) {
       if (!cancelled && data) setSelectedLabel(data.short_name || data[meta.labelColumn] || value);
     })();
     return () => { cancelled = true; };
-  }, [meta.labelColumn, meta.table, value]);
+  }, [meta.labelColumn, meta.table, page, value]);
 
   useEffect(() => {
     if (!open) return;

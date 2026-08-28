@@ -126,7 +126,7 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
     }, normalizedQuery.length <= 2 ? 140 : 90);
 
     return () => window.clearTimeout(timer);
-  }, [normalizedQuery, variants]);
+  }, [normalizedQuery, query, variants]);
 
   const askDiya = () => {
     const message = query.trim() || undefined;

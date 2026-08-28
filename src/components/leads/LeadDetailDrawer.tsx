@@ -48,7 +48,7 @@ export function LeadDetailDrawer({ lead, onClose, onChanged }: { lead: any | nul
       setNotes((data as Note[]) || []);
       setLoading(false);
     })();
-  }, [lead?.id]);
+  }, [lead?.id, lead?.status]);
 
   if (!lead) return null;
   const tel = (lead.phone || "").replace(/\D/g, "").slice(-10);

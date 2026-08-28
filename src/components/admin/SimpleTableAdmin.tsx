@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,17 +50,19 @@ export function SimpleTableAdmin({ table, fields, titleKey = "name", subtitleKey
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<any | null>(null);
+  const orderColumn = orderBy?.column;
+  const orderAscending = orderBy?.ascending ?? true;
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     let q = (backendClient as any).from(table).select("*");
-    if (orderBy) q = q.order(orderBy.column, { ascending: orderBy.ascending ?? true });
+    if (orderColumn) q = q.order(orderColumn, { ascending: orderAscending });
     const { data, error } = await q;
     if (error) toast.error(error.message); else setRows(data || []);
     setLoading(false);
-  };
+  }, [orderAscending, orderColumn, table]);
 
-  useEffect(() => { load(); }, [table]);
+  useEffect(() => { void load(); }, [load]);
 
   const save = async () => {
     if (!editing) return;

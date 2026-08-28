@@ -72,7 +72,7 @@ export default function Onboarding() {
       setPrefilled(true);
     })();
     return () => { cancelled = true; };
-  }, [user?.id, prefilled, navigate]);
+  }, [navigate, prefilled, user]);
 
   if (!isLoading && !user) return <Navigate to="/auth" replace />;
 

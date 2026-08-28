@@ -110,6 +110,7 @@ export function useInfiniteData({
     staleTime: 5 * 60 * 1000,
     placeholderData: undefined,
   });
+  const { fetchNextPage, hasNextPage, isFetchingNextPage } = query;
 
   // IntersectionObserver for infinite scroll
   useEffect(() => {
@@ -118,8 +119,8 @@ export function useInfiniteData({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && query.hasNextPage && !query.isFetchingNextPage) {
-          query.fetchNextPage();
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          void fetchNextPage();
         }
       },
       { rootMargin: "300px" }
@@ -127,7 +128,7 @@ export function useInfiniteData({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [query.hasNextPage, query.isFetchingNextPage, query.fetchNextPage]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const items = query.data?.pages.flatMap(p => p.items) ?? [];
 

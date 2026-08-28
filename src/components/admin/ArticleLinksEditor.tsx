@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,12 +41,12 @@ export function ArticleLinksEditor({
   const [slug, setSlug] = useState("");
   const [bulk, setBulk] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const { data } = await (backendClient as any)
       .from("article_links").select("*").eq(ownerColumn, ownerId);
     setLinks(data || []);
-  };
-  useEffect(() => { if (ownerId) load(); }, [ownerId]);
+  }, [ownerColumn, ownerId]);
+  useEffect(() => { if (ownerId) load(); }, [load, ownerId]);
 
   const addOne = async (entitySlug: string) => {
     const s = entitySlug.trim().toLowerCase();

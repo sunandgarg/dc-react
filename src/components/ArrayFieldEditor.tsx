@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Plus, X, Upload, Images, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +52,7 @@ export function ArrayFieldEditor({ label, values, onChange, placeholder, suggest
     }
   };
 
-  const loadLibrary = async () => {
+  const loadLibrary = useCallback(async () => {
     setLibLoading(true);
     try {
       const { data, error } = await backendClient.storage.from(bucket).list(folder, {
@@ -72,9 +72,9 @@ export function ArrayFieldEditor({ label, values, onChange, placeholder, suggest
     } finally {
       setLibLoading(false);
     }
-  };
+  }, [bucket, folder]);
 
-  useEffect(() => { if (libOpen && imageUpload) loadLibrary(); }, [libOpen]);
+  useEffect(() => { if (libOpen && imageUpload) void loadLibrary(); }, [imageUpload, libOpen, loadLibrary]);
 
   const add = () => {
     const trimmed = input.trim();

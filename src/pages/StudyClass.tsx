@@ -14,7 +14,7 @@ export default function StudyClass() {
   const classNum = Number((classSlug || "").replace(/\D/g, ""));
   const { data: boards = [] } = useStudyBoards();
   const [boardSlug, setBoardSlug] = useState<string>(routeBoard || search.get("board") || "cbse");
-  useEffect(() => { if (routeBoard && routeBoard !== boardSlug) setBoardSlug(routeBoard); }, [routeBoard]);
+  useEffect(() => { if (routeBoard && routeBoard !== boardSlug) setBoardSlug(routeBoard); }, [boardSlug, routeBoard]);
   const { data: subjects = [], isLoading } = useStudySubjects(classNum, boardSlug);
   const { data: toppers = [] } = useStudyToppers(classNum, boardSlug);
   const { data: boardLinks = [] } = useStudyBoardLinks(classNum, boardSlug);

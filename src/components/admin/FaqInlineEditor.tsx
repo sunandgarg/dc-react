@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,7 +35,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
   // Buffer for "new entity, no slug yet" - saved on first reload after slug exists
   const [buffer, setBuffer] = useState<FaqRow[]>([]);
 
-  const reload = async () => {
+  const reload = useCallback(async () => {
     if (!itemSlug) { setRows([]); return; }
     setLoading(true);
     const { data, error } = await backendClient
@@ -53,9 +53,9 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
       if (insErr) toast.error(`FAQ buffer flush failed: ${insErr.message}`);
       else { toast.success(`Saved ${buffer.length} buffered FAQ${buffer.length === 1 ? "" : "s"}`); setBuffer([]); }
     }
-  };
+  }, [buffer, itemSlug, page]);
 
-  useEffect(() => { reload(); }, [page, itemSlug]);
+  useEffect(() => { void reload(); }, [reload]);
 
   const save = async () => {
     if (!draft) return;

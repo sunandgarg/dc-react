@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,16 +28,16 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   const [draft, setDraft] = useState<FeeRow | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const reload = async () => {
+  const reload = useCallback(async () => {
     if (!collegeSlug) return;
     setLoading(true);
     const { data } = await (backendClient as any).from("course_fees").select("*").eq("college_slug", collegeSlug).order("course_name");
     setRows(data || []);
     setLoading(false);
     qc.invalidateQueries({ queryKey: ["college_fees", collegeSlug] });
-  };
+  }, [collegeSlug, qc]);
 
-  useEffect(() => { reload(); }, [collegeSlug]);
+  useEffect(() => { void reload(); }, [reload]);
 
   useEffect(() => {
     (backendClient as any).from("courses").select("slug,name,full_name,category").eq("is_active", true).order("name").limit(500).then(({ data }: any) => setCourses(data || []));

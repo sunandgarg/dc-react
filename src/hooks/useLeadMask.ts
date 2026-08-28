@@ -22,7 +22,7 @@ export function useLeadMask() {
       if (!cancelled) setMask(!!(data as any)?.mask_leads);
     })();
     return () => { cancelled = true; };
-  }, [user?.id, isAdmin]);
+  }, [isAdmin, user]);
 
   const maskPhone = (p?: string | null) => {
     if (!mask || !p) return p || "";

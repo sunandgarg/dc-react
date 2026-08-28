@@ -12,6 +12,7 @@ export function IntentTrackingProvider({ children }: { children: React.ReactNode
   const location = useLocation();
   const { user } = useAuth();
   const mergedFor = useRef<string | null>(null);
+  const initialLocation = useRef(`${location.pathname}${location.search}`);
 
   // Ensure visitor row exists once per session
   useEffect(() => {
@@ -23,8 +24,8 @@ export function IntentTrackingProvider({ children }: { children: React.ReactNode
         device_type: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? "mobile" : "desktop",
         user_agent: navigator.userAgent,
         referrer: document.referrer || null,
-        landing_url: location.pathname + location.search,
-        utm: Object.fromEntries(new URLSearchParams(location.search).entries()),
+        landing_url: initialLocation.current,
+        utm: Object.fromEntries(new URLSearchParams(initialLocation.current.split("?")[1] || "").entries()),
       }, { onConflict: "visitor_id" }).then(() => {}, () => {});
     } catch { /* noop */ }
   }, []);

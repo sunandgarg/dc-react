@@ -76,11 +76,11 @@ export function useSEO({
     }
 
     document.getElementById("ld-json-page")?.remove();
-    if (jsonLd) {
+    if (jsonLdKey !== "null") {
       const script = document.createElement("script");
       script.id = "ld-json-page";
       script.type = "application/ld+json";
-      script.text = JSON.stringify(jsonLd);
+      script.text = jsonLdKey;
       document.head.appendChild(script);
     }
 

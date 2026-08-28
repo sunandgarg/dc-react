@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
@@ -48,7 +48,10 @@ export function CollegeStudyTagger({ articleId, onDone }: Props) {
   useEffect(() => { setActiveSem(null); }, [university]);
 
   const key = (t: string, s: string) => `${t}::${s}`;
-  const isLinked = (type: string, slug: string) => links.some((l) => l.entity_type === type && l.entity_slug === slug);
+  const isLinked = useCallback(
+    (type: string, slug: string) => links.some((l) => l.entity_type === type && l.entity_slug === slug),
+    [links],
+  );
   const isPending = (type: string, slug: string) => pending.has(key(type, slug));
 
   const refresh = async () => {
@@ -156,7 +159,7 @@ export function CollegeStudyTagger({ articleId, onDone }: Props) {
   // Counts of linked items for current scope
   const linkedUnisOfProgram = useMemo(
     () => unis.filter((u) => isLinked("college_university", u.slug)).length,
-    [unis, links]
+    [unis, isLinked]
   );
   const allUniSlugs = unis.map((u) => u.slug);
   const semSlugs = useMemo(

@@ -89,7 +89,7 @@ export default function AdminArticles() {
     // Do not re-filter locally, otherwise admin search can look limited to the
     // currently prefetched rows instead of the complete articles table.
     return articles ?? [];
-  }, [articles, normalizedSearch]);
+  }, [articles]);
 
   const { can, isAdmin } = useAuth();
   const canPublish = isAdmin || can("articles", "publish");

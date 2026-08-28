@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
@@ -82,8 +82,11 @@ interface ListEditorProps {
 function ListEditor({ table, fields, defaults = {} }: ListEditorProps) {
   const [rows, setRows] = useState<any[]>([]);
 
-  const load = () => s.from(table).select("*").order("display_order").then(({ data }: any) => setRows(data || []));
-  useEffect(() => { load(); }, []);
+  const load = useCallback(
+    () => s.from(table).select("*").order("display_order").then(({ data }: any) => setRows(data || [])),
+    [table],
+  );
+  useEffect(() => { load(); }, [load]);
 
   const add = async () => {
     const { data, error } = await s.from(table).insert({ ...defaults, display_order: rows.length, is_active: true }).select().single();

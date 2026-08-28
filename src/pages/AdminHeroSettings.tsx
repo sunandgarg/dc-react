@@ -23,7 +23,7 @@ export default function AdminHeroSettings() {
   const textGradientStrength = Number(textGradientValue) || 0.72;
   const [draft, setDraft] = useDraftState<HeroSettings | null>('admin.hero-settings.draft.v3', null);
 
-  useEffect(() => { if (data && !draft) setDraft(data); }, [data, draft]);
+  useEffect(() => { if (data && !draft) setDraft(data); }, [data, draft, setDraft]);
 
   if (isLoading || !draft) {
     return <AdminLayout title="Hero / Search Background"><div className="p-8 text-muted-foreground">Loading…</div></AdminLayout>;

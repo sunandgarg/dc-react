@@ -37,7 +37,7 @@ function SetupTab() {
         setRow(created);
       }
     })();
-  }, []);
+  }, [setRow]);
 
   const save = async () => {
     if (!row) return;

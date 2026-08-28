@@ -23,6 +23,8 @@ export function SEO({
   twitterCard = "summary_large_image",
   jsonLd,
 }: SEOProps) {
+  const jsonLdText = JSON.stringify(jsonLd ?? null);
+
   useEffect(() => {
     const canonicalUrl = absoluteCanonical(canonical || window.location.pathname);
     const ogImageUrl = absoluteCanonical(ogImage);
@@ -82,13 +84,13 @@ export function SEO({
     const id = "ld-json-page";
     const existing = document.getElementById(id);
     if (existing) existing.remove();
-    if (jsonLd) {
+    if (jsonLdText !== "null") {
       const script = document.createElement("script");
       script.type = "application/ld+json";
       script.id = id;
-      script.text = JSON.stringify(jsonLd);
+      script.text = jsonLdText;
       document.head.appendChild(script);
     }
-  }, [title, description, keywords, canonical, ogImage, ogType, twitterCard, JSON.stringify(jsonLd ?? null)]);
+  }, [title, description, keywords, canonical, ogImage, ogType, twitterCard, jsonLdText]);
   return null;
 }

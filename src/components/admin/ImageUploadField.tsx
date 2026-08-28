@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { backendClient } from "@/integrations/backend/client";
@@ -30,7 +30,7 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
   const [libLoading, setLibLoading] = useState(false);
   const [libQuery, setLibQuery] = useState("");
 
-  const loadLibrary = async () => {
+  const loadLibrary = useCallback(async () => {
     setLibLoading(true);
     try {
       const { data, error } = await backendClient.storage.from(bucket).list(folder, {
@@ -50,9 +50,9 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
     } finally {
       setLibLoading(false);
     }
-  };
+  }, [bucket, folder]);
 
-  useEffect(() => { if (mode === "library") loadLibrary(); }, [mode]);
+  useEffect(() => { if (mode === "library") void loadLibrary(); }, [loadLibrary, mode]);
 
   const handleFile = async (rawFile: File) => {
     if (!rawFile) return;

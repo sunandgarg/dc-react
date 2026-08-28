@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +45,7 @@ export function SlugScopedTableEditor({
   const [draft, setDraft] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const reload = async () => {
+  const reload = useCallback(async () => {
     if (!scopeValue) { setRows([]); return; }
     setLoading(true);
     let q = (backendClient as any).from(table).select("*").eq(scopeColumn, scopeValue);
@@ -54,9 +54,9 @@ export function SlugScopedTableEditor({
     if (error) toast.error(error.message);
     else setRows(data || []);
     setLoading(false);
-  };
+  }, [orderColumn, scopeColumn, scopeValue, table]);
 
-  useEffect(() => { reload(); }, [table, scopeColumn, scopeValue]);
+  useEffect(() => { void reload(); }, [reload]);
 
   const save = async () => {
     if (!draft || !scopeValue) return;

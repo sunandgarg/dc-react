@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Newspaper, ChevronRight, Calendar, Lightbulb, NotebookPen, ArrowDownAZ, Clock } from "lucide-react";
@@ -48,8 +48,8 @@ export function SubjectNewsSection({ subjectSlug, subjectName, subjectId }: Prop
     },
   });
 
-  const isTricks = (a: any) => (a.tags || []).includes(`${subjectSlug}-tricks`);
-  const isNotes = (a: any) => (a.tags || []).includes(`${subjectSlug}-notes`);
+  const isTricks = useCallback((a: any) => (a.tags || []).includes(`${subjectSlug}-tricks`), [subjectSlug]);
+  const isNotes = useCallback((a: any) => (a.tags || []).includes(`${subjectSlug}-notes`), [subjectSlug]);
 
   const visible = useMemo(() => {
     let list = articles;
@@ -61,7 +61,7 @@ export function SubjectNewsSection({ subjectSlug, subjectName, subjectId }: Prop
       return sort === "newest" ? db - da : da - db;
     });
     return list.slice(0, 12);
-  }, [articles, filter, sort]);
+  }, [articles, filter, isNotes, isTricks, sort]);
 
   if (!articles.length) return null;
 

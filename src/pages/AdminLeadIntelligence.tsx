@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { backendClient } from "@/integrations/backend/client";
 import { Card } from "@/components/ui/card";
@@ -43,17 +43,18 @@ export default function AdminLeadIntelligence() {
   const [timeline, setTimeline] = useState<any[]>([]);
   const [prediction, setPrediction] = useState<any>(null);
   const [aiLoading, setAiLoading] = useState(false);
+  const { category, college, course, from, max, min, to } = filters;
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     let q = backendClient.from("intent_lead_scores").select("*").order("score", { ascending: false }).limit(500);
-    if (filters.category !== "all") q = q.eq("category", filters.category);
-    if (filters.college) q = q.eq("top_college_slug", filters.college);
-    if (filters.course)  q = q.eq("top_course_slug",  filters.course);
-    if (filters.min)     q = q.gte("score", Number(filters.min));
-    if (filters.max)     q = q.lte("score", Number(filters.max));
-    if (filters.from)    q = q.gte("updated_at", filters.from);
-    if (filters.to)      q = q.lte("updated_at", filters.to);
+    if (category !== "all") q = q.eq("category", category);
+    if (college) q = q.eq("top_college_slug", college);
+    if (course)  q = q.eq("top_course_slug",  course);
+    if (min)     q = q.gte("score", Number(min));
+    if (max)     q = q.lte("score", Number(max));
+    if (from)    q = q.gte("updated_at", from);
+    if (to)      q = q.lte("updated_at", to);
     const { data, error } = await q;
     if (error) toast({ title: "Failed to load", description: error.message, variant: "destructive" });
     const list = (data as any) || [];
@@ -92,9 +93,9 @@ export default function AdminLeadIntelligence() {
     }
     setStats(s);
     setLoading(false);
-  };
+  }, [category, college, course, from, max, min, to]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const filteredRows = useMemo(() => {
     const q = filters.q.trim().toLowerCase();
