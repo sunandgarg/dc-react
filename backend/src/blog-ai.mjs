@@ -338,16 +338,33 @@ async function createGeneratedImage(prompt, options) {
 
 export async function createBlogCover(slug, prompt, rawOptions = {}) {
   const options = normalizeBlogCoverOptions(rawOptions);
+  const diagnostics = rawOptions.diagnostics && typeof rawOptions.diagnostics === "object" ? rawOptions.diagnostics : null;
   if (options.mode === "none") return "";
   let sourceBytes;
   let generatedConfig = null;
   if (options.mode === "template") {
     if (!options.templateUrl) throw new Error("A cover template is required when image mode is template");
-    sourceBytes = await downloadCoverSource(options.templateUrl, "Cover template");
+    try {
+      sourceBytes = await downloadCoverSource(options.templateUrl, "Cover template");
+      if (diagnostics) diagnostics.sourceMode = "template";
+    } catch (templateError) {
+      try {
+        const generated = await createGeneratedImage(prompt, options);
+        sourceBytes = generated.bytes;
+        generatedConfig = generated.config;
+        if (diagnostics) {
+          diagnostics.sourceMode = "generated-fallback";
+          diagnostics.templateError = String(templateError?.message || templateError).slice(0, 200);
+        }
+      } catch (generatedError) {
+        throw new Error(`Cover template failed (${templateError?.message || templateError}); generated fallback failed (${generatedError?.message || generatedError})`);
+      }
+    }
   } else {
     const generated = await createGeneratedImage(prompt, options);
     sourceBytes = generated.bytes;
     generatedConfig = generated.config;
+    if (diagnostics) diagnostics.sourceMode = "generated";
   }
   const bytes = await renderBlogCover(sourceBytes, options);
   const path = `blog-covers/${slug}-${Date.now()}.webp`;

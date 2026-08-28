@@ -12,6 +12,7 @@ let coverUrl = "";
 let runId = "";
 let createdArticleIds = [];
 let originalSettings = null;
+const coverDiagnostics = {};
 
 async function diagnostics() {
   const [settings, controls, recentRuns, providers] = await Promise.all([
@@ -91,6 +92,7 @@ try {
     logoUrl: originalSettings.logo_url,
     aspectRatio: originalSettings.image_aspect_ratio,
     resolution: originalSettings.output_resolution,
+    diagnostics: coverDiagnostics,
   });
   assert.match(coverUrl, /^https:\/\//);
   const coverResponse = await fetch(coverUrl, { signal: AbortSignal.timeout(30_000) });
@@ -101,7 +103,8 @@ try {
   console.log(JSON.stringify({
     ok: true,
     gemini_agent: "created one AWS MySQL draft",
-    cover: `${coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
+    cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
+    template_fallback_reason: coverDiagnostics.templateError || null,
     logo_applied: Boolean(originalSettings.include_logo && originalSettings.logo_url),
     cleanup: "pending",
   }, null, 2));
