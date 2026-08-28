@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { prisma, schemaMetadata } from "./db.mjs";
 import { uploadStorageObject } from "./storage.mjs";
-import { toPublicMediaUrls } from "./media-values.mjs";
+import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
@@ -56,7 +56,8 @@ export function normalizeBlogCoverOptions(options = {}) {
 }
 
 function publicMediaSource(value) {
-  return String(toPublicMediaUrls(String(value || "").trim()) || "").trim();
+  const storedValue = toStoredMediaKeys(String(value || "").trim());
+  return String(toPublicMediaUrls(storedValue) || "").trim();
 }
 
 async function downloadCoverSource(value, label) {
