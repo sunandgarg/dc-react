@@ -84,20 +84,61 @@ async function downloadCoverSource(value, label) {
   return bytes;
 }
 
-async function renderBlogCover(sourceBytes, options) {
+function escapeCoverText(value) {
+  return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[char]);
+}
+
+export async function createLocalEditorialCover(prompt, options) {
+  const words = stripHtml(prompt).split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const candidate = `${line} ${word}`.trim();
+    if (candidate.length > 28 && line) {
+      lines.push(line);
+      line = word;
+    } else line = candidate;
+    if (lines.length === 3) break;
+  }
+  if (line && lines.length < 4) lines.push(line);
+  const fontSize = Math.max(48, Math.round(options.width * 0.052));
+  const lineHeight = Math.round(fontSize * 1.18);
+  const titleY = Math.round(options.height * 0.35);
+  const title = lines.slice(0, 4).map((text, index) => `<text x="${Math.round(options.width * 0.09)}" y="${titleY + index * lineHeight}" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" fill="#0f172a">${escapeCoverText(text)}</text>`).join("");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">
+    <rect width="100%" height="100%" fill="#f8fafc"/>
+    <rect width="100%" height="${Math.max(18, Math.round(options.height * 0.025))}" fill="#f97316"/>
+    <rect x="${Math.round(options.width * 0.78)}" y="0" width="${Math.round(options.width * 0.22)}" height="100%" fill="#1d4ed8"/>
+    <rect x="${Math.round(options.width * 0.09)}" y="${Math.round(options.height * 0.21)}" width="${Math.round(options.width * 0.12)}" height="${Math.max(8, Math.round(options.height * 0.012))}" fill="#f97316"/>
+    <text x="${Math.round(options.width * 0.09)}" y="${Math.round(options.height * 0.17)}" font-family="Arial, Helvetica, sans-serif" font-size="${Math.max(24, Math.round(options.width * 0.022))}" font-weight="700" fill="#1d4ed8">DEKHOCAMPUS EDITORIAL</text>
+    ${title}
+    <text x="${Math.round(options.width * 0.09)}" y="${Math.round(options.height * 0.86)}" font-family="Arial, Helvetica, sans-serif" font-size="${Math.max(22, Math.round(options.width * 0.018))}" fill="#475569">Admissions, exams and college decisions explained clearly</text>
+  </svg>`;
+  return sharp(Buffer.from(svg)).png().toBuffer();
+}
+
+async function renderBlogCover(sourceBytes, options, diagnostics = null) {
   const base = sharp(sourceBytes, { limitInputPixels: 50_000_000 })
     .rotate()
     .resize(options.width, options.height, { fit: "cover", position: "attention" });
   if (options.includeLogo && options.logoUrl) {
-    const logoSource = await downloadCoverSource(options.logoUrl, "Cover logo");
-    const logo = await sharp(logoSource, { limitInputPixels: 20_000_000 })
-      .rotate()
-      .resize({ width: Math.round(options.width * 0.2), height: Math.round(options.height * 0.11), fit: "inside", withoutEnlargement: true })
-      .png()
-      .toBuffer({ resolveWithObject: true });
-    const left = Math.max(24, Math.round((options.width - logo.info.width) / 2));
-    const top = Math.max(24, Math.round(options.height * 0.045));
-    base.composite([{ input: logo.data, left, top }]);
+    try {
+      const logoSource = await downloadCoverSource(options.logoUrl, "Cover logo");
+      const logo = await sharp(logoSource, { limitInputPixels: 20_000_000 })
+        .rotate()
+        .resize({ width: Math.round(options.width * 0.2), height: Math.round(options.height * 0.11), fit: "inside", withoutEnlargement: true })
+        .png()
+        .toBuffer({ resolveWithObject: true });
+      const left = Math.max(24, Math.round((options.width - logo.info.width) / 2));
+      const top = Math.max(24, Math.round(options.height * 0.045));
+      base.composite([{ input: logo.data, left, top }]);
+      if (diagnostics) diagnostics.logoApplied = true;
+    } catch (error) {
+      if (diagnostics) {
+        diagnostics.logoApplied = false;
+        diagnostics.logoError = String(error?.message || error).slice(0, 200);
+      }
+    }
   }
   return base.webp({ quality: options.resolution === "web" ? 82 : 88, effort: 5 }).toBuffer();
 }
@@ -357,16 +398,28 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
           diagnostics.templateError = String(templateError?.message || templateError).slice(0, 200);
         }
       } catch (generatedError) {
-        throw new Error(`Cover template failed (${templateError?.message || templateError}); generated fallback failed (${generatedError?.message || generatedError})`);
+        sourceBytes = await createLocalEditorialCover(prompt, options);
+        if (diagnostics) {
+          diagnostics.sourceMode = "local-fallback";
+          diagnostics.generatedError = String(generatedError?.message || generatedError).slice(0, 200);
+        }
       }
     }
   } else {
-    const generated = await createGeneratedImage(prompt, options);
-    sourceBytes = generated.bytes;
-    generatedConfig = generated.config;
-    if (diagnostics) diagnostics.sourceMode = "generated";
+    try {
+      const generated = await createGeneratedImage(prompt, options);
+      sourceBytes = generated.bytes;
+      generatedConfig = generated.config;
+      if (diagnostics) diagnostics.sourceMode = "generated";
+    } catch (generatedError) {
+      sourceBytes = await createLocalEditorialCover(prompt, options);
+      if (diagnostics) {
+        diagnostics.sourceMode = "local-fallback";
+        diagnostics.generatedError = String(generatedError?.message || generatedError).slice(0, 200);
+      }
+    }
   }
-  const bytes = await renderBlogCover(sourceBytes, options);
+  const bytes = await renderBlogCover(sourceBytes, options, diagnostics);
   const path = `blog-covers/${slug}-${Date.now()}.webp`;
   const upload = await uploadStorageObject("admin-uploads", path, bytes, "image/webp", { cacheControl: "public,max-age=31536000,immutable" });
   if (generatedConfig) {

@@ -105,7 +105,9 @@ try {
     gemini_agent: "created one AWS MySQL draft",
     cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
     template_fallback_reason: coverDiagnostics.templateError || null,
-    logo_applied: Boolean(originalSettings.include_logo && originalSettings.logo_url),
+    generated_fallback_reason: coverDiagnostics.generatedError || null,
+    logo_applied: Boolean(coverDiagnostics.logoApplied),
+    logo_fallback_reason: coverDiagnostics.logoError || null,
     cleanup: "pending",
   }, null, 2));
 } finally {

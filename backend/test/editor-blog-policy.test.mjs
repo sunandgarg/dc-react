@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
-import { blogLimits, geminiQuotaHelpers, normalizeBlogCoverOptions, resolveBlogMediaSource } from "../src/blog-ai.mjs";
+import { blogLimits, createLocalEditorialCover, geminiQuotaHelpers, normalizeBlogCoverOptions, resolveBlogMediaSource } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 
 test("recognizes only the restricted content editor phone", () => {
@@ -86,4 +86,10 @@ test("routes a legacy Supabase blog bucket through the configured AWS media base
     if (previous === undefined) delete process.env.MEDIA_BASE_URL;
     else process.env.MEDIA_BASE_URL = previous;
   }
+});
+
+test("renders a local branded cover without an external image provider", async () => {
+  const bytes = await createLocalEditorialCover("JEE Main counselling choices for students", { width: 1600, height: 900 });
+  assert.ok(bytes.length > 5_000);
+  assert.equal(bytes.subarray(1, 4).toString(), "PNG");
 });
