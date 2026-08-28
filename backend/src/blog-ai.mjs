@@ -166,21 +166,12 @@ export function layoutTemplateCoverTitle(value, options) {
     lines[lines.length - 2] = lines[lines.length - 2].split(/\s+/).slice(0, -1).join(" ");
   }
 
-  const safeWidth = options.width * 0.68;
-  const longestLine = Math.max(1, ...lines.map((line) => line.length));
-  const fontSize = Math.max(
-    Math.round(options.width * 0.035),
-    Math.min(
-      Math.round(options.width * 0.063),
-      Math.round(safeWidth / (longestLine * 0.56)),
-      Math.round((options.height * 0.38) / (Math.max(1, lines.length) * 1.18)),
-    ),
-  );
+  const fontSize = Math.round(options.width * 0.04);
 
   return {
     lines,
     fontSize,
-    lineHeight: Math.round(fontSize * 1.18),
+    lineHeight: Math.round(fontSize * 1.25),
     centerX: Math.round(options.width * 0.5),
     centerY: Math.round(options.height * 0.52),
   };
@@ -191,8 +182,8 @@ export function templateCoverTitleOverlay(value, options) {
   const midpoint = (layout.lines.length - 1) / 2;
   const title = layout.lines.map((text, index) => (
     `<text x="${layout.centerX}" y="${Math.round(layout.centerY + (index - midpoint) * layout.lineHeight)}" `
-    + `text-anchor="middle" dominant-baseline="middle" font-family="Arial, Helvetica, sans-serif" `
-    + `font-size="${layout.fontSize}" font-weight="700" fill="#111827">${escapeCoverText(text)}</text>`
+    + `text-anchor="middle" dominant-baseline="middle" font-family="Inter, Arial, Helvetica, sans-serif" `
+    + `font-size="${layout.fontSize}" font-weight="600" fill="#111827">${escapeCoverText(text)}</text>`
   )).join("");
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">${title}</svg>`);
 }
@@ -200,16 +191,15 @@ export function templateCoverTitleOverlay(value, options) {
 export async function templateCoverTitleRasterOverlay(value, options) {
   const layout = layoutTemplateCoverTitle(value, options);
   const width = Math.round(options.width * 0.72);
-  const height = Math.round(options.height * 0.42);
   const rendered = await sharp({
     text: {
       text: layout.lines.map(escapeCoverText).join("\n"),
-      font: `Inter Bold ${layout.fontSize}`,
+      font: `Inter SemiBold ${layout.fontSize}`,
       fontfile: BLOG_COVER_FONT_FILE,
       width,
-      height,
       align: "centre",
       rgba: true,
+      dpi: 72,
     },
   }).png().toBuffer({ resolveWithObject: true });
 

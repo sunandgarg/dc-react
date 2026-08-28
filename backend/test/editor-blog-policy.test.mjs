@@ -128,7 +128,8 @@ test("fits template headings into at most four centered lines without adding a p
   const layout = layoutTemplateCoverTitle(title, options);
   assert.ok(layout.lines.length >= 2 && layout.lines.length <= 4);
   assert.equal(layout.lines.join(" "), formatBlogCoverTitle(title));
-  assert.ok(layout.fontSize >= 56);
+  assert.equal(layout.fontSize, 64);
+  assert.equal(layout.lineHeight, 80);
   const svg = templateCoverTitleOverlay(title, options).toString();
   assert.match(svg, /text-anchor="middle"/);
   assert.doesNotMatch(svg, /<rect/);
@@ -138,6 +139,17 @@ test("balances abbreviated article titles without orphan lines", () => {
   const layout = layoutTemplateCoverTitle("ICAR AIEEA PG 2026 Seat Matrix and Choice Locking Strategy", { width: 1600, height: 900 });
   assert.ok(layout.lines.every((line) => line.split(/\s+/).length > 1));
   assert.equal(layout.lines.join(" "), "DekhoCampus: ICAR AIEEA PG 2026 Seat Matrix and Choice Locking Strategy");
+  assert.equal(layout.fontSize, 64);
+});
+
+test("uses identical typography for short and long template titles", () => {
+  const options = { width: 1600, height: 900 };
+  const short = layoutTemplateCoverTitle("NEET counselling update", options);
+  const long = layoutTemplateCoverTitle("The counselling deadline and document checklist every student should verify before choice filling", options);
+  assert.deepEqual(
+    { fontSize: short.fontSize, lineHeight: short.lineHeight },
+    { fontSize: long.fontSize, lineHeight: long.lineHeight },
+  );
 });
 
 test("rasterizes template headings with the bundled production font", async () => {
