@@ -11,6 +11,7 @@ import { handleDataCleaner } from "./data-cleaner.mjs";
 import { canContentEditorAccess } from "./editor-access.mjs";
 import { storageConfig } from "./storage.mjs";
 import { publishSitemap, readPublishedSitemap } from "./sitemap-publish.mjs";
+import { handleClarityExport } from "./clarity-export.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -294,6 +295,11 @@ export async function handleRequest(request) {
         const identity = await resolveIdentity(request);
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
         return json(200, await integrationStatus(), requestId, request, { "cache-control": "private, no-store" });
+      }
+      if (functionMatch[1] === "admin-clarity-export") {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        return json(200, await handleClarityExport(request), requestId, request, { "cache-control": "private, no-store" });
       }
       if (functionMatch[1] === "publish-sitemap") {
         const identity = await resolveIdentity(request);

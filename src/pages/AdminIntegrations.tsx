@@ -5,7 +5,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Lock, Unlock, Save, AlertTriangle, CheckCircle2, XCircle, Server } from "lucide-react";
+import { Lock, Unlock, Save, AlertTriangle, CheckCircle2, XCircle, Server, Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
@@ -71,6 +71,7 @@ export default function AdminIntegrations() {
   return (
     <AdminLayout title="Integrations & Tracking">
       {runtimeStatus && <RuntimeStatus status={runtimeStatus} />}
+      <ClarityExportPanel />
       <div className="mb-4">
         <CSVTools table="site_integrations" filename="site_integrations.csv" columns="*" upsertKey="id" />
       </div>
@@ -95,6 +96,37 @@ export default function AdminIntegrations() {
       ))}
     </AdminLayout>
   );
+}
+
+function ClarityExportPanel() {
+  const [days, setDays] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const fetchInsights = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await backendClient.functions.invoke("admin-clarity-export", { body: { numOfDays: days } });
+      if (error || data?.error) throw error || new Error(data.error);
+      setResult(data);
+      toast.success(data.cached ? "Loaded cached Clarity insights" : "Fetched fresh Clarity insights");
+    } catch (error: any) {
+      toast.error(error?.message || "Could not fetch Clarity insights");
+    } finally {
+      setLoading(false);
+    }
+  };
+  return <section className="mb-6 border border-border bg-card p-4">
+    <div className="flex flex-wrap items-end justify-between gap-3">
+      <div><h2 className="text-sm font-semibold">Microsoft Clarity live insights</h2><p className="mt-1 text-xs text-muted-foreground">Server-only export with a one-hour cache and a hard 10-request daily guard.</p></div>
+      <div className="flex items-center gap-2">
+        <select aria-label="Clarity export days" value={days} onChange={(event) => setDays(Number(event.target.value))} className="h-9 rounded-md border bg-background px-2 text-sm">
+          <option value={1}>Last 1 day</option><option value={2}>Last 2 days</option><option value={3}>Last 3 days</option>
+        </select>
+        <Button size="sm" onClick={fetchInsights} disabled={loading}>{loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}Fetch</Button>
+      </div>
+    </div>
+    {result && <div className="mt-3 rounded-md bg-muted p-3 text-xs"><p>{result.cached ? "Cached response" : "Fresh response"} · {result.requests_remaining_today} requests remaining today</p><pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap">{JSON.stringify(result.data, null, 2)}</pre></div>}
+  </section>;
 }
 
 function RuntimeStatus({ status }: { status: {

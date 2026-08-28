@@ -88,39 +88,55 @@ function escapeCoverText(value) {
   return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[char]);
 }
 
-export async function createLocalEditorialCover(prompt, options) {
-  const words = stripHtml(prompt).split(/\s+/).filter(Boolean);
+export function formatBlogCoverTitle(value) {
+  const hook = stripHtml(value).replace(/^dekhocampus\s*:\s*/i, "").trim().slice(0, 120);
+  return `DekhoCampus: ${hook || "Your next education decision, made clearer"}`;
+}
+
+function coverTitleOverlay(value, options) {
+  const words = formatBlogCoverTitle(value).split(/\s+/).filter(Boolean);
   const lines = [];
   let line = "";
+  const maxCharacters = options.aspectRatio === "1:1" ? 24 : 34;
   for (const word of words) {
     const candidate = `${line} ${word}`.trim();
-    if (candidate.length > 28 && line) {
+    if (candidate.length > maxCharacters && line) {
       lines.push(line);
       line = word;
     } else line = candidate;
-    if (lines.length === 3) break;
   }
-  if (line && lines.length < 4) lines.push(line);
-  const fontSize = Math.max(48, Math.round(options.width * 0.052));
-  const lineHeight = Math.round(fontSize * 1.18);
-  const titleY = Math.round(options.height * 0.35);
-  const title = lines.slice(0, 4).map((text, index) => `<text x="${Math.round(options.width * 0.09)}" y="${titleY + index * lineHeight}" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" fill="#0f172a">${escapeCoverText(text)}</text>`).join("");
+  if (line) lines.push(line);
+  const visible = lines.slice(0, 4);
+  const fontSize = Math.max(42, Math.round(options.width * (options.aspectRatio === "1:1" ? 0.052 : 0.044)));
+  const lineHeight = Math.round(fontSize * 1.16);
+  const panelHeight = Math.round((visible.length * lineHeight) + options.height * 0.15);
+  const panelY = options.height - panelHeight;
+  const title = visible.map((text, index) => `<text x="${Math.round(options.width * 0.065)}" y="${panelY + Math.round(options.height * 0.09) + index * lineHeight}" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" fill="#ffffff">${escapeCoverText(text)}</text>`).join("");
+  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">
+    <rect x="0" y="${panelY}" width="100%" height="${panelHeight}" fill="#07111f" fill-opacity="0.9"/>
+    <rect x="0" y="${panelY}" width="${Math.round(options.width * 0.018)}" height="${panelHeight}" fill="#f97316"/>
+    ${title}
+  </svg>`);
+}
+
+export async function createLocalEditorialCover(prompt, options) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">
     <rect width="100%" height="100%" fill="#f8fafc"/>
     <rect width="100%" height="${Math.max(18, Math.round(options.height * 0.025))}" fill="#f97316"/>
     <rect x="${Math.round(options.width * 0.78)}" y="0" width="${Math.round(options.width * 0.22)}" height="100%" fill="#1d4ed8"/>
     <rect x="${Math.round(options.width * 0.09)}" y="${Math.round(options.height * 0.21)}" width="${Math.round(options.width * 0.12)}" height="${Math.max(8, Math.round(options.height * 0.012))}" fill="#f97316"/>
     <text x="${Math.round(options.width * 0.09)}" y="${Math.round(options.height * 0.17)}" font-family="Arial, Helvetica, sans-serif" font-size="${Math.max(24, Math.round(options.width * 0.022))}" font-weight="700" fill="#1d4ed8">DEKHOCAMPUS EDITORIAL</text>
-    ${title}
-    <text x="${Math.round(options.width * 0.09)}" y="${Math.round(options.height * 0.86)}" font-family="Arial, Helvetica, sans-serif" font-size="${Math.max(22, Math.round(options.width * 0.018))}" fill="#475569">Admissions, exams and college decisions explained clearly</text>
+    <circle cx="${Math.round(options.width * 0.68)}" cy="${Math.round(options.height * 0.35)}" r="${Math.round(options.height * 0.2)}" fill="#dbeafe"/>
+    <path d="M ${Math.round(options.width * 0.56)} ${Math.round(options.height * 0.4)} Q ${Math.round(options.width * 0.68)} ${Math.round(options.height * 0.12)} ${Math.round(options.width * 0.78)} ${Math.round(options.height * 0.42)}" fill="none" stroke="#f97316" stroke-width="${Math.max(12, Math.round(options.width * 0.012))}"/>
   </svg>`;
   return sharp(Buffer.from(svg)).png().toBuffer();
 }
 
-async function renderBlogCover(sourceBytes, options, diagnostics = null) {
+async function renderBlogCover(sourceBytes, options, titleHook, diagnostics = null) {
   const base = sharp(sourceBytes, { limitInputPixels: 50_000_000 })
     .rotate()
     .resize(options.width, options.height, { fit: "cover", position: "attention" });
+  const composites = [{ input: coverTitleOverlay(titleHook, options), left: 0, top: 0 }];
   if (options.includeLogo && options.logoUrl) {
     try {
       const logoSource = await downloadCoverSource(options.logoUrl, "Cover logo");
@@ -131,7 +147,7 @@ async function renderBlogCover(sourceBytes, options, diagnostics = null) {
         .toBuffer({ resolveWithObject: true });
       const left = Math.max(24, Math.round((options.width - logo.info.width) / 2));
       const top = Math.max(24, Math.round(options.height * 0.045));
-      base.composite([{ input: logo.data, left, top }]);
+      composites.push({ input: logo.data, left, top });
       if (diagnostics) diagnostics.logoApplied = true;
     } catch (error) {
       if (diagnostics) {
@@ -140,6 +156,7 @@ async function renderBlogCover(sourceBytes, options, diagnostics = null) {
       }
     }
   }
+  base.composite(composites);
   return base.webp({ quality: options.resolution === "web" ? 82 : 88, effort: 5 }).toBuffer();
 }
 
@@ -389,20 +406,10 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
       sourceBytes = await downloadCoverSource(options.templateUrl, "Cover template");
       if (diagnostics) diagnostics.sourceMode = "template";
     } catch (templateError) {
-      try {
-        const generated = await createGeneratedImage(prompt, options);
-        sourceBytes = generated.bytes;
-        generatedConfig = generated.config;
-        if (diagnostics) {
-          diagnostics.sourceMode = "generated-fallback";
-          diagnostics.templateError = String(templateError?.message || templateError).slice(0, 200);
-        }
-      } catch (generatedError) {
-        sourceBytes = await createLocalEditorialCover(prompt, options);
-        if (diagnostics) {
-          diagnostics.sourceMode = "local-fallback";
-          diagnostics.generatedError = String(generatedError?.message || generatedError).slice(0, 200);
-        }
+      sourceBytes = await createLocalEditorialCover(prompt, options);
+      if (diagnostics) {
+        diagnostics.sourceMode = "local-fallback";
+        diagnostics.templateError = String(templateError?.message || templateError).slice(0, 200);
       }
     }
   } else {
@@ -419,7 +426,7 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
       }
     }
   }
-  const bytes = await renderBlogCover(sourceBytes, options, diagnostics);
+  const bytes = await renderBlogCover(sourceBytes, options, prompt, diagnostics);
   const path = `blog-covers/${slug}-${Date.now()}.webp`;
   const upload = await uploadStorageObject("admin-uploads", path, bytes, "image/webp", { cacheControl: "public,max-age=31536000,immutable" });
   if (generatedConfig) {
@@ -444,7 +451,16 @@ async function researchSignals(limit = 12) {
 }
 
 function articlePrompt(topic, signals, wordLimit = 1200) {
-  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are for trend and fact awareness only; never copy wording or credit competitor publishers in the article body: ${JSON.stringify(signals)}. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes}. Use concise direct answers, descriptive H2/H3 headings, short paragraphs, useful lists, an FAQ section, and verifiable facts. Do not include Sources, References, Citations or competitor names in content_html. When evidence is uncertain, tell readers to verify the official authority website.`;
+  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are for trend and fact awareness only; never copy wording or credit competitor publishers in the article body: ${JSON.stringify(signals)}. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. hero_hook must be a short, accurate, curiosity-led headline based on human decision psychology without clickbait. Write 4-8 distinct, search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Use concise direct answers, descriptive H2/H3 headings, short paragraphs, useful lists, and verifiable facts. Do not include Sources, References, Citations or competitor names in content_html. When evidence is uncertain, tell readers to verify the official authority website.`;
+}
+
+export function normalizeGeneratedFaqs(value) {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((faq) => {
+    const question = stripHtml(faq?.question).slice(0, 500);
+    const answer = stripHtml(faq?.answer).slice(0, 4000);
+    return question && answer ? [{ question, answer }] : [];
+  }).slice(0, 10);
 }
 
 async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = null, requiredTitle = "" } = {}) {
@@ -458,9 +474,11 @@ async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = nu
     slug,
     content_html: stripCompetitorCredits(result.content_html),
     tags: Array.isArray(result.tags) ? result.tags : [],
+    hero_hook: formatBlogCoverTitle(result.hero_hook || result.title || topic).replace(/^DekhoCampus:\s*/i, ""),
+    faqs: normalizeGeneratedFaqs(result.faqs),
     featured_image: "",
   };
-  draft.featured_image = await createBlogCover(slug, result.hero_hook || result.title || topic, cover);
+  draft.featured_image = await createBlogCover(slug, draft.hero_hook, cover);
   return { draft, model, research_sources: evidence.map((item) => item.url) };
 }
 
@@ -488,6 +506,7 @@ export async function handleBlogStudio(request) {
   const body = await request.json().catch(() => ({}));
   const topic = String(body.topic || "").trim();
   if (!topic) throw Object.assign(new Error("A blog topic is required"), { status: 400 });
+  const coverDiagnostics = {};
   const generated = await generateDraft(topic, { wordLimit: body.word_limit, cover: {
     imageMode: body.image?.mode || "none",
     templateUrl: body.image?.template_url,
@@ -496,8 +515,20 @@ export async function handleBlogStudio(request) {
     logoUrl: body.image?.logo_url,
     aspectRatio: body.image?.aspect_ratio,
     resolution: body.image?.resolution,
+    diagnostics: coverDiagnostics,
   } });
-  return { draft: generated.draft, model_used: `gemini:${generated.model}`, image_model_used: generated.draft.featured_image ? "openai" : "none", research_sources: generated.research_sources };
+  const existing = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { id: true, slug: true, title: true } });
+  const duplicate = findDuplicateArticleTitle(generated.draft, existing);
+  if (duplicate) {
+    throw Object.assign(new Error(`DekhoCampus already covers this topic: ${duplicate.title}`), { status: 409, code: "DUPLICATE_ARTICLE" });
+  }
+  return {
+    draft: generated.draft,
+    model_used: `gemini:${generated.model}`,
+    image_model_used: coverDiagnostics.sourceMode === "generated" ? "openai" : coverDiagnostics.sourceMode || "none",
+    cover_diagnostics: coverDiagnostics,
+    research_sources: generated.research_sources,
+  };
 }
 
 export async function handleAiGenerate(request) {
@@ -534,14 +565,20 @@ async function saveGeneratedArticle(topic, settings, signals, schedule = null) {
   const draft = generated.draft;
   const existing = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { id: true, slug: true, title: true } });
   if (findDuplicateArticleTitle(draft, existing)) return null;
-  const article = await prisma.articles.create({ data: {
-    id: randomUUID(), status: settings.human_review_required ? "Draft" : settings.publish_status,
-    title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: "DekhoCampus Editorial", featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: true, data_source_urls: generated.research_sources, data_clean_state: "not_checked",
-  } });
-  if (schedule) {
-    await prisma.article_links.create({ data: { id: randomUUID(), article_id: article.id, entity_type: schedule.entity_type.replace(/s$/, ""), entity_slug: schedule.entity_slug } }).catch(() => {});
-    await prisma.entity_article_publications.create({ data: { id: randomUUID(), schedule_id: schedule.id, article_id: article.id, entity_type: schedule.entity_type, entity_slug: schedule.entity_slug, topic_kind: "researched_update", generated_for_date: new Date() } });
-  }
+  const article = await prisma.$transaction(async (tx) => {
+    const created = await tx.articles.create({ data: {
+      id: randomUUID(), status: settings.human_review_required ? "Draft" : settings.publish_status,
+      title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: "DekhoCampus Editorial", featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: true, data_source_urls: generated.research_sources, data_clean_state: "not_checked",
+    } });
+    if (draft.faqs.length) {
+      await tx.faqs.createMany({ data: draft.faqs.map((faq, index) => ({ id: randomUUID(), page: "articles", item_slug: created.slug, question: faq.question, answer: faq.answer, display_order: (index + 1) * 10, is_active: true })) });
+    }
+    if (schedule) {
+      await tx.article_links.create({ data: { id: randomUUID(), article_id: created.id, entity_type: schedule.entity_type.replace(/s$/, ""), entity_slug: schedule.entity_slug } });
+      await tx.entity_article_publications.create({ data: { id: randomUUID(), schedule_id: schedule.id, article_id: created.id, entity_type: schedule.entity_type, entity_slug: schedule.entity_slug, topic_kind: "researched_update", generated_for_date: new Date() } });
+    }
+    return created;
+  });
   return article.id;
 }
 

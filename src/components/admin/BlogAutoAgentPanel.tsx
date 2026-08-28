@@ -223,12 +223,13 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     setBusy(true);
     try {
       const nextRun = settings.enabled && !settings.next_run_at ? new Date().toISOString() : settings.next_run_at;
-      const normalizedSettings = { ...settings, model_provider: "gemini", image_provider: "openai" as const, image_model: "gpt-image-1" };
+      const dailyPostCap = Math.min(48, Math.max(1, Math.floor(Number(settings.daily_post_cap) || 12)));
+      const normalizedSettings = { ...settings, daily_post_cap: dailyPostCap, model_provider: "gemini", image_provider: "openai" as const, image_model: "gpt-image-1" };
       const legacySettings = {
         enabled: settings.enabled,
         interval_minutes: settings.interval_minutes,
         posts_per_run: Math.min(3, settings.posts_per_run),
-        daily_post_cap: settings.daily_post_cap,
+        daily_post_cap: dailyPostCap,
         publish_status: settings.publish_status,
         model_provider: "gemini",
         word_limit: settings.word_limit,
@@ -248,11 +249,21 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             next_run_at: nextRun,
           }
         : legacySettings;
-      const { error } = await (backendClient as any).from("blog_auto_agent_settings").upsert(
-        { id: "default", ...settingsPayload },
-        { onConflict: "id" },
-      );
-      if (error) throw error;
+      const cleanedPayload = Object.fromEntries(Object.entries(settingsPayload).filter(([, value]) => value !== undefined));
+      const { data: updated, error: updateError } = await (backendClient as any)
+        .from("blog_auto_agent_settings")
+        .update(cleanedPayload)
+        .eq("id", "default")
+        .select("id,daily_post_cap")
+        .maybeSingle();
+      if (updateError) throw updateError;
+      if (!updated) {
+        const { error: createError } = await (backendClient as any)
+          .from("blog_auto_agent_settings")
+          .insert({ id: "default", ...cleanedPayload });
+        if (createError) throw createError;
+      }
+      setSettings((current) => ({ ...current, daily_post_cap: dailyPostCap }));
       for (const [index, source] of sources.entries()) {
         await (backendClient as any).from("blog_research_sources").upsert({ ...source, display_order: (index + 1) * 10 }, { onConflict: "url" });
       }

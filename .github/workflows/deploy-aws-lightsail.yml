@@ -131,6 +131,7 @@ jobs:
           SMS_FAST2SMS_API_KEY: ${{ secrets.SMS_FAST2SMS_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLARITY_DATA_EXPORT_TOKEN: ${{ secrets.CLARITY_DATA_EXPORT_TOKEN }}
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}
         run: |
           jq -n \
@@ -138,8 +139,9 @@ jobs:
             --arg smsFast2smsApiKey "$SMS_FAST2SMS_API_KEY" \
             --arg geminiApiKey "$GEMINI_API_KEY" \
             --arg openaiApiKey "$OPENAI_API_KEY" \
+            --arg clarityDataExportToken "$CLARITY_DATA_EXPORT_TOKEN" \
             --arg cloudflarePagesDeployHookUrl "$CLOUDFLARE_PAGES_DEPLOY_HOOK_URL" \
-            '{authJwtSecret:$authJwtSecret,smsFast2smsApiKey:$smsFast2smsApiKey,geminiApiKey:$geminiApiKey,openaiApiKey:$openaiApiKey,cloudflarePagesDeployHookUrl:$cloudflarePagesDeployHookUrl}' \
+            '{authJwtSecret:$authJwtSecret,smsFast2smsApiKey:$smsFast2smsApiKey,geminiApiKey:$geminiApiKey,openaiApiKey:$openaiApiKey,clarityDataExportToken:$clarityDataExportToken,cloudflarePagesDeployHookUrl:$cloudflarePagesDeployHookUrl}' \
             > /tmp/runtime-secret.json
           aws secretsmanager put-secret-value \
             --secret-id "$PROJECT_NAME/lightsail/runtime" \
@@ -319,6 +321,7 @@ jobs:
           SMS_FAST2SMS_API_KEY=$(jq -r .smsFast2smsApiKey <<<"$RUNTIME_SECRET")
           GEMINI_API_KEY=$(jq -r .geminiApiKey <<<"$RUNTIME_SECRET")
           OPENAI_API_KEY=$(jq -r .openaiApiKey <<<"$RUNTIME_SECRET")
+          CLARITY_DATA_EXPORT_TOKEN=$(jq -r .clarityDataExportToken <<<"$RUNTIME_SECRET")
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r .cloudflarePagesDeployHookUrl <<<"$RUNTIME_SECRET")
           CORS_ORIGIN=https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com
           STORAGE_MAX_UPLOAD_BYTES=20971520
@@ -335,6 +338,7 @@ jobs:
           source /etc/dc-react.env
           set +a
           npm --prefix backend run db:setup:runtime
+          node backend/scripts/configure-production-site-integrations.mjs
           npm --prefix backend run db:normalize:media
           npm --prefix backend run verify:integrations
           pm2 reload dc-react-api --update-env

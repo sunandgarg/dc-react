@@ -3,9 +3,9 @@ import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
 import { BlogStudioDialog } from "@/components/admin/BlogStudioDialog";
 import { BlogAutoAgentPanel } from "@/components/admin/BlogAutoAgentPanel";
 import { EntityResearchBlogPanel } from "@/components/admin/EntityResearchBlogPanel";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
-import { useAllDbArticles, useSaveArticle, useDeleteArticle, type DbArticle } from "@/hooks/useArticlesData";
+import { useAdminArticles, useSaveArticle, useDeleteArticle, type DbArticle } from "@/hooks/useArticlesData";
 import { AdminFormSection } from "@/components/AdminFormSection";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { ArrayFieldEditor } from "@/components/ArrayFieldEditor";
@@ -72,7 +72,10 @@ const normalizeAdminArticleSearch = (value: unknown) =>
 export default function AdminArticles() {
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
-  const { data: articles, isLoading, refetch: refetchArticles } = useAllDbArticles(deferredSearch);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [customPageSize, setCustomPageSize] = useState(200);
+  const { data: articlePage, isLoading, refetch: refetchArticles } = useAdminArticles(deferredSearch, page, pageSize);
   const { data: CATEGORIES = [] } = useArticleCategories();
   const saveArticle = useSaveArticle();
   const deleteArticle = useDeleteArticle();
@@ -85,11 +88,14 @@ export default function AdminArticles() {
 
   const normalizedSearch = normalizeAdminArticleSearch(deferredSearch);
   const filtered = useMemo(() => {
-    // useAllDbArticles performs server-side search when a query is present.
-    // Do not re-filter locally, otherwise admin search can look limited to the
-    // currently prefetched rows instead of the complete articles table.
-    return articles ?? [];
-  }, [articles]);
+    return articlePage?.rows ?? [];
+  }, [articlePage]);
+  const totalArticles = articlePage?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalArticles / pageSize));
+  const standardPageSizes = [10, 20, 30, 40, 50, 100];
+
+  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [normalizedSearch, pageSize]);
+  useEffect(() => { if (page > totalPages) setPage(totalPages); }, [page, totalPages]);
 
   const { can, isAdmin } = useAuth();
   const canPublish = isAdmin || can("articles", "publish");
@@ -199,7 +205,7 @@ export default function AdminArticles() {
       {isAdmin && <div className="mb-3 space-y-3 rounded-2xl border bg-card p-3 shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" variant="outline" onClick={() => setSelectedIds(selectedIds.size === filtered.length ? new Set() : new Set(filtered.map((article) => article.id)))} className="gap-2">
-            {selectedIds.size === filtered.length && filtered.length ? <CheckSquare2 className="h-4 w-4" /> : <Square className="h-4 w-4" />} {selectedIds.size === filtered.length && filtered.length ? "Clear all" : `Select all filtered (${filtered.length})`}
+            {selectedIds.size === filtered.length && filtered.length ? <CheckSquare2 className="h-4 w-4" /> : <Square className="h-4 w-4" />} {selectedIds.size === filtered.length && filtered.length ? "Clear page" : `Select this page (${filtered.length})`}
           </Button>
           <span className="text-xs font-medium text-muted-foreground">{selectedIds.size} selected</span>
           {bulkBusy && <span className="inline-flex items-center gap-1 text-xs text-primary"><Loader2 className="h-3 w-3 animate-spin" /> Updating...</span>}
@@ -288,6 +294,40 @@ export default function AdminArticles() {
           {filtered.length === 0 && <div className="text-center py-12 text-muted-foreground">No articles found</div>}
         </div>
       )}
+
+      <div className="mt-4 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-muted-foreground">
+          {totalArticles ? `${(page - 1) * pageSize + 1}-${Math.min(page * pageSize, totalArticles)} of ${totalArticles}` : "0 articles"}
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <label className="text-xs font-medium text-muted-foreground" htmlFor="article-page-size">Rows</label>
+          <select
+            id="article-page-size"
+            value={standardPageSizes.includes(pageSize) ? String(pageSize) : "custom"}
+            onChange={(event) => {
+              if (event.target.value === "custom") setPageSize(Math.min(500, Math.max(1, customPageSize)));
+              else setPageSize(Number(event.target.value));
+            }}
+            className="h-9 rounded-md border bg-background px-2 text-sm"
+          >
+            {standardPageSizes.map((size) => <option key={size} value={size}>{size}</option>)}
+            <option value="custom">Custom</option>
+          </select>
+          {!standardPageSizes.includes(pageSize) && <Input
+            aria-label="Custom rows per page"
+            type="number"
+            min={1}
+            max={500}
+            value={customPageSize}
+            onChange={(event) => setCustomPageSize(Number(event.target.value || 1))}
+            onBlur={() => setPageSize(Math.min(500, Math.max(1, customPageSize)))}
+            className="h-9 w-24"
+          />}
+          <Button size="sm" variant="outline" disabled={page <= 1 || isLoading} onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous</Button>
+          <span className="min-w-20 text-center text-xs font-medium">Page {page} of {totalPages}</span>
+          <Button size="sm" variant="outline" disabled={page >= totalPages || isLoading} onClick={() => setPage((value) => Math.min(totalPages, value + 1))}>Next</Button>
+        </div>
+      </div>
 
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

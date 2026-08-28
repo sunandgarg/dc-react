@@ -49,49 +49,41 @@ const normalizeArticleSearch = (value: string | undefined) =>
     .replace(/\s+/g, " ")
     .trim();
 
-export function useAllDbArticles(search?: string) {
+export function useAdminArticles(search: string | undefined, page: number, pageSize: number) {
   const normalizedSearch = normalizeArticleSearch(search);
+  const safePage = Math.max(1, Math.floor(page || 1));
+  const safePageSize = Math.min(500, Math.max(1, Math.floor(pageSize || 20)));
 
   return useQuery({
-    queryKey: ["db-articles-all", normalizedSearch],
+    queryKey: ["db-articles-admin", normalizedSearch, safePage, safePageSize],
     queryFn: async () => {
-      const pageSize = 1000;
-      const rows: DbArticle[] = [];
+      let query = backendClient
+        .from("articles")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false });
 
-      for (let from = 0; ; from += pageSize) {
-        let query = backendClient
-          .from("articles")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (normalizedSearch) {
-          const ilikeTerm = `%${normalizedSearch.replace(/\s+/g, "%")}%`;
-          query = query.or(
-            [
-              `title.ilike.${ilikeTerm}`,
-              `slug.ilike.${ilikeTerm}`,
-              `author.ilike.${ilikeTerm}`,
-              `category.ilike.${ilikeTerm}`,
-              `vertical.ilike.${ilikeTerm}`,
-              `description.ilike.${ilikeTerm}`,
-              `content.ilike.${ilikeTerm}`,
-              `meta_title.ilike.${ilikeTerm}`,
-              `meta_description.ilike.${ilikeTerm}`,
-              `meta_keywords.ilike.${ilikeTerm}`,
-            ].join(",")
-          );
-        }
-
-        const { data, error } = await query
-          .range(from, from + pageSize - 1);
-
-        if (error) throw error;
-        rows.push(...((data || []) as DbArticle[]));
-
-        if (!data || data.length < pageSize) break;
+      if (normalizedSearch) {
+        const ilikeTerm = `%${normalizedSearch.replace(/\s+/g, "%")}%`;
+        query = query.or(
+          [
+            `title.ilike.${ilikeTerm}`,
+            `slug.ilike.${ilikeTerm}`,
+            `author.ilike.${ilikeTerm}`,
+            `category.ilike.${ilikeTerm}`,
+            `vertical.ilike.${ilikeTerm}`,
+            `description.ilike.${ilikeTerm}`,
+            `content.ilike.${ilikeTerm}`,
+            `meta_title.ilike.${ilikeTerm}`,
+            `meta_description.ilike.${ilikeTerm}`,
+            `meta_keywords.ilike.${ilikeTerm}`,
+          ].join(",")
+        );
       }
 
-      return rows;
+      const from = (safePage - 1) * safePageSize;
+      const { data, error, count } = await query.range(from, from + safePageSize - 1);
+      if (error) throw error;
+      return { rows: (data || []) as DbArticle[], total: count ?? 0 };
     },
     staleTime: 2 * 60 * 1000,
   });
@@ -138,7 +130,7 @@ export function useSaveArticle() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["db-articles"] });
-      qc.invalidateQueries({ queryKey: ["db-articles-all"] });
+      qc.invalidateQueries({ queryKey: ["db-articles-admin"] });
       toast.success("Article saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
@@ -154,7 +146,7 @@ export function useDeleteArticle() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["db-articles"] });
-      qc.invalidateQueries({ queryKey: ["db-articles-all"] });
+      qc.invalidateQueries({ queryKey: ["db-articles-admin"] });
       toast.success("Article deleted!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),

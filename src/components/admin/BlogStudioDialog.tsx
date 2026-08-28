@@ -13,7 +13,8 @@ import { Switch } from "@/components/ui/switch";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 type Suggestion = { entity_type: string; entity_slug: string; label: string };
-type Draft = { title: string; slug: string; description: string; content_html: string; meta_title: string; meta_description: string; meta_keywords: string; tags: string[]; featured_image: string; entity_suggestions?: Suggestion[] };
+type DraftFaq = { question: string; answer: string };
+type Draft = { title: string; slug: string; description: string; content_html: string; meta_title: string; meta_description: string; meta_keywords: string; tags: string[]; featured_image: string; faqs?: DraftFaq[]; entity_suggestions?: Suggestion[] };
 const LENGTHS = [800, 1200, 1800] as const;
 
 export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
@@ -61,6 +62,20 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
         tags: draft.tags || [], featured_image: draft.featured_image, status: "Draft", is_active: true,
       }, { onConflict: "slug" }).select("id").single();
       if (error) throw error;
+      const articleSlug = slugify(draft.slug);
+      const { error: faqDeleteError } = await (backendClient as any).from("faqs").delete().eq("page", "articles").eq("item_slug", articleSlug);
+      if (faqDeleteError) throw faqDeleteError;
+      if (draft.faqs?.length) {
+        const { error: faqInsertError } = await (backendClient as any).from("faqs").insert(draft.faqs.map((faq, index) => ({
+          page: "articles",
+          item_slug: articleSlug,
+          question: faq.question,
+          answer: faq.answer,
+          display_order: (index + 1) * 10,
+          is_active: true,
+        })));
+        if (faqInsertError) throw faqInsertError;
+      }
       for (const suggestion of draft.entity_suggestions || []) {
         if (selected.has(`${suggestion.entity_type}:${suggestion.entity_slug}`)) {
           await (backendClient as any).from("article_links").upsert({ article_id: article.id, entity_type: suggestion.entity_type, entity_slug: suggestion.entity_slug }, { onConflict: "article_id,entity_type,entity_slug" });
@@ -92,10 +107,10 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
             {includeLogo && <ImageUploadField label="High-resolution logo" value={logoUrl} onChange={setLogoUrl} folder="blog-brand" />}
           </div>}
         </div>
-        <p className="text-xs text-muted-foreground">Competitor research is used for trend awareness only. Every result is AI-assisted and saved as Draft for editor review.</p>
+        <p className="text-xs text-muted-foreground">Competitor research is used for trend awareness only. Every result is checked for duplicate coverage, includes dedicated FAQs, and is saved as Draft for editor review.</p>
         <Button onClick={generate} disabled={busy} className="gap-2">{busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Research, write and generate branded cover</Button>
         {draft && <div className="grid lg:grid-cols-[1.2fr_.8fr] gap-4 border-t pt-4">
-          <div className="space-y-3"><Input value={draft.title} onChange={event => setDraft({ ...draft, title: event.target.value })} /><Input value={draft.slug} onChange={event => setDraft({ ...draft, slug: event.target.value })} /><Textarea value={draft.description} onChange={event => setDraft({ ...draft, description: event.target.value })} rows={3} /><Textarea value={draft.content_html} onChange={event => setDraft({ ...draft, content_html: event.target.value })} rows={16} /><Textarea value={draft.meta_description} onChange={event => setDraft({ ...draft, meta_description: event.target.value })} rows={2} /></div>
+          <div className="space-y-3"><Input value={draft.title} onChange={event => setDraft({ ...draft, title: event.target.value })} /><Input value={draft.slug} onChange={event => setDraft({ ...draft, slug: event.target.value })} /><Textarea value={draft.description} onChange={event => setDraft({ ...draft, description: event.target.value })} rows={3} /><Textarea value={draft.content_html} onChange={event => setDraft({ ...draft, content_html: event.target.value })} rows={16} /><Textarea value={draft.meta_description} onChange={event => setDraft({ ...draft, meta_description: event.target.value })} rows={2} />{draft.faqs?.length ? <div className="rounded-lg border p-3"><Label>Generated FAQs ({draft.faqs.length})</Label><div className="mt-2 space-y-2">{draft.faqs.map((faq, index) => <div key={`${faq.question}-${index}`} className="text-sm"><p className="font-medium">{faq.question}</p><p className="text-muted-foreground">{faq.answer}</p></div>)}</div></div> : null}</div>
           <div className="space-y-3">{draft.featured_image ? <div className="rounded-xl overflow-hidden border bg-muted"><img alt="Editorial cover" src={draft.featured_image} className="w-full aspect-video object-cover" loading="lazy" /><div className="p-3 text-xs text-muted-foreground flex gap-2"><ImageIcon className="w-4 h-4" /> 4K-ready editorial cover</div></div> : <div className="rounded-xl border bg-muted p-8 text-center text-sm text-muted-foreground">No cover selected</div>}<Label>Suggested entity links</Label><div className="flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div><Button onClick={save} disabled={busy} className="w-full">Save as Draft with image and links</Button></div>
         </div>}
       </div>

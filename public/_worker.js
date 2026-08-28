@@ -41,6 +41,37 @@ async function proxyToApi(request) {
   });
 }
 
+function edgeCacheTtl(request, pathname) {
+  if (request.method !== "GET" || request.headers.has("authorization")) return 0;
+  if (pathname.startsWith("/storage/v1/object/public/")) return 60 * 60;
+  if (pathname === "/v1/functions/bootstrap") return 60;
+  if (pathname.startsWith("/v1/rest/")) return 60;
+  if (/^\/sitemap(?:-index|-\d+)?\.xml$/.test(pathname) || pathname.startsWith("/sitemap-files/")) return 300;
+  return 0;
+}
+
+async function proxyToApiWithCache(request, context) {
+  const url = new URL(request.url);
+  const ttl = edgeCacheTtl(request, url.pathname);
+  if (!ttl) return proxyToApi(request);
+  const cache = caches.default;
+  const cacheKey = new Request(url.toString(), { method: "GET" });
+  const cached = await cache.match(cacheKey);
+  if (cached) {
+    const headers = new Headers(cached.headers);
+    headers.set("x-dc-edge-cache", "HIT");
+    return new Response(cached.body, { status: cached.status, statusText: cached.statusText, headers });
+  }
+  const response = await proxyToApi(request);
+  if (!response.ok || response.headers.has("set-cookie")) return response;
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", `public, max-age=${Math.min(ttl, 300)}, s-maxage=${ttl}, stale-while-revalidate=${ttl * 2}`);
+  headers.set("x-dc-edge-cache", "MISS");
+  const cacheable = new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+  context.waitUntil(cache.put(cacheKey, cacheable.clone()));
+  return cacheable;
+}
+
 async function serveAsset(request, env) {
   const url = new URL(request.url);
   let response = await env.ASSETS.fetch(request);
@@ -59,14 +90,14 @@ async function serveAsset(request, env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, context) {
     const url = new URL(request.url);
     if (url.hostname === "www.dekhocampus.com") {
       url.hostname = "dekhocampus.com";
       return Response.redirect(url.toString(), 308);
     }
     try {
-      return isApiRequest(url.pathname) ? await proxyToApi(request) : await serveAsset(request, env);
+      return isApiRequest(url.pathname) ? await proxyToApiWithCache(request, context) : await serveAsset(request, env);
     } catch (error) {
       console.error(JSON.stringify({ event: "candidate_proxy_error", path: url.pathname, message: error instanceof Error ? error.message : String(error) }));
       return Response.json({ error: "Candidate service is temporarily unavailable" }, { status: 502 });
