@@ -25,18 +25,20 @@ jobs:
 
       - name: Build production frontend
         env:
-          # A slash intentionally resolves to window.location.origin after
-          # normalization, keeping API traffic behind the Pages Worker proxy.
-          VITE_API_URL: /
-          VITE_AWS_API_URL: ""
-          VITE_MEDIA_BASE_URL: /storage/v1/object/public
+          # Static Pages requests do not consume the Workers free-tier quota.
+          # The browser calls the CORS-restricted AWS API directly.
+          VITE_API_URL: https://aws-origin.dekhocampus.com
+          VITE_AWS_API_URL: https://aws-origin.dekhocampus.com
+          VITE_MEDIA_BASE_URL: https://aws-origin.dekhocampus.com/storage/v1/object/public
           SITEMAP_API_URL: https://aws-origin.dekhocampus.com
         run: |
           npm ci
           npm test
           npm run lint
           npm run build
-          test -s dist/_worker.js
+          rm -f dist/_worker.js
+          test ! -e dist/_worker.js
+          grep -R -Fq "https://aws-origin.dekhocampus.com" dist/assets
           ! grep -R -Fq "127.0.0.1:8787" dist/assets
           EXPECTED_ASSET=$(basename "$(find dist/assets -maxdepth 1 -type f -name 'index-*.js' | head -1)")
           test -n "$EXPECTED_ASSET"
@@ -51,7 +53,7 @@ jobs:
             --output /tmp/cloudflare-deployment.json
           jq -e '.success == true or .id != null or .deployment_id != null' /tmp/cloudflare-deployment.json >/dev/null
 
-      - name: Verify published frontend and AWS proxy
+      - name: Verify published frontend and AWS API
         run: |
           for attempt in $(seq 1 90); do
             HTML=$(curl --fail --silent --show-error --max-time 20 \
@@ -61,7 +63,7 @@ jobs:
             sleep 10
           done
           curl --fail --silent --show-error --max-time 20 \
-            https://dekhocampus-aws-candidate.pages.dev/health \
+            https://aws-origin.dekhocampus.com/health \
             | jq -e '.ok == true and .database == "mysql" and .storage == "s3"' >/dev/null
           curl --fail --silent --show-error --max-time 20 \
             https://dekhocampus-aws-candidate.pages.dev/sitemap.xml >/dev/null
