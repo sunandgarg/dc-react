@@ -5,12 +5,12 @@ DekhoCampus is a React/Vite application backed by the native Node, Prisma, and M
 ## Production
 
 - Cloudflare Pages serves the React frontend at `https://dekhocampus.com`.
-- A Cloudflare Pages Worker proxies API, authentication, sitemap, and media requests to AWS.
+- The static frontend calls the CORS-restricted AWS API origin directly; it does not consume Cloudflare Workers request quota.
 - AWS Lightsail runs the Node API and managed MySQL database in `ap-south-1`.
 - AWS S3 stores uploaded and published media. Public media is exposed through the site origin.
 - AWS Secrets Manager stores server-only runtime credentials.
 
-The production runtime has no external database, authentication, function, or object-storage fallback.
+The production runtime has no DigitalOcean or Supabase database, authentication, function, or object-storage fallback.
 
 ## Local development
 

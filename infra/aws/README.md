@@ -9,6 +9,6 @@
 - scoped IAM application credentials
 - budget and CPU alarms
 
-Cloudflare Pages serves the frontend. Its Worker proxies `/v1`, `/auth`, `/storage`, `/health`, and sitemap paths to the TLS-enabled AWS origin. Public browser traffic is canonicalized to `https://dekhocampus.com`.
+Cloudflare Pages serves the static frontend. The browser calls the CORS-restricted TLS-enabled AWS origin for `/v1`, `/auth`, and `/storage`; sitemap files remain available on the canonical `https://dekhocampus.com` domain.
 
 The deployment workflow validates tests, lint, the production build, private-bucket policy, API health, MySQL connectivity, S3 delivery, and sitemap publication.
