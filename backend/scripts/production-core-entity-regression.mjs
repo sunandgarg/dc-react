@@ -197,12 +197,20 @@ function comparable(table, fieldName, value) {
   return value;
 }
 
+function canonical(value) {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.keys(value).sort().map((key) => [key, canonical(value[key])]));
+  }
+  return value;
+}
+
 function assertPersisted(table, expected, actual) {
   for (const field of ADMIN_FIELDS[table]) {
     if (!(field in expected)) throw new Error(`${table}.${field} was not included in the write payload`);
     const wanted = comparable(table, field, expected[field]);
     const stored = comparable(table, field, actual?.[field]);
-    if (JSON.stringify(stored) !== JSON.stringify(wanted)) {
+    if (JSON.stringify(canonical(stored)) !== JSON.stringify(canonical(wanted))) {
       throw new Error(`${table}.${field} mismatch: expected ${JSON.stringify(wanted)}, got ${JSON.stringify(stored)}`);
     }
   }
