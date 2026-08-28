@@ -82,12 +82,14 @@ function DeferredGlobalUi() {
     let idleHandle: number | undefined;
     const show = () => setReady(true);
     const win = window as any;
-    if ("requestIdleCallback" in win) {
-      idleHandle = win.requestIdleCallback(show, { timeout: 2500 });
-    } else {
-      timer = win.setTimeout(show, 2200);
-    }
+    const schedule = () => {
+      if ("requestIdleCallback" in win) idleHandle = win.requestIdleCallback(show, { timeout: 2500 });
+      else timer = win.setTimeout(show, 1200);
+    };
+    if (document.readyState === "complete") schedule();
+    else window.addEventListener("load", schedule, { once: true });
     return () => {
+      window.removeEventListener("load", schedule);
       if (idleHandle !== undefined && "cancelIdleCallback" in win) win.cancelIdleCallback(idleHandle);
       if (timer) window.clearTimeout(timer);
     };

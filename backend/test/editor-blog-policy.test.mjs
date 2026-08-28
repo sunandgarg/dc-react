@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { blogLimits, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, normalizeBlogCoverOptions, normalizeGeneratedFaqs, renderBlogCover, resolveBlogMediaSource, templateCoverTitleOverlay } from "../src/blog-ai.mjs";
+import { blogLimits, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeGeneratedFaqs, parseGeminiJsonPayload, renderBlogCover, resolveBlogMediaSource, templateCoverTitleOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 
 test("recognizes only the restricted content editor phone", () => {
@@ -51,6 +51,17 @@ test("normalizes legacy Gemini models and classifies quota errors", () => {
   }));
   assert.equal(classified.code, "GEMINI_QUOTA_EXHAUSTED");
   assert.match(classified.message, /Enable billing/);
+});
+
+test("detects truncated Gemini JSON and bounds the recovery budget", () => {
+  assert.deepEqual(parseGeminiJsonPayload({
+    candidates: [{ finishReason: "STOP", content: { parts: [{ text: '```json\n{"topics":[{"title":"NEET counselling"}]}\n```' }] } }],
+  }), { topics: [{ title: "NEET counselling" }] });
+  assert.throws(() => parseGeminiJsonPayload({
+    candidates: [{ finishReason: "MAX_TOKENS", content: { parts: [{ text: '{"content_html":"unfinished' }] } }],
+  }), (error) => error.code === "GEMINI_RESPONSE_TRUNCATED");
+  assert.equal(nextGeminiOutputBudget(1200), 2000);
+  assert.equal(nextGeminiOutputBudget(7000), 8192);
 });
 
 test("normalizes every saved blog cover control into render dimensions", () => {

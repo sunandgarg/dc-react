@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
-export function DeferredRender({ children, minHeight = 600 }: { children: ReactNode; minHeight?: number }) {
+export function DeferredRender({ children, minHeight = 600, rootMargin = "600px 0px" }: { children: ReactNode; minHeight?: number; rootMargin?: string }) {
   const marker = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
 
@@ -19,13 +19,13 @@ export function DeferredRender({ children, minHeight = 600 }: { children: ReactN
         reveal();
         observer.disconnect();
       }
-    }, { rootMargin: "600px 0px" });
+    }, { rootMargin });
     observer.observe(element);
     return () => {
       observer.disconnect();
       if (timer) window.clearTimeout(timer);
     };
-  }, [ready]);
+  }, [ready, rootMargin]);
 
   return <div ref={marker} style={!ready ? { minHeight } : undefined}>{ready ? children : null}</div>;
 }

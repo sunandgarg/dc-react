@@ -35,7 +35,7 @@ export default function Index() {
     <ProfileCompletionBanner />
     <main id="main-content">
       <div id="hero"><HeroSection onOpenChat={handleOpenChat} /></div>
-      <DeferredRender minHeight={900}>
+      <DeferredRender minHeight={900} rootMargin="0px">
         <Suspense fallback={<div className="min-h-[900px]" aria-hidden="true" />}><HomeBelowFold /></Suspense>
       </DeferredRender>
     </main>

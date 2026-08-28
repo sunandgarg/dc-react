@@ -18,6 +18,22 @@ const emitBuildVersionPlugin: Plugin = {
   },
 };
 
+const prioritizeStylesPlugin: Plugin = {
+  name: "prioritize-entry-styles",
+  enforce: "post",
+  transformIndexHtml: {
+    order: "post",
+    handler(html) {
+      const styles = html.match(/<link rel="stylesheet"[^>]*>/g) || [];
+      if (!styles.length) return html;
+      const withoutStyles = styles.reduce((result, tag) => result.replace(tag, ""), html);
+      const firstModulePreload = withoutStyles.indexOf('<link rel="modulepreload"');
+      if (firstModulePreload < 0) return html;
+      return `${withoutStyles.slice(0, firstModulePreload)}${styles.join("\n  ")}\n  ${withoutStyles.slice(firstModulePreload)}`;
+    },
+  },
+};
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -30,6 +46,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     emitBuildVersionPlugin,
+    prioritizeStylesPlugin,
   ].filter(Boolean),
   define: {
     __APP_BUILD_ID__: JSON.stringify(buildId),

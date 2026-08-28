@@ -311,10 +311,12 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       window.setTimeout(() => { void load(false); }, 800);
       const { data, error } = await invocation;
       if (error || data?.error) throw error || new Error(data.error);
-      toast.success(data.accepted ? "Blog agent started. Progress will update below." : `Created ${data.created_article_ids?.length || 0} blog article(s)`);
+      if (data.skipped) toast.info(data.message || "This blog run was skipped.");
+      else if (data.accepted) toast.success("Blog agent started. Progress will update below.");
+      else toast.success(`Created ${data.created_article_ids?.length || 0} blog article(s)`);
       await load(false);
       if (data.accepted) [1_000, 3_000, 6_000].forEach((delay) => window.setTimeout(() => { void load(false); }, delay));
-      onArticlesCreated?.();
+      if (!data.skipped) onArticlesCreated?.();
     } catch (error: any) {
       const message = await edgeErrorMessage(error);
       toast.error(message, { duration: 12000 });

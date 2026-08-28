@@ -12,6 +12,7 @@ const MIN_INTERVAL_MINUTES = 30;
 const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
+const MAX_GEMINI_OUTPUT_TOKENS = 8192;
 export const DEFAULT_BLOG_COVER_TEMPLATE_KEY = "admin-uploads/blog-templates/dekhocampus-blog-cover-template-v1.png";
 
 const COVER_DIMENSIONS = {
@@ -340,6 +341,27 @@ function geminiErrorMessage(status, payloadText) {
   };
 }
 
+export function parseGeminiJsonPayload(payload) {
+  const text = payload?.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("") || "{}";
+  try {
+    return JSON.parse(cleanJson(text));
+  } catch (error) {
+    const finishReason = String(payload?.candidates?.[0]?.finishReason || "UNKNOWN");
+    const truncated = finishReason === "MAX_TOKENS" || /unterminated|unexpected end/i.test(String(error?.message || error));
+    throw Object.assign(
+      new Error(truncated
+        ? "Gemini stopped before its structured article response was complete"
+        : "Gemini returned invalid structured JSON"),
+      { code: truncated ? "GEMINI_RESPONSE_TRUNCATED" : "GEMINI_INVALID_JSON", finishReason, cause: error },
+    );
+  }
+}
+
+export function nextGeminiOutputBudget(current) {
+  const tokens = Math.max(256, Math.trunc(Number(current || 0)));
+  return Math.min(MAX_GEMINI_OUTPUT_TOKENS, Math.max(tokens + 800, Math.ceil(tokens * 1.5)));
+}
+
 async function provider(name) {
   return prisma.ai_providers.findFirst({ where: { provider_name: name }, orderBy: { updated_at: "desc" } });
 }
@@ -429,8 +451,6 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
     throw Object.assign(new Error(friendly.message), { status: response?.status || 500, code: friendly.code });
   }
   const payload = await response.json();
-  const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("") || "{}";
-  const result = JSON.parse(cleanJson(text));
   const usage = payload.usageMetadata || {};
   const inputTokens = Math.max(0, Math.trunc(Number(usage.promptTokenCount || 0)));
   const outputTokens = Math.max(0, Math.trunc(Number(usage.candidatesTokenCount || 0)));
@@ -442,8 +462,22 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
       cached_input_tokens: Math.max(0, Math.trunc(Number(usage.cachedContentTokenCount || 0))),
       thought_tokens: Math.max(0, Math.trunc(Number(usage.thoughtsTokenCount || 0))),
       max_output_tokens: options.maxOutputTokens || null,
+      finish_reason: payload.candidates?.[0]?.finishReason || null,
     },
   } }).catch(() => {});
+  let result;
+  try {
+    result = parseGeminiJsonPayload(payload);
+  } catch (error) {
+    if (error?.code === "GEMINI_RESPONSE_TRUNCATED" && !options.truncationRetry && options.maxOutputTokens < MAX_GEMINI_OUTPUT_TOKENS) {
+      return geminiJson(prompt, feature, {
+        ...options,
+        maxOutputTokens: nextGeminiOutputBudget(options.maxOutputTokens),
+        truncationRetry: true,
+      });
+    }
+    throw error;
+  }
   return { result, model };
 }
 
@@ -535,7 +569,7 @@ async function researchSignals(limit = 6) {
   const settled = await Promise.allSettled(sources.slice(0, limit).map(async (source) => {
     const response = await fetch(source.url, { headers: { "user-agent": "DekhoCampus editorial research/2.0" }, signal: AbortSignal.timeout(12_000) });
     if (!response.ok) throw new Error(String(response.status));
-    return { name: source.name, url: source.url, source_type: source.source_type, signal: stripHtml((await response.text()).slice(0, 60_000)).slice(0, 1600) };
+    return { name: source.name, url: source.url, source_type: source.source_type, signal: stripHtml((await response.text()).slice(0, 40_000)).slice(0, 1200) };
   }));
   return settled.flatMap((item) => item.status === "fulfilled" ? [item.value] : []);
 }
@@ -543,6 +577,32 @@ async function researchSignals(limit = 6) {
 function articlePrompt(topic, signals, wordLimit = 1200) {
   return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are for trend and fact awareness only; never copy wording or credit competitor publishers in the article body: ${JSON.stringify(signals)}. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. hero_hook must be a short, accurate, curiosity-led headline based on human decision psychology without clickbait. Write 4-8 distinct, search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Use concise direct answers, descriptive H2/H3 headings, short paragraphs, useful lists, and verifiable facts. Do not include Sources, References, Citations or competitor names in content_html. When evidence is uncertain, tell readers to verify the official authority website.`;
 }
+
+const ARTICLE_RESPONSE_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    title: { type: "STRING" },
+    slug: { type: "STRING" },
+    description: { type: "STRING" },
+    content_html: { type: "STRING" },
+    meta_title: { type: "STRING" },
+    meta_description: { type: "STRING" },
+    meta_keywords: { type: "STRING" },
+    tags: { type: "ARRAY", items: { type: "STRING" } },
+    category: { type: "STRING" },
+    hero_hook: { type: "STRING" },
+    research_notes: { type: "STRING" },
+    faqs: {
+      type: "ARRAY",
+      items: {
+        type: "OBJECT",
+        properties: { question: { type: "STRING" }, answer: { type: "STRING" } },
+        required: ["question", "answer"],
+      },
+    },
+  },
+  required: ["title", "slug", "description", "content_html", "meta_title", "meta_description", "tags", "category", "hero_hook", "faqs"],
+};
 
 export function normalizeGeneratedFaqs(value) {
   if (!Array.isArray(value)) return [];
@@ -555,8 +615,11 @@ export function normalizeGeneratedFaqs(value) {
 
 async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = null, requiredTitle = "" } = {}) {
   const evidence = signals || await researchSignals(6);
-  const maxOutputTokens = Math.min(6000, Math.max(2400, Math.trunc(Number(wordLimit || 1200) * 3)));
-  const { result, model } = await geminiJson(articlePrompt(topic, evidence, wordLimit), "blog-studio", { maxOutputTokens });
+  const maxOutputTokens = Math.min(7000, Math.max(3200, Math.trunc(Number(wordLimit || 1200) * 4.5)));
+  const { result, model } = await geminiJson(articlePrompt(topic, evidence, wordLimit), "blog-studio", {
+    maxOutputTokens,
+    responseSchema: ARTICLE_RESPONSE_SCHEMA,
+  });
   const title = String(requiredTitle || result.title || topic).trim();
   const slug = slugify(requiredTitle || result.slug || result.title || topic);
   const draft = {
@@ -774,7 +837,7 @@ export async function runBlogAgent(body = {}) {
     const entityInstruction = entityContext
       ? `Generate only for this ${entityContext.schedule.entity_type}: ${JSON.stringify({ name: entityContext.schedule.entity_name, slug: entityContext.schedule.entity_slug, facts: entityContext.entity, topic_focus: entityContext.schedule.topic_focus })}. Prefer a timely verified update; otherwise create an evergreen student guide. Every topic must be specifically useful for this entity.`
       : "Cover the strongest Indian education opportunities across admissions, exams, counselling, scholarships, careers and college decisions.";
-    const promptTitles = recent.slice(0, 120);
+    const promptTitles = recent.slice(0, 80).map((article) => article.title);
     const topics = [];
     const comparedTitles = [...recent];
     const rejected = [];
@@ -782,7 +845,8 @@ export async function runBlogAgent(body = {}) {
       const rejectedInstruction = rejected.length
         ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
         : "";
-      const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 4, 8)} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return topic objects with a non-empty title.`, "blog-agent", {
+      const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
+      const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return topic objects with a non-empty title.`, "blog-agent", {
         research: true,
         maxOutputTokens: 1200,
         responseSchema: {

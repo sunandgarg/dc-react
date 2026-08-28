@@ -12,9 +12,10 @@ interface Section {
   featured?: { title: string; subtitle: string; href: string };
 }
 
-function useMegaMenuData() {
+function useMegaMenuData(enabled: boolean) {
   return useQuery({
     queryKey: ["mega-menu-data-v2"],
+    enabled,
     staleTime: 30 * 60 * 1000,
     queryFn: async () => {
       const [c, co, e] = await Promise.all([
@@ -37,7 +38,8 @@ const STREAMS = [
 ];
 
 export function MegaMenu() {
-  const { data } = useMegaMenuData();
+  const [dataRequested, setDataRequested] = useState(false);
+  const { data } = useMegaMenuData(dataRequested);
   const [open, setOpen] = useState<string | null>(null);
   const [panelTop, setPanelTop] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -303,10 +305,15 @@ export function MegaMenu() {
                 type="button"
                 aria-expanded={active}
                 aria-haspopup="menu"
-                onPointerEnter={() => { if (open && !active) setOpen(s.label); }}
-            onClick={(event) => {
+                onPointerEnter={() => {
+                  setDataRequested(true);
+                  if (open && !active) setOpen(s.label);
+                }}
+                onFocus={() => setDataRequested(true)}
+                onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
+                  setDataRequested(true);
                   if (active) setOpen(null);
                   else setOpen(s.label);
                 }}

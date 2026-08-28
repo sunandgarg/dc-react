@@ -42,6 +42,33 @@
     <meta name="theme-color" content="#ff6b35" />
     <meta name="msapplication-TileColor" content="#ff6b35" />
 
+    <style>
+      #dc-first-paint-shell { min-height: 100vh; background: #f8fafc; color: #111827; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      #dc-first-paint-shell[hidden] { display: none; }
+      .dc-shell-nav { height: 56px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid #e5e7eb; background: #fff; }
+      .dc-shell-logo { font-size: 22px; font-weight: 900; color: #111827; }
+      .dc-shell-logo span { color: #f97316; }
+      .dc-shell-search-row { height: 56px; box-sizing: border-box; padding: 7px 16px; border-bottom: 1px solid #e5e7eb; background: #fff; }
+      .dc-shell-search { height: 40px; border: 1px solid #dbe2ea; border-radius: 16px; background: #fff; }
+      .dc-shell-hero { box-sizing: border-box; min-height: 650px; padding: 32px 16px 48px; background: linear-gradient(118deg,#fff7f1 0%,#f8fbff 48%,#eef5ff 100%); }
+      .dc-shell-copy { max-width: 800px; }
+      .dc-shell-badge { display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border: 1px solid #fed7aa; border-radius: 999px; background: #fff7ed; color: #ea580c; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+      .dc-shell-ai { margin: 12px 0 0; color: #64748b; font-size: 14px; font-weight: 600; }
+      .dc-shell-title { max-width: 760px; margin: 20px 0 0; font-size: 40px; line-height: 1.02; letter-spacing: 0; font-weight: 900; }
+      .dc-shell-title strong { color: #3257d2; }
+      .dc-shell-description { max-width: 680px; margin: 20px 0 0; color: #475569; font-size: 14px; line-height: 24px; font-weight: 500; }
+      .dc-shell-hero-search { max-width: 672px; height: 54px; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 999px; background: #fff; box-shadow: 0 10px 40px -20px rgba(50,87,210,.32); }
+      @media (min-width: 768px) {
+        .dc-shell-nav { height: 72px; padding: 0 max(24px, calc((100vw - 1280px) / 2)); }
+        .dc-shell-search-row { height: 60px; padding: 8px max(24px, calc((100vw - 1280px) / 2)); }
+        .dc-shell-search { height: 44px; }
+        .dc-shell-hero { min-height: 720px; padding: 56px max(24px, calc((100vw - 1280px) / 2)); }
+        .dc-shell-title { font-size: 68px; }
+        .dc-shell-description { font-size: 18px; line-height: 32px; }
+      }
+      @media (min-width: 1024px) { .dc-shell-title { font-size: 86px; } }
+    </style>
+
     <!-- Google AdSense (deferred to idle to avoid blocking LCP; loaded via AdsenseLoader) -->
     <meta name="google-adsense-account" content="ca-pub-4858806955717066" />
 
@@ -95,7 +122,31 @@
   <body>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5PF56SJF" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div id="dc-first-paint-shell" hidden>
+        <header>
+          <div class="dc-shell-nav"><div class="dc-shell-logo">Dekho<span>Campus</span></div></div>
+          <div class="dc-shell-search-row"><div class="dc-shell-search"></div></div>
+        </header>
+        <main class="dc-shell-hero">
+          <div class="dc-shell-copy">
+            <div class="dc-shell-badge">Built by IIT Delhi Alumni</div>
+            <p class="dc-shell-ai">AI-first guidance</p>
+            <h1 class="dc-shell-title">Discover Your Ideal <strong>Path</strong></h1>
+            <p class="dc-shell-description">Search verified colleges, courses and exams, then move forward with clear guidance, transparent information and human support when you need it.</p>
+            <div class="dc-shell-hero-search"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script>
+      (() => {
+        const shell = document.getElementById("dc-first-paint-shell");
+        if (!shell) return;
+        if (location.pathname === "/") shell.hidden = false;
+        else shell.remove();
+      })();
+    </script>
     <noscript>
       <main>
         <h1>Discover colleges, courses and entrance exams with DekhoCampus</h1>
