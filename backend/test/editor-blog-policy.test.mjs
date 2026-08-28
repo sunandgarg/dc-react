@@ -61,7 +61,8 @@ test("detects truncated Gemini JSON and bounds the recovery budget", () => {
     candidates: [{ finishReason: "MAX_TOKENS", content: { parts: [{ text: '{"content_html":"unfinished' }] } }],
   }), (error) => error.code === "GEMINI_RESPONSE_TRUNCATED");
   assert.equal(nextGeminiOutputBudget(1200), 2000);
-  assert.equal(nextGeminiOutputBudget(7000), 8192);
+  assert.equal(nextGeminiOutputBudget(7000), 10500);
+  assert.equal(nextGeminiOutputBudget(10000), 12000);
 });
 
 test("normalizes every saved blog cover control into render dimensions", () => {

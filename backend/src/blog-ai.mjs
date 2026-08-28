@@ -12,7 +12,7 @@ const MIN_INTERVAL_MINUTES = 30;
 const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
-const MAX_GEMINI_OUTPUT_TOKENS = 8192;
+const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
 export const DEFAULT_BLOG_COVER_TEMPLATE_KEY = "admin-uploads/blog-templates/dekhocampus-blog-cover-template-v1.png";
 
 const COVER_DIMENSIONS = {
@@ -422,7 +422,12 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     generationConfig: {
       responseMimeType: "application/json",
-      temperature: 0.45,
+      // Gemini 3 uses dynamic thinking by default. Structured JSON does not
+      // need a large reasoning budget, and that budget can otherwise consume
+      // maxOutputTokens before the JSON body is complete.
+      thinkingConfig: {
+        thinkingLevel: options.thinkingLevel || (options.research ? "minimal" : "low"),
+      },
       ...(options.maxOutputTokens ? { maxOutputTokens: Math.max(256, Math.trunc(options.maxOutputTokens)) } : {}),
       ...(options.responseSchema ? { responseSchema: options.responseSchema } : {}),
     },
@@ -461,6 +466,7 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
     metadata: {
       cached_input_tokens: Math.max(0, Math.trunc(Number(usage.cachedContentTokenCount || 0))),
       thought_tokens: Math.max(0, Math.trunc(Number(usage.thoughtsTokenCount || 0))),
+      thinking_level: options.thinkingLevel || (options.research ? "minimal" : "low"),
       max_output_tokens: options.maxOutputTokens || null,
       finish_reason: payload.candidates?.[0]?.finishReason || null,
     },
@@ -618,6 +624,7 @@ async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = nu
   const maxOutputTokens = Math.min(7000, Math.max(3200, Math.trunc(Number(wordLimit || 1200) * 4.5)));
   const { result, model } = await geminiJson(articlePrompt(topic, evidence, wordLimit), "blog-studio", {
     maxOutputTokens,
+    thinkingLevel: "low",
     responseSchema: ARTICLE_RESPONSE_SCHEMA,
   });
   const title = String(requiredTitle || result.title || topic).trim();
@@ -848,6 +855,7 @@ export async function runBlogAgent(body = {}) {
       const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
       const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return topic objects with a non-empty title.`, "blog-agent", {
         research: true,
+        thinkingLevel: "minimal",
         maxOutputTokens: 1200,
         responseSchema: {
           type: "OBJECT",
