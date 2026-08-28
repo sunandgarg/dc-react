@@ -12,6 +12,11 @@ on:
         required: false
         default: false
         type: boolean
+      revoke_phone:
+        description: Optional Indian mobile number whose sessions must be revoked
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -363,6 +368,31 @@ jobs:
           systemctl enable --now certbot.timer
           curl --fail --silent --show-error --max-time 20 https://aws-origin.dekhocampus.com/health \
             | jq -e '.ok == true and .database == "mysql" and .storage == "s3"' >/dev/null
+          REMOTE
+
+      - name: Revoke requested user sessions
+        if: ${{ inputs.revoke_phone != '' }}
+        env:
+          REVOKE_PHONE: ${{ inputs.revoke_phone }}
+        run: |
+          echo "::add-mask::$REVOKE_PHONE"
+          NORMALIZED=$(printf '%s' "$REVOKE_PHONE" | tr -cd '0-9')
+          if [ "${#NORMALIZED}" -eq 12 ] && [[ "$NORMALIZED" == 91* ]]; then
+            NORMALIZED="${NORMALIZED:2}"
+          fi
+          if ! [[ "$NORMALIZED" =~ ^[6-9][0-9]{9}$ ]]; then
+            echo "The requested session-revocation phone is invalid."
+            exit 1
+          fi
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            "$SSH_USER@$SSH_IP" "sudo bash -s -- '$NORMALIZED'" <<'REMOTE'
+          set -euo pipefail
+          export REVOKE_PHONE="$1"
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app
+          npm --prefix backend run revoke:user-sessions
           REMOTE
 
       - name: Publish build sitemap seed to private S3

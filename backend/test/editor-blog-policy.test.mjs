@@ -5,12 +5,21 @@ import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import { blogLimits, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeGeneratedFaqs, parseGeminiJsonPayload, renderBlogCover, resolveBlogMediaSource, templateCoverTitleOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
+import { accessTokenIsCurrent } from "../src/auth.mjs";
 
 test("recognizes only the restricted content editor phone", () => {
   assert.equal(isRestrictedEditorPhone("7428966263"), true);
   assert.equal(isRestrictedEditorPhone("+91 74289 66263"), true);
   assert.equal(isRestrictedEditorPhone("9818308623"), false);
   assert.equal(isRestrictedEditorPhone("8700602524"), false);
+});
+
+test("rejects access tokens issued before a user's global session cutoff", () => {
+  const user = { user_metadata: { full_name: "Admin", _sessions_revoked_after: 1_788_000_000 } };
+  assert.equal(accessTokenIsCurrent(user, { iat: 1_787_999_999 }), false);
+  assert.equal(accessTokenIsCurrent(user, { iat: 1_788_000_000 }), false);
+  assert.equal(accessTokenIsCurrent(user, { iat: 1_788_000_001 }), true);
+  assert.equal(accessTokenIsCurrent({ user_metadata: { full_name: "Admin" } }, { iat: 1 }), true);
 });
 
 test("content role covers editorial resources without destructive access", () => {

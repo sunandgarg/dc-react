@@ -43,6 +43,7 @@ export function verifyAccessToken(token) {
 }
 
 function authUser(row) {
+  const { _sessions_revoked_after: _internalSessionCutoff, ...userMetadata } = providerConfig(row.user_metadata);
   return {
     id: row.id,
     aud: "authenticated",
@@ -50,20 +51,34 @@ function authUser(row) {
     email: row.email || undefined,
     phone: row.phone || undefined,
     app_metadata: { provider: row.provider || "phone", providers: [row.provider || "phone"] },
-    user_metadata: typeof row.user_metadata === "string" ? JSON.parse(row.user_metadata || "{}") : (row.user_metadata || {}),
+    user_metadata: userMetadata,
     created_at: new Date(row.created_at).toISOString(),
     updated_at: new Date(row.updated_at).toISOString(),
   };
 }
 
-async function issueSession(userRow) {
-  const now = Math.floor(Date.now() / 1000);
+async function issueSession(userRow, db = prisma) {
+  const revokedAfter = Number(providerConfig(userRow?.user_metadata)._sessions_revoked_after || 0);
+  const now = Math.max(Math.floor(Date.now() / 1000), revokedAfter + 1);
   const accessToken = signJwt({ sub: userRow.id, aud: "authenticated", role: "authenticated", iat: now, exp: now + ACCESS_TTL_SECONDS });
   const refreshToken = randomBytes(48).toString("base64url");
-  await prisma.app_auth_refresh_tokens.create({
-    data: { id: randomUUID(), user_id: userRow.id, token_hash: digest(refreshToken), expires_at: new Date(Date.now() + REFRESH_TTL_SECONDS * 1000) },
+  await db.app_auth_refresh_tokens.create({
+    data: {
+      id: randomUUID(),
+      user_id: userRow.id,
+      token_hash: digest(refreshToken),
+      created_at: new Date(now * 1000),
+      expires_at: new Date((now + REFRESH_TTL_SECONDS) * 1000),
+    },
   });
   return { access_token: accessToken, token_type: "bearer", expires_in: ACCESS_TTL_SECONDS, expires_at: now + ACCESS_TTL_SECONDS, refresh_token: refreshToken, user: authUser(userRow) };
+}
+
+export function accessTokenIsCurrent(userRow, payload) {
+  const revokedAfter = Number(providerConfig(userRow?.user_metadata)._sessions_revoked_after || 0);
+  if (!Number.isFinite(revokedAfter) || revokedAfter <= 0) return true;
+  const issuedAt = Number(payload?.iat || 0);
+  return Number.isFinite(issuedAt) && issuedAt > revokedAfter;
 }
 
 async function userFromRequest(request) {
@@ -71,7 +86,8 @@ async function userFromRequest(request) {
   const token = value.toLowerCase().startsWith("bearer ") ? value.slice(7).trim() : "";
   const payload = verifyAccessToken(token);
   if (!payload) return null;
-  return prisma.app_auth_users.findUnique({ where: { id: payload.sub } });
+  const user = await prisma.app_auth_users.findUnique({ where: { id: payload.sub } });
+  return user && accessTokenIsCurrent(user, payload) ? user : null;
 }
 
 function providerConfig(value) {
@@ -80,6 +96,34 @@ function providerConfig(value) {
     try { return JSON.parse(value); } catch { return {}; }
   }
   return value;
+}
+
+async function revokeUserSessions(where) {
+  return prisma.$transaction(async (tx) => {
+    const user = await tx.app_auth_users.findUnique({ where });
+    if (!user) throw Object.assign(new Error("User not found"), { status: 404, code: "USER_NOT_FOUND" });
+
+    const revokedAfter = Math.floor(Date.now() / 1000);
+    const metadata = providerConfig(user.user_metadata);
+    await tx.app_auth_users.update({
+      where: { id: user.id },
+      data: { user_metadata: { ...metadata, _sessions_revoked_after: revokedAfter } },
+    });
+    const revoked = await tx.app_auth_refresh_tokens.updateMany({
+      where: { user_id: user.id, revoked_at: null },
+      data: { revoked_at: new Date() },
+    });
+    return { user_id: user.id, revoked_refresh_tokens: revoked.count, revoked_after: revokedAfter };
+  });
+}
+
+export async function revokeUserSessionsByPhone(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  const mobile = digits.length === 12 && digits.startsWith("91") ? digits.slice(2) : digits;
+  if (!/^[6-9]\d{9}$/.test(mobile)) {
+    throw Object.assign(new Error("Enter a valid Indian mobile number"), { status: 400, code: "INVALID_PHONE" });
+  }
+  return revokeUserSessions({ phone: `+91${mobile}` });
 }
 
 function fast2SmsError(text, fallback) {
@@ -187,21 +231,26 @@ export async function handleAuth(request) {
   }
   if (url.pathname === "/auth/v1/logout" && request.method === "POST") {
     const user = await userFromRequest(request);
-    if (user) {
-      await prisma.app_auth_refresh_tokens.updateMany({
-        where: { user_id: user.id, revoked_at: null },
-        data: { revoked_at: new Date() },
-      });
-    }
+    if (user) await revokeUserSessions({ id: user.id });
     return { status: 204, body: null };
   }
   if (url.pathname === "/auth/v1/token" && request.method === "POST" && url.searchParams.get("grant_type") === "refresh_token") {
     const body = await request.json().catch(() => ({}));
-    const row = await prisma.app_auth_refresh_tokens.findUnique({ where: { token_hash: digest(String(body.refresh_token || "")) } });
-    if (!row || row.revoked_at || row.expires_at <= new Date()) return { status: 401, body: { code: "refresh_token_not_found", msg: "Invalid refresh token" } };
-    await prisma.app_auth_refresh_tokens.update({ where: { id: row.id }, data: { revoked_at: new Date() } });
-    const user = await prisma.app_auth_users.findUnique({ where: { id: row.user_id } });
-    return { status: 200, body: await issueSession(user) };
+    const session = await prisma.$transaction(async (tx) => {
+      const row = await tx.app_auth_refresh_tokens.findUnique({ where: { token_hash: digest(String(body.refresh_token || "")) } });
+      if (!row || row.revoked_at || row.expires_at <= new Date()) return null;
+      const user = await tx.app_auth_users.findUnique({ where: { id: row.user_id } });
+      const revokedAfter = Number(providerConfig(user?.user_metadata)._sessions_revoked_after || 0);
+      const refreshIssuedAt = Math.floor(new Date(row.created_at).getTime() / 1000);
+      if (!user || (revokedAfter > 0 && refreshIssuedAt <= revokedAfter)) return null;
+      const claimed = await tx.app_auth_refresh_tokens.updateMany({
+        where: { id: row.id, revoked_at: null },
+        data: { revoked_at: new Date() },
+      });
+      return claimed.count === 1 ? issueSession(user, tx) : null;
+    });
+    if (!session) return { status: 401, body: { code: "refresh_token_not_found", msg: "Invalid refresh token" } };
+    return { status: 200, body: session };
   }
   if (url.pathname === "/auth/v1/authorize") return { status: 501, body: { code: "OAUTH_NOT_CONFIGURED", msg: "Native Google OAuth needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET" } };
   return null;
