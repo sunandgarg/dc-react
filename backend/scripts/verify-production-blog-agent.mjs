@@ -11,6 +11,7 @@ const testSlug = `codex-blog-agent-smoke-${Date.now()}`;
 let coverUrl = "";
 let runId = "";
 let createdArticleIds = [];
+let createdArticleSlugs = [];
 let originalSettings = null;
 const coverDiagnostics = {};
 
@@ -82,6 +83,10 @@ try {
   assert.ok(article, "Generated smoke-test article was not saved in AWS MySQL");
   assert.equal(article.status, "Draft");
   assert.match(article.content, /<\w+/i, "Generated article has no HTML content");
+  assert.match(article.content, /frequently asked|<h[2-4][^>]*>\s*faqs?/i, "Generated article has no visible FAQ section");
+  createdArticleSlugs = [article.slug];
+  const faqCount = await prisma.faqs.count({ where: { page: "articles", item_slug: article.slug, is_active: true } });
+  assert.ok(faqCount >= 4, `Generated article stored only ${faqCount} dedicated FAQs`);
 
   const coverMode = originalSettings.image_mode === "template" && originalSettings.image_template_url ? "template" : "generated";
   coverUrl = await createBlogCover(testSlug, "Indian higher education admissions and student success", {
@@ -103,6 +108,7 @@ try {
   console.log(JSON.stringify({
     ok: true,
     gemini_agent: "created one AWS MySQL draft",
+    article_faqs: `${faqCount} visible and dedicated FAQ records verified`,
     cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
     template_fallback_reason: coverDiagnostics.templateError || null,
     generated_fallback_reason: coverDiagnostics.generatedError || null,
@@ -111,6 +117,9 @@ try {
     cleanup: "pending",
   }, null, 2));
 } finally {
+  if (createdArticleSlugs.length) {
+    await prisma.faqs.deleteMany({ where: { page: "articles", item_slug: { in: createdArticleSlugs } } }).catch(() => {});
+  }
   if (createdArticleIds.length) {
     await prisma.article_links.deleteMany({ where: { article_id: { in: createdArticleIds } } }).catch(() => {});
     await prisma.articles.deleteMany({ where: { id: { in: createdArticleIds } } }).catch(() => {});
