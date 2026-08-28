@@ -328,12 +328,14 @@ function articlePrompt(topic, signals, wordLimit = 1200) {
   return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are for trend and fact awareness only; never copy wording or credit competitor publishers in the article body: ${JSON.stringify(signals)}. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes}. Use concise direct answers, descriptive H2/H3 headings, short paragraphs, useful lists, an FAQ section, and verifiable facts. Do not include Sources, References, Citations or competitor names in content_html. When evidence is uncertain, tell readers to verify the official authority website.`;
 }
 
-async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = null } = {}) {
+async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = null, requiredTitle = "" } = {}) {
   const evidence = signals || await researchSignals();
   const { result, model } = await geminiJson(articlePrompt(topic, evidence, wordLimit), "blog-studio");
-  const slug = slugify(result.slug || result.title || topic);
+  const title = String(requiredTitle || result.title || topic).trim();
+  const slug = slugify(requiredTitle || result.slug || result.title || topic);
   const draft = {
     ...result,
+    title,
     slug,
     content_html: stripCompetitorCredits(result.content_html),
     tags: Array.isArray(result.tags) ? result.tags : [],
@@ -400,7 +402,8 @@ export async function handleAiGenerate(request) {
 }
 
 async function saveGeneratedArticle(topic, settings, signals, schedule = null) {
-  const generated = await generateDraft(topic, { wordLimit: settings.word_limit, signals, cover: {
+  const topicTitle = String(topic?.title || topic).trim();
+  const generated = await generateDraft(topicTitle, { wordLimit: settings.word_limit, signals, requiredTitle: topicTitle, cover: {
     imageMode: settings.image_mode,
     templateUrl: settings.image_template_url,
     promptStyle: settings.image_prompt_style,
@@ -538,7 +541,7 @@ export async function runBlogAgent(body = {}) {
     const ids = [];
     for (const topic of topics) {
       await assertRunActive(run.id, executionToken);
-      const id = await saveGeneratedArticle(topic.title, settings, signals, entityContext?.schedule || null);
+      const id = await saveGeneratedArticle(topic, settings, signals, entityContext?.schedule || null);
       await assertRunActive(run.id, executionToken);
       if (id) ids.push(id);
     }

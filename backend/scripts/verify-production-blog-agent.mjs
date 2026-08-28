@@ -41,12 +41,24 @@ async function diagnostics() {
   return settings;
 }
 
+async function waitForScheduledRun() {
+  for (let attempt = 0; attempt < 96; attempt += 1) {
+    const active = await prisma.blog_auto_agent_runs.findFirst({ where: { status: "running" }, select: { id: true, trigger_type: true, started_at: true } });
+    if (!active) return;
+    if (attempt === 0) console.log(JSON.stringify({ waiting_for_existing_run: active }));
+    await new Promise((resolve) => setTimeout(resolve, 5_000));
+  }
+  throw new Error("An existing blog-agent run did not finish within eight minutes");
+}
+
 try {
   originalSettings = await diagnostics();
   const disabledControl = await prisma.ai_runtime_controls.findFirst({
     where: { feature: { in: ["global", "blog-agent", "blog-studio", "blog-cover"] }, is_enabled: false },
   });
   assert.equal(disabledControl, null, `AI control ${disabledControl?.feature} is disabled`);
+  await waitForScheduledRun();
+  originalSettings = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } });
 
   await prisma.blog_auto_agent_settings.update({
     where: { id: "default" },
