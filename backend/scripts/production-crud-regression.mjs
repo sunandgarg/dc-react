@@ -69,10 +69,10 @@ function rowBody(result) {
   return Array.isArray(result.body) ? result.body[0] : result.body;
 }
 
-function requestFor(table, method, { body, id, prefer = "return=representation" } = {}) {
+function requestFor(table, method, { body, filters = {}, prefer = "return=representation" } = {}) {
   const url = new URL(`http://localhost/v1/rest/${table}`);
   url.searchParams.set("select", "*");
-  if (id) url.searchParams.set("id", `eq.${id}`);
+  for (const [field, value] of Object.entries(filters)) url.searchParams.set(field, `eq.${value}`);
   return new Request(url, {
     method,
     headers: {
@@ -131,7 +131,8 @@ async function payloadFor(table) {
   if (!metadata || metadata.ignored) throw new Error(`${table} is unavailable or read-only`);
   const payload = {};
   for (const [name, field] of Object.entries(metadata.fields)) {
-    if (field.primaryKey || field.nullable || field.default !== null) continue;
+    if (field.nullable || field.default !== null) continue;
+    if (field.primaryKey && field.default !== null) continue;
     if (name === "short_id" && ["colleges", "courses", "exams"].includes(table)) continue;
     payload[name] = await requiredValue(table, name, field);
   }
@@ -155,8 +156,10 @@ function editableField(table) {
     || Object.entries(fields).find(([name, field]) => !field.primaryKey && !["created_at", "updated_at"].includes(name))?.[0];
 }
 
-async function publicRows(table, id) {
-  const url = `${PUBLIC_BASE_URL}/v1/rest/${table}?id=eq.${encodeURIComponent(id)}&select=*`;
+async function publicRows(table, filters) {
+  const url = new URL(`${PUBLIC_BASE_URL}/v1/rest/${table}`);
+  url.searchParams.set("select", "*");
+  for (const [field, value] of Object.entries(filters)) url.searchParams.set(field, `eq.${value}`);
   const response = await fetch(url, { headers: { accept: "application/json" }, signal: AbortSignal.timeout(20_000) });
   const text = await response.text();
   if (!response.ok) throw new Error(`public ${table} read failed (${response.status}): ${text.slice(0, 240)}`);
@@ -193,8 +196,11 @@ async function exerciseTable(table) {
   const insert = await handleRest(table, requestFor(table, "POST", { body: payload }));
   if (insert.status !== 201) throw new Error(`insert returned ${insert.status}`);
   const inserted = rowBody(insert);
-  if (!inserted?.id) throw new Error("insert did not return an id");
-  created.push({ table, id: inserted.id });
+  const filters = Object.fromEntries(schemaMetadata[table].primaryKeys.map((field) => [field, inserted?.[field]]));
+  if (Object.values(filters).some((value) => value === null || value === undefined || value === "")) {
+    throw new Error(`insert did not return primary key values: ${schemaMetadata[table].primaryKeys.join(",")}`);
+  }
+  created.push({ table, filters });
   createdByTable.set(table, inserted);
 
   const field = editableField(table);
@@ -210,16 +216,16 @@ async function exerciseTable(table) {
         : ["Int", "BigInt", "Decimal", "Float"].includes(fieldMetadata.type)
           ? Number(inserted[field] || 0) + 1
           : inserted[field];
-  const update = await handleRest(table, requestFor(table, "PATCH", { id: inserted.id, body: { [field]: editedValue } }));
+  const update = await handleRest(table, requestFor(table, "PATCH", { filters, body: { [field]: editedValue } }));
   if (update.status !== 200) throw new Error(`update returned ${update.status}`);
 
-  const read = await handleRest(table, requestFor(table, "GET", { id: inserted.id, prefer: "" }));
+  const read = await handleRest(table, requestFor(table, "GET", { filters, prefer: "" }));
   const stored = rowBody(read);
   if (!stored || JSON.stringify(stored[field]) !== JSON.stringify(editedValue)) throw new Error(`${field} edit did not persist`);
 
   let publicRead = false;
   if (PUBLIC_READ_TABLES.has(table)) {
-    const rows = await publicRows(table, inserted.id);
+    const rows = await publicRows(table, filters);
     if (!Array.isArray(rows) || rows.length !== 1) throw new Error("public API did not return the inserted row");
     publicRead = true;
   }
@@ -248,15 +254,16 @@ async function cleanup() {
   const cleanupFailures = [];
   for (const item of [...created].reverse()) {
     try {
-      await handleRest(item.table, requestFor(item.table, "DELETE", { id: item.id, prefer: "" }));
-      const check = await handleRest(item.table, requestFor(item.table, "GET", { id: item.id, prefer: "" }));
-      if (Array.isArray(check.body) ? check.body.length : check.body) throw new Error("row remained after delete");
+      await handleRest(item.table, requestFor(item.table, "DELETE", { filters: item.filters, prefer: "" }));
+      const check = await handleRest(item.table, requestFor(item.table, "GET", { filters: item.filters, prefer: "" }));
+      if (check.status !== 406) throw new Error("row remained after delete");
     } catch (error) {
-      cleanupFailures.push(`${item.table}:${item.id}: ${error.message}`);
+      cleanupFailures.push(`${item.table}:${JSON.stringify(item.filters)}: ${error.message}`);
     }
   }
   // Clean the record left by the interrupted browser confirmation in the same QA run.
   await prisma.companies.deleteMany({ where: { name: { startsWith: "Codex QA 20260828 Company" } } });
+  await prisma.intent_event_weights.deleteMany({ where: { label: { startsWith: "Codex production regression" } } });
   if (cleanupFailures.length) throw new Error(`cleanup failed: ${cleanupFailures.join("; ")}`);
 }
 

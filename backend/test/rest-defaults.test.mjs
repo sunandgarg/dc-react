@@ -55,3 +55,9 @@ test("stores blank optional dates as null for MySQL", () => {
   assert.equal(normalizeForDatabase("", { type: "DateTime", nullable: true, format: "date" }), null);
   assert.equal(normalizeForDatabase("2026-08-27", { type: "DateTime", nullable: true, format: "date" }), "2026-08-27");
 });
+
+test("materializes SQL current-date defaults before raw inserts", () => {
+  const university = applyDefaults("universities", { name: "QA University" });
+  assert.match(university.daily_count_reset_at, /^\d{4}-\d{2}-\d{2}$/);
+  assert.notEqual(university.daily_count_reset_at, "CURRENT_DATE");
+});

@@ -73,8 +73,10 @@ export function applyDefaults(table, row) {
   const result = { ...row };
   for (const [name, field] of Object.entries(schemaMetadata[table].fields)) {
     if (result[name] !== undefined) continue;
+    const normalizedDefault = String(field.default).toLowerCase();
     if (String(field.default).includes("gen_random_uuid")) result[name] = randomUUID();
-    else if (String(field.default).toLowerCase() === "now()") result[name] = new Date().toISOString();
+    else if (normalizedDefault === "now()") result[name] = new Date().toISOString();
+    else if (["current_date", "current_date()"].includes(normalizedDefault)) result[name] = new Date().toISOString().slice(0, 10);
     else if (field.default !== null) result[name] = field.default;
     else if (field.type === "Json" && !field.nullable) {
       result[name] = String(field.format).endsWith("[]") ? [] : {};
