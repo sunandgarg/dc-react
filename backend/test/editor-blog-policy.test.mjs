@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { blogLimits, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeGeneratedFaqs, parseGeminiJsonPayload, renderBlogCover, resolveBlogMediaSource, templateCoverTitleOverlay } from "../src/blog-ai.mjs";
+import { blogLimits, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeGeneratedFaqs, parseGeminiJsonPayload, renderBlogCover, resolveBlogMediaSource, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent } from "../src/auth.mjs";
 
@@ -132,6 +132,22 @@ test("fits template headings into at most four centered lines without adding a p
   const svg = templateCoverTitleOverlay(title, options).toString();
   assert.match(svg, /text-anchor="middle"/);
   assert.doesNotMatch(svg, /<rect/);
+});
+
+test("balances abbreviated article titles without orphan lines", () => {
+  const layout = layoutTemplateCoverTitle("ICAR AIEEA PG 2026 Seat Matrix and Choice Locking Strategy", { width: 1600, height: 900 });
+  assert.ok(layout.lines.every((line) => line.split(/\s+/).length > 1));
+  assert.equal(layout.lines.join(" "), "DekhoCampus: ICAR AIEEA PG 2026 Seat Matrix and Choice Locking Strategy");
+});
+
+test("rasterizes template headings with the bundled production font", async () => {
+  const options = { width: 1600, height: 900 };
+  const overlay = await templateCoverTitleRasterOverlay("A clear counselling deadline students should remember", options);
+  const metadata = await sharp(overlay.input).metadata();
+  const stats = await sharp(overlay.input).stats();
+  assert.equal(metadata.format, "png");
+  assert.ok(metadata.width > 500 && metadata.height > 50);
+  assert.ok(stats.channels[3].max > 0, "Expected the title overlay to contain visible alpha pixels");
 });
 
 test("renders the supplied template as a 16:9 WebP while preserving its own artwork", async () => {

@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { prisma, schemaMetadata } from "./db.mjs";
 import { uploadStorageObject } from "./storage.mjs";
@@ -15,6 +16,7 @@ const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
 const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
 export const DEFAULT_BLOG_COVER_TEMPLATE_KEY = "admin-uploads/blog-templates/dekhocampus-blog-cover-template-v1.png";
+const BLOG_COVER_FONT_FILE = fileURLToPath(new URL("../assets/Inter.ttf", import.meta.url));
 
 const COVER_DIMENSIONS = {
   "16:9": { web: [1600, 900], "2k": [2560, 1440], "4k": [3840, 2160] },
@@ -133,28 +135,35 @@ export function layoutTemplateCoverTitle(value, options) {
   const words = formatBlogCoverTitle(value).split(/\s+/).filter(Boolean);
   const totalCharacters = words.join(" ").length;
   const targetLineCount = totalCharacters <= 34 ? 1 : totalCharacters <= 68 ? 2 : totalCharacters <= 98 ? 3 : 4;
-  let maxCharacters = Math.ceil(totalCharacters / targetLineCount) + 5;
-  let lines = [];
-
-  for (let attempt = 0; attempt < 6; attempt += 1) {
-    lines = [];
-    let line = "";
-    for (const word of words) {
-      const candidate = `${line} ${word}`.trim();
-      if (candidate.length > maxCharacters && line) {
-        lines.push(line);
-        line = word;
-      } else {
-        line = candidate;
-      }
+  const lineCount = Math.min(targetLineCount, words.length);
+  const averageLength = totalCharacters / lineCount;
+  const memo = new Map();
+  const partition = (wordIndex, linesLeft) => {
+    const key = `${wordIndex}:${linesLeft}`;
+    if (memo.has(key)) return memo.get(key);
+    if (linesLeft === 1) {
+      const text = words.slice(wordIndex).join(" ");
+      const result = { lines: [text], score: (text.length - averageLength) ** 2 };
+      memo.set(key, result);
+      return result;
     }
-    if (line) lines.push(line);
-    if (lines.length <= 4) break;
-    maxCharacters += 4;
-  }
+    let best = null;
+    const lastBreak = words.length - linesLeft + 1;
+    for (let end = wordIndex + 1; end <= lastBreak; end += 1) {
+      const text = words.slice(wordIndex, end).join(" ");
+      const tail = partition(end, linesLeft - 1);
+      const orphanPenalty = end === wordIndex + 1 && words.length > lineCount ? 2_000 : 0;
+      const score = ((text.length - averageLength) ** 2) + orphanPenalty + tail.score;
+      if (!best || score < best.score) best = { lines: [text, ...tail.lines], score };
+    }
+    memo.set(key, best);
+    return best;
+  };
+  const lines = partition(0, lineCount)?.lines || [words.join(" ")];
 
-  if (lines.length > 4) {
-    lines = [...lines.slice(0, 3), lines.slice(3).join(" ")];
+  if (lines.length > 1 && lines.at(-1).split(/\s+/).length === 1) {
+    lines[lines.length - 1] = `${lines[lines.length - 2].split(/\s+/).pop()} ${lines.at(-1)}`;
+    lines[lines.length - 2] = lines[lines.length - 2].split(/\s+/).slice(0, -1).join(" ");
   }
 
   const safeWidth = options.width * 0.68;
@@ -188,6 +197,29 @@ export function templateCoverTitleOverlay(value, options) {
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">${title}</svg>`);
 }
 
+export async function templateCoverTitleRasterOverlay(value, options) {
+  const layout = layoutTemplateCoverTitle(value, options);
+  const width = Math.round(options.width * 0.72);
+  const height = Math.round(options.height * 0.42);
+  const rendered = await sharp({
+    text: {
+      text: layout.lines.map(escapeCoverText).join("\n"),
+      font: `Inter Bold ${layout.fontSize}`,
+      fontfile: BLOG_COVER_FONT_FILE,
+      width,
+      height,
+      align: "centre",
+      rgba: true,
+    },
+  }).png().toBuffer({ resolveWithObject: true });
+
+  return {
+    input: rendered.data,
+    left: Math.round(layout.centerX - rendered.info.width / 2),
+    top: Math.round(layout.centerY - rendered.info.height / 2),
+  };
+}
+
 export async function createLocalEditorialCover(prompt, options) {
   void prompt;
   void options;
@@ -201,11 +233,9 @@ export async function renderBlogCover(sourceBytes, options, titleHook, sourceMod
     .resize(options.width, options.height, usesTemplateArtwork
       ? { fit: "fill" }
       : { fit: "cover", position: "attention" });
-  const composites = [{
-    input: usesTemplateArtwork ? templateCoverTitleOverlay(titleHook, options) : coverTitleOverlay(titleHook, options),
-    left: 0,
-    top: 0,
-  }];
+  const composites = [usesTemplateArtwork
+    ? await templateCoverTitleRasterOverlay(titleHook, options)
+    : { input: coverTitleOverlay(titleHook, options), left: 0, top: 0 }];
   if (usesTemplateArtwork && diagnostics) diagnostics.logoPreservedFromTemplate = true;
   if (!usesTemplateArtwork && options.includeLogo && options.logoUrl) {
     try {

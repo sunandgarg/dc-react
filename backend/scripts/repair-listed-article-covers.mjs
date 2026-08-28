@@ -78,6 +78,11 @@ for (const title of titles) {
     .raw()
     .toBuffer();
   assert.ok([...bottomCenter].every((channel) => channel > 220), `Retired dark-panel cover detected for ${article.slug}`);
+  const titleStats = await sharp(bytes)
+    .extract({ left: 260, top: 270, width: 1080, height: 380 })
+    .greyscale()
+    .stats();
+  assert.ok(titleStats.channels[0].min < 80, `Rendered title is missing for ${article.slug}`);
 
   await prisma.articles.update({
     where: { id: article.id },
