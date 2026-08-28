@@ -2,7 +2,7 @@
 
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { createBlogCover, runBlogAgent } from "../src/blog-ai.mjs";
+import { createBlogCover, DEFAULT_BLOG_COVER_TEMPLATE_KEY, runBlogAgent } from "../src/blog-ai.mjs";
 import { prisma } from "../src/db.mjs";
 import { toStoredMediaKeys } from "../src/media-values.mjs";
 import { deleteStorageObjectKeys } from "../src/storage.mjs";
@@ -116,6 +116,8 @@ try {
   assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
 
   const coverMode = originalSettings.image_mode === "template" && originalSettings.image_template_url ? "template" : "generated";
+  assert.equal(coverMode, "template", "Production is not configured to use the saved blog cover template");
+  assert.equal(originalSettings.image_template_url, DEFAULT_BLOG_COVER_TEMPLATE_KEY, "Production points to an unexpected blog cover template");
   coverUrl = await createBlogCover(testSlug, "Indian higher education admissions and student success", {
     imageMode: coverMode,
     templateUrl: originalSettings.image_template_url,
@@ -131,6 +133,9 @@ try {
   assert.equal(coverResponse.ok, true, `Generated AWS cover is not publicly readable (${coverResponse.status})`);
   assert.match(String(coverResponse.headers.get("content-type")), /^image\/webp/);
   assert.ok((await coverResponse.arrayBuffer()).byteLength > 10_000, "Generated cover is unexpectedly small");
+  assert.equal(coverDiagnostics.sourceMode, "template", coverDiagnostics.templateError || "Production cover did not use the saved template");
+  assert.equal(coverDiagnostics.logoPreservedFromTemplate, true, "The template's embedded logo was not preserved");
+  assert.equal(coverDiagnostics.logoApplied, undefined, "A second logo was unexpectedly applied over the saved template");
 
   console.log(JSON.stringify({
     ok: true,
@@ -140,6 +145,7 @@ try {
     template_fallback_reason: coverDiagnostics.templateError || null,
     generated_fallback_reason: coverDiagnostics.generatedError || null,
     logo_applied: Boolean(coverDiagnostics.logoApplied),
+    template_logo_preserved: Boolean(coverDiagnostics.logoPreservedFromTemplate),
     logo_fallback_reason: coverDiagnostics.logoError || null,
     cleanup: "pending",
   }, null, 2));

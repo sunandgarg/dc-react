@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sparkles, Loader2, Image as ImageIcon, BookOpenCheck } from "lucide-react";
 import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
@@ -28,6 +28,21 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
   const [templateUrl, setTemplateUrl] = useState("");
   const [includeLogo, setIncludeLogo] = useState(true);
   const [logoUrl, setLogoUrl] = useState("");
+
+  useEffect(() => {
+    if (!open) return;
+    void (async () => {
+      const { data } = await (backendClient as any).from("blog_auto_agent_settings")
+        .select("image_mode,image_template_url,include_logo,logo_url")
+        .eq("id", "default")
+        .maybeSingle();
+      if (!data) return;
+      setImageMode(data.image_mode || "template");
+      setTemplateUrl(data.image_template_url || "");
+      setIncludeLogo(Boolean(data.include_logo));
+      setLogoUrl(data.logo_url || "");
+    })();
+  }, [open]);
 
   const generate = async () => {
     if (!topic.trim()) return toast.error("Enter a blog topic");
@@ -102,10 +117,11 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
             {([["generated", "New OpenAI image"], ["template", "Use template"], ["none", "No image"]] as const).map(([mode, label]) => <Button key={mode} size="sm" variant={imageMode === mode ? "default" : "outline"} onClick={() => setImageMode(mode)}>{label}</Button>)}
           </div>
           {imageMode === "template" && <div className="mt-3"><ImageUploadField label="Cover template" value={templateUrl} onChange={setTemplateUrl} folder="blog-templates" /></div>}
-          {imageMode !== "none" && <div className="mt-3 grid gap-3 md:grid-cols-2">
+          {imageMode === "generated" && <div className="mt-3 grid gap-3 md:grid-cols-2">
             <label className="flex items-center justify-between rounded-lg border p-3"><span className="text-sm">Place uploaded logo</span><Switch checked={includeLogo} onCheckedChange={setIncludeLogo} /></label>
             {includeLogo && <ImageUploadField label="High-resolution logo" value={logoUrl} onChange={setLogoUrl} folder="blog-brand" />}
           </div>}
+          {imageMode === "template" && <p className="mt-2 text-xs text-muted-foreground">The saved template logo and frame are preserved; only the article heading is placed in its white area.</p>}
         </div>
         <p className="text-xs text-muted-foreground">Competitor research is used for trend awareness only. Every result is checked for duplicate coverage, includes dedicated FAQs, and is saved as Draft for editor review.</p>
         <Button onClick={generate} disabled={busy} className="gap-2">{busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Research, write and generate branded cover</Button>

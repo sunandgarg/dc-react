@@ -12,6 +12,7 @@ const MIN_INTERVAL_MINUTES = 30;
 const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
+export const DEFAULT_BLOG_COVER_TEMPLATE_KEY = "admin-uploads/blog-templates/dekhocampus-blog-cover-template-v1.png";
 
 const COVER_DIMENSIONS = {
   "16:9": { web: [1600, 900], "2k": [2560, 1440], "4k": [3840, 2160] },
@@ -119,6 +120,65 @@ function coverTitleOverlay(value, options) {
   </svg>`);
 }
 
+export function layoutTemplateCoverTitle(value, options) {
+  const words = formatBlogCoverTitle(value).split(/\s+/).filter(Boolean);
+  const totalCharacters = words.join(" ").length;
+  const targetLineCount = totalCharacters <= 34 ? 1 : totalCharacters <= 68 ? 2 : totalCharacters <= 98 ? 3 : 4;
+  let maxCharacters = Math.ceil(totalCharacters / targetLineCount) + 5;
+  let lines = [];
+
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    lines = [];
+    let line = "";
+    for (const word of words) {
+      const candidate = `${line} ${word}`.trim();
+      if (candidate.length > maxCharacters && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = candidate;
+      }
+    }
+    if (line) lines.push(line);
+    if (lines.length <= 4) break;
+    maxCharacters += 4;
+  }
+
+  if (lines.length > 4) {
+    lines = [...lines.slice(0, 3), lines.slice(3).join(" ")];
+  }
+
+  const safeWidth = options.width * 0.68;
+  const longestLine = Math.max(1, ...lines.map((line) => line.length));
+  const fontSize = Math.max(
+    Math.round(options.width * 0.035),
+    Math.min(
+      Math.round(options.width * 0.063),
+      Math.round(safeWidth / (longestLine * 0.56)),
+      Math.round((options.height * 0.38) / (Math.max(1, lines.length) * 1.18)),
+    ),
+  );
+
+  return {
+    lines,
+    fontSize,
+    lineHeight: Math.round(fontSize * 1.18),
+    centerX: Math.round(options.width * 0.5),
+    centerY: Math.round(options.height * 0.52),
+  };
+}
+
+export function templateCoverTitleOverlay(value, options) {
+  const layout = layoutTemplateCoverTitle(value, options);
+  const midpoint = (layout.lines.length - 1) / 2;
+  const title = layout.lines.map((text, index) => (
+    `<text x="${layout.centerX}" y="${Math.round(layout.centerY + (index - midpoint) * layout.lineHeight)}" `
+    + `text-anchor="middle" dominant-baseline="middle" font-family="Arial, Helvetica, sans-serif" `
+    + `font-size="${layout.fontSize}" font-weight="700" fill="#111827">${escapeCoverText(text)}</text>`
+  )).join("");
+  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">${title}</svg>`);
+}
+
 export async function createLocalEditorialCover(prompt, options) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">
     <rect width="100%" height="100%" fill="#f8fafc"/>
@@ -132,12 +192,20 @@ export async function createLocalEditorialCover(prompt, options) {
   return sharp(Buffer.from(svg)).png().toBuffer();
 }
 
-async function renderBlogCover(sourceBytes, options, titleHook, diagnostics = null) {
+export async function renderBlogCover(sourceBytes, options, titleHook, diagnostics = null) {
+  const usesTemplateArtwork = diagnostics?.sourceMode === "template";
   const base = sharp(sourceBytes, { limitInputPixels: 50_000_000 })
     .rotate()
-    .resize(options.width, options.height, { fit: "cover", position: "attention" });
-  const composites = [{ input: coverTitleOverlay(titleHook, options), left: 0, top: 0 }];
-  if (options.includeLogo && options.logoUrl) {
+    .resize(options.width, options.height, usesTemplateArtwork
+      ? { fit: "fill" }
+      : { fit: "cover", position: "attention" });
+  const composites = [{
+    input: usesTemplateArtwork ? templateCoverTitleOverlay(titleHook, options) : coverTitleOverlay(titleHook, options),
+    left: 0,
+    top: 0,
+  }];
+  if (usesTemplateArtwork && diagnostics) diagnostics.logoPreservedFromTemplate = true;
+  if (!usesTemplateArtwork && options.includeLogo && options.logoUrl) {
     try {
       const logoSource = await downloadCoverSource(options.logoUrl, "Cover logo");
       const logo = await sharp(logoSource, { limitInputPixels: 20_000_000 })
@@ -506,15 +574,17 @@ export async function handleBlogStudio(request) {
   const body = await request.json().catch(() => ({}));
   const topic = String(body.topic || "").trim();
   if (!topic) throw Object.assign(new Error("A blog topic is required"), { status: 400 });
+  const savedCover = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } }).catch(() => null);
+  const image = body.image && typeof body.image === "object" ? body.image : {};
   const coverDiagnostics = {};
   const generated = await generateDraft(topic, { wordLimit: body.word_limit, cover: {
-    imageMode: body.image?.mode || "none",
-    templateUrl: body.image?.template_url,
-    promptStyle: body.image?.prompt_style,
-    includeLogo: body.image?.include_logo,
-    logoUrl: body.image?.logo_url,
-    aspectRatio: body.image?.aspect_ratio,
-    resolution: body.image?.resolution,
+    imageMode: image.mode || savedCover?.image_mode || "none",
+    templateUrl: image.template_url || savedCover?.image_template_url,
+    promptStyle: image.prompt_style || savedCover?.image_prompt_style,
+    includeLogo: image.include_logo ?? savedCover?.include_logo,
+    logoUrl: image.logo_url || savedCover?.logo_url,
+    aspectRatio: image.aspect_ratio || savedCover?.image_aspect_ratio,
+    resolution: image.resolution || savedCover?.output_resolution,
     diagnostics: coverDiagnostics,
   } });
   const existing = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { id: true, slug: true, title: true } });

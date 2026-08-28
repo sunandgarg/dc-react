@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { DEFAULT_BLOG_COVER_TEMPLATE_KEY } from "../src/blog-ai.mjs";
 import { prisma } from "../src/db.mjs";
+import { uploadStorageObject } from "../src/storage.mjs";
 
 const integrations = [
   ["ga4_measurement_id", "Google Analytics 4 Measurement ID", "analytics", "G-Y8E5HHTXLX"],
@@ -16,7 +19,29 @@ try {
       await prisma.site_integrations.create({ data: { id: randomUUID(), key, label, category, value, enabled: true, notes: "Production tracking configuration" } });
     }
   }
-  console.log(JSON.stringify({ configured: integrations.map(([key]) => key) }));
+  const templateBytes = await readFile(new URL("../assets/dekhocampus-blog-cover-template-v1.png", import.meta.url));
+  const templatePath = DEFAULT_BLOG_COVER_TEMPLATE_KEY.replace(/^admin-uploads\//, "");
+  const template = await uploadStorageObject("admin-uploads", templatePath, templateBytes, "image/png", {
+    upsert: true,
+    cacheControl: "public,max-age=31536000,immutable",
+  });
+  const updated = await prisma.blog_auto_agent_settings.updateMany({
+    where: { id: "default" },
+    data: {
+      image_mode: "template",
+      image_template_url: DEFAULT_BLOG_COVER_TEMPLATE_KEY,
+      include_logo: false,
+      image_aspect_ratio: "16:9",
+      updated_at: new Date(),
+    },
+  });
+  if (updated.count !== 1) throw new Error("Auto Blog Agent default settings are missing");
+
+  console.log(JSON.stringify({
+    configured: integrations.map(([key]) => key),
+    blog_cover_template: template.publicUrl,
+    blog_cover_settings_updated: updated.count,
+  }));
 } finally {
   await prisma.$disconnect();
 }

@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
-import { blogLimits, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, normalizeBlogCoverOptions, normalizeGeneratedFaqs, resolveBlogMediaSource } from "../src/blog-ai.mjs";
+import { readFile } from "node:fs/promises";
+import sharp from "sharp";
+import { blogLimits, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, normalizeBlogCoverOptions, normalizeGeneratedFaqs, renderBlogCover, resolveBlogMediaSource, templateCoverTitleOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 
 test("recognizes only the restricted content editor phone", () => {
@@ -97,6 +99,34 @@ test("renders a local branded cover without an external image provider", async (
 test("prefixes every cover hook with the DekhoCampus brand", () => {
   assert.equal(formatBlogCoverTitle("The counselling mistake most students miss"), "DekhoCampus: The counselling mistake most students miss");
   assert.equal(formatBlogCoverTitle("DekhoCampus: Existing hook"), "DekhoCampus: Existing hook");
+});
+
+test("fits template headings into at most four centered lines without adding a panel", () => {
+  const title = "The counselling deadline and document checklist every student should verify before choice filling";
+  const options = { width: 1600, height: 900 };
+  const layout = layoutTemplateCoverTitle(title, options);
+  assert.ok(layout.lines.length >= 2 && layout.lines.length <= 4);
+  assert.equal(layout.lines.join(" "), formatBlogCoverTitle(title));
+  assert.ok(layout.fontSize >= 56);
+  const svg = templateCoverTitleOverlay(title, options).toString();
+  assert.match(svg, /text-anchor="middle"/);
+  assert.doesNotMatch(svg, /<rect/);
+});
+
+test("renders the supplied template as a 16:9 WebP while preserving its own artwork", async () => {
+  const source = await readFile(new URL("../assets/dekhocampus-blog-cover-template-v1.png", import.meta.url));
+  const bytes = await renderBlogCover(source, {
+    width: 1600,
+    height: 900,
+    resolution: "web",
+    includeLogo: true,
+    logoUrl: "https://example.com/should-not-be-downloaded.png",
+  }, "A practical guide to choosing the right college", { sourceMode: "template" });
+  const metadata = await sharp(bytes).metadata();
+  assert.equal(metadata.format, "webp");
+  assert.equal(metadata.width, 1600);
+  assert.equal(metadata.height, 900);
+  assert.ok(bytes.length > 20_000);
 });
 
 test("normalizes generated FAQs for dedicated article storage", () => {

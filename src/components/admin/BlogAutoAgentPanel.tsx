@@ -567,7 +567,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       {supportsAdvancedSettings && <div className="mt-4 rounded-2xl border p-4">
         <div>
           <Label className="text-sm font-semibold">Cover image workflow</Label>
-          <p className="mt-1 text-xs text-muted-foreground">Generate a new background, use your template, or skip the cover. Uploaded logos are placed without changing the source file.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Generate a new background, use your saved design, or skip the cover. Saved templates keep their existing logo and frame.</p>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           {([["generated", "Generate new"], ["template", "Use saved template"], ["none", "No image"]] as const).map(([mode, label]) => (
@@ -593,9 +593,9 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               <div><Label>Output</Label><select value={settings.output_resolution} onChange={(event) => updateSetting("output_resolution", event.target.value)} className="mt-1 h-10 w-full rounded-md border bg-background px-3"><option value="web">Web</option><option value="2k">2K</option><option value="4k">4K</option></select></div>
             </div>
           </div>
-          <div className="space-y-3">
+          {settings.image_mode === "generated" && <div className="space-y-3">
             <label className="flex items-center justify-between rounded-xl border p-3">
-              <span><span className="block text-sm font-medium">Place logo on cover</span><span className="block text-xs text-muted-foreground">Works with generated images and templates.</span></span>
+              <span><span className="block text-sm font-medium">Place logo on cover</span><span className="block text-xs text-muted-foreground">Adds your separate logo to newly generated artwork.</span></span>
               <Switch checked={settings.include_logo} onCheckedChange={(value) => updateSetting("include_logo", value)} />
             </label>
             {settings.include_logo && (
@@ -604,7 +604,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
                 <div><Label>Logo position</Label><select value="top-center" disabled className="mt-1 h-10 w-full rounded-md border bg-muted px-3"><option value="top-center">Top center (locked)</option></select></div>
               </>
             )}
-          </div>
+          </div>}
+          {settings.image_mode === "template" && <div className="rounded-xl border p-3 text-sm text-muted-foreground">The template's existing logo and orange frame stay intact. Only the fitted article heading is added to the white center.</div>}
         </div>
       </div>}
 
