@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
-import { blogLimits, geminiQuotaHelpers } from "../src/blog-ai.mjs";
+import { blogLimits, geminiQuotaHelpers, normalizeBlogCoverOptions } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 
 test("recognizes only the restricted content editor phone", () => {
@@ -49,4 +49,27 @@ test("normalizes legacy Gemini models and classifies quota errors", () => {
   }));
   assert.equal(classified.code, "GEMINI_QUOTA_EXHAUSTED");
   assert.match(classified.message, /Enable billing/);
+});
+
+test("normalizes every saved blog cover control into render dimensions", () => {
+  assert.deepEqual(normalizeBlogCoverOptions({
+    imageMode: "template",
+    templateUrl: "https://dekhocampus.com/template.webp",
+    promptStyle: " Editorial ",
+    includeLogo: true,
+    logoUrl: "https://dekhocampus.com/logo.webp",
+    aspectRatio: "4:5",
+    resolution: "2K",
+  }), {
+    mode: "template",
+    aspectRatio: "4:5",
+    resolution: "2k",
+    width: 2048,
+    height: 2560,
+    templateUrl: "https://dekhocampus.com/template.webp",
+    promptStyle: "Editorial",
+    includeLogo: true,
+    logoUrl: "https://dekhocampus.com/logo.webp",
+    logoPosition: "top-center",
+  });
 });

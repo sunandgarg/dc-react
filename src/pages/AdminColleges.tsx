@@ -57,6 +57,8 @@ const emptyCollege: Partial<DbCollege> = {
   gallery_images: [], cutoff: "", course_fee_content: "", placement_content: "", rankings_content: "",
   facilities_content: "", meta_title: "", meta_description: "", meta_keywords: "",
   banner_ad_image: "", square_ad_image: "", youtube_video_url: "",
+  show_in_explore_by_category: false,
+  explore_by_category_checked_at: null,
   ...({ approval_logos: [], approval_logo_names: [], priority: 50, apply_cta_mode: "lead", apply_url: "", admission_criteria_points: [], admission_deadline: null, affiliation_kind: "standalone", parent_university_slug: null, is_partner: false } as any),
 };
 

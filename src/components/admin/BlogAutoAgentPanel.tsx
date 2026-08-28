@@ -300,8 +300,9 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       window.setTimeout(() => { void load(false); }, 800);
       const { data, error } = await invocation;
       if (error || data?.error) throw error || new Error(data.error);
-      toast.success(`Created ${data.created_article_ids?.length || 0} blog article(s)`);
+      toast.success(data.accepted ? "Blog agent started. Progress will update below." : `Created ${data.created_article_ids?.length || 0} blog article(s)`);
       await load(false);
+      if (data.accepted) [1_000, 3_000, 6_000].forEach((delay) => window.setTimeout(() => { void load(false); }, delay));
       onArticlesCreated?.();
     } catch (error: any) {
       const message = await edgeErrorMessage(error);

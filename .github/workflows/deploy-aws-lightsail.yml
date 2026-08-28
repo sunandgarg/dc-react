@@ -7,6 +7,11 @@ on:
         description: Email address for AWS budget alerts
         required: true
         type: string
+      run_ai_smoke:
+        description: Run one reversible live Gemini and OpenAI cover test
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -393,6 +398,19 @@ jobs:
           done
           REMOTE
           rm -f /tmp/dc-sitemap-seed.tar.gz
+
+      - name: Verify live AI blog agent and cover pipeline
+        if: ${{ inputs.run_ai_smoke }}
+        run: |
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+            "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
+          set -euo pipefail
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app
+          npm --prefix backend run verify:production-blog
+          REMOTE
 
       - name: Publish complete MySQL sitemap generation
         run: |

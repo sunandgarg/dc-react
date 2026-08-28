@@ -9,7 +9,10 @@ const HOMEPAGE_EXPLORE_TABLES = new Set(["colleges", "courses", "exams"]);
 
 function stampHomepageExploreSelection(table, input) {
   if (!HOMEPAGE_EXPLORE_TABLES.has(table) || input?.show_in_explore_by_category === undefined) return input;
-  return { ...input, explore_by_category_checked_at: new Date().toISOString() };
+  return {
+    ...input,
+    explore_by_category_checked_at: input.show_in_explore_by_category ? new Date().toISOString() : null,
+  };
 }
 
 function splitDepth(value, separator = ",") {

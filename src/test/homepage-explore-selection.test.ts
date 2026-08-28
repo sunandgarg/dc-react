@@ -55,7 +55,7 @@ describe("homepage Explore by Category selection", () => {
     expect(schema.match(/show_in_explore_by_category\s+Boolean\s+@default\(false\)/g)).toHaveLength(3);
     expect(schema.match(/explore_by_category_checked_at\s+DateTime\?/g)).toHaveLength(3);
     expect(rest).toMatch(/stampHomepageExploreSelection/);
-    expect(rest).toMatch(/explore_by_category_checked_at: new Date\(\)\.toISOString\(\)/);
+    expect(rest).toMatch(/input\.show_in_explore_by_category \? new Date\(\)\.toISOString\(\) : null/);
     expect(parity).toMatch(/ensureHomepageExploreSchema/);
     expect(parity).toMatch(/ADD COLUMN \\`show_in_explore_by_category\\` BOOLEAN NOT NULL DEFAULT FALSE/);
   });

@@ -12,6 +12,7 @@
     "db:parity": "node --env-file-if-exists=.env.local scripts/apply-mysql-parity.mjs",
     "db:normalize:media": "node scripts/normalize-external-media.mjs",
     "verify:integrations": "node scripts/verify-production-integrations.mjs",
+    "verify:production-blog": "node scripts/verify-production-blog-agent.mjs",
     "verify:production-crud": "node scripts/production-crud-regression.mjs",
     "verify:production-core": "node scripts/production-core-entity-regression.mjs"
   },
@@ -19,7 +20,8 @@
     "@aws-sdk/client-s3": "^3.887.0",
     "@aws-sdk/s3-request-presigner": "^3.887.0",
     "@prisma/client": "6.12.0",
-    "mysql2": "^3.23.4"
+    "mysql2": "^3.23.4",
+    "sharp": "^0.35.4"
   },
   "devDependencies": {
     "prisma": "6.12.0"

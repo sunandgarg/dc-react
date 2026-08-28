@@ -74,7 +74,7 @@ export type AdminCollegeListItem = Pick<DbCollege,
   | "id" | "slug" | "name" | "short_name" | "location" | "city" | "state"
   | "type" | "category" | "rating" | "reviews" | "courses_count" | "established"
   | "image" | "logo" | "status" | "is_active" | "updated_at" | "priority"
-  | "featured_rank" | "affiliation_kind" | "is_partner"
+  | "featured_rank" | "affiliation_kind" | "is_partner" | "show_in_explore_by_category"
 >;
 
 export type AdminCollegeListFilters = {
@@ -86,7 +86,7 @@ export type AdminCollegeListFilters = {
   state?: string;
 };
 
-const ADMIN_COLLEGE_LIST_SELECT = "id,slug,name,short_name,location,city,state,type,category,rating,reviews,courses_count,established,image,logo,status,is_active,updated_at,priority,featured_rank,affiliation_kind,is_partner";
+const ADMIN_COLLEGE_LIST_SELECT = "id,slug,name,short_name,location,city,state,type,category,rating,reviews,courses_count,established,image,logo,status,is_active,updated_at,priority,featured_rank,affiliation_kind,is_partner,show_in_explore_by_category";
 const PUBLIC_COLLEGE_CARD_SELECT = "id,slug,name,short_name,location,city,state,type,category,rating,reviews,courses_count,fees,image,logo,tags,established,approvals,naac_grade,is_active,status,priority,priority_updated_at,featured_rank,affiliation_kind,parent_university_slug,is_partner";
 const HOMEPAGE_EXPLORE_COLLEGE_SELECT = "id,slug,name,short_name,city,state,category,categories,rating,image,logo,priority,show_in_explore_by_category,explore_by_category_checked_at";
 const HOMEPAGE_FALLBACK_COLLEGE_SELECT = "id,slug,name,short_name,city,state,category,categories,rating,image,logo,priority";
@@ -474,7 +474,7 @@ export function useSaveCollege() {
       // status, etc.) reflect everywhere without a hard refresh.
       qc.invalidateQueries({ predicate: (q) => {
         const k = q.queryKey?.[0];
-        return typeof k === "string" && (k.startsWith("db-college") || k.startsWith("admin-colleges") || k.startsWith("infinite-college") || k === "featured-colleges" || k === "homepage-category-colleges");
+        return typeof k === "string" && (k.startsWith("db-college") || k.startsWith("admin-colleges") || k.startsWith("infinite-college") || k === "featured-colleges" || k.startsWith("homepage-category-colleges"));
       }});
       toast.success(result.pendingReview ? "College draft submitted for admin review." : "College saved!");
     },

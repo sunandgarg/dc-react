@@ -79,6 +79,16 @@ export async function uploadStorageObject(bucket, objectPath, body, contentType,
   return { key: storageObjectKey(bucket, objectPath), publicUrl: publicMediaUrl(bucket, objectPath) };
 }
 
+export async function deleteStorageObjectKeys(keys) {
+  const normalized = [...new Set((keys || []).map((key) => String(key || "").replace(/^\/+/, "")).filter(Boolean))];
+  if (!normalized.length) return;
+  const config = storageConfig();
+  await config.client.send(new DeleteObjectsCommand({
+    Bucket: config.bucket,
+    Delete: { Objects: normalized.map((Key) => ({ Key })) },
+  }));
+}
+
 async function requireUser(request) {
   const identity = await resolveNativeIdentity(request);
   if (!identity) throw Object.assign(new Error("A valid user session is required for uploads"), { status: 401, code: "AUTH_REQUIRED" });

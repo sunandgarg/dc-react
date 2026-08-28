@@ -101,7 +101,7 @@ function stringValue(table, field, marker, runToken, editPhase) {
   if (field === "short_name") return editPhase ? "CCQE" : "CCQC";
   if (field === "author") return "DekhoCampus Editorial QA";
   if (field === "vertical") return "General";
-  if (field === "category") return "Education";
+  if (field === "category") return table === "articles" ? "Education" : "Engineering";
   if (field === "type") return "Private";
   if (field === "level") return "Undergraduate";
   if (field === "mode" || field === "application_mode") return "Online";

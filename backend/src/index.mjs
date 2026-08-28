@@ -308,10 +308,25 @@ export async function handleRequest(request) {
       if (["admin-blog-ai-settings", "admin-blog-studio", "admin-blog-agent", "admin-ai-generate"].includes(functionMatch[1])) {
         const identity = await resolveIdentity(request);
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
-        const result = functionMatch[1] === "admin-blog-ai-settings" ? await handleBlogAiSettings(request, identity.id)
-          : functionMatch[1] === "admin-blog-studio" ? await handleBlogStudio(request)
-          : functionMatch[1] === "admin-blog-agent" ? await runBlogAgent(await request.json().catch(() => ({})))
-          : await handleAiGenerate(request);
+        const body = functionMatch[1] === "admin-blog-agent" ? await request.json().catch(() => ({})) : null;
+        let result;
+        if (functionMatch[1] === "admin-blog-agent" && !body.action) {
+          const task = runBlogAgent(body);
+          const early = await Promise.race([
+            task.then((value) => ({ settled: true, value }), (error) => ({ settled: true, error })),
+            new Promise((resolve) => setTimeout(() => resolve({ settled: false }), 1_500)),
+          ]);
+          if (early.settled && early.error) throw early.error;
+          result = early.settled
+            ? early.value
+            : { accepted: true, message: "Blog agent started. Progress is available in the run history." };
+          if (!early.settled) void task.catch((error) => console.error("Manual blog agent run failed", error));
+        } else {
+          result = functionMatch[1] === "admin-blog-ai-settings" ? await handleBlogAiSettings(request, identity.id)
+            : functionMatch[1] === "admin-blog-studio" ? await handleBlogStudio(request)
+            : functionMatch[1] === "admin-blog-agent" ? await runBlogAgent(body)
+            : await handleAiGenerate(request);
+        }
         return json(200, result, requestId, request, { "cache-control": "private, no-store" });
       }
       if (functionMatch[1] === "admin-data-cleaner") {

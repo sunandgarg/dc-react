@@ -1,14 +1,23 @@
 import { randomUUID } from "node:crypto";
+import sharp from "sharp";
 import { prisma, schemaMetadata } from "./db.mjs";
 import { uploadStorageObject } from "./storage.mjs";
+import { toPublicMediaUrls } from "./media-values.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const MAX_POSTS_PER_RUN = 10;
 const MAX_DAILY_POSTS = 48;
 const MIN_INTERVAL_MINUTES = 30;
-const GEMINI_MAX_RETRIES = 2;
-const GEMINI_MAX_RETRY_DELAY_MS = 2_500;
+const GEMINI_MAX_RETRIES = 4;
+const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
+const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
+
+const COVER_DIMENSIONS = {
+  "16:9": { web: [1600, 900], "2k": [2560, 1440], "4k": [3840, 2160] },
+  "1:1": { web: [1200, 1200], "2k": [2048, 2048], "4k": [3840, 3840] },
+  "4:5": { web: [1280, 1600], "2k": [2048, 2560], "4k": [3072, 3840] },
+};
 
 const cleanJson = (value) => String(value || "").replace(/^```json\s*|\s*```$/gi, "").trim();
 const slugify = (value) => String(value || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 100);
@@ -24,6 +33,69 @@ const stripCompetitorCredits = (value) => String(value || "")
   .replace(/<p[^>]*>(?:(?!<\/p>)[\s\S])*(collegedunia|collegedekho|shiksha|careers360|kollegeapply|getmyuni|pagalguy)(?:(?!<\/p>)[\s\S])*<\/p>/gi, "")
   .replace(/[\u2013\u2014]/g, "-")
   .trim();
+
+export function normalizeBlogCoverOptions(options = {}) {
+  const mode = ["generated", "template", "none"].includes(options.imageMode) ? options.imageMode : "none";
+  const aspectRatio = COVER_DIMENSIONS[options.aspectRatio] ? options.aspectRatio : "16:9";
+  const resolution = ["web", "2k", "4k"].includes(String(options.resolution).toLowerCase())
+    ? String(options.resolution).toLowerCase()
+    : "web";
+  const [width, height] = COVER_DIMENSIONS[aspectRatio][resolution];
+  return {
+    mode,
+    aspectRatio,
+    resolution,
+    width,
+    height,
+    templateUrl: String(options.templateUrl || "").trim(),
+    promptStyle: String(options.promptStyle || "Premium editorial, clean, credible, student-focused").trim().slice(0, 600),
+    includeLogo: Boolean(options.includeLogo),
+    logoUrl: String(options.logoUrl || "").trim(),
+    logoPosition: "top-center",
+  };
+}
+
+function publicMediaSource(value) {
+  return String(toPublicMediaUrls(String(value || "").trim()) || "").trim();
+}
+
+async function downloadCoverSource(value, label) {
+  const sourceUrl = publicMediaSource(value);
+  let parsed;
+  try { parsed = new URL(sourceUrl); } catch { throw new Error(`${label} is not a valid media URL`); }
+  if (parsed.protocol !== "https:") throw new Error(`${label} must use HTTPS`);
+  if (["localhost", "127.0.0.1", "::1"].includes(parsed.hostname.toLowerCase())) throw new Error(`${label} cannot use a local address`);
+  const response = await fetch(parsed, { signal: AbortSignal.timeout(20_000), redirect: "follow" });
+  if (!response.ok) throw new Error(`${label} could not be downloaded (${response.status})`);
+  const finalUrl = new URL(response.url);
+  if (finalUrl.protocol !== "https:" || ["localhost", "127.0.0.1", "::1"].includes(finalUrl.hostname.toLowerCase())) {
+    throw new Error(`${label} redirected to an unsafe address`);
+  }
+  if (!String(response.headers.get("content-type") || "").toLowerCase().startsWith("image/")) throw new Error(`${label} is not an image`);
+  const declaredLength = Number(response.headers.get("content-length") || 0);
+  if (declaredLength > MAX_COVER_SOURCE_BYTES) throw new Error(`${label} exceeds 20 MB`);
+  const bytes = Buffer.from(await response.arrayBuffer());
+  if (!bytes.length || bytes.length > MAX_COVER_SOURCE_BYTES) throw new Error(`${label} exceeds 20 MB or is empty`);
+  return bytes;
+}
+
+async function renderBlogCover(sourceBytes, options) {
+  const base = sharp(sourceBytes, { limitInputPixels: 50_000_000 })
+    .rotate()
+    .resize(options.width, options.height, { fit: "cover", position: "attention" });
+  if (options.includeLogo && options.logoUrl) {
+    const logoSource = await downloadCoverSource(options.logoUrl, "Cover logo");
+    const logo = await sharp(logoSource, { limitInputPixels: 20_000_000 })
+      .rotate()
+      .resize({ width: Math.round(options.width * 0.2), height: Math.round(options.height * 0.11), fit: "inside", withoutEnlargement: true })
+      .png()
+      .toBuffer({ resolveWithObject: true });
+    const left = Math.max(24, Math.round((options.width - logo.info.width) / 2));
+    const top = Math.max(24, Math.round(options.height * 0.045));
+    base.composite([{ input: logo.data, left, top }]);
+  }
+  return base.webp({ quality: options.resolution === "web" ? 82 : 88, effort: 5 }).toBuffer();
+}
 
 const TITLE_STOP_WORDS = new Set(["a", "an", "and", "at", "by", "for", "from", "in", "of", "on", "the", "to", "with"]);
 export const normalizeArticleTitle = (value) => String(value || "")
@@ -165,6 +237,7 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: requestBody,
+      signal: AbortSignal.timeout(120_000),
     });
     if (response.ok) break;
     providerText = await response.text();
@@ -192,27 +265,47 @@ export async function generateGeminiJson(prompt, feature, options) {
 
 export const geminiQuotaHelpers = { normalizeGeminiModel, parseRetryDelayMs, geminiErrorMessage };
 
-async function uploadGeneratedImage(slug, prompt) {
+async function createGeneratedImage(prompt, options) {
   await assertAiEnabled("blog-cover");
   const config = await aiConfig();
   if (!config.openaiKey) throw Object.assign(new Error("OpenAI API key is not configured for blog images"), { status: 503, code: "OPENAI_NOT_CONFIGURED" });
   const response = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
     headers: { authorization: `Bearer ${config.openaiKey}`, "content-type": "application/json" },
-    body: JSON.stringify({ model: config.imageModel || DEFAULT_OPENAI_IMAGE_MODEL, prompt: `Editorial education news cover for Indian students. No text, no logo, no watermark. Topic: ${String(prompt).slice(0, 500)}`, size: "1536x1024", quality: config.imageQuality, output_format: "webp", n: 1 }),
+    body: JSON.stringify({ model: config.imageModel || DEFAULT_OPENAI_IMAGE_MODEL, prompt: `${options.promptStyle}. Editorial education news cover for Indian students. No text, no logo, no watermark. Topic: ${String(prompt).slice(0, 500)}`, size: options.aspectRatio === "1:1" ? "1024x1024" : options.aspectRatio === "4:5" ? "1024x1536" : "1536x1024", quality: config.imageQuality, output_format: "webp", n: 1 }),
+    signal: AbortSignal.timeout(180_000),
   });
   if (!response.ok) throw new Error(`OpenAI image generation failed (${response.status}): ${(await response.text()).slice(0, 500)}`);
   const payload = await response.json();
   let bytes;
   if (payload.data?.[0]?.b64_json) bytes = Buffer.from(payload.data[0].b64_json, "base64");
   else {
-    const source = await fetch(payload.data?.[0]?.url || "");
+    const source = await fetch(payload.data?.[0]?.url || "", { signal: AbortSignal.timeout(60_000) });
     if (!source.ok) throw new Error("OpenAI image result could not be downloaded");
     bytes = Buffer.from(await source.arrayBuffer());
   }
+  return { bytes, config };
+}
+
+export async function createBlogCover(slug, prompt, rawOptions = {}) {
+  const options = normalizeBlogCoverOptions(rawOptions);
+  if (options.mode === "none") return "";
+  let sourceBytes;
+  let generatedConfig = null;
+  if (options.mode === "template") {
+    if (!options.templateUrl) throw new Error("A cover template is required when image mode is template");
+    sourceBytes = await downloadCoverSource(options.templateUrl, "Cover template");
+  } else {
+    const generated = await createGeneratedImage(prompt, options);
+    sourceBytes = generated.bytes;
+    generatedConfig = generated.config;
+  }
+  const bytes = await renderBlogCover(sourceBytes, options);
   const path = `blog-covers/${slug}-${Date.now()}.webp`;
   const upload = await uploadStorageObject("admin-uploads", path, bytes, "image/webp", { cacheControl: "public,max-age=31536000,immutable" });
-  await prisma.ai_usage_events.create({ data: { id: randomUUID(), provider: "openai", model: config.imageModel, feature: "blog-cover", operation: "image-generation", input_tokens: 0, output_tokens: 0, image_count: 1, estimated_cost_usd: 0, metadata: { slug } } }).catch(() => {});
+  if (generatedConfig) {
+    await prisma.ai_usage_events.create({ data: { id: randomUUID(), provider: "openai", model: generatedConfig.imageModel, feature: "blog-cover", operation: "image-generation", input_tokens: 0, output_tokens: 0, image_count: 1, estimated_cost_usd: 0, metadata: { slug, aspect_ratio: options.aspectRatio, resolution: options.resolution, logo_applied: options.includeLogo && Boolean(options.logoUrl) } } }).catch(() => {});
+  }
   return upload.publicUrl;
 }
 
@@ -235,7 +328,7 @@ function articlePrompt(topic, signals, wordLimit = 1200) {
   return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are for trend and fact awareness only; never copy wording or credit competitor publishers in the article body: ${JSON.stringify(signals)}. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes}. Use concise direct answers, descriptive H2/H3 headings, short paragraphs, useful lists, an FAQ section, and verifiable facts. Do not include Sources, References, Citations or competitor names in content_html. When evidence is uncertain, tell readers to verify the official authority website.`;
 }
 
-async function generateDraft(topic, { wordLimit = 1200, imageMode = "none", signals = null } = {}) {
+async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = null } = {}) {
   const evidence = signals || await researchSignals();
   const { result, model } = await geminiJson(articlePrompt(topic, evidence, wordLimit), "blog-studio");
   const slug = slugify(result.slug || result.title || topic);
@@ -246,7 +339,7 @@ async function generateDraft(topic, { wordLimit = 1200, imageMode = "none", sign
     tags: Array.isArray(result.tags) ? result.tags : [],
     featured_image: "",
   };
-  if (imageMode !== "none") draft.featured_image = await uploadGeneratedImage(slug, result.hero_hook || result.title || topic);
+  draft.featured_image = await createBlogCover(slug, result.hero_hook || result.title || topic, cover);
   return { draft, model, research_sources: evidence.map((item) => item.url) };
 }
 
@@ -274,7 +367,15 @@ export async function handleBlogStudio(request) {
   const body = await request.json().catch(() => ({}));
   const topic = String(body.topic || "").trim();
   if (!topic) throw Object.assign(new Error("A blog topic is required"), { status: 400 });
-  const generated = await generateDraft(topic, { wordLimit: body.word_limit, imageMode: body.image?.mode || "none" });
+  const generated = await generateDraft(topic, { wordLimit: body.word_limit, cover: {
+    imageMode: body.image?.mode || "none",
+    templateUrl: body.image?.template_url,
+    promptStyle: body.image?.prompt_style,
+    includeLogo: body.image?.include_logo,
+    logoUrl: body.image?.logo_url,
+    aspectRatio: body.image?.aspect_ratio,
+    resolution: body.image?.resolution,
+  } });
   return { draft: generated.draft, model_used: `gemini:${generated.model}`, image_model_used: generated.draft.featured_image ? "openai" : "none", research_sources: generated.research_sources };
 }
 
@@ -299,7 +400,15 @@ export async function handleAiGenerate(request) {
 }
 
 async function saveGeneratedArticle(topic, settings, signals, schedule = null) {
-  const generated = await generateDraft(topic, { wordLimit: settings.word_limit, imageMode: settings.image_mode, signals });
+  const generated = await generateDraft(topic, { wordLimit: settings.word_limit, signals, cover: {
+    imageMode: settings.image_mode,
+    templateUrl: settings.image_template_url,
+    promptStyle: settings.image_prompt_style,
+    includeLogo: settings.include_logo,
+    logoUrl: settings.logo_url,
+    aspectRatio: settings.image_aspect_ratio,
+    resolution: settings.output_resolution,
+  } });
   const draft = generated.draft;
   const existing = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { id: true, slug: true, title: true } });
   if (findDuplicateArticleTitle(draft, existing)) return null;
@@ -407,13 +516,14 @@ export async function runBlogAgent(body = {}) {
     ? await prisma.blog_auto_agent_runs.update({ where: { id: body.resume_run_id }, data: { status: "running", resumed_at: new Date(), finished_at: null, message: "Resumed", current_step: "Resuming education research", control_note: executionToken } })
     : await prisma.blog_auto_agent_runs.create({ data: { id: randomUUID(), status: "running", trigger_type: triggerType, interval_minutes: interval, model_provider: "gemini", word_limit: settings.word_limit, sources: [], selected_topics: [], created_article_ids: [], message: "Researching", progress: 5, current_step: "Researching education signals", estimated_seconds: postCount * 90, completed_steps: 0, total_steps: postCount * 2 + 1, control_note: executionToken, entity_schedule_id: entityContext?.schedule.id || null, agent_mode: entityContext ? "entity_schedule" : "general" } });
   try {
-    const signals = await researchSignals(20);
+    const signals = await researchSignals(12);
     await assertRunActive(run.id, executionToken);
     const recent = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { title: true, slug: true } });
     const entityInstruction = entityContext
       ? `Generate only for this ${entityContext.schedule.entity_type}: ${JSON.stringify({ name: entityContext.schedule.entity_name, slug: entityContext.schedule.entity_slug, facts: entityContext.entity, topic_focus: entityContext.schedule.topic_focus })}. Prefer a timely verified update; otherwise create an evergreen student guide. Every topic must be specifically useful for this entity.`
       : "Cover the strongest Indian education opportunities across admissions, exams, counselling, scholarships, careers and college decisions.";
-    const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 3, 6)} original Indian education article opportunities. ${entityInstruction} Existing DekhoCampus titles to avoid: ${JSON.stringify(recent)}. Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Return {topics:[{title,angle,category,tags}]}.`, "blog-agent", { research: true });
+    const promptTitles = recent.slice(0, 500);
+    const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 3, 6)} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Return {topics:[{title,angle,category,tags}]}.`, "blog-agent", { research: true });
     await assertRunActive(run.id, executionToken);
     const topics = [];
     const comparedTitles = [...recent];
@@ -423,6 +533,7 @@ export async function runBlogAgent(body = {}) {
       comparedTitles.push({ title: topic.title, slug: slugify(topic.title) });
       if (topics.length >= postCount) break;
     }
+    if (!topics.length) throw new Error("Gemini returned no new non-duplicate article topics. Review the active research sources and try again.");
     await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { progress: 30, current_step: `Writing ${topics.length} article(s)`, selected_topics: topics, sources: signals.map(({ signal, ...source }) => source) } });
     const ids = [];
     for (const topic of topics) {

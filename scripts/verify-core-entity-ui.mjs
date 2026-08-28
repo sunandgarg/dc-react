@@ -19,6 +19,18 @@ const checks = [];
 try {
   for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "mobile", width: 390, height: 844 }]) {
     const context = await browser.newContext({ viewport });
+    if (expectedPhase === "create") {
+      const homepage = await context.newPage();
+      const homepageErrors = [];
+      homepage.on("pageerror", (error) => homepageErrors.push(error.message));
+      await homepage.goto(`${baseUrl}/?core-regression=${encodeURIComponent(manifest.runToken)}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
+      for (const entity of manifest.entities.filter(({ table }) => ["colleges", "courses", "exams"].includes(table))) {
+        await homepage.locator(`a[href="${entity.route}"]`).first().waitFor({ state: "visible", timeout: 30_000 });
+        checks.push({ table: entity.table, phase: expectedPhase, viewport: viewport.name, route: "/#explore-by-category", status: 200 });
+      }
+      if (homepageErrors.length) throw new Error(`Homepage page errors: ${homepageErrors.join("; ")}`);
+      await homepage.close();
+    }
     for (const entity of manifest.entities) {
       const page = await context.newPage();
       const pageErrors = [];
