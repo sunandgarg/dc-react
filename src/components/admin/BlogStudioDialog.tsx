@@ -24,9 +24,9 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [busy, setBusy] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [imageMode, setImageMode] = useState<"generated" | "template" | "none">("generated");
+  const [imageMode, setImageMode] = useState<"generated" | "template" | "none">("template");
   const [templateUrl, setTemplateUrl] = useState("");
-  const [includeLogo, setIncludeLogo] = useState(true);
+  const [includeLogo, setIncludeLogo] = useState(false);
   const [logoUrl, setLogoUrl] = useState("");
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
           topic,
           word_limit: wordLimit,
           content_goals: ["SEO", "AEO", "GEO", "AIO", "LLMO", "LLM"],
-          image: { mode: imageMode, template_url: templateUrl, include_logo: includeLogo, logo_url: logoUrl, resolution: "4k" },
+          image: { mode: imageMode, template_url: templateUrl, include_logo: includeLogo, logo_url: logoUrl, resolution: "web" },
         },
       });
       if (error || data?.error) throw error || new Error(data.error);
@@ -121,13 +121,13 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
             <label className="flex items-center justify-between rounded-lg border p-3"><span className="text-sm">Place uploaded logo</span><Switch checked={includeLogo} onCheckedChange={setIncludeLogo} /></label>
             {includeLogo && <ImageUploadField label="High-resolution logo" value={logoUrl} onChange={setLogoUrl} folder="blog-brand" />}
           </div>}
-          {imageMode === "template" && <p className="mt-2 text-xs text-muted-foreground">The saved template logo and frame are preserved; only the article heading is placed in its white area.</p>}
+          {imageMode === "template" && <p className="mt-2 text-xs text-muted-foreground">The saved template logo and frame are preserved. A concise cover hook is added without using OpenAI image credits.</p>}
         </div>
         <p className="text-xs text-muted-foreground">Competitor research is used for trend awareness only. Every result is checked for duplicate coverage, includes dedicated FAQs, and is saved as Draft for editor review.</p>
         <Button onClick={generate} disabled={busy} className="gap-2">{busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Research, write and generate branded cover</Button>
         {draft && <div className="grid lg:grid-cols-[1.2fr_.8fr] gap-4 border-t pt-4">
           <div className="space-y-3"><Input value={draft.title} onChange={event => setDraft({ ...draft, title: event.target.value })} /><Input value={draft.slug} onChange={event => setDraft({ ...draft, slug: event.target.value })} /><Textarea value={draft.description} onChange={event => setDraft({ ...draft, description: event.target.value })} rows={3} /><Textarea value={draft.content_html} onChange={event => setDraft({ ...draft, content_html: event.target.value })} rows={16} /><Textarea value={draft.meta_description} onChange={event => setDraft({ ...draft, meta_description: event.target.value })} rows={2} />{draft.faqs?.length ? <div className="rounded-lg border p-3"><Label>Generated FAQs ({draft.faqs.length})</Label><div className="mt-2 space-y-2">{draft.faqs.map((faq, index) => <div key={`${faq.question}-${index}`} className="text-sm"><p className="font-medium">{faq.question}</p><p className="text-muted-foreground">{faq.answer}</p></div>)}</div></div> : null}</div>
-          <div className="space-y-3">{draft.featured_image ? <div className="rounded-xl overflow-hidden border bg-muted"><img alt="Editorial cover" src={draft.featured_image} className="w-full aspect-video object-cover" loading="lazy" /><div className="p-3 text-xs text-muted-foreground flex gap-2"><ImageIcon className="w-4 h-4" /> 4K-ready editorial cover</div></div> : <div className="rounded-xl border bg-muted p-8 text-center text-sm text-muted-foreground">No cover selected</div>}<Label>Suggested entity links</Label><div className="flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div><Button onClick={save} disabled={busy} className="w-full">Save as Draft with image and links</Button></div>
+          <div className="space-y-3">{draft.featured_image ? <div className="rounded-xl overflow-hidden border bg-muted"><img alt="Editorial cover" src={draft.featured_image} className="w-full aspect-video object-cover" loading="lazy" /><div className="p-3 text-xs text-muted-foreground flex gap-2"><ImageIcon className="w-4 h-4" /> Web-optimised editorial cover</div></div> : <div className="rounded-xl border bg-muted p-8 text-center text-sm text-muted-foreground">No cover selected</div>}<Label>Suggested entity links</Label><div className="flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div><Button onClick={save} disabled={busy} className="w-full">Save as Draft with image and links</Button></div>
         </div>}
       </div>
     </DialogContent></Dialog>

@@ -378,7 +378,7 @@ async function aiConfig() {
     geminiModel: configuredGeminiModel,
     openaiKey: String(process.env.OPENAI_API_KEY || openai?.api_key_encrypted || "").trim(),
     imageModel: DEFAULT_OPENAI_IMAGE_MODEL,
-    imageQuality: ["low", "medium", "high"].includes(blog?.image_quality) ? blog.image_quality : "medium",
+    imageQuality: ["low", "medium", "high"].includes(blog?.image_quality) ? blog.image_quality : "low",
   };
 }
 
@@ -401,6 +401,7 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
     generationConfig: {
       responseMimeType: "application/json",
       temperature: 0.45,
+      ...(options.maxOutputTokens ? { maxOutputTokens: Math.max(256, Math.trunc(options.maxOutputTokens)) } : {}),
       ...(options.responseSchema ? { responseSchema: options.responseSchema } : {}),
     },
     ...(options.research ? { tools: [{ google_search: {} }, { url_context: {} }] } : {}),
@@ -430,7 +431,19 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
   const payload = await response.json();
   const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("") || "{}";
   const result = JSON.parse(cleanJson(text));
-  await prisma.ai_usage_events.create({ data: { id: randomUUID(), provider: "gemini", model, feature, operation: "text-generation", input_tokens: 0, output_tokens: 0, image_count: 0, estimated_cost_usd: 0, metadata: {} } }).catch(() => {});
+  const usage = payload.usageMetadata || {};
+  const inputTokens = Math.max(0, Math.trunc(Number(usage.promptTokenCount || 0)));
+  const outputTokens = Math.max(0, Math.trunc(Number(usage.candidatesTokenCount || 0)));
+  const totalTokens = Math.max(0, Math.trunc(Number(usage.totalTokenCount || inputTokens + outputTokens)));
+  await prisma.ai_usage_events.create({ data: {
+    id: randomUUID(), provider: "gemini", model, feature, operation: "text-generation",
+    input_tokens: BigInt(inputTokens), output_tokens: BigInt(outputTokens), total_tokens: BigInt(totalTokens), image_count: 0, estimated_cost_usd: 0,
+    metadata: {
+      cached_input_tokens: Math.max(0, Math.trunc(Number(usage.cachedContentTokenCount || 0))),
+      thought_tokens: Math.max(0, Math.trunc(Number(usage.thoughtsTokenCount || 0))),
+      max_output_tokens: options.maxOutputTokens || null,
+    },
+  } }).catch(() => {});
   return { result, model };
 }
 
@@ -459,7 +472,7 @@ async function createGeneratedImage(prompt, options) {
     if (!source.ok) throw new Error("OpenAI image result could not be downloaded");
     bytes = Buffer.from(await source.arrayBuffer());
   }
-  return { bytes, config };
+  return { bytes, config, usage: payload.usage || {} };
 }
 
 export async function createBlogCover(slug, prompt, rawOptions = {}) {
@@ -468,6 +481,7 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
   if (options.mode === "none") return "";
   let sourceBytes;
   let generatedConfig = null;
+  let generatedUsage = null;
   if (options.mode === "template") {
     if (!options.templateUrl) throw new Error("A cover template is required when image mode is template");
     try {
@@ -485,6 +499,7 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
       const generated = await createGeneratedImage(prompt, options);
       sourceBytes = generated.bytes;
       generatedConfig = generated.config;
+      generatedUsage = generated.usage;
       if (diagnostics) diagnostics.sourceMode = "generated";
     } catch (generatedError) {
       sourceBytes = await createLocalEditorialCover(prompt, options);
@@ -498,12 +513,19 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
   const path = `blog-covers/${slug}-${Date.now()}.webp`;
   const upload = await uploadStorageObject("admin-uploads", path, bytes, "image/webp", { cacheControl: "public,max-age=31536000,immutable" });
   if (generatedConfig) {
-    await prisma.ai_usage_events.create({ data: { id: randomUUID(), provider: "openai", model: generatedConfig.imageModel, feature: "blog-cover", operation: "image-generation", input_tokens: 0, output_tokens: 0, image_count: 1, estimated_cost_usd: 0, metadata: { slug, aspect_ratio: options.aspectRatio, resolution: options.resolution, logo_applied: options.includeLogo && Boolean(options.logoUrl) } } }).catch(() => {});
+    const inputTokens = Math.max(0, Math.trunc(Number(generatedUsage?.input_tokens || 0)));
+    const outputTokens = Math.max(0, Math.trunc(Number(generatedUsage?.output_tokens || 0)));
+    const totalTokens = Math.max(0, Math.trunc(Number(generatedUsage?.total_tokens || inputTokens + outputTokens)));
+    await prisma.ai_usage_events.create({ data: {
+      id: randomUUID(), provider: "openai", model: generatedConfig.imageModel, feature: "blog-cover", operation: "image-generation",
+      input_tokens: BigInt(inputTokens), output_tokens: BigInt(outputTokens), total_tokens: BigInt(totalTokens), image_count: 1, estimated_cost_usd: 0,
+      metadata: { slug, aspect_ratio: options.aspectRatio, resolution: options.resolution, quality: generatedConfig.imageQuality, logo_applied: options.includeLogo && Boolean(options.logoUrl) },
+    } }).catch(() => {});
   }
   return upload.publicUrl;
 }
 
-async function researchSignals(limit = 12) {
+async function researchSignals(limit = 6) {
   const configured = await prisma.blog_research_sources.findMany({ where: { is_active: true }, orderBy: { display_order: "asc" }, take: limit });
   const defaults = [
     { name: "Google News Education India", url: "https://news.google.com/rss/search?q=education+college+admission+exam+India&hl=en-IN&gl=IN&ceid=IN:en", source_type: "public_signal" },
@@ -513,7 +535,7 @@ async function researchSignals(limit = 12) {
   const settled = await Promise.allSettled(sources.slice(0, limit).map(async (source) => {
     const response = await fetch(source.url, { headers: { "user-agent": "DekhoCampus editorial research/2.0" }, signal: AbortSignal.timeout(12_000) });
     if (!response.ok) throw new Error(String(response.status));
-    return { name: source.name, url: source.url, source_type: source.source_type, signal: stripHtml((await response.text()).slice(0, 120_000)).slice(0, 5000) };
+    return { name: source.name, url: source.url, source_type: source.source_type, signal: stripHtml((await response.text()).slice(0, 60_000)).slice(0, 1600) };
   }));
   return settled.flatMap((item) => item.status === "fulfilled" ? [item.value] : []);
 }
@@ -532,8 +554,9 @@ export function normalizeGeneratedFaqs(value) {
 }
 
 async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = null, requiredTitle = "" } = {}) {
-  const evidence = signals || await researchSignals();
-  const { result, model } = await geminiJson(articlePrompt(topic, evidence, wordLimit), "blog-studio");
+  const evidence = signals || await researchSignals(6);
+  const maxOutputTokens = Math.min(6000, Math.max(2400, Math.trunc(Number(wordLimit || 1200) * 3)));
+  const { result, model } = await geminiJson(articlePrompt(topic, evidence, wordLimit), "blog-studio", { maxOutputTokens });
   const title = String(requiredTitle || result.title || topic).trim();
   const slug = slugify(requiredTitle || result.slug || result.title || topic);
   const draft = {
@@ -558,7 +581,7 @@ export async function handleBlogAiSettings(request, userId) {
   }
   const body = await request.json().catch(() => ({}));
   const requestedTextModel = String(body.text_model || DEFAULT_GEMINI_MODEL);
-  const updates = { text_model: normalizeGeminiModel(requestedTextModel), image_model: DEFAULT_OPENAI_IMAGE_MODEL, image_quality: ["low", "medium", "high"].includes(body.image_quality) ? body.image_quality : "medium", updated_at: new Date(), updated_by: userId };
+  const updates = { text_model: normalizeGeminiModel(requestedTextModel), image_model: DEFAULT_OPENAI_IMAGE_MODEL, image_quality: ["low", "medium", "high"].includes(body.image_quality) ? body.image_quality : "low", updated_at: new Date(), updated_by: userId };
   const current = await prisma.blog_ai_provider_settings.findUnique({ where: { id: "default" } });
   await prisma.blog_ai_provider_settings.upsert({ where: { id: "default" }, create: { id: "default", claude_api_key_ciphertext: current?.claude_api_key_ciphertext || "", openai_api_key_ciphertext: current?.openai_api_key_ciphertext || "", ...updates }, update: updates });
   for (const [name, key, model] of [["gemini", body.gemini_api_key, updates.text_model], ["openai", body.openai_api_key, updates.image_model]]) {
@@ -745,13 +768,13 @@ export async function runBlogAgent(body = {}) {
     ? await prisma.blog_auto_agent_runs.update({ where: { id: body.resume_run_id }, data: { status: "running", resumed_at: new Date(), finished_at: null, message: "Resumed", current_step: "Resuming education research", control_note: executionToken } })
     : await prisma.blog_auto_agent_runs.create({ data: { id: randomUUID(), status: "running", trigger_type: triggerType, interval_minutes: interval, model_provider: "gemini", word_limit: settings.word_limit, sources: [], selected_topics: [], created_article_ids: [], message: "Researching", progress: 5, current_step: "Researching education signals", estimated_seconds: postCount * 90, completed_steps: 0, total_steps: postCount * 2 + 1, control_note: executionToken, entity_schedule_id: entityContext?.schedule.id || null, agent_mode: entityContext ? "entity_schedule" : "general" } });
   try {
-    const signals = await researchSignals(12);
+    const signals = await researchSignals(6);
     await assertRunActive(run.id, executionToken);
     const recent = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { title: true, slug: true } });
     const entityInstruction = entityContext
       ? `Generate only for this ${entityContext.schedule.entity_type}: ${JSON.stringify({ name: entityContext.schedule.entity_name, slug: entityContext.schedule.entity_slug, facts: entityContext.entity, topic_focus: entityContext.schedule.topic_focus })}. Prefer a timely verified update; otherwise create an evergreen student guide. Every topic must be specifically useful for this entity.`
       : "Cover the strongest Indian education opportunities across admissions, exams, counselling, scholarships, careers and college decisions.";
-    const promptTitles = recent.slice(0, 500);
+    const promptTitles = recent.slice(0, 120);
     const topics = [];
     const comparedTitles = [...recent];
     const rejected = [];
@@ -761,6 +784,7 @@ export async function runBlogAgent(body = {}) {
         : "";
       const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 4, 8)} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return topic objects with a non-empty title.`, "blog-agent", {
         research: true,
+        maxOutputTokens: 1200,
         responseSchema: {
           type: "OBJECT",
           properties: {

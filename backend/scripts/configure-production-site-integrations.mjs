@@ -32,15 +32,21 @@ try {
       image_template_url: DEFAULT_BLOG_COVER_TEMPLATE_KEY,
       include_logo: false,
       image_aspect_ratio: "16:9",
+      output_resolution: "web",
       updated_at: new Date(),
     },
   });
   if (updated.count !== 1) throw new Error("Auto Blog Agent default settings are missing");
+  const providerSettings = await prisma.blog_ai_provider_settings.updateMany({
+    where: { id: "default" },
+    data: { image_quality: "low", updated_at: new Date() },
+  });
 
   console.log(JSON.stringify({
     configured: integrations.map(([key]) => key),
     blog_cover_template: template.publicUrl,
     blog_cover_settings_updated: updated.count,
+    low_cost_image_quality_updated: providerSettings.count,
   }));
 } finally {
   await prisma.$disconnect();

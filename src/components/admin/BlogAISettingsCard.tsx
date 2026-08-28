@@ -16,7 +16,7 @@ const normalizeTextModel = (value?: string) => {
   if (!model.startsWith("gemini-")) return DEFAULT_TEXT_MODEL;
   return LEGACY_TEXT_MODELS.has(model) ? DEFAULT_TEXT_MODEL : model;
 };
-const defaults: State = { text_model: DEFAULT_TEXT_MODEL, image_model: "gpt-image-1", image_quality: "medium", gemini_key_set: false, openai_key_set: false };
+const defaults: State = { text_model: DEFAULT_TEXT_MODEL, image_model: "gpt-image-1", image_quality: "low", gemini_key_set: false, openai_key_set: false };
 
 const TEXT_MODELS = [
   { value: "gemini-3.6-flash", label: "Gemini 3.6 Flash - production default" },
