@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
-import { blogLimits, geminiQuotaHelpers, normalizeBlogCoverOptions } from "../src/blog-ai.mjs";
+import { blogLimits, geminiQuotaHelpers, normalizeBlogCoverOptions, resolveBlogMediaSource } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 
 test("recognizes only the restricted content editor phone", () => {
@@ -72,4 +72,18 @@ test("normalizes every saved blog cover control into render dimensions", () => {
     logoUrl: "https://dekhocampus.com/logo.webp",
     logoPosition: "top-center",
   });
+});
+
+test("routes a legacy Supabase blog bucket through the configured AWS media base", () => {
+  const previous = process.env.MEDIA_BASE_URL;
+  process.env.MEDIA_BASE_URL = "https://media.dekhocampus.com";
+  try {
+    assert.equal(
+      resolveBlogMediaSource("https://project.supabase.co/storage/v1/object/public/blog-templates/cover one.png"),
+      "https://media.dekhocampus.com/blog-templates/cover%20one.png",
+    );
+  } finally {
+    if (previous === undefined) delete process.env.MEDIA_BASE_URL;
+    else process.env.MEDIA_BASE_URL = previous;
+  }
 });

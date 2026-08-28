@@ -55,13 +55,17 @@ export function normalizeBlogCoverOptions(options = {}) {
   };
 }
 
-function publicMediaSource(value) {
+export function resolveBlogMediaSource(value) {
   const storedValue = toStoredMediaKeys(String(value || "").trim());
-  return String(toPublicMediaUrls(storedValue) || "").trim();
+  const publicValue = String(toPublicMediaUrls(storedValue) || "").trim();
+  if (!publicValue || publicValue.includes("://")) return publicValue;
+  const mediaBaseUrl = String(process.env.MEDIA_BASE_URL || "").replace(/\/$/, "");
+  if (!mediaBaseUrl) return publicValue;
+  return `${mediaBaseUrl}/${publicValue.split("/").map(encodeURIComponent).join("/")}`;
 }
 
 async function downloadCoverSource(value, label) {
-  const sourceUrl = publicMediaSource(value);
+  const sourceUrl = resolveBlogMediaSource(value);
   let parsed;
   try { parsed = new URL(sourceUrl); } catch { throw new Error(`${label} is not a valid media URL`); }
   if (parsed.protocol !== "https:") throw new Error(`${label} must use HTTPS`);
