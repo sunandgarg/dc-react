@@ -31,4 +31,11 @@ test("normalizes Gemini topic strings and alternate object keys", () => {
     category: "Education",
     tags: [],
   }]);
+  assert.deepEqual(normalizeTopicSuggestions({ research: { article_opportunities: { first: { topic: "CUET subject choice guide" } } } }), [{
+    topic: "CUET subject choice guide",
+    title: "CUET subject choice guide",
+    angle: "",
+    category: "Education",
+    tags: [],
+  }]);
 });

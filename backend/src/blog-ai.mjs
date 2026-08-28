@@ -133,9 +133,27 @@ export function findDuplicateArticleTitle(candidate, existing, threshold = 0.82)
 }
 
 export function normalizeTopicSuggestions(result) {
-  const suggestions = Array.isArray(result)
-    ? result
-    : [result?.topics, result?.article_topics, result?.opportunities].find(Array.isArray) || [];
+  const suggestions = [];
+  const topicContainerKey = /topic|article|opportunit|idea|suggestion/i;
+  const visit = (value, isTopicContainer = false) => {
+    if (typeof value === "string") {
+      if (isTopicContainer && value.trim()) suggestions.push(value);
+      return;
+    }
+    if (Array.isArray(value)) {
+      for (const item of value) visit(item, isTopicContainer);
+      return;
+    }
+    if (!value || typeof value !== "object") return;
+    if (value.title || value.topic || value.headline) {
+      suggestions.push(value);
+      return;
+    }
+    for (const [key, item] of Object.entries(value)) {
+      visit(item, isTopicContainer || topicContainerKey.test(key));
+    }
+  };
+  visit(result, Array.isArray(result));
   return suggestions.flatMap((suggestion) => {
     if (typeof suggestion === "string") {
       const title = suggestion.trim();
@@ -250,7 +268,11 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
   const requestBody = JSON.stringify({
     systemInstruction: { parts: [{ text: "Return valid JSON only. Use factual, original language. Never use an em dash." }] },
     contents: [{ role: "user", parts: [{ text: prompt }] }],
-    generationConfig: { responseMimeType: "application/json", temperature: 0.45 },
+    generationConfig: {
+      responseMimeType: "application/json",
+      temperature: 0.45,
+      ...(options.responseSchema ? { responseSchema: options.responseSchema } : {}),
+    },
     ...(options.research ? { tools: [{ google_search: {} }, { url_context: {} }] } : {}),
   });
   let response;
@@ -556,7 +578,28 @@ export async function runBlogAgent(body = {}) {
       const rejectedInstruction = rejected.length
         ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
         : "";
-      const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 4, 8)} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return exactly {"topics":[{"title":"...","angle":"...","category":"...","tags":["..."]}]}; every item must have a non-empty title.`, "blog-agent", { research: true });
+      const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 4, 8)} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return topic objects with a non-empty title.`, "blog-agent", {
+        research: true,
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            topics: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  title: { type: "STRING" },
+                  angle: { type: "STRING" },
+                  category: { type: "STRING" },
+                  tags: { type: "ARRAY", items: { type: "STRING" } },
+                },
+                required: ["title"],
+              },
+            },
+          },
+          required: ["topics"],
+        },
+      });
       await assertRunActive(run.id, executionToken);
       for (const topic of normalizeTopicSuggestions(result)) {
         const duplicate = findDuplicateArticleTitle(topic, comparedTitles);
@@ -569,7 +612,7 @@ export async function runBlogAgent(body = {}) {
         if (topics.length >= postCount) break;
       }
     }
-    if (!topics.length) throw new Error(`Gemini returned no new non-duplicate article topics after three research attempts (${rejected.length} duplicate suggestions rejected). Review the active research sources and try again.`);
+    if (!topics.length) throw new Error(`Gemini returned no usable non-duplicate article topics after three structured research attempts (${rejected.length} duplicate suggestions rejected). Review the active research sources and try again.`);
     await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { progress: 30, current_step: `Writing ${topics.length} article(s)`, selected_topics: topics, sources: signals.map(({ signal, ...source }) => source) } });
     const ids = [];
     for (const topic of topics) {
