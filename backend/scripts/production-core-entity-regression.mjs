@@ -187,18 +187,21 @@ async function payloadFor(table, runToken, editPhase, authorId) {
   return payload;
 }
 
-function comparable(value) {
+function comparable(table, fieldName, value) {
   if (value === null || value === undefined) return value;
-  if (typeof value === "number") return Number(value);
-  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value)) return new Date(value).toISOString();
+  const field = schemaMetadata[table].fields[fieldName];
+  if (field.type === "Boolean") return value === true || value === 1 || value === "1";
+  if (["Decimal", "Float", "Int"].includes(field.type)) return Number(value);
+  if (field.type === "BigInt") return String(value);
+  if (field.type === "DateTime") return new Date(value).toISOString();
   return value;
 }
 
 function assertPersisted(table, expected, actual) {
   for (const field of ADMIN_FIELDS[table]) {
     if (!(field in expected)) throw new Error(`${table}.${field} was not included in the write payload`);
-    const wanted = comparable(expected[field]);
-    const stored = comparable(actual?.[field]);
+    const wanted = comparable(table, field, expected[field]);
+    const stored = comparable(table, field, actual?.[field]);
     if (JSON.stringify(stored) !== JSON.stringify(wanted)) {
       throw new Error(`${table}.${field} mismatch: expected ${JSON.stringify(wanted)}, got ${JSON.stringify(stored)}`);
     }
