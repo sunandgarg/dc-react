@@ -6,6 +6,7 @@ import { prisma, schemaMetadata } from "../src/db.mjs";
 import { handleRest } from "../src/rest.mjs";
 
 const PUBLIC_BASE_URL = String(process.env.PUBLIC_BASE_URL || "https://dekhocampus.com").replace(/\/$/, "");
+const API_BASE_URL = String(process.env.API_BASE_URL || PUBLIC_BASE_URL).replace(/\/$/, "");
 const MANIFEST_PATH = process.env.CORE_REGRESSION_MANIFEST || "/tmp/dc-core-entity-regression.json";
 const PREFIX = "codex-core-qa-";
 const phase = process.argv[2] || "prepare";
@@ -217,7 +218,7 @@ function assertPersisted(table, expected, actual) {
 }
 
 async function publicRow(table, id) {
-  const url = new URL(`${PUBLIC_BASE_URL}/v1/rest/${table}`);
+  const url = new URL(`${API_BASE_URL}/v1/rest/${table}`);
   url.searchParams.set("select", "*");
   url.searchParams.set("id", `eq.${id}`);
   const response = await fetch(url, { signal: AbortSignal.timeout(20_000) });

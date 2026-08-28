@@ -462,7 +462,9 @@ jobs:
           source /etc/dc-react.env
           set +a
           cd /opt/dc-react/app
-          PUBLIC_BASE_URL=https://dekhocampus.com npm --prefix backend run verify:production-crud
+          PUBLIC_BASE_URL=https://dekhocampus.com \
+            API_BASE_URL=https://aws-origin.dekhocampus.com \
+            npm --prefix backend run verify:production-crud
           REMOTE
 
       - name: Verify full-field core entity create and edit on public UI
@@ -478,7 +480,9 @@ jobs:
           source /etc/dc-react.env
           set +a
           cd /opt/dc-react/app
-          PUBLIC_BASE_URL=https://dekhocampus.com npm --prefix backend run verify:production-core -- "$phase"
+          PUBLIC_BASE_URL=https://dekhocampus.com \
+            API_BASE_URL=https://aws-origin.dekhocampus.com \
+            npm --prefix backend run verify:production-core -- "$phase"
           REMOTE
           }
 

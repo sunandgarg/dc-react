@@ -6,6 +6,7 @@ import { prisma, quote, schemaMetadata } from "../src/db.mjs";
 import { handleRest } from "../src/rest.mjs";
 
 const PUBLIC_BASE_URL = String(process.env.PUBLIC_BASE_URL || "https://dekhocampus.com").replace(/\/$/, "");
+const API_BASE_URL = String(process.env.API_BASE_URL || PUBLIC_BASE_URL).replace(/\/$/, "");
 const runToken = `codex-production-regression-${Date.now()}`;
 
 // These are the resources that expose create/edit controls in the production admin.
@@ -157,7 +158,7 @@ function editableField(table) {
 }
 
 async function publicRows(table, filters) {
-  const url = new URL(`${PUBLIC_BASE_URL}/v1/rest/${table}`);
+  const url = new URL(`${API_BASE_URL}/v1/rest/${table}`);
   url.searchParams.set("select", "*");
   for (const [field, value] of Object.entries(filters)) url.searchParams.set(field, `eq.${value}`);
   const response = await fetch(url, { headers: { accept: "application/json" }, signal: AbortSignal.timeout(20_000) });
