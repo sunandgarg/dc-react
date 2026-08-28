@@ -356,7 +356,11 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
 
           {/* Unified Search Bar with AI icon */}
           <div className="relative z-[120] max-w-2xl">
-            <form onSubmit={handleAskAI}>
+            <form
+              onSubmit={handleAskAI}
+              toolname="search_dekhocampus"
+              tooldescription="Search DekhoCampus for colleges, courses, exams, careers, or education guidance."
+            >
               <div className="relative">
                 <div
                   className={`relative flex items-center bg-card/90 backdrop-blur-xl rounded-full shadow-[0_10px_40px_-12px_hsl(var(--primary)/0.25)] border p-1.5 transition-all ${isFocused ? "border-primary/40 ring-2 ring-primary/10" : "border-border/60"}`}
@@ -377,6 +381,8 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
                     autoCapitalize="none"
                     autoCorrect="off"
                     spellCheck={false}
+                    name="query"
+                    toolparamdescription="College, course, exam, career, or education question to search for."
                     placeholder="Search Colleges, Courses, Exams or Ask AI..."
                     className="flex-1 bg-transparent border-0 text-sm md:text-base placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 py-2.5 md:py-3 px-1 text-foreground min-w-0"
                     aria-label="Search or ask AI"

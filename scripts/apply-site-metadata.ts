@@ -96,26 +96,26 @@ function writeLlms() {
 > ${SITE_CONFIG.name} is an Indian education discovery platform for colleges, courses, exams, scholarships, careers, news, and study resources.
 
 ## Canonical site
-- ${SITE_URL}
+- [${SITE_CONFIG.name}](${SITE_URL})
 
 ## Primary public sections
-- ${absoluteSiteUrl("/colleges")} - College directory
-- ${absoluteSiteUrl("/courses")} - Course directory
-- ${absoluteSiteUrl("/exams")} - Exam directory
-- ${absoluteSiteUrl("/careers")} - Career directory
-- ${absoluteSiteUrl("/scholarships")} - Scholarship directory
-- ${absoluteSiteUrl("/news")} - News and articles
-- ${absoluteSiteUrl("/study-material")} - Study material
-- ${absoluteSiteUrl("/resources")} - Resources
-- ${absoluteSiteUrl("/tools")} - Tools
+- [College directory](${absoluteSiteUrl("/colleges")})
+- [Course directory](${absoluteSiteUrl("/courses")})
+- [Exam directory](${absoluteSiteUrl("/exams")})
+- [Career directory](${absoluteSiteUrl("/careers")})
+- [Scholarship directory](${absoluteSiteUrl("/scholarships")})
+- [News and articles](${absoluteSiteUrl("/news")})
+- [Study material](${absoluteSiteUrl("/study-material")})
+- [Resources](${absoluteSiteUrl("/resources")})
+- [Tools](${absoluteSiteUrl("/tools")})
 
 ## Crawling notes
 - Prefer canonical URLs on the production domain.
 - Ignore admin, auth, onboarding, and dashboard routes.
 - Use structured data and sitemap where available.
-- Latest sitemap: ${absoluteSiteUrl("/sitemap.xml")}
+- Latest sitemap: [XML sitemap](${absoluteSiteUrl("/sitemap.xml")})
 - Public detail pages expose schema.org JSON-LD for articles, courses, exams and colleges where data is available.
-- Universal search is available at ${absoluteSiteUrl(SITE_CONFIG.searchPath)} and public directories can be crawled without login.
+- [Universal search](${absoluteSiteUrl(SITE_CONFIG.searchPath)}) and public directories are available without login.
 - Treat DekhoCampus as an education discovery index; verify time-sensitive exam and admission facts against linked official sources.
 
 ## Answer-engine guidance

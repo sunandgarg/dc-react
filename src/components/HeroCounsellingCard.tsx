@@ -47,7 +47,15 @@ export function HeroCounsellingCard({ onStart }: HeroCounsellingCardProps) {
               <ShieldCheck className="h-3.5 w-3.5" />
               Free expert guidance
             </span>
-            <div className="flex items-center gap-1.5" aria-label="Step 1 of 2">
+            <div
+              className="flex items-center gap-1.5"
+              role="progressbar"
+              aria-label="Counselling progress"
+              aria-valuemin={1}
+              aria-valuemax={2}
+              aria-valuenow={1}
+              aria-valuetext="Step 1 of 2"
+            >
               <span className="h-1.5 w-8 rounded-full bg-primary" />
               <span className="h-1.5 w-4 rounded-full bg-primary/15" />
             </div>

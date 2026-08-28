@@ -83,12 +83,12 @@ export function Navbar() {
 
           <div className="flex items-center gap-2">
             {hasContentAdminAccess && (
-              <Link to={adminHref}>
-                <Button variant="outline" size="sm" className="hidden md:flex gap-2 rounded-xl border-amber-200 text-amber-600 hover:bg-amber-50">
+              <Button asChild variant="outline" size="sm" className="hidden md:flex gap-2 rounded-xl border-amber-200 text-amber-600 hover:bg-amber-50">
+                <Link to={adminHref}>
                   <Shield className="w-4 h-4" />
                   {isAdmin ? "Admin" : "Content Admin"}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             )}
 
             {user ? (
@@ -150,26 +150,26 @@ export function Navbar() {
               </div>
             ) : (
               <>
-                <Link to="/auth">
-                  <Button variant="outline" className="hidden md:flex gap-2 rounded-xl focus-ring">
+                <Button asChild variant="outline" className="hidden md:flex gap-2 rounded-xl focus-ring">
+                  <Link to="/auth">
                     <User className="w-4 h-4" />
                     Sign In
-                  </Button>
-                </Link>
-                <Link to="/auth">
-                  <Button className="hidden md:flex gradient-primary btn-glow rounded-xl text-primary-foreground">
+                  </Link>
+                </Button>
+                <Button asChild className="hidden md:flex gradient-primary btn-glow rounded-xl text-primary-foreground">
+                  <Link to="/auth">
                     Get Started
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </>
             )}
 
             {!user && (
-              <Link to="/auth" className="lg:hidden">
-                <Button variant="ghost" size="icon" className="focus-ring">
+              <Button asChild variant="ghost" size="icon" className="lg:hidden focus-ring">
+                <Link to="/auth" aria-label="Sign in">
                   <User className="w-5 h-5" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             )}
 
             <Button
@@ -234,17 +234,17 @@ export function Navbar() {
                     </Button>
                   ) : (
                     <>
-                      <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                        <Button variant="outline" className="w-full rounded-xl">
+                      <Button asChild variant="outline" className="w-full rounded-xl">
+                        <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
                           <User className="w-4 h-4 mr-2" />
                           Sign In
-                        </Button>
-                      </Link>
-                      <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                        <Button className="w-full gradient-primary text-primary-foreground rounded-xl">
+                        </Link>
+                      </Button>
+                      <Button asChild className="w-full gradient-primary text-primary-foreground rounded-xl">
+                        <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
                           Get Started
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                     </>
                   )}
                 </div>

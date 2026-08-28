@@ -87,12 +87,12 @@ export function GlobalInternalAds({ area }: { area: "top" | "bottom" }) {
   if (area === "top") {
     if (!topAnchor) return null;
     return createPortal(
-      <div aria-label="Sponsored content">
+      <section aria-label="Sponsored content">
         <DynamicAdBanner position="leaderboard" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />
         <div className="container py-2 empty:hidden">
           <DynamicAdBanner position="top" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />
         </div>
-      </div>,
+      </section>,
       topAnchor,
     );
   }
@@ -104,9 +104,9 @@ export function GlobalInternalAds({ area }: { area: "top" | "bottom" }) {
     (["colleges", "courses", "exams", "tools"].includes(context.page || "") && Boolean(context.itemSlug));
 
   return (
-    <div className="container space-y-4 py-4 empty:hidden" aria-label="Sponsored content">
+    <section className="container space-y-4 py-4 empty:hidden" aria-label="Sponsored content">
       {!hasEmbeddedMidPageSlot && <DynamicAdBanner position="mid-page" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />}
       <DynamicAdBanner position="bottom" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />
-    </div>
+    </section>
   );
 }
