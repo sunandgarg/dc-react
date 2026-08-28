@@ -131,6 +131,28 @@ export function findDuplicateArticleTitle(candidate, existing, threshold = 0.82)
   )) || null;
 }
 
+export function normalizeTopicSuggestions(result) {
+  const suggestions = Array.isArray(result)
+    ? result
+    : [result?.topics, result?.article_topics, result?.opportunities].find(Array.isArray) || [];
+  return suggestions.flatMap((suggestion) => {
+    if (typeof suggestion === "string") {
+      const title = suggestion.trim();
+      return title ? [{ title, angle: "", category: "Education", tags: [] }] : [];
+    }
+    if (!suggestion || typeof suggestion !== "object") return [];
+    const title = String(suggestion.title || suggestion.topic || suggestion.headline || "").trim();
+    if (!title) return [];
+    return [{
+      ...suggestion,
+      title,
+      angle: String(suggestion.angle || "").trim(),
+      category: String(suggestion.category || "Education").trim() || "Education",
+      tags: Array.isArray(suggestion.tags) ? suggestion.tags.map(String).filter(Boolean) : [],
+    }];
+  });
+}
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function parseRetryDelayMs(value) {
@@ -526,17 +548,27 @@ export async function runBlogAgent(body = {}) {
       ? `Generate only for this ${entityContext.schedule.entity_type}: ${JSON.stringify({ name: entityContext.schedule.entity_name, slug: entityContext.schedule.entity_slug, facts: entityContext.entity, topic_focus: entityContext.schedule.topic_focus })}. Prefer a timely verified update; otherwise create an evergreen student guide. Every topic must be specifically useful for this entity.`
       : "Cover the strongest Indian education opportunities across admissions, exams, counselling, scholarships, careers and college decisions.";
     const promptTitles = recent.slice(0, 500);
-    const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 3, 6)} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Return {topics:[{title,angle,category,tags}]}.`, "blog-agent", { research: true });
-    await assertRunActive(run.id, executionToken);
     const topics = [];
     const comparedTitles = [...recent];
-    for (const topic of Array.isArray(result.topics) ? result.topics : []) {
-      if (!topic.title || findDuplicateArticleTitle(topic, comparedTitles)) continue;
-      topics.push(topic);
-      comparedTitles.push({ title: topic.title, slug: slugify(topic.title) });
-      if (topics.length >= postCount) break;
+    const rejected = [];
+    for (let round = 1; round <= 3 && topics.length < postCount; round += 1) {
+      const rejectedInstruction = rejected.length
+        ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
+        : "";
+      const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${Math.max(postCount * 4, 8)} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return exactly {"topics":[{"title":"...","angle":"...","category":"...","tags":["..."]}]}; every item must have a non-empty title.`, "blog-agent", { research: true });
+      await assertRunActive(run.id, executionToken);
+      for (const topic of normalizeTopicSuggestions(result)) {
+        const duplicate = findDuplicateArticleTitle(topic, comparedTitles);
+        if (duplicate) {
+          rejected.push({ suggested: topic.title, conflicts_with: duplicate.title });
+          continue;
+        }
+        topics.push(topic);
+        comparedTitles.push({ title: topic.title, slug: slugify(topic.title) });
+        if (topics.length >= postCount) break;
+      }
     }
-    if (!topics.length) throw new Error("Gemini returned no new non-duplicate article topics. Review the active research sources and try again.");
+    if (!topics.length) throw new Error(`Gemini returned no new non-duplicate article topics after three research attempts (${rejected.length} duplicate suggestions rejected). Review the active research sources and try again.`);
     await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { progress: 30, current_step: `Writing ${topics.length} article(s)`, selected_topics: topics, sources: signals.map(({ signal, ...source }) => source) } });
     const ids = [];
     for (const topic of topics) {
@@ -577,7 +609,7 @@ export async function startBlogAgentWorker() {
   };
   workerTimer = setInterval(() => void tick(), 15 * 60_000);
   workerTimer.unref?.();
-  setTimeout(() => void tick(), 15_000).unref?.();
+  setTimeout(() => void tick(), 60_000).unref?.();
 }
 
 export function stopBlogAgentWorker() {
