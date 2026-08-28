@@ -2,6 +2,7 @@
 
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
+import sharp from "sharp";
 import { createBlogCover, DEFAULT_BLOG_COVER_TEMPLATE_KEY, runBlogAgent } from "../src/blog-ai.mjs";
 import { prisma } from "../src/db.mjs";
 import { toStoredMediaKeys } from "../src/media-values.mjs";
@@ -9,6 +10,7 @@ import { deleteStorageObjectKeys } from "../src/storage.mjs";
 
 const testSlug = `codex-blog-agent-smoke-${Date.now()}`;
 let coverUrl = "";
+let generatedArticleCoverUrl = "";
 let runId = "";
 let createdArticleIds = [];
 let createdArticleSlugs = [];
@@ -97,7 +99,8 @@ try {
       daily_post_cap: 48,
       human_review_required: true,
       publish_status: "Draft",
-      image_mode: "none",
+      image_mode: "template",
+      image_template_url: originalSettings.image_template_url,
     },
   });
 
@@ -111,6 +114,18 @@ try {
   assert.equal(article.status, "Draft");
   assert.match(article.content, /<\w+/i, "Generated article has no HTML content");
   assert.match(article.content, /frequently asked|<h[2-4][^>]*>\s*faqs?/i, "Generated article has no visible FAQ section");
+  generatedArticleCoverUrl = String(article.featured_image || "");
+  assert.match(generatedArticleCoverUrl, /^https:\/\//, "Scheduled agent did not save a public cover URL");
+  const generatedCoverResponse = await fetch(generatedArticleCoverUrl, { signal: AbortSignal.timeout(30_000) });
+  assert.equal(generatedCoverResponse.ok, true, `Scheduled agent cover is not publicly readable (${generatedCoverResponse.status})`);
+  const generatedCoverBytes = Buffer.from(await generatedCoverResponse.arrayBuffer());
+  const generatedMetadata = await sharp(generatedCoverBytes).metadata();
+  const generatedBottomCenter = await sharp(generatedCoverBytes)
+    .extract({ left: Math.floor(generatedMetadata.width / 2), top: Math.floor(generatedMetadata.height * 0.91), width: 1, height: 1 })
+    .removeAlpha()
+    .raw()
+    .toBuffer();
+  assert.ok([...generatedBottomCenter].every((channel) => channel > 220), "Scheduled agent cover contains the retired dark-panel composition");
   createdArticleSlugs = [article.slug];
   createdFaqCount = await prisma.faqs.count({ where: { page: "articles", item_slug: article.slug, is_active: true } });
   assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
@@ -142,6 +157,7 @@ try {
     gemini_agent: "created one AWS MySQL draft",
     article_faqs: `${createdFaqCount} visible and dedicated FAQ records verified`,
     cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
+    scheduled_cover: "branded template with light lower canvas verified",
     template_fallback_reason: coverDiagnostics.templateError || null,
     generated_fallback_reason: coverDiagnostics.generatedError || null,
     logo_applied: Boolean(coverDiagnostics.logoApplied),
@@ -180,14 +196,14 @@ try {
       cleanupErrors.push(error);
     }
   }
-  if (coverUrl) {
-    const key = String(toStoredMediaKeys(coverUrl) || "");
-    if (key && !key.includes("://")) {
-      try {
-        await deleteStorageObjectKeys([key]);
-      } catch (error) {
-        cleanupErrors.push(error);
-      }
+  const coverKeys = [...new Set([coverUrl, generatedArticleCoverUrl]
+    .map((url) => String(toStoredMediaKeys(url) || ""))
+    .filter((key) => key && !key.includes("://")))];
+  if (coverKeys.length) {
+    try {
+      await deleteStorageObjectKeys(coverKeys);
+    } catch (error) {
+      cleanupErrors.push(error);
     }
   }
   if (originalSettings) {

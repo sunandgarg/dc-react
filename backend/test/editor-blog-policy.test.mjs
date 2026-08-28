@@ -142,12 +142,20 @@ test("renders the supplied template as a 16:9 WebP while preserving its own artw
     resolution: "web",
     includeLogo: true,
     logoUrl: "https://example.com/should-not-be-downloaded.png",
-  }, "A practical guide to choosing the right college", { sourceMode: "template" });
+  }, "A practical guide to choosing the right college", "template");
   const metadata = await sharp(bytes).metadata();
   assert.equal(metadata.format, "webp");
   assert.equal(metadata.width, 1600);
   assert.equal(metadata.height, 900);
   assert.ok(bytes.length > 20_000);
+});
+
+test("uses the bundled branded template fallback without the legacy dark panel", async () => {
+  const options = { width: 1600, height: 900, resolution: "web", includeLogo: false, logoUrl: "" };
+  const source = await createLocalEditorialCover("Fallback", options);
+  const bytes = await renderBlogCover(source, options, "The counselling deadline students should verify", "bundled-template");
+  const bottomCenter = await sharp(bytes).extract({ left: 800, top: 820, width: 1, height: 1 }).removeAlpha().raw().toBuffer();
+  assert.ok([...bottomCenter].every((channel) => channel > 220), `Expected a light template background, received ${[...bottomCenter]}`);
 });
 
 test("normalizes generated FAQs for dedicated article storage", () => {

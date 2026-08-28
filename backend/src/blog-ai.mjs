@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import { prisma, schemaMetadata } from "./db.mjs";
 import { uploadStorageObject } from "./storage.mjs";
@@ -91,7 +92,14 @@ function escapeCoverText(value) {
 }
 
 export function formatBlogCoverTitle(value) {
-  const hook = stripHtml(value).replace(/^dekhocampus\s*:\s*/i, "").trim().slice(0, 120);
+  const normalized = stripHtml(value)
+    .replace(/^dekhocampus\s*:\s*/i, "")
+    .replace(/\.{3,}|…/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const hook = normalized.length <= 120
+    ? normalized
+    : normalized.slice(0, 121).replace(/\s+\S*$/, "").replace(/[,:;\-\s]+$/, "");
   return `DekhoCampus: ${hook || "Your next education decision, made clearer"}`;
 }
 
@@ -181,20 +189,13 @@ export function templateCoverTitleOverlay(value, options) {
 }
 
 export async function createLocalEditorialCover(prompt, options) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">
-    <rect width="100%" height="100%" fill="#f8fafc"/>
-    <rect width="100%" height="${Math.max(18, Math.round(options.height * 0.025))}" fill="#f97316"/>
-    <rect x="${Math.round(options.width * 0.78)}" y="0" width="${Math.round(options.width * 0.22)}" height="100%" fill="#1d4ed8"/>
-    <rect x="${Math.round(options.width * 0.09)}" y="${Math.round(options.height * 0.21)}" width="${Math.round(options.width * 0.12)}" height="${Math.max(8, Math.round(options.height * 0.012))}" fill="#f97316"/>
-    <text x="${Math.round(options.width * 0.09)}" y="${Math.round(options.height * 0.17)}" font-family="Arial, Helvetica, sans-serif" font-size="${Math.max(24, Math.round(options.width * 0.022))}" font-weight="700" fill="#1d4ed8">DEKHOCAMPUS EDITORIAL</text>
-    <circle cx="${Math.round(options.width * 0.68)}" cy="${Math.round(options.height * 0.35)}" r="${Math.round(options.height * 0.2)}" fill="#dbeafe"/>
-    <path d="M ${Math.round(options.width * 0.56)} ${Math.round(options.height * 0.4)} Q ${Math.round(options.width * 0.68)} ${Math.round(options.height * 0.12)} ${Math.round(options.width * 0.78)} ${Math.round(options.height * 0.42)}" fill="none" stroke="#f97316" stroke-width="${Math.max(12, Math.round(options.width * 0.012))}"/>
-  </svg>`;
-  return sharp(Buffer.from(svg)).png().toBuffer();
+  void prompt;
+  void options;
+  return readFile(new URL("../assets/dekhocampus-blog-cover-template-v1.png", import.meta.url));
 }
 
-export async function renderBlogCover(sourceBytes, options, titleHook, diagnostics = null) {
-  const usesTemplateArtwork = diagnostics?.sourceMode === "template";
+export async function renderBlogCover(sourceBytes, options, titleHook, sourceMode = "generated", diagnostics = null) {
+  const usesTemplateArtwork = ["template", "bundled-template"].includes(sourceMode);
   const base = sharp(sourceBytes, { limitInputPixels: 50_000_000 })
     .rotate()
     .resize(options.width, options.height, usesTemplateArtwork
@@ -520,17 +521,20 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
   const diagnostics = rawOptions.diagnostics && typeof rawOptions.diagnostics === "object" ? rawOptions.diagnostics : null;
   if (options.mode === "none") return "";
   let sourceBytes;
+  let sourceMode = "generated";
   let generatedConfig = null;
   let generatedUsage = null;
   if (options.mode === "template") {
     if (!options.templateUrl) throw new Error("A cover template is required when image mode is template");
     try {
       sourceBytes = await downloadCoverSource(options.templateUrl, "Cover template");
+      sourceMode = "template";
       if (diagnostics) diagnostics.sourceMode = "template";
     } catch (templateError) {
       sourceBytes = await createLocalEditorialCover(prompt, options);
+      sourceMode = "bundled-template";
       if (diagnostics) {
-        diagnostics.sourceMode = "local-fallback";
+        diagnostics.sourceMode = "bundled-template";
         diagnostics.templateError = String(templateError?.message || templateError).slice(0, 200);
       }
     }
@@ -538,18 +542,20 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
     try {
       const generated = await createGeneratedImage(prompt, options);
       sourceBytes = generated.bytes;
+      sourceMode = "generated";
       generatedConfig = generated.config;
       generatedUsage = generated.usage;
       if (diagnostics) diagnostics.sourceMode = "generated";
     } catch (generatedError) {
       sourceBytes = await createLocalEditorialCover(prompt, options);
+      sourceMode = "bundled-template";
       if (diagnostics) {
-        diagnostics.sourceMode = "local-fallback";
+        diagnostics.sourceMode = "bundled-template";
         diagnostics.generatedError = String(generatedError?.message || generatedError).slice(0, 200);
       }
     }
   }
-  const bytes = await renderBlogCover(sourceBytes, options, prompt, diagnostics);
+  const bytes = await renderBlogCover(sourceBytes, options, prompt, sourceMode, diagnostics);
   const path = `blog-covers/${slug}-${Date.now()}.webp`;
   const upload = await uploadStorageObject("admin-uploads", path, bytes, "image/webp", { cacheControl: "public,max-age=31536000,immutable" });
   if (generatedConfig) {
@@ -581,7 +587,7 @@ async function researchSignals(limit = 6) {
 }
 
 function articlePrompt(topic, signals, wordLimit = 1200) {
-  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are for trend and fact awareness only; never copy wording or credit competitor publishers in the article body: ${JSON.stringify(signals)}. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. hero_hook must be a short, accurate, curiosity-led headline based on human decision psychology without clickbait. Write 4-8 distinct, search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Use concise direct answers, descriptive H2/H3 headings, short paragraphs, useful lists, and verifiable facts. Do not include Sources, References, Citations or competitor names in content_html. When evidence is uncertain, tell readers to verify the official authority website.`;
+  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are for trend and fact awareness only; never copy wording or credit competitor publishers in the article body: ${JSON.stringify(signals)}. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. hero_hook must be a concise 6-12 word English headline, accurate and curiosity-led using human decision psychology without clickbait; do not include DekhoCampus, an ellipsis, or trailing punctuation. Write 4-8 distinct, search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Use concise direct answers, descriptive H2/H3 headings, short paragraphs, useful lists, and verifiable facts. Do not include Sources, References, Citations or competitor names in content_html. When evidence is uncertain, tell readers to verify the official authority website.`;
 }
 
 const ARTICLE_RESPONSE_SCHEMA = {
@@ -692,6 +698,23 @@ export async function handleBlogStudio(request) {
     cover_diagnostics: coverDiagnostics,
     research_sources: generated.research_sources,
   };
+}
+
+export async function handleArticleCover(request) {
+  const body = await request.json().catch(() => ({}));
+  const title = stripHtml(body.title).trim();
+  if (!title) throw Object.assign(new Error("Article title is required to generate a cover"), { status: 400, code: "ARTICLE_TITLE_REQUIRED" });
+  const settings = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } }).catch(() => null);
+  const diagnostics = {};
+  const featuredImage = await createBlogCover(slugify(body.slug || title) || `article-${Date.now()}`, title, {
+    imageMode: "template",
+    templateUrl: settings?.image_template_url || DEFAULT_BLOG_COVER_TEMPLATE_KEY,
+    includeLogo: false,
+    aspectRatio: "16:9",
+    resolution: "web",
+    diagnostics,
+  });
+  return { featured_image: featuredImage, cover_title: formatBlogCoverTitle(title), cover_diagnostics: diagnostics };
 }
 
 export async function handleAiGenerate(request) {

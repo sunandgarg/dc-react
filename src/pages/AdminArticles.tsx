@@ -25,6 +25,7 @@ import { CollegeStudyTagger } from "@/components/admin/CollegeStudyTagger";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Link2 } from "lucide-react";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { ArticleCoverGenerator } from "@/components/admin/ArticleCoverGenerator";
 import { AuthorPicker } from "@/components/admin/AuthorPicker";
 import { BulkEditToggle } from "@/components/admin/BulkEditToggle";
 import { FeaturedRankPicker } from "@/components/admin/FeaturedRankPicker";
@@ -365,7 +366,10 @@ export default function AdminArticles() {
                   <div><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Title *</label><Input value={editing.title || ""} onChange={(e) => update("title", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="my-article-slug" className="rounded-lg h-9 text-sm" /></div>
-                  <div className="sm:col-span-2"><ImageUploadField label="Featured Image" value={editing.featured_image || ""} onChange={(v) => update("featured_image", v)} preset="article" folder="article-images" /></div>
+                  <div className="sm:col-span-2">
+                    <ImageUploadField label="Featured Image" value={editing.featured_image || ""} onChange={(v) => update("featured_image", v)} preset="article" folder="article-images" />
+                    <ArticleCoverGenerator title={editing.title || ""} slug={editing.slug} onGenerated={(url) => update("featured_image", url)} />
+                  </div>
                   <div><label className="text-xs font-medium text-muted-foreground">Views</label><Input type="number" value={editing.views ?? 0} onChange={(e) => update("views", parseInt(e.target.value) || 0)} className="rounded-lg h-9 text-sm" /></div>
                   <div className="sm:col-span-2 lg:col-span-3"><FeaturedRankPicker value={(editing as any).featured_rank} onChange={(v) => update("featured_rank" as any, v)} label="Pin to News page top" maxSlots={4} slotLabel={(r) => `#${r}${r === 1 ? " (Big Hero)" : ` (Small ${r - 1})`}`} helpText="#1 = big hero card on /news. #2-4 = the three small cards beside it. Picking a slot pushes existing pinned items down; anything beyond #4 unpins automatically." /></div>
                 </div>
