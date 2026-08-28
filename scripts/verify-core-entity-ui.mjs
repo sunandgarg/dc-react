@@ -24,6 +24,13 @@ try {
       const homepageErrors = [];
       homepage.on("pageerror", (error) => homepageErrors.push(error.message));
       await homepage.goto(`${baseUrl}/?core-regression=${encodeURIComponent(manifest.runToken)}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
+      const exploreHeading = homepage.locator("#explore-heading");
+      for (let top = 700; top <= 4_200 && await exploreHeading.count() === 0; top += 700) {
+        await homepage.evaluate((scrollTop) => window.scrollTo({ top: scrollTop, behavior: "auto" }), top);
+        await homepage.waitForTimeout(400);
+      }
+      await exploreHeading.waitFor({ state: "visible", timeout: 30_000 });
+      await exploreHeading.scrollIntoViewIfNeeded();
       for (const entity of manifest.entities.filter(({ table }) => ["colleges", "courses", "exams"].includes(table))) {
         await homepage.locator(`a[href="${entity.route}"]`).first().waitFor({ state: "visible", timeout: 30_000 });
         checks.push({ table: entity.table, phase: expectedPhase, viewport: viewport.name, route: "/#explore-by-category", status: 200 });
