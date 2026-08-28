@@ -565,7 +565,7 @@ export async function runBlogAgent(body = {}) {
 let workerTimer;
 let workerBusy = false;
 export async function startBlogAgentWorker() {
-  await prisma.blog_auto_agent_runs.updateMany({ where: { status: "running", started_at: { lt: new Date(Date.now() - 30 * 60_000) } }, data: { status: "failed", progress: 100, current_step: "Recovered after restart", finished_at: new Date(), message: "Interrupted run recovered after process restart" } });
+  await prisma.blog_auto_agent_runs.updateMany({ where: { status: "running" }, data: { status: "failed", progress: 100, current_step: "Interrupted by process restart", finished_at: new Date(), message: "This run was interrupted by a Node process restart. Start a new run or resume it from the admin controls." } });
   const tick = async () => {
     if (workerBusy) return;
     workerBusy = true;
