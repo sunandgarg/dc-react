@@ -14,9 +14,17 @@ export function isNodeBackendEnabled() {
 
 export function apiBaseUrl() {
   const value = String(import.meta.env.VITE_API_URL || import.meta.env.VITE_AWS_API_URL || "").replace(/\/$/, "");
+  if (typeof window !== "undefined") {
+    if (value) {
+      const configured = new URL(value, window.location.origin);
+      const configuredIsLocal = ["localhost", "127.0.0.1", "::1"].includes(configured.hostname);
+      const pageIsLocal = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+      if (!configuredIsLocal || pageIsLocal) return configured.origin;
+    }
+    return window.location.origin;
+  }
   if (value) return value;
-  if (typeof window !== "undefined") return window.location.origin;
-  return "http://127.0.0.1:8787";
+  return "http://localhost:8787";
 }
 
 export function functionUrl(name: string) {

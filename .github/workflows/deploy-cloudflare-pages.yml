@@ -25,7 +25,9 @@ jobs:
 
       - name: Build production frontend
         env:
-          VITE_API_URL: ""
+          # A slash intentionally resolves to window.location.origin after
+          # normalization, keeping API traffic behind the Pages Worker proxy.
+          VITE_API_URL: /
           VITE_AWS_API_URL: ""
           VITE_MEDIA_BASE_URL: /storage/v1/object/public
           SITEMAP_API_URL: https://aws-origin.dekhocampus.com
