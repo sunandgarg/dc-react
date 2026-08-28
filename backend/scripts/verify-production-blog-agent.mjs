@@ -12,8 +12,33 @@ let coverUrl = "";
 let runId = "";
 let createdArticleIds = [];
 let createdArticleSlugs = [];
+let createdFaqCount = 0;
 let originalSettings = null;
 const coverDiagnostics = {};
+
+async function cleanupRecentOrphanArticleFaqs() {
+  const cutoff = new Date(Date.now() - 6 * 60 * 60_000);
+  const recentFaqs = await prisma.faqs.findMany({
+    where: { page: "articles", created_at: { gte: cutoff }, item_slug: { not: null } },
+    select: { id: true, item_slug: true },
+  });
+  const slugs = [...new Set(recentFaqs.map((faq) => faq.item_slug).filter(Boolean))];
+  if (!slugs.length) return 0;
+
+  const articles = await prisma.articles.findMany({
+    where: { slug: { in: slugs } },
+    select: { slug: true },
+  });
+  const articleSlugs = new Set(articles.map((article) => article.slug));
+  const orphanIds = recentFaqs
+    .filter((faq) => faq.item_slug && !articleSlugs.has(faq.item_slug))
+    .map((faq) => faq.id);
+  if (!orphanIds.length) return 0;
+
+  const deleted = await prisma.faqs.deleteMany({ where: { id: { in: orphanIds } } });
+  assert.equal(deleted.count, orphanIds.length, "Recent orphan article FAQ cleanup was incomplete");
+  return deleted.count;
+}
 
 async function diagnostics() {
   const [settings, controls, recentRuns, providers] = await Promise.all([
@@ -54,6 +79,8 @@ async function waitForScheduledRun() {
 }
 
 try {
+  const repairedOrphanFaqs = await cleanupRecentOrphanArticleFaqs();
+  if (repairedOrphanFaqs) console.log(JSON.stringify({ repaired_orphan_article_faqs: repairedOrphanFaqs }));
   originalSettings = await diagnostics();
   const disabledControl = await prisma.ai_runtime_controls.findFirst({
     where: { feature: { in: ["global", "blog-agent", "blog-studio", "blog-cover"] }, is_enabled: false },
@@ -85,8 +112,8 @@ try {
   assert.match(article.content, /<\w+/i, "Generated article has no HTML content");
   assert.match(article.content, /frequently asked|<h[2-4][^>]*>\s*faqs?/i, "Generated article has no visible FAQ section");
   createdArticleSlugs = [article.slug];
-  const faqCount = await prisma.faqs.count({ where: { page: "articles", item_slug: article.slug, is_active: true } });
-  assert.ok(faqCount >= 4, `Generated article stored only ${faqCount} dedicated FAQs`);
+  createdFaqCount = await prisma.faqs.count({ where: { page: "articles", item_slug: article.slug, is_active: true } });
+  assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
 
   const coverMode = originalSettings.image_mode === "template" && originalSettings.image_template_url ? "template" : "generated";
   coverUrl = await createBlogCover(testSlug, "Indian higher education admissions and student success", {
@@ -108,7 +135,7 @@ try {
   console.log(JSON.stringify({
     ok: true,
     gemini_agent: "created one AWS MySQL draft",
-    article_faqs: `${faqCount} visible and dedicated FAQ records verified`,
+    article_faqs: `${createdFaqCount} visible and dedicated FAQ records verified`,
     cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
     template_fallback_reason: coverDiagnostics.templateError || null,
     generated_fallback_reason: coverDiagnostics.generatedError || null,
@@ -117,35 +144,77 @@ try {
     cleanup: "pending",
   }, null, 2));
 } finally {
+  const cleanupErrors = [];
+  let deletedFaqCount = 0;
   if (createdArticleSlugs.length) {
-    await prisma.faqs.deleteMany({ where: { page: "articles", item_slug: { in: createdArticleSlugs } } }).catch(() => {});
+    try {
+      const deleted = await prisma.faqs.deleteMany({ where: { page: "articles", item_slug: { in: createdArticleSlugs } } });
+      deletedFaqCount = deleted.count;
+      const remaining = await prisma.faqs.count({ where: { page: "articles", item_slug: { in: createdArticleSlugs } } });
+      assert.equal(remaining, 0, "Generated article FAQs remain after cleanup");
+      assert.ok(deletedFaqCount >= createdFaqCount, `Deleted only ${deletedFaqCount} of ${createdFaqCount} generated FAQs`);
+    } catch (error) {
+      cleanupErrors.push(error);
+    }
   }
   if (createdArticleIds.length) {
-    await prisma.article_links.deleteMany({ where: { article_id: { in: createdArticleIds } } }).catch(() => {});
-    await prisma.articles.deleteMany({ where: { id: { in: createdArticleIds } } }).catch(() => {});
+    try {
+      await prisma.article_links.deleteMany({ where: { article_id: { in: createdArticleIds } } });
+      await prisma.articles.deleteMany({ where: { id: { in: createdArticleIds } } });
+      const remaining = await prisma.articles.count({ where: { id: { in: createdArticleIds } } });
+      assert.equal(remaining, 0, "Generated smoke-test article remains after cleanup");
+    } catch (error) {
+      cleanupErrors.push(error);
+    }
   }
-  if (runId) await prisma.blog_auto_agent_runs.deleteMany({ where: { id: runId } }).catch(() => {});
+  if (runId) {
+    try {
+      await prisma.blog_auto_agent_runs.deleteMany({ where: { id: runId } });
+    } catch (error) {
+      cleanupErrors.push(error);
+    }
+  }
   if (coverUrl) {
     const key = String(toStoredMediaKeys(coverUrl) || "");
-    if (key && !key.includes("://")) await deleteStorageObjectKeys([key]).catch(() => {});
+    if (key && !key.includes("://")) {
+      try {
+        await deleteStorageObjectKeys([key]);
+      } catch (error) {
+        cleanupErrors.push(error);
+      }
+    }
   }
   if (originalSettings) {
-    await prisma.blog_auto_agent_settings.update({
-      where: { id: "default" },
-      data: {
-        enabled: originalSettings.enabled,
-        interval_minutes: originalSettings.interval_minutes,
-        posts_per_run: originalSettings.posts_per_run,
-        daily_post_cap: originalSettings.daily_post_cap,
-        publish_status: originalSettings.publish_status,
-        human_review_required: originalSettings.human_review_required,
-        image_mode: originalSettings.image_mode,
-        last_run_at: originalSettings.last_run_at,
-        next_run_at: originalSettings.next_run_at,
-      },
-    }).catch(() => {});
+    try {
+      await prisma.blog_auto_agent_settings.update({
+        where: { id: "default" },
+        data: {
+          enabled: originalSettings.enabled,
+          interval_minutes: originalSettings.interval_minutes,
+          posts_per_run: originalSettings.posts_per_run,
+          daily_post_cap: originalSettings.daily_post_cap,
+          publish_status: originalSettings.publish_status,
+          human_review_required: originalSettings.human_review_required,
+          image_mode: originalSettings.image_mode,
+          last_run_at: originalSettings.last_run_at,
+          next_run_at: originalSettings.next_run_at,
+        },
+      });
+    } catch (error) {
+      cleanupErrors.push(error);
+    }
   }
-  await prisma.blog_auto_agent_runs.deleteMany({ where: { trigger_type: "production-smoke", started_at: { gte: new Date(Date.now() - 60 * 60_000) } } }).catch(() => {});
-  console.log(JSON.stringify({ cleanup: "complete", test_slug: testSlug }));
+  try {
+    await prisma.blog_auto_agent_runs.deleteMany({ where: { trigger_type: "production-smoke", started_at: { gte: new Date(Date.now() - 60 * 60_000) } } });
+  } catch (error) {
+    cleanupErrors.push(error);
+  }
+  console.log(JSON.stringify({
+    cleanup: cleanupErrors.length ? "failed" : "complete",
+    test_slug: testSlug,
+    generated_faqs_deleted: deletedFaqCount,
+    errors: cleanupErrors.map((error) => error instanceof Error ? error.message : String(error)),
+  }));
   await prisma.$disconnect();
+  if (cleanupErrors.length) throw new AggregateError(cleanupErrors, "Production blog-agent smoke cleanup failed");
 }
