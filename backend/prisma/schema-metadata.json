@@ -6848,6 +6848,22 @@
         "default": null,
         "foreignKey": null
       },
+      "academic_level": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "text",
+        "default": null,
+        "foreignKey": null
+      },
+      "duration": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "text",
+        "default": null,
+        "foreignKey": null
+      },
       "fee_amount": {
         "type": "Decimal",
         "nullable": true,
