@@ -14,15 +14,17 @@ export default function AdminCourseFees() {
         table="course_fees"
         titleKey="course_name"
         subtitleKey="college_slug"
-        defaultValues={{ college_slug: "", course_slug: "", course_name: "", course_group: "", specialization: "", fee_amount: 0, fee_type: "Annual", year: "" }}
-        ioColumns={["college_slug","course_slug","course_name","course_group","specialization","fee_amount","fee_type","year"]}
+        defaultValues={{ college_slug: "", course_slug: "", course_name: "", academic_level: "UG", course_group: "", specialization: "", duration: "", fee_amount: 0, fee_type: "Annual", year: "" }}
+        ioColumns={["college_slug","course_slug","course_name","academic_level","course_group","specialization","duration","fee_amount","fee_type","year"]}
         ioTypeHints={{ fee_amount: "number" }}
         fields={[
           { key: "college_slug", label: "College Slug", required: true },
           { key: "course_slug", label: "Course Slug", required: true },
+          { key: "academic_level", label: "Academic Level", required: true, type: "select", options: ["UG", "PG", "Diploma", "Doctoral", "Certificate", "Other"] },
           { key: "course_group", label: "Broad Course / Degree", required: true, type: "combobox", options: ["B.E. / B.Tech", "M.E. / M.Tech", "MBA / PGDM", "BBA", "BCA", "MCA", "B.Com", "M.Com", "B.Sc.", "M.Sc.", "BA", "MA", "MBBS", "BDS", "B.Pharm", "M.Pharm", "LL.B.", "LL.M.", "B.Arch", "M.Arch", "Ph.D.", "Diploma"] },
           { key: "specialization", label: "Specialization", placeholder: "Computer Science and Engineering" },
           { key: "course_name", label: "Course Name (display)" },
+          { key: "duration", label: "Duration", placeholder: "2 Years / 4 Semesters" },
           { key: "fee_amount", label: "Fee Amount", type: "number" },
           { key: "fee_type", label: "Fee Type", placeholder: "Annual / Total / Semester" },
           { key: "year", label: "Year", placeholder: "2024-25" },

@@ -47,7 +47,7 @@ import { RichSection } from "@/components/detail/RichSection";
 import { RichText } from "@/components/detail/RichText";
 import { PageSummary } from "@/components/detail/PageSummary";
 import { absoluteSiteUrl } from "@/lib/constant";
-import { formatFeeRange, formatIndianFee, groupCollegeFees, inferCourseSpecialization } from "@/lib/courseFeeGroups";
+import { formatFeeRange, formatIndianFee, groupCollegeFees, groupCollegeFeesByLevel, inferCourseSpecialization } from "@/lib/courseFeeGroups";
 
 const COLLEGE_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "College Info" },
@@ -81,6 +81,7 @@ export default function CollegeDetail() {
   const [visibleCourseGroupCount, setVisibleCourseGroupCount] = useState(5);
   const [courseSearch, setCourseSearch] = useState("");
   const [expandedCourseGroups, setExpandedCourseGroups] = useState<Set<string>>(new Set());
+  const [selectedAcademicLevel, setSelectedAcademicLevel] = useState("");
   // Canonicalize URL to slug-with-id once the college resolves
   useEffect(() => {
     if (!college?.slug || !(college as any).short_id) return;
@@ -105,7 +106,7 @@ export default function CollegeDetail() {
     queryFn: async () => {
       const { data, error } = await (backendClient as any)
         .from("course_fees")
-        .select("id,course_slug,course_name,course_group,specialization,fee_amount,fee_type,year")
+        .select("id,course_slug,course_name,academic_level,course_group,specialization,duration,fee_amount,fee_type,year")
         .eq("college_slug", collegeRelationSlug)
         .order("course_name");
       if (error) throw error;
@@ -115,7 +116,15 @@ export default function CollegeDetail() {
     staleTime: 30 * 60 * 1000,
   });
 
-  const groupedCollegeFees = useMemo(() => groupCollegeFees(collegeFees, courseSearch), [collegeFees, courseSearch]);
+  const collegeFeeLevels = useMemo(() => groupCollegeFeesByLevel(collegeFees), [collegeFees]);
+  const activeFeeLevel = useMemo(
+    () => collegeFeeLevels.find((level) => level.label === selectedAcademicLevel) || collegeFeeLevels[0],
+    [collegeFeeLevels, selectedAcademicLevel],
+  );
+  const groupedCollegeFees = useMemo(
+    () => groupCollegeFees(activeFeeLevel?.groups.flatMap((group) => group.entries) || [], courseSearch),
+    [activeFeeLevel, courseSearch],
+  );
   const visibleCourseGroups = useMemo(
     () => groupedCollegeFees.slice(0, visibleCourseGroupCount),
     [groupedCollegeFees, visibleCourseGroupCount],
@@ -144,7 +153,14 @@ export default function CollegeDetail() {
   useEffect(() => {
     setVisibleCourseGroupCount(5);
     setExpandedCourseGroups(new Set());
-  }, [collegeRelationSlug, courseSearch]);
+  }, [collegeRelationSlug, courseSearch, activeFeeLevel?.key]);
+
+  useEffect(() => {
+    if (!collegeFeeLevels.length) return;
+    if (!collegeFeeLevels.some((level) => level.label === selectedAcademicLevel)) {
+      setSelectedAcademicLevel(collegeFeeLevels.find((level) => level.label === "UG")?.label || collegeFeeLevels[0].label);
+    }
+  }, [collegeFeeLevels, selectedAcademicLevel]);
 
   const toggleCourseGroup = (key: string) => {
     setExpandedCourseGroups((current) => {
@@ -393,17 +409,44 @@ export default function CollegeDetail() {
                 <div className="mb-4"><RichText html={college.course_fee_content} /></div>
               )}
               {collegeFees.length > 0 && (
-                <label className="relative mb-3 block max-w-xs">
-                  <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="search"
-                    value={courseSearch}
-                    onChange={(event) => setCourseSearch(event.target.value)}
-                    placeholder="Search courses"
-                    aria-label={`Search courses at ${college.name}`}
-                    className="h-8 w-full rounded-md border border-border bg-background pl-8 pr-3 text-xs outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
-                  />
-                </label>
+                <>
+                  <div className="mb-3 flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Course levels">
+                    {collegeFeeLevels.map((level) => {
+                      const selected = activeFeeLevel?.key === level.key;
+                      return (
+                        <button
+                          key={level.key}
+                          type="button"
+                          role="tab"
+                          aria-selected={selected}
+                          onClick={() => setSelectedAcademicLevel(level.label)}
+                          className={`min-w-[7rem] shrink-0 rounded-md border px-3 py-2 text-left transition-colors ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary/40 hover:bg-muted/40"}`}
+                        >
+                          <span className="block text-sm font-semibold">{level.label}</span>
+                          <span className={`block text-[11px] ${selected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                            {level.courseCount} course{level.courseCount === 1 ? "" : "s"}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-xs text-muted-foreground">
+                      {activeFeeLevel ? `${activeFeeLevel.courseCount} ${activeFeeLevel.label} course${activeFeeLevel.courseCount === 1 ? "" : "s"} across ${activeFeeLevel.groups.length} degree${activeFeeLevel.groups.length === 1 ? "" : "s"}` : ""}
+                    </p>
+                    <label className="relative block w-full sm:w-64">
+                      <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                      <input
+                        type="search"
+                        value={courseSearch}
+                        onChange={(event) => setCourseSearch(event.target.value)}
+                        placeholder={`Search ${activeFeeLevel?.label || ""} courses`}
+                        aria-label={`Search ${activeFeeLevel?.label || ""} courses at ${college.name}`}
+                        className="h-8 w-full rounded-md border border-border bg-background pl-8 pr-3 text-xs outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
+                      />
+                    </label>
+                  </div>
+                </>
               )}
               <div className="dc-scroll-table">
                 <table id="college-course-fee-table" className="w-full min-w-[620px] text-sm">
@@ -473,7 +516,7 @@ export default function CollegeDetail() {
                                             )}
                                             {entry.year && <div className="text-[11px] text-muted-foreground">Fee year: {entry.year}</div>}
                                           </div>
-                                          <span className="col-start-1 text-xs text-muted-foreground sm:col-start-auto">{linked?.duration || "Duration varies"}</span>
+                                          <span className="col-start-1 text-xs text-muted-foreground sm:col-start-auto">{entry.duration || linked?.duration || "Duration not published"}</span>
                                           <span className="col-start-1 text-xs font-medium text-foreground sm:col-start-auto">
                                             {formatIndianFee(amount !== null && Number.isFinite(amount) ? amount : null)}
                                             {entry.fee_type && <span className="block font-normal text-muted-foreground">{entry.fee_type}</span>}
@@ -496,7 +539,7 @@ export default function CollegeDetail() {
                     ) : (
                       <tr>
                         <td colSpan={4} className="py-4 text-sm text-muted-foreground">
-                          {courseSearch.trim() ? "No degree or specialization matches your search." : "Check the official college website for current courses and fees."}
+                          {courseSearch.trim() ? `No ${activeFeeLevel?.label || ""} degree or specialization matches your search.` : "Check the official college website for current courses and fees."}
                         </td>
                       </tr>
                     )}

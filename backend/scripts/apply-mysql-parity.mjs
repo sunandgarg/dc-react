@@ -205,6 +205,14 @@ async function ensureCourseFeeGroupingSchema(report) {
     await prisma.$executeRawUnsafe("ALTER TABLE `course_fees` ADD COLUMN `specialization` LONGTEXT NULL AFTER `course_group`");
     report.createdRuntimeColumns.push("course_fees.specialization");
   }
+  if (!await columnInfo("course_fees", "academic_level")) {
+    await prisma.$executeRawUnsafe("ALTER TABLE `course_fees` ADD COLUMN `academic_level` VARCHAR(32) NULL AFTER `specialization`");
+    report.createdRuntimeColumns.push("course_fees.academic_level");
+  }
+  if (!await columnInfo("course_fees", "duration")) {
+    await prisma.$executeRawUnsafe("ALTER TABLE `course_fees` ADD COLUMN `duration` VARCHAR(64) NULL AFTER `academic_level`");
+    report.createdRuntimeColumns.push("course_fees.duration");
+  }
   const indexName = "ix_course_fees_college_group";
   if (!await indexExists("course_fees", indexName)) {
     await prisma.$executeRawUnsafe(`CREATE INDEX ${quote(indexName)} ON \`course_fees\` (\`college_slug\`(191), \`course_group\`)`);

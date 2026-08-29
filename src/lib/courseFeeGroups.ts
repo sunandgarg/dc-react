@@ -4,10 +4,23 @@ export type CollegeFeeRow = {
   course_name?: string | null;
   course_group?: string | null;
   specialization?: string | null;
+  academic_level?: string | null;
+  duration?: string | null;
   fee_amount?: number | string | null;
   fee_type?: string | null;
   year?: string | null;
 };
+
+export type CollegeFeeLevel = {
+  key: string;
+  label: string;
+  groups: CollegeFeeGroup[];
+  courseCount: number;
+  lowFee: number | null;
+  highFee: number | null;
+};
+
+export const ACADEMIC_LEVEL_OPTIONS = ["UG", "PG", "Diploma", "Doctoral", "Certificate", "Other"] as const;
 
 export type CollegeFeeGroup = {
   key: string;
@@ -175,6 +188,31 @@ export function inferCourseSpecialization(row: CollegeFeeRow) {
     : "General";
 }
 
+export function inferAcademicLevel(row: CollegeFeeRow) {
+  const explicit = row.academic_level?.trim().toLowerCase();
+  if (explicit) {
+    if (["ug", "undergraduate", "under graduate", "bachelor"].includes(explicit)) return "UG";
+    if (["pg", "postgraduate", "post graduate", "master"].includes(explicit)) return "PG";
+    if (["diploma", "diploma / certificate"].includes(explicit)) return "Diploma";
+    if (["doctoral", "doctorate", "phd", "ph.d."].includes(explicit)) return "Doctoral";
+    if (explicit === "certificate") return "Certificate";
+    if (explicit === "other") return "Other";
+    return normalizeCourseDisplayName(row.academic_level!.trim());
+  }
+
+  const group = inferCourseGroup(row);
+  if (group === "Diploma") return "Diploma";
+  if (group === "Ph.D.") return "Doctoral";
+  if (/^(M\.|M[A-Z]|MBA|PGDM|LL\.M)/.test(group)) return "PG";
+  if (/^(B\.|B[A-Z]|LL\.B|MBBS|BDS)/.test(group)) return "UG";
+
+  const source = `${row.course_name || ""} ${row.course_slug || ""}`;
+  if (/\b(certificate|certification)\b/i.test(source)) return "Certificate";
+  if (/\b(postgraduate|post graduate|pg|master|llm|md|ms)\b/i.test(source)) return "PG";
+  if (/\b(undergraduate|under graduate|ug|bachelor|llb|mbbs|bds)\b/i.test(source)) return "UG";
+  return "Other";
+}
+
 export function groupCollegeFees(rows: CollegeFeeRow[], search = ""): CollegeFeeGroup[] {
   const query = search.trim().toLowerCase();
   const groups = new Map<string, CollegeFeeGroup>();
@@ -216,6 +254,40 @@ export function groupCollegeFees(rows: CollegeFeeRow[], search = ""): CollegeFee
       entries: [...group.entries].sort((a, b) => inferCourseSpecialization(a).localeCompare(inferCourseSpecialization(b))),
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
+}
+
+const LEVEL_ORDER = new Map(ACADEMIC_LEVEL_OPTIONS.map((level, index) => [level, index]));
+
+export function groupCollegeFeesByLevel(rows: CollegeFeeRow[], search = ""): CollegeFeeLevel[] {
+  const levels = new Map<string, CollegeFeeRow[]>();
+  for (const row of rows) {
+    const level = inferAcademicLevel(row);
+    levels.set(level, [...(levels.get(level) || []), row]);
+  }
+
+  return [...levels.entries()]
+    .map(([label, levelRows]) => {
+      const groups = groupCollegeFees(levelRows, search);
+      const visibleRows = groups.flatMap((group) => group.entries);
+      const validFees = visibleRows
+        .map((row) => Number(row.fee_amount))
+        .filter((amount) => Number.isFinite(amount) && amount > 0);
+      const uniqueCourses = new Set(visibleRows.map((row) => [
+        row.course_slug?.trim() || row.course_name || "course",
+        inferCourseSpecialization(row),
+      ].join("|").toLowerCase()));
+      return {
+        key: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+        label,
+        groups,
+        courseCount: uniqueCourses.size,
+        lowFee: validFees.length ? Math.min(...validFees) : null,
+        highFee: validFees.length ? Math.max(...validFees) : null,
+      };
+    })
+    .filter((level) => level.groups.length > 0)
+    .sort((a, b) => (LEVEL_ORDER.get(a.label as typeof ACADEMIC_LEVEL_OPTIONS[number]) ?? 99)
+      - (LEVEL_ORDER.get(b.label as typeof ACADEMIC_LEVEL_OPTIONS[number]) ?? 99));
 }
 
 export function formatIndianFee(amount: number | null) {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatFeeRange, groupCollegeFees, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "./courseFeeGroups";
+import { formatFeeRange, groupCollegeFees, groupCollegeFeesByLevel, inferAcademicLevel, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "./courseFeeGroups";
 
 describe("course fee grouping", () => {
   it("groups specializations under a broad degree and calculates its fee range", () => {
@@ -60,5 +60,28 @@ describe("course fee grouping", () => {
   it("repairs legacy rows that copied the full course name into specialization", () => {
     expect(inferCourseSpecialization({ course_name: "MCA", specialization: "MCA" })).toBe("General");
     expect(inferCourseSpecialization({ course_name: "B.Sc. (Hons) - Mathematics", specialization: "B.Sc. (Hons) - Mathematics" })).toBe("Mathematics");
+  });
+
+  it("classifies legacy and explicit courses into academic levels", () => {
+    expect(inferAcademicLevel({ course_name: "B.Tech Computer Science" })).toBe("UG");
+    expect(inferAcademicLevel({ course_group: "MBA / PGDM" })).toBe("PG");
+    expect(inferAcademicLevel({ course_group: "Diploma" })).toBe("Diploma");
+    expect(inferAcademicLevel({ course_group: "Ph.D." })).toBe("Doctoral");
+    expect(inferAcademicLevel({ academic_level: "Postgraduate", course_group: "BBA" })).toBe("PG");
+  });
+
+  it("builds level summaries with course counts and degree groups", () => {
+    const levels = groupCollegeFeesByLevel([
+      { course_slug: "btech", course_group: "B.E. / B.Tech", specialization: "CSE", fee_amount: 400000 },
+      { course_slug: "btech", course_group: "B.E. / B.Tech", specialization: "Mechanical", fee_amount: 600000 },
+      { course_slug: "bba", course_group: "BBA", specialization: "General", fee_amount: 300000 },
+      { course_slug: "mba", course_group: "MBA / PGDM", specialization: "Finance", fee_amount: 800000 },
+      { course_slug: "diploma-cse", course_group: "Diploma", specialization: "Computer Science", fee_amount: 150000 },
+    ]);
+
+    expect(levels.map((level) => level.label)).toEqual(["UG", "PG", "Diploma"]);
+    expect(levels[0].courseCount).toBe(3);
+    expect(levels[0].groups.map((group) => group.label)).toEqual(["B.E. / B.Tech", "BBA"]);
+    expect(levels[1].courseCount).toBe(1);
   });
 });

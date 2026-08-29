@@ -6,7 +6,7 @@ import { Plus, Trash2, Save, Search, X, Pencil, CircleHelp } from "lucide-react"
 import { toast } from "sonner";
 import { CSVTools } from "@/components/CSVTools";
 import { useQueryClient } from "@tanstack/react-query";
-import { COURSE_GROUP_OPTIONS, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "@/lib/courseFeeGroups";
+import { ACADEMIC_LEVEL_OPTIONS, COURSE_GROUP_OPTIONS, inferAcademicLevel, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "@/lib/courseFeeGroups";
 import { syncAutoSlug } from "@/lib/slugify";
 import { ComboboxAdd } from "@/components/admin/ComboboxAdd";
 
@@ -14,7 +14,7 @@ interface Props {
   collegeSlug: string;
 }
 
-interface CourseLite { slug: string; name: string; full_name: string; category: string; }
+interface CourseLite { slug: string; name: string; full_name: string; category: string; duration: string; level: string; }
 interface FeeRow {
   id?: string;
   college_slug: string;
@@ -22,12 +22,18 @@ interface FeeRow {
   course_name: string;
   course_group: string;
   specialization: string;
+  academic_level: string;
+  duration: string;
   fee_amount: number;
   fee_type: string;
   year: string;
 }
 
 const FEE_TYPES = ["Annual", "Semester", "Total Course", "Monthly"];
+const DURATION_OPTIONS = [
+  "6 Months", "1 Year", "18 Months", "2 Years", "3 Years", "4 Years", "5 Years", "5.5 Years",
+  "2 Semesters", "4 Semesters", "6 Semesters", "8 Semesters", "10 Semesters",
+];
 
 function FieldLabel({ children, help }: { children: React.ReactNode; help: string }) {
   return (
@@ -64,7 +70,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   useEffect(() => { void reload(); }, [reload]);
 
   useEffect(() => {
-    (backendClient as any).from("courses").select("slug,name,full_name,category").eq("is_active", true).order("name").limit(500).then(({ data }: any) => setCourses(data || []));
+    (backendClient as any).from("courses").select("slug,name,full_name,category,duration,level").eq("is_active", true).order("name").limit(500).then(({ data }: any) => setCourses(data || []));
   }, []);
 
   const loadSavedCourseGroups = useCallback(async () => {
@@ -94,13 +100,15 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   const addFromCourse = (c: CourseLite) => {
     setSearch("");
     setCourseSearchOpen(false);
-    const selected = { course_slug: c.slug, course_name: c.name };
+    const selected = { course_slug: c.slug, course_name: c.name, academic_level: c.level };
     setDraft({
       college_slug: collegeSlug,
       course_slug: c.slug,
       course_name: c.name,
       course_group: inferCourseGroup(selected),
       specialization: inferCourseSpecialization(selected),
+      academic_level: inferAcademicLevel(selected),
+      duration: c.duration || "",
       fee_amount: 0,
       fee_type: "Annual",
       year: String(new Date().getFullYear()),
@@ -109,12 +117,13 @@ export function CourseFeePicker({ collegeSlug }: Props) {
 
   const addManual = () => {
     setSearch("");
-    setDraft({ college_slug: collegeSlug, course_slug: "", course_name: "", course_group: "", specialization: "", fee_amount: 0, fee_type: "Annual", year: String(new Date().getFullYear()) });
+    setDraft({ college_slug: collegeSlug, course_slug: "", course_name: "", course_group: "", specialization: "", academic_level: "", duration: "", fee_amount: 0, fee_type: "Annual", year: String(new Date().getFullYear()) });
   };
 
   const validate = (d: FeeRow): string | null => {
     if (!d.course_name?.trim()) return "Course name is required";
     if (!d.course_group?.trim()) return "Broad course or degree is required";
+    if (!d.academic_level?.trim()) return "Academic level is required";
     if (!d.fee_type) return "Fee type is required";
     if (d.fee_amount === null || d.fee_amount === undefined || isNaN(Number(d.fee_amount))) return "Fee amount must be a number";
     if (Number(d.fee_amount) < 0) return "Fee amount cannot be negative";
@@ -144,6 +153,8 @@ export function CourseFeePicker({ collegeSlug }: Props) {
       course_name: normalizedName,
       course_group: normalizedGroup,
       specialization: normalizedSpecialization || null,
+      academic_level: inferAcademicLevel({ academic_level: draft.academic_level, course_group: normalizedGroup }),
+      duration: draft.duration?.trim() || null,
       fee_amount: Number(draft.fee_amount),
     };
     const response = draft.id
@@ -207,7 +218,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
       <CSVTools
         table="course_fees"
         filename={`course-fees-${collegeSlug}.csv`}
-        columns={["college_slug","course_slug","course_name","course_group","specialization","fee_amount","fee_type","year"]}
+        columns={["college_slug","course_slug","course_name","academic_level","course_group","specialization","duration","fee_amount","fee_type","year"]}
         typeHints={{ fee_amount: "number" }}
         upsertKey="id"
         onImported={reload}
@@ -217,10 +228,20 @@ export function CourseFeePicker({ collegeSlug }: Props) {
         <div className="bg-muted/40 rounded-xl border border-border p-3 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
+              <FieldLabel help="The qualification stage used for the public UG, PG, Diploma and Doctoral course tabs.">Academic Level *</FieldLabel>
+              <select value={draft.academic_level} onChange={e => setDraft({ ...draft, academic_level: e.target.value })} className="w-full h-9 rounded-lg border border-border bg-card px-2 text-sm">
+                <option value="" disabled>Select level</option>
+                {ACADEMIC_LEVEL_OPTIONS.map(level => <option key={level}>{level}</option>)}
+              </select>
+            </div>
+            <div>
               <FieldLabel help="The parent qualification used to group specializations on the college page, such as B.E. / B.Tech.">Broad Course / Degree *</FieldLabel>
               <ComboboxAdd
                 value={draft.course_group}
-                onChange={(value) => setDraft({ ...draft, course_group: inferCourseGroup({ course_group: value }) })}
+                onChange={(value) => {
+                  const courseGroup = inferCourseGroup({ course_group: value });
+                  setDraft({ ...draft, course_group: courseGroup, academic_level: inferAcademicLevel({ course_group: courseGroup }) });
+                }}
                 options={courseGroupOptions}
                 placeholder="Select or add a degree"
               />
@@ -236,6 +257,15 @@ export function CourseFeePicker({ collegeSlug }: Props) {
             <div>
               <FieldLabel help="The URL-safe course identifier. It follows the course name automatically until you edit it manually.">Course Slug</FieldLabel>
               <Input value={draft.course_slug} onChange={e => setDraft({ ...draft, course_slug: e.target.value })} placeholder="auto-generated" className="rounded-lg h-9 text-sm" />
+            </div>
+            <div>
+              <FieldLabel help="The complete program duration shown to students, such as 2 Years or 4 Semesters.">Duration</FieldLabel>
+              <ComboboxAdd
+                value={draft.duration}
+                onChange={(value) => setDraft({ ...draft, duration: value })}
+                options={DURATION_OPTIONS}
+                placeholder="Select or add duration"
+              />
             </div>
             <div>
               <FieldLabel help="Enter only the numeric rupee amount for the selected fee type; do not include currency symbols.">Fee Amount (₹) *</FieldLabel>
@@ -266,10 +296,10 @@ export function CourseFeePicker({ collegeSlug }: Props) {
               <div className="min-w-0 flex-1">
                 <div className="text-sm font-medium text-foreground truncate">{r.course_name}</div>
                 <div className="text-[11px] text-muted-foreground truncate">
-                  {r.course_group || inferCourseGroup(r)}{(r.specialization || inferCourseSpecialization(r)) ? ` · ${r.specialization || inferCourseSpecialization(r)}` : ""}
+                  {r.academic_level || inferAcademicLevel(r)} · {r.course_group || inferCourseGroup(r)}{(r.specialization || inferCourseSpecialization(r)) ? ` · ${r.specialization || inferCourseSpecialization(r)}` : ""}
                 </div>
                 <div className="text-[11px] text-muted-foreground truncate">
-                  ₹{Number(r.fee_amount).toLocaleString("en-IN")} · {r.fee_type} · {r.year || "-"}
+                  {r.duration ? `${r.duration} · ` : ""}₹{Number(r.fee_amount).toLocaleString("en-IN")} · {r.fee_type} · {r.year || "-"}
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -278,7 +308,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
                   size="sm"
                   variant="ghost"
                   className="h-7 gap-1 px-2 text-xs"
-                  onClick={() => setDraft({ ...r, id: undefined, course_group: r.course_group || inferCourseGroup(r), specialization: "", fee_amount: 0 })}
+                  onClick={() => setDraft({ ...r, id: undefined, course_group: r.course_group || inferCourseGroup(r), academic_level: r.academic_level || inferAcademicLevel(r), specialization: "", fee_amount: 0 })}
                 >
                   <Plus className="w-3 h-3" /> Specialization
                 </Button>
@@ -287,7 +317,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
                   size="sm"
                   variant="outline"
                   className="h-7 gap-1 px-2 text-xs"
-                  onClick={() => setDraft({ ...r, course_group: r.course_group || inferCourseGroup(r), specialization: r.specialization || inferCourseSpecialization(r) })}
+                  onClick={() => setDraft({ ...r, course_group: r.course_group || inferCourseGroup(r), academic_level: r.academic_level || inferAcademicLevel(r), duration: r.duration || "", specialization: r.specialization || inferCourseSpecialization(r) })}
                 >
                   <Pencil className="w-3 h-3" /> Edit
                 </Button>

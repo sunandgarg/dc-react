@@ -1070,6 +1070,8 @@ model course_fees {
   course_name    String?  @db.LongText
   course_group   String?  @db.VarChar(191)
   specialization String?  @db.LongText
+  academic_level String?  @db.VarChar(32)
+  duration       String?  @db.VarChar(64)
   fee_amount     Decimal? @default(0) @db.Decimal(65, 20)
   fee_type       String?  @db.LongText
   year           String?  @db.LongText

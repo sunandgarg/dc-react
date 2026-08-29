@@ -1972,11 +1972,13 @@ export type Database = {
       }
       course_fees: {
         Row: {
+          academic_level: string | null
           college_slug: string
           course_group: string | null
           course_name: string | null
           course_slug: string
           created_at: string
+          duration: string | null
           fee_amount: number | null
           fee_type: string | null
           id: string
@@ -1984,11 +1986,13 @@ export type Database = {
           year: string | null
         }
         Insert: {
+          academic_level?: string | null
           college_slug: string
           course_group?: string | null
           course_name?: string | null
           course_slug: string
           created_at?: string
+          duration?: string | null
           fee_amount?: number | null
           fee_type?: string | null
           id?: string
@@ -1996,11 +2000,13 @@ export type Database = {
           year?: string | null
         }
         Update: {
+          academic_level?: string | null
           college_slug?: string
           course_group?: string | null
           course_name?: string | null
           course_slug?: string
           created_at?: string
+          duration?: string | null
           fee_amount?: number | null
           fee_type?: string | null
           id?: string
