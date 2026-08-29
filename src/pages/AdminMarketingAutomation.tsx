@@ -41,7 +41,7 @@ type Rule = {
   prefills: Record<string, Record<string, Record<string, any>>>; // {uniId: {scenario: {field: mapping}}}
 };
 
-type Uni = { id: string; name: string; api_url: string; api_type: string; is_active: boolean; column_mapping: any; default_values: any };
+type Uni = { id: string; name: string; api_url: string; api_type: string; is_active: boolean; status?: string; column_mapping: any; default_values: any; leads_per_minute?: number };
 
 const LEAD_SELECT = "id,name,email,phone,city,state,source,initial_query,interested_college_slug,interested_course_slug,interested_exam_slug,cta,page_url,program_mode,device_type,source_category,otp_verified,consent_terms_accepted,created_at";
 
@@ -106,6 +106,13 @@ function SearchableMultiSelect({
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const visibleOptions = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const matches = q
+      ? options.filter((option) => `${option.label} ${option.value} ${option.hint || ""}`.toLowerCase().includes(q))
+      : options;
+    return matches.slice(0, 100);
+  }, [options, query]);
   const labelOf = (v: string) => options.find((o) => o.value === v)?.label || v;
   const toggle = (v: string) => {
     onChange(value.includes(v) ? value.filter((x) => x !== v) : [...value, v]);
@@ -133,20 +140,20 @@ function SearchableMultiSelect({
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-[320px] p-0" align="start">
-            <Command shouldFilter>
+            <Command shouldFilter={false}>
               <CommandInput value={query} onValueChange={setQuery} placeholder={placeholder} />
               <CommandList>
-                <CommandEmpty>
-                  {allowCustom && query.trim() ? (
+                {visibleOptions.length === 0 ? (
+                  allowCustom && query.trim() ? (
                     <button onClick={addCustom} className="text-sm px-3 py-2 hover:bg-muted w-full text-left">
                       <Plus className="w-3 h-3 inline mr-1" /> Add custom: <span className="font-mono">{query.trim()}</span>
                     </button>
                   ) : (
                     <div className="py-3 text-center text-xs text-muted-foreground">{emptyText}</div>
-                  )}
-                </CommandEmpty>
+                  )
+                ) : null}
                 <CommandGroup>
-                  {options.map((o) => (
+                  {visibleOptions.map((o) => (
                     <CommandItem key={o.value} value={`${o.label} ${o.value} ${o.hint || ""}`} onSelect={() => toggle(o.value)}>
                       <Check className={`w-3.5 h-3.5 mr-2 ${value.includes(o.value) ? "opacity-100 text-orange-500" : "opacity-0"}`} />
                       <div className="flex-1">
@@ -220,7 +227,10 @@ export default function AdminMarketingAutomation() {
   });
   const { data: unis = [] } = useQuery<Uni[]>({
     queryKey: ["lp_universities_marketing"],
-    queryFn: async () => ((await backendClient.from("universities" as any).select("id,name,api_url,api_type,column_mapping,default_values,leads_per_minute").order("name")).data || []).map((u: any) => ({ ...u, is_active: true })) as any,
+    queryFn: async () => ((await backendClient.from("universities" as any).select("id,name,api_url,api_type,column_mapping,default_values,leads_per_minute,is_active,status").order("name")).data || []).map((u: any) => ({
+      ...u,
+      is_active: u.is_active !== false && String(u.status || "active").toLowerCase() !== "inactive",
+    })) as any,
   });
   const { data: logs = [] } = useQuery<any[]>({
     queryKey: ["lp_push_logs_recent"],
@@ -229,7 +239,9 @@ export default function AdminMarketingAutomation() {
   });
   const { data: recentLeads = [] } = useQuery<any[]>({
     queryKey: ["leads_all_for_routing"],
-    queryFn: async () => ((await backendClient.from("leads").select(LEAD_SELECT).order("created_at", { ascending: false }).limit(1000)).data || []) as any,
+    queryFn: async () => ((await backendClient.from("leads").select(LEAD_SELECT).order("created_at", { ascending: false }).limit(250)).data || []) as any,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
   });
 
   const uniMap = useMemo(() => new Map(unis.map((u) => [u.id, u])), [unis]);
@@ -363,7 +375,7 @@ export default function AdminMarketingAutomation() {
             <TabsTrigger value="prefills" className="gap-1.5"><Settings2 className="w-4 h-4" /> 2. University Values</TabsTrigger>
             <TabsTrigger value="tester" className="gap-1.5"><Play className="w-4 h-4" /> 3. Test Before Push</TabsTrigger>
             <TabsTrigger value="logs" className="gap-1.5"><Activity className="w-4 h-4" /> Dispatch Logs ({filteredLogs.length})</TabsTrigger>
-            <TabsTrigger value="leads" className="gap-1.5"><Filter className="w-4 h-4" /> All Leads ({filteredLeads.length})</TabsTrigger>
+            <TabsTrigger value="leads" className="gap-1.5"><Filter className="w-4 h-4" /> Recent Leads ({filteredLeads.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="rules" className="mt-5">
@@ -645,18 +657,13 @@ function useRuleOptions() {
       const { data } = await backendClient.from("courses").select("slug,name").order("name").limit(2000);
       return (data || []).map((c: any) => ({ value: c.slug, label: c.name, hint: c.slug }));
     },
-  });
-  const { data: colleges = [] } = useQuery<Opt[]>({
-    queryKey: ["lp_opts_colleges"],
-    queryFn: async () => {
-      const { data } = await backendClient.from("colleges").select("slug,name,city,state").order("name").limit(3000);
-      return (data || []).map((c: any) => ({ value: c.slug, label: c.name, hint: [c.city, c.state].filter(Boolean).join(", ") }));
-    },
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
   });
   const { data: leadFacets = { cities: [], states: [], sources: [], ctas: [] } } = useQuery<any>({
     queryKey: ["lp_opts_lead_facets"],
     queryFn: async () => {
-      const { data } = await backendClient.from("leads").select("city,state,source,cta").limit(5000);
+      const { data } = await backendClient.from("leads").select("city,state,source,cta").order("created_at", { ascending: false }).limit(1500);
       const cities = new Set<string>(), states = new Set<string>(), sources = new Set<string>(), ctas = new Set<string>();
       (data || []).forEach((l: any) => {
         if (l.city) cities.add(l.city);
@@ -667,8 +674,10 @@ function useRuleOptions() {
       const toOpts = (s: Set<string>) => Array.from(s).sort().map((x) => ({ value: x, label: x }));
       return { cities: toOpts(cities), states: toOpts(states), sources: toOpts(sources), ctas: toOpts(ctas) };
     },
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
   });
-  return { courses, colleges, cities: leadFacets.cities, states: leadFacets.states, sources: leadFacets.sources, ctas: leadFacets.ctas };
+  return { courses, cities: leadFacets.cities, states: leadFacets.states, sources: leadFacets.sources, ctas: leadFacets.ctas };
 }
 
 function RuleEditor({ rule, unis, onClose }: { rule: Rule; unis: Uni[]; onClose: () => void }) {
@@ -777,7 +786,7 @@ function RuleEditor({ rule, unis, onClose }: { rule: Rule; unis: Uni[]; onClose:
                   size="sm"
                   className="h-7 px-2 text-xs"
                   disabled={filteredUnis.length === 0}
-                  onClick={() => set("university_ids", Array.from(new Set([...r.university_ids, ...filteredUnis.map((university) => university.id)])))}
+                  onClick={() => set("university_ids", Array.from(new Set([...r.university_ids, ...filteredUnis.filter((university) => university.is_active).map((university) => university.id)])))}
                 >
                   Select visible
                 </Button>
@@ -799,10 +808,11 @@ function RuleEditor({ rule, unis, onClose }: { rule: Rule; unis: Uni[]; onClose:
             </div>
             <div className="mt-2 max-h-72 overflow-y-auto border rounded-lg divide-y">
               {filteredUnis.map((u) => (
-                <label key={u.id} className="flex items-center gap-3 p-2.5 hover:bg-muted/40 cursor-pointer">
-                  <input type="checkbox" checked={r.university_ids.includes(u.id)} onChange={() => toggleUni(u.id)} className="accent-orange-500 w-4 h-4" />
+                <label key={u.id} className={`flex items-center gap-3 p-2.5 ${u.is_active ? "hover:bg-muted/40 cursor-pointer" : "opacity-55 cursor-not-allowed"}`}>
+                  <input type="checkbox" checked={r.university_ids.includes(u.id)} onChange={() => u.is_active && toggleUni(u.id)} disabled={!u.is_active} className="accent-orange-500 w-4 h-4" />
                   <Building2 className="w-4 h-4 text-muted-foreground" />
                   <span className="flex-1 text-sm">{u.name}</span>
+                  {!u.is_active && <Badge variant="outline" className="text-[10px]">Inactive</Badge>}
                   <Badge variant="outline" className="text-[10px]">{u.api_type}</Badge>
                 </label>
               ))}
@@ -1154,11 +1164,12 @@ function PrefillEditor({ rule, unis, onSaved }: { rule: Rule; unis: Uni[]; onSav
 
 
 function LiveTester({ rules, unis, recentLeads, selectedLead }: { rules: Rule[]; unis: Uni[]; recentLeads: any[]; selectedLead?: any | null }) {
-  const [lead, setLead] = useState({ name: "Test Lead", email: "test@dekho.com", phone: "9876543210", city: "Delhi", state: "Delhi", source: "chatbot", interested_course_slug: "btech", cta: "", source_category: "college", program_mode: "regular" });
+  const [lead, setLead] = useState<any>({ name: "Test Lead", email: "test@dekho.com", phone: "9876543210", city: "Delhi", state: "Delhi", source: "chatbot", interested_course_slug: "btech", cta: "", source_category: "college", program_mode: "regular" });
   const [result, setResult] = useState<any>(null);
   const [busy, setBusy] = useState(false);
 
   const loadFrom = useCallback((l: any) => setLead({
+    id: l.id,
     name: l.name || "", email: l.email || "", phone: l.phone || "", city: l.city || "", state: l.state || "",
     source: l.source || "", interested_course_slug: l.interested_course_slug || l.initial_query || "", cta: l.cta || "",
     source_category: l.source_category || "", program_mode: l.program_mode || "",
@@ -1170,7 +1181,7 @@ function LiveTester({ rules, unis, recentLeads, selectedLead }: { rules: Rule[];
 
   const run = useCallback(async (dryRun = true) => {
     setBusy(true); setResult(null);
-    const { data, error } = await backendClient.functions.invoke("lp-dispatch-lead", { body: { lead, dry_run: dryRun } });
+    const { data, error } = await backendClient.functions.invoke("lp-dispatch-lead", { body: { lead, lead_id: lead.id, dry_run: dryRun } });
     setBusy(false);
     if (error) return toast.error(error.message);
     setResult(data);
@@ -1191,7 +1202,7 @@ function LiveTester({ rules, unis, recentLeads, selectedLead }: { rules: Rule[];
           {(["name", "phone", "city", "state", "source", "interested_course_slug", "cta", "email", "source_category", "program_mode"] as const).map((k) => (
             <div key={k}>
               <Label className="text-xs capitalize">{k.replace(/_/g, " ")}</Label>
-              <Input value={(lead as any)[k] || ""} onChange={(e) => setLead((p) => ({ ...p, [k]: e.target.value }))} className="h-9" />
+              <Input value={(lead as any)[k] || ""} onChange={(e) => setLead((p: any) => ({ ...p, id: undefined, [k]: e.target.value }))} className="h-9" />
             </div>
           ))}
         </div>
@@ -1199,10 +1210,11 @@ function LiveTester({ rules, unis, recentLeads, selectedLead }: { rules: Rule[];
           <Button onClick={() => run(true)} disabled={busy} className="bg-orange-500 hover:bg-orange-600 text-white flex-1">
             <Target className="w-4 h-4 mr-1.5" /> {busy ? "Checking…" : "Safe Preview"}
           </Button>
-          <Button onClick={() => confirm("This will really push the lead to matched universities. Continue?") && run(false)} disabled={busy} variant="outline">
+          <Button onClick={() => confirm("This will really push the saved lead to every matched university. Continue?") && run(false)} disabled={busy || !lead.id} variant="outline" title={lead.id ? "Push this saved lead" : "Choose an unchanged saved lead first"}>
             <Rocket className="w-4 h-4 mr-1.5" /> Real Push
           </Button>
         </div>
+        {!lead.id && <p className="text-xs text-muted-foreground">Safe Preview works with typed values. For a real push, choose an existing lead below and do not edit it.</p>}
 
         {recentLeads.length > 0 && (
           <>
@@ -1230,6 +1242,7 @@ function LiveTester({ rules, unis, recentLeads, selectedLead }: { rules: Rule[];
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm">
               <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30" variant="outline">{result.dispatched} matched</Badge>
+              {result.matchedRules?.length > 0 && <Badge variant="outline">{result.matchedRules.length} rules triggered</Badge>}
               {result.reason && <span className="text-xs text-muted-foreground">{result.reason}</span>}
             </div>
             <div className="space-y-1.5 max-h-[420px] overflow-y-auto">
@@ -1239,7 +1252,10 @@ function LiveTester({ rules, unis, recentLeads, selectedLead }: { rules: Rule[];
                   <div className="flex-1 text-sm">
                     <div className="font-medium">{row.university}</div>
                     <div className="text-xs text-muted-foreground">
-                      {row.rule && <>Matched rule: <span className="font-mono">{row.rule}</span> · </>}
+                      {row.matched_rules?.length > 0
+                        ? <>Matched rules: <span className="font-medium">{row.matched_rules.join(" + ")}</span> · </>
+                        : row.rule && <>Matched rule: <span className="font-medium">{row.rule}</span> · </>}
+                      {row.deduplicated && <>duplicate university removed · </>}
                       {row.prefill_keys?.length > 0 && <>Changed fields: {row.prefill_keys.join(", ")} · </>}
                       {row.status && <span className={`px-1.5 rounded ${STATUS_COLORS[row.status] || ""}`}>{row.status}</span>}
                       {row.http && <> · HTTP {row.http}</>}

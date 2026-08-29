@@ -3,7 +3,8 @@ import { handleRest, handleRpc } from "./rest.mjs";
 import { prisma } from "./db.mjs";
 import { handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp } from "./auth.mjs";
 import { handleStorage } from "./storage.mjs";
-import { enqueueLeadAutomation } from "./lead-outbox.mjs";
+import { enqueueLeadAutomation, wakeLeadOutboxWorker } from "./lead-outbox.mjs";
+import { dispatchLead, previewLeadAutomation } from "./lead-automation.mjs";
 import { integrationStatus } from "./integration-status.mjs";
 import { handleContentReviews } from "./content-review.mjs";
 import { handleAiGenerate, handleArticleCover, handleBlogAiSettings, handleBlogStudio, runBlogAgent } from "./blog-ai.mjs";
@@ -207,6 +208,7 @@ async function saveLead(request) {
       return updated;
     });
     if (!result.count) throw new HttpError(404, "LEAD_NOT_FOUND", "The saved lead could not be updated");
+    wakeLeadOutboxWorker();
     return { success: true, lead_id: leadId, phase: "complete" };
   }
   const existingCount = await prisma.leads.count({ where: { OR: [{ phone }, { email }] } });
@@ -237,7 +239,16 @@ async function saveLead(request) {
     if (phase === "complete") await enqueueLeadAutomation(tx, created.id);
     return created;
   });
+  if (phase === "complete") wakeLeadOutboxWorker();
   return { success: true, lead_id: lead.id, phase, existing_count: existingCount };
+}
+
+async function handleLeadAutomation(request) {
+  const body = await request.json().catch(() => ({}));
+  if (body.dry_run !== false) return previewLeadAutomation(body.lead || {});
+  const leadId = String(body.lead_id || body.lead?.id || "").trim();
+  if (!leadId) throw new HttpError(400, "SAVED_LEAD_REQUIRED", "Choose a saved lead before making a real partner push");
+  return dispatchLead(leadId);
 }
 
 export async function handleRequest(request) {
@@ -295,6 +306,11 @@ export async function handleRequest(request) {
       if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(), requestId, request, { "cache-control": "public, max-age=60" });
       if (functionMatch[1] === "save-lead") return json(200, await saveLead(request), requestId, request);
+      if (functionMatch[1] === "lp-dispatch-lead") {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        return json(200, await handleLeadAutomation(request), requestId, request, { "cache-control": "private, no-store" });
+      }
       if (functionMatch[1] === "integration-status") {
         const identity = await resolveIdentity(request);
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");

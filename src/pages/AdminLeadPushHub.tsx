@@ -19,15 +19,16 @@ export default function AdminLeadPushHub() {
   const { data: stats } = useQuery({
     queryKey: ["lp_hub_stats"],
     queryFn: async () => {
-      const [u, today, ok, pend] = await Promise.all([
-        backendClient.from("lp_universities" as any).select("id", { count: "exact", head: true }),
-        backendClient.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
-        backendClient.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).eq("status", "success"),
-        backendClient.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).eq("status", "pending"),
+      const todayStart = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+      const [u, today, ok, retry] = await Promise.all([
+        backendClient.from("universities" as any).select("id", { count: "exact", head: true }),
+        backendClient.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).gte("created_at", todayStart),
+        backendClient.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).eq("status", "Success").gte("created_at", todayStart),
+        backendClient.from("lp_push_logs" as any).select("id", { count: "exact", head: true }).in("status", ["Fail", "RateLimited"]).gte("created_at", todayStart),
       ]);
       const okC = ok.count || 0;
       const todayC = today.count || 0;
-      return { universities: u.count || 0, today: todayC, rate: todayC ? Math.round((okC / Math.max(1, todayC)) * 100) : 0, pending: pend.count || 0 };
+      return { universities: u.count || 0, today: todayC, rate: todayC ? Math.round((okC / Math.max(1, todayC)) * 100) : 0, retry: retry.count || 0 };
     },
   });
 
@@ -49,7 +50,7 @@ export default function AdminLeadPushHub() {
             { label: "Universities", value: stats?.universities ?? "-", icon: Building2 },
             { label: "Leads Today", value: stats?.today ?? "-", icon: Upload },
             { label: "Success Rate", value: stats ? `${stats.rate}%` : "-", icon: Activity },
-            { label: "Pending", value: stats?.pending ?? "-", icon: History },
+            { label: "Needs Retry", value: stats?.retry ?? "-", icon: History },
           ].map((s) => (
             <div key={s.label} className="border border-border rounded-xl p-4 bg-card">
               <div className="flex items-center gap-2 text-xs text-muted-foreground"><s.icon className="w-3.5 h-3.5" />{s.label}</div>

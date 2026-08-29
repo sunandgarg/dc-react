@@ -1978,6 +1978,7 @@ model lp_automation_rules {
   prefills       Json
   auto_dispatch  Boolean  @default(true)
 
+  @@index([is_active, auto_dispatch, priority], map: "ix_lp_rules_dispatch")
   @@map("lp_automation_rules")
 }
 
@@ -2038,6 +2039,9 @@ model lp_push_logs {
   error           String?  @db.LongText
   created_at      DateTime @default(now()) @db.DateTime(3)
 
+  @@index([lead_id, university_id, status(length: 32)], map: "ix_lp_logs_delivery")
+  @@index([university_id, created_at], map: "ix_lp_logs_rate")
+  @@index([status(length: 32), created_at], map: "ix_lp_logs_daily_status")
   @@map("lp_push_logs")
 }
 
@@ -2769,6 +2773,7 @@ model universities {
   sample_csv_content       String?   @db.LongText
   slug                     String?   @db.LongText
 
+  @@index([is_active], map: "ix_universities_active")
   @@map("universities")
 }
 

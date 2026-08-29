@@ -160,17 +160,13 @@ export function buildPartnerRequest(university, lead, overrides = {}) {
   return { headers, payload };
 }
 
-async function sendToUniversity(university, lead, rule, flowId = null, multiFlowId = null) {
-  const delivered = await prisma.lp_push_logs.findFirst({
-    where: { lead_id: lead.id, university_id: university.id, status: { in: ["Success", "Duplicate"] } },
-    select: { id: true, status: true },
-  });
+async function sendToUniversity(university, lead, rule, flowId = null, multiFlowId = null, deliveryState = {}) {
+  const delivered = deliveryState.delivered;
   if (delivered) return { universityId: university.id, status: delivered.status, skipped: true, matchedRuleIds: list(rule.matched_rule_ids || [rule.id]) };
-  const recent = university.leads_per_minute > 0
-    ? await prisma.lp_push_logs.count({ where: { university_id: university.id, created_at: { gt: new Date(Date.now() - 60_000) } } })
-    : 0;
-  if (recent >= university.leads_per_minute) {
-    await prisma.lp_push_logs.create({ data: { id: randomUUID(), lead_id: lead.id, university_id: university.id, rule_id: rule.id, flow_id: flowId, multi_flow_id: multiFlowId, matched_rule_ids: list(rule.matched_rule_ids || [rule.id]), status: "RateLimited", error: `>${university.leads_per_minute}/min` } });
+  const recent = Number(deliveryState.recentCount || 0);
+  const perMinute = Math.max(0, Number(university.leads_per_minute ?? 5));
+  if (recent >= perMinute) {
+    await prisma.lp_push_logs.create({ data: { id: randomUUID(), lead_id: lead.id, university_id: university.id, rule_id: rule.id, flow_id: flowId, multi_flow_id: multiFlowId, matched_rule_ids: list(rule.matched_rule_ids || [rule.id]), status: "RateLimited", error: `>${perMinute}/min` } });
     return { universityId: university.id, status: "RateLimited" };
   }
   const overrides = getPrefillOverrides(rule, university.id, lead);
@@ -178,7 +174,8 @@ async function sendToUniversity(university, lead, rule, flowId = null, multiFlow
   headers["x-idempotency-key"] = `dc-lead-${lead.id}-${university.id}`;
   let status = "Fail"; let httpStatus = 0; let responseBody = ""; let error = null;
   try {
-    const response = await fetch(university.api_url, { method: "POST", headers, body: JSON.stringify(payload), signal: AbortSignal.timeout(30_000) });
+    const timeoutMs = Math.min(60_000, Math.max(5_000, Number(university.api_timeout_seconds ?? 30) * 1_000));
+    const response = await fetch(university.api_url, { method: "POST", headers, body: JSON.stringify(payload), signal: AbortSignal.timeout(timeoutMs) });
     httpStatus = response.status;
     responseBody = (await response.text()).slice(0, 50_000);
     status = categorize(response.status, responseBody, response.ok);
@@ -203,9 +200,25 @@ export function buildAutomationPlan(rules, lead) {
   return { matchedRules, deliveries: [...byUniversity.values()] };
 }
 
-export async function dispatchLead(leadId) {
-  const lead = await prisma.leads.findUnique({ where: { id: leadId } });
-  if (!isLeadReadyForAutomation(lead)) return { dispatched: 0, reason: "lead incomplete" };
+export function buildAutomationPreview(plan, universities, lead) {
+  const universityMap = new Map(universities.map((university) => [university.id, university]));
+  return plan.deliveries.flatMap((delivery) => {
+    const university = universityMap.get(delivery.universityId);
+    if (!university) return [];
+    return [{
+      university_id: university.id,
+      university: university.name,
+      rule: delivery.primaryRule.name,
+      matched_rule_ids: delivery.rules.map((rule) => rule.id),
+      matched_rules: delivery.rules.map((rule) => rule.name),
+      overrides: getPrefillOverrides(delivery.primaryRule, university.id, lead),
+      deduplicated: delivery.rules.length > 1,
+    }];
+  });
+}
+
+async function loadAutomationPlan(lead) {
+  if (!isLeadReadyForAutomation(lead)) return { plan: buildAutomationPlan([], lead || {}), activeFlows: [], multiFlows: [] };
   const [directRules, flows, multiFlows] = await Promise.all([
     prisma.lp_automation_rules.findMany({ where: { is_active: true, auto_dispatch: true }, orderBy: { priority: "asc" } }),
     prisma.lp_marketing_flows.findMany({ where: { is_active: true } }),
@@ -216,17 +229,70 @@ export async function dispatchLead(leadId) {
   const flowRuleIds = new Set(activeFlows.flatMap((flow) => list(flow.rule_ids)));
   const flowRules = flowRuleIds.size ? await prisma.lp_automation_rules.findMany({ where: { id: { in: [...flowRuleIds] }, is_active: true } }) : [];
   const plan = buildAutomationPlan([...new Map([...directRules, ...flowRules].map((rule) => [rule.id, rule])).values()], lead);
+  return { plan, activeFlows, multiFlows };
+}
+
+export async function previewLeadAutomation(lead) {
+  if (!isLeadReadyForAutomation(lead)) return { dispatched: 0, reason: "Add city, state and course to preview routing", matchedRules: [], results: [] };
+  const { plan } = await loadAutomationPlan(lead);
+  const universityIds = plan.deliveries.map((delivery) => delivery.universityId);
+  const universities = universityIds.length
+    ? await prisma.universities.findMany({ where: { id: { in: universityIds }, is_active: true } })
+    : [];
+  const results = buildAutomationPreview(plan, universities, lead);
+  return {
+    dispatched: results.length,
+    matchedRuleIds: plan.matchedRules.map((rule) => rule.id),
+    matchedRules: plan.matchedRules.map((rule) => ({ id: rule.id, name: rule.name, priority: rule.priority })),
+    results,
+  };
+}
+
+export async function dispatchLead(leadId) {
+  const lead = await prisma.leads.findUnique({ where: { id: leadId } });
+  if (!isLeadReadyForAutomation(lead)) return { dispatched: 0, reason: "lead incomplete" };
+  const { plan, activeFlows, multiFlows } = await loadAutomationPlan(lead);
   if (!plan.deliveries.length) return { dispatched: 0, reason: "no rules matched", matchedRuleIds: plan.matchedRules.map((rule) => rule.id) };
   const deliveryByUniversity = new Map(plan.deliveries.map((delivery) => [delivery.universityId, delivery]));
-  const universities = await prisma.lp_universities.findMany({ where: { id: { in: [...deliveryByUniversity.keys()] }, is_active: true } });
-  const results = await Promise.all(universities.map((university) => {
+  const universityIds = [...deliveryByUniversity.keys()];
+  const minuteAgo = new Date(Date.now() - 60_000);
+  const [universities, deliveredRows, recentRows] = await Promise.all([
+    prisma.universities.findMany({ where: { id: { in: universityIds }, is_active: true } }),
+    prisma.lp_push_logs.findMany({
+      where: { lead_id: lead.id, university_id: { in: universityIds }, status: { in: ["Success", "Duplicate"] } },
+      select: { university_id: true, status: true },
+    }),
+    prisma.lp_push_logs.groupBy({
+      by: ["university_id"],
+      where: { university_id: { in: universityIds }, created_at: { gt: minuteAgo } },
+      _count: { _all: true },
+    }),
+  ]);
+  const deliveredByUniversity = new Map(deliveredRows.map((row) => [row.university_id, row]));
+  const recentByUniversity = new Map(recentRows.map((row) => [row.university_id, row._count._all]));
+  const results = await Promise.all(universities.map(async (university) => {
     const delivery = deliveryByUniversity.get(university.id);
     const rule = { ...delivery.primaryRule, matched_rule_ids: delivery.rules.map((item) => item.id) };
     const flow = activeFlows.find((item) => list(item.rule_ids).includes(rule.id));
     const multi = multiFlows.find((item) => flow && list(item.flow_ids).includes(flow.id));
-    return sendToUniversity(university, lead, rule, flow?.id || null, multi?.id || null);
+    const result = await sendToUniversity(university, lead, rule, flow?.id || null, multi?.id || null, {
+      delivered: deliveredByUniversity.get(university.id),
+      recentCount: recentByUniversity.get(university.id) || 0,
+    });
+    return {
+      ...result,
+      university: university.name,
+      rule: delivery.primaryRule.name,
+      matched_rules: delivery.rules.map((item) => item.name),
+      deduplicated: delivery.rules.length > 1,
+    };
   }));
   const retryable = results.filter((result) => ["Fail", "RateLimited"].includes(result.status));
   if (retryable.length) throw new Error(`Partner delivery pending for ${retryable.length} of ${results.length} universities`);
-  return { dispatched: results.length, matchedRuleIds: plan.matchedRules.map((rule) => rule.id), results };
+  return {
+    dispatched: results.length,
+    matchedRuleIds: plan.matchedRules.map((rule) => rule.id),
+    matchedRules: plan.matchedRules.map((rule) => ({ id: rule.id, name: rule.name, priority: rule.priority })),
+    results,
+  };
 }

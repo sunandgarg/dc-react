@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildAutomationPlan, buildPartnerRequest, getPrefillOverrides, isLeadReadyForAutomation, ruleMatches } from "../src/lead-automation.mjs";
+import { buildAutomationPlan, buildAutomationPreview, buildPartnerRequest, getPrefillOverrides, isLeadReadyForAutomation, ruleMatches } from "../src/lead-automation.mjs";
 import { retryDelayMs } from "../src/lead-outbox.mjs";
 
 test("matches lead automation conditions with all and any modes", () => {
@@ -25,15 +25,24 @@ test("accepts a complete routing lead when its course is stored in the course sl
 test("runs every matching automation and sends a university only once", () => {
   const lead = { city: "Dehradun", state: "Uttarakhand", interested_course_slug: "B.Tech" };
   const rules = [
-    { id: "course", priority: 10, match_courses: ["btech"], match_cities: [], match_states: [], match_sources: [], match_ctas: [], match_all: true, university_ids: ["u1", "u2"] },
-    { id: "city", priority: 20, match_courses: [], match_cities: ["dehradun"], match_states: [], match_sources: [], match_ctas: [], match_all: true, university_ids: ["u2", "u3"] },
-    { id: "other", priority: 30, match_courses: ["mba"], match_cities: [], match_states: [], match_sources: [], match_ctas: [], match_all: true, university_ids: ["u4"] },
+    { id: "course", name: "B.Tech routing", priority: 10, match_courses: ["btech"], match_cities: [], match_states: [], match_sources: [], match_ctas: [], match_all: true, university_ids: ["u1", "u2"] },
+    { id: "city", name: "Dehradun routing", priority: 20, match_courses: [], match_cities: ["dehradun"], match_states: [], match_sources: [], match_ctas: [], match_all: true, university_ids: ["u2", "u3"] },
+    { id: "other", name: "MBA routing", priority: 30, match_courses: ["mba"], match_cities: [], match_states: [], match_sources: [], match_ctas: [], match_all: true, university_ids: ["u4"] },
   ];
   const plan = buildAutomationPlan(rules, lead);
   assert.deepEqual(plan.matchedRules.map((rule) => rule.id), ["course", "city"]);
   assert.deepEqual(plan.deliveries.map((delivery) => delivery.universityId), ["u1", "u2", "u3"]);
   assert.deepEqual(plan.deliveries.find((delivery) => delivery.universityId === "u2").rules.map((rule) => rule.id), ["course", "city"]);
   assert.equal(plan.deliveries.find((delivery) => delivery.universityId === "u2").primaryRule.id, "course");
+
+  const preview = buildAutomationPreview(plan, [
+    { id: "u1", name: "University One" },
+    { id: "u2", name: "University Two" },
+    { id: "u3", name: "University Three" },
+  ], lead);
+  assert.equal(preview.length, 3);
+  assert.deepEqual(preview.find((row) => row.university_id === "u2").matched_rules, ["B.Tech routing", "Dehradun routing"]);
+  assert.equal(preview.find((row) => row.university_id === "u2").deduplicated, true);
 });
 
 test("maps a lead to university API field names", () => {

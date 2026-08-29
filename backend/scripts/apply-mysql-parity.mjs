@@ -227,6 +227,30 @@ async function ensureLeadAutomationAuditSchema(report) {
   }
 }
 
+async function ensureLeadAutomationPerformanceIndexes(report) {
+  const indexes = [
+    ["lp_automation_rules", "ix_lp_rules_dispatch", ["is_active", "auto_dispatch", "priority"]],
+    ["lp_push_logs", "ix_lp_logs_delivery", ["lead_id", "university_id", "status(32)"]],
+    ["lp_push_logs", "ix_lp_logs_rate", ["university_id", "created_at"]],
+    ["lp_push_logs", "ix_lp_logs_daily_status", ["status(32)", "created_at"]],
+    ["universities", "ix_universities_active", ["is_active"]],
+  ];
+
+  for (const [table, name, columns] of indexes) {
+    if (await indexExists(table, name)) {
+      report.existing.push(name);
+      continue;
+    }
+    await prisma.$executeRawUnsafe(
+      `CREATE INDEX ${quote(name)} ON ${quote(table)} (${columns.map((column) => {
+        const match = column.match(/^(\w+)\((\d+)\)$/);
+        return match ? `${quote(match[1])}(${match[2]})` : quote(column);
+      }).join(", ")})`,
+    );
+    report.createdReferenceIndexes.push(name);
+  }
+}
+
 async function makeReferenceIndexes(report) {
   for (const line of postgresSchemaReference.split("\n")) {
     const match = line.match(/^CREATE INDEX (\w+) ON public\.(\w+) USING btree \((.*)\);$/);
@@ -397,6 +421,7 @@ try {
   await ensureHomepageExploreSchema(report);
   await ensureCourseFeeGroupingSchema(report);
   await ensureLeadAutomationAuditSchema(report);
+  await ensureLeadAutomationPerformanceIndexes(report);
   for (const [table, ...columns] of uniqueIndexes) await makeUniqueIndex(table, columns, report);
   await makeReferenceIndexes(report);
   await makeForeignKeyIndexes(report);
