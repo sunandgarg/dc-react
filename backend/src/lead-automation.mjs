@@ -4,14 +4,35 @@ import { prisma } from "./db.mjs";
 const list = (value) => Array.isArray(value) ? value.map(String).filter(Boolean) : [];
 const object = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
 const norm = (value) => String(value || "").trim().toLowerCase();
+const compact = (value) => norm(value).replace(/[^a-z0-9]+/g, "");
 
 function includesValue(values, value) {
   if (!values.length) return true;
   const candidate = norm(value);
+  const compactCandidate = compact(value);
   return Boolean(candidate) && values.some((item) => {
     const expected = norm(item);
-    return expected === candidate || (expected.length >= 2 && candidate.includes(expected));
+    const compactExpected = compact(item);
+    return expected === candidate
+      || (expected.length >= 2 && candidate.includes(expected))
+      || (compactExpected.length >= 2 && compactCandidate.includes(compactExpected));
   });
+}
+
+function leadFieldValue(lead, field) {
+  const aliases = {
+    mobile: "phone",
+    course: "interested_course_slug",
+    specialization: "current_situation",
+    college: "interested_college_slug",
+    exam: "interested_exam_slug",
+    campaign: "cta",
+    lead_source: "source",
+  };
+  const key = aliases[norm(field)] || field;
+  if (key === "interested_course_slug") return lead.interested_course_slug || lead.current_situation || lead.initial_query || lead.cta;
+  if (key === "current_situation") return lead.current_situation || lead.interested_course_slug || lead.initial_query;
+  return lead[key];
 }
 
 export function ruleMatches(rule, lead) {
@@ -22,10 +43,19 @@ export function ruleMatches(rule, lead) {
     [list(rule.match_sources), lead.source],
     [list(rule.match_ctas), lead.cta],
   ].filter(([values]) => values.length);
+  for (const [field, values] of Object.entries(object(rule.match_fields))) {
+    const expected = list(values);
+    if (expected.length) checks.push([expected, leadFieldValue(lead, field)]);
+  }
   if (!checks.length) return true;
   return rule.match_all
     ? checks.every(([values, value]) => includesValue(values, value))
     : checks.some(([values, value]) => includesValue(values, value));
+}
+
+export function isLeadReadyForAutomation(lead) {
+  const course = lead?.interested_course_slug || lead?.current_situation || lead?.initial_query || lead?.cta;
+  return Boolean(lead?.city && lead?.state && course);
 }
 
 function leadData(lead) {
@@ -159,7 +189,7 @@ async function sendToUniversity(university, lead, rule, flowId = null, multiFlow
 
 export async function dispatchLead(leadId) {
   const lead = await prisma.leads.findUnique({ where: { id: leadId } });
-  if (!lead || !lead.city || !lead.state || !lead.current_situation) return { dispatched: 0, reason: "lead incomplete" };
+  if (!isLeadReadyForAutomation(lead)) return { dispatched: 0, reason: "lead incomplete" };
   const [directRules, flows, multiFlows] = await Promise.all([
     prisma.lp_automation_rules.findMany({ where: { is_active: true, auto_dispatch: true }, orderBy: { priority: "asc" } }),
     prisma.lp_marketing_flows.findMany({ where: { is_active: true } }),

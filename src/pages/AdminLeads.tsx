@@ -50,6 +50,7 @@ export default function AdminLeads() {
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [stateFilter, setStateFilter] = useState<string>("all");
   const [collegeFilter, setCollegeFilter] = useState<string>("all");
+  const [courseFilter, setCourseFilter] = useState<string>("all");
   const [modeFilter, setModeFilter] = useState<string>("all"); // all | regular | online
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [deviceFilter, setDeviceFilter] = useState<string>("all"); // all | mobile | tablet | desktop
@@ -180,6 +181,7 @@ export default function AdminLeads() {
   const states = useMemo(() => Array.from(new Set(leads.map((l: any) => l.state).filter(Boolean))) as string[], [leads]);
   const collegeSlugs = useMemo(() => Array.from(new Set(leads.map((l: any) => l.interested_college_slug).filter(Boolean))) as string[], [leads]);
   const categories = useMemo(() => Array.from(new Set(leads.map((l: any) => l.source_category).filter(Boolean))) as string[], [leads]);
+  const courseInterests = useMemo(() => Array.from(new Set(leads.flatMap((lead: any) => [lead.interested_course_slug, lead.current_situation]).filter(Boolean))) as string[], [leads]);
 
   const allLeadGroups = useMemo<LeadGroup[]>(() => groupLeadsByIdentity(leads as any[]), [leads]);
   const identityKeyById = useMemo(() => new Map(allLeadGroups.flatMap((group) => group.instances.map((lead) => [lead.id, group.key]))), [allLeadGroups]);
@@ -213,6 +215,10 @@ export default function AdminLeads() {
       if (cityFilter !== "all" && l.city !== cityFilter) return false;
       if (stateFilter !== "all" && (l as any).state !== stateFilter) return false;
       if (collegeFilter !== "all" && l.interested_college_slug !== collegeFilter) return false;
+      if (courseFilter !== "all") {
+        const courseText = [l.interested_course_slug, l.current_situation, l.initial_query].filter(Boolean).join(" ").toLowerCase();
+        if (!courseText.includes(courseFilter.toLowerCase())) return false;
+      }
       if (modeFilter !== "all" && (l.program_mode || "regular") !== modeFilter) return false;
       if (categoryFilter !== "all" && (l.source_category || "") !== categoryFilter) return false;
       if (deviceFilter !== "all" && (l.device_type || "") !== deviceFilter) return false;
@@ -234,10 +240,10 @@ export default function AdminLeads() {
       }
       return true;
     });
-  }, [leads, search, sourceFilter, cityFilter, stateFilter, collegeFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, dupCounts, dupKey]);
+  }, [leads, search, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, dupCounts, dupKey]);
 
   // Reset to page 1 whenever filters change
-  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, sourceFilter, cityFilter, collegeFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, sortBy, sortDir, pageSize]);
+  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, sortBy, sortDir, pageSize]);
 
   const filteredLeadGroups = useMemo<LeadGroup[]>(() => {
     const matchingIds = new Set(filtered.map((lead: any) => lead.id));
@@ -312,9 +318,11 @@ export default function AdminLeads() {
     cityFilter !== "all",
     stateFilter !== "all",
     collegeFilter !== "all",
+    courseFilter !== "all",
     categoryFilter !== "all",
     deviceFilter !== "all",
     modeFilter !== "all",
+    statusFilter !== "all",
     dupOnly,
   ].filter(Boolean).length;
 
@@ -362,10 +370,10 @@ export default function AdminLeads() {
             onReset={resetColumns}
           />
           <LeadFilterPresets
-            current={{ search, sourceFilter, cityFilter, stateFilter, collegeFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly }}
+            current={{ search, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly }}
             onApply={(f: any) => {
               setSearch(f.search ?? ""); setSourceFilter(f.sourceFilter ?? "all"); setCityFilter(f.cityFilter ?? "all"); setStateFilter(f.stateFilter ?? "all");
-              setCollegeFilter(f.collegeFilter ?? "all"); setModeFilter(f.modeFilter ?? "all"); setCategoryFilter(f.categoryFilter ?? "all");
+              setCollegeFilter(f.collegeFilter ?? "all"); setCourseFilter(f.courseFilter ?? "all"); setModeFilter(f.modeFilter ?? "all"); setCategoryFilter(f.categoryFilter ?? "all");
               setDeviceFilter(f.deviceFilter ?? "all"); setStatusFilter(f.statusFilter ?? "all"); setRangeFilter(f.rangeFilter ?? "all");
               setCustomFrom(f.customFrom ?? ""); setCustomTo(f.customTo ?? ""); setDupOnly(!!f.dupOnly);
             }}
@@ -390,7 +398,7 @@ export default function AdminLeads() {
             <Filter className="w-4 h-4 text-primary" />
           </div>
 
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 min-w-0">
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 min-w-0">
             <FilterField label="User Registration Date">
               <Select value={rangeFilter} onValueChange={setRangeFilter}>
                 <SelectTrigger className="h-9 rounded-lg border-0 bg-transparent px-0 text-sm focus:ring-0"><SelectValue placeholder="Select Here" /></SelectTrigger>
@@ -406,12 +414,11 @@ export default function AdminLeads() {
               </Select>
             </FilterField>
             <FilterField label="Lead Stage">
-              <Select value={modeFilter} onValueChange={setModeFilter}>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="h-9 rounded-lg border-0 bg-transparent px-0 text-sm focus:ring-0"><SelectValue placeholder="Select Here" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All stages</SelectItem>
-                  <SelectItem value="regular">Regular</SelectItem>
-                  <SelectItem value="online">Online</SelectItem>
+                  {LEAD_STATUSES.map((status) => <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>)}
                 </SelectContent>
               </Select>
             </FilterField>
@@ -421,6 +428,24 @@ export default function AdminLeads() {
                 value={sourceFilter === "all" ? "All sources" : sourceFilter}
                 onChange={(v) => setSourceFilter(!v || v === "All sources" ? "all" : v)}
                 placeholder="Select Here"
+                className="border-0 bg-transparent px-0 h-9"
+              />
+            </FilterField>
+            <FilterField label="State">
+              <SearchableSelect
+                options={["All states", ...states]}
+                value={stateFilter === "all" ? "All states" : stateFilter}
+                onChange={(value) => setStateFilter(!value || value === "All states" ? "all" : value)}
+                placeholder="Search state..."
+                className="border-0 bg-transparent px-0 h-9"
+              />
+            </FilterField>
+            <FilterField label="Course / Specialization">
+              <SearchableSelect
+                options={["All interests", ...courseInterests]}
+                value={courseFilter === "all" ? "All interests" : courseFilter}
+                onChange={(value) => setCourseFilter(!value || value === "All interests" ? "all" : value)}
+                placeholder="Search course..."
                 className="border-0 bg-transparent px-0 h-9"
               />
             </FilterField>
@@ -460,15 +485,6 @@ export default function AdminLeads() {
                 className="border-0 bg-transparent px-0 h-9"
               />
             </FilterField>
-            <FilterField label="State">
-              <SearchableSelect
-                options={["All states", ...(states as string[])]}
-                value={stateFilter === "all" ? "All states" : stateFilter}
-                onChange={(v) => setStateFilter(!v || v === "All states" ? "all" : v)}
-                placeholder="Search state…"
-                className="border-0 bg-transparent px-0 h-9"
-              />
-            </FilterField>
             <FilterField label="College Interested In">
               <SearchableSelect
                 options={["All colleges", ...collegeSlugs]}
@@ -488,6 +504,25 @@ export default function AdminLeads() {
                   <SelectItem value="desktop">Desktop (System)</SelectItem>
                 </SelectContent>
               </Select>
+            </FilterField>
+            <FilterField label="Program Mode">
+              <Select value={modeFilter} onValueChange={setModeFilter}>
+                <SelectTrigger className="h-9 rounded-lg border-0 bg-transparent px-0 text-sm focus:ring-0"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All modes</SelectItem>
+                  <SelectItem value="regular">Regular</SelectItem>
+                  <SelectItem value="online">Online</SelectItem>
+                </SelectContent>
+              </Select>
+            </FilterField>
+            <FilterField label="Source Category">
+              <SearchableSelect
+                options={["All categories", ...categories]}
+                value={categoryFilter === "all" ? "All categories" : categoryFilter}
+                onChange={(value) => setCategoryFilter(!value || value === "All categories" ? "all" : value)}
+                placeholder="Search category..."
+                className="border-0 bg-transparent px-0 h-9"
+              />
             </FilterField>
             <div className="flex items-center gap-3 px-3 rounded-lg border border-border bg-card">
               <Layers className="w-3.5 h-3.5 text-muted-foreground" />
@@ -514,7 +549,7 @@ export default function AdminLeads() {
             ))}
             {(activeAdvCount > 0 || rangeFilter !== "all" || search) && (
               <button
-                onClick={() => { setRangeFilter("all"); setSourceFilter("all"); setCityFilter("all"); setCollegeFilter("all"); setModeFilter("all"); setCategoryFilter("all"); setDeviceFilter("all"); setDupOnly(false); setSearch(""); }}
+                onClick={() => { setRangeFilter("all"); setCustomFrom(""); setCustomTo(""); setSourceFilter("all"); setCityFilter("all"); setStateFilter("all"); setCollegeFilter("all"); setCourseFilter("all"); setModeFilter("all"); setCategoryFilter("all"); setDeviceFilter("all"); setStatusFilter("all"); setDupOnly(false); setSearch(""); }}
                 className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-dashed border-border text-muted-foreground hover:text-destructive hover:border-destructive/40"
               >
                 Reset all
@@ -578,9 +613,9 @@ export default function AdminLeads() {
       {isLoading ? (
         <div className="text-center py-8 text-muted-foreground">Loading leads...</div>
       ) : (
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
+          <div className="overflow-x-auto overscroll-x-contain [scrollbar-gutter:stable]" aria-label="Scrollable lead table">
+            <table className="w-max min-w-full text-sm">
               {(() => {
                 const visibleCols = columnOrder
                   .map((k) => ALL_COLUMNS.find((c) => c.key === k))
@@ -596,12 +631,17 @@ export default function AdminLeads() {
                         ? differenceInCalendarDays(new Date(instances[0].created_at), new Date(instances[1].created_at))
                         : 0;
                       return (
-                        <div className="flex items-center gap-2 whitespace-nowrap">
-
+                        <button
+                          type="button"
+                          disabled={dn <= 1}
+                          onClick={(event) => { event.stopPropagation(); if (dn > 1) toggle(rowKey); }}
+                          className={`flex items-center gap-2 whitespace-nowrap rounded-md px-1.5 py-1 text-left ${dn > 1 ? "hover:bg-primary/10" : "cursor-default"}`}
+                          title={dn > 1 ? (isOpen ? "Collapse submission history" : "Expand submission history inline") : "One submission"}
+                        >
                           {dn > 1 && (
-                            <button onClick={(event) => { event.stopPropagation(); toggle(rowKey); }} className="w-5 h-5 rounded hover:bg-muted flex items-center justify-center flex-shrink-0" title={isOpen ? "Collapse" : "Expand"}>
+                            <span className="w-5 h-5 rounded border border-border bg-card flex items-center justify-center flex-shrink-0">
                               {isOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-                            </button>
+                            </span>
                           )}
                           {dn > 1 ? (
                             <Badge className={`text-[10px] border ${t?.chip || "bg-muted"}`}><Flame className="w-3 h-3 mr-1" />{dn} submissions</Badge>
@@ -609,11 +649,11 @@ export default function AdminLeads() {
                             <span className="text-xs text-muted-foreground">1</span>
                           )}
                           {latestGapDays >= 10 && <Badge variant="outline" className="text-[10px] text-blue-700 border-blue-200">Returned after {latestGapDays}d</Badge>}
-                        </div>
+                        </button>
                       );
                     }
                     case "name":
-                      return <span className="font-semibold text-primary hover:underline cursor-pointer">{maskName(lead.name) || "-"}</span>;
+                      return <button type="button" onClick={() => setDetailLead(lead)} className="font-semibold text-primary hover:underline">{maskName(lead.name) || "-"}</button>;
                     case "phone":
                       return lead.phone ? (
                         <span className="inline-flex items-center gap-1.5 text-muted-foreground"><Phone className="w-3.5 h-3.5" />+91 {mask ? maskPhone(lead.phone) : lead.phone.replace(/\D/g, "").slice(-10)}</span>
@@ -747,6 +787,13 @@ export default function AdminLeads() {
                     default: return k;
                   }
                 };
+                const columnWidth = (key: string) => {
+                  if (["name", "email", "course", "landing_page", "initial_query"].includes(key)) return "min-w-[220px]";
+                  if (["phone", "state", "city", "campus", "page_url"].includes(key)) return "min-w-[160px]";
+                  if (["instances", "created_at", "first_at", "registered_at"].includes(key)) return "min-w-[145px]";
+                  if (key === "actions") return "min-w-[120px]";
+                  return "min-w-[130px]";
+                };
 
                 return (
                   <>
@@ -769,7 +816,7 @@ export default function AdminLeads() {
                                 if (sortBy === sortField) setSortDir(d => d === "asc" ? "desc" : "asc");
                                 else { setSortBy(sortField); setSortDir("desc"); }
                               }}
-                              className={`text-left p-3 text-xs font-semibold uppercase tracking-wide select-none whitespace-nowrap ${sortField ? "cursor-pointer" : ""} ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                              className={`text-left p-3 text-xs font-semibold uppercase tracking-wide select-none whitespace-nowrap ${columnWidth(col.key)} ${sortField ? "cursor-pointer" : ""} ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
                             >
                               <span className="inline-flex items-center gap-1">{col.label} {sortField && <Icon className="w-3 h-3 opacity-60" />}</span>
                             </th>
@@ -789,8 +836,7 @@ export default function AdminLeads() {
                         const head = (
                           <tr
                             key={key}
-                            onClick={() => setDetailLead(lead)}
-                            className={`border-b border-border last:border-0 hover:bg-primary/5 transition-colors cursor-pointer ${t ? `${t.bg}` : "odd:bg-muted/20"}`}
+                            className={`border-b border-border last:border-0 hover:bg-primary/5 transition-colors ${t ? `${t.bg}` : "odd:bg-muted/20"}`}
                           >
                             <td className="p-0 w-1">
                               <div className={`w-1 h-10 ${t ? "bg-rose-500" : "bg-primary/60"}`} />
@@ -799,7 +845,7 @@ export default function AdminLeads() {
                               <Checkbox checked={groupChecked} onCheckedChange={() => toggleRowSel(instanceIds)} aria-label={`Select all submissions for ${lead.name || "lead"}`} />
                             </td>
                             {visibleCols.map((col) => (
-                              <td key={col.key} className="px-3 py-2 align-middle" onClick={(e) => { if (col.key === "actions") e.stopPropagation(); }}>
+                              <td key={col.key} className={`px-3 py-2 align-middle ${columnWidth(col.key)}`}>
                                 {renderCell(col.key, lead, dn, t, isOpen, key, instances)}
                               </td>
                             ))}
@@ -807,55 +853,24 @@ export default function AdminLeads() {
                         );
 
                         if (!isOpen || dn <= 1) return [head];
-                        const children = (
-                          <tr key={key + "-d"} className="bg-muted/20">
-                            <td></td>
-                            <td></td>
-                            <td colSpan={visibleCols.length} className="p-3">
-
-                              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                                <div>
-                                  <div className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5"><FileText className="w-3 h-3" /> Submission history · latest first</div>
-                                  <p className="mt-0.5 text-[10px] text-muted-foreground">Uncheck submissions you want to keep, then delete the selected history.</p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[11px] text-muted-foreground">{selectedInGroup} of {dn} selected</span>
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    className="h-7 gap-1.5 text-[11px]"
-                                    disabled={deleteBusy || selectedInGroup === 0}
-                                    onClick={() => deleteLeads(instanceIds.filter((id) => selectedIds.has(id)), `selected history for ${lead.name || "this lead"}`)}
-                                  >
-                                    <Trash2 className="h-3 w-3" /> Delete selected history
-                                  </Button>
-                                </div>
-                              </div>
-                              <div className="space-y-2">
-                                {instances.map((it, index) => (
-                                  <div key={it.id} className="bg-card border border-border rounded-lg p-2 grid md:grid-cols-4 gap-2 text-[11px]">
-                                    <div className="md:col-span-4 flex items-center justify-between gap-3">
-                                      <div className="flex items-center gap-2">
-                                        <Checkbox checked={selectedIds.has(it.id)} onCheckedChange={() => toggleRowSel([it.id])} aria-label={`Select submission ${index + 1}`} />
-                                        <strong>{index === 0 ? "Latest" : `Previous ${index}`} · {maskName(it.name) || "Unknown"}</strong>
-                                      </div>
-                                      <span className="text-muted-foreground">{it.created_at ? format(new Date(it.created_at), "MMM d, yyyy HH:mm") : "-"}</span>
-                                    </div>
-                                    <div><span className="text-muted-foreground">Phone:</span> {it.phone ? `+91 ${mask ? maskPhone(it.phone) : String(it.phone).replace(/\D/g, "").slice(-10)}` : "-"}</div>
-                                    <div><span className="text-muted-foreground">Email:</span> {it.email ? (mask ? maskEmail(it.email) : it.email) : "-"}</div>
-                                    <div><span className="text-muted-foreground">Course:</span> {it.current_situation || it.interested_course_slug || "-"}</div>
-                                    <div><span className="text-muted-foreground">Location:</span> {[it.city, it.state].filter(Boolean).join(", ") || "-"} · {it.program_mode || "unknown"}</div>
-                                    <div><span className="text-muted-foreground">Source:</span> <Badge className={`text-[10px] border ${sourceColor(it.source || "")}`}>{it.source || "-"}</Badge></div>
-                                    <div><span className="text-muted-foreground">CTA:</span> {it.cta || "-"}</div>
-                                    <div className="md:col-span-2 truncate" title={it.page_url || ""}><span className="text-muted-foreground">Page:</span> {it.page_url || "-"}</div>
-                                    <div className="md:col-span-3"><span className="text-muted-foreground">Query:</span> {it.initial_query || "-"}</div>
-                                  </div>
-                                ))}
-                              </div>
+                        const historyRows = instances.slice(1).map((historicalLead, historyIndex) => (
+                          <tr key={`${key}-history-${historicalLead.id}`} className="border-b border-border/70 bg-muted/35 text-muted-foreground hover:bg-muted/60">
+                            <td className="p-0 w-1"><div className="ml-0.5 h-10 w-0.5 bg-border" /></td>
+                            <td className="w-10 px-2">
+                              <Checkbox checked={selectedIds.has(historicalLead.id)} onCheckedChange={() => toggleRowSel([historicalLead.id])} aria-label={`Select previous submission ${historyIndex + 1}`} />
                             </td>
+                            {visibleCols.map((col) => (
+                              <td key={col.key} className={`px-3 py-2 align-middle ${columnWidth(col.key)}`}>
+                                {col.key === "instances" ? (
+                                  <div className="flex items-center gap-2 whitespace-nowrap pl-1 text-[11px] font-medium">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" /> Previous {historyIndex + 1}
+                                  </div>
+                                ) : renderCell(col.key, historicalLead, 1, null, false, key, [historicalLead])}
+                              </td>
+                            ))}
                           </tr>
-                        );
-                        return [head, children];
+                        ));
+                        return [head, ...historyRows];
                       })}
                     </tbody>
                   </>

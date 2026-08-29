@@ -1970,6 +1970,7 @@ model lp_automation_rules {
   match_courses  Json
   match_sources  Json
   match_ctas     Json
+  match_fields   Json?
   match_all      Boolean  @default(false)
   university_ids Json
   created_at     DateTime @default(now()) @db.DateTime(3)

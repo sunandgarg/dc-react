@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildPartnerRequest, getPrefillOverrides, ruleMatches } from "../src/lead-automation.mjs";
+import { buildPartnerRequest, getPrefillOverrides, isLeadReadyForAutomation, ruleMatches } from "../src/lead-automation.mjs";
 import { retryDelayMs } from "../src/lead-outbox.mjs";
 
 test("matches lead automation conditions with all and any modes", () => {
@@ -8,6 +8,18 @@ test("matches lead automation conditions with all and any modes", () => {
   assert.equal(ruleMatches({ match_cities: ["delhi"], match_courses: ["mba"], match_states: [], match_sources: [], match_ctas: [], match_all: true }, lead), true);
   assert.equal(ruleMatches({ match_cities: ["mumbai"], match_courses: ["mba"], match_states: [], match_sources: [], match_ctas: [], match_all: false }, lead), true);
   assert.equal(ruleMatches({ match_cities: ["mumbai"], match_courses: ["btech"], match_states: [], match_sources: [], match_ctas: [], match_all: false }, lead), false);
+});
+
+test("matches punctuation-normalized courses and generic specialization fields", () => {
+  const lead = { city: "New Delhi", state: "Delhi", current_situation: "B.Tech Computer Science and Engineering", source: "website" };
+  assert.equal(ruleMatches({ match_cities: [], match_courses: ["btech"], match_states: ["Delhi"], match_sources: [], match_ctas: [], match_fields: {}, match_all: true }, lead), true);
+  assert.equal(ruleMatches({ match_cities: [], match_courses: [], match_states: [], match_sources: [], match_ctas: [], match_fields: { specialization: ["computer science"] }, match_all: true }, lead), true);
+  assert.equal(ruleMatches({ match_cities: [], match_courses: [], match_states: [], match_sources: [], match_ctas: [], match_fields: { specialization: ["mechanical"] }, match_all: true }, lead), false);
+});
+
+test("accepts a complete routing lead when its course is stored in the course slug", () => {
+  assert.equal(isLeadReadyForAutomation({ city: "New Delhi", state: "Delhi", interested_course_slug: "btech" }), true);
+  assert.equal(isLeadReadyForAutomation({ city: "New Delhi", state: "Delhi" }), false);
 });
 
 test("maps a lead to university API field names", () => {

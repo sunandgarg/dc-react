@@ -766,7 +766,31 @@ function RuleEditor({ rule, unis, onClose }: { rule: Rule; unis: Uni[]; onClose:
 
           <Separator />
           <div>
-            <Label className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> Target Universities ({r.university_ids.length} selected)</Label>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Label className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> Target Universities ({r.university_ids.length} selected)</Label>
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  disabled={filteredUnis.length === 0}
+                  onClick={() => set("university_ids", Array.from(new Set([...r.university_ids, ...filteredUnis.map((university) => university.id)])))}
+                >
+                  Select visible
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  disabled={r.university_ids.length === 0}
+                  onClick={() => set("university_ids", [])}
+                >
+                  Clear
+                </Button>
+              </div>
+            </div>
             <div className="relative mt-2">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
               <Input value={uniQuery} onChange={(e) => setUniQuery(e.target.value)} placeholder="Search universities…" className="pl-9 h-9" />
