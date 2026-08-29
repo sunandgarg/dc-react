@@ -213,6 +213,16 @@ export function inferAcademicLevel(row: CollegeFeeRow) {
   return "Other";
 }
 
+export function formatFeePeriod(value?: string | null) {
+  const normalized = value?.trim().toLowerCase();
+  if (!normalized) return "";
+  if (["annual", "annually", "year", "yearly", "per year"].includes(normalized)) return "per year";
+  if (["semester", "semester-wise", "per semester"].includes(normalized)) return "per semester";
+  if (["month", "monthly", "per month"].includes(normalized)) return "per month";
+  if (["total", "total course", "full course", "one time", "one-time"].includes(normalized)) return "total course";
+  return normalized.startsWith("per ") ? normalized : `per ${normalized}`;
+}
+
 export function groupCollegeFees(rows: CollegeFeeRow[], search = ""): CollegeFeeGroup[] {
   const query = search.trim().toLowerCase();
   const groups = new Map<string, CollegeFeeGroup>();

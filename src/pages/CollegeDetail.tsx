@@ -47,7 +47,7 @@ import { RichSection } from "@/components/detail/RichSection";
 import { RichText } from "@/components/detail/RichText";
 import { PageSummary } from "@/components/detail/PageSummary";
 import { absoluteSiteUrl } from "@/lib/constant";
-import { formatFeeRange, formatIndianFee, groupCollegeFees, groupCollegeFeesByLevel, inferCourseSpecialization } from "@/lib/courseFeeGroups";
+import { formatFeePeriod, formatFeeRange, formatIndianFee, groupCollegeFees, groupCollegeFeesByLevel, inferCourseSpecialization } from "@/lib/courseFeeGroups";
 
 const COLLEGE_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "College Info" },
@@ -449,7 +449,7 @@ export default function CollegeDetail() {
                 </>
               )}
               <div className="dc-scroll-table">
-                <table id="college-course-fee-table" className="w-full min-w-[620px] text-sm">
+                <table id="college-course-fee-table" className="w-full table-fixed text-sm sm:min-w-[620px]">
                   <thead>
                     <tr className="border-b border-border bg-muted/40">
                       <th className="px-3 py-3 text-left font-medium text-muted-foreground">Broad course</th>
@@ -505,24 +505,27 @@ export default function CollegeDetail() {
                                         ? null
                                         : Number(entry.fee_amount);
                                       return (
-                                        <div key={entry.id || `${entry.course_slug}-${index}`} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 py-3 sm:grid-cols-[minmax(12rem,1fr)_8rem_9rem_2rem] sm:items-center">
+                                        <div
+                                          key={entry.id || `${entry.course_slug}-${index}`}
+                                          className="grid grid-cols-[minmax(0,1.15fr)_minmax(5.75rem,0.9fr)_minmax(5rem,0.72fr)_1.25rem] items-start gap-2 py-3 transition-colors hover:bg-primary/[0.03] sm:grid-cols-[minmax(12rem,1fr)_8rem_9rem_2rem] sm:items-center sm:gap-3"
+                                        >
                                           <div className="min-w-0">
                                             {linked ? (
-                                              <Link to={`/courses/${linked.slug}`} className="font-medium text-foreground hover:text-primary hover:underline">
+                                              <Link to={`/courses/${linked.slug}`} className="block text-[13px] font-semibold leading-5 text-foreground hover:text-primary hover:underline sm:text-sm">
                                                 {inferCourseSpecialization(entry)}
                                               </Link>
                                             ) : (
-                                              <span className="font-medium text-foreground">{inferCourseSpecialization(entry)}</span>
+                                              <span className="block text-[13px] font-semibold leading-5 text-foreground sm:text-sm">{inferCourseSpecialization(entry)}</span>
                                             )}
-                                            {entry.year && <div className="text-[11px] text-muted-foreground">Fee year: {entry.year}</div>}
+                                            {entry.year && <div className="mt-0.5 text-[10px] leading-4 text-muted-foreground sm:text-[11px]">Fee year {entry.year}</div>}
                                           </div>
-                                          <span className="col-start-1 text-xs text-muted-foreground sm:col-start-auto">{entry.duration || linked?.duration || "Duration not published"}</span>
-                                          <span className="col-start-1 text-xs font-medium text-foreground sm:col-start-auto">
+                                          <span className="min-w-0 text-[11px] leading-5 text-muted-foreground sm:text-xs">{entry.duration || linked?.duration || "Duration not published"}</span>
+                                          <span className="min-w-0 text-right text-xs font-semibold leading-5 text-foreground sm:text-left">
                                             {formatIndianFee(amount !== null && Number.isFinite(amount) ? amount : null)}
-                                            {entry.fee_type && <span className="block font-normal text-muted-foreground">{entry.fee_type}</span>}
+                                            {entry.fee_type && <span className="block text-[10px] font-normal leading-4 text-muted-foreground sm:text-[11px]">{formatFeePeriod(entry.fee_type)}</span>}
                                           </span>
                                           {linked ? (
-                                            <Link className="col-start-2 row-span-3 row-start-1 self-center sm:col-start-auto sm:row-span-1 sm:row-start-auto" to={`/courses/${linked.slug}`} aria-label={`Open ${entry.course_name || inferCourseSpecialization(entry)}`}>
+                                            <Link className="self-center justify-self-end rounded p-1 hover:bg-primary/10" to={`/courses/${linked.slug}`} aria-label={`Open ${entry.course_name || inferCourseSpecialization(entry)}`}>
                                               <ExternalLink className="h-3.5 w-3.5 text-primary" />
                                             </Link>
                                           ) : <span />}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatFeeRange, groupCollegeFees, groupCollegeFeesByLevel, inferAcademicLevel, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "./courseFeeGroups";
+import { formatFeePeriod, formatFeeRange, groupCollegeFees, groupCollegeFeesByLevel, inferAcademicLevel, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "./courseFeeGroups";
 
 describe("course fee grouping", () => {
   it("groups specializations under a broad degree and calculates its fee range", () => {
@@ -83,5 +83,12 @@ describe("course fee grouping", () => {
     expect(levels[0].courseCount).toBe(3);
     expect(levels[0].groups.map((group) => group.label)).toEqual(["B.E. / B.Tech", "BBA"]);
     expect(levels[1].courseCount).toBe(1);
+  });
+
+  it("formats fee periods as reader-friendly billing labels", () => {
+    expect(formatFeePeriod("Semester")).toBe("per semester");
+    expect(formatFeePeriod("Annual")).toBe("per year");
+    expect(formatFeePeriod("Total Course")).toBe("total course");
+    expect(formatFeePeriod(null)).toBe("");
   });
 });
