@@ -452,9 +452,9 @@ export default function CollegeDetail() {
                 <table id="college-course-fee-table" className="w-full table-fixed text-sm sm:min-w-[620px]">
                   <thead>
                     <tr className="border-b border-border bg-muted/40">
-                      <th className="px-2 py-3 text-left font-medium text-muted-foreground sm:px-3">Broad course</th>
-                      <th className="px-2 py-3 text-left font-medium text-muted-foreground sm:px-3">Specializations</th>
-                      <th className="px-2 py-3 text-left font-medium text-muted-foreground sm:px-3">Fee range</th>
+                      <th className="px-2 py-3 text-left text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-sm"><span className="sm:hidden">Course</span><span className="hidden sm:inline">Broad course</span></th>
+                      <th className="px-2 py-3 text-left text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-sm"><span className="sm:hidden">Options</span><span className="hidden sm:inline">Specializations</span></th>
+                      <th className="px-2 py-3 text-left text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-sm"><span className="sm:hidden">Fees</span><span className="hidden sm:inline">Fee range</span></th>
                       <th className="w-[4.5rem] px-2 py-3 text-right font-medium text-muted-foreground sm:w-24 sm:px-3">Details</th>
                     </tr>
                   </thead>
