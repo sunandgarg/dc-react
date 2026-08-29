@@ -39,6 +39,7 @@ const resolvedApiUrl = apiBaseUrl();
 const mediaBaseUrl = String(import.meta.env.VITE_MEDIA_BASE_URL || "/storage/v1/object/public").replace(/\/$/, "");
 const authListeners = new Set<(event: string, session: BackendSession | null) => void>();
 let memorySession: BackendSession | null | undefined;
+let refreshPromise: Promise<BackendSession | null> | null = null;
 
 function storageAvailable() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -105,20 +106,32 @@ async function parseResponse(response: Response) {
 }
 
 async function refreshSession(session: BackendSession) {
-  const response = await fetch(`${resolvedApiUrl}/auth/v1/token?grant_type=refresh_token`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ refresh_token: session.refresh_token }),
-  });
-  const payload = await parseResponse(response);
-  if (!response.ok || !isSession(payload)) {
-    saveSession(null);
-    notifyAuth("SIGNED_OUT", null);
-    return null;
-  }
-  saveSession(payload);
-  notifyAuth("TOKEN_REFRESHED", payload);
-  return payload;
+  if (refreshPromise) return refreshPromise;
+  refreshPromise = (async () => {
+    try {
+      const response = await fetch(`${resolvedApiUrl}/auth/v1/token?grant_type=refresh_token`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ refresh_token: session.refresh_token }),
+      });
+      const payload = await parseResponse(response);
+      if (response.status === 401) {
+        saveSession(null);
+        notifyAuth("SIGNED_OUT", null);
+        return null;
+      }
+      if (!response.ok || !isSession(payload)) return session;
+      saveSession(payload);
+      notifyAuth("TOKEN_REFRESHED", payload);
+      return payload;
+    } catch {
+      // Keep persistent login state during temporary network or origin outages.
+      return session;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+  return refreshPromise;
 }
 
 async function activeSession() {
@@ -318,7 +331,11 @@ const auth = {
   },
   async signOut() {
     const session = readStoredSession();
-    if (session?.access_token) await fetch(`${resolvedApiUrl}/auth/v1/logout`, { method: "POST", headers: { authorization: `Bearer ${session.access_token}` } }).catch(() => null);
+    if (session?.access_token) await fetch(`${resolvedApiUrl}/auth/v1/logout`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${session.access_token}`, "content-type": "application/json" },
+      body: JSON.stringify({ refresh_token: session.refresh_token }),
+    }).catch(() => null);
     saveSession(null);
     notifyAuth("SIGNED_OUT", null);
     return { error: null };
@@ -338,6 +355,15 @@ const auth = {
     return { data: null, error: makeError({ code: "OTP_EXCHANGE_REQUIRED", message: "Use the native phone OTP exchange endpoint" }) };
   },
 };
+
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (event) => {
+    if (event.key !== SESSION_KEY) return;
+    memorySession = undefined;
+    const session = readStoredSession();
+    notifyAuth(session ? "SIGNED_IN" : "SIGNED_OUT", session);
+  });
+}
 
 const encodePath = (value: string) => value.split("/").map(encodeURIComponent).join("/");
 const storage = {

@@ -24,7 +24,7 @@ const RESTRICTED_EDITOR_GRANTS = [
   { resource: "career_course_links", can_view: true, can_create: true, can_edit: true },
   { resource: "exams", can_view: true, can_create: true, can_edit: true },
   { resource: "faqs", can_view: true, can_create: true, can_edit: true },
-  { resource: "articles", can_view: true, can_create: true, can_edit: false },
+  { resource: "articles", can_view: true, can_create: true, can_edit: true },
 ];
 
 export function isRestrictedEditorPhone(phone) {

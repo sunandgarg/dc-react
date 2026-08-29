@@ -15,6 +15,7 @@
     "verify:production-blog": "node scripts/verify-production-blog-agent.mjs",
     "verify:production-crud": "node scripts/production-crud-regression.mjs",
     "verify:production-core": "node scripts/production-core-entity-regression.mjs",
+    "verify:production-editor-review": "node scripts/production-editor-review-regression.mjs",
     "repair:listed-article-covers": "node scripts/repair-listed-article-covers.mjs",
     "revoke:user-sessions": "node scripts/revoke-user-sessions.mjs"
   },

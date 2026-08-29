@@ -106,7 +106,7 @@ async function authorizeRest(table, request) {
       identity.id,
     );
     if (contentRole.length && canContentEditorAccess(table, action)) {
-      return { request, actorUserId: identity.id, stageReview: action !== "view" };
+      return { request, actorUserId: identity.id, stageReview: action !== "view", forceDraft: action !== "view" };
     }
     const permission = await prisma.$queryRawUnsafe(
       `SELECT \`can_publish\` FROM \`user_permissions\`
@@ -119,7 +119,8 @@ async function authorizeRest(table, request) {
       identity.id, table, table, action, action, action, action,
     );
     if (!permission.length) throw new HttpError(403, "PERMISSION_DENIED", `You do not have ${action} permission for ${table}`);
-    return { request, actorUserId: identity.id, stageReview: !Boolean(permission[0]?.can_publish) };
+    const requiresReview = !Boolean(permission[0]?.can_publish);
+    return { request, actorUserId: identity.id, stageReview: requiresReview, forceDraft: requiresReview };
   }
   if (request.method === "POST") {
     const input = await request.clone().json();

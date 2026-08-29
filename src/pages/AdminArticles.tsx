@@ -463,7 +463,7 @@ export default function AdminArticles() {
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-xl">Cancel</Button>
                 <Button onClick={handleSave} disabled={saveArticle.isPending} className="rounded-xl">
-                  {saveArticle.isPending ? "Saving..." : "Save Article"}
+                  {saveArticle.isPending ? "Saving..." : canPublish ? "Save Article" : "Save as draft"}
                 </Button>
               </div>
             </div>

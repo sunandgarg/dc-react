@@ -60,7 +60,6 @@ function authUser(row) {
 async function issueSession(userRow, db = prisma) {
   const revokedAfter = Number(providerConfig(userRow?.user_metadata)._sessions_revoked_after || 0);
   const now = Math.max(Math.floor(Date.now() / 1000), revokedAfter + 1);
-  const accessToken = signJwt({ sub: userRow.id, aud: "authenticated", role: "authenticated", iat: now, exp: now + ACCESS_TTL_SECONDS });
   const refreshToken = randomBytes(48).toString("base64url");
   await db.app_auth_refresh_tokens.create({
     data: {
@@ -71,6 +70,13 @@ async function issueSession(userRow, db = prisma) {
       expires_at: new Date((now + REFRESH_TTL_SECONDS) * 1000),
     },
   });
+  return sessionPayload(userRow, refreshToken, now);
+}
+
+function sessionPayload(userRow, refreshToken, issuedAt = Math.floor(Date.now() / 1000)) {
+  const revokedAfter = Number(providerConfig(userRow?.user_metadata)._sessions_revoked_after || 0);
+  const now = Math.max(issuedAt, revokedAfter + 1);
+  const accessToken = signJwt({ sub: userRow.id, aud: "authenticated", role: "authenticated", iat: now, exp: now + ACCESS_TTL_SECONDS });
   return { access_token: accessToken, token_type: "bearer", expires_in: ACCESS_TTL_SECONDS, expires_at: now + ACCESS_TTL_SECONDS, refresh_token: refreshToken, user: authUser(userRow) };
 }
 
@@ -230,8 +236,14 @@ export async function handleAuth(request) {
     return { status: 200, body: authUser(user) };
   }
   if (url.pathname === "/auth/v1/logout" && request.method === "POST") {
-    const user = await userFromRequest(request);
-    if (user) await revokeUserSessions({ id: user.id });
+    const body = await request.json().catch(() => ({}));
+    const refreshToken = String(body.refresh_token || "");
+    if (refreshToken) {
+      await prisma.app_auth_refresh_tokens.updateMany({
+        where: { token_hash: digest(refreshToken), revoked_at: null },
+        data: { revoked_at: new Date() },
+      });
+    }
     return { status: 204, body: null };
   }
   if (url.pathname === "/auth/v1/token" && request.method === "POST" && url.searchParams.get("grant_type") === "refresh_token") {
@@ -243,11 +255,11 @@ export async function handleAuth(request) {
       const revokedAfter = Number(providerConfig(user?.user_metadata)._sessions_revoked_after || 0);
       const refreshIssuedAt = Math.floor(new Date(row.created_at).getTime() / 1000);
       if (!user || (revokedAfter > 0 && refreshIssuedAt <= revokedAfter)) return null;
-      const claimed = await tx.app_auth_refresh_tokens.updateMany({
+      const extended = await tx.app_auth_refresh_tokens.updateMany({
         where: { id: row.id, revoked_at: null },
-        data: { revoked_at: new Date() },
+        data: { expires_at: new Date(Date.now() + REFRESH_TTL_SECONDS * 1000) },
       });
-      return claimed.count === 1 ? issueSession(user, tx) : null;
+      return extended.count === 1 ? sessionPayload(user, String(body.refresh_token || "")) : null;
     });
     if (!session) return { status: 401, body: { code: "refresh_token_not_found", msg: "Invalid refresh token" } };
     return { status: 200, body: session };

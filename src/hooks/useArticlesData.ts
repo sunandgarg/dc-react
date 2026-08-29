@@ -2,6 +2,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 
+function isPendingReview(response: { status?: number | null }) {
+  return response.status === 202;
+}
+
 export type DbArticle = {
   id: string;
   status: string;
@@ -110,6 +114,7 @@ export function useSaveArticle() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (article: Partial<DbArticle> & { slug: string; title: string }) => {
+      let pendingReview = false;
       // Normalize slug: lowercase, spaces & special chars -> dashes
       const cleanSlug = (article.slug || "")
         .toString()
@@ -120,18 +125,23 @@ export function useSaveArticle() {
       const normalized = { ...article, slug: cleanSlug || article.slug };
       if (normalized.id) {
         const { id, created_at, updated_at, ...rest } = normalized;
-        const { error } = await backendClient.from("articles").update(rest).eq("id", id);
+        const response = await backendClient.from("articles").update(rest).eq("id", id);
+        const { error } = response;
         if (error) throw error;
+        pendingReview = isPendingReview(response);
       } else {
         const { id, created_at, updated_at, ...rest } = normalized;
-        const { error } = await backendClient.from("articles").insert(rest);
+        const response = await backendClient.from("articles").insert(rest);
+        const { error } = response;
         if (error) throw error;
+        pendingReview = isPendingReview(response);
       }
+      return { pendingReview };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["db-articles"] });
       qc.invalidateQueries({ queryKey: ["db-articles-admin"] });
-      toast.success("Article saved!");
+      toast.success(result.pendingReview ? "Article draft submitted for admin review." : "Article saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });

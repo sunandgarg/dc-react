@@ -3,6 +3,10 @@ import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
 
+function isPendingReview(response: { status?: number | null }) {
+  return response.status === 202;
+}
+
 export type ExamImportantDate = { event: string; date: string };
 export type ExamQuestionPaper = { label: string; url: string };
 
@@ -251,6 +255,7 @@ export function useSaveExam() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (exam: Partial<DbExam> & { slug: string; name: string }) => {
+      let pendingReview = false;
       const payload = {
         ...exam,
         important_dates: exam.important_dates ?? [],
@@ -259,19 +264,24 @@ export function useSaveExam() {
       if (exam.id) {
         const { id, created_at, updated_at, ...rest } = payload;
         delete rest.short_id;
-        const { error } = await backendClient.from("exams").update(rest as any).eq("id", id);
+        const response = await backendClient.from("exams").update(rest as any).eq("id", id);
+        const { error } = response;
         if (error) throw error;
+        pendingReview = isPendingReview(response);
       } else {
         const { id, created_at, updated_at, ...rest } = payload;
         delete rest.short_id;
-        const { error } = await backendClient.from("exams").insert(rest as any);
+        const response = await backendClient.from("exams").insert(rest as any);
+        const { error } = response;
         if (error) throw error;
+        pendingReview = isPendingReview(response);
       }
+      return { pendingReview };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["db-exams"] });
       qc.invalidateQueries({ queryKey: ["homepage-category-exams"] });
-      toast.success("Exam saved!");
+      toast.success(result.pendingReview ? "Exam draft submitted for admin review." : "Exam saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });

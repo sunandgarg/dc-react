@@ -30,6 +30,19 @@ test("content role covers editorial resources without destructive access", () =>
   assert.equal(canContentEditorAccess("leads", "view"), false);
 });
 
+test("restricted editor sessions and article edits preserve browser independence", async () => {
+  const authSource = await readFile(new URL("../src/auth.mjs", import.meta.url), "utf8");
+  const editorSource = await readFile(new URL("../src/editor-access.mjs", import.meta.url), "utf8");
+  const clientSource = await readFile(new URL("../../src/integrations/backend/client.ts", import.meta.url), "utf8");
+
+  assert.match(authSource, /data: \{ expires_at: new Date\(Date\.now\(\) \+ REFRESH_TTL_SECONDS \* 1000\) \}/);
+  assert.doesNotMatch(authSource, /claimed\.count === 1 \? issueSession/);
+  assert.match(authSource, /where: \{ token_hash: digest\(refreshToken\), revoked_at: null \}/);
+  assert.match(clientSource, /let refreshPromise: Promise<BackendSession \| null> \| null = null/);
+  assert.match(clientSource, /body: JSON\.stringify\(\{ refresh_token: session\.refresh_token \}\)/);
+  assert.match(editorSource, /resource: "articles", can_view: true, can_create: true, can_edit: true/);
+});
+
 test("non-publishing editors are forced into draft state by the server", () => {
   assert.deepEqual(
     forceDraftPayload("articles", { title: "Draft", status: "Published", is_active: true }),
