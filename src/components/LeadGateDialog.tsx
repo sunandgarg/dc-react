@@ -25,6 +25,9 @@ interface LeadGateDialogProps {
   simple?: boolean;
   interestLabel?: string;
   interestOptions?: string[];
+  interestedCollegeSlug?: string;
+  interestedCourseSlug?: string;
+  interestedExamSlug?: string;
 }
 
 
@@ -40,6 +43,9 @@ export function LeadGateDialog({
   simple = false,
   interestLabel,
   interestOptions,
+  interestedCollegeSlug,
+  interestedCourseSlug,
+  interestedExamSlug,
 }: LeadGateDialogProps) {
   const { user } = useAuth();
   const { data: profile } = useUserProfile();
@@ -89,13 +95,16 @@ export function LeadGateDialog({
           phone: knownByAuth ? (profile?.phone || c.phone) : c.phone,
           city: knownByAuth ? (profile?.city ?? null) : (c.city ?? null),
           state: knownByAuth ? (profile?.state ?? null) : (c.state ?? null),
+          interested_college_slug: interestedCollegeSlug || null,
+          interested_course_slug: interestedCourseSlug || null,
+          interested_exam_slug: interestedExamSlug || null,
         });
         trackLeadConversion({ source: `${source}_silent`, silent: true });
       } catch {/* ignore - UX must not block */}
       onSuccess?.();
       onOpenChange(false);
     })();
-  }, [open, user, profile, source, onOpenChange, onSuccess, forceShow]);
+  }, [open, user, profile, source, onOpenChange, onSuccess, forceShow, interestedCollegeSlug, interestedCourseSlug, interestedExamSlug]);
 
   // Don't render the dialog at all for already-known users (silent save above) - unless forceShow.
   if (!forceShow && open && (
@@ -125,6 +134,9 @@ export function LeadGateDialog({
           simple={simple}
           interestLabel={interestLabel}
           interestOptions={interestOptions}
+          interestedCollegeSlug={interestedCollegeSlug}
+          interestedCourseSlug={interestedCourseSlug}
+          interestedExamSlug={interestedExamSlug}
         />
       </DialogContent>
     </Dialog>

@@ -44,6 +44,7 @@ describe("OTP latency and entity logo regressions", () => {
 
   it("uses contained logo-first images in college comparison and exam cards", () => {
     const collegeDetail = read("src/pages/CollegeDetail.tsx");
+    expect(collegeDetail).not.toContain("enabled: !!collegeRelationSlug && coursesOfficiallyVerified");
     const examCard = read("src/components/ExamCard.tsx");
     expect(collegeDetail).toContain("src={c.logo || c.image}");
     expect(collegeDetail).toContain("aspect-square");

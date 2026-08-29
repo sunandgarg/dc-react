@@ -10,7 +10,7 @@ import { ArrayFieldEditor } from "@/components/ArrayFieldEditor";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { slugify } from "@/lib/slugify";
+import { slugify, syncAutoSlug } from "@/lib/slugify";
 import { UserPicker } from "@/components/admin/UserPicker";
 
 import { CSVTools } from "@/components/CSVTools";
@@ -137,7 +137,7 @@ export default function AdminAuthors() {
                 )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div><label className="text-xs text-muted-foreground">Name *</label><Input value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></div>
+                <div><label className="text-xs text-muted-foreground">Name *</label><Input value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value, slug: !editing.id ? syncAutoSlug(editing.slug, editing.name, e.target.value) : editing.slug })} /></div>
                 <div><label className="text-xs text-muted-foreground">Slug</label><Input value={editing.slug} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} placeholder="auto from name" /></div>
                 <div><label className="text-xs text-muted-foreground">Designation</label><Input value={editing.designation} onChange={(e) => setEditing({ ...editing, designation: e.target.value })} placeholder="Senior Counsellor" /></div>
                 <div><label className="text-xs text-muted-foreground">Email</label><Input value={editing.email} onChange={(e) => setEditing({ ...editing, email: e.target.value })} /></div>

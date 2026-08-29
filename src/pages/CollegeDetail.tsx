@@ -75,7 +75,6 @@ export default function CollegeDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: college, isLoading } = useDbCollege(slug);
-  const coursesOfficiallyVerified = Boolean((college as any)?.official_courses_verified);
   // Relational tables store the base database slug, while canonical public
   // URLs append the numeric short ID (for example, iit-delhi-10001).
   const collegeRelationSlug = college?.slug || parseSlugWithId(slug).slug;
@@ -112,7 +111,7 @@ export default function CollegeDetail() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!collegeRelationSlug && coursesOfficiallyVerified,
+    enabled: !!collegeRelationSlug,
     staleTime: 30 * 60 * 1000,
   });
 
@@ -221,7 +220,7 @@ export default function CollegeDetail() {
 
     return COLLEGE_SECTIONS.filter((section) => has[section.id] ?? true);
   })();
-  const courseGroupCount = coursesOfficiallyVerified ? groupedCollegeFees.length : 0;
+  const courseGroupCount = groupedCollegeFees.length;
   const nextCourseBatchSize = Math.min(5, Math.max(0, courseGroupCount - visibleCourseGroupCount));
 
   return (
@@ -390,10 +389,10 @@ export default function CollegeDetail() {
               title={<>Courses & Fees</>}
               defaultOpen
             >
-              {coursesOfficiallyVerified && college.course_fee_content && (
+              {college.course_fee_content && (
                 <div className="mb-4"><RichText html={college.course_fee_content} /></div>
               )}
-              {coursesOfficiallyVerified && collegeFees.length > 0 && (
+              {collegeFees.length > 0 && (
                 <label className="relative mb-3 block max-w-xs">
                   <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                   <input
@@ -417,7 +416,7 @@ export default function CollegeDetail() {
                     </tr>
                   </thead>
                   <tbody>
-                    {coursesOfficiallyVerified && visibleCourseGroups.length > 0 ? (
+                    {visibleCourseGroups.length > 0 ? (
                       visibleCourseGroups.map((group) => {
                         const expanded = expandedCourseGroups.has(group.key);
                         const feeType = group.feeTypes.length === 1 ? group.feeTypes[0] : null;
@@ -796,7 +795,7 @@ export default function CollegeDetail() {
             </section>
 
             <RelatedCoursesExamsStrip
-              courseSlugs={coursesOfficiallyVerified ? ((college as any).related_courses || []) : []}
+              courseSlugs={(college as any).related_courses || []}
               examSlugs={(college as any).related_exams || []}
               collegeName={college.short_name || college.name}
             />
@@ -842,7 +841,7 @@ export default function CollegeDetail() {
               city={college.city}
               category={college.category}
               sections={COLLEGE_SECTIONS}
-              topCourses={coursesOfficiallyVerified ? feeCourseMetadata.map((c: any) => ({ name: c.name, slug: c.slug })) : []}
+              topCourses={feeCourseMetadata.map((c: any) => ({ name: c.name, slug: c.slug }))}
             />
           </div>
 
@@ -867,7 +866,7 @@ export default function CollegeDetail() {
               </div>
 
               {/* Top Courses */}
-              {coursesOfficiallyVerified && feeCourseMetadata.length > 0 && (
+              {feeCourseMetadata.length > 0 && (
                 <div className="bg-card rounded-2xl border border-border p-4">
                   <h3 data-h className="text-sm font-bold text-foreground mb-3">📚 Top Courses</h3>
                   <div className="space-y-2">

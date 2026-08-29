@@ -2,11 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Save, Search, X, Pencil } from "lucide-react";
+import { Plus, Trash2, Save, Search, X, Pencil, CircleHelp } from "lucide-react";
 import { toast } from "sonner";
 import { CSVTools } from "@/components/CSVTools";
 import { useQueryClient } from "@tanstack/react-query";
 import { COURSE_GROUP_OPTIONS, inferCourseGroup, inferCourseSpecialization } from "@/lib/courseFeeGroups";
+import { syncAutoSlug } from "@/lib/slugify";
 
 interface Props {
   collegeSlug: string;
@@ -27,6 +28,15 @@ interface FeeRow {
 
 const FEE_TYPES = ["Annual", "Semester", "Total Course", "Monthly"];
 
+function FieldLabel({ children, help }: { children: React.ReactNode; help: string }) {
+  return (
+    <label className="mb-1 flex items-center gap-1 text-[11px] text-muted-foreground">
+      {children}
+      <span title={help} aria-label={help} className="cursor-help"><CircleHelp className="h-3 w-3" /></span>
+    </label>
+  );
+}
+
 function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
 }
@@ -38,6 +48,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState<FeeRow | null>(null);
   const [loading, setLoading] = useState(false);
+  const [savedCourseGroups, setSavedCourseGroups] = useState<string[]>([]);
 
   const reload = useCallback(async () => {
     if (!collegeSlug) return;
@@ -53,6 +64,21 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   useEffect(() => {
     (backendClient as any).from("courses").select("slug,name,full_name,category").eq("is_active", true).order("name").limit(500).then(({ data }: any) => setCourses(data || []));
   }, []);
+
+  const loadSavedCourseGroups = useCallback(async () => {
+    const { data } = await (backendClient as any).from("course_fees").select("course_group").limit(5000);
+    const groups = Array.from(new Set((data || [])
+      .map((row: any) => String(row.course_group || "").trim())
+      .filter(Boolean))) as string[];
+    setSavedCourseGroups(groups.sort((a, b) => a.localeCompare(b)));
+  }, []);
+
+  useEffect(() => { void loadSavedCourseGroups(); }, [loadSavedCourseGroups]);
+
+  const courseGroupOptions = useMemo(() => Array.from(new Set([
+    ...COURSE_GROUP_OPTIONS,
+    ...savedCourseGroups,
+  ])), [savedCourseGroups]);
 
   const matches = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -105,7 +131,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
     if (!draft) return;
     const err = validate(draft);
     if (err) { toast.error(err); return; }
-    if (!draft.course_slug) draft.course_slug = draft.course_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    if (!draft.course_slug) draft.course_slug = syncAutoSlug("", "", draft.course_name);
     const payload: any = {
       ...draft,
       course_group: draft.course_group.trim(),
@@ -119,7 +145,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
     if (error) { toast.error(error.message); return; }
     toast.success(isPendingReview(response) ? "Course fee draft submitted for admin review." : "Saved");
     setDraft(null);
-    reload();
+    await Promise.all([reload(), loadSavedCourseGroups()]);
   };
 
   const remove = async (id?: string) => {
@@ -176,42 +202,50 @@ export function CourseFeePicker({ collegeSlug }: Props) {
         <div className="bg-muted/40 rounded-xl border border-border p-3 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label className="text-[11px] text-muted-foreground">Broad Course / Degree *</label>
-              <Input
-                list="course-fee-groups"
-                value={draft.course_group}
-                onChange={e => setDraft({ ...draft, course_group: e.target.value })}
-                placeholder="B.E. / B.Tech"
-                className="rounded-lg h-9 text-sm"
-              />
-              <datalist id="course-fee-groups">
-                {COURSE_GROUP_OPTIONS.map(group => <option key={group} value={group} />)}
-              </datalist>
+              <FieldLabel help="The parent qualification used to group specializations on the college page, such as B.E. / B.Tech.">Broad Course / Degree *</FieldLabel>
+              <select
+                value={courseGroupOptions.includes(draft.course_group) ? draft.course_group : "__other__"}
+                onChange={e => setDraft({ ...draft, course_group: e.target.value === "__other__" ? "" : e.target.value })}
+                className="h-9 w-full rounded-lg border border-border bg-card px-2 text-sm"
+              >
+                <option value="" disabled>Select a degree</option>
+                {courseGroupOptions.map(group => <option key={group} value={group}>{group}</option>)}
+                <option value="__other__">Other - add a new degree</option>
+              </select>
+              {!courseGroupOptions.includes(draft.course_group) && (
+                <Input
+                  autoFocus
+                  value={draft.course_group}
+                  onChange={e => setDraft({ ...draft, course_group: e.target.value })}
+                  placeholder="Enter the other degree name"
+                  className="mt-2 h-9 rounded-lg text-sm"
+                />
+              )}
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground">Specialization</label>
+              <FieldLabel help="The branch or major within the broad degree, such as Computer Science and Engineering.">Specialization</FieldLabel>
               <Input value={draft.specialization} onChange={e => setDraft({ ...draft, specialization: e.target.value })} placeholder="Computer Science and Engineering" className="rounded-lg h-9 text-sm" />
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground">Directory Course Name *</label>
-              <Input value={draft.course_name} onChange={e => setDraft({ ...draft, course_name: e.target.value })} className="rounded-lg h-9 text-sm" />
+              <FieldLabel help="The exact public course name shown to students and used to match the course directory.">Directory Course Name *</FieldLabel>
+              <Input value={draft.course_name} onChange={e => setDraft({ ...draft, course_name: e.target.value, course_slug: syncAutoSlug(draft.course_slug, draft.course_name, e.target.value) })} className="rounded-lg h-9 text-sm" />
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground">Course Slug</label>
+              <FieldLabel help="The URL-safe course identifier. It follows the course name automatically until you edit it manually.">Course Slug</FieldLabel>
               <Input value={draft.course_slug} onChange={e => setDraft({ ...draft, course_slug: e.target.value })} placeholder="auto-generated" className="rounded-lg h-9 text-sm" />
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground">Fee Amount (₹) *</label>
+              <FieldLabel help="Enter only the numeric rupee amount for the selected fee type; do not include currency symbols.">Fee Amount (₹) *</FieldLabel>
               <Input type="number" min={0} step="1" value={draft.fee_amount} onChange={e => setDraft({ ...draft, fee_amount: parseFloat(e.target.value) || 0 })} className="rounded-lg h-9 text-sm" />
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground">Fee Type *</label>
+              <FieldLabel help="Defines whether the amount applies annually, per semester, monthly, or to the entire course.">Fee Type *</FieldLabel>
               <select value={draft.fee_type} onChange={e => setDraft({ ...draft, fee_type: e.target.value })} className="w-full h-9 rounded-lg border border-border bg-card px-2 text-sm">
                 {FEE_TYPES.map(t => <option key={t}>{t}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground">Year (YYYY)</label>
+              <FieldLabel help="The four-digit admission or fee session year for which this amount is valid.">Year (YYYY)</FieldLabel>
               <Input value={draft.year} onChange={e => setDraft({ ...draft, year: e.target.value })} placeholder={String(new Date().getFullYear())} maxLength={4} className="rounded-lg h-9 text-sm" />
             </div>
           </div>

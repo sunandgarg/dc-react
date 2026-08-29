@@ -1,8 +1,8 @@
 import { useState, forwardRef } from "react";
-import { X, FileText, Download, Phone, List, MessageCircle } from "lucide-react";
+import { X, FileText, Download, Phone, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
-import { ApplyButton } from "@/components/ApplyButton";
+import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { downloadCourseFeePDF } from "@/lib/courseFeePdf";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -18,6 +18,7 @@ export const MobileBottomBar = forwardRef<HTMLDivElement, MobileBottomBarProps>(
   const [showAd, setShowAd] = useState(true);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [showTOC, setShowTOC] = useState(false);
+  const [collegeLeadAction, setCollegeLeadAction] = useState<"brochure" | "fees" | null>(null);
 
   const scrollToSection = (id: string) => {
     setShowTOC(false);
@@ -64,30 +65,19 @@ export const MobileBottomBar = forwardRef<HTMLDivElement, MobileBottomBarProps>(
         <div className="bg-background border-t border-border px-3 py-2 flex items-center gap-2">
           {type === "college" && (
             <>
-              <ApplyButton
-                collegeSlug={slug || ""}
-                collegeName={collegeName || ""}
+              <Button
                 variant="outline"
                 className="flex-1 h-10 rounded-xl text-sm"
-                label="Brochure"
-                icon={<FileText className="w-4 h-4 mr-2" />}
-                applyMode={brochureUrl ? "lead_then_link" : "lead"}
-                applyUrl={brochureUrl || null}
-                formTitle={`Download Brochure - ${collegeName}`}
-                formSubtitle="Get the official brochure on email & WhatsApp. Quick form, instant download."
-                submitLabel="Download Brochure"
-              />
-              <ApplyButton
-                collegeSlug={slug || ""}
-                collegeName={collegeName || ""}
+                onClick={() => setCollegeLeadAction("brochure")}
+              >
+                <FileText className="w-4 h-4 mr-2" /> Brochure
+              </Button>
+              <Button
                 className="flex-1 h-10 rounded-xl text-sm bg-accent text-accent-foreground hover:bg-accent/90"
-                label="Course & Fee"
-                icon={<Download className="w-4 h-4 mr-2" />}
-                onSuccessAction={() => downloadCourseFeePDF({ collegeSlug: slug || "", collegeName: collegeName || "College" })}
-                formTitle={`Course & Fee - ${collegeName}`}
-                formSubtitle="Get the full course list & fees PDF. Submit details to download."
-                submitLabel="Get Course & Fee PDF"
-              />
+                onClick={() => setCollegeLeadAction("fees")}
+              >
+                <Download className="w-4 h-4 mr-2" /> Course & Fee
+              </Button>
             </>
           )}
           {type === "course" && (
@@ -181,6 +171,26 @@ export const MobileBottomBar = forwardRef<HTMLDivElement, MobileBottomBarProps>(
           </div>
         </DialogContent>
       </Dialog>
+
+      <LeadGateDialog
+        open={collegeLeadAction !== null}
+        onOpenChange={(open) => { if (!open) setCollegeLeadAction(null); }}
+        title={collegeLeadAction === "brochure" ? `Download Brochure - ${collegeName}` : `Course & Fees - ${collegeName}`}
+        subtitle="Share your contact details first, then add your course and location preferences."
+        source={`mobile_college_${collegeLeadAction || "details"}_${slug || ""}`}
+        interestedCollegeSlug={slug}
+        simple
+        onSuccess={() => {
+          const action = collegeLeadAction;
+          setCollegeLeadAction(null);
+          if (action === "brochure" && brochureUrl) {
+            const url = /^(https?:|\/)/i.test(brochureUrl) ? brochureUrl : `https://${brochureUrl}`;
+            window.location.assign(url);
+          } else if (action === "fees") {
+            void downloadCourseFeePDF({ collegeSlug: slug || "", collegeName: collegeName || "College" });
+          }
+        }}
+      />
 
       {/* Spacer to prevent content being hidden behind fixed bar */}
       <div className="h-24 lg:hidden" />

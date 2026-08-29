@@ -32,6 +32,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AdminPageSizePicker } from "@/components/admin/AdminPageSizePicker";
 import { useDraftState } from "@/hooks/useDraftState";
 import { OfficialDataFillButton } from "@/components/admin/OfficialDataFillButton";
+import { syncAutoSlug } from "@/lib/slugify";
 
 const CATEGORIES = ["Engineering", "Medical", "Management", "Law", "Design", "Science", "Commerce", "Arts", "Pharmacy"];
 const LEVELS = ["Undergraduate", "Postgraduate", "Diploma", "Doctoral"];
@@ -103,7 +104,12 @@ export default function AdminCourses() {
     saveCourse.mutate(editing as any, { onSuccess: () => setEditing(null) });
   };
 
-  const update = (field: string, value: any) => setEditing((prev) => prev ? { ...prev, [field]: value } : prev);
+  const update = (field: string, value: any) => setEditing((prev) => {
+    if (!prev) return prev;
+    const next = { ...prev, [field]: value };
+    if (field === "name" && !(prev as any).id) next.slug = syncAutoSlug(prev.slug, prev.name, value);
+    return next;
+  });
   const openEditor = (value: Partial<DbCourse>) => {
     const next = { ...value };
     setEditingBaseline(JSON.stringify(next));

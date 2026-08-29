@@ -31,6 +31,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AdminPageSizePicker } from "@/components/admin/AdminPageSizePicker";
 import { useDraftState } from "@/hooks/useDraftState";
 import { OfficialDataFillButton } from "@/components/admin/OfficialDataFillButton";
+import { syncAutoSlug } from "@/lib/slugify";
 
 const CATEGORIES = EXAM_CATEGORIES;
 const LEVELS = EXAM_LEVELS;
@@ -132,7 +133,12 @@ export default function AdminExams() {
     saveExam.mutate(editing as any, { onSuccess: () => setEditing(null) });
   };
 
-  const update = (field: string, value: any) => setEditing((prev) => prev ? { ...prev, [field]: value } : prev);
+  const update = (field: string, value: any) => setEditing((prev) => {
+    if (!prev) return prev;
+    const next = { ...prev, [field]: value };
+    if (field === "name" && !(prev as any).id) next.slug = syncAutoSlug(prev.slug, prev.name, value);
+    return next;
+  });
   const openEditor = (value: Partial<DbExam>) => {
     const next = { ...value };
     setEditingBaseline(JSON.stringify(next));

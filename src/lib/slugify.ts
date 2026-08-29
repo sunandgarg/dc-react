@@ -22,6 +22,13 @@ export function slugify(input: string): string {
     .slice(0, 60);
 }
 
+/** Keep a slug in sync with its source until an editor manually changes it. */
+export function syncAutoSlug(currentSlug: string | null | undefined, previousSource: string | null | undefined, nextSource: string): string {
+  const current = (currentSlug || "").trim();
+  const previousAutoSlug = slugify(previousSource || "");
+  return !current || current === previousAutoSlug ? slugify(nextSource) : current;
+}
+
 /** Slug + 4-char random suffix (base36). Falls back to "item" if name empty. */
 export function readableSlug(name: string): string {
   const base = slugify(name) || "item";

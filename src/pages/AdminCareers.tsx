@@ -20,6 +20,7 @@ import { AuthorPicker } from "@/components/admin/AuthorPicker";
 import { EntitySlugMultiSearch } from "@/components/admin/EntitySlugMultiSearch";
 import { UploadOrUrlField } from "@/components/UploadOrUrlField";
 import { useDraftState } from "@/hooks/useDraftState";
+import { syncAutoSlug } from "@/lib/slugify";
 
 const blank = {
   slug: "", name: "", domain: "", short_description: "", description: "",
@@ -145,7 +146,7 @@ export default function AdminCareers() {
               <Button variant="ghost" size="sm" onClick={() => setEditing(null)}><X className="w-4 h-4" /></Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div><Label>Name *</Label><Input value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })} /></div>
+              <div><Label>Name *</Label><Input value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value, slug: !editing.id ? syncAutoSlug(editing.slug, editing.name, e.target.value) : editing.slug })} /></div>
               <div><Label>Slug *</Label><Input value={editing.slug} onChange={e => setEditing({ ...editing, slug: e.target.value })} /></div>
               <div><Label>Domain</Label><Input value={editing.domain} onChange={e => setEditing({ ...editing, domain: e.target.value })} placeholder="Technology, Finance..." /></div>
               <div><Label>Icon (emoji)</Label><Input value={editing.icon_emoji} onChange={e => setEditing({ ...editing, icon_emoji: e.target.value })} maxLength={4} /></div>

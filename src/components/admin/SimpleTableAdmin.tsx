@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { CSVTools } from "@/components/CSVTools";
 import { RowDataIO } from "@/components/admin/RowDataIO";
 import type { ImagePresetKey } from "@/components/ImageHint";
+import { syncAutoSlug } from "@/lib/slugify";
 
 export type FieldType = "text" | "number" | "textarea" | "boolean" | "author" | "combobox" | "image";
 export interface FieldDef {
@@ -52,6 +53,16 @@ export function SimpleTableAdmin({ table, fields, titleKey = "name", subtitleKey
   const [editing, setEditing] = useState<any | null>(null);
   const orderColumn = orderBy?.column;
   const orderAscending = orderBy?.ascending ?? true;
+  const slugSourceKey = fields.some((field) => field.key === "title") ? "title" : fields.some((field) => field.key === "name") ? "name" : null;
+
+  const updateField = (key: string, value: any) => setEditing((current: any) => {
+    if (!current) return current;
+    const next = { ...current, [key]: value };
+    if (!current.id && slugSourceKey === key && fields.some((field) => field.key === "slug")) {
+      next.slug = syncAutoSlug(current.slug, current[key], value);
+    }
+    return next;
+  });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -131,32 +142,32 @@ export function SimpleTableAdmin({ table, fields, titleKey = "name", subtitleKey
                   <RichTextEditor
                     bare
                     value={editing[f.key] ?? ""}
-                    onChange={(v) => setEditing({ ...editing, [f.key]: v })}
+                    onChange={(v) => updateField(f.key, v)}
                     placeholder={f.placeholder}
                     rows={4}
                   />
                 ) : f.type === "boolean" ? (
                   <select
                     value={editing[f.key] ? "true" : "false"}
-                    onChange={e => setEditing({ ...editing, [f.key]: e.target.value === "true" })}
+                    onChange={e => updateField(f.key, e.target.value === "true")}
                     className="w-full h-10 rounded-xl border border-input bg-background px-3"
                   >
                     <option value="true">Yes</option>
                     <option value="false">No</option>
                   </select>
                 ) : f.type === "author" ? (
-                  <AuthorPicker value={editing[f.key]} onChange={(v) => setEditing({ ...editing, [f.key]: v })} />
+                  <AuthorPicker value={editing[f.key]} onChange={(v) => updateField(f.key, v)} />
                 ) : f.type === "combobox" ? (
                   <ComboboxAdd
                     value={editing[f.key] ?? ""}
-                    onChange={(v) => setEditing({ ...editing, [f.key]: v })}
+                    onChange={(v) => updateField(f.key, v)}
                     options={f.options || []}
                     placeholder={f.placeholder || "Search or type to add…"}
                   />
                 ) : f.type === "image" ? (
                   <ImageUploadField
                     value={editing[f.key] ?? ""}
-                    onChange={(v) => setEditing({ ...editing, [f.key]: v })}
+                    onChange={(v) => updateField(f.key, v)}
                     folder={f.folder}
                     preset={f.preset}
                   />
@@ -164,7 +175,7 @@ export function SimpleTableAdmin({ table, fields, titleKey = "name", subtitleKey
                   <Input
                     type={f.type === "number" ? "number" : "text"}
                     value={editing[f.key] ?? ""}
-                    onChange={e => setEditing({ ...editing, [f.key]: f.type === "number" ? (parseFloat(e.target.value) || 0) : e.target.value })}
+                    onChange={e => updateField(f.key, f.type === "number" ? (parseFloat(e.target.value) || 0) : e.target.value)}
                     placeholder={f.placeholder}
                     className="rounded-xl"
                   />

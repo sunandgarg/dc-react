@@ -35,6 +35,7 @@ import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { Link } from "react-router-dom";
 import { useDraftState } from "@/hooks/useDraftState";
+import { syncAutoSlug } from "@/lib/slugify";
 
 const STATUSES = ["Draft", "Published"];
 const VERTICALS = ["Engineering", "Medical", "Management", "Law", "Design", "Science", "General"];
@@ -173,7 +174,12 @@ export default function AdminArticles() {
     });
   };
 
-  const update = (field: string, value: any) => setEditing((prev) => prev ? { ...prev, [field]: value } : prev);
+  const update = (field: string, value: any) => setEditing((prev) => {
+    if (!prev) return prev;
+    const next = { ...prev, [field]: value };
+    if (field === "title" && !(prev as any).id) next.slug = syncAutoSlug(prev.slug, prev.title, value);
+    return next;
+  });
 
   return (
     <AdminLayout title="Articles Manager">
