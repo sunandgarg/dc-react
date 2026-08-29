@@ -6,9 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Download, Upload, Users, TrendingUp, Phone, Mail, Calendar as CalendarIcon, MapPin, Star, Flame, ChevronRight, ChevronDown, ChevronLeft, ChevronsLeft, ChevronsRight, Layers, FileText, MessageCircle, ArrowUpDown, ArrowUp, ArrowDown, Filter, ShieldCheck, Zap, Trophy, GraduationCap, Copy, ExternalLink, GitMerge, CheckSquare, Square, X as XIcon, Tag, Trash2, Maximize2, Minimize2 } from "lucide-react";
-import { format, subDays, isAfter } from "date-fns";
+import { differenceInCalendarDays, format, subDays, isAfter } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLeadMask } from "@/hooks/useLeadMask";
 import { SearchableSelect } from "@/components/SearchableSelect";
@@ -22,6 +21,7 @@ import { MergeLeadsDialog } from "@/components/leads/MergeLeadsDialog";
 import { LeadFilterPresets } from "@/components/leads/LeadFilterPresets";
 import { Sparkles } from "lucide-react";
 import { leadConsentLabel } from "@/lib/leadConsent";
+import { groupLeadsByIdentity, type LeadIdentityGroup } from "@/lib/leadIdentity";
 
 /** Compact labeled chip wrapper - CRM-style floating-label field. */
 function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
@@ -32,6 +32,8 @@ function FilterField({ label, children }: { label: string; children: React.React
     </div>
   );
 }
+
+type LeadGroup = LeadIdentityGroup<any>;
 
 /**
  * AdminLeads - Interactive dashboard for managing inbound leads with:
@@ -80,12 +82,16 @@ export default function AdminLeads() {
 
   const deleteLeads = async (ids: string[], label: string) => {
     const uniqueIds = Array.from(new Set(ids)).filter(Boolean);
-    if (!uniqueIds.length || !confirm(`Delete ${uniqueIds.length} ${label}? This cannot be undone.`)) return;
+    if (!uniqueIds.length || !confirm(`Delete ${label} (${uniqueIds.length} submission${uniqueIds.length === 1 ? "" : "s"})? This cannot be undone.`)) return;
     setDeleteBusy(true);
-    const { error } = await (backendClient as any).from("leads").delete().in("id", uniqueIds);
+    let deleteError: any = null;
+    for (let index = 0; index < uniqueIds.length; index += 200) {
+      const { error } = await (backendClient as any).from("leads").delete().in("id", uniqueIds.slice(index, index + 200));
+      if (error) { deleteError = error; break; }
+    }
     setDeleteBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success(`Deleted ${uniqueIds.length} ${label}`);
+    if (deleteError) return toast.error(deleteError.message);
+    toast.success(`Deleted ${uniqueIds.length} lead submission${uniqueIds.length === 1 ? "" : "s"}`);
     setSelectedIds(new Set());
     await queryClient.invalidateQueries({ queryKey: ["admin-leads"] });
   };
@@ -94,7 +100,7 @@ export default function AdminLeads() {
   // Default view is intentionally minimal (8 essentials). Admins can re-enable extras
   // via the column customizer; preferences persist per-admin in localStorage.
   const ALL_COLUMNS: LeadColumnDef[] = [
-    { key: "instances", label: "Instances", defaultVisible: true },
+    { key: "instances", label: "History", defaultVisible: true },
     { key: "name", label: "Name", defaultVisible: true },
     { key: "phone", label: "Mobile", defaultVisible: true },
     { key: "email", label: "Email", defaultVisible: true },
@@ -175,41 +181,13 @@ export default function AdminLeads() {
   const collegeSlugs = useMemo(() => Array.from(new Set(leads.map((l: any) => l.interested_college_slug).filter(Boolean))) as string[], [leads]);
   const categories = useMemo(() => Array.from(new Set(leads.map((l: any) => l.source_category).filter(Boolean))) as string[], [leads]);
 
-  // Join submissions when either normalized phone OR normalized email matches.
-  // Union-find also handles bridge cases where a later row connects two earlier identities.
-  const identityKeys = useMemo(() => {
-    const parent = leads.map((_: any, index: number) => index);
-    const find = (index: number): number => parent[index] === index ? index : (parent[index] = find(parent[index]));
-    const join = (left: number, right: number) => {
-      const a = find(left); const b = find(right);
-      if (a !== b) parent[b] = a;
-    };
-    const phones = new Map<string, number>();
-    const emails = new Map<string, number>();
-    leads.forEach((lead: any, index: number) => {
-      const phone = String(lead.phone || "").replace(/\D/g, "").slice(-10);
-      const email = String(lead.email || "").trim().toLowerCase();
-      if (phone.length === 10) {
-        if (phones.has(phone)) join(index, phones.get(phone)!);
-        else phones.set(phone, index);
-      }
-      if (email) {
-        if (emails.has(email)) join(index, emails.get(email)!);
-        else emails.set(email, index);
-      }
-    });
-    return new Map(leads.map((lead: any, index: number) => [lead.id, `person:${leads[find(index)]?.id || lead.id}`]));
-  }, [leads]);
-  const dupKey = useCallback((lead: any) => identityKeys.get(lead.id) || `id:${lead.id}`, [identityKeys]);
-  const dupCounts = useMemo(() => {
-    const m = new Map<string, number>();
-    leads.forEach((l: any) => { const k = dupKey(l); if (k) m.set(k, (m.get(k) || 0) + 1); });
-    return m;
-  }, [leads, dupKey]);
+  const allLeadGroups = useMemo<LeadGroup[]>(() => groupLeadsByIdentity(leads as any[]), [leads]);
+  const identityKeyById = useMemo(() => new Map(allLeadGroups.flatMap((group) => group.instances.map((lead) => [lead.id, group.key]))), [allLeadGroups]);
+  const dupKey = useCallback((lead: any) => identityKeyById.get(lead.id) || `id:${lead.id}`, [identityKeyById]);
+  const dupCounts = useMemo(() => new Map(allLeadGroups.map((group) => [group.key, group.instances.length])), [allLeadGroups]);
   const [dupOnly, setDupOnly] = useState(false);
-  const [groupDup, setGroupDup] = useState(true);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const dupTotal = useMemo(() => Array.from(dupCounts.values()).filter((v) => v > 1).reduce((a, b) => a + b, 0), [dupCounts]);
+  const dupTotal = useMemo(() => allLeadGroups.filter((group) => group.instances.length > 1).length, [allLeadGroups]);
 
   // Tier color by repeat count (2 → 10+)
   const dupTier = (n: number) => {
@@ -261,11 +239,11 @@ export default function AdminLeads() {
   // Reset to page 1 whenever filters change
   useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, sourceFilter, cityFilter, collegeFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, sortBy, sortDir, pageSize]);
 
-  // Apply sort
-  const sortedFiltered = useMemo(() => {
-    const arr = [...filtered];
-    arr.sort((a: any, b: any) => {
-      const av = a[sortBy]; const bv = b[sortBy];
+  const filteredLeadGroups = useMemo<LeadGroup[]>(() => {
+    const matchingIds = new Set(filtered.map((lead: any) => lead.id));
+    const groups = allLeadGroups.filter((group) => group.instances.some((lead) => matchingIds.has(lead.id)));
+    groups.sort((a, b) => {
+      const av = a.primary?.[sortBy]; const bv = b.primary?.[sortBy];
       if (av == null && bv == null) return 0;
       if (av == null) return 1;
       if (bv == null) return -1;
@@ -274,39 +252,42 @@ export default function AdminLeads() {
       }
       return String(av).localeCompare(String(bv)) * (sortDir === "asc" ? 1 : -1);
     });
-    return arr;
-  }, [filtered, sortBy, sortDir]);
+    return groups;
+  }, [allLeadGroups, filtered, sortBy, sortDir]);
+  const filteredSubmissionIds = useMemo(() => filteredLeadGroups.flatMap((group) => group.instances.map((lead) => lead.id)), [filteredLeadGroups]);
+  const selectedPersonCount = useMemo(() => allLeadGroups.filter((group) => group.instances.some((lead) => selectedIds.has(lead.id))).length, [allLeadGroups, selectedIds]);
 
 
   // Stats
   const stats = useMemo(() => {
     const now = new Date();
-    const today = leads.filter((l: any) => l.created_at && isAfter(new Date(l.created_at), subDays(now, 1))).length;
-    const week = leads.filter((l: any) => l.created_at && isAfter(new Date(l.created_at), subDays(now, 7))).length;
-    const yesterday = leads.filter((l: any) => {
+    const latestLeads = allLeadGroups.map((group) => group.primary);
+    const today = latestLeads.filter((l: any) => l.created_at && isAfter(new Date(l.created_at), subDays(now, 1))).length;
+    const week = latestLeads.filter((l: any) => l.created_at && isAfter(new Date(l.created_at), subDays(now, 7))).length;
+    const yesterday = latestLeads.filter((l: any) => {
       if (!l.created_at) return false;
       const d = new Date(l.created_at);
       return isAfter(d, subDays(now, 2)) && !isAfter(d, subDays(now, 1));
     }).length;
-    const withPhone = leads.filter((l: any) => l.phone).length;
-    const verified = leads.filter((l: any) => l.otp_verified).length;
-    const online = leads.filter((l: any) => (l.program_mode || "regular") === "online").length;
-    const verifiedPct = leads.length ? Math.round((verified / leads.length) * 100) : 0;
+    const withPhone = allLeadGroups.filter((group) => group.instances.some((lead) => lead.phone)).length;
+    const verified = allLeadGroups.filter((group) => group.instances.some((lead) => lead.otp_verified)).length;
+    const online = latestLeads.filter((l: any) => (l.program_mode || "regular") === "online").length;
+    const verifiedPct = allLeadGroups.length ? Math.round((verified / allLeadGroups.length) * 100) : 0;
     const avgPerDay = Math.round(week / 7);
     const dayDelta = yesterday > 0 ? Math.round(((today - yesterday) / yesterday) * 100) : (today > 0 ? 100 : 0);
-    return { total: leads.length, today, week, withPhone, verified, verifiedPct, online, avgPerDay, dayDelta };
-  }, [leads]);
+    return { total: allLeadGroups.length, today, week, withPhone, verified, verifiedPct, online, avgPerDay, dayDelta };
+  }, [allLeadGroups]);
 
   // Top sources & cities
   const topSources = useMemo(() => {
     const map = new Map<string, number>();
-    leads.forEach((l: any) => map.set(l.source || "unknown", (map.get(l.source || "unknown") || 0) + 1));
+    allLeadGroups.forEach(({ primary: l }) => map.set(l.source || "unknown", (map.get(l.source || "unknown") || 0) + 1));
     return Array.from(map.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  }, [leads]);
+  }, [allLeadGroups]);
 
   const exportCSV = () => {
-    const headers = ["Name", "Phone", "Email", "City", "State", "Source", "Mode", "OTP Verified", "Consent", "Query", "Created"];
-    const rows = filtered.map((l: any) => [l.name, l.phone, l.email, l.city, l.state, l.source, (l.program_mode || "regular"), l.otp_verified ? "Yes" : "No", leadConsentLabel(l), (l.initial_query || "").replace(/[\r\n,]+/g, " "), l.created_at]);
+    const headers = ["Name", "Phone", "Email", "City", "State", "Source", "Mode", "OTP Verified", "Consent", "Query", "Latest Created", "Submission Count"];
+    const rows = filteredLeadGroups.map(({ primary: l, instances }) => [l.name, l.phone, l.email, l.city, l.state, l.source, (l.program_mode || "regular"), l.otp_verified ? "Yes" : "No", leadConsentLabel(l), (l.initial_query || "").replace(/[\r\n,]+/g, " "), l.created_at, instances.length]);
     const csv = [headers, ...rows].map(r => r.map(v => `"${(v ?? "").toString().replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -510,8 +491,7 @@ export default function AdminLeads() {
             </FilterField>
             <div className="flex items-center gap-3 px-3 rounded-lg border border-border bg-card">
               <Layers className="w-3.5 h-3.5 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground flex-1">Group duplicates</span>
-              <Switch checked={groupDup} onCheckedChange={setGroupDup} />
+              <span className="text-xs text-muted-foreground flex-1">Email/mobile identity matching is always on</span>
             </div>
           </div>
         )}
@@ -542,7 +522,7 @@ export default function AdminLeads() {
             )}
           </div>
           <p className="text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">{filtered.length.toLocaleString()}</span> of {leads.length.toLocaleString()} leads
+            <span className="font-semibold text-foreground">{filteredLeadGroups.length.toLocaleString()}</span> of {allLeadGroups.length.toLocaleString()} unique leads
             <span className="mx-2 text-border">·</span>
             <span className="font-semibold text-emerald-600">{stats.today}</span> last 24h
             <span className="mx-2 text-border">·</span>
@@ -590,9 +570,9 @@ export default function AdminLeads() {
       </details>
 
       <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border bg-card p-2.5">
-        <span className="text-xs text-muted-foreground">{selectedIds.size} selected</span>
-        <Button size="sm" variant="destructive" disabled={deleteBusy || !selectedIds.size} onClick={() => deleteLeads(Array.from(selectedIds), "selected lead(s)")} className="gap-1.5"><Trash2 className="h-3.5 w-3.5" /> Delete selected</Button>
-        <Button size="sm" variant="outline" disabled={deleteBusy || !filtered.length} onClick={() => deleteLeads(filtered.map((lead: any) => lead.id), "filtered lead(s)")} className="gap-1.5 text-destructive"><Trash2 className="h-3.5 w-3.5" /> Delete all filtered ({filtered.length})</Button>
+        <span className="text-xs text-muted-foreground">{selectedPersonCount} people · {selectedIds.size} submissions selected</span>
+        <Button size="sm" variant="destructive" disabled={deleteBusy || !selectedIds.size} onClick={() => deleteLeads(Array.from(selectedIds), `${selectedPersonCount} selected lead${selectedPersonCount === 1 ? "" : "s"}`)} className="gap-1.5"><Trash2 className="h-3.5 w-3.5" /> Delete selected</Button>
+        <Button size="sm" variant="outline" disabled={deleteBusy || !filteredLeadGroups.length} onClick={() => deleteLeads(filteredSubmissionIds, `${filteredLeadGroups.length} filtered lead${filteredLeadGroups.length === 1 ? "" : "s"}`)} className="gap-1.5 text-destructive"><Trash2 className="h-3.5 w-3.5" /> Delete all filtered ({filteredLeadGroups.length})</Button>
       </div>
 
       {isLoading ? (
@@ -611,22 +591,27 @@ export default function AdminLeads() {
                     ? instances.reduce((min, it) => !min || new Date(it.created_at) < new Date(min) ? it.created_at : min, null as string | null)
                     : lead.created_at;
                   switch (key) {
-                    case "instances":
+                    case "instances": {
+                      const latestGapDays = instances.length > 1 && instances[0]?.created_at && instances[1]?.created_at
+                        ? differenceInCalendarDays(new Date(instances[0].created_at), new Date(instances[1].created_at))
+                        : 0;
                       return (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 whitespace-nowrap">
 
                           {dn > 1 && (
-                            <button onClick={() => toggle(rowKey)} className="w-5 h-5 rounded hover:bg-muted flex items-center justify-center flex-shrink-0" title={isOpen ? "Collapse" : "Expand"}>
+                            <button onClick={(event) => { event.stopPropagation(); toggle(rowKey); }} className="w-5 h-5 rounded hover:bg-muted flex items-center justify-center flex-shrink-0" title={isOpen ? "Collapse" : "Expand"}>
                               {isOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                             </button>
                           )}
                           {dn > 1 ? (
-                            <Badge className={`text-[10px] border ${t?.chip || "bg-muted"}`}><Flame className="w-3 h-3 mr-1" />{dn}×</Badge>
+                            <Badge className={`text-[10px] border ${t?.chip || "bg-muted"}`}><Flame className="w-3 h-3 mr-1" />{dn} submissions</Badge>
                           ) : (
                             <span className="text-xs text-muted-foreground">1</span>
                           )}
+                          {latestGapDays >= 10 && <Badge variant="outline" className="text-[10px] text-blue-700 border-blue-200">Returned after {latestGapDays}d</Badge>}
                         </div>
                       );
+                    }
                     case "name":
                       return <span className="font-semibold text-primary hover:underline cursor-pointer">{maskName(lead.name) || "-"}</span>;
                     case "phone":
@@ -706,7 +691,7 @@ export default function AdminLeads() {
                             <Copy className="w-3.5 h-3.5 text-muted-foreground" />
                           </button>
                           <button
-                            onClick={() => deleteLeads([lead.id], "lead")}
+                            onClick={() => deleteLeads(instances.map((instance) => instance.id), `this lead and its full history`)}
                             disabled={deleteBusy}
                             className="w-7 h-7 rounded hover:bg-destructive/10 flex items-center justify-center" title="Delete lead"
                           >
@@ -720,28 +705,7 @@ export default function AdminLeads() {
                   }
                 };
 
-                // Group rows when groupDup is on, otherwise show flat
-                const groups = new Map<string, any[]>();
-                sortedFiltered.forEach((l: any) => {
-                  const k = dupKey(l) || `id:${l.id}`;
-                  if (!groups.has(k)) groups.set(k, []);
-                  groups.get(k)!.push(l);
-                });
-                const rows: { key: string; primary: any; instances: any[] }[] = [];
-                if (groupDup) {
-                  groups.forEach((arr, key) => {
-                    arr.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-                    rows.push({ key, primary: arr[0], instances: arr });
-                  });
-                  const order = new Map<string, number>();
-                  sortedFiltered.forEach((l: any, i) => {
-                    const k = dupKey(l) || `id:${l.id}`;
-                    if (!order.has(k)) order.set(k, i);
-                  });
-                  rows.sort((a, b) => (order.get(a.key)! - order.get(b.key)!));
-                } else {
-                  sortedFiltered.forEach((l: any) => rows.push({ key: l.id, primary: l, instances: [l] }));
-                }
+                const rows = filteredLeadGroups;
                 const toggle = (k: string) => {
                   setExpanded((prev) => {
                     const next = new Set(prev);
@@ -754,7 +718,7 @@ export default function AdminLeads() {
                 const totalPages = Math.max(1, Math.ceil(rows.length / effectivePageSize));
                 const safePage = Math.min(page, totalPages);
                 const visibleRows = rows.slice((safePage - 1) * effectivePageSize, safePage * effectivePageSize);
-                const visibleIds = visibleRows.map((r) => r.primary.id);
+                const visibleIds = visibleRows.flatMap((row) => row.instances.map((lead) => lead.id));
                 const allOnPageSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
                 const toggleAllOnPage = () => {
                   const next = new Set(selectedIds);
@@ -762,10 +726,10 @@ export default function AdminLeads() {
                   else visibleIds.forEach((id) => next.add(id));
                   setSelectedIds(next);
                 };
-                const toggleRowSel = (id: string) => {
+                const toggleRowSel = (ids: string[]) => {
                   const next = new Set(selectedIds);
-                  if (next.has(id)) next.delete(id);
-                  else next.add(id);
+                  const allSelected = ids.every((id) => next.has(id));
+                  ids.forEach((id) => allSelected ? next.delete(id) : next.add(id));
                   setSelectedIds(next);
                 };
 
@@ -819,6 +783,9 @@ export default function AdminLeads() {
                         const dn = instances.length;
                         const t = dupTier(dn);
                         const isOpen = expanded.has(key);
+                        const instanceIds = instances.map((instance) => instance.id);
+                        const selectedInGroup = instanceIds.filter((id) => selectedIds.has(id)).length;
+                        const groupChecked = selectedInGroup === instanceIds.length ? true : selectedInGroup > 0 ? "indeterminate" : false;
                         const head = (
                           <tr
                             key={key}
@@ -829,7 +796,7 @@ export default function AdminLeads() {
                               <div className={`w-1 h-10 ${t ? "bg-rose-500" : "bg-primary/60"}`} />
                             </td>
                             <td className="w-10 px-2" onClick={(e) => e.stopPropagation()}>
-                              <Checkbox checked={selectedIds.has(lead.id)} onCheckedChange={() => toggleRowSel(lead.id)} aria-label="Select row" />
+                              <Checkbox checked={groupChecked} onCheckedChange={() => toggleRowSel(instanceIds)} aria-label={`Select all submissions for ${lead.name || "lead"}`} />
                             </td>
                             {visibleCols.map((col) => (
                               <td key={col.key} className="px-3 py-2 align-middle" onClick={(e) => { if (col.key === "actions") e.stopPropagation(); }}>
@@ -846,11 +813,34 @@ export default function AdminLeads() {
                             <td></td>
                             <td colSpan={visibleCols.length} className="p-3">
 
-                              <div className="text-[11px] font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><FileText className="w-3 h-3" /> Submission history · oldest first</div>
+                              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                  <div className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5"><FileText className="w-3 h-3" /> Submission history · latest first</div>
+                                  <p className="mt-0.5 text-[10px] text-muted-foreground">Uncheck submissions you want to keep, then delete the selected history.</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[11px] text-muted-foreground">{selectedInGroup} of {dn} selected</span>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    className="h-7 gap-1.5 text-[11px]"
+                                    disabled={deleteBusy || selectedInGroup === 0}
+                                    onClick={() => deleteLeads(instanceIds.filter((id) => selectedIds.has(id)), `selected history for ${lead.name || "this lead"}`)}
+                                  >
+                                    <Trash2 className="h-3 w-3" /> Delete selected history
+                                  </Button>
+                                </div>
+                              </div>
                               <div className="space-y-2">
                                 {instances.map((it, index) => (
                                   <div key={it.id} className="bg-card border border-border rounded-lg p-2 grid md:grid-cols-4 gap-2 text-[11px]">
-                                    <div className="md:col-span-4 flex items-center justify-between"><strong>#{index + 1} · {maskName(it.name) || "Unknown"}</strong><span className="text-muted-foreground">{it.created_at ? format(new Date(it.created_at), "MMM d, yyyy HH:mm") : "-"}</span></div>
+                                    <div className="md:col-span-4 flex items-center justify-between gap-3">
+                                      <div className="flex items-center gap-2">
+                                        <Checkbox checked={selectedIds.has(it.id)} onCheckedChange={() => toggleRowSel([it.id])} aria-label={`Select submission ${index + 1}`} />
+                                        <strong>{index === 0 ? "Latest" : `Previous ${index}`} · {maskName(it.name) || "Unknown"}</strong>
+                                      </div>
+                                      <span className="text-muted-foreground">{it.created_at ? format(new Date(it.created_at), "MMM d, yyyy HH:mm") : "-"}</span>
+                                    </div>
                                     <div><span className="text-muted-foreground">Phone:</span> {it.phone ? `+91 ${mask ? maskPhone(it.phone) : String(it.phone).replace(/\D/g, "").slice(-10)}` : "-"}</div>
                                     <div><span className="text-muted-foreground">Email:</span> {it.email ? (mask ? maskEmail(it.email) : it.email) : "-"}</div>
                                     <div><span className="text-muted-foreground">Course:</span> {it.current_situation || it.interested_course_slug || "-"}</div>
@@ -873,21 +863,21 @@ export default function AdminLeads() {
               })()}
             </table>
           </div>
-          {filtered.length === 0 && (
+          {filteredLeadGroups.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">No leads match your filters.</div>
           )}
 
           {/* Bottom bar - true pagination */}
           {(() => {
-            const effectivePageSize = pageSize === -1 ? Math.max(1, filtered.length) : pageSize;
-            const totalPages = Math.max(1, Math.ceil(filtered.length / effectivePageSize));
+            const effectivePageSize = pageSize === -1 ? Math.max(1, filteredLeadGroups.length) : pageSize;
+            const totalPages = Math.max(1, Math.ceil(filteredLeadGroups.length / effectivePageSize));
             const safePage = Math.min(page, totalPages);
-            const start = filtered.length === 0 ? 0 : (safePage - 1) * effectivePageSize + 1;
-            const end = Math.min(safePage * effectivePageSize, filtered.length);
+            const start = filteredLeadGroups.length === 0 ? 0 : (safePage - 1) * effectivePageSize + 1;
+            const end = Math.min(safePage * effectivePageSize, filteredLeadGroups.length);
             return (
               <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-border bg-muted/30">
                 <div className="text-xs text-muted-foreground">
-                  Showing <span className="font-semibold text-foreground">{start}-{end}</span> of <span className="font-semibold text-foreground">{filtered.length.toLocaleString()}</span> leads
+                  Showing <span className="font-semibold text-foreground">{start}-{end}</span> of <span className="font-semibold text-foreground">{filteredLeadGroups.length.toLocaleString()}</span> unique leads
                 </div>
                 <div className="flex items-center gap-1">
                   <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setPage(1)} disabled={safePage <= 1}><ChevronsLeft className="w-3.5 h-3.5" /></Button>
