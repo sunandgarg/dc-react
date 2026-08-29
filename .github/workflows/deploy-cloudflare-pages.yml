@@ -48,7 +48,10 @@ jobs:
         env:
           DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}
         run: |
-          test -n "$DEPLOY_HOOK_URL"
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "No deploy hook is configured; relying on the connected GitHub production branch."
+            exit 0
+          fi
           curl --fail --silent --show-error --request POST "$DEPLOY_HOOK_URL" \
             --output /tmp/cloudflare-deployment.json
           jq -e '.success == true or .id != null or .deployment_id != null' /tmp/cloudflare-deployment.json >/dev/null
