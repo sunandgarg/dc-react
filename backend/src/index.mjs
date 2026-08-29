@@ -89,6 +89,10 @@ async function authorizeRest(table, request) {
   const identity = await resolveIdentity(request);
   if (!identity) throw new HttpError(401, "AUTH_REQUIRED", "A valid user session is required");
   if (await isAdmin(identity.id)) return { request, actorUserId: null };
+  const ownerColumn = ownedTables.get(table);
+  if (request.method === "DELETE" && !ownerColumn) {
+    throw new HttpError(403, "ADMIN_REQUIRED", "Only an administrator can permanently delete website data");
+  }
 
   if (["GET", "HEAD"].includes(request.method) && ["user_roles", "user_permissions"].includes(table)) {
     const url = new URL(request.url);
@@ -96,7 +100,6 @@ async function authorizeRest(table, request) {
     return { request: new Request(url, request), actorUserId: null };
   }
 
-  const ownerColumn = ownedTables.get(table);
   if (!ownerColumn) {
     const action = request.method === "POST"
       ? (String(request.headers.get("prefer") || "").includes("resolution=merge-duplicates") ? "edit" : "create")

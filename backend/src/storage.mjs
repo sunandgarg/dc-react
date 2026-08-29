@@ -132,6 +132,9 @@ async function authorizeStorage(request, route) {
 
   const paths = await requestedPaths(request, route);
   const ownsEveryPath = paths.length > 0 && paths.every((path) => ownsPath(identity, route.bucket, path));
+  if (request.method === "DELETE" && !ownsEveryPath) {
+    throw Object.assign(new Error("Only an administrator can permanently delete website files"), { status: 403, code: "ADMIN_REQUIRED" });
+  }
   const isUpload = ["POST", "PUT"].includes(request.method) && route.modifier === null;
   const contentType = String(request.headers.get("content-type") || "").split(";", 1)[0].trim().toLowerCase();
   if (route.bucket === USER_DOCUMENT_BUCKET && ownsEveryPath) {

@@ -220,6 +220,13 @@ async function ensureCourseFeeGroupingSchema(report) {
   }
 }
 
+async function ensureLeadAutomationAuditSchema(report) {
+  if (!await columnInfo("lp_push_logs", "matched_rule_ids")) {
+    await prisma.$executeRawUnsafe("ALTER TABLE `lp_push_logs` ADD COLUMN `matched_rule_ids` JSON NULL AFTER `multi_flow_id`");
+    report.createdRuntimeColumns.push("lp_push_logs.matched_rule_ids");
+  }
+}
+
 async function makeReferenceIndexes(report) {
   for (const line of postgresSchemaReference.split("\n")) {
     const match = line.match(/^CREATE INDEX (\w+) ON public\.(\w+) USING btree \((.*)\);$/);
@@ -389,6 +396,7 @@ const report = { createdRuntimeColumns: [], createdUnique: [], createdReferenceI
 try {
   await ensureHomepageExploreSchema(report);
   await ensureCourseFeeGroupingSchema(report);
+  await ensureLeadAutomationAuditSchema(report);
   for (const [table, ...columns] of uniqueIndexes) await makeUniqueIndex(table, columns, report);
   await makeReferenceIndexes(report);
   await makeForeignKeyIndexes(report);

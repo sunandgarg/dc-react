@@ -1,5 +1,6 @@
 import { apiBaseUrl, functionUrl, restUrl } from "@/lib/backendMode";
 import { normalizeJsonRequestBody } from "@/lib/typography";
+import { requestProtectedAction } from "@/lib/protectedActions";
 
 export type BackendUser = {
   id: string;
@@ -224,6 +225,14 @@ class BackendQuery implements PromiseLike<ClientResult<any>> {
   throwOnError() { this.shouldThrow = true; return this; }
 
   private async execute(): Promise<ClientResult<any>> {
+    if (this.operation === "delete") {
+      const allowed = await requestProtectedAction({ kind: "delete", label: `${this.table} records` });
+      if (!allowed) {
+        const error = makeError({ code: "ACTION_CANCELLED", message: "Deletion was cancelled or requires administrator access" });
+        if (this.shouldThrow) throw error;
+        return { data: null, error, count: null, status: 0, statusText: "Cancelled" };
+      }
+    }
     const url = new URL(restUrl(this.table));
     if (this.columns) url.searchParams.set("select", this.columns);
     this.filters.forEach(([column, expression]) => url.searchParams.append(column, expression));
@@ -385,6 +394,8 @@ const storage = {
         return requestJson(`${resolvedApiUrl}/storage/v1/object/list/${bucketPath}`, { method: "POST", body: JSON.stringify({ prefix, limit: options.limit || 100, offset: options.offset || 0, sortBy: options.sortBy }) });
       },
       async remove(paths: string[]) {
+        const allowed = await requestProtectedAction({ kind: "delete", label: `${paths.length} stored ${paths.length === 1 ? "file" : "files"}`, count: paths.length });
+        if (!allowed) return { data: null, error: makeError({ code: "ACTION_CANCELLED", message: "Deletion was cancelled or requires administrator access" }) };
         return requestJson(`${resolvedApiUrl}/storage/v1/object/${bucketPath}`, { method: "DELETE", body: JSON.stringify({ prefixes: paths }) });
       },
       getPublicUrl(path: string) {
@@ -394,6 +405,8 @@ const storage = {
         return requestJson(`${resolvedApiUrl}/storage/v1/object/sign/${bucketPath}/${encodePath(path)}`, { method: "POST", body: JSON.stringify({ expiresIn }) });
       },
       async download(path: string) {
+        const allowed = await requestProtectedAction({ kind: "download", label: path.split("/").pop() || "this file" });
+        if (!allowed) return { data: null, error: makeError({ code: "ACTION_CANCELLED", message: "Download was cancelled or requires administrator access" }) };
         const headers = await authorizedHeaders();
         const response = await fetch(`${resolvedApiUrl}/storage/v1/object/authenticated/${bucketPath}/${encodePath(path)}`, { headers });
         return response.ok ? { data: await response.blob(), error: null } : { data: null, error: makeError(await parseResponse(response), response) };

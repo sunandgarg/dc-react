@@ -2030,6 +2030,7 @@ model lp_push_logs {
   rule_id         String?  @db.Char(36)
   flow_id         String?  @db.Char(36)
   multi_flow_id   String?  @db.Char(36)
+  matched_rule_ids Json?
   status          String   @db.LongText
   http_status     Int?
   request_payload Json?

@@ -301,7 +301,6 @@ export default function AdminMarketingAutomation() {
     refetchRules();
   };
   const removeRule = async (id: string) => {
-    if (!confirm("Delete this routing rule?")) return;
     await backendClient.from("lp_automation_rules" as any).delete().eq("id", id);
     refetchRules();
     toast.success("Deleted");
@@ -330,6 +329,9 @@ export default function AdminMarketingAutomation() {
             <GuideStep n="1" title="Select leads" text="Pick course, city, state, source, or campaign from your database." />
             <GuideStep n="2" title="Select universities" text="Choose all partner universities that should receive matching leads." />
             <GuideStep n="3" title="Set sent values" text="For each university, choose normal setup, lead field, or fixed value." />
+          </div>
+          <div className="relative mt-4 rounded-lg border border-white/25 bg-black/15 px-4 py-3 text-sm text-white/95">
+            Rules are additive. One lead can trigger every matching active rule. Target universities from those rules are combined, and the same lead is sent only once to a university selected by more than one rule.
           </div>
           <div className="relative grid grid-cols-2 md:grid-cols-4 gap-3 mt-7">
             <KPI icon={Target} label="Active Rules" value={stats.activeRules} />

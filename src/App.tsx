@@ -10,6 +10,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { HomeMobileBottomNav } from "@/components/HomeMobileBottomNav";
 import { GlobalInternalAds } from "@/components/GlobalInternalAds";
+import { AdminActionGuard } from "@/components/AdminActionGuard";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ScrollLockGuard } from "@/components/ScrollLockGuard";
@@ -306,6 +307,7 @@ const App = () => (
     <BootstrapHydrator />
 
     <AuthProvider>
+      <AdminActionGuard />
       <CompareProvider>
         <TooltipProvider>
           <Toaster />

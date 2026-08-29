@@ -13017,6 +13017,14 @@
         "default": null,
         "foreignKey": null
       },
+      "matched_rule_ids": {
+        "type": "Json",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "jsonb",
+        "default": null,
+        "foreignKey": null
+      },
       "status": {
         "type": "String",
         "nullable": false,

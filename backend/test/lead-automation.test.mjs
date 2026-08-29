@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildPartnerRequest, getPrefillOverrides, isLeadReadyForAutomation, ruleMatches } from "../src/lead-automation.mjs";
+import { buildAutomationPlan, buildPartnerRequest, getPrefillOverrides, isLeadReadyForAutomation, ruleMatches } from "../src/lead-automation.mjs";
 import { retryDelayMs } from "../src/lead-outbox.mjs";
 
 test("matches lead automation conditions with all and any modes", () => {
@@ -20,6 +20,20 @@ test("matches punctuation-normalized courses and generic specialization fields",
 test("accepts a complete routing lead when its course is stored in the course slug", () => {
   assert.equal(isLeadReadyForAutomation({ city: "New Delhi", state: "Delhi", interested_course_slug: "btech" }), true);
   assert.equal(isLeadReadyForAutomation({ city: "New Delhi", state: "Delhi" }), false);
+});
+
+test("runs every matching automation and sends a university only once", () => {
+  const lead = { city: "Dehradun", state: "Uttarakhand", interested_course_slug: "B.Tech" };
+  const rules = [
+    { id: "course", priority: 10, match_courses: ["btech"], match_cities: [], match_states: [], match_sources: [], match_ctas: [], match_all: true, university_ids: ["u1", "u2"] },
+    { id: "city", priority: 20, match_courses: [], match_cities: ["dehradun"], match_states: [], match_sources: [], match_ctas: [], match_all: true, university_ids: ["u2", "u3"] },
+    { id: "other", priority: 30, match_courses: ["mba"], match_cities: [], match_states: [], match_sources: [], match_ctas: [], match_all: true, university_ids: ["u4"] },
+  ];
+  const plan = buildAutomationPlan(rules, lead);
+  assert.deepEqual(plan.matchedRules.map((rule) => rule.id), ["course", "city"]);
+  assert.deepEqual(plan.deliveries.map((delivery) => delivery.universityId), ["u1", "u2", "u3"]);
+  assert.deepEqual(plan.deliveries.find((delivery) => delivery.universityId === "u2").rules.map((rule) => rule.id), ["course", "city"]);
+  assert.equal(plan.deliveries.find((delivery) => delivery.universityId === "u2").primaryRule.id, "course");
 });
 
 test("maps a lead to university API field names", () => {
