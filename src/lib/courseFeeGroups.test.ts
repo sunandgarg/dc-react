@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatFeeRange, groupCollegeFees, inferCourseGroup, inferCourseSpecialization } from "./courseFeeGroups";
+import { formatFeeRange, groupCollegeFees, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "./courseFeeGroups";
 
 describe("course fee grouping", () => {
   it("groups specializations under a broad degree and calculates its fee range", () => {
@@ -35,5 +35,29 @@ describe("course fee grouping", () => {
       { course_group: "B.E. / B.Tech", specialization: "Mechanical", fee_amount: 600000 },
     ]);
     expect(formatFeeRange(group)).toBe("₹6 L");
+  });
+
+  it("groups legacy Amity-style rows even when broad course fields are blank", () => {
+    const groups = groupCollegeFees([
+      { course_name: "B.Sc. (Hons) - Mathematics", fee_amount: 200000 },
+      { course_name: "B.Sc. (Hons) - Biotechnology", fee_amount: 350000 },
+      { course_name: "B.Des in Fashion Design", fee_amount: 600000 },
+      { course_name: "Bachelor of Interior Design", fee_amount: 500000 },
+      { course_name: "B.El.Ed. (Bachelor of Elementary Education)", fee_amount: 250000 },
+    ]);
+
+    expect(groups.map((group) => group.label)).toEqual(["B.Des", "B.Ed", "B.Sc."]);
+    expect(groups.find((group) => group.label === "B.Des")?.specializationCount).toBe(2);
+    expect(groups.find((group) => group.label === "B.Sc.")?.specializationCount).toBe(2);
+  });
+
+  it("normalizes writer-entered course casing while preserving degree acronyms", () => {
+    expect(normalizeCourseDisplayName("btech in computer science and engineering")).toBe("B.Tech in Computer Science and Engineering");
+    expect(normalizeCourseDisplayName("mba international business")).toBe("MBA International Business");
+  });
+
+  it("repairs legacy rows that copied the full course name into specialization", () => {
+    expect(inferCourseSpecialization({ course_name: "MCA", specialization: "MCA" })).toBe("General");
+    expect(inferCourseSpecialization({ course_name: "B.Sc. (Hons) - Mathematics", specialization: "B.Sc. (Hons) - Mathematics" })).toBe("Mathematics");
   });
 });

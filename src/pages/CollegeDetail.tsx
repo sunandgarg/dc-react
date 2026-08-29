@@ -462,7 +462,7 @@ export default function CollegeDetail() {
                                         ? null
                                         : Number(entry.fee_amount);
                                       return (
-                                        <div key={entry.id || `${entry.course_slug}-${index}`} className="grid grid-cols-[minmax(0,1fr)_8rem_9rem_2rem] items-center gap-3 py-3">
+                                        <div key={entry.id || `${entry.course_slug}-${index}`} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 py-3 sm:grid-cols-[minmax(12rem,1fr)_8rem_9rem_2rem] sm:items-center">
                                           <div className="min-w-0">
                                             {linked ? (
                                               <Link to={`/courses/${linked.slug}`} className="font-medium text-foreground hover:text-primary hover:underline">
@@ -473,13 +473,13 @@ export default function CollegeDetail() {
                                             )}
                                             {entry.year && <div className="text-[11px] text-muted-foreground">Fee year: {entry.year}</div>}
                                           </div>
-                                          <span className="text-xs text-muted-foreground">{linked?.duration || "Duration varies"}</span>
-                                          <span className="text-xs font-medium text-foreground">
+                                          <span className="col-start-1 text-xs text-muted-foreground sm:col-start-auto">{linked?.duration || "Duration varies"}</span>
+                                          <span className="col-start-1 text-xs font-medium text-foreground sm:col-start-auto">
                                             {formatIndianFee(amount !== null && Number.isFinite(amount) ? amount : null)}
                                             {entry.fee_type && <span className="block font-normal text-muted-foreground">{entry.fee_type}</span>}
                                           </span>
                                           {linked ? (
-                                            <Link to={`/courses/${linked.slug}`} aria-label={`Open ${entry.course_name || inferCourseSpecialization(entry)}`}>
+                                            <Link className="col-start-2 row-span-3 row-start-1 self-center sm:col-start-auto sm:row-span-1 sm:row-start-auto" to={`/courses/${linked.slug}`} aria-label={`Open ${entry.course_name || inferCourseSpecialization(entry)}`}>
                                               <ExternalLink className="h-3.5 w-3.5 text-primary" />
                                             </Link>
                                           ) : <span />}

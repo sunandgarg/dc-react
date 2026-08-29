@@ -6,8 +6,9 @@ import { Plus, Trash2, Save, Search, X, Pencil, CircleHelp } from "lucide-react"
 import { toast } from "sonner";
 import { CSVTools } from "@/components/CSVTools";
 import { useQueryClient } from "@tanstack/react-query";
-import { COURSE_GROUP_OPTIONS, inferCourseGroup, inferCourseSpecialization } from "@/lib/courseFeeGroups";
+import { COURSE_GROUP_OPTIONS, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "@/lib/courseFeeGroups";
 import { syncAutoSlug } from "@/lib/slugify";
+import { ComboboxAdd } from "@/components/admin/ComboboxAdd";
 
 interface Props {
   collegeSlug: string;
@@ -46,6 +47,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   const [rows, setRows] = useState<FeeRow[]>([]);
   const [courses, setCourses] = useState<CourseLite[]>([]);
   const [search, setSearch] = useState("");
+  const [courseSearchOpen, setCourseSearchOpen] = useState(false);
   const [draft, setDraft] = useState<FeeRow | null>(null);
   const [loading, setLoading] = useState(false);
   const [savedCourseGroups, setSavedCourseGroups] = useState<string[]>([]);
@@ -70,7 +72,8 @@ export function CourseFeePicker({ collegeSlug }: Props) {
     const groups = Array.from(new Set((data || [])
       .map((row: any) => String(row.course_group || "").trim())
       .filter(Boolean))) as string[];
-    setSavedCourseGroups(groups.sort((a, b) => a.localeCompare(b)));
+    const normalized = groups.map((group) => inferCourseGroup({ course_group: group }));
+    setSavedCourseGroups(Array.from(new Set(normalized)).sort((a, b) => a.localeCompare(b)));
   }, []);
 
   useEffect(() => { void loadSavedCourseGroups(); }, [loadSavedCourseGroups]);
@@ -82,7 +85,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
 
   const matches = useMemo(() => {
     const q = search.toLowerCase().trim();
-    if (!q) return [];
+    if (!q) return courses.slice(0, 8);
     return courses
       .filter(c => c.name.toLowerCase().includes(q) || c.full_name.toLowerCase().includes(q) || c.slug.includes(q))
       .slice(0, 8);
@@ -90,6 +93,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
 
   const addFromCourse = (c: CourseLite) => {
     setSearch("");
+    setCourseSearchOpen(false);
     const selected = { course_slug: c.slug, course_name: c.name };
     setDraft({
       college_slug: collegeSlug,
@@ -131,11 +135,15 @@ export function CourseFeePicker({ collegeSlug }: Props) {
     if (!draft) return;
     const err = validate(draft);
     if (err) { toast.error(err); return; }
-    if (!draft.course_slug) draft.course_slug = syncAutoSlug("", "", draft.course_name);
+    const normalizedName = normalizeCourseDisplayName(draft.course_name);
+    const normalizedGroup = inferCourseGroup({ course_group: draft.course_group });
+    const normalizedSpecialization = draft.specialization ? normalizeCourseDisplayName(draft.specialization) : "";
+    if (!draft.course_slug) draft.course_slug = syncAutoSlug("", "", normalizedName);
     const payload: any = {
       ...draft,
-      course_group: draft.course_group.trim(),
-      specialization: draft.specialization.trim() || null,
+      course_name: normalizedName,
+      course_group: normalizedGroup,
+      specialization: normalizedSpecialization || null,
       fee_amount: Number(draft.fee_amount),
     };
     const response = draft.id
@@ -159,15 +167,21 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   return (
     <div className="space-y-3">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        {courseSearchOpen && <div className="fixed inset-0 z-20" onClick={() => setCourseSearchOpen(false)} />}
+        <Search className="pointer-events-none absolute left-3 top-1/2 z-40 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onFocus={() => setCourseSearchOpen(true)}
+          onClick={() => setCourseSearchOpen(true)}
+          onChange={e => { setSearch(e.target.value); setCourseSearchOpen(true); }}
           placeholder="Search course directory (e.g. B.Tech, MBA)…"
-          className="rounded-lg pl-10 h-9 text-sm"
+          className="relative z-30 rounded-lg pl-10 h-9 text-sm"
         />
-        {matches.length > 0 && (
-          <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        {courseSearchOpen && (
+          <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            <div className="px-3 py-1.5 text-[10px] font-medium uppercase text-muted-foreground">
+              {search.trim() ? `${matches.length} matching courses` : "Course directory"}
+            </div>
             {matches.map(c => (
               <button
                 type="button"
@@ -179,6 +193,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
                 <span className="text-[10px] text-muted-foreground">{c.category}</span>
               </button>
             ))}
+            {matches.length === 0 && <div className="px-3 py-3 text-xs text-muted-foreground">No directory course found. Use Add manual below.</div>}
           </div>
         )}
       </div>
@@ -203,32 +218,20 @@ export function CourseFeePicker({ collegeSlug }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <FieldLabel help="The parent qualification used to group specializations on the college page, such as B.E. / B.Tech.">Broad Course / Degree *</FieldLabel>
-              <select
-                value={courseGroupOptions.includes(draft.course_group) ? draft.course_group : "__other__"}
-                onChange={e => setDraft({ ...draft, course_group: e.target.value === "__other__" ? "" : e.target.value })}
-                className="h-9 w-full rounded-lg border border-border bg-card px-2 text-sm"
-              >
-                <option value="" disabled>Select a degree</option>
-                {courseGroupOptions.map(group => <option key={group} value={group}>{group}</option>)}
-                <option value="__other__">Other - add a new degree</option>
-              </select>
-              {!courseGroupOptions.includes(draft.course_group) && (
-                <Input
-                  autoFocus
-                  value={draft.course_group}
-                  onChange={e => setDraft({ ...draft, course_group: e.target.value })}
-                  placeholder="Enter the other degree name"
-                  className="mt-2 h-9 rounded-lg text-sm"
-                />
-              )}
+              <ComboboxAdd
+                value={draft.course_group}
+                onChange={(value) => setDraft({ ...draft, course_group: inferCourseGroup({ course_group: value }) })}
+                options={courseGroupOptions}
+                placeholder="Select or add a degree"
+              />
             </div>
             <div>
               <FieldLabel help="The branch or major within the broad degree, such as Computer Science and Engineering.">Specialization</FieldLabel>
-              <Input value={draft.specialization} onChange={e => setDraft({ ...draft, specialization: e.target.value })} placeholder="Computer Science and Engineering" className="rounded-lg h-9 text-sm" />
+              <Input value={draft.specialization} onChange={e => setDraft({ ...draft, specialization: e.target.value })} onBlur={() => setDraft({ ...draft, specialization: normalizeCourseDisplayName(draft.specialization) })} placeholder="Computer Science and Engineering" className="rounded-lg h-9 text-sm" />
             </div>
             <div>
               <FieldLabel help="The exact public course name shown to students and used to match the course directory.">Directory Course Name *</FieldLabel>
-              <Input value={draft.course_name} onChange={e => setDraft({ ...draft, course_name: e.target.value, course_slug: syncAutoSlug(draft.course_slug, draft.course_name, e.target.value) })} className="rounded-lg h-9 text-sm" />
+              <Input value={draft.course_name} onChange={e => setDraft({ ...draft, course_name: e.target.value, course_slug: syncAutoSlug(draft.course_slug, draft.course_name, e.target.value) })} onBlur={() => setDraft({ ...draft, course_name: normalizeCourseDisplayName(draft.course_name) })} className="rounded-lg h-9 text-sm" />
             </div>
             <div>
               <FieldLabel help="The URL-safe course identifier. It follows the course name automatically until you edit it manually.">Course Slug</FieldLabel>

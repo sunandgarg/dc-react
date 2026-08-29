@@ -40,55 +40,128 @@ export const COURSE_GROUP_OPTIONS = [
   "LL.M.",
   "B.Arch",
   "M.Arch",
+  "B.Des",
+  "M.Des",
+  "B.Ed",
+  "M.Ed",
+  "B.P.Ed",
+  "M.P.Ed",
+  "BFA",
+  "MFA",
+  "BPA",
+  "MPA",
+  "BPT",
+  "MPT",
+  "BHM / BHMCT",
+  "B.Voc",
+  "BSW",
+  "MSW",
   "Ph.D.",
   "Diploma",
 ];
 
 const GROUP_RULES: Array<[RegExp, string]> = [
-  [/\b(b\.?\s*e\.?|b\.?\s*tech|bachelor of (engineering|technology))\b/i, "B.E. / B.Tech"],
-  [/\b(m\.?\s*e\.?|m\.?\s*tech|master of (engineering|technology))\b/i, "M.E. / M.Tech"],
+  [/\b(b ?e|b ?tech|bachelor of (engineering|technology))\b/i, "B.E. / B.Tech"],
+  [/\b(m ?e|m ?tech|master of (engineering|technology))\b/i, "M.E. / M.Tech"],
   [/\b(mba|pgdm|master of business administration)\b/i, "MBA / PGDM"],
   [/\b(bba|bachelor of business administration)\b/i, "BBA"],
   [/\b(bca|bachelor of computer applications?)\b/i, "BCA"],
   [/\b(mca|master of computer applications?)\b/i, "MCA"],
-  [/\b(b\.?\s*com|bachelor of commerce)\b/i, "B.Com"],
-  [/\b(m\.?\s*com|master of commerce)\b/i, "M.Com"],
-  [/\b(b\.?\s*sc|bachelor of science)\b/i, "B.Sc."],
-  [/\b(m\.?\s*sc|master of science)\b/i, "M.Sc."],
+  [/\b(b ?com|bachelor of commerce)\b/i, "B.Com"],
+  [/\b(m ?com|master of commerce)\b/i, "M.Com"],
+  [/\b(b ?sc|bachelor of science)\b/i, "B.Sc."],
+  [/\b(m ?sc|master of science)\b/i, "M.Sc."],
   [/\b(mbbs|bachelor of medicine)\b/i, "MBBS"],
   [/\b(bds|bachelor of dental surgery)\b/i, "BDS"],
-  [/\b(b\.?\s*pharm|bachelor of pharmacy)\b/i, "B.Pharm"],
-  [/\b(m\.?\s*pharm|master of pharmacy)\b/i, "M.Pharm"],
-  [/\b(ll\.?\s*b|bachelor of laws?)\b/i, "LL.B."],
-  [/\b(ll\.?\s*m|master of laws?)\b/i, "LL.M."],
-  [/\b(b\.?\s*arch|bachelor of architecture)\b/i, "B.Arch"],
-  [/\b(m\.?\s*arch|master of architecture)\b/i, "M.Arch"],
-  [/\b(ph\.?\s*d|doctor of philosophy)\b/i, "Ph.D."],
+  [/\b(b ?pharm|bachelor of pharmacy)\b/i, "B.Pharm"],
+  [/\b(m ?pharm|master of pharmacy)\b/i, "M.Pharm"],
+  [/\b(ll ?b|bachelor of laws?)\b/i, "LL.B."],
+  [/\b(ll ?m|master of laws?)\b/i, "LL.M."],
+  [/\b(b ?arch|bachelor of architecture)\b/i, "B.Arch"],
+  [/\b(m ?arch|master of architecture)\b/i, "M.Arch"],
+  [/\b(b ?des|bachelor of design)\b/i, "B.Des"],
+  [/\b(m ?des|master of design)\b/i, "M.Des"],
+  [/\b(b ?el ?ed|bachelor of elementary education)\b/i, "B.Ed"],
+  [/\b(b ?ed|bachelor of education)\b/i, "B.Ed"],
+  [/\b(m ?ed|master of education)\b/i, "M.Ed"],
+  [/\b(b ?p ?ed|bachelor of physical education( and sports)?)\b/i, "B.P.Ed"],
+  [/\b(m ?p ?ed|master of physical education)\b/i, "M.P.Ed"],
+  [/\bbachelor of interior design\b/i, "B.Des"],
+  [/\b(bfa|bachelor of fine arts?)\b/i, "BFA"],
+  [/\b(mfa|master of fine arts?)\b/i, "MFA"],
+  [/\b(bpa|bachelor of performing arts?)\b/i, "BPA"],
+  [/\b(mpa|master of performing arts?)\b/i, "MPA"],
+  [/\b(bpt|bachelor of physiotherapy)\b/i, "BPT"],
+  [/\b(mpt|master of physiotherapy)\b/i, "MPT"],
+  [/\b(bhm|bhmct|bachelor of hotel management)\b/i, "BHM / BHMCT"],
+  [/\b(b ?voc|bachelor of vocation)\b/i, "B.Voc"],
+  [/\b(bsw|bachelor of social work)\b/i, "BSW"],
+  [/\b(msw|master of social work)\b/i, "MSW"],
+  [/\b(ph ?d|doctor of philosophy)\b/i, "Ph.D."],
   [/\b(ba|bachelor of arts)\b/i, "BA"],
   [/\b(ma|master of arts)\b/i, "MA"],
   [/\bdiploma\b/i, "Diploma"],
 ];
 
+const normalizeDegreeSearch = (value: string) => value
+  .replace(/\./g, "")
+  .replace(/[()/_:-]+/g, " ")
+  .replace(/\s+/g, " ")
+  .trim();
+
+const COURSE_TOKEN_CASE: Record<string, string> = {
+  ba: "BA", ma: "MA", bba: "BBA", mba: "MBA", pgdm: "PGDM", bca: "BCA", mca: "MCA",
+  bcom: "B.Com", mcom: "M.Com", bsc: "B.Sc.", msc: "M.Sc.", btech: "B.Tech", mtech: "M.Tech",
+  be: "B.E.", me: "M.E.", mbbs: "MBBS", bds: "BDS", bpharm: "B.Pharm", mpharm: "M.Pharm",
+  llb: "LL.B.", llm: "LL.M.", barch: "B.Arch", march: "M.Arch", bdes: "B.Des", mdes: "M.Des",
+  bed: "B.Ed", beled: "B.El.Ed", med: "M.Ed", bped: "B.P.Ed", mped: "M.P.Ed", bfa: "BFA", mfa: "MFA",
+  bpa: "BPA", mpa: "MPA", bpt: "BPT", mpt: "MPT", bhm: "BHM",
+  bhmct: "BHMCT", bvoc: "B.Voc", bsw: "BSW", msw: "MSW", phd: "Ph.D.", cse: "CSE", ai: "AI",
+  ml: "ML", it: "IT", ug: "UG", pg: "PG",
+};
+const LOWERCASE_WORDS = new Set(["and", "of", "in", "for", "with", "to", "at", "by"]);
+
+export function normalizeCourseDisplayName(value: string) {
+  const words = value.trim().replace(/\s+/g, " ").split(" ");
+  return words.map((word, index) => {
+    const edge = word.match(/^([^a-z0-9]*)(.*?)([^a-z0-9]*)$/i);
+    const prefix = edge?.[1] || "";
+    const core = edge?.[2] || word;
+    const suffix = edge?.[3] || "";
+    const token = core.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (COURSE_TOKEN_CASE[token]) {
+      const canonical = COURSE_TOKEN_CASE[token];
+      return `${prefix}${canonical}${canonical.endsWith(".") ? suffix.replace(/\./g, "") : suffix}`;
+    }
+    if (index > 0 && LOWERCASE_WORDS.has(core.toLowerCase())) return `${prefix}${core.toLowerCase()}${suffix}`;
+    if (/^[A-Z0-9]{2,}$/.test(core)) return `${prefix}${core}${suffix}`;
+    return `${prefix}${core.charAt(0).toUpperCase()}${core.slice(1).toLowerCase()}${suffix}`;
+  }).join(" ");
+}
+
 const canonicalGroup = (value: string) => {
   const direct = COURSE_GROUP_OPTIONS.find((option) => option.toLowerCase() === value.trim().toLowerCase());
   if (direct) return direct;
-  return GROUP_RULES.find(([pattern]) => pattern.test(value))?.[1] || value.trim();
+  return GROUP_RULES.find(([pattern]) => pattern.test(normalizeDegreeSearch(value)))?.[1] || normalizeCourseDisplayName(value);
 };
 
 export function inferCourseGroup(row: CollegeFeeRow) {
   if (row.course_group?.trim()) return canonicalGroup(row.course_group);
-  const source = `${row.course_name || ""} ${row.course_slug || ""}`.replaceAll("-", " ");
-  return GROUP_RULES.find(([pattern]) => pattern.test(source))?.[1] || row.course_name?.trim() || "Other programs";
+  const source = normalizeDegreeSearch(`${row.course_name || ""} ${row.course_slug || ""}`.replaceAll("-", " "));
+  return GROUP_RULES.find(([pattern]) => pattern.test(source))?.[1]
+    || (row.course_name?.trim() ? normalizeCourseDisplayName(row.course_name) : "Other Programs");
 }
 
 export function inferCourseSpecialization(row: CollegeFeeRow) {
-  if (row.specialization?.trim()) return row.specialization.trim();
   const name = row.course_name?.trim() || "Program details";
+  if (row.specialization?.trim() && row.specialization.trim().toLowerCase() !== name.toLowerCase()) {
+    return normalizeCourseDisplayName(row.specialization);
+  }
   const group = inferCourseGroup(row);
-  const withoutGroup = name
-    .replace(/\b(b\.?\s*e\.?|b\.?\s*tech|bachelor of (engineering|technology))\b/ig, "")
-    .replace(/\b(m\.?\s*e\.?|m\.?\s*tech|master of (engineering|technology))\b/ig, "")
-    .replace(/\b(mba|pgdm|master of business administration)\b/ig, "")
+  const normalizedName = normalizeDegreeSearch(name);
+  const matchedRule = GROUP_RULES.find(([pattern, label]) => label === group && pattern.test(normalizedName));
+  const withoutGroup = (matchedRule ? normalizedName.replace(matchedRule[0], "") : normalizedName)
+    .replace(/^\s*(hons|honours)\s*/i, "")
     .replace(/^\s*in\s+/i, "")
     .replace(/^\s*-\s*/, "")
     .replace(/^\s*:\s*/, "")
@@ -96,7 +169,9 @@ export function inferCourseSpecialization(row: CollegeFeeRow) {
     .replace(/^\s*\(\s*/, "")
     .replace(/\s*\)\s*$/, "")
     .trim();
-  return withoutGroup && withoutGroup.toLowerCase() !== group.toLowerCase() ? withoutGroup : name;
+  return withoutGroup && withoutGroup.toLowerCase() !== normalizeDegreeSearch(group).toLowerCase()
+    ? normalizeCourseDisplayName(withoutGroup)
+    : "General";
 }
 
 export function groupCollegeFees(rows: CollegeFeeRow[], search = ""): CollegeFeeGroup[] {
