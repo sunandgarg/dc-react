@@ -280,11 +280,7 @@ export function LeadCaptureForm({
 
   const selectCls = "w-full px-3 py-2.5 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none";
 
-  const LogoBadge = () => (
-    <img src={dcLogo} alt="DekhoCampus" className="h-8 w-8 object-contain" />
-  );
-
-  const TwoStepFields = ({ dark = false, compact = false }: { dark?: boolean; compact?: boolean }) => (
+  const renderTwoStepFields = ({ dark = false, compact = false }: { dark?: boolean; compact?: boolean } = {}) => (
     <>
       {step === 1 ? (
         <>
@@ -350,7 +346,7 @@ export function LeadCaptureForm({
           </div>
         </div>
         <form onSubmit={handleSubmit} className="space-y-2.5">
-          <TwoStepFields />
+          {renderTwoStepFields()}
         </form>
         {otpPortal}
       </motion.div>
@@ -369,7 +365,7 @@ export function LeadCaptureForm({
               <p className="mt-2 max-w-md text-sm leading-6 text-white/70">Share only the essentials. We will help you shortlist the right options and next steps.</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-2.5">
-              <TwoStepFields dark />
+              {renderTwoStepFields({ dark: true })}
             </form>
           </div>
         </motion.div>
@@ -389,7 +385,7 @@ export function LeadCaptureForm({
             <p className="text-primary-foreground/90 text-sm md:text-base mt-2">{subtitle}</p>
           </div>
           <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto space-y-2.5">
-            <TwoStepFields dark />
+            {renderTwoStepFields({ dark: true })}
           </form>
         </div>
         {otpPortal}
@@ -413,7 +409,7 @@ export function LeadCaptureForm({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-2">
-          <TwoStepFields compact />
+          {renderTwoStepFields({ compact: true })}
         </form>
         {otpPortal}
       </motion.div>
@@ -431,7 +427,7 @@ export function LeadCaptureForm({
         <img src={dcLogo} alt="DekhoCampus" className="h-7 w-7 object-contain" />
       </div>
       <form onSubmit={handleSubmit} className="space-y-2">
-        <TwoStepFields compact />
+        {renderTwoStepFields({ compact: true })}
       </form>
       {otpPortal}
     </div>
