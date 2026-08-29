@@ -54,6 +54,7 @@ describe("course fee grouping", () => {
   it("normalizes writer-entered course casing while preserving degree acronyms", () => {
     expect(normalizeCourseDisplayName("btech in computer science and engineering")).toBe("B.Tech in Computer Science and Engineering");
     expect(normalizeCourseDisplayName("mba international business")).toBe("MBA International Business");
+    expect(normalizeCourseDisplayName("computer science && engg")).toBe("Computer Science & Engineering");
   });
 
   it("repairs legacy rows that copied the full course name into specialization", () => {

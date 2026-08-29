@@ -118,15 +118,16 @@ const COURSE_TOKEN_CASE: Record<string, string> = {
   bpa: "BPA", mpa: "MPA", bpt: "BPT", mpt: "MPT", bhm: "BHM",
   bhmct: "BHMCT", bvoc: "B.Voc", bsw: "BSW", msw: "MSW", phd: "Ph.D.", cse: "CSE", ai: "AI",
   ml: "ML", it: "IT", ug: "UG", pg: "PG",
+  engg: "Engineering",
 };
 const LOWERCASE_WORDS = new Set(["and", "of", "in", "for", "with", "to", "at", "by"]);
 
 export function normalizeCourseDisplayName(value: string) {
-  const words = value.trim().replace(/\s+/g, " ").split(" ");
+  const words = value.trim().replace(/&{2,}/g, "&").replace(/\s*&\s*/g, " & ").replace(/\s+/g, " ").split(" ");
   return words.map((word, index) => {
     const edge = word.match(/^([^a-z0-9]*)(.*?)([^a-z0-9]*)$/i);
     const prefix = edge?.[1] || "";
-    const core = edge?.[2] || word;
+    const core = edge?.[2] ?? word;
     const suffix = edge?.[3] || "";
     const token = core.toLowerCase().replace(/[^a-z0-9]/g, "");
     if (COURSE_TOKEN_CASE[token]) {
