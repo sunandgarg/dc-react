@@ -1973,32 +1973,38 @@ export type Database = {
       course_fees: {
         Row: {
           college_slug: string
+          course_group: string | null
           course_name: string | null
           course_slug: string
           created_at: string
           fee_amount: number | null
           fee_type: string | null
           id: string
+          specialization: string | null
           year: string | null
         }
         Insert: {
           college_slug: string
+          course_group?: string | null
           course_name?: string | null
           course_slug: string
           created_at?: string
           fee_amount?: number | null
           fee_type?: string | null
           id?: string
+          specialization?: string | null
           year?: string | null
         }
         Update: {
           college_slug?: string
+          course_group?: string | null
           course_name?: string | null
           course_slug?: string
           created_at?: string
           fee_amount?: number | null
           fee_type?: string | null
           id?: string
+          specialization?: string | null
           year?: string | null
         }
         Relationships: []

@@ -1064,14 +1064,16 @@ model companies {
 }
 
 model course_fees {
-  id           String   @id @default(uuid()) @db.Char(36)
-  college_slug String   @db.LongText
-  course_slug  String   @db.LongText
-  course_name  String?  @db.LongText
-  fee_amount   Decimal? @default(0) @db.Decimal(65, 20)
-  fee_type     String?  @db.LongText
-  year         String?  @db.LongText
-  created_at   DateTime @default(now()) @db.DateTime(3)
+  id             String   @id @default(uuid()) @db.Char(36)
+  college_slug   String   @db.LongText
+  course_slug    String   @db.LongText
+  course_name    String?  @db.LongText
+  course_group   String?  @db.VarChar(191)
+  specialization String?  @db.LongText
+  fee_amount     Decimal? @default(0) @db.Decimal(65, 20)
+  fee_type       String?  @db.LongText
+  year           String?  @db.LongText
+  created_at     DateTime @default(now()) @db.DateTime(3)
 
   @@map("course_fees")
 }

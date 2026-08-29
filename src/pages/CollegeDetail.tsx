@@ -1,10 +1,10 @@
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useMemo } from "react";
+import { Fragment, useEffect, useMemo } from "react";
 import { buildCollegeHref, parseSlugWithId } from "@/lib/entityUrls";
 import { useSEO } from "@/hooks/useSEO";
 import { motion } from "framer-motion";
-import { Star, MapPin, Calendar, GraduationCap, TrendingUp, Building, CheckCircle, Briefcase, BookOpen, Image as ImageIcon, Users, Award, Scale, Newspaper, HelpCircle, DollarSign, ExternalLink, Download, Phone, Shield, Globe, Landmark, Search } from "lucide-react";
+import { Star, MapPin, Calendar, GraduationCap, TrendingUp, Building, CheckCircle, Briefcase, BookOpen, Image as ImageIcon, Users, Award, Scale, Newspaper, HelpCircle, DollarSign, ExternalLink, Download, Phone, Shield, Globe, Landmark, Search, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -47,6 +47,7 @@ import { RichSection } from "@/components/detail/RichSection";
 import { RichText } from "@/components/detail/RichText";
 import { PageSummary } from "@/components/detail/PageSummary";
 import { absoluteSiteUrl } from "@/lib/constant";
+import { formatFeeRange, formatIndianFee, groupCollegeFees, inferCourseSpecialization } from "@/lib/courseFeeGroups";
 
 const COLLEGE_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "College Info" },
@@ -78,8 +79,9 @@ export default function CollegeDetail() {
   // Relational tables store the base database slug, while canonical public
   // URLs append the numeric short ID (for example, iit-delhi-10001).
   const collegeRelationSlug = college?.slug || parseSlugWithId(slug).slug;
-  const [visibleCourseCount, setVisibleCourseCount] = useState(5);
+  const [visibleCourseGroupCount, setVisibleCourseGroupCount] = useState(5);
   const [courseSearch, setCourseSearch] = useState("");
+  const [expandedCourseGroups, setExpandedCourseGroups] = useState<Set<string>>(new Set());
   // Canonicalize URL to slug-with-id once the college resolves
   useEffect(() => {
     if (!college?.slug || !(college as any).short_id) return;
@@ -104,7 +106,7 @@ export default function CollegeDetail() {
     queryFn: async () => {
       const { data, error } = await (backendClient as any)
         .from("course_fees")
-        .select("id,course_slug,course_name,fee_amount,fee_type")
+        .select("id,course_slug,course_name,course_group,specialization,fee_amount,fee_type,year")
         .eq("college_slug", collegeRelationSlug)
         .order("course_name");
       if (error) throw error;
@@ -114,18 +116,17 @@ export default function CollegeDetail() {
     staleTime: 30 * 60 * 1000,
   });
 
-  const filteredCollegeFees = useMemo(() => {
-    const query = courseSearch.trim().toLowerCase();
-    if (!query) return collegeFees;
-    return collegeFees.filter((fee: any) =>
-      [fee.course_name, fee.course_slug, fee.fee_type]
-        .some((value) => String(value || "").toLowerCase().includes(query)),
-    );
-  }, [collegeFees, courseSearch]);
-  const feeCourseSlugs = filteredCollegeFees
-    .map((fee: any) => fee.course_slug)
-    .filter((courseSlug: unknown): courseSlug is string => typeof courseSlug === "string" && courseSlug.length > 0);
-  const visibleFeeCourseSlugs = feeCourseSlugs.slice(0, visibleCourseCount);
+  const groupedCollegeFees = useMemo(() => groupCollegeFees(collegeFees, courseSearch), [collegeFees, courseSearch]);
+  const visibleCourseGroups = useMemo(
+    () => groupedCollegeFees.slice(0, visibleCourseGroupCount),
+    [groupedCollegeFees, visibleCourseGroupCount],
+  );
+  const visibleFeeCourseSlugs = useMemo(() => Array.from(new Set(
+    visibleCourseGroups
+      .flatMap((group) => group.entries)
+      .map((fee) => fee.course_slug)
+      .filter((courseSlug): courseSlug is string => typeof courseSlug === "string" && courseSlug.length > 0),
+  )), [visibleCourseGroups]);
   const { data: feeCourseMetadata = [] } = useQuery({
     queryKey: ["college-fee-course-metadata", collegeRelationSlug, visibleFeeCourseSlugs],
     queryFn: async () => {
@@ -142,8 +143,17 @@ export default function CollegeDetail() {
   });
 
   useEffect(() => {
-    setVisibleCourseCount(5);
+    setVisibleCourseGroupCount(5);
+    setExpandedCourseGroups(new Set());
   }, [collegeRelationSlug, courseSearch]);
+
+  const toggleCourseGroup = (key: string) => {
+    setExpandedCourseGroups((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  };
 
   useSEO({
     title: college ? (college.meta_title || `${college.name} - Admissions, Fees, Placements ${currentYear()}`) : undefined,
@@ -211,8 +221,8 @@ export default function CollegeDetail() {
 
     return COLLEGE_SECTIONS.filter((section) => has[section.id] ?? true);
   })();
-  const courseRowCount = coursesOfficiallyVerified ? filteredCollegeFees.length : 0;
-  const nextCourseBatchSize = Math.min(5, Math.max(0, courseRowCount - visibleCourseCount));
+  const courseGroupCount = coursesOfficiallyVerified ? groupedCollegeFees.length : 0;
+  const nextCourseBatchSize = Math.min(5, Math.max(0, courseGroupCount - visibleCourseGroupCount));
 
   return (
     <div className="min-h-screen bg-background">
@@ -397,49 +407,97 @@ export default function CollegeDetail() {
                 </label>
               )}
               <div className="dc-scroll-table">
-                <table id="college-course-fee-table" className="w-full text-sm min-w-[420px]">
+                <table id="college-course-fee-table" className="w-full min-w-[620px] text-sm">
                   <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left py-2 text-muted-foreground font-medium">Course</th>
-                      <th className="text-left py-2 text-muted-foreground font-medium">Duration</th>
-                      <th className="text-left py-2 text-muted-foreground font-medium">Fees</th>
-                      <th className="text-right py-2 text-muted-foreground font-medium"></th>
+                    <tr className="border-b border-border bg-muted/40">
+                      <th className="px-3 py-3 text-left font-medium text-muted-foreground">Broad course</th>
+                      <th className="px-3 py-3 text-left font-medium text-muted-foreground">Specializations</th>
+                      <th className="px-3 py-3 text-left font-medium text-muted-foreground">Fee range</th>
+                      <th className="w-24 px-3 py-3 text-right font-medium text-muted-foreground">Details</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {coursesOfficiallyVerified && filteredCollegeFees.length > 0 ? (
-                      filteredCollegeFees.slice(0, visibleCourseCount).map((f) => {
-                        const linked = feeCourseMetadata.find((c: any) => c.slug === f.course_slug);
+                    {coursesOfficiallyVerified && visibleCourseGroups.length > 0 ? (
+                      visibleCourseGroups.map((group) => {
+                        const expanded = expandedCourseGroups.has(group.key);
+                        const feeType = group.feeTypes.length === 1 ? group.feeTypes[0] : null;
                         return (
-                          <tr key={f.id} className="border-b border-border last:border-0">
-                            <td className="py-3">
-                              {linked ? (
-                                <Link to={`/courses/${linked.slug}`} className="text-primary font-medium hover:underline">{f.course_name}</Link>
-                              ) : (
-                                <span className="text-foreground font-medium">{f.course_name}</span>
-                              )}
-                            </td>
-                            <td className="py-3 text-muted-foreground">{linked?.duration || "-"}</td>
-                            <td className="py-3 text-foreground font-medium">
-                              {f.fee_amount === null || f.fee_amount === undefined || f.fee_amount === "" ? (
-                                <span className="text-xs text-muted-foreground">Check official fee notice</span>
-                              ) : (
-                                <>
-                                  ₹{Number(f.fee_amount).toLocaleString("en-IN")}
-                                  {f.fee_type && <span className="text-xs text-muted-foreground"> /{f.fee_type.toLowerCase()}</span>}
-                                </>
-                              )}
-                            </td>
-                            <td className="py-3 text-right">
-                              {linked && <Link to={`/courses/${linked.slug}`}><Button size="sm" variant="ghost" className="text-xs"><ExternalLink className="w-3 h-3" /></Button></Link>}
-                            </td>
-                          </tr>
+                          <Fragment key={group.key}>
+                            <tr className="border-b border-border last:border-0">
+                              <td className="px-3 py-4">
+                                <button type="button" onClick={() => toggleCourseGroup(group.key)} className="text-left font-semibold text-primary hover:underline">
+                                  {group.label}
+                                </button>
+                              </td>
+                              <td className="px-3 py-4 text-muted-foreground">
+                                {group.specializationCount} specialization{group.specializationCount === 1 ? "" : "s"}
+                              </td>
+                              <td className="px-3 py-4">
+                                <div className="font-semibold text-foreground">{formatFeeRange(group)}</div>
+                                <div className="mt-0.5 text-[11px] text-muted-foreground">
+                                  {feeType ? feeType : group.feeTypes.length > 1 ? "Multiple fee types" : "Published fee"}
+                                </div>
+                              </td>
+                              <td className="px-3 py-4 text-right">
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 gap-1 px-2 text-xs"
+                                  aria-expanded={expanded}
+                                  aria-label={`${expanded ? "Hide" : "Show"} ${group.label} specializations`}
+                                  onClick={() => toggleCourseGroup(group.key)}
+                                >
+                                  {expanded ? "Hide" : "View"}
+                                  <ChevronDown className={`h-3.5 w-3.5 transition-transform ${expanded ? "rotate-180" : ""}`} />
+                                </Button>
+                              </td>
+                            </tr>
+                            {expanded && (
+                              <tr className="border-b border-border bg-muted/20">
+                                <td colSpan={4} className="p-0">
+                                  <div className="divide-y divide-border/70 px-3 py-1">
+                                    {group.entries.map((entry, index) => {
+                                      const linked = feeCourseMetadata.find((course: any) => course.slug === entry.course_slug);
+                                      const amount = entry.fee_amount === null || entry.fee_amount === undefined || entry.fee_amount === ""
+                                        ? null
+                                        : Number(entry.fee_amount);
+                                      return (
+                                        <div key={entry.id || `${entry.course_slug}-${index}`} className="grid grid-cols-[minmax(0,1fr)_8rem_9rem_2rem] items-center gap-3 py-3">
+                                          <div className="min-w-0">
+                                            {linked ? (
+                                              <Link to={`/courses/${linked.slug}`} className="font-medium text-foreground hover:text-primary hover:underline">
+                                                {inferCourseSpecialization(entry)}
+                                              </Link>
+                                            ) : (
+                                              <span className="font-medium text-foreground">{inferCourseSpecialization(entry)}</span>
+                                            )}
+                                            {entry.year && <div className="text-[11px] text-muted-foreground">Fee year: {entry.year}</div>}
+                                          </div>
+                                          <span className="text-xs text-muted-foreground">{linked?.duration || "Duration varies"}</span>
+                                          <span className="text-xs font-medium text-foreground">
+                                            {formatIndianFee(amount !== null && Number.isFinite(amount) ? amount : null)}
+                                            {entry.fee_type && <span className="block font-normal text-muted-foreground">{entry.fee_type}</span>}
+                                          </span>
+                                          {linked ? (
+                                            <Link to={`/courses/${linked.slug}`} aria-label={`Open ${entry.course_name || inferCourseSpecialization(entry)}`}>
+                                              <ExternalLink className="h-3.5 w-3.5 text-primary" />
+                                            </Link>
+                                          ) : <span />}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </Fragment>
                         );
                       })
                     ) : (
                       <tr>
                         <td colSpan={4} className="py-4 text-sm text-muted-foreground">
-                          {courseSearch.trim() ? "No courses match your search." : "Check the official college website for current courses and fees."}
+                          {courseSearch.trim() ? "No degree or specialization matches your search." : "Check the official college website for current courses and fees."}
                         </td>
                       </tr>
                     )}
@@ -447,7 +505,7 @@ export default function CollegeDetail() {
                 </table>
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                {courseRowCount > visibleCourseCount && (
+                {courseGroupCount > visibleCourseGroupCount && (
                   <Button
                     type="button"
                     variant="outline"
@@ -455,14 +513,14 @@ export default function CollegeDetail() {
                     className="rounded-xl text-xs"
                     data-testid="show-more-college-courses"
                     aria-controls="college-course-fee-table"
-                    onClick={() => setVisibleCourseCount((count) => count + 5)}
+                    onClick={() => setVisibleCourseGroupCount((count) => count + 5)}
                   >
-                    Show {nextCourseBatchSize} more
+                    Show {nextCourseBatchSize} more degree{nextCourseBatchSize === 1 ? "" : "s"}
                   </Button>
                 )}
-                {courseRowCount > 5 && (
+                {courseGroupCount > 5 && (
                   <span className="text-xs text-muted-foreground" aria-live="polite">
-                    Showing {Math.min(visibleCourseCount, courseRowCount)} of {courseRowCount}
+                    Showing {Math.min(visibleCourseGroupCount, courseGroupCount)} of {courseGroupCount} degrees
                   </span>
                 )}
                 <Link to="/courses">

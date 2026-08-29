@@ -2,17 +2,28 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Save, Search, X } from "lucide-react";
+import { Plus, Trash2, Save, Search, X, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { CSVTools } from "@/components/CSVTools";
 import { useQueryClient } from "@tanstack/react-query";
+import { COURSE_GROUP_OPTIONS, inferCourseGroup, inferCourseSpecialization } from "@/lib/courseFeeGroups";
 
 interface Props {
   collegeSlug: string;
 }
 
 interface CourseLite { slug: string; name: string; full_name: string; category: string; }
-interface FeeRow { id?: string; college_slug: string; course_slug: string; course_name: string; fee_amount: number; fee_type: string; year: string; }
+interface FeeRow {
+  id?: string;
+  college_slug: string;
+  course_slug: string;
+  course_name: string;
+  course_group: string;
+  specialization: string;
+  fee_amount: number;
+  fee_type: string;
+  year: string;
+}
 
 const FEE_TYPES = ["Annual", "Semester", "Total Course", "Monthly"];
 
@@ -46,32 +57,46 @@ export function CourseFeePicker({ collegeSlug }: Props) {
   const matches = useMemo(() => {
     const q = search.toLowerCase().trim();
     if (!q) return [];
-    const used = new Set(rows.map(r => r.course_slug));
     return courses
-      .filter(c => !used.has(c.slug))
       .filter(c => c.name.toLowerCase().includes(q) || c.full_name.toLowerCase().includes(q) || c.slug.includes(q))
       .slice(0, 8);
-  }, [search, courses, rows]);
+  }, [search, courses]);
 
   const addFromCourse = (c: CourseLite) => {
     setSearch("");
-    setDraft({ college_slug: collegeSlug, course_slug: c.slug, course_name: c.name, fee_amount: 0, fee_type: "Annual", year: String(new Date().getFullYear()) });
+    const selected = { course_slug: c.slug, course_name: c.name };
+    setDraft({
+      college_slug: collegeSlug,
+      course_slug: c.slug,
+      course_name: c.name,
+      course_group: inferCourseGroup(selected),
+      specialization: inferCourseSpecialization(selected),
+      fee_amount: 0,
+      fee_type: "Annual",
+      year: String(new Date().getFullYear()),
+    });
   };
 
   const addManual = () => {
     setSearch("");
-    setDraft({ college_slug: collegeSlug, course_slug: "", course_name: "", fee_amount: 0, fee_type: "Annual", year: String(new Date().getFullYear()) });
+    setDraft({ college_slug: collegeSlug, course_slug: "", course_name: "", course_group: "", specialization: "", fee_amount: 0, fee_type: "Annual", year: String(new Date().getFullYear()) });
   };
 
   const validate = (d: FeeRow): string | null => {
     if (!d.course_name?.trim()) return "Course name is required";
+    if (!d.course_group?.trim()) return "Broad course or degree is required";
     if (!d.fee_type) return "Fee type is required";
     if (d.fee_amount === null || d.fee_amount === undefined || isNaN(Number(d.fee_amount))) return "Fee amount must be a number";
     if (Number(d.fee_amount) < 0) return "Fee amount cannot be negative";
     if (Number(d.fee_amount) > 100000000) return "Fee amount looks too large (max ₹10 Cr)";
     if (d.year && !/^\d{4}$/.test(d.year)) return "Year must be a 4-digit value";
     const slug = d.course_slug || d.course_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    const dup = rows.find(r => r.id !== d.id && r.course_slug === slug && (r.year || "") === (d.year || "") && (r.fee_type || "") === (d.fee_type || ""));
+    const specialization = d.specialization?.trim().toLowerCase() || "";
+    const dup = rows.find(r => r.id !== d.id
+      && r.course_slug === slug
+      && (r.specialization?.trim().toLowerCase() || "") === specialization
+      && (r.year || "") === (d.year || "")
+      && (r.fee_type || "") === (d.fee_type || ""));
     if (dup) return `Duplicate: a ${d.fee_type} fee for "${d.course_name}" (${d.year || "any year"}) already exists`;
     return null;
   };
@@ -81,7 +106,12 @@ export function CourseFeePicker({ collegeSlug }: Props) {
     const err = validate(draft);
     if (err) { toast.error(err); return; }
     if (!draft.course_slug) draft.course_slug = draft.course_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    const payload: any = { ...draft, fee_amount: Number(draft.fee_amount) };
+    const payload: any = {
+      ...draft,
+      course_group: draft.course_group.trim(),
+      specialization: draft.specialization.trim() || null,
+      fee_amount: Number(draft.fee_amount),
+    };
     const response = draft.id
       ? await (backendClient as any).from("course_fees").update(payload).eq("id", draft.id)
       : await (backendClient as any).from("course_fees").insert(payload);
@@ -136,7 +166,7 @@ export function CourseFeePicker({ collegeSlug }: Props) {
       <CSVTools
         table="course_fees"
         filename={`course-fees-${collegeSlug}.csv`}
-        columns={["college_slug","course_slug","course_name","fee_amount","fee_type","year"]}
+        columns={["college_slug","course_slug","course_name","course_group","specialization","fee_amount","fee_type","year"]}
         typeHints={{ fee_amount: "number" }}
         upsertKey="id"
         onImported={reload}
@@ -146,7 +176,24 @@ export function CourseFeePicker({ collegeSlug }: Props) {
         <div className="bg-muted/40 rounded-xl border border-border p-3 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label className="text-[11px] text-muted-foreground">Course Name *</label>
+              <label className="text-[11px] text-muted-foreground">Broad Course / Degree *</label>
+              <Input
+                list="course-fee-groups"
+                value={draft.course_group}
+                onChange={e => setDraft({ ...draft, course_group: e.target.value })}
+                placeholder="B.E. / B.Tech"
+                className="rounded-lg h-9 text-sm"
+              />
+              <datalist id="course-fee-groups">
+                {COURSE_GROUP_OPTIONS.map(group => <option key={group} value={group} />)}
+              </datalist>
+            </div>
+            <div>
+              <label className="text-[11px] text-muted-foreground">Specialization</label>
+              <Input value={draft.specialization} onChange={e => setDraft({ ...draft, specialization: e.target.value })} placeholder="Computer Science and Engineering" className="rounded-lg h-9 text-sm" />
+            </div>
+            <div>
+              <label className="text-[11px] text-muted-foreground">Directory Course Name *</label>
               <Input value={draft.course_name} onChange={e => setDraft({ ...draft, course_name: e.target.value })} className="rounded-lg h-9 text-sm" />
             </div>
             <div>
@@ -178,15 +225,37 @@ export function CourseFeePicker({ collegeSlug }: Props) {
       {rows.length > 0 && (
         <div className="space-y-1.5">
           {rows.map(r => (
-            <div key={r.id} className="flex items-center justify-between bg-card rounded-lg border border-border px-3 py-2">
+            <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 bg-card rounded-lg border border-border px-3 py-2">
               <div className="min-w-0 flex-1">
                 <div className="text-sm font-medium text-foreground truncate">{r.course_name}</div>
+                <div className="text-[11px] text-muted-foreground truncate">
+                  {r.course_group || inferCourseGroup(r)}{(r.specialization || inferCourseSpecialization(r)) ? ` · ${r.specialization || inferCourseSpecialization(r)}` : ""}
+                </div>
                 <div className="text-[11px] text-muted-foreground truncate">
                   ₹{Number(r.fee_amount).toLocaleString("en-IN")} · {r.fee_type} · {r.year || "-"}
                 </div>
               </div>
-              <Button type="button" size="icon" variant="ghost" className="h-7 w-7" onClick={() => setDraft({ ...r })}><Save className="w-3 h-3 rotate-180" /></Button>
-              <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => remove(r.id)}><Trash2 className="w-3 h-3" /></Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 gap-1 px-2 text-xs"
+                  onClick={() => setDraft({ ...r, id: undefined, course_group: r.course_group || inferCourseGroup(r), specialization: "", fee_amount: 0 })}
+                >
+                  <Plus className="w-3 h-3" /> Specialization
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="h-7 gap-1 px-2 text-xs"
+                  onClick={() => setDraft({ ...r, course_group: r.course_group || inferCourseGroup(r), specialization: r.specialization || inferCourseSpecialization(r) })}
+                >
+                  <Pencil className="w-3 h-3" /> Edit
+                </Button>
+                <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-destructive" aria-label={`Delete ${r.course_name}`} onClick={() => remove(r.id)}><Trash2 className="w-3 h-3" /></Button>
+              </div>
             </div>
           ))}
         </div>

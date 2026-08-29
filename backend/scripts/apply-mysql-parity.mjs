@@ -196,6 +196,22 @@ async function ensureHomepageExploreSchema(report) {
   }
 }
 
+async function ensureCourseFeeGroupingSchema(report) {
+  if (!await columnInfo("course_fees", "course_group")) {
+    await prisma.$executeRawUnsafe("ALTER TABLE `course_fees` ADD COLUMN `course_group` VARCHAR(191) NULL AFTER `course_name`");
+    report.createdRuntimeColumns.push("course_fees.course_group");
+  }
+  if (!await columnInfo("course_fees", "specialization")) {
+    await prisma.$executeRawUnsafe("ALTER TABLE `course_fees` ADD COLUMN `specialization` LONGTEXT NULL AFTER `course_group`");
+    report.createdRuntimeColumns.push("course_fees.specialization");
+  }
+  const indexName = "ix_course_fees_college_group";
+  if (!await indexExists("course_fees", indexName)) {
+    await prisma.$executeRawUnsafe(`CREATE INDEX ${quote(indexName)} ON \`course_fees\` (\`college_slug\`(191), \`course_group\`)`);
+    report.createdReferenceIndexes.push(indexName);
+  }
+}
+
 async function makeReferenceIndexes(report) {
   for (const line of postgresSchemaReference.split("\n")) {
     const match = line.match(/^CREATE INDEX (\w+) ON public\.(\w+) USING btree \((.*)\);$/);
@@ -364,6 +380,7 @@ async function createViews() {
 const report = { createdRuntimeColumns: [], createdUnique: [], createdReferenceIndexes: [], createdForeignKeyIndexes: [], createdForeignKeys: [], createdTriggers: [], existing: [], skipped: [], views: [] };
 try {
   await ensureHomepageExploreSchema(report);
+  await ensureCourseFeeGroupingSchema(report);
   for (const [table, ...columns] of uniqueIndexes) await makeUniqueIndex(table, columns, report);
   await makeReferenceIndexes(report);
   await makeForeignKeyIndexes(report);
