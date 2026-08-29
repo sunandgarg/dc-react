@@ -448,14 +448,14 @@ export default function CollegeDetail() {
                   </div>
                 </>
               )}
-              <div className="dc-scroll-table">
+              <div className="dc-scroll-table dc-course-fee-table">
                 <table id="college-course-fee-table" className="w-full table-fixed text-sm sm:min-w-[620px]">
                   <thead>
                     <tr className="border-b border-border bg-muted/40">
-                      <th className="px-3 py-3 text-left font-medium text-muted-foreground">Broad course</th>
-                      <th className="px-3 py-3 text-left font-medium text-muted-foreground">Specializations</th>
-                      <th className="px-3 py-3 text-left font-medium text-muted-foreground">Fee range</th>
-                      <th className="w-24 px-3 py-3 text-right font-medium text-muted-foreground">Details</th>
+                      <th className="px-2 py-3 text-left font-medium text-muted-foreground sm:px-3">Broad course</th>
+                      <th className="px-2 py-3 text-left font-medium text-muted-foreground sm:px-3">Specializations</th>
+                      <th className="px-2 py-3 text-left font-medium text-muted-foreground sm:px-3">Fee range</th>
+                      <th className="w-[4.5rem] px-2 py-3 text-right font-medium text-muted-foreground sm:w-24 sm:px-3">Details</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -466,21 +466,21 @@ export default function CollegeDetail() {
                         return (
                           <Fragment key={group.key}>
                             <tr className="border-b border-border last:border-0">
-                              <td className="px-3 py-4">
+                              <td className="px-2 py-4 sm:px-3">
                                 <button type="button" onClick={() => toggleCourseGroup(group.key)} className="text-left font-semibold text-primary hover:underline">
                                   {group.label}
                                 </button>
                               </td>
-                              <td className="px-3 py-4 text-muted-foreground">
+                              <td className="px-2 py-4 text-muted-foreground sm:px-3">
                                 {group.specializationCount} specialization{group.specializationCount === 1 ? "" : "s"}
                               </td>
-                              <td className="px-3 py-4">
+                              <td className="px-2 py-4 sm:px-3">
                                 <div className="font-semibold text-foreground">{formatFeeRange(group)}</div>
                                 <div className="mt-0.5 text-[11px] text-muted-foreground">
                                   {feeType ? feeType : group.feeTypes.length > 1 ? "Multiple fee types" : "Published fee"}
                                 </div>
                               </td>
-                              <td className="px-3 py-4 text-right">
+                              <td className="px-2 py-4 text-right sm:px-3">
                                 <Button
                                   type="button"
                                   size="sm"

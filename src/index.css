@@ -581,6 +581,19 @@
       max-width: calc(100vw - 2rem);
       padding-bottom: 0.35rem;
     }
+
+    .dc-scroll-table.dc-course-fee-table {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .dc-scroll-table.dc-course-fee-table > table {
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      table-layout: fixed;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
