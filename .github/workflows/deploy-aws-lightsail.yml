@@ -358,6 +358,9 @@ jobs:
             apt-get -o DPkg::Lock::Timeout=120 install -y certbot python3-certbot-nginx
           fi
           sed -i -E 's/server_name [^;]*;/server_name aws-origin.dekhocampus.com ec2-3-7-27-134.ap-south-1.compute.amazonaws.com;/' /etc/nginx/sites-available/dc-react
+          if ! grep -q 'Strict-Transport-Security' /etc/nginx/sites-available/dc-react; then
+            sed -i '/add_header X-Content-Type-Options/i\          add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;' /etc/nginx/sites-available/dc-react
+          fi
           if ! grep -q 'return 308 https://dekhocampus.com/;' /etc/nginx/sites-available/dc-react; then
             sed -i '/^[[:space:]]*location \/ {$/i\          location = / {\n            return 308 https://dekhocampus.com/;\n          }' /etc/nginx/sites-available/dc-react
           fi

@@ -17,6 +17,7 @@ function isApiRequest(pathname) {
 
 function withSecurityHeaders(response) {
   const headers = new Headers(response.headers);
+  headers.set("strict-transport-security", "max-age=31536000; includeSubDomains; preload");
   headers.set("x-content-type-options", "nosniff");
   headers.set("referrer-policy", "strict-origin-when-cross-origin");
   headers.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
@@ -97,7 +98,9 @@ export default {
       return Response.redirect(url.toString(), 308);
     }
     try {
-      return isApiRequest(url.pathname) ? await proxyToApiWithCache(request, context) : await serveAsset(request, env);
+      return isApiRequest(url.pathname)
+        ? withSecurityHeaders(await proxyToApiWithCache(request, context))
+        : await serveAsset(request, env);
     } catch (error) {
       console.error(JSON.stringify({ event: "candidate_proxy_error", path: url.pathname, message: error instanceof Error ? error.message : String(error) }));
       return Response.json({ error: "Candidate service is temporarily unavailable" }, { status: 502 });
