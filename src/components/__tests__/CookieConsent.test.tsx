@@ -17,5 +17,23 @@ describe("CookieConsent", () => {
     expect(bar).toHaveClass("top-0", "bottom-auto", "md:top-auto", "md:bottom-0");
     expect(screen.getByRole("button", { name: "Essential only" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Accept all" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /customise/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /decline/i })).not.toBeInTheDocument();
+  });
+
+  it("keeps analytics and marketing disabled for essential consent", () => {
+    render(<CookieConsent />);
+    act(() => vi.advanceTimersByTime(1_500));
+
+    act(() => screen.getByRole("button", { name: "Essential only" }).click());
+
+    expect(localStorage.getItem("dc_cookie_consent_v1")).toBe("essential");
+    expect(JSON.parse(localStorage.getItem("dc_cookie_prefs_v1") || "{}")).toEqual({
+      essential: true,
+      prefill: true,
+      analytics: false,
+      marketing: false,
+    });
   });
 });

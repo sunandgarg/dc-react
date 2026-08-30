@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cookie, ShieldCheck, Settings2, X, ChevronDown } from "lucide-react";
+import { Cookie, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { COOKIE_CONSENT_KEY, signalCookieResolved } from "@/lib/promptSequence";
 
@@ -56,12 +56,9 @@ export function savePrefillCookie(data: PrefillCookie) {
 
 export function CookieConsent() {
   const [open, setOpen] = useState(false);
-  const [showCustom, setShowCustom] = useState(false);
-  const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
 
   useEffect(() => {
     const saved = localStorage.getItem(COOKIE_KEY);
-    setPrefs(getPrefs());
     if (!saved) {
       const t = setTimeout(() => setOpen(true), 1500);
       return () => clearTimeout(t);
@@ -92,23 +89,6 @@ export function CookieConsent() {
 
   const acceptAll = () => persist("accepted", { essential: true, prefill: true, analytics: true, marketing: true });
   const acceptEssential = () => persist("essential", { essential: true, prefill: true, analytics: false, marketing: false });
-  const saveCustom = () => persist(prefs.analytics || prefs.marketing ? "accepted" : "essential", prefs);
-
-  const Toggle = ({ k, label, desc, locked }: { k: keyof Prefs; label: string; desc: string; locked?: boolean }) => (
-    <label className="flex items-start gap-3 py-2 cursor-pointer">
-      <input
-        type="checkbox"
-        disabled={locked}
-        checked={prefs[k] as boolean}
-        onChange={e => setPrefs(p => ({ ...p, [k]: e.target.checked }))}
-        className="mt-0.5 w-4 h-4 rounded accent-primary disabled:opacity-50"
-      />
-      <div className="flex-1">
-        <div className="text-xs font-semibold flex items-center gap-1.5">{label}{locked && <span className="text-[10px] text-muted-foreground font-normal">(always on)</span>}</div>
-        <div className="text-[11px] text-muted-foreground leading-snug">{desc}</div>
-      </div>
-    </label>
-  );
 
   return (
     <AnimatePresence>
@@ -129,56 +109,19 @@ export function CookieConsent() {
                     <Cookie className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <h3 className="text-sm font-bold">We value your privacy</h3>
-                      <button onClick={() => persist("rejected", { ...DEFAULT_PREFS, prefill: false, analytics: false, marketing: false })} aria-label="Close" className="text-muted-foreground hover:text-foreground md:hidden">
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
+                    <h3 className="text-sm font-bold">We value your privacy</h3>
                     <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground sm:text-xs">
-                      We use cookies to keep the site secure, remember your preferences and improve your experience. Choose what works for you.
+                      Essential cookies keep the site secure, maintain your login, remember form progress and deliver requested services. Accept all also enables analytics and relevant offers.
                     </p>
                   </div>
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-2 md:mt-0 md:flex-nowrap">
-                  {!showCustom ? (
-                    <>
-                      <Button onClick={() => setShowCustom(true)} variant="ghost" size="sm" className="h-9 gap-1 rounded-md px-2 text-xs">
-                        <Settings2 className="h-3.5 w-3.5" /> Customise <ChevronDown className="h-3 w-3" />
-                      </Button>
-                      <Button onClick={acceptEssential} variant="outline" size="sm" className="h-9 flex-1 rounded-md px-3 sm:flex-none">Essential only</Button>
-                      <Button onClick={acceptAll} size="sm" className="h-9 flex-1 rounded-md bg-primary px-3 hover:bg-primary/90 sm:flex-none">
-                        <ShieldCheck className="mr-1.5 h-4 w-4" /> Accept all
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button onClick={() => setShowCustom(false)} variant="ghost" size="sm" className="h-9 rounded-md text-xs">Back</Button>
-                      <Button onClick={() => persist("rejected", { ...DEFAULT_PREFS, prefill: false, analytics: false, marketing: false })} variant="outline" size="sm" className="h-9 flex-1 rounded-md sm:flex-none">Decline all</Button>
-                      <Button onClick={saveCustom} size="sm" className="h-9 flex-1 rounded-md bg-primary hover:bg-primary/90 sm:flex-none">Save preferences</Button>
-                    </>
-                  )}
-                  <button onClick={() => persist("rejected", { ...DEFAULT_PREFS, prefill: false, analytics: false, marketing: false })} aria-label="Close" className="hidden text-muted-foreground hover:text-foreground md:block">
-                    <X className="h-4 w-4" />
-                  </button>
+                  <Button onClick={acceptEssential} variant="outline" size="sm" className="h-9 flex-1 rounded-md px-3 sm:flex-none">Essential only</Button>
+                  <Button onClick={acceptAll} size="sm" className="h-9 flex-1 rounded-md bg-primary px-3 hover:bg-primary/90 sm:flex-none">
+                    <ShieldCheck className="mr-1.5 h-4 w-4" /> Accept all
+                  </Button>
                 </div>
               </div>
-
-              <AnimatePresence initial={false}>
-                {showCustom && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="max-h-[55vh] overflow-y-auto border-t border-border px-4 pb-3 sm:grid sm:grid-cols-2 sm:gap-x-8 md:max-h-[40vh]"
-                  >
-                    <Toggle k="essential" label="Essential" desc="Login sessions, security, consent choices, form progress, lead delivery, duplicate prevention and saved preferences." locked />
-                    <Toggle k="prefill" label="Personalisation (prefill)" desc="Remember your name, mobile, state and city so forms are auto-filled." />
-                    <Toggle k="analytics" label="Analytics" desc="Help us understand which pages and tools work best." />
-                    <Toggle k="marketing" label="Marketing" desc="Show counselling offers most relevant to your interests." />
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           </div>
         </motion.div>
