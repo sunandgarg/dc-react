@@ -6,7 +6,10 @@ export interface SitemapRoute {
   priority: string;
 }
 
-export const SITEMAP_CHUNK_SIZE = 45_000;
+// Cloudflare Pages limits individual assets to 25 MiB. Image sitemap entries are
+// substantially larger than plain URLs, so keep each static child comfortably
+// below both Cloudflare's byte limit and Google's 50,000 URL limit.
+export const SITEMAP_CHUNK_SIZE = 3_000;
 
 export const STATIC_SITEMAP_ROUTES: SitemapRoute[] = [
   { path: "/", changefreq: "daily", priority: "1.0" },

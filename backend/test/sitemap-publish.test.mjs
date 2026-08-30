@@ -16,7 +16,7 @@ function populatedDb(coreCount = 1) {
       const base = { slug: `${table}-sample`, short_id: 101, updated_at: new Date("2026-08-27T00:00:00Z"), image: "https://cdn.dekhocampus.com/catalog/sample.webp" };
       if (table === "colleges") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, state: "Delhi NCR", city: "New Delhi", type: "Private", category: "Management", logo: "https://old-origin.example/storage/v1/object/public/admin-uploads/logos/sample.webp", carousel_images: [{ url: "https://www.youtube.com/embed/not-an-image", caption: "Campus tour" }], gallery_images: [] }));
       if (table === "course_fees") return [1, 2, 3].map((number) => ({ college_slug: number === 1 ? "colleges-sample" : `colleges-sample-${number}`, course_group: "MBA" }));
-      if (table === "articles") return [{ ...base, tags: ["Admissions"], featured_image: "https://cdn.dekhocampus.com/news/sample.webp" }];
+      if (table === "articles") return [{ ...base, tags: ["Admissions", "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material"], featured_image: "https://cdn.dekhocampus.com/news/sample.webp" }];
       if (table === "study_subjects") return [{ ...base, id: "subject-1", class_num: 12, board_slug: "cbse" }];
       if (table === "study_chapters") return [{ ...base, subject_id: "subject-1" }];
       if (table === "college_universities") return [{ ...base, program_slug: "btech" }];
@@ -29,7 +29,7 @@ function populatedDb(coreCount = 1) {
 
 function memoryRepository() {
   const objects = new Map([
-    ["system-sitemaps/public/sitemap.xml", { body: '<?xml version="1.0"?><urlset><url><loc>https://dekhocampus.com/</loc><priority>1.0</priority></url></urlset>' }],
+    ["system-sitemaps/public/sitemap.xml", { body: '<?xml version="1.0"?><urlset><url><loc>https://dekhocampus.com/</loc><priority>1.0</priority></url><url><loc>https://dekhocampus.com/colleges?group=Unverified&amp;state=Nowhere</loc></url></urlset>' }],
     ["system-sitemaps/generations/old-generation/sitemap-1.xml", { body: "old", lastModified: new Date("2026-01-01T00:00:00Z") }],
   ]);
   return {
@@ -68,7 +68,9 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.match(chunk, /<image:loc>https:\/\/cdn\.dekhocampus\.com\/news\/sample\.webp<\/image:loc>/);
   assert.match(chunk, /<image:loc>https:\/\/dekhocampus\.com\/storage\/v1\/object\/public\/admin-uploads\/logos\/sample\.webp<\/image:loc>/);
   assert.doesNotMatch(chunk, /youtube\.com|Campus tour/);
+  assert.doesNotMatch(chunk, /news\/tag\/https|aws-origin\.dekhocampus\.com/);
   assert.match(chunk, /\/colleges\?group=MBA&amp;state=Delhi\+NCR<\/loc>/);
+  assert.doesNotMatch(chunk, /group=Unverified|state=Nowhere/);
   assert.doesNotMatch(chunk, /\/colleges\/colleges-sample-101\/overview/);
   assert.doesNotMatch(chunk, /\/courses\/courses-sample-101\/eligibility/);
   assert.doesNotMatch(chunk, /\/exams\/exams-sample-101\/sample-paper/);

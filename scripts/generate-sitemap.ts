@@ -118,6 +118,13 @@ function changed(value?: string) {
   return value ? new Date(value).toISOString().slice(0, 10) : undefined;
 }
 
+function tagSlug(value: unknown) {
+  const tag = String(value || "").trim();
+  if (!tag || tag.length > 80 || /(?:https?:\/\/|\/storage\/|@)/i.test(tag)) return null;
+  const slug = tag.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return slug && slug.length <= 80 ? slug : null;
+}
+
 function jsonValues(value: unknown): string[] {
   if (value == null || value === "") return [];
   if (Array.isArray(value)) return value.flatMap(jsonValues);
@@ -410,7 +417,7 @@ function writeSitemaps(entries: SitemapEntry[]) {
     studyEntries(),
   ]);
 
-  const tags = [...new Set(articles.flatMap((article) => Array.isArray(article.tags) ? article.tags : []).filter(Boolean))];
+  const tags = [...new Set(articles.flatMap((article) => Array.isArray(article.tags) ? article.tags : []).map(tagSlug).filter(Boolean))];
   const liveEntityRowsVisible = Boolean(colleges.length || courses.length || exams.length || articles.length || premiumPrograms.length);
   const seedEntries = liveEntityRowsVisible ? [] : await fetchSeedEntries();
   if (!liveEntityRowsVisible) {
@@ -424,7 +431,7 @@ function writeSitemaps(entries: SitemapEntry[]) {
     ...detailEntries("/careers", careers, "0.72", ["image"]),
     ...detailEntries("/scholarships", scholarships, "0.72", ["image"]),
     ...detailEntries("/news", articles, "0.7", ["featured_image"]),
-    ...tags.map((tag) => ({ path: `/news/tag/${encodeURIComponent(String(tag).toLowerCase().trim().replace(/\s+/g, "-"))}`, changefreq: "daily" as const, priority: "0.62" })),
+    ...tags.map((tag) => ({ path: `/news/tag/${encodeURIComponent(tag!)}`, changefreq: "daily" as const, priority: "0.62" })),
     ...detailEntries("/landing", landing, "0.65", ["logo_url", "og_image"]),
     ...detailEntries("/cat-universe", catModules, "0.75"),
     ...detailEntries("/premium-programs", premiumPrograms, "0.86", ["image_url", "hero_image", "certificate_image", "degree_image", "institute_logo"]),

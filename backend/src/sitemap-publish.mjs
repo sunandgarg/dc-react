@@ -6,7 +6,7 @@ import { storageConfig } from "./storage.mjs";
 const CORE_TABLES = ["colleges", "courses", "exams", "articles"];
 const PUBLISH_TARGET = "https://dekhocampus.com";
 const SITEMAP_PREFIX = "system-sitemaps";
-const CHUNK_SIZE = 45_000;
+const CHUNK_SIZE = 3_000;
 const MIN_FILTER_RESULTS = 3;
 const GENERATION_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 const REBUILT_ROOTS = [
@@ -34,6 +34,13 @@ function dateOnly(value) {
   if (!value) return undefined;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString().slice(0, 10);
+}
+
+function tagSlug(value) {
+  const tag = String(value || "").trim();
+  if (!tag || tag.length > 80 || /(?:https?:\/\/|\/storage\/|@)/i.test(tag)) return null;
+  const slug = tag.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return slug && slug.length <= 80 ? slug : null;
 }
 
 function canonicalPath(value) {
@@ -112,6 +119,34 @@ function sitemapIndex(generation, count) {
     ...Array.from({ length: count }, (_, index) => `  <sitemap><loc>${PUBLISH_TARGET}/sitemap-files/${generation}/sitemap-${index + 1}.xml</loc></sitemap>`),
     "</sitemapindex>",
   ].join("\n");
+}
+
+function isFilterLanding(path) {
+  return /^\/(?:colleges|courses|exams)\?/.test(path || "");
+}
+
+function mergeEntries(seed, dynamic) {
+  const entries = new Map();
+  for (const entry of seed) {
+    // Filter pages are rebuilt from live MySQL records below. Keeping static
+    // permutations here would reintroduce empty or near-duplicate crawl pages.
+    if (entry.path && !isFilterLanding(entry.path)) entries.set(entry.path, entry);
+  }
+  for (const entry of dynamic) {
+    if (!entry.path) continue;
+    const current = entries.get(entry.path);
+    if (!current) {
+      entries.set(entry.path, entry);
+      continue;
+    }
+    entries.set(entry.path, {
+      ...current,
+      ...entry,
+      lastmod: [current.lastmod, entry.lastmod].filter(Boolean).sort().at(-1),
+      images: [...new Set([...(current.images || []), ...(entry.images || [])])].slice(0, 1_000),
+    });
+  }
+  return [...entries.values()];
 }
 
 function objectRepository() {
@@ -334,7 +369,10 @@ async function dynamicEntries(prismaClient) {
   const tags = new Set();
   for (const article of articles) {
     const values = Array.isArray(article.tags) ? article.tags : (() => { try { return JSON.parse(article.tags || "[]"); } catch { return []; } })();
-    for (const tag of values) if (tag) tags.add(String(tag).toLowerCase().trim().replace(/\s+/g, "-"));
+    for (const tag of values) {
+      const slug = tagSlug(tag);
+      if (slug) tags.add(slug);
+    }
   }
   return [
     ...colleges.map((row) => canonicalEntity("/colleges", row, "0.88", ["image", "logo", "carousel_images", "gallery_images"])),
@@ -380,8 +418,7 @@ export async function publishSitemap(request, options = {}) {
     const counts = Object.fromEntries(await Promise.all(CORE_TABLES.map(async (table) => [table, await activeCount(table, prismaClient)])));
     if (Object.values(counts).some((count) => count === 0)) throw publishError(409, "SITEMAP_SOURCE_INCOMPLETE", "Publishing stopped because one or more core public catalogs are empty");
     const [seed, dynamic] = await Promise.all([currentSeedEntries(repository), dynamicEntries(prismaClient)]);
-    const seen = new Set();
-    const entries = [...seed, ...dynamic].filter((entry) => entry.path && !seen.has(entry.path) && (seen.add(entry.path), true));
+    const entries = mergeEntries(seed, dynamic);
     const imageCount = entries.reduce((total, entry) => total + (entry.images?.length || 0), 0);
     const filterUrlCount = entries.filter((entry) => /^\/(colleges|courses|exams)\?/.test(entry.path)).length;
     const generation = randomUUID();
