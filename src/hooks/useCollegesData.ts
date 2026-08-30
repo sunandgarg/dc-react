@@ -2,6 +2,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
+import { getPrefillCookie } from "@/components/CookieConsent";
+import {
+  DELHI_NCR_CITIES,
+  isDelhiNcrLocation,
+  rankPartnerColleges,
+  rankSimilarColleges,
+  type RecommendationLocation,
+} from "@/lib/collegeRecommendations";
 
 function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
@@ -9,6 +17,7 @@ function isPendingReview(response: { status?: number | null }) {
 
 export type DbCollege = {
   id: string;
+  short_id?: number | null;
   slug: string;
   name: string;
   short_name: string;
@@ -427,23 +436,79 @@ export function useCollegesByCategory(category: string | undefined, excludeSlug?
   });
 }
 
-export function usePartnerColleges(limit = 8, excludeSlug?: string) {
+export function useSimilarColleges(college: DbCollege | null | undefined, limit = 8) {
+  const visitor = typeof window === "undefined" ? {} : getPrefillCookie();
+  const current = college ? {
+    slug: college.slug,
+    city: college.city,
+    state: college.state,
+    location: college.location,
+    category: college.category,
+    type: college.type,
+    affiliation_kind: college.affiliation_kind,
+  } : null;
+
   return useQuery({
-    queryKey: ["partner-colleges", limit, excludeSlug],
+    queryKey: ["similar-colleges-v2", current, visitor.city || "", visitor.state || "", limit],
     queryFn: async () => {
-      let query = backendClient
-        .from("colleges")
-        .select(PUBLIC_COLLEGE_CARD_SELECT)
-        .eq("is_active", true)
-        .eq("is_partner", true)
+      if (!college || !current) return [] as DbCollege[];
+      const candidateLimit = Math.max(24, limit * 4);
+      const base = () => {
+        let query = backendClient
+          .from("colleges")
+          .select(PUBLIC_COLLEGE_CARD_SELECT)
+          .eq("is_active", true)
+          .limit(candidateLimit);
+        query = query.neq("slug", college.slug);
+        return query;
+      };
+      const queries: any[] = [];
+      if (college.state) queries.push(base().eq("state", college.state));
+      if (college.category) queries.push(base().eq("category", college.category));
+      if (isDelhiNcrLocation(college)) queries.push(base().in("city", DELHI_NCR_CITIES));
+      if (!queries.length) queries.push(base().order("rating", { ascending: false, nullsFirst: false }));
+      const results = await Promise.all(queries);
+      const failed = results.find((result) => result.error);
+      if (failed?.error) throw failed.error;
+      const candidates = results.flatMap((result) => result.data || []) as unknown as DbCollege[];
+      return rankSimilarColleges(candidates, current, visitor, limit);
+    },
+    enabled: Boolean(college?.slug),
+    staleTime: 10 * 60 * 1000,
+  });
+}
+
+export function usePartnerColleges(limit = 8, excludeSlug?: string, preferredLocation?: RecommendationLocation) {
+  const cached = typeof window === "undefined" ? {} : getPrefillCookie();
+  const preferred = {
+    city: preferredLocation?.city || cached.city,
+    state: preferredLocation?.state || cached.state,
+  };
+  return useQuery({
+    queryKey: ["partner-colleges-v2", limit, excludeSlug, preferred.city || "", preferred.state || ""],
+    queryFn: async () => {
+      const candidateLimit = Math.max(24, limit * 4);
+      const base = () => {
+        let query = backendClient
+          .from("colleges")
+          .select(PUBLIC_COLLEGE_CARD_SELECT)
+          .eq("is_active", true)
+          .eq("is_partner", true)
+          .limit(candidateLimit);
+        if (excludeSlug) query = query.neq("slug", excludeSlug);
+        return query;
+      };
+      const queries: any[] = [base()
         .order("priority", { ascending: true, nullsFirst: false })
         .order("featured_rank", { ascending: true, nullsFirst: false })
-        .order("rating", { ascending: false, nullsFirst: false })
-        .limit(limit);
-      if (excludeSlug) query = query.neq("slug", excludeSlug);
-      const { data, error } = await query;
-      if (error) throw error;
-      return (data ?? []) as unknown as DbCollege[];
+        .order("rating", { ascending: false, nullsFirst: false })];
+      if (preferred.state) queries.push(base().eq("state", preferred.state));
+      if (isDelhiNcrLocation(preferred)) queries.push(base().in("city", DELHI_NCR_CITIES));
+      const results = await Promise.all(queries);
+      const failed = results.find((result) => result.error);
+      if (failed?.error) throw failed.error;
+      const candidates = results.flatMap((result) => result.data || []) as unknown as DbCollege[];
+      return rankPartnerColleges(candidates, preferred, limit);
     },
     staleTime: 10 * 60 * 1000,
   });

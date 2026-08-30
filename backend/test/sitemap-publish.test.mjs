@@ -58,7 +58,13 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.equal(result.sitemap_url, "https://dekhocampus.com/sitemap.xml");
   const index = repository.objects.get("system-sitemaps/public/sitemap.xml").body;
   assert.match(index, new RegExp(`/sitemap-files/${result.generation}/sitemap-1\\.xml`));
-  assert.ok(repository.objects.has(`system-sitemaps/generations/${result.generation}/sitemap-1.xml`));
+  const chunk = repository.objects.get(`system-sitemaps/generations/${result.generation}/sitemap-1.xml`)?.body || "";
+  assert.match(chunk, /\/colleges\/colleges-sample-101<\/loc>/);
+  assert.match(chunk, /\/courses\/courses-sample-101<\/loc>/);
+  assert.match(chunk, /\/exams\/exams-sample-101<\/loc>/);
+  assert.doesNotMatch(chunk, /\/colleges\/colleges-sample-101\/overview/);
+  assert.doesNotMatch(chunk, /\/courses\/courses-sample-101\/eligibility/);
+  assert.doesNotMatch(chunk, /\/exams\/exams-sample-101\/sample-paper/);
   assert.equal(result.removed_objects, 1);
   assert.equal(repository.objects.has("system-sitemaps/generations/old-generation/sitemap-1.xml"), false);
 });

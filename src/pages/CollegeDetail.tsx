@@ -26,7 +26,7 @@ import { CollegeDecisionRail } from "@/components/detail/CollegeDecisionRail";
 import { CollegeQuickFacts } from "@/components/detail/CollegeQuickFacts";
 import { AuthorByline } from "@/components/AuthorByline";
 import { MobileBottomBar } from "@/components/MobileBottomBar";
-import { useDbCollege, useCollegesByState, useCollegesByCategory } from "@/hooks/useCollegesData";
+import { useDbCollege, useCollegesByState, useSimilarColleges } from "@/hooks/useCollegesData";
 import { useApprovalBodies } from "@/hooks/useApprovalBodies";
 import { WhatsNewSection } from "@/components/WhatsNewSection";
 import { UsefulLinks } from "@/components/UsefulLinks";
@@ -94,7 +94,7 @@ export default function CollegeDetail() {
     }
   }, [college, location.pathname, location.search, location.hash, navigate]);
   const { data: sameStateColleges } = useCollegesByState(college?.state, collegeRelationSlug);
-  const { data: similarColleges } = useCollegesByCategory(college?.category, collegeRelationSlug);
+  const { data: similarColleges } = useSimilarColleges(college, 8);
   const { data: approvalBodies = [] } = useApprovalBodies();
   const [counsellingOpen, setCounsellingOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
@@ -776,7 +776,7 @@ export default function CollegeDetail() {
               <h2 data-h className="text-lg font-bold text-foreground mb-3">Compare with Similar Colleges</h2>
               <div className="grid sm:grid-cols-2 gap-3">
                 {(similarColleges ?? []).slice(0, 4).map((c) => (
-                  <Link key={c.slug} to={`/colleges/${c.slug}`} className="bg-muted rounded-xl p-3 hover:shadow-md transition-shadow">
+                  <Link key={c.slug} to={buildCollegeHref(c)} className="bg-muted rounded-xl p-3 hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-3">
                       {(c.logo || c.image) ? (
                         <img
@@ -805,7 +805,7 @@ export default function CollegeDetail() {
                   <h3 data-h className="text-sm font-semibold text-foreground mb-2">More colleges in {college.state}</h3>
                   <div className="flex flex-wrap gap-2">
                     {(sameStateColleges ?? []).slice(0, 6).map((c) => (
-                      <Link key={c.slug} to={`/colleges/${c.slug}`}>
+                      <Link key={c.slug} to={buildCollegeHref(c)}>
                         <Badge variant="secondary" className="text-xs cursor-pointer hover:bg-primary/10">{c.short_name || c.name}</Badge>
                       </Link>
                     ))}
@@ -818,6 +818,8 @@ export default function CollegeDetail() {
                 title={`Partner colleges near ${college.state || "India"}`}
                 subtitle="Priority partner options you can compare with this college."
                 excludeSlug={college.slug}
+                preferredCity={college.city}
+                preferredState={college.state}
                 limit={4}
                 frame
               />
@@ -929,13 +931,13 @@ export default function CollegeDetail() {
                   <h3 data-h className="text-sm font-bold text-foreground mb-3">🏛️ Similar Colleges</h3>
                   <div className="space-y-2">
                     {(similarColleges ?? []).slice(0, 5).map((c) => (
-                      <Link key={c.slug} to={`/colleges/${c.slug}`} className="block text-xs text-primary hover:underline py-1 border-b border-border last:border-0">{c.short_name || c.name}</Link>
+                      <Link key={c.slug} to={buildCollegeHref(c)} className="block text-xs text-primary hover:underline py-1 border-b border-border last:border-0">{c.short_name || c.name}</Link>
                     ))}
                   </div>
                 </div>
               )}
 
-              <PartnerCollegeStrip title="Partner Colleges" excludeSlug={college.slug} limit={5} compact />
+              <PartnerCollegeStrip title="Partner Colleges" excludeSlug={college.slug} preferredCity={college.city} preferredState={college.state} limit={5} compact />
 
               <DynamicAdBanner variant="vertical" position="sidebar" page="colleges" itemSlug={college.slug} />
             </div>

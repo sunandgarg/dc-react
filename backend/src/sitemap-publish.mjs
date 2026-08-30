@@ -8,16 +8,6 @@ const PUBLISH_TARGET = "https://dekhocampus.com";
 const SITEMAP_PREFIX = "system-sitemaps";
 const CHUNK_SIZE = 45_000;
 const GENERATION_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
-const COLLEGE_TABS = ["overview", "highlights", "courses-fees", "admission", "placements", "cutoff", "rankings", "scholarship", "hostel", "facilities", "faculty", "gallery", "reviews", "news", "faq"];
-const COURSE_TABS = ["overview", "highlights", "eligibility", "syllabus", "fees", "admission", "career", "placements", "specializations", "top-exams", "top-colleges", "cutoff", "faq"];
-const EXAM_TABS = ["overview", "dates", "eligibility", "pattern", "syllabus", "application", "admit-card", "result", "counselling", "cutoff", "preparation", "faq"];
-const EXAM_STRATEGIES = [
-  "sample-paper", "tips-and-tricks", "last-1-month-preparation-strategy", "15-days-preparation-strategy",
-  "7-days-preparation-strategy", "3-days-preparation-strategy", "2-days-preparation-strategy", "1-day-preparation-strategy",
-  "18-hours-preparation-strategy", "12-hours-preparation-strategy", "8-hours-preparation-strategy", "6-hours-preparation-strategy",
-  "3-hours-preparation-strategy", "1-hour-preparation-strategy", "30-minute-preparation-tips", "15-minute-preparation-tips",
-  "10-minute-preparation-tips", "5-minute-preparation-tips", "last-2-minute-preparation-tips",
-];
 const REBUILT_ROOTS = [
   "/colleges/", "/courses/", "/exams/", "/news/", "/careers/", "/scholarships/", "/landing/",
   "/cat-universe/", "/premium-programs/", "/jobs/", "/vacancies/", "/author/", "/legal/",
@@ -191,14 +181,9 @@ async function rows(prismaClient, table, columns, requireSlug = true) {
   return prismaClient.$queryRawUnsafe(`SELECT ${columns.map((column) => `\`${column}\``).join(",")} FROM \`${table}\` WHERE \`is_active\` = 1${requireSlug ? " AND `slug` IS NOT NULL" : ""}`);
 }
 
-function canonicalEntity(prefix, row, priority, tabs = []) {
+function canonicalEntity(prefix, row, priority) {
   const suffix = row.short_id ? `${row.slug}-${row.short_id}` : row.slug;
-  const base = `${prefix}/${suffix}`;
-  const common = { lastmod: dateOnly(row.updated_at), changefreq: "weekly" };
-  return [
-    { path: base, ...common, priority },
-    ...tabs.map((tab) => ({ path: `${base}/${tab}`, ...common, priority: String(Math.max(0.1, Number(priority) - 0.12)) })),
-  ];
+  return { path: `${prefix}/${suffix}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority };
 }
 
 function simpleEntities(prefix, sourceRows, priority) {
@@ -235,12 +220,9 @@ async function dynamicEntries(prismaClient) {
     for (const tag of values) if (tag) tags.add(String(tag).toLowerCase().trim().replace(/\s+/g, "-"));
   }
   return [
-    ...colleges.flatMap((row) => canonicalEntity("/colleges", row, "0.88", COLLEGE_TABS)),
-    ...courses.flatMap((row) => canonicalEntity("/courses", row, "0.85", COURSE_TABS)),
-    ...exams.flatMap((row) => [
-      ...canonicalEntity("/exams", row, "0.85", EXAM_TABS),
-      ...EXAM_STRATEGIES.map((strategy) => ({ path: `${canonicalEntity("/exams", row, "0.85")[0].path}/${strategy}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority: "0.64" })),
-    ]),
+    ...colleges.map((row) => canonicalEntity("/colleges", row, "0.88")),
+    ...courses.map((row) => canonicalEntity("/courses", row, "0.85")),
+    ...exams.map((row) => canonicalEntity("/exams", row, "0.85")),
     ...simpleEntities("/news", articles, "0.7"),
     ...[...tags].map((tag) => ({ path: `/news/tag/${encodeURIComponent(tag)}`, changefreq: "daily", priority: "0.62" })),
     ...simpleEntities("/careers", careers, "0.72"),

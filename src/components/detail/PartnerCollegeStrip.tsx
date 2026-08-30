@@ -13,6 +13,8 @@ interface PartnerCollegeStripProps {
   limit?: number;
   compact?: boolean;
   frame?: boolean;
+  preferredCity?: string;
+  preferredState?: string;
 }
 
 function partnerCollegeLocation(college: DbCollege) {
@@ -26,8 +28,13 @@ export function PartnerCollegeStrip({
   limit = 6,
   compact = false,
   frame = false,
+  preferredCity,
+  preferredState,
 }: PartnerCollegeStripProps) {
-  const { data: colleges = [], isLoading } = usePartnerColleges(limit, excludeSlug);
+  const { data: colleges = [], isLoading } = usePartnerColleges(limit, excludeSlug, {
+    city: preferredCity,
+    state: preferredState,
+  });
 
   if (isLoading) {
     return (

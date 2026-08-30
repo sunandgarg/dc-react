@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Landmark, ArrowRight, ShieldCheck, Building2 } from "lucide-react";
+import { ArrowRight, ShieldCheck, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { backendClient } from "@/integrations/backend/client";
 import { buildCollegeHref } from "@/lib/entityUrls";
@@ -22,23 +22,26 @@ function AffiliationLogo({
   name: string;
   size?: "parent" | "child";
 }) {
-  const [src, setSrc] = useState(logo || image || "");
-  const [failed, setFailed] = useState(false);
+  const candidates = useMemo(
+    () => [logo, image].filter((value, index, values): value is string => Boolean(value) && values.indexOf(value) === index),
+    [logo, image],
+  );
+  const [src, setSrc] = useState(candidates[0] || "");
 
   useEffect(() => {
-    setSrc(logo || image || "");
-    setFailed(false);
-  }, [logo, image]);
+    setSrc(candidates[0] || "");
+  }, [candidates]);
 
   const isParent = size === "parent";
   const fallbackClass = isParent
-    ? "w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-border"
-    : "w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center border border-border shrink-0";
+    ? "w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20"
+    : "w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0";
 
-  if (!src || failed) {
+  if (!src) {
+    const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "DC";
     return (
       <div className={fallbackClass} aria-label={`${name} logo unavailable`}>
-        <Landmark className={isParent ? "w-6 h-6 text-primary" : "w-4 h-4 text-primary"} />
+        <span className={isParent ? "text-sm font-bold text-primary" : "text-xs font-bold text-primary"}>{initials}</span>
       </div>
     );
   }
@@ -50,15 +53,13 @@ function AffiliationLogo({
       className={
         isParent
           ? "w-12 h-12 rounded-xl object-contain bg-background border border-border p-1.5 shrink-0"
-          : "entity-logo-safe w-8 h-8 rounded-md border border-border bg-background p-1 object-contain shrink-0"
+          : "entity-logo-safe w-12 h-12 rounded-lg border border-border bg-slate-50 p-1 object-contain shrink-0"
       }
       loading="lazy"
+      decoding="async"
       onError={() => {
-        if (image && src !== image) {
-          setSrc(image);
-          return;
-        }
-        setFailed(true);
+        const next = candidates[candidates.indexOf(src) + 1];
+        setSrc(next || "");
       }}
     />
   );
@@ -166,16 +167,18 @@ export function CollegeAffiliationCard({ college }: Props) {
           <Link
             key={c.slug}
             to={buildCollegeHref(c as any)}
-            className="snap-start shrink-0 w-44 group rounded-xl border border-border p-3 hover:border-primary/40 hover:bg-primary/5 transition-colors"
+            className="snap-start shrink-0 w-52 group rounded-xl border border-border p-3 hover:border-primary/40 hover:bg-primary/5 transition-colors"
           >
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex items-center gap-3">
               <AffiliationLogo logo={c.logo} image={c.image} name={c.name} />
-            </div>
-            <div className="text-xs font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-              {c.short_name || c.name}
-            </div>
-            <div className="text-[10px] text-muted-foreground truncate mt-0.5">
-              {[c.city, c.state].filter(Boolean).join(", ")}
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                  {c.short_name || c.name}
+                </div>
+                <div className="text-[10px] text-muted-foreground truncate mt-1">
+                  {[c.city, c.state].filter(Boolean).join(", ")}
+                </div>
+              </div>
             </div>
           </Link>
         ))}
