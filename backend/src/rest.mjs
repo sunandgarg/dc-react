@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata, tableNames, jsonSafe } from "./db.mjs";
 import { recordContentReviews } from "./content-review.mjs";
 import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
+import { invalidateDirectorySearchCache, searchDirectory } from "./directory-search.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
@@ -425,9 +426,14 @@ export async function handleRest(table, request, context = {}) {
   const url = new URL(request.url);
   if (["GET", "HEAD"].includes(request.method)) return handleGet(table, request, url);
   if (schemaMetadata[table].ignored) return { status: 405, body: { code: "25006", message: `Resource ${table} is read-only` } };
-  if (request.method === "POST") return handlePost(table, request, url, context);
-  if (request.method === "PATCH") return handlePatch(table, request, url, context);
-  if (request.method === "DELETE") return handleDelete(table, request, url);
+  let result;
+  if (request.method === "POST") result = await handlePost(table, request, url, context);
+  else if (request.method === "PATCH") result = await handlePatch(table, request, url, context);
+  else if (request.method === "DELETE") result = await handleDelete(table, request, url);
+  if (result) {
+    if (["colleges", "courses", "exams", "career_profiles"].includes(table) && result.status < 400) invalidateDirectorySearchCache();
+    return result;
+  }
   return { status: 405, body: { message: "Method not allowed" } };
 }
 
@@ -464,30 +470,8 @@ export async function handleRpc(name, request) {
     const query = String(body.p_query || "").trim().toLowerCase().slice(0, 120);
     const limit = Math.max(1, Math.min(Number(body.p_limit || 10), 15));
     if (query.length < 2) return { status: 200, body: [] };
-    const like = `%${query}%`;
-    const slugLike = `%${query.replaceAll(" ", "-")}%`;
-    const rows = await prisma.$queryRawUnsafe(`
-      SELECT entity_type, name, slug, subtitle, image_url, logo_url,
-             CASE WHEN LOWER(name) = ? THEN 1.0 WHEN LOWER(search_alias) = ? THEN 0.995 WHEN LOWER(name) LIKE CONCAT(?, '%') THEN 0.98 ELSE 0.94 END AS score
-      FROM (
-        SELECT 'College' AS entity_type, name, slug, COALESCE(NULLIF(city, ''), NULLIF(state, ''), '') AS subtitle,
-               COALESCE(NULLIF(image, ''), logo, '') AS image_url, COALESCE(NULLIF(logo, ''), image, '') AS logo_url,
-               COALESCE(short_name, '') AS search_alias
-        FROM colleges WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(short_name) LIKE ? OR LOWER(slug) LIKE ?)
-        UNION ALL
-        SELECT 'Course', name, slug, COALESCE(NULLIF(level, ''), NULLIF(category, ''), 'Course'), COALESCE(image, ''), COALESCE(image, ''), COALESCE(full_name, '')
-        FROM courses WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(full_name) LIKE ? OR LOWER(slug) LIKE ?)
-        UNION ALL
-        SELECT 'Exam', name, slug, COALESCE(NULLIF(exam_type, ''), NULLIF(category, ''), 'Exam'), COALESCE(NULLIF(logo, ''), image, ''), COALESCE(NULLIF(logo, ''), image, ''), CONCAT_WS(' ', short_name, full_name)
-        FROM exams WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(short_name) LIKE ? OR LOWER(full_name) LIKE ? OR LOWER(slug) LIKE ?)
-        UNION ALL
-        SELECT 'Career', name, slug, COALESCE(domain, 'Career'), COALESCE(image, ''), COALESCE(image, ''), ''
-        FROM career_profiles WHERE is_active = 1 AND (LOWER(name) LIKE ? OR LOWER(slug) LIKE ?)
-      ) candidates
-      ORDER BY score DESC, LENGTH(name), name
-      LIMIT ${limit}
-    `, query, query, query, like, like, slugLike, like, like, slugLike, like, like, like, slugLike, like, slugLike);
-    return { status: 200, body: jsonSafe(rows) };
+    const rows = await searchDirectory(query, limit);
+    return { status: 200, body: rows, headers: { "cache-control": "public, max-age=60, stale-while-revalidate=300" } };
   }
   if (name === "get_data_cleaning_coverage") {
     const mappings = [

@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, GraduationCap, BookOpen, FileText, ClipboardList, Star, Newspaper, MapPin, ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { backendClient } from "@/integrations/backend/client";
-import { buildSearchVariants, buildIlikeOr } from "@/lib/fuzzySearch";
-import { compactDisplayText, displayText } from "@/lib/displayText";
+import { displayText } from "@/lib/displayText";
+import { searchDirectory } from "@/lib/directorySearch";
+import { SearchResultIcon } from "@/components/SearchResultIcon";
 
 const rotatingWords = ["College", "Course", "Exam"];
 
@@ -34,6 +34,7 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
   const [dbResults, setDbResults] = useState<SearchResult[]>([]);
+  const requestId = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,27 +46,21 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
 
   useEffect(() => {
     const q = query.trim().toLowerCase();
+    const currentRequest = ++requestId.current;
     if (!q || q.length < 2) { setDbResults([]); return; }
-
-    const variants = buildSearchVariants(q);
-    const orFor = (col: string) => buildIlikeOr(col, variants);
 
     const timeout = setTimeout(async () => {
       try {
-        const [colleges, courses, exams] = await Promise.all([
-          backendClient.from("colleges").select("name, short_name, slug, city, logo").eq("is_active", true).or([orFor("name"), orFor("short_name"), orFor("slug")].join(",")).limit(3),
-          backendClient.from("courses").select("name, full_name, slug").eq("is_active", true).or([orFor("name"), orFor("full_name"), orFor("slug")].join(",")).limit(3),
-          backendClient.from("exams").select("name, short_name, full_name, slug, logo").eq("is_active", true).or([orFor("name"), orFor("short_name"), orFor("full_name"), orFor("slug")].join(",")).limit(3),
-        ]);
-
-        const results: SearchResult[] = [
-          ...(colleges.data || []).map(c => ({ type: "College" as const, name: compactDisplayText(c.name, "Untitled college", 90), slug: c.slug, location: compactDisplayText([c.short_name, c.city].filter(Boolean).join(" · "), "", 60), logo: c.logo || "" })),
-          ...(courses.data || []).map(c => ({ type: "Course" as const, name: compactDisplayText(c.name, "Untitled course", 90), slug: c.slug, location: "" })),
-          ...(exams.data || []).map(e => ({ type: "Exam" as const, name: compactDisplayText(e.name, "Untitled exam", 90), slug: e.slug, location: "", logo: e.logo || "" })),
-        ];
-        setDbResults(results);
+        const results = await searchDirectory(q, 9);
+        if (requestId.current !== currentRequest) return;
+        setDbResults(results.filter((row) => row.entity_type !== "Career").map((row) => ({
+          type: row.entity_type as SearchResult["type"],
+          name: row.name,
+          slug: row.slug,
+          location: row.subtitle,
+        })));
       } catch { /* skip */ }
-    }, 250);
+    }, q.length <= 2 ? 90 : 55);
 
     return () => clearTimeout(timeout);
   }, [query]);
@@ -86,12 +81,6 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
   };
 
   const showDropdown = isFocused && query.trim().length >= 2;
-
-  const getIcon = (type: string) => {
-    if (type === "College") return GraduationCap;
-    if (type === "Course") return BookOpen;
-    return FileText;
-  };
 
   return (
     <section className="py-12 bg-card" aria-label="Search Colleges, Courses & Exams">
@@ -155,20 +144,13 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
                         : `No matches for "${query}" - try Ask AI`}
                     </p>
                     {dbResults.map((item) => {
-                      const Icon = getIcon(item.type);
                       return (
                         <button
                           key={`${item.type}-${item.slug}`}
                           onMouseDown={() => handleResultClick(item)}
                           className="w-full flex items-center gap-3 px-5 py-3 hover:bg-muted/50 transition-colors text-left"
                         >
-                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                            {item.logo ? (
-                              <img src={item.logo} alt="" className="entity-logo-safe w-8 h-8 rounded-lg" />
-                            ) : (
-                              <Icon className="w-5 h-5 text-primary" />
-                            )}
-                          </div>
+                          <SearchResultIcon type={item.type} />
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-foreground truncate">{displayText(item.name, "Untitled")}</p>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">

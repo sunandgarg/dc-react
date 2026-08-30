@@ -8,12 +8,14 @@ import { provisionExistingRestrictedEditor } from "./editor-access.mjs";
 import { ensureSupportedAiModels, startBlogAgentWorker, stopBlogAgentWorker } from "./blog-ai.mjs";
 import { startDataCleanerWorker, stopDataCleanerWorker } from "./data-cleaner.mjs";
 import { prisma } from "./db.mjs";
+import { warmDirectorySearchCache } from "./directory-search.mjs";
 
 const port = Number(process.env.PORT || 8787);
 const host = process.env.HOST || "0.0.0.0";
 await ensureContentReviewTable();
 await provisionExistingRestrictedEditor();
 await ensureSupportedAiModels();
+await warmDirectorySearchCache();
 await startLeadOutboxWorker();
 await startBlogAgentWorker();
 startDataCleanerWorker();

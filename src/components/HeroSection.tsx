@@ -3,16 +3,12 @@ import {
   Send,
   Sparkles,
   Zap,
-  GraduationCap,
-  BookOpen,
-  FileText,
   MapPin,
   ArrowRight,
   Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { backendClient } from "@/integrations/backend/client";
 import { useHeroSettings } from "@/hooks/useHeroSettings";
 import { useSiteIntegration, useSiteIntegrationEnabled } from "@/hooks/useSiteIntegration";
 import dcLogo from "@/assets/dc-logo-small.webp";
@@ -23,8 +19,9 @@ import catApplication from "@/assets/hero-application-attached.png";
 import catReviews from "@/assets/hero-reviews-attached.png";
 import catNews from "@/assets/hero-news-attached.png";
 import { HeroCounsellingCard } from "@/components/HeroCounsellingCard";
-import { compactDisplayText, displayText } from "@/lib/displayText";
-import { buildIlikeOr, buildSearchVariants, rankDirectoryResult } from "@/lib/fuzzySearch";
+import { displayText } from "@/lib/displayText";
+import { searchDirectory } from "@/lib/directorySearch";
+import { SearchResultIcon } from "@/components/SearchResultIcon";
 
 const YEAR = new Date().getFullYear();
 const suggestedPrompts = [
@@ -94,92 +91,22 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
     setIsSearching(true);
     const timeout = setTimeout(async () => {
       try {
-        const rpc = await (backendClient as any).rpc("search_directory_fast", {
-          p_query: q,
-          p_limit: 10,
-        });
+        const results = await searchDirectory(q, 10);
         if (requestId.current !== currentRequest) return;
-
-        if (!rpc.error && rpc.data?.length) {
-          setDbResults(
-            (rpc.data || [])
-              .filter((row: any) => ["College", "Course", "Exam", "Career"].includes(row.entity_type))
-              .map((row: any) => ({
-                type: row.entity_type,
-                name: compactDisplayText(row.name, `Untitled ${String(row.entity_type || "result").toLowerCase()}`, 90),
-                slug: row.slug,
-                location: compactDisplayText(row.subtitle || row.entity_type || "", "", 60),
-                image: row.image_url || "",
-                logo: row.logo_url || "",
-              }))
-              .sort((a: SearchResult, b: SearchResult) => rankDirectoryResult(q, b.name, b.location) - rankDirectoryResult(q, a.name, a.location)),
-          );
-          return;
-        }
-
-        const variants = buildSearchVariants(q.toLowerCase()).slice(0, 3);
-        const orFor = (column: string) => buildIlikeOr(column, variants);
-        const [colleges, courses, exams] = await Promise.all([
-          backendClient
-            .from("colleges")
-            .select("name, short_name, slug, city, logo")
-            .eq("is_active", true)
-            .or([orFor("name"), orFor("short_name"), orFor("slug"), orFor("city"), orFor("state")].filter(Boolean).join(","))
-            .limit(5),
-          backendClient
-            .from("courses")
-            .select("name, full_name, slug, level, category, image")
-            .eq("is_active", true)
-            .or([orFor("name"), orFor("full_name"), orFor("slug"), orFor("category")].filter(Boolean).join(","))
-            .limit(5),
-          backendClient
-            .from("exams")
-            .select("name, short_name, full_name, slug, image, logo, exam_type, category")
-            .eq("is_active", true)
-            .or([orFor("name"), orFor("short_name"), orFor("full_name"), orFor("slug"), orFor("category")].filter(Boolean).join(","))
-            .limit(5),
-        ]);
-        if (requestId.current !== currentRequest) return;
-
-        const rank = (name: string) => {
-          const value = name.toLowerCase();
-          const needle = q.toLowerCase();
-          if (value === needle) return 0;
-          if (value.startsWith(needle)) return 1;
-          return 2;
-        };
-
-        const results: SearchResult[] = [
-          ...(colleges.data || []).map((c) => ({
-            type: "College" as const,
-            name: compactDisplayText(c.name, "Untitled college", 90),
-            slug: c.slug,
-            location: compactDisplayText([c.short_name, c.city].filter(Boolean).join(" · "), "", 60),
-            logo: c.logo || "",
-          })),
-          ...(courses.data || []).map((c) => ({
-            type: "Course" as const,
-            name: compactDisplayText(c.name, "Untitled course", 90),
-            slug: c.slug,
-            location: compactDisplayText(c.level || c.category || "Course", "", 60),
-            image: c.image || "",
-          })),
-          ...(exams.data || []).map((e) => ({
-            type: "Exam" as const,
-            name: compactDisplayText(e.name, "Untitled exam", 90),
-            slug: e.slug,
-            location: compactDisplayText(e.exam_type || e.category || "Exam", "", 60),
-            image: e.image || "",
-            logo: e.logo || "",
-          })),
-        ].sort((a, b) => (rank(a.name) - rank(b.name)) || (rankDirectoryResult(q, b.name, b.location) - rankDirectoryResult(q, a.name, a.location)));
-        setDbResults(results);
+        setDbResults(results.map((row) => ({
+          type: row.entity_type,
+          name: row.name,
+          slug: row.slug,
+          location: row.subtitle,
+          image: row.image_url,
+          logo: row.logo_url,
+        })));
       } catch {
         /* skip */
       } finally {
         if (requestId.current === currentRequest) setIsSearching(false);
       }
-    }, q.length <= 2 ? 140 : 90);
+    }, q.length <= 2 ? 90 : 55);
 
     return () => clearTimeout(timeout);
   }, [searchQuery]);
@@ -211,40 +138,6 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
   // matching record. That empty state is the hand-off to Ask Diya.
   const showDropdown = isFocused && searchQuery.trim().length >= 2;
   const rotatingWord = { label: "Path", className: "text-primary" } as const;
-  const getIcon = (item: SearchResult) => {
-    if (item.type === "College") return GraduationCap;
-    if (item.type === "Course") return BookOpen;
-    return FileText;
-  };
-
-  const getThumb = (item: SearchResult) => {
-    const Icon = getIcon(item);
-    const imageUrl =
-      item.type === "College" ? item.logo :
-      item.type === "Exam" ? (item.logo || item.image) :
-      item.image;
-
-    return (
-      <div
-        className="relative flex h-10 w-10 min-h-10 min-w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-primary/10 bg-primary/10"
-        style={{ width: 40, height: 40, flexBasis: 40 }}
-      >
-        <Icon className="h-5 w-5 text-primary" />
-        {imageUrl && (
-          <img
-            src={imageUrl}
-            alt=""
-            className="entity-logo-safe absolute inset-0 block h-full w-full rounded-xl"
-            style={{ width: 40, height: 40, maxWidth: 40, maxHeight: 40 }}
-            onError={(event) => {
-              event.currentTarget.style.display = "none";
-            }}
-          />
-        )}
-      </div>
-    );
-  };
-
   return (
     <section
       className={`relative isolate overflow-visible bg-[linear-gradient(118deg,#fff7f1_0%,#f8fbff_48%,#eef5ff_100%)] ${showDropdown ? "z-[500]" : "z-0"}`}
@@ -411,7 +304,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
                           onMouseDown={() => handleResultClick(item)}
                           className="flex min-h-[72px] w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50"
                         >
-                          {getThumb(item)}
+                          <SearchResultIcon type={item.type} />
                           <div className="flex-1 min-w-0">
                             <p className="truncate text-sm font-medium text-foreground md:text-base">{displayText(item.name, "Untitled")}</p>
                             <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground md:text-sm">
