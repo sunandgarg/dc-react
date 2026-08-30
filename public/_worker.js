@@ -1,3 +1,5 @@
+import { applyEdgeSeo, edgeSeoFor } from "./edge-seo.js";
+
 const API_ORIGIN = "https://aws-origin.dekhocampus.com";
 
 const API_PREFIXES = [
@@ -79,6 +81,16 @@ async function serveAsset(request, env) {
 
   if (response.status === 404 && request.method === "GET" && request.headers.get("accept")?.includes("text/html")) {
     response = await env.ASSETS.fetch(new Request(new URL("/index.html", url), request));
+  }
+
+  if (request.method === "GET" && response.ok && response.headers.get("content-type")?.includes("text/html")) {
+    const headers = new Headers(response.headers);
+    headers.delete("content-length");
+    response = new Response(applyEdgeSeo(await response.text(), edgeSeoFor(url)), {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   }
 
   const secured = withSecurityHeaders(response);
