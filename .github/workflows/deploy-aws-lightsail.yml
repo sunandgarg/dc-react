@@ -341,7 +341,9 @@ jobs:
           rm -f "$ENV_FILE"
           cd /opt/dc-react/app
           git fetch origin main
-          git merge --ff-only origin/main
+          # This is a deployment checkout. Keep it identical to the approved
+          # production branch even after an intentional force-with-lease rollback.
+          git reset --hard origin/main
           npm --prefix backend ci
           npm --prefix backend run prisma:generate
           set -a
