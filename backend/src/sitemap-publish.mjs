@@ -7,6 +7,7 @@ const CORE_TABLES = ["colleges", "courses", "exams", "articles"];
 const PUBLISH_TARGET = "https://dekhocampus.com";
 const SITEMAP_PREFIX = "system-sitemaps";
 const CHUNK_SIZE = 45_000;
+const MIN_FILTER_RESULTS = 3;
 const GENERATION_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 const REBUILT_ROOTS = [
   "/colleges/", "/courses/", "/exams/", "/news/", "/careers/", "/scholarships/", "/landing/",
@@ -45,16 +46,59 @@ function canonicalPath(value) {
   }
 }
 
+function jsonValues(value) {
+  if (value == null || value === "") return [];
+  if (Array.isArray(value)) return value.flatMap(jsonValues);
+  if (typeof value === "object") {
+    const preferredKeys = ["url", "src", "image", "image_url", "imageUrl", "path", "publicUrl"];
+    const preferred = preferredKeys.flatMap((key) => jsonValues(value[key]));
+    return preferred.length ? preferred : Object.values(value).flatMap(jsonValues);
+  }
+  if (typeof value !== "string") return [];
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+  if (/^[\[{]/.test(trimmed)) {
+    try { return jsonValues(JSON.parse(trimmed)); } catch { /* use the raw value */ }
+  }
+  return [trimmed];
+}
+
+function canonicalImageLocation(value) {
+  try {
+    const url = new URL(value, PUBLISH_TARGET);
+    if (!/^https?:$/.test(url.protocol) || !/\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(url.pathname)) return null;
+    if (/^\/storage\/v1\/object\/public\//.test(url.pathname)) return `${PUBLISH_TARGET}${url.pathname}${url.search}`;
+    if (!value.includes("://") && !value.startsWith("/")) {
+      return `${PUBLISH_TARGET}/storage/v1/object/public/${url.pathname.replace(/^\/+/, "")}${url.search}`;
+    }
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+function imageLocations(row, fields) {
+  const seen = new Set();
+  return fields.flatMap((field) => jsonValues(row?.[field])).flatMap((value) => {
+    const location = canonicalImageLocation(value);
+    if (!location || seen.has(location)) return [];
+    seen.add(location);
+    return [location];
+  });
+}
+
 function sitemapXml(entries) {
+  const hasImages = entries.some((entry) => entry.images?.length);
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"${hasImages ? ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"' : ""}>`,
     ...entries.map((entry) => [
       "  <url>",
       `    <loc>${escapeXml(`${PUBLISH_TARGET}${entry.path}`)}</loc>`,
       entry.lastmod ? `    <lastmod>${entry.lastmod}</lastmod>` : null,
       `    <changefreq>${entry.changefreq || "weekly"}</changefreq>`,
       `    <priority>${entry.priority || "0.6"}</priority>`,
+      ...(entry.images || []).map((location) => `    <image:image><image:loc>${escapeXml(location)}</image:loc></image:image>`),
       "  </url>",
     ].filter(Boolean).join("\n")),
     "</urlset>",
@@ -171,6 +215,7 @@ async function currentSeedEntries(repository) {
         lastmod: match[1].match(/<lastmod>([\s\S]*?)<\/lastmod>/i)?.[1]?.slice(0, 10),
         changefreq: match[1].match(/<changefreq>([\s\S]*?)<\/changefreq>/i)?.[1] || "weekly",
         priority: match[1].match(/<priority>([\s\S]*?)<\/priority>/i)?.[1] || "0.6",
+        images: [...match[1].matchAll(/<image:loc>([\s\S]*?)<\/image:loc>/gi)].map((image) => decodeXml(image[1].trim())),
       });
     }
   }
@@ -181,28 +226,99 @@ async function rows(prismaClient, table, columns, requireSlug = true) {
   return prismaClient.$queryRawUnsafe(`SELECT ${columns.map((column) => `\`${column}\``).join(",")} FROM \`${table}\` WHERE \`is_active\` = 1${requireSlug ? " AND `slug` IS NOT NULL" : ""}`);
 }
 
-function canonicalEntity(prefix, row, priority) {
+function canonicalEntity(prefix, row, priority, imageFields = []) {
   const suffix = row.short_id ? `${row.slug}-${row.short_id}` : row.slug;
-  return { path: `${prefix}/${suffix}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority };
+  return { path: `${prefix}/${suffix}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority, images: imageLocations(row, imageFields) };
 }
 
-function simpleEntities(prefix, sourceRows, priority) {
-  return sourceRows.map((row) => ({ path: `${prefix}/${row.slug}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority }));
+function simpleEntities(prefix, sourceRows, priority, imageFields = []) {
+  return sourceRows.map((row) => ({ path: `${prefix}/${row.slug}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority, images: imageLocations(row, imageFields) }));
+}
+
+function filteredPath(base, values) {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(values)) if (String(value || "").trim()) query.set(key, String(value).trim());
+  return `${base}?${query}`;
+}
+
+function filterEntries(colleges, courses, exams, courseFees) {
+  const buckets = new Map();
+  const add = (path, identity, updatedAt, priority = "0.58") => {
+    if (!path || !identity) return;
+    const bucket = buckets.get(path) || { identities: new Set(), lastmod: undefined, priority };
+    bucket.identities.add(String(identity));
+    const changed = dateOnly(updatedAt);
+    if (changed && (!bucket.lastmod || changed > bucket.lastmod)) bucket.lastmod = changed;
+    buckets.set(path, bucket);
+  };
+  const groupsByCollege = new Map();
+  for (const row of courseFees) {
+    const group = String(row.course_group || "").trim();
+    const collegeSlug = String(row.college_slug || "").trim();
+    if (!group || !collegeSlug) continue;
+    const groups = groupsByCollege.get(collegeSlug) || new Set();
+    groups.add(group);
+    groupsByCollege.set(collegeSlug, groups);
+  }
+  for (const row of colleges) {
+    const state = String(row.state || "").trim();
+    const city = String(row.city || "").trim();
+    const stream = String(row.category || "").trim();
+    const type = String(row.type || "").trim();
+    const id = row.slug;
+    if (state) add(filteredPath("/colleges", { state }), id, row.updated_at);
+    if (city) add(filteredPath("/colleges", { ...(state ? { state } : {}), city }), id, row.updated_at);
+    if (stream) add(filteredPath("/colleges", { stream }), id, row.updated_at);
+    if (type) add(filteredPath("/colleges", { type }), id, row.updated_at);
+    if (stream && state) add(filteredPath("/colleges", { stream, state }), id, row.updated_at, "0.62");
+    if (stream && city) add(filteredPath("/colleges", { stream, ...(state ? { state } : {}), city }), id, row.updated_at, "0.64");
+    if (type && state) add(filteredPath("/colleges", { type, state }), id, row.updated_at, "0.6");
+    if (type && city) add(filteredPath("/colleges", { type, ...(state ? { state } : {}), city }), id, row.updated_at, "0.62");
+    for (const group of groupsByCollege.get(row.slug) || []) {
+      add(filteredPath("/colleges", { group }), id, row.updated_at, "0.6");
+      if (state) add(filteredPath("/colleges", { group, state }), id, row.updated_at, "0.64");
+      if (city) add(filteredPath("/colleges", { group, ...(state ? { state } : {}), city }), id, row.updated_at, "0.66");
+      if (type && state) add(filteredPath("/colleges", { group, type, state }), id, row.updated_at, "0.63");
+    }
+  }
+  for (const row of courses) {
+    const stream = String(row.category || "").trim();
+    const mode = String(row.mode || "").trim();
+    const duration = String(row.duration || "").trim();
+    if (stream) add(filteredPath("/courses", { stream }), row.slug, row.updated_at);
+    if (mode) add(filteredPath("/courses", { mode }), row.slug, row.updated_at);
+    if (duration) add(filteredPath("/courses", { duration }), row.slug, row.updated_at);
+    if (stream && mode) add(filteredPath("/courses", { stream, mode }), row.slug, row.updated_at, "0.6");
+  }
+  for (const row of exams) {
+    const stream = String(row.category || "").trim();
+    const category = String(row.exam_type || "").trim();
+    const level = String(row.level || "").trim();
+    if (stream) add(filteredPath("/exams", { stream }), row.slug, row.updated_at);
+    if (category) add(filteredPath("/exams", { category }), row.slug, row.updated_at);
+    if (level) add(filteredPath("/exams", { level }), row.slug, row.updated_at);
+    if (stream && level) add(filteredPath("/exams", { stream, level }), row.slug, row.updated_at, "0.6");
+    if (category && stream) add(filteredPath("/exams", { category, stream }), row.slug, row.updated_at, "0.6");
+  }
+  return [...buckets.entries()]
+    .filter(([, bucket]) => bucket.identities.size >= MIN_FILTER_RESULTS)
+    .map(([path, bucket]) => ({ path, lastmod: bucket.lastmod, changefreq: "weekly", priority: bucket.priority }))
+    .sort((left, right) => left.path.localeCompare(right.path));
 }
 
 async function dynamicEntries(prismaClient) {
-  const [colleges, courses, exams, articles, careers, scholarships, landing, catModules, programs, jobs, authors, legal, subjects, chapters, collegePrograms, universities, semesters, collegeSubjects] = await Promise.all([
-    rows(prismaClient, "colleges", ["slug", "short_id", "updated_at"]),
-    rows(prismaClient, "courses", ["slug", "short_id", "updated_at"]),
-    rows(prismaClient, "exams", ["slug", "short_id", "updated_at"]),
-    rows(prismaClient, "articles", ["slug", "updated_at", "tags"]),
-    rows(prismaClient, "career_profiles", ["slug", "updated_at"]),
-    rows(prismaClient, "scholarships", ["slug", "updated_at"]),
-    rows(prismaClient, "landing_pages", ["slug", "updated_at"]),
+  const [colleges, courses, exams, articles, careers, scholarships, landing, catModules, programs, jobs, authors, legal, subjects, chapters, collegePrograms, universities, semesters, collegeSubjects, courseFees] = await Promise.all([
+    rows(prismaClient, "colleges", ["slug", "short_id", "updated_at", "state", "city", "type", "category", "image", "logo", "carousel_images", "gallery_images"]),
+    rows(prismaClient, "courses", ["slug", "short_id", "updated_at", "category", "mode", "duration", "image"]),
+    rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "image", "logo"]),
+    rows(prismaClient, "articles", ["slug", "updated_at", "tags", "featured_image"]),
+    rows(prismaClient, "career_profiles", ["slug", "updated_at", "image"]),
+    rows(prismaClient, "scholarships", ["slug", "updated_at", "image"]),
+    rows(prismaClient, "landing_pages", ["slug", "updated_at", "logo_url", "og_image"]),
     rows(prismaClient, "cat_universe_modules", ["slug", "updated_at"]),
-    rows(prismaClient, "promoted_programs", ["slug", "updated_at"]),
-    rows(prismaClient, "jobs", ["slug", "updated_at"]),
-    rows(prismaClient, "authors", ["slug", "updated_at"]),
+    rows(prismaClient, "promoted_programs", ["slug", "updated_at", "image_url", "hero_image", "certificate_image", "degree_image", "institute_logo"]),
+    rows(prismaClient, "jobs", ["slug", "updated_at", "company_logo"]),
+    rows(prismaClient, "authors", ["slug", "updated_at", "photo"]),
     rows(prismaClient, "legal_pages", ["slug", "updated_at"]),
     rows(prismaClient, "study_subjects", ["id", "slug", "class_num", "board_slug", "updated_at"]),
     rows(prismaClient, "study_chapters", ["slug", "subject_id", "updated_at"]),
@@ -210,6 +326,7 @@ async function dynamicEntries(prismaClient) {
     rows(prismaClient, "college_universities", ["slug", "program_slug", "updated_at"]),
     rows(prismaClient, "college_semesters", ["semester_num", "program_slug", "university_slug", "updated_at"], false),
     rows(prismaClient, "college_subjects", ["slug", "semester_num", "program_slug", "university_slug", "updated_at"]),
+    prismaClient.$queryRawUnsafe("SELECT `college_slug`,`course_group` FROM `course_fees` WHERE `course_group` IS NOT NULL AND TRIM(`course_group`) <> ''"),
   ]);
   const subjectById = new Map(subjects.map((subject) => [subject.id, subject]));
   const classBoards = new Map();
@@ -220,19 +337,19 @@ async function dynamicEntries(prismaClient) {
     for (const tag of values) if (tag) tags.add(String(tag).toLowerCase().trim().replace(/\s+/g, "-"));
   }
   return [
-    ...colleges.map((row) => canonicalEntity("/colleges", row, "0.88")),
-    ...courses.map((row) => canonicalEntity("/courses", row, "0.85")),
-    ...exams.map((row) => canonicalEntity("/exams", row, "0.85")),
-    ...simpleEntities("/news", articles, "0.7"),
+    ...colleges.map((row) => canonicalEntity("/colleges", row, "0.88", ["image", "logo", "carousel_images", "gallery_images"])),
+    ...courses.map((row) => canonicalEntity("/courses", row, "0.85", ["image"])),
+    ...exams.map((row) => canonicalEntity("/exams", row, "0.85", ["image", "logo"])),
+    ...simpleEntities("/news", articles, "0.7", ["featured_image"]),
     ...[...tags].map((tag) => ({ path: `/news/tag/${encodeURIComponent(tag)}`, changefreq: "daily", priority: "0.62" })),
-    ...simpleEntities("/careers", careers, "0.72"),
-    ...simpleEntities("/scholarships", scholarships, "0.72"),
-    ...simpleEntities("/landing", landing, "0.65"),
+    ...simpleEntities("/careers", careers, "0.72", ["image"]),
+    ...simpleEntities("/scholarships", scholarships, "0.72", ["image"]),
+    ...simpleEntities("/landing", landing, "0.65", ["logo_url", "og_image"]),
     ...simpleEntities("/cat-universe", catModules, "0.75"),
-    ...simpleEntities("/premium-programs", programs, "0.86"),
-    ...simpleEntities("/jobs", jobs, "0.75"),
-    ...simpleEntities("/vacancies", jobs, "0.72"),
-    ...simpleEntities("/author", authors, "0.58"),
+    ...simpleEntities("/premium-programs", programs, "0.86", ["image_url", "hero_image", "certificate_image", "degree_image", "institute_logo"]),
+    ...simpleEntities("/jobs", jobs, "0.75", ["company_logo"]),
+    ...simpleEntities("/vacancies", jobs, "0.72", ["company_logo"]),
+    ...simpleEntities("/author", authors, "0.58", ["photo"]),
     ...simpleEntities("/legal", legal, "0.45"),
     ...classBoards.values(),
     ...subjects.map((row) => ({ path: `/study-material/class-${row.class_num}/${row.board_slug}/${row.slug}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority: "0.58" })),
@@ -241,6 +358,7 @@ async function dynamicEntries(prismaClient) {
     ...universities.map((row) => ({ path: `/college-study-material/${row.program_slug}/${row.slug}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority: "0.58" })),
     ...semesters.map((row) => ({ path: `/college-study-material/${row.program_slug}/${row.university_slug}/semester-${row.semester_num}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority: "0.55" })),
     ...collegeSubjects.map((row) => ({ path: `/college-study-material/${row.program_slug}/${row.university_slug}/semester-${row.semester_num}/${row.slug}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority: "0.52" })),
+    ...filterEntries(colleges, courses, exams, courseFees),
   ];
 }
 
@@ -264,6 +382,8 @@ export async function publishSitemap(request, options = {}) {
     const [seed, dynamic] = await Promise.all([currentSeedEntries(repository), dynamicEntries(prismaClient)]);
     const seen = new Set();
     const entries = [...seed, ...dynamic].filter((entry) => entry.path && !seen.has(entry.path) && (seen.add(entry.path), true));
+    const imageCount = entries.reduce((total, entry) => total + (entry.images?.length || 0), 0);
+    const filterUrlCount = entries.filter((entry) => /^\/(colleges|courses|exams)\?/.test(entry.path)).length;
     const generation = randomUUID();
     const chunks = [];
     for (let index = 0; index < entries.length; index += CHUNK_SIZE) chunks.push(entries.slice(index, index + CHUNK_SIZE));
@@ -271,7 +391,7 @@ export async function publishSitemap(request, options = {}) {
     const indexXml = sitemapIndex(generation, chunks.length);
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap-index.xml`, indexXml);
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap.xml`, indexXml);
-    await repository.put(`${SITEMAP_PREFIX}/public/manifest.json`, JSON.stringify({ generation, url_count: entries.length, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() }), "application/json; charset=utf-8");
+    await repository.put(`${SITEMAP_PREFIX}/public/manifest.json`, JSON.stringify({ generation, url_count: entries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() }), "application/json; charset=utf-8");
     let removedObjects = 0;
     if (typeof repository.list === "function" && typeof repository.delete === "function") {
       const currentPrefix = `${SITEMAP_PREFIX}/generations/${generation}/`;
@@ -283,7 +403,7 @@ export async function publishSitemap(request, options = {}) {
       await repository.delete(staleKeys);
       removedObjects = staleKeys.length;
     }
-    return { success: true, status: "published", target: PUBLISH_TARGET, generation, url_count: entries.length, chunk_count: chunks.length, removed_objects: removedObjects, source_counts: counts, sitemap_url: `${PUBLISH_TARGET}/sitemap.xml`, requested_at: new Date().toISOString() };
+    return { success: true, status: "published", target: PUBLISH_TARGET, generation, url_count: entries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, removed_objects: removedObjects, source_counts: counts, sitemap_url: `${PUBLISH_TARGET}/sitemap.xml`, requested_at: new Date().toISOString() };
   } finally {
     publishing = false;
   }

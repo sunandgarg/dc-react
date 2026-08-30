@@ -46,6 +46,7 @@ interface SitemapEntry {
   lastmod?: string;
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   priority?: string;
+  images?: string[];
 }
 
 const STATIC: SitemapEntry[] = STATIC_SITEMAP_ROUTES;
@@ -117,21 +118,65 @@ function changed(value?: string) {
   return value ? new Date(value).toISOString().slice(0, 10) : undefined;
 }
 
-function detailEntries(prefix: string, rows: any[], priority = "0.7"): SitemapEntry[] {
+function jsonValues(value: unknown): string[] {
+  if (value == null || value === "") return [];
+  if (Array.isArray(value)) return value.flatMap(jsonValues);
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const preferredKeys = ["url", "src", "image", "image_url", "imageUrl", "path", "publicUrl"];
+    const preferred = preferredKeys.flatMap((key) => jsonValues(record[key]));
+    return preferred.length ? preferred : Object.values(record).flatMap(jsonValues);
+  }
+  if (typeof value !== "string") return [];
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+  if (/^[\[{]/.test(trimmed)) {
+    try { return jsonValues(JSON.parse(trimmed)); } catch { /* keep the raw URL */ }
+  }
+  return [trimmed];
+}
+
+function canonicalImageLocation(value: string) {
+  try {
+    const url = new URL(value, BASE_URL);
+    if (!/^https?:$/.test(url.protocol) || !/\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(url.pathname)) return null;
+    if (/^\/storage\/v1\/object\/public\//.test(url.pathname)) return `${BASE_URL}${url.pathname}${url.search}`;
+    if (!value.includes("://") && !value.startsWith("/")) {
+      return `${BASE_URL}/storage/v1/object/public/${url.pathname.replace(/^\/+/, "")}${url.search}`;
+    }
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+function imageLocations(row: any, fields: string[]) {
+  const seen = new Set<string>();
+  return fields.flatMap((field) => jsonValues(row?.[field])).flatMap((value) => {
+    const location = canonicalImageLocation(value);
+    if (!location || seen.has(location)) return [];
+    seen.add(location);
+    return [location];
+  });
+}
+
+function detailEntries(prefix: string, rows: any[], priority = "0.7", imageFields: string[] = []): SitemapEntry[] {
   return rows.filter((row) => row.slug).map((row) => ({
     path: `${prefix}/${row.slug}`,
     lastmod: changed(row.updated_at),
     changefreq: "weekly",
     priority,
+    images: imageLocations(row, imageFields),
   }));
 }
 
-function canonicalDetailEntries(rows: any[], buildHref: (row: any) => string, priority = "0.7"): SitemapEntry[] {
+function canonicalDetailEntries(rows: any[], buildHref: (row: any) => string, priority = "0.7", imageFields: string[] = []): SitemapEntry[] {
   return rows.filter((row) => row.slug).map((row) => ({
     path: buildHref(row),
     lastmod: changed(row.updated_at),
     changefreq: "weekly",
     priority,
+    images: imageLocations(row, imageFields),
   }));
 }
 
@@ -301,7 +346,8 @@ async function fetchSeedEntries(): Promise<SitemapEntry[]> {
         const path = location ? canonicalSeedPath(location) : null;
         if (!path) continue;
         const lastmod = block.match(/<lastmod>([\s\S]*?)<\/lastmod>/i)?.[1]?.trim();
-        entries.push({ path, lastmod: lastmod && /^\d{4}-\d{2}-\d{2}/.test(lastmod) ? lastmod.slice(0, 10) : undefined, changefreq: "weekly", priority: "0.6" });
+        const images = [...block.matchAll(/<image:loc>([\s\S]*?)<\/image:loc>/gi)].map((image) => decodeXml(image[1].trim()));
+        entries.push({ path, lastmod: lastmod && /^\d{4}-\d{2}-\d{2}/.test(lastmod) ? lastmod.slice(0, 10) : undefined, changefreq: "weekly", priority: "0.6", images });
       }
     } catch (error) {
       console.warn(`[sitemap] seed ${source}: ${error instanceof Error ? error.message : String(error)}`);
@@ -312,15 +358,17 @@ async function fetchSeedEntries(): Promise<SitemapEntry[]> {
 }
 
 function xmlFor(entries: SitemapEntry[]) {
+  const hasImages = entries.some((entry) => entry.images?.length);
   const urls = entries.map((entry) => [
     "  <url>",
     `    <loc>${escapeXml(`${BASE_URL}${entry.path}`)}</loc>`,
     entry.lastmod ? `    <lastmod>${entry.lastmod}</lastmod>` : null,
     entry.changefreq ? `    <changefreq>${entry.changefreq}</changefreq>` : null,
     entry.priority ? `    <priority>${entry.priority}</priority>` : null,
+    ...(entry.images || []).map((location) => `    <image:image><image:loc>${escapeXml(location)}</image:loc></image:image>`),
     "  </url>",
   ].filter(Boolean).join("\n"));
-  return [`<?xml version="1.0" encoding="UTF-8"?>`, `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`, ...urls, `</urlset>`].join("\n");
+  return [`<?xml version="1.0" encoding="UTF-8"?>`, `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"${hasImages ? ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"' : ""}>`, ...urls, `</urlset>`].join("\n");
 }
 
 function sitemapIndex(files: string[]) {
@@ -347,17 +395,17 @@ function writeSitemaps(entries: SitemapEntry[]) {
 
 (async () => {
   const [colleges, courses, exams, careers, scholarships, articles, landing, catModules, premiumPrograms, jobs, authors, legalPages, study] = await Promise.all([
-    fetchRows("colleges", "slug,short_id,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("courses", "slug,short_id,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("exams", "slug,short_id,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("career_profiles", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("scholarships", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("articles", "slug,updated_at,tags", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("landing_pages", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("colleges", "slug,short_id,updated_at,image,logo,carousel_images,gallery_images", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("courses", "slug,short_id,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("exams", "slug,short_id,updated_at,image,logo", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("career_profiles", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("scholarships", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("articles", "slug,updated_at,tags,featured_image", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("landing_pages", "slug,updated_at,logo_url,og_image", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("cat_universe_modules", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("promoted_programs", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("jobs", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("authors", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("promoted_programs", "slug,updated_at,image_url,hero_image,certificate_image,degree_image,institute_logo", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("jobs", "slug,updated_at,company_logo", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("authors", "slug,updated_at,photo", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("legal_pages", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
     studyEntries(),
   ]);
@@ -370,19 +418,19 @@ function writeSitemaps(entries: SitemapEntry[]) {
   }
   const all: SitemapEntry[] = [
     ...STATIC,
-    ...canonicalDetailEntries(colleges, buildCollegeHref, "0.88"),
-    ...canonicalDetailEntries(courses, buildCourseHref, "0.85"),
-    ...canonicalDetailEntries(exams, buildExamHref, "0.85"),
-    ...detailEntries("/careers", careers, "0.72"),
-    ...detailEntries("/scholarships", scholarships, "0.72"),
-    ...detailEntries("/news", articles, "0.7"),
+    ...canonicalDetailEntries(colleges, buildCollegeHref, "0.88", ["image", "logo", "carousel_images", "gallery_images"]),
+    ...canonicalDetailEntries(courses, buildCourseHref, "0.85", ["image"]),
+    ...canonicalDetailEntries(exams, buildExamHref, "0.85", ["image", "logo"]),
+    ...detailEntries("/careers", careers, "0.72", ["image"]),
+    ...detailEntries("/scholarships", scholarships, "0.72", ["image"]),
+    ...detailEntries("/news", articles, "0.7", ["featured_image"]),
     ...tags.map((tag) => ({ path: `/news/tag/${encodeURIComponent(String(tag).toLowerCase().trim().replace(/\s+/g, "-"))}`, changefreq: "daily" as const, priority: "0.62" })),
-    ...detailEntries("/landing", landing, "0.65"),
+    ...detailEntries("/landing", landing, "0.65", ["logo_url", "og_image"]),
     ...detailEntries("/cat-universe", catModules, "0.75"),
-    ...detailEntries("/premium-programs", premiumPrograms, "0.86"),
-    ...detailEntries("/jobs", jobs, "0.75"),
-    ...detailEntries("/vacancies", jobs, "0.72"),
-    ...detailEntries("/author", authors, "0.58"),
+    ...detailEntries("/premium-programs", premiumPrograms, "0.86", ["image_url", "hero_image", "certificate_image", "degree_image", "institute_logo"]),
+    ...detailEntries("/jobs", jobs, "0.75", ["company_logo"]),
+    ...detailEntries("/vacancies", jobs, "0.72", ["company_logo"]),
+    ...detailEntries("/author", authors, "0.58", ["photo"]),
     ...detailEntries("/legal", legalPages, "0.45"),
     ...study,
     ...toolEntries(),
