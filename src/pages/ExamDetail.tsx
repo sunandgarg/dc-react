@@ -63,18 +63,18 @@ export default function ExamDetail() {
   const location = useLocation();
   const { data: exam, isLoading } = useDbExam(slug);
   const strategy = findStrategyBySlug(tab);
+  const detailTab = EXAM_SECTIONS.find((section) => section.id === tab);
 
   // Canonicalize to slug-with-id URL once exam resolves
   useEffect(() => {
     if (!exam?.slug || !(exam as any).short_id) return;
     const canonical = buildExamHref(exam as any);
-    const tabMatch = location.pathname.match(/\/exams\/[^/]+(\/[^/?#]+)?/);
-    const tail = tabMatch?.[1] || "";
+    const tail = strategy ? `/${strategy.slug}` : detailTab ? `/${detailTab.id}` : "";
     const desired = `${canonical}${tail}`;
     if (location.pathname !== desired) {
       navigate(`${desired}${location.search}${location.hash}`, { replace: true });
     }
-  }, [exam, location.pathname, location.search, location.hash, navigate]);
+  }, [exam, strategy, detailTab, location.pathname, location.search, location.hash, navigate]);
   const year = new Date().getFullYear();
 
   const [gateOpen, setGateOpen] = useState(false);
@@ -88,21 +88,23 @@ export default function ExamDetail() {
   useSEO({
     title: exam ? (
       strategy ? strategy.metaTitle(exam.name, year)
+      : detailTab ? `${exam.name} ${detailTab.label} ${year}`
       : (exam.meta_title || `${exam.name} ${year} - Dates, Syllabus, Preparation`)
     ) : undefined,
     description: exam ? (
       strategy ? strategy.metaDescription(exam.name, year)
+      : detailTab ? `Explore ${exam.name} ${detailTab.label.toLowerCase()} for ${year}, including verified exam information, updates and preparation guidance.`
       : (exam.meta_description || `${exam.name} ${year} exam dates, syllabus, preparation tips, cutoff`)
     ) : undefined,
     keywords: exam?.meta_keywords || undefined,
-    canonical: exam ? `${buildExamHref(exam as any)}${strategy ? `/${strategy.slug}` : ""}` : undefined,
+    canonical: exam ? `${buildExamHref(exam as any)}${strategy ? `/${strategy.slug}` : detailTab ? `/${detailTab.id}` : ""}` : undefined,
     ogImage: exam?.image || undefined,
     jsonLd: exam ? {
       "@context": "https://schema.org",
       "@type": "WebPage",
       name: exam.full_name || exam.name,
       description: (exam as any).page_summary || exam.description || undefined,
-      url: absoluteSiteUrl(`${buildExamHref(exam as any)}${strategy ? `/${strategy.slug}` : ""}`),
+      url: absoluteSiteUrl(`${buildExamHref(exam as any)}${strategy ? `/${strategy.slug}` : detailTab ? `/${detailTab.id}` : ""}`),
       primaryImageOfPage: exam.image ? { "@type": "ImageObject", url: exam.image } : undefined,
       about: {
         "@type": "Thing",

@@ -129,10 +129,11 @@ function SafeScrollNav({ sections }: { sections: ScrollSection[] }) {
 }
 
 export default function CourseDetail() {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug, tab } = useParams<{ slug: string; tab?: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { data: course, isLoading } = useDbCourse(slug);
+  const detailTab = COURSE_SECTIONS.find((section) => section.id === tab);
   const [leadOpen, setLeadOpen] = useState<null | "apply" | "talk" | "syllabus">(null);
   const seoCourseName = course ? displayText(course.name, "Course") : "";
   const seoFullName = course ? displayText(course.full_name || course.name, seoCourseName) : "";
@@ -143,13 +144,12 @@ export default function CourseDetail() {
   useEffect(() => {
     if (!course?.slug || !(course as any).short_id) return;
     const canonical = buildCourseHref(course as any);
-    const tabMatch = location.pathname.match(/\/courses\/[^/]+(\/[^/?#]+)?/);
-    const tail = tabMatch?.[1] || "";
+    const tail = detailTab ? `/${detailTab.id}` : "";
     const desired = `${canonical}${tail}`;
     if (location.pathname !== desired) {
       navigate(`${desired}${location.search}${location.hash}`, { replace: true });
     }
-  }, [course, location.pathname, location.search, location.hash, navigate]);
+  }, [course, detailTab, location.pathname, location.search, location.hash, navigate]);
 
 
 
@@ -185,12 +185,12 @@ export default function CourseDetail() {
   }, []);
 
   useSEO({
-    title: course ? course.meta_title || `${seoCourseName} Course - Fees, Colleges, Career ${new Date().getFullYear()}` : undefined,
+    title: course ? (detailTab ? `${seoCourseName} ${detailTab.label} ${new Date().getFullYear()}` : course.meta_title || `${seoCourseName} Course - Fees, Colleges, Career ${new Date().getFullYear()}`) : undefined,
     description: course
-      ? course.meta_description || `${seoCourseName} course details - fees, top colleges, career scope for ${new Date().getFullYear()}`
+      ? (detailTab ? `Explore ${seoCourseName} ${detailTab.label.toLowerCase()} for ${new Date().getFullYear()}, including verified course details and related guidance.` : course.meta_description || `${seoCourseName} course details - fees, top colleges, career scope for ${new Date().getFullYear()}`)
       : undefined,
     keywords: course?.meta_keywords || undefined,
-    canonical: course ? buildCourseHref(course as any) : undefined,
+    canonical: course ? `${buildCourseHref(course as any)}${detailTab ? `/${detailTab.id}` : ""}` : undefined,
     ogImage: course?.image || undefined,
     jsonLd: course ? {
       "@context": "https://schema.org",
@@ -198,7 +198,7 @@ export default function CourseDetail() {
       name: seoFullName || seoCourseName,
       alternateName: seoCourseName,
       description: seoDescription || undefined,
-      url: absoluteSiteUrl(buildCourseHref(course as any)),
+      url: absoluteSiteUrl(`${buildCourseHref(course as any)}${detailTab ? `/${detailTab.id}` : ""}`),
       image: course.image || undefined,
       timeRequired: displayText(course.duration) || undefined,
       educationalLevel: displayText(course.level) || undefined,

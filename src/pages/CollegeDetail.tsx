@@ -71,10 +71,11 @@ const COLLEGE_SECTIONS: ScrollSection[] = [
 ];
 
 export default function CollegeDetail() {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug, tab } = useParams<{ slug: string; tab?: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { data: college, isLoading } = useDbCollege(slug);
+  const detailTab = COLLEGE_SECTIONS.find((section) => section.id === tab);
   // Relational tables store the base database slug, while canonical public
   // URLs append the numeric short ID (for example, iit-delhi-10001).
   const collegeRelationSlug = college?.slug || parseSlugWithId(slug).slug;
@@ -86,13 +87,12 @@ export default function CollegeDetail() {
   useEffect(() => {
     if (!college?.slug || !(college as any).short_id) return;
     const canonical = buildCollegeHref(college as any);
-    const tabMatch = location.pathname.match(/\/colleges\/[^/]+(\/[^/?#]+)?/);
-    const tail = tabMatch?.[1] || "";
+    const tail = detailTab ? `/${detailTab.id}` : "";
     const desired = `${canonical}${tail}`;
     if (location.pathname !== desired) {
       navigate(`${desired}${location.search}${location.hash}`, { replace: true });
     }
-  }, [college, location.pathname, location.search, location.hash, navigate]);
+  }, [college, detailTab, location.pathname, location.search, location.hash, navigate]);
   const { data: sameStateColleges } = useCollegesByState(college?.state, collegeRelationSlug);
   const { data: similarColleges } = useSimilarColleges(college, 8);
   const { data: approvalBodies = [] } = useApprovalBodies();
@@ -171,10 +171,10 @@ export default function CollegeDetail() {
   };
 
   useSEO({
-    title: college ? (college.meta_title || `${college.name} - Admissions, Fees, Placements ${currentYear()}`) : undefined,
-    description: college ? (college.meta_description || `${college.name} - admissions, fees, placements, courses, ranking details for ${currentYear()}`) : undefined,
+    title: college ? (detailTab ? `${college.name} ${detailTab.label} ${currentYear()}` : (college.meta_title || `${college.name} - Admissions, Fees, Placements ${currentYear()}`)) : undefined,
+    description: college ? (detailTab ? `Explore ${college.name} ${detailTab.label.toLowerCase()} details for ${currentYear()}, with verified information and related admission guidance.` : (college.meta_description || `${college.name} - admissions, fees, placements, courses, ranking details for ${currentYear()}`)) : undefined,
     keywords: college?.meta_keywords || undefined,
-    canonical: college ? buildCollegeHref(college as any) : undefined,
+    canonical: college ? `${buildCollegeHref(college as any)}${detailTab ? `/${detailTab.id}` : ""}` : undefined,
     ogImage: college?.image || undefined,
     jsonLd: college ? {
       "@context": "https://schema.org",
@@ -182,7 +182,7 @@ export default function CollegeDetail() {
       name: college.name,
       alternateName: college.short_name || undefined,
       description: (college as any).page_summary || college.description || undefined,
-      url: absoluteSiteUrl(buildCollegeHref(college as any)),
+      url: absoluteSiteUrl(`${buildCollegeHref(college as any)}${detailTab ? `/${detailTab.id}` : ""}`),
       image: college.image || undefined,
       logo: college.logo || undefined,
       foundingDate: college.established ? String(college.established) : undefined,

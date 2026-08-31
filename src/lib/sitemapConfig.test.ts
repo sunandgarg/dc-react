@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { STATIC_SITEMAP_ROUTES } from "./sitemapConfig";
+import { COLLEGE_DETAIL_TABS, COURSE_DETAIL_TABS, EXAM_DETAIL_TABS, STATIC_SITEMAP_ROUTES } from "./sitemapConfig";
 
 const REQUIRED_PUBLIC_ROOTS = [
   "/",
@@ -35,5 +35,15 @@ describe("sitemap configuration", () => {
     const paths = STATIC_SITEMAP_ROUTES.map((route) => route.path);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths.some((path) => path.startsWith("/admin") || path.startsWith("/dashboard") || path === "/auth")).toBe(false);
+  });
+
+  it("keeps every detail sitemap tab unique and crawlable", () => {
+    for (const tabs of [COLLEGE_DETAIL_TABS, COURSE_DETAIL_TABS, EXAM_DETAIL_TABS]) {
+      expect(new Set(tabs).size).toBe(tabs.length);
+      expect(tabs).toContain("overview");
+      expect(tabs).toContain("faq");
+    }
+    expect(COLLEGE_DETAIL_TABS).toContain("courses");
+    expect(EXAM_DETAIL_TABS).toContain("answer-key");
   });
 });

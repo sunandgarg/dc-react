@@ -9,11 +9,16 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Download, RefreshCw, Copy, UploadCloud } from "lucide-react";
 import { buildCollegeHref, buildCourseHref, buildExamHref } from "@/lib/entityUrls";
+import { STRATEGY_SLUGS } from "@/lib/examStrategies";
 import { eligibilityComboSlugs, predictorComboSlugs } from "@/lib/seoSubSlugs";
 import { LOCK_TARGET_TRENDING_SLUGS, TOOL_SLUGS } from "@/lib/toolsRegistry";
 import {
+  COLLEGE_DETAIL_TABS,
+  COURSE_DETAIL_TABS,
+  EXAM_DETAIL_TABS,
   SITEMAP_CHUNK_SIZE,
   STATIC_SITEMAP_ROUTES,
+  sitemapPriority,
   type SitemapChangefreq,
 } from "@/lib/sitemapConfig";
 
@@ -69,11 +74,20 @@ function pushDetails(
   rows: any[],
   buildHref: (row: any) => string,
   pri: number,
+  tabs: readonly string[] = [],
 ) {
   for (const row of rows) {
     if (!row.slug) continue;
     const base = buildHref(row);
     urls.push({ loc: base, pri, cf: "weekly", lastmod: changed(row.updated_at) });
+    for (const tab of tabs) {
+      urls.push({
+        loc: `${base}/${tab}`,
+        pri: Number(sitemapPriority(pri.toFixed(2), -0.12)),
+        cf: "weekly",
+        lastmod: changed(row.updated_at),
+      });
+    }
   }
 }
 
@@ -146,9 +160,9 @@ export default function AdminSitemap() {
         fetchAllRows("college_subjects", "slug,semester_num,program_slug,university_slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
       ]);
 
-      pushDetails(urls, colleges, buildCollegeHref, 0.88);
-      pushDetails(urls, courses, buildCourseHref, 0.85);
-      pushDetails(urls, exams, buildExamHref, 0.85);
+      pushDetails(urls, colleges, buildCollegeHref, 0.88, COLLEGE_DETAIL_TABS);
+      pushDetails(urls, courses, buildCourseHref, 0.85, COURSE_DETAIL_TABS);
+      pushDetails(urls, exams, buildExamHref, 0.85, [...EXAM_DETAIL_TABS, ...STRATEGY_SLUGS]);
       pushGenericDetails(urls, "/news", articles, 0.7);
       pushGenericDetails(urls, "/careers", careers, 0.72);
       pushGenericDetails(urls, "/scholarships", scholarships, 0.72);
@@ -195,8 +209,11 @@ export default function AdminSitemap() {
         static: STATIC_SITEMAP_ROUTES.length,
         tools: TOOL_SLUGS.length,
         colleges: colleges.length,
+        college_subpages: colleges.length * COLLEGE_DETAIL_TABS.length,
         courses: courses.length,
+        course_subpages: courses.length * COURSE_DETAIL_TABS.length,
         exams: exams.length,
+        exam_subpages: exams.length * (EXAM_DETAIL_TABS.length + STRATEGY_SLUGS.length),
         articles: articles.length,
         scholarships: scholarships.length,
         study_material: studySubjects.length + studyChapters.length,

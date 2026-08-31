@@ -71,9 +71,11 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.doesNotMatch(chunk, /news\/tag\/https|aws-origin\.dekhocampus\.com/);
   assert.match(chunk, /\/colleges\?group=MBA&amp;state=Delhi\+NCR<\/loc>/);
   assert.doesNotMatch(chunk, /group=Unverified|state=Nowhere/);
-  assert.doesNotMatch(chunk, /\/colleges\/colleges-sample-101\/overview/);
-  assert.doesNotMatch(chunk, /\/courses\/courses-sample-101\/eligibility/);
-  assert.doesNotMatch(chunk, /\/exams\/exams-sample-101\/sample-paper/);
+  assert.match(chunk, /\/colleges\/colleges-sample-101\/overview/);
+  assert.match(chunk, /\/colleges\/colleges-sample-101\/courses/);
+  assert.match(chunk, /\/courses\/courses-sample-101\/eligibility/);
+  assert.match(chunk, /\/exams\/exams-sample-101\/answer-key/);
+  assert.match(chunk, /\/exams\/exams-sample-101\/sample-paper/);
   assert.equal(result.removed_objects, 1);
   assert.ok(result.image_count > 0);
   assert.ok(result.filter_url_count > 0);

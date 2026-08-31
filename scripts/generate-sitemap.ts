@@ -5,9 +5,14 @@ import { loadEnv } from "vite";
 import { buildCollegeHref, buildCourseHref, buildExamHref } from "../src/lib/entityUrls";
 import { eligibilityComboSlugs, predictorComboSlugs } from "../src/lib/seoSubSlugs";
 import { LOCK_TARGET_TRENDING_SLUGS, TOOL_SLUGS } from "../src/lib/toolsRegistry";
+import { STRATEGY_SLUGS } from "../src/lib/examStrategies";
 import {
+  COLLEGE_DETAIL_TABS,
+  COURSE_DETAIL_TABS,
+  EXAM_DETAIL_TABS,
   SITEMAP_CHUNK_SIZE,
   STATIC_SITEMAP_ROUTES,
+  sitemapPriority,
 } from "../src/lib/sitemapConfig";
 import {
   citiesByState,
@@ -185,6 +190,19 @@ function canonicalDetailEntries(rows: any[], buildHref: (row: any) => string, pr
     priority,
     images: imageLocations(row, imageFields),
   }));
+}
+
+function nestedDetailEntries(rows: any[], buildHref: (row: any) => string, tabs: readonly string[], priority = "0.62"): SitemapEntry[] {
+  return rows.flatMap((row) => {
+    if (!row.slug) return [];
+    const base = buildHref(row);
+    return tabs.map((tab) => ({
+      path: `${base}/${tab}`,
+      lastmod: changed(row.updated_at),
+      changefreq: "weekly" as const,
+      priority,
+    }));
+  });
 }
 
 function filteredPath(base: string, values: Record<string, string>) {
@@ -426,8 +444,11 @@ function writeSitemaps(entries: SitemapEntry[]) {
   const all: SitemapEntry[] = [
     ...STATIC,
     ...canonicalDetailEntries(colleges, buildCollegeHref, "0.88", ["image", "logo", "carousel_images", "gallery_images"]),
+    ...nestedDetailEntries(colleges, buildCollegeHref, COLLEGE_DETAIL_TABS, sitemapPriority("0.88", -0.12)),
     ...canonicalDetailEntries(courses, buildCourseHref, "0.85", ["image"]),
+    ...nestedDetailEntries(courses, buildCourseHref, COURSE_DETAIL_TABS, sitemapPriority("0.85", -0.12)),
     ...canonicalDetailEntries(exams, buildExamHref, "0.85", ["image", "logo"]),
+    ...nestedDetailEntries(exams, buildExamHref, [...EXAM_DETAIL_TABS, ...STRATEGY_SLUGS], sitemapPriority("0.85", -0.12)),
     ...detailEntries("/careers", careers, "0.72", ["image"]),
     ...detailEntries("/scholarships", scholarships, "0.72", ["image"]),
     ...detailEntries("/news", articles, "0.7", ["featured_image"]),
