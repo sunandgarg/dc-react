@@ -52,4 +52,11 @@ describe("OTP latency and entity logo regressions", () => {
     expect(examCard).toContain("src={exam.logo || exam.image}");
     expect(examCard).toContain("object-contain");
   });
+
+  it("keeps logo padding independent from the surrounding card width", () => {
+    const styles = read("src/index.css");
+    const logoRule = styles.slice(styles.indexOf(".entity-logo-safe"), styles.indexOf(".entity-logo-safe") + 420);
+    expect(logoRule).toContain("--entity-logo-padding, 0.375rem");
+    expect(logoRule).not.toMatch(/padding:\s*\d+%/);
+  });
 });

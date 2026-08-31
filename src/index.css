@@ -116,7 +116,8 @@
     object-fit: contain !important;
     object-position: center !important;
     box-sizing: border-box;
-    padding: 12% !important;
+    /* Percentage padding is based on the containing block, not the logo box. */
+    padding: var(--entity-logo-padding, 0.375rem) !important;
     background: #fff;
     transform: none !important;
   }
