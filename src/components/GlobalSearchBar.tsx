@@ -120,7 +120,11 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
                 <button key={`${result.entity_type}-${result.slug}`} type="button"
                   onMouseDown={(event) => event.preventDefault()} onClick={() => choose(result)}
                   className="flex min-h-16 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50">
-                  <SearchResultIcon type={result.entity_type} />
+                  <SearchResultIcon
+                    type={result.entity_type}
+                    imageUrl={result.logo_url || result.image_url}
+                    alt={`${displayText(result.name, result.entity_type)} logo`}
+                  />
                   <span className="min-w-0 flex-1">
                     <strong className="block truncate text-sm text-foreground">{displayText(result.name, "Untitled")}</strong>
                     <span className="block truncate text-xs text-muted-foreground">{result.entity_type}{result.subtitle ? ` · ${displayText(result.subtitle)}` : ""}</span>

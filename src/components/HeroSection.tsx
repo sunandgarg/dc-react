@@ -304,7 +304,11 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
                           onMouseDown={() => handleResultClick(item)}
                           className="flex min-h-[72px] w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50"
                         >
-                          <SearchResultIcon type={item.type} />
+                          <SearchResultIcon
+                            type={item.type}
+                            imageUrl={item.logo || item.image}
+                            alt={`${displayText(item.name, item.type)} logo`}
+                          />
                           <div className="flex-1 min-w-0">
                             <p className="truncate text-sm font-medium text-foreground md:text-base">{displayText(item.name, "Untitled")}</p>
                             <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground md:text-sm">

@@ -1,4 +1,5 @@
 import { backendClient } from "@/integrations/backend/client";
+import { apiBaseUrl } from "@/lib/backendMode";
 import { compactDisplayText } from "@/lib/displayText";
 import { buildIlikeOr, buildSearchVariants, rankDirectoryResult } from "@/lib/fuzzySearch";
 
@@ -17,6 +18,18 @@ const MAX_CACHE_ENTRIES = 60;
 const resultCache = new Map<string, { expiresAt: number; results: DirectorySearchResult[] }>();
 const inFlight = new Map<string, Promise<DirectorySearchResult[]>>();
 
+export function resolveDirectoryMediaUrl(value: unknown) {
+  const path = String(value || "").trim();
+  if (!path || /^(?:https?:|data:|blob:)/i.test(path)) return path;
+
+  const apiBase = apiBaseUrl();
+  const normalizedPath = path.replace(/^\/+/, "");
+  if (normalizedPath.startsWith("storage/v1/object/public/")) {
+    return `${apiBase}/${normalizedPath}`;
+  }
+  return `${apiBase}/storage/v1/object/public/${normalizedPath}`;
+}
+
 function normalizeResult(row: Record<string, unknown>): DirectorySearchResult | null {
   const entityType = String(row.entity_type || "");
   if (!["College", "Course", "Exam", "Career"].includes(entityType) || !row.slug) return null;
@@ -25,8 +38,8 @@ function normalizeResult(row: Record<string, unknown>): DirectorySearchResult | 
     name: compactDisplayText(row.name, `Untitled ${entityType.toLowerCase()}`, 90),
     slug: String(row.slug),
     subtitle: compactDisplayText(row.subtitle || "", "", 60),
-    image_url: String(row.image_url || ""),
-    logo_url: String(row.logo_url || ""),
+    image_url: resolveDirectoryMediaUrl(row.image_url),
+    logo_url: resolveDirectoryMediaUrl(row.logo_url),
     score: Number(row.score || 0),
   };
 }

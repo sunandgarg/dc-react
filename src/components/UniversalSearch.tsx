@@ -14,6 +14,7 @@ interface SearchResult {
   location: string;
   slug: string;
   logo?: string;
+  image?: string;
 }
 
 const quickCategories = [
@@ -58,6 +59,8 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
           name: row.name,
           slug: row.slug,
           location: row.subtitle,
+          logo: row.logo_url,
+          image: row.image_url,
         })));
       } catch { /* skip */ }
     }, q.length <= 2 ? 90 : 55);
@@ -150,7 +153,11 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
                           onMouseDown={() => handleResultClick(item)}
                           className="w-full flex items-center gap-3 px-5 py-3 hover:bg-muted/50 transition-colors text-left"
                         >
-                          <SearchResultIcon type={item.type} />
+                          <SearchResultIcon
+                            type={item.type}
+                            imageUrl={item.logo || item.image}
+                            alt={`${displayText(item.name, item.type)} logo`}
+                          />
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-foreground truncate">{displayText(item.name, "Untitled")}</p>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
