@@ -15,7 +15,7 @@ const ADMIN_FIELDS = {
   colleges: [
     "admission_criteria_points", "admission_deadline", "admission_process", "affiliation_kind", "apply_cta_mode",
     "apply_url", "approval_logo_names", "approval_logos", "approvals", "author_id", "banner_ad_image", "brochure_url",
-    "carousel_images", "categories", "category", "city", "course_fee_content", "courses_count", "cutoff", "description",
+    "carousel_images", "categories", "category", "city", "course_fee_content", "cutoff", "description",
     "eligibility_criteria", "established", "facilities", "facilities_content", "featured_rank", "fees", "gallery_images",
     "highlights", "hostel_life", "image", "is_active", "is_partner", "location", "logo", "meta_description",
     "meta_keywords", "meta_title", "naac_grade", "name", "official_website", "page_summary", "parent_university_slug",
@@ -217,6 +217,12 @@ function assertPersisted(table, expected, actual) {
   }
 }
 
+function assertDerivedFields(table, actual) {
+  if (table === "colleges" && Number(actual?.courses_count) !== 0) {
+    throw new Error(`colleges.courses_count must be derived from saved course fees; expected 0, got ${JSON.stringify(actual?.courses_count)}`);
+  }
+}
+
 async function publicRow(table, id) {
   const url = new URL(`${API_BASE_URL}/v1/rest/${table}`);
   url.searchParams.set("select", "*");
@@ -254,7 +260,10 @@ async function prepare() {
       if (result.status !== 201) throw new Error(`${table} create returned ${result.status}: ${JSON.stringify(result.body)}`);
       const created = resultRow(result);
       assertPersisted(table, payload, created);
-      assertPersisted(table, payload, await publicRow(table, created.id));
+      assertDerivedFields(table, created);
+      const publicCreated = await publicRow(table, created.id);
+      assertPersisted(table, payload, publicCreated);
+      assertDerivedFields(table, publicCreated);
       entities.push({
         table,
         id: created.id,
@@ -283,7 +292,10 @@ async function edit() {
     if (result.status !== 200) throw new Error(`${entity.table} edit returned ${result.status}: ${JSON.stringify(result.body)}`);
     const edited = resultRow(result);
     assertPersisted(entity.table, payload, edited);
-    assertPersisted(entity.table, payload, await publicRow(entity.table, entity.id));
+    assertDerivedFields(entity.table, edited);
+    const publicEdited = await publicRow(entity.table, entity.id);
+    assertPersisted(entity.table, payload, publicEdited);
+    assertDerivedFields(entity.table, publicEdited);
     entities.push({
       ...entity,
       slug: edited.slug,
