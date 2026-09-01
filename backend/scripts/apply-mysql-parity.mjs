@@ -218,6 +218,18 @@ async function ensureCourseFeeGroupingSchema(report) {
     await prisma.$executeRawUnsafe(`CREATE INDEX ${quote(indexName)} ON \`course_fees\` (\`college_slug\`(191), \`course_group\`)`);
     report.createdReferenceIndexes.push(indexName);
   }
+  await prisma.$executeRawUnsafe(`
+    UPDATE \`colleges\` college
+    LEFT JOIN (
+      SELECT \`college_slug\`, COUNT(DISTINCT SHA2(CONCAT_WS(CHAR(31),
+        COALESCE(NULLIF(TRIM(\`course_slug\`), ''), NULLIF(TRIM(\`course_name\`), ''), 'missing'),
+        COALESCE(NULLIF(TRIM(\`specialization\`), ''), 'general')
+      ), 256)) AS \`offering_count\`
+      FROM \`course_fees\`
+      GROUP BY \`college_slug\`
+    ) fees ON fees.\`college_slug\` = college.\`slug\`
+    SET college.\`courses_count\` = COALESCE(fees.\`offering_count\`, 0)
+  `);
 }
 
 async function ensureLeadAutomationAuditSchema(report) {
@@ -358,6 +370,35 @@ async function makeIntegrityTriggers(report) {
         END IF;
       END
     `);
+    report.createdTriggers.push(name);
+  }
+  const countExpression = `(
+    SELECT COUNT(DISTINCT SHA2(CONCAT_WS(CHAR(31),
+      COALESCE(NULLIF(TRIM(fee.course_slug), ''), NULLIF(TRIM(fee.course_name), ''), 'missing'),
+      COALESCE(NULLIF(TRIM(fee.specialization), ''), 'general')
+    ), 256))
+    FROM course_fees fee
+    WHERE fee.college_slug = %SLUG%
+  )`;
+  const courseCountTriggers = [
+    ["trg_sync_course_fees_ins", `AFTER INSERT ON \`course_fees\` FOR EACH ROW UPDATE \`colleges\` SET \`courses_count\` = ${countExpression.replace("%SLUG%", "NEW.college_slug")} WHERE \`slug\` = NEW.college_slug`],
+    ["trg_sync_course_fees_del", `AFTER DELETE ON \`course_fees\` FOR EACH ROW UPDATE \`colleges\` SET \`courses_count\` = ${countExpression.replace("%SLUG%", "OLD.college_slug")} WHERE \`slug\` = OLD.college_slug`],
+    ["trg_sync_course_fees_upd", `AFTER UPDATE ON \`course_fees\` FOR EACH ROW BEGIN
+      UPDATE \`colleges\` SET \`courses_count\` = ${countExpression.replace("%SLUG%", "OLD.college_slug")} WHERE \`slug\` = OLD.college_slug;
+      UPDATE \`colleges\` SET \`courses_count\` = ${countExpression.replace("%SLUG%", "NEW.college_slug")} WHERE \`slug\` = NEW.college_slug;
+    END`],
+  ];
+  for (const obsoleteName of ["trg_derive_college_courses_ins", "trg_derive_college_courses_upd"]) {
+    if (!existing.has(obsoleteName)) continue;
+    await mysqlConnection.query(`DROP TRIGGER ${quote(obsoleteName)}`);
+    existing.delete(obsoleteName);
+  }
+  for (const [name, definition] of courseCountTriggers) {
+    if (existing.has(name)) {
+      report.existing.push(name);
+      continue;
+    }
+    await mysqlConnection.query(`CREATE TRIGGER ${quote(name)} ${definition}`);
     report.createdTriggers.push(name);
   }
 }

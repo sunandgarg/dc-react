@@ -6,12 +6,13 @@ import { Plus, Trash2, Save, Search, X, Pencil, CircleHelp } from "lucide-react"
 import { toast } from "sonner";
 import { CSVTools } from "@/components/CSVTools";
 import { useQueryClient } from "@tanstack/react-query";
-import { ACADEMIC_LEVEL_OPTIONS, COURSE_GROUP_OPTIONS, inferAcademicLevel, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "@/lib/courseFeeGroups";
+import { ACADEMIC_LEVEL_OPTIONS, COURSE_GROUP_OPTIONS, countCollegeCourseOfferings, inferAcademicLevel, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "@/lib/courseFeeGroups";
 import { syncAutoSlug } from "@/lib/slugify";
 import { ComboboxAdd } from "@/components/admin/ComboboxAdd";
 
 interface Props {
   collegeSlug: string;
+  onCountChange?: (count: number) => void;
 }
 
 interface CourseLite { slug: string; name: string; full_name: string; category: string; duration: string; level: string; }
@@ -48,7 +49,7 @@ function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
 }
 
-export function CourseFeePicker({ collegeSlug }: Props) {
+export function CourseFeePicker({ collegeSlug, onCountChange }: Props) {
   const qc = useQueryClient();
   const [rows, setRows] = useState<FeeRow[]>([]);
   const [courses, setCourses] = useState<CourseLite[]>([]);
@@ -62,10 +63,12 @@ export function CourseFeePicker({ collegeSlug }: Props) {
     if (!collegeSlug) return;
     setLoading(true);
     const { data } = await (backendClient as any).from("course_fees").select("*").eq("college_slug", collegeSlug).order("course_name");
-    setRows(data || []);
+    const nextRows = data || [];
+    setRows(nextRows);
+    onCountChange?.(countCollegeCourseOfferings(nextRows));
     setLoading(false);
     qc.invalidateQueries({ queryKey: ["college_fees", collegeSlug] });
-  }, [collegeSlug, qc]);
+  }, [collegeSlug, onCountChange, qc]);
 
   useEffect(() => { void reload(); }, [reload]);
 

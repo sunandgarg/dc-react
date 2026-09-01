@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { formatFeePeriod, formatFeeRange, groupCollegeFees, groupCollegeFeesByLevel, inferAcademicLevel, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "./courseFeeGroups";
+import { countCollegeCourseOfferings, formatFeePeriod, formatFeeRange, groupCollegeFees, groupCollegeFeesByLevel, inferAcademicLevel, inferCourseGroup, inferCourseSpecialization, normalizeCourseDisplayName } from "./courseFeeGroups";
 
 describe("course fee grouping", () => {
+  it("counts unique saved course offerings instead of fee rows", () => {
+    expect(countCollegeCourseOfferings([
+      { course_slug: "btech", specialization: "CSE", year: "2026", fee_type: "Annual" },
+      { course_slug: "btech", specialization: "CSE", year: "2027", fee_type: "Annual" },
+      { course_slug: "btech", specialization: "Mechanical", year: "2026", fee_type: "Annual" },
+      { course_slug: "mba", specialization: "Finance", year: "2026", fee_type: "Semester" },
+    ])).toBe(3);
+  });
+
   it("groups specializations under a broad degree and calculates its fee range", () => {
     const groups = groupCollegeFees([
       { id: "1", course_name: "B.Tech Computer Science", course_slug: "btech-cse", fee_amount: 450000, fee_type: "Total Course" },

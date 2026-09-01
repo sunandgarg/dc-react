@@ -98,6 +98,7 @@ async function applyApprovedReview(tx, review) {
   const after = parseReviewJson(review.after_json, {});
   const changed = parseReviewJson(review.changed_fields, []);
   const fields = schemaMetadata[table].fields;
+  const isWritableField = (column) => fields[column] && !(table === "colleges" && column === "courses_count");
 
   if (review.operation === "create") {
     if (["colleges", "courses", "exams"].includes(table) && fields.short_id && after.short_id === undefined) {
@@ -105,7 +106,7 @@ async function applyApprovedReview(tx, review) {
       const maximum = await tx.$queryRawUnsafe(`SELECT MAX(\`short_id\`) AS maximum FROM ${quote(table)}`);
       after.short_id = Math.max(starts[table], Number(maximum[0]?.maximum || starts[table] - 1) + 1);
     }
-    const columns = Object.keys(after).filter((column) => fields[column]);
+    const columns = Object.keys(after).filter(isWritableField);
     if (!columns.length) throw new Error("Reviewed create contains no writable fields");
     const existing = after.id
       ? await tx.$queryRawUnsafe(`SELECT 1 FROM ${quote(table)} WHERE \`id\` = ? LIMIT 1`, after.id)
@@ -125,7 +126,7 @@ async function applyApprovedReview(tx, review) {
     return;
   }
 
-  const columns = changed.filter((column) => fields[column] && !["id", "created_at", "updated_at", "short_id"].includes(column));
+  const columns = changed.filter((column) => isWritableField(column) && !["id", "created_at", "updated_at", "short_id"].includes(column));
   if (!columns.length) return;
   const identityField = review.entity_id ? "id" : "slug";
   const identityValue = review.entity_id || review.entity_slug;

@@ -32,6 +32,17 @@ export type CollegeFeeGroup = {
   feeTypes: string[];
 };
 
+export function countCollegeCourseOfferings(rows: CollegeFeeRow[]): number {
+  const identities = new Set<string>();
+  for (const row of rows) {
+    const course = String(row.course_slug || row.course_name || "").trim().toLowerCase();
+    if (!course) continue;
+    const specialization = String(row.specialization || "general").trim().toLowerCase() || "general";
+    identities.add(`${course}\u001f${specialization}`);
+  }
+  return identities.size;
+}
+
 export const COURSE_GROUP_OPTIONS = [
   "B.E. / B.Tech",
   "M.E. / M.Tech",

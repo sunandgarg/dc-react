@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { applyDefaults, decodeRow, nextShortIdValue, normalizeForDatabase, resolveConflictColumns } from "../src/rest.mjs";
+import { applyDefaults, decodeRow, nextShortIdValue, normalizeForDatabase, omitDerivedFields, resolveConflictColumns } from "../src/rest.mjs";
 
 test("returns MySQL decimal fields as JSON numbers", () => {
   const row = decodeRow("colleges", { rating: { toNumber: () => 4.75 } });
@@ -60,4 +60,15 @@ test("materializes SQL current-date defaults before raw inserts", () => {
   const university = applyDefaults("universities", { name: "QA University" });
   assert.match(university.daily_count_reset_at, /^\d{4}-\d{2}-\d{2}$/);
   assert.notEqual(university.daily_count_reset_at, "CURRENT_DATE");
+});
+
+test("does not accept manually supplied college course counts", () => {
+  assert.deepEqual(
+    omitDerivedFields("colleges", { slug: "qa-college", courses_count: 999 }),
+    { slug: "qa-college" },
+  );
+  assert.deepEqual(
+    omitDerivedFields("courses", { slug: "mba", courses_count: 999 }),
+    { slug: "mba", courses_count: 999 },
+  );
 });

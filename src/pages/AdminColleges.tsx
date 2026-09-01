@@ -1,6 +1,6 @@
 import { PermGate } from "@/components/PermGate";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
-import { useDeferredValue, useState } from "react";
+import { useCallback, useDeferredValue, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAdminCollegeList, useAdminCollegeStats, useSaveCollege, useDeleteCollege, type DbCollege } from "@/hooks/useCollegesData";
 import { AdminFormSection } from "@/components/AdminFormSection";
@@ -166,6 +166,10 @@ export default function AdminColleges() {
     }
     return next;
   });
+
+  const handleCourseCountChange = useCallback((count: number) => {
+    setEditing((current) => current ? { ...current, courses_count: count } : current);
+  }, [setEditing]);
 
   return (
     <AdminLayout title="Colleges Manager">
@@ -595,14 +599,18 @@ export default function AdminColleges() {
               {/* ── Courses & Fees ── */}
               <AdminFormSection title="Courses & Fees" icon={<FileText className="w-4 h-4 text-primary" />} defaultOpen={false}>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div><label className="text-xs font-medium text-muted-foreground">Courses Count</label><Input value={editing.courses_count ?? ""} onChange={(e) => update("courses_count", parseInt(e.target.value) || 0)} className="rounded-lg h-9 text-sm" /></div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Courses Count</label>
+                    <Input value={editing.courses_count ?? 0} readOnly aria-readonly="true" className="rounded-lg h-9 bg-muted/50 text-sm" />
+                    <p className="mt-1 text-[10px] text-muted-foreground">Calculated automatically from the unique courses added below.</p>
+                  </div>
                   <div><label className="text-xs font-medium text-muted-foreground">Fees</label><Input value={editing.fees || ""} onChange={(e) => update("fees", e.target.value)} placeholder="₹2.5L/year" className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Ranking</label><Input value={editing.ranking || ""} onChange={(e) => update("ranking", e.target.value)} placeholder="NIRF #1" className="rounded-lg h-9 text-sm" /></div>
                 </div>
                 <RichTextEditor label="Course & Fee Content" value={editing.course_fee_content || ""} onChange={(v) => update("course_fee_content", v)} />
                 <div className="pt-3 border-t border-border">
                   <h4 className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5 text-primary" /> Course-with-fee Picker</h4>
-                  <CourseFeePicker collegeSlug={editing.slug || ""} />
+                  <CourseFeePicker collegeSlug={editing.slug || ""} onCountChange={handleCourseCountChange} />
                 </div>
               </AdminFormSection>
 
