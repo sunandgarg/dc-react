@@ -10,8 +10,8 @@ const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
 const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5-nano";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const MAX_POSTS_PER_RUN = 10;
-const MAX_DAILY_POSTS = 48;
-const MIN_INTERVAL_MINUTES = 30;
+const MAX_DAILY_POSTS = 60;
+const MIN_INTERVAL_MINUTES = 24;
 const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
@@ -68,6 +68,8 @@ export function normalizeBlogCoverOptions(options = {}) {
     promptStyle: String(options.promptStyle || "Premium editorial, clean, credible, student-focused").trim().slice(0, 600),
     includeLogo: Boolean(options.includeLogo),
     logoUrl: String(options.logoUrl || "").trim(),
+    contextLogoUrl: String(options.contextLogoUrl || "").trim(),
+    contextLogoName: String(options.contextLogoName || "").trim().slice(0, 160),
     logoPosition: "top-center",
   };
 }
@@ -185,7 +187,7 @@ export function layoutTemplateCoverTitle(value, options) {
     fontSize,
     lineHeight: Math.round(fontSize * 1.25),
     centerX: Math.round(options.width * 0.5),
-    centerY: Math.round(options.height * 0.52),
+    centerY: Math.round(options.height * 0.59),
   };
 }
 
@@ -239,18 +241,23 @@ export async function renderBlogCover(sourceBytes, options, titleHook, sourceMod
     ? await templateCoverTitleRasterOverlay(titleHook, options)
     : { input: coverTitleOverlay(titleHook, options), left: 0, top: 0 }];
   if (usesTemplateArtwork && diagnostics) diagnostics.logoPreservedFromTemplate = true;
-  if (!usesTemplateArtwork && options.includeLogo && options.logoUrl) {
+  const overlayLogoUrl = options.contextLogoUrl || (!usesTemplateArtwork && options.includeLogo ? options.logoUrl : "");
+  if (overlayLogoUrl) {
     try {
-      const logoSource = await downloadCoverSource(options.logoUrl, "Cover logo");
+      const logoSource = await downloadCoverSource(overlayLogoUrl, "Context logo");
       const logo = await sharp(logoSource, { limitInputPixels: 20_000_000 })
         .rotate()
-        .resize({ width: Math.round(options.width * 0.2), height: Math.round(options.height * 0.11), fit: "inside", withoutEnlargement: true })
+        .resize({ width: Math.round(options.width * 0.14), height: Math.round(options.height * 0.09), fit: "inside", withoutEnlargement: true })
         .png()
         .toBuffer({ resolveWithObject: true });
       const left = Math.max(24, Math.round((options.width - logo.info.width) / 2));
-      const top = Math.max(24, Math.round(options.height * 0.045));
+      const top = Math.max(24, Math.round(options.height * (usesTemplateArtwork ? 0.205 : 0.045)));
       composites.push({ input: logo.data, left, top });
-      if (diagnostics) diagnostics.logoApplied = true;
+      if (diagnostics) {
+        diagnostics.logoApplied = true;
+        diagnostics.logoKind = options.contextLogoUrl ? "context" : "brand";
+        diagnostics.logoName = options.contextLogoName || "";
+      }
     } catch (error) {
       if (diagnostics) {
         diagnostics.logoApplied = false;
@@ -269,6 +276,66 @@ export const normalizeArticleTitle = (value) => String(value || "")
   .replace(/[^a-z0-9]+/g, " ")
   .trim()
   .replace(/\s+/g, " ");
+
+const contextLogoFields = {
+  colleges: { aliases: ["name", "short_name"], media: ["logo", "image"] },
+  courses: { aliases: ["name", "full_name"], media: ["image"] },
+  exams: { aliases: ["name", "full_name", "short_name"], media: ["logo", "image"] },
+};
+
+function selectEntityLogo(entity, table) {
+  const fields = contextLogoFields[table];
+  if (!entity || !fields) return null;
+  const url = fields.media.map((field) => String(entity[field] || "").trim()).find(Boolean);
+  if (!url) return null;
+  const name = fields.aliases.map((field) => String(entity[field] || "").trim()).find(Boolean) || "Context organization";
+  return { url, name };
+}
+
+export async function resolveContextualBlogLogo(topic, entityContext = null) {
+  const schedule = entityContext?.schedule;
+  if (schedule && entityContext?.entity) {
+    const table = { college: "colleges", course: "courses", exam: "exams" }[schedule.entity_type];
+    return selectEntityLogo(entityContext.entity, table);
+  }
+
+  const rawTitle = stripHtml(topic).replace(/^dekhocampus\s*:\s*/i, "").trim();
+  const words = rawTitle.match(/[A-Za-z0-9]+/g) || [];
+  if (words.length < 2) return null;
+  const phrases = new Set();
+  for (let size = 2; size <= Math.min(5, words.length); size += 1) {
+    for (let start = 0; start + size <= words.length; start += 1) {
+      const phrase = words.slice(start, start + size).join(" ");
+      if (phrase.length >= 5) phrases.add(phrase);
+    }
+  }
+  const acronyms = words.filter((word) => /^[A-Z0-9-]{2,12}$/.test(word));
+  const searchTerms = [...phrases].sort((a, b) => b.length - a.length).slice(0, 24);
+  const titleNormalized = normalizeArticleTitle(rawTitle);
+  const candidates = [];
+
+  for (const [table, fields] of Object.entries(contextLogoFields)) {
+    const aliasFilters = fields.aliases.flatMap((field) => [
+      ...searchTerms.map((term) => ({ [field]: { contains: term } })),
+      ...(acronyms.length ? [{ [field]: { in: acronyms } }] : []),
+    ]);
+    if (!aliasFilters.length) continue;
+    const select = Object.fromEntries([...fields.aliases, ...fields.media].map((field) => [field, true]));
+    const rows = await prisma[table].findMany({ where: { is_active: true, OR: aliasFilters }, select, take: 30 }).catch(() => []);
+    for (const row of rows) {
+      const logo = selectEntityLogo(row, table);
+      if (!logo) continue;
+      const matchedAlias = fields.aliases
+        .map((field) => String(row[field] || "").trim())
+        .filter((alias) => alias.length >= 3)
+        .sort((a, b) => b.length - a.length)
+        .find((alias) => titleNormalized.includes(normalizeArticleTitle(alias)));
+      if (matchedAlias) candidates.push({ ...logo, score: normalizeArticleTitle(matchedAlias).length });
+    }
+  }
+  const match = candidates.sort((a, b) => b.score - a.score)[0];
+  return match ? { url: match.url, name: match.name } : null;
+}
 
 function titleTokens(value) {
   return new Set(normalizeArticleTitle(value).split(" ").filter((token) => token.length > 1 && !TITLE_STOP_WORDS.has(token)));
@@ -779,12 +846,15 @@ export async function handleBlogStudio(request) {
   const savedCover = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } }).catch(() => null);
   const image = body.image && typeof body.image === "object" ? body.image : {};
   const coverDiagnostics = {};
+  const contextLogo = await resolveContextualBlogLogo(topic);
   const generated = await generateDraft(topic, { wordLimit: body.word_limit, cover: {
     imageMode: image.mode || savedCover?.image_mode || "none",
     templateUrl: image.template_url || savedCover?.image_template_url,
     promptStyle: image.prompt_style || savedCover?.image_prompt_style,
     includeLogo: image.include_logo ?? savedCover?.include_logo,
     logoUrl: image.logo_url || savedCover?.logo_url,
+    contextLogoUrl: contextLogo?.url,
+    contextLogoName: contextLogo?.name,
     aspectRatio: image.aspect_ratio || savedCover?.image_aspect_ratio,
     resolution: image.resolution || savedCover?.output_resolution,
     diagnostics: coverDiagnostics,
@@ -809,10 +879,13 @@ export async function handleArticleCover(request) {
   if (!title) throw Object.assign(new Error("Article title is required to generate a cover"), { status: 400, code: "ARTICLE_TITLE_REQUIRED" });
   const settings = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } }).catch(() => null);
   const diagnostics = {};
+  const contextLogo = await resolveContextualBlogLogo(title);
   const featuredImage = await createBlogCover(slugify(body.slug || title) || `article-${Date.now()}`, title, {
     imageMode: "template",
     templateUrl: settings?.image_template_url || DEFAULT_BLOG_COVER_TEMPLATE_KEY,
     includeLogo: false,
+    contextLogoUrl: contextLogo?.url,
+    contextLogoName: contextLogo?.name,
     aspectRatio: "16:9",
     resolution: "web",
     diagnostics,
@@ -843,14 +916,18 @@ export async function handleAiGenerate(request) {
   return { items, model_used: `${generated.provider}:${model}`, counts: { inserts: items.filter((item) => item._action === "insert").length, upserts: items.filter((item) => item._action === "upsert").length }, duplicate_titles_skipped: [] };
 }
 
-async function saveGeneratedArticle(topic, settings, signals, schedule = null) {
+async function saveGeneratedArticle(topic, settings, signals, entityContext = null) {
   const topicTitle = String(topic?.title || topic).trim();
+  const schedule = entityContext?.schedule || null;
+  const contextLogo = await resolveContextualBlogLogo(topicTitle, entityContext);
   const generated = await generateDraft(topicTitle, { wordLimit: settings.word_limit, signals, requiredTitle: topicTitle, cover: {
     imageMode: settings.image_mode,
     templateUrl: settings.image_template_url,
     promptStyle: settings.image_prompt_style,
     includeLogo: settings.include_logo,
     logoUrl: settings.logo_url,
+    contextLogoUrl: contextLogo?.url,
+    contextLogoName: contextLogo?.name,
     aspectRatio: settings.image_aspect_ratio,
     resolution: settings.output_resolution,
   } });
@@ -1022,7 +1099,7 @@ export async function runBlogAgent(body = {}) {
     const ids = [];
     for (const topic of topics) {
       await assertRunActive(run.id, executionToken);
-      const id = await saveGeneratedArticle(topic, settings, signals, entityContext?.schedule || null);
+      const id = await saveGeneratedArticle(topic, settings, signals, entityContext);
       await assertRunActive(run.id, executionToken);
       if (id) ids.push(id);
     }

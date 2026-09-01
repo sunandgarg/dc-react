@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { blogLimits, blogTextProvider, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
+import { blogLimits, blogTextProvider, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent } from "../src/auth.mjs";
 
@@ -57,8 +57,8 @@ test("non-publishing editors are forced into draft state by the server", () => {
 test("enforces conservative auto-blog cadence and volume limits", () => {
   assert.deepEqual(blogLimits, {
     MAX_POSTS_PER_RUN: 10,
-    MAX_DAILY_POSTS: 48,
-    MIN_INTERVAL_MINUTES: 30,
+    MAX_DAILY_POSTS: 60,
+    MIN_INTERVAL_MINUTES: 24,
   });
 });
 
@@ -119,6 +119,8 @@ test("normalizes every saved blog cover control into render dimensions", () => {
     promptStyle: "Editorial",
     includeLogo: true,
     logoUrl: "https://dekhocampus.com/logo.webp",
+    contextLogoUrl: "",
+    contextLogoName: "",
     logoPosition: "top-center",
   });
 });
@@ -156,9 +158,17 @@ test("fits template headings into at most four centered lines without adding a p
   assert.equal(layout.lines.join(" "), formatBlogCoverTitle(title));
   assert.equal(layout.fontSize, 64);
   assert.equal(layout.lineHeight, 80);
+  assert.equal(layout.centerY, 531);
   const svg = templateCoverTitleOverlay(title, options).toString();
   assert.match(svg, /text-anchor="middle"/);
   assert.doesNotMatch(svg, /<rect/);
+});
+
+test("uses the verified scheduled entity logo without an AI lookup", async () => {
+  assert.deepEqual(await resolveContextualBlogLogo("Amity University admissions", {
+    schedule: { entity_type: "college" },
+    entity: { name: "Amity University, Noida", short_name: "Amity", logo: "admin-uploads/college/amity.webp", image: "" },
+  }), { url: "admin-uploads/college/amity.webp", name: "Amity University, Noida" });
 });
 
 test("balances abbreviated article titles without orphan lines", () => {

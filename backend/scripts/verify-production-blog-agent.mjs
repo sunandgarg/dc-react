@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import sharp from "sharp";
-import { createBlogCover, DEFAULT_BLOG_COVER_TEMPLATE_KEY, handleBlogStudio, runBlogAgent } from "../src/blog-ai.mjs";
+import { blogLimits, createBlogCover, DEFAULT_BLOG_COVER_TEMPLATE_KEY, handleBlogStudio, runBlogAgent } from "../src/blog-ai.mjs";
 import { prisma } from "../src/db.mjs";
 import { toStoredMediaKeys } from "../src/media-values.mjs";
 import { deleteStorageObjectKeys } from "../src/storage.mjs";
@@ -96,7 +96,7 @@ try {
     data: {
       enabled: true,
       posts_per_run: 1,
-      daily_post_cap: 48,
+      daily_post_cap: blogLimits.MAX_DAILY_POSTS,
       human_review_required: true,
       publish_status: "Draft",
       image_mode: "template",
