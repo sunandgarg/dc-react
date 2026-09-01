@@ -128,11 +128,12 @@ try {
     createdFaqCount = await prisma.faqs.count({ where: { page: "articles", item_slug: article.slug, is_active: true } });
     assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
   }
-  assert.match(article.content, /<\w+/i, "Generated article has no HTML content");
-  assert.match(article.content, /frequently asked|<h[2-4][^>]*>\s*faqs?/i, "Generated article has no visible FAQ section");
-  assert.doesNotMatch(article.content, /<h[2-4][^>]*>\s*(sources?|references?|citations?)\b/i, "Generated article exposes a source section");
-  assert.doesNotMatch(article.content, /\[(?:source|citation)\s*\d+\]/i, "Generated article exposes citation markers");
-  assert.doesNotMatch(article.content, /href=["']https?:\/\//i, "Generated article exposes external source links");
+  const articleContent = String(article.content || article.content_html || "");
+  assert.match(articleContent, /<\w+/i, "Generated article has no HTML content");
+  assert.match(articleContent, /frequently asked|<h[2-4][^>]*>\s*faqs?/i, "Generated article has no visible FAQ section");
+  assert.doesNotMatch(articleContent, /<h[2-4][^>]*>\s*(sources?|references?|citations?)\b/i, "Generated article exposes a source section");
+  assert.doesNotMatch(articleContent, /\[(?:source|citation)\s*\d+\]/i, "Generated article exposes citation markers");
+  assert.doesNotMatch(articleContent, /href=["']https?:\/\//i, "Generated article exposes external source links");
   generatedArticleCoverUrl = String(article.featured_image || "");
   assert.match(generatedArticleCoverUrl, /^https:\/\//, "Scheduled agent did not save a public cover URL");
   const generatedCoverResponse = await fetch(generatedArticleCoverUrl, { signal: AbortSignal.timeout(30_000) });
