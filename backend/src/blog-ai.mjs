@@ -7,6 +7,7 @@ import { uploadStorageObject } from "./storage.mjs";
 import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
+const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5-nano";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const MAX_POSTS_PER_RUN = 10;
 const MAX_DAILY_POSTS = 48;
@@ -33,11 +34,22 @@ const normalizeGeminiModel = (value) => {
   if (!model.startsWith("gemini-")) return DEFAULT_GEMINI_MODEL;
   return LEGACY_GEMINI_MODELS.has(model) ? DEFAULT_GEMINI_MODEL : model;
 };
-const stripCompetitorCredits = (value) => String(value || "")
+export const normalizeBlogTextModel = (value) => {
+  const model = String(value || "").trim();
+  if (model.startsWith("gemini-")) return normalizeGeminiModel(model);
+  if (model.startsWith("gpt-")) return model;
+  return DEFAULT_OPENAI_TEXT_MODEL;
+};
+export const blogTextProvider = (model) => normalizeBlogTextModel(model).startsWith("gemini-") ? "gemini" : "openai";
+export const stripPublishedSourceReferences = (value) => String(value || "")
   .replace(/<h[1-6][^>]*>\s*(sources?|references?|citations?)[\s\S]*$/i, "")
   .replace(/<p[^>]*>(?:(?!<\/p>)[\s\S])*(collegedunia|collegedekho|shiksha|careers360|kollegeapply|getmyuni|pagalguy)(?:(?!<\/p>)[\s\S])*<\/p>/gi, "")
+  .replace(/<a\b[^>]*href=["']https?:\/\/[^"']+["'][^>]*>([\s\S]*?)<\/a>/gi, "$1")
+  .replace(/\s*\[(?:source|citation)?\s*\d+\]/gi, "")
+  .replace(/\s*\((?:source|citation|reference)\s*:[^)]+\)/gi, "")
   .replace(/[\u2013\u2014]/g, "-")
   .trim();
+const stripCompetitorCredits = stripPublishedSourceReferences;
 
 export function normalizeBlogCoverOptions(options = {}) {
   const mode = ["generated", "template", "none"].includes(options.imageMode) ? options.imageMode : "none";
@@ -415,14 +427,85 @@ async function aiConfig() {
     provider("openai"),
     prisma.blog_ai_provider_settings.findUnique({ where: { id: "default" } }).catch(() => null),
   ]);
-  const configuredGeminiModel = normalizeGeminiModel(gemini?.default_model || blog?.text_model || DEFAULT_GEMINI_MODEL);
+  const configuredTextModel = normalizeBlogTextModel(blog?.text_model || DEFAULT_OPENAI_TEXT_MODEL);
   return {
     geminiKey: String(process.env.GEMINI_API_KEY || gemini?.api_key_encrypted || "").trim(),
-    geminiModel: configuredGeminiModel,
+    geminiModel: normalizeGeminiModel(gemini?.default_model || DEFAULT_GEMINI_MODEL),
     openaiKey: String(process.env.OPENAI_API_KEY || openai?.api_key_encrypted || "").trim(),
+    textModel: configuredTextModel,
     imageModel: DEFAULT_OPENAI_IMAGE_MODEL,
     imageQuality: ["low", "medium", "high"].includes(blog?.image_quality) ? blog.image_quality : "low",
   };
+}
+
+function openAiErrorMessage(status, payloadText) {
+  let providerMessage = payloadText;
+  try { providerMessage = JSON.parse(payloadText)?.error?.message || payloadText; } catch { /* keep response text */ }
+  return `OpenAI request failed (${status}): ${String(providerMessage).slice(0, 300)}`;
+}
+
+export function parseOpenAiJsonPayload(payload) {
+  const content = payload?.choices?.[0]?.message?.content;
+  const text = Array.isArray(content)
+    ? content.map((part) => part?.text || part?.content || "").join("")
+    : String(content || "{}");
+  try { return JSON.parse(cleanJson(text)); }
+  catch (error) {
+    throw Object.assign(new Error("OpenAI returned invalid structured JSON"), { code: "OPENAI_INVALID_JSON", cause: error });
+  }
+}
+
+async function openAiJson(prompt, feature = "blog-studio", options = {}) {
+  const control = await assertAiEnabled(feature);
+  const config = await aiConfig();
+  if (!config.openaiKey) throw Object.assign(new Error("OpenAI API key is not configured in AWS or Admin - AI Providers"), { status: 503, code: "OPENAI_NOT_CONFIGURED" });
+  const configuredModel = control?.provider === "openai" && control?.model ? control.model : config.textModel;
+  const model = normalizeBlogTextModel(configuredModel).startsWith("gpt-") ? normalizeBlogTextModel(configuredModel) : DEFAULT_OPENAI_TEXT_MODEL;
+  const requestBody = JSON.stringify({
+    model,
+    messages: [
+      { role: "system", content: "Return valid JSON only. Write factual, original, natural editorial English. Never expose sources, citations, URLs, competitor names, research notes, or AI process in publishable content. Never use an em dash." },
+      { role: "user", content: prompt },
+    ],
+    response_format: { type: "json_object" },
+    reasoning_effort: "minimal",
+    ...(options.maxOutputTokens ? { max_completion_tokens: Math.max(256, Math.trunc(options.maxOutputTokens)) } : {}),
+  });
+  let response;
+  let providerText = "";
+  for (let attempt = 0; attempt <= 3; attempt += 1) {
+    response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { authorization: `Bearer ${config.openaiKey}`, "content-type": "application/json" },
+      body: requestBody,
+      signal: AbortSignal.timeout(120_000),
+    });
+    if (response.ok) break;
+    providerText = await response.text();
+    if (![408, 429, 500, 502, 503, 504].includes(response.status) || attempt === 3) break;
+    const retryAfter = Number(response.headers.get("retry-after") || 0) * 1000;
+    await sleep(Math.min(30_000, retryAfter || 500 * (attempt + 1)));
+  }
+  if (!response?.ok) throw Object.assign(new Error(openAiErrorMessage(response?.status || 500, providerText)), { status: response?.status || 500, code: "OPENAI_REQUEST_FAILED" });
+  const payload = await response.json();
+  const usage = payload.usage || {};
+  const inputTokens = Math.max(0, Math.trunc(Number(usage.prompt_tokens || 0)));
+  const outputTokens = Math.max(0, Math.trunc(Number(usage.completion_tokens || 0)));
+  const totalTokens = Math.max(0, Math.trunc(Number(usage.total_tokens || inputTokens + outputTokens)));
+  const estimatedCost = (inputTokens * 0.05 + outputTokens * 0.40) / 1_000_000;
+  await prisma.ai_usage_events.create({ data: {
+    id: randomUUID(), provider: "openai", model, feature, operation: "text-generation",
+    input_tokens: BigInt(inputTokens), output_tokens: BigInt(outputTokens), total_tokens: BigInt(totalTokens), image_count: 0, estimated_cost_usd: estimatedCost,
+    metadata: { cached_input_tokens: Math.max(0, Math.trunc(Number(usage.prompt_tokens_details?.cached_tokens || 0))), max_output_tokens: options.maxOutputTokens || null },
+  } }).catch(() => {});
+  return { result: parseOpenAiJsonPayload(payload), model, provider: "openai" };
+}
+
+async function blogTextJson(prompt, feature = "blog-studio", options = {}) {
+  const config = await aiConfig();
+  if (blogTextProvider(config.textModel) === "openai") return openAiJson(prompt, feature, options);
+  const generated = await geminiJson(prompt, feature, options);
+  return { ...generated, provider: "gemini" };
 }
 
 async function assertAiEnabled(feature) {
@@ -607,7 +690,7 @@ async function researchSignals(limit = 6) {
 }
 
 function articlePrompt(topic, signals, wordLimit = 1200) {
-  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are for trend and fact awareness only; never copy wording or credit competitor publishers in the article body: ${JSON.stringify(signals)}. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. hero_hook must be a concise 6-12 word English headline, accurate and curiosity-led using human decision psychology without clickbait; do not include DekhoCampus, an ellipsis, or trailing punctuation. Write 4-8 distinct, search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Use concise direct answers, descriptive H2/H3 headings, short paragraphs, useful lists, and verifiable facts. Do not include Sources, References, Citations or competitor names in content_html. When evidence is uncertain, tell readers to verify the official authority website.`;
+  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are private fact-checking context only: ${JSON.stringify(signals)}. Never copy their wording and never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. hero_hook must be a concise 6-12 word English headline, accurate and curiosity-led without clickbait; do not include DekhoCampus, an ellipsis, or trailing punctuation. Write 4-8 distinct search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Write like an experienced Indian education editor: use natural variation in sentence length, specific explanations, restrained transitions, and context-aware phrasing. Avoid repetitive templates, generic filler, exaggerated claims, robotic summaries, first-person claims of lived experience, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". Use descriptive H2/H3 headings, short readable paragraphs, useful lists, and verifiable facts. When evidence is uncertain, tell readers to verify details on the relevant official authority website without naming or linking a research source.`;
 }
 
 const ARTICLE_RESPONSE_SCHEMA = {
@@ -648,7 +731,7 @@ export function normalizeGeneratedFaqs(value) {
 async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = null, requiredTitle = "" } = {}) {
   const evidence = signals || await researchSignals(6);
   const maxOutputTokens = Math.min(7000, Math.max(3200, Math.trunc(Number(wordLimit || 1200) * 4.5)));
-  const { result, model } = await geminiJson(articlePrompt(topic, evidence, wordLimit), "blog-studio", {
+  const { result, model, provider: textProvider } = await blogTextJson(articlePrompt(topic, evidence, wordLimit), "blog-studio", {
     maxOutputTokens,
     thinkingLevel: "low",
     responseSchema: ARTICLE_RESPONSE_SCHEMA,
@@ -666,21 +749,21 @@ async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = nu
     featured_image: "",
   };
   draft.featured_image = await createBlogCover(slug, draft.hero_hook, cover);
-  return { draft, model, research_sources: evidence.map((item) => item.url) };
+  return { draft, model, textProvider, research_sources: evidence.map((item) => item.url) };
 }
 
 export async function handleBlogAiSettings(request, userId) {
   const config = await aiConfig();
   if (request.method === "GET") {
     const row = await prisma.blog_ai_provider_settings.findUnique({ where: { id: "default" } }).catch(() => null);
-    return { text_model: row?.text_model || config.geminiModel, image_model: row?.image_model || config.imageModel, image_quality: row?.image_quality || config.imageQuality, gemini_key_set: Boolean(config.geminiKey), openai_key_set: Boolean(config.openaiKey), updated_at: row?.updated_at || null };
+    return { text_model: row?.text_model || config.textModel, text_provider: blogTextProvider(row?.text_model || config.textModel), image_model: row?.image_model || config.imageModel, image_quality: row?.image_quality || config.imageQuality, gemini_key_set: Boolean(config.geminiKey), openai_key_set: Boolean(config.openaiKey), updated_at: row?.updated_at || null };
   }
   const body = await request.json().catch(() => ({}));
-  const requestedTextModel = String(body.text_model || DEFAULT_GEMINI_MODEL);
-  const updates = { text_model: normalizeGeminiModel(requestedTextModel), image_model: DEFAULT_OPENAI_IMAGE_MODEL, image_quality: ["low", "medium", "high"].includes(body.image_quality) ? body.image_quality : "low", updated_at: new Date(), updated_by: userId };
+  const requestedTextModel = String(body.text_model || DEFAULT_OPENAI_TEXT_MODEL);
+  const updates = { text_model: normalizeBlogTextModel(requestedTextModel), image_model: DEFAULT_OPENAI_IMAGE_MODEL, image_quality: ["low", "medium", "high"].includes(body.image_quality) ? body.image_quality : "low", updated_at: new Date(), updated_by: userId };
   const current = await prisma.blog_ai_provider_settings.findUnique({ where: { id: "default" } });
   await prisma.blog_ai_provider_settings.upsert({ where: { id: "default" }, create: { id: "default", claude_api_key_ciphertext: current?.claude_api_key_ciphertext || "", openai_api_key_ciphertext: current?.openai_api_key_ciphertext || "", ...updates }, update: updates });
-  for (const [name, key, model] of [["gemini", body.gemini_api_key, updates.text_model], ["openai", body.openai_api_key, updates.image_model]]) {
+  for (const [name, key, model] of [["gemini", body.gemini_api_key, DEFAULT_GEMINI_MODEL], ["openai", body.openai_api_key, updates.text_model]]) {
     if (!String(key || "").trim()) continue;
     const existing = await provider(name);
     if (existing) await prisma.ai_providers.update({ where: { id: existing.id }, data: { api_key_encrypted: String(key).trim(), default_model: model, updated_at: new Date() } });
@@ -713,7 +796,7 @@ export async function handleBlogStudio(request) {
   }
   return {
     draft: generated.draft,
-    model_used: `gemini:${generated.model}`,
+    model_used: `${generated.textProvider}:${generated.model}`,
     image_model_used: coverDiagnostics.sourceMode === "generated" ? "openai" : coverDiagnostics.sourceMode || "none",
     cover_diagnostics: coverDiagnostics,
     research_sources: generated.research_sources,
@@ -744,7 +827,10 @@ export async function handleAiGenerate(request) {
   const count = Math.min(20, Math.max(1, Number(body.count || body.names?.length || 1)));
   const fields = Object.entries(schemaMetadata[table].fields).filter(([name, meta]) => !["id", "created_at", "updated_at", "short_id"].includes(name) && !meta.ignored).map(([name, meta]) => `${name}:${meta.type}${meta.nullable ? "?" : ""}`);
   const prompt = `Generate ${count} production-ready ${table} records for DekhoCampus. Topic: ${body.topic || ""}. Exact requested names: ${JSON.stringify(body.names || [])}. Use official-source-first, conservative facts; omit uncertain values. Return {items:[...]}. Each item must use this schema: ${fields.join(", ")}. JSON fields must be arrays or objects, booleans must be booleans, slugs lowercase-hyphen. Articles must be Draft and contain original HTML without competitor credits.`;
-  const { result, model } = await geminiJson(prompt, table === "articles" ? "blog-studio" : "admin-ai-generate");
+  const generated = table === "articles"
+    ? await blogTextJson(prompt, "blog-studio")
+    : { ...(await geminiJson(prompt, "admin-ai-generate")), provider: "gemini" };
+  const { result, model } = generated;
   const rawItems = Array.isArray(result.items) ? result.items.slice(0, count) : [];
   const items = [];
   for (const raw of rawItems) {
@@ -754,7 +840,7 @@ export async function handleAiGenerate(request) {
     const existing = item.slug ? await prisma.$queryRawUnsafe(`SELECT 1 FROM \`${table}\` WHERE \`slug\` = ? LIMIT 1`, item.slug) : [];
     items.push({ ...item, _action: existing.length ? "upsert" : "insert", _key: item.slug || item.name || item.title });
   }
-  return { items, model_used: `gemini:${model}`, counts: { inserts: items.filter((item) => item._action === "insert").length, upserts: items.filter((item) => item._action === "upsert").length }, duplicate_titles_skipped: [] };
+  return { items, model_used: `${generated.provider}:${model}`, counts: { inserts: items.filter((item) => item._action === "insert").length, upserts: items.filter((item) => item._action === "upsert").length }, duplicate_titles_skipped: [] };
 }
 
 async function saveGeneratedArticle(topic, settings, signals, schedule = null) {
@@ -879,7 +965,7 @@ export async function runBlogAgent(body = {}) {
   const executionToken = `executor:${randomUUID()}`;
   const run = body.resume_run_id
     ? await prisma.blog_auto_agent_runs.update({ where: { id: body.resume_run_id }, data: { status: "running", resumed_at: new Date(), finished_at: null, message: "Resumed", current_step: "Resuming education research", control_note: executionToken } })
-    : await prisma.blog_auto_agent_runs.create({ data: { id: randomUUID(), status: "running", trigger_type: triggerType, interval_minutes: interval, model_provider: "gemini", word_limit: settings.word_limit, sources: [], selected_topics: [], created_article_ids: [], message: "Researching", progress: 5, current_step: "Researching education signals", estimated_seconds: postCount * 90, completed_steps: 0, total_steps: postCount * 2 + 1, control_note: executionToken, entity_schedule_id: entityContext?.schedule.id || null, agent_mode: entityContext ? "entity_schedule" : "general" } });
+    : await prisma.blog_auto_agent_runs.create({ data: { id: randomUUID(), status: "running", trigger_type: triggerType, interval_minutes: interval, model_provider: blogTextProvider(settings.text_model || DEFAULT_OPENAI_TEXT_MODEL), word_limit: settings.word_limit, sources: [], selected_topics: [], created_article_ids: [], message: "Researching", progress: 5, current_step: "Researching education signals", estimated_seconds: postCount * 90, completed_steps: 0, total_steps: postCount * 2 + 1, control_note: executionToken, entity_schedule_id: entityContext?.schedule.id || null, agent_mode: entityContext ? "entity_schedule" : "general" } });
   try {
     const signals = await researchSignals(6);
     await assertRunActive(run.id, executionToken);
@@ -896,8 +982,7 @@ export async function runBlogAgent(body = {}) {
         ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
         : "";
       const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
-      const { result } = await geminiJson(`Using these official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Search current web results for competitor coverage and official updates, but use competitor material only to identify coverage gaps; never copy or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return topic objects with a non-empty title.`, "blog-agent", {
-        research: true,
+      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Use competitor material only to identify coverage gaps; never copy, cite, link, name, or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return topic objects with a non-empty title.`, "blog-agent", {
         thinkingLevel: "minimal",
         maxOutputTokens: 1200,
         responseSchema: {
@@ -932,7 +1017,7 @@ export async function runBlogAgent(body = {}) {
         if (topics.length >= postCount) break;
       }
     }
-    if (!topics.length) throw new Error(`Gemini returned no usable non-duplicate article topics after three structured research attempts (${rejected.length} duplicate suggestions rejected). Review the active research sources and try again.`);
+    if (!topics.length) throw new Error(`The configured text model returned no usable non-duplicate article topics after three structured research attempts (${rejected.length} duplicate suggestions rejected). Review the active research sources and try again.`);
     await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { progress: 30, current_step: `Writing ${topics.length} article(s)`, selected_topics: topics, sources: signals.map(({ signal, ...source }) => source) } });
     const ids = [];
     for (const topic of topics) {

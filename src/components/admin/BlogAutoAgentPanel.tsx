@@ -70,8 +70,8 @@ const DEFAULT_SETTINGS: Settings = {
   posts_per_run: 2,
   daily_post_cap: 12,
   publish_status: "Published",
-  model_provider: "gemini",
-  text_model: "gemini-3.6-flash",
+  model_provider: "openai",
+  text_model: "gpt-5-nano",
   word_limit: 1200,
   author_mode: "none",
   author_ids: [],
@@ -146,8 +146,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         setSettings({
           ...DEFAULT_SETTINGS,
           ...settingsData,
-          model_provider: "gemini",
-          text_model: String(settingsData.text_model || "").startsWith("gemini-") ? settingsData.text_model : DEFAULT_SETTINGS.text_model,
+          model_provider: String(settingsData.text_model || "").startsWith("gemini-") ? "gemini" : "openai",
+          text_model: settingsData.text_model || DEFAULT_SETTINGS.text_model,
           image_provider: "openai",
           image_model: "gpt-image-1",
         });
@@ -224,14 +224,14 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     try {
       const nextRun = settings.enabled && !settings.next_run_at ? new Date().toISOString() : settings.next_run_at;
       const dailyPostCap = Math.min(48, Math.max(1, Math.floor(Number(settings.daily_post_cap) || 12)));
-      const normalizedSettings = { ...settings, daily_post_cap: dailyPostCap, model_provider: "gemini", image_provider: "openai" as const, image_model: "gpt-image-1" };
+      const normalizedSettings = { ...settings, daily_post_cap: dailyPostCap, model_provider: settings.text_model.startsWith("gemini-") ? "gemini" : "openai", image_provider: "openai" as const, image_model: "gpt-image-1" };
       const legacySettings = {
         enabled: settings.enabled,
         interval_minutes: settings.interval_minutes,
         posts_per_run: Math.min(3, settings.posts_per_run),
         daily_post_cap: dailyPostCap,
         publish_status: settings.publish_status,
-        model_provider: "gemini",
+        model_provider: settings.text_model.startsWith("gemini-") ? "gemini" : "openai",
         word_limit: settings.word_limit,
         author_mode: settings.author_mode,
         author_ids: settings.author_ids,
@@ -359,7 +359,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             <Badge variant={settings.enabled ? "default" : "secondary"}>{settings.enabled ? "Running" : "Paused"}</Badge>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Uses low-cost Gemini for source-aware editorial drafts and OpenAI only for optional blog cover images. Review gates, schedules and templates remain under your control.
+            Uses low-cost OpenAI GPT-5 nano for source-aware editorial drafts. Review gates, schedules and templates remain under your control.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -480,8 +480,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         </div>
         <div>
           <Label className="text-xs">Blog AI provider</Label>
-          <div className="mt-1"><Button type="button" size="sm" variant="default" disabled>Google Gemini</Button></div>
-          <p className="mt-1 text-[10px] text-muted-foreground">Gemini is fixed for text, research, data cleaning and admin AI generation.</p>
+          <div className="mt-1"><Button type="button" size="sm" variant="default" disabled>{settings.text_model.startsWith("gemini-") ? "Google Gemini" : "OpenAI"}</Button></div>
+          <p className="mt-1 text-[10px] text-muted-foreground">GPT-5 nano is the temporary lowest-cost default for blog text. Gemini remains available as a fallback.</p>
           {supportsAdvancedSettings && (
             <select
               aria-label="Blog text model"
@@ -489,7 +489,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("text_model", event.target.value)}
               className="mt-2 h-9 w-full rounded-md border bg-background px-2 text-xs"
             >
-              <option value="gemini-3.6-flash">Gemini 3.6 Flash - production default</option>
+              <option value="gpt-5-nano">OpenAI GPT-5 nano - lowest cost</option>
+              <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
               <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite - lowest cost</option>
               <option value="gemini-3.7-flash">Gemini 3.7 Flash - latest Flash</option>
             </select>

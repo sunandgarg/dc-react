@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { blogLimits, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeGeneratedFaqs, parseGeminiJsonPayload, renderBlogCover, resolveBlogMediaSource, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
+import { blogLimits, blogTextProvider, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent } from "../src/auth.mjs";
 
@@ -73,6 +73,19 @@ test("normalizes legacy Gemini models and classifies quota errors", () => {
   }));
   assert.equal(classified.code, "GEMINI_QUOTA_EXHAUSTED");
   assert.match(classified.message, /Enable billing/);
+});
+
+test("selects the lowest-cost OpenAI blog model and parses structured output", () => {
+  assert.equal(normalizeBlogTextModel(""), "gpt-5-nano");
+  assert.equal(normalizeBlogTextModel("gpt-5-nano"), "gpt-5-nano");
+  assert.equal(blogTextProvider("gpt-5-nano"), "openai");
+  assert.equal(blogTextProvider("gemini-3.6-flash"), "gemini");
+  assert.deepEqual(parseOpenAiJsonPayload({ choices: [{ message: { content: '{"title":"Natural draft"}' } }] }), { title: "Natural draft" });
+});
+
+test("removes visible source references from publishable article HTML", () => {
+  const cleaned = stripPublishedSourceReferences('<p>Apply after checking the deadline [Source 1].</p><p>Read the <a href="https://example.com/report">official notice</a>.</p><h2>References</h2><p>https://example.com</p>');
+  assert.equal(cleaned, "<p>Apply after checking the deadline.</p><p>Read the official notice.</p>");
 });
 
 test("detects truncated Gemini JSON and bounds the recovery budget", () => {

@@ -28,6 +28,8 @@ try {
   const updated = await prisma.blog_auto_agent_settings.updateMany({
     where: { id: "default" },
     data: {
+      model_provider: "openai",
+      text_model: "gpt-5-nano",
       image_mode: "template",
       image_template_url: DEFAULT_BLOG_COVER_TEMPLATE_KEY,
       include_logo: false,
@@ -39,7 +41,11 @@ try {
   if (updated.count !== 1) throw new Error("Auto Blog Agent default settings are missing");
   const providerSettings = await prisma.blog_ai_provider_settings.updateMany({
     where: { id: "default" },
-    data: { image_quality: "low", updated_at: new Date() },
+    data: { text_model: "gpt-5-nano", image_quality: "low", updated_at: new Date() },
+  });
+  const runtimeControls = await prisma.ai_runtime_controls.updateMany({
+    where: { feature: { in: ["blog-studio", "blog-agent"] } },
+    data: { provider: "openai", model: "gpt-5-nano", updated_at: new Date() },
   });
 
   console.log(JSON.stringify({
@@ -47,6 +53,7 @@ try {
     blog_cover_template: template.publicUrl,
     blog_cover_settings_updated: updated.count,
     low_cost_image_quality_updated: providerSettings.count,
+    openai_blog_runtime_controls_updated: runtimeControls.count,
   }));
 } finally {
   await prisma.$disconnect();

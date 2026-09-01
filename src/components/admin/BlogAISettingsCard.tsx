@@ -8,18 +8,20 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-type State = { text_model: string; image_model: string; image_quality: "low" | "medium" | "high"; gemini_key_set: boolean; openai_key_set: boolean };
-const DEFAULT_TEXT_MODEL = "gemini-3.6-flash";
+type State = { text_model: string; text_provider?: "openai" | "gemini"; image_model: string; image_quality: "low" | "medium" | "high"; gemini_key_set: boolean; openai_key_set: boolean };
+const DEFAULT_TEXT_MODEL = "gpt-5-nano";
 const LEGACY_TEXT_MODELS = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
 const normalizeTextModel = (value?: string) => {
   const model = String(value || "").trim();
+  if (model.startsWith("gpt-")) return model;
   if (!model.startsWith("gemini-")) return DEFAULT_TEXT_MODEL;
   return LEGACY_TEXT_MODELS.has(model) ? DEFAULT_TEXT_MODEL : model;
 };
 const defaults: State = { text_model: DEFAULT_TEXT_MODEL, image_model: "gpt-image-1", image_quality: "low", gemini_key_set: false, openai_key_set: false };
 
 const TEXT_MODELS = [
-  { value: "gemini-3.6-flash", label: "Gemini 3.6 Flash - production default" },
+  { value: "gpt-5-nano", label: "OpenAI GPT-5 nano - lowest cost" },
+  { value: "gemini-3.6-flash", label: "Gemini 3.6 Flash" },
   { value: "gemini-3.5-flash-lite", label: "Gemini 3.5 Flash-Lite - lowest cost" },
   { value: "gemini-3.7-flash", label: "Gemini 3.7 Flash - latest Flash" },
 ] as const;
@@ -48,16 +50,16 @@ export function BlogAISettingsCard() {
   };
 
   return <div className="mb-6 rounded-2xl border border-orange-200 bg-orange-50/40 p-5 dark:border-orange-900 dark:bg-orange-950/10">
-    <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="flex items-center gap-2 font-semibold"><Newspaper className="h-5 w-5 text-orange-500" /> Blog AI providers</h2><p className="mt-1 text-sm text-muted-foreground">Gemini Flash Lite is the lowest-cost text option for blog writing, research and structured data generation. OpenAI GPT Image is used only for optional blog imagery. Keys are write-only and are never returned to the browser.</p></div><div className="flex gap-2"><Badge variant={settings.gemini_key_set ? "default" : "destructive"}>Gemini {settings.gemini_key_set ? "ready" : "missing"}</Badge><Badge variant={settings.openai_key_set ? "default" : "destructive"}>OpenAI {settings.openai_key_set ? "ready" : "missing"}</Badge></div></div>
+    <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="flex items-center gap-2 font-semibold"><Newspaper className="h-5 w-5 text-orange-500" /> Blog AI providers</h2><p className="mt-1 text-sm text-muted-foreground">OpenAI GPT-5 nano is the lowest-cost text option and is the temporary default for Blog Studio and Auto Blog Agent. OpenAI GPT Image remains optional for imagery. Keys are write-only and are never returned to the browser.</p></div><div className="flex gap-2"><Badge variant={settings.gemini_key_set ? "default" : "destructive"}>Gemini {settings.gemini_key_set ? "ready" : "missing"}</Badge><Badge variant={settings.openai_key_set ? "default" : "destructive"}>OpenAI {settings.openai_key_set ? "ready" : "missing"}</Badge></div></div>
     <div className="mt-4 grid gap-4 md:grid-cols-2">
       <div className="space-y-3">
         <Label className="flex items-center gap-2"><Newspaper className="h-4 w-4" /> Google Gemini API key</Label>
         <Input type="password" autoComplete="new-password" value={geminiKey} onChange={event => setGeminiKey(event.target.value)} placeholder={settings.gemini_key_set ? "Leave blank to keep current key" : "Paste the Gemini API key"} />
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-2"><Label>Text provider</Label><Select value="gemini" disabled><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="gemini">Google Gemini</SelectItem></SelectContent></Select></div>
+          <div className="space-y-2"><Label>Text provider</Label><Select value={settings.text_model.startsWith("gemini-") ? "gemini" : "openai"} disabled><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="openai">OpenAI</SelectItem><SelectItem value="gemini">Google Gemini</SelectItem></SelectContent></Select></div>
           <div className="space-y-2"><Label>Default text model</Label><Select value={settings.text_model} onValueChange={(value) => setSettings({ ...settings, text_model: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{TEXT_MODELS.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent></Select></div>
         </div>
-        <p className="text-xs text-muted-foreground">The same Gemini key powers Blog Studio, Auto Blog Agent, AI generation and Clean Data after their runtime controls select Gemini.</p>
+        <p className="text-xs text-muted-foreground">The selected text model powers Blog Studio, Auto Blog Agent and article generation. Gemini remains available for non-blog data cleanup.</p>
       </div>
       <div className="space-y-3"><Label className="flex items-center gap-2"><Image className="h-4 w-4" /> OpenAI API key</Label><Input type="password" autoComplete="new-password" value={openaiKey} onChange={event => setOpenaiKey(event.target.value)} placeholder={settings.openai_key_set ? "Leave blank to keep current key" : "Paste a new OpenAI key"} /><div className="grid grid-cols-[1fr_auto] gap-2"><div><Label>Image model</Label><Input value={settings.image_model} onChange={event => setSettings({ ...settings, image_model: event.target.value })} /></div><div><Label>Quality</Label><select value={settings.image_quality} onChange={event => setSettings({ ...settings, image_quality: event.target.value as State["image_quality"] })} className="mt-0 h-10 rounded-md border bg-background px-3"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div></div>
     </div>
