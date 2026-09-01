@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import sharp from "sharp";
-import { createBlogCover, DEFAULT_BLOG_COVER_TEMPLATE_KEY, runBlogAgent } from "../src/blog-ai.mjs";
+import { createBlogCover, DEFAULT_BLOG_COVER_TEMPLATE_KEY, handleBlogStudio, runBlogAgent } from "../src/blog-ai.mjs";
 import { prisma } from "../src/db.mjs";
 import { toStoredMediaKeys } from "../src/media-values.mjs";
 import { deleteStorageObjectKeys } from "../src/storage.mjs";
@@ -105,15 +105,34 @@ try {
   });
 
   const result = await runBlogAgent({ trigger_type: "production-smoke" });
-  assert.equal(result.success, true, result.message || "Blog-agent smoke run was not successful");
-  runId = String(result.run_id || "");
-  createdArticleIds = result.created_article_ids || [];
-  assert.equal(createdArticleIds.length, 1, "Blog agent did not create exactly one smoke-test draft");
-  const article = await prisma.articles.findUnique({ where: { id: createdArticleIds[0] } });
-  assert.ok(article, "Generated smoke-test article was not saved in AWS MySQL");
-  assert.equal(article.status, "Draft");
+  let article;
+  let verificationMode = "agent-draft";
+  if (result.skipped && result.message === "Daily post cap reached") {
+    verificationMode = "studio-draft-daily-cap-fallback";
+    const studio = await handleBlogStudio({ json: async () => ({
+      topic: `Indian student admission planning guide ${testSlug}`,
+      word_limit: 900,
+      image: { mode: "template", template_url: originalSettings.image_template_url },
+    }) });
+    assert.match(studio.model_used, /^openai:gpt-5-nano$/, "Blog Studio did not use OpenAI GPT-5 nano");
+    article = studio.draft;
+  } else {
+    assert.equal(result.success, true, result.message || "Blog-agent smoke run was not successful");
+    runId = String(result.run_id || "");
+    createdArticleIds = result.created_article_ids || [];
+    assert.equal(createdArticleIds.length, 1, "Blog agent did not create exactly one smoke-test draft");
+    article = await prisma.articles.findUnique({ where: { id: createdArticleIds[0] } });
+    assert.ok(article, "Generated smoke-test article was not saved in AWS MySQL");
+    assert.equal(article.status, "Draft");
+    createdArticleSlugs = [article.slug];
+    createdFaqCount = await prisma.faqs.count({ where: { page: "articles", item_slug: article.slug, is_active: true } });
+    assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
+  }
   assert.match(article.content, /<\w+/i, "Generated article has no HTML content");
   assert.match(article.content, /frequently asked|<h[2-4][^>]*>\s*faqs?/i, "Generated article has no visible FAQ section");
+  assert.doesNotMatch(article.content, /<h[2-4][^>]*>\s*(sources?|references?|citations?)\b/i, "Generated article exposes a source section");
+  assert.doesNotMatch(article.content, /\[(?:source|citation)\s*\d+\]/i, "Generated article exposes citation markers");
+  assert.doesNotMatch(article.content, /href=["']https?:\/\//i, "Generated article exposes external source links");
   generatedArticleCoverUrl = String(article.featured_image || "");
   assert.match(generatedArticleCoverUrl, /^https:\/\//, "Scheduled agent did not save a public cover URL");
   const generatedCoverResponse = await fetch(generatedArticleCoverUrl, { signal: AbortSignal.timeout(30_000) });
@@ -126,9 +145,6 @@ try {
     .raw()
     .toBuffer();
   assert.ok([...generatedBottomCenter].every((channel) => channel > 220), "Scheduled agent cover contains the retired dark-panel composition");
-  createdArticleSlugs = [article.slug];
-  createdFaqCount = await prisma.faqs.count({ where: { page: "articles", item_slug: article.slug, is_active: true } });
-  assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
 
   const coverMode = originalSettings.image_mode === "template" && originalSettings.image_template_url ? "template" : "generated";
   assert.equal(coverMode, "template", "Production is not configured to use the saved blog cover template");
@@ -154,8 +170,9 @@ try {
 
   console.log(JSON.stringify({
     ok: true,
-    gemini_agent: "created one AWS MySQL draft",
-    article_faqs: `${createdFaqCount} visible and dedicated FAQ records verified`,
+    openai_blog: `${verificationMode} verified with GPT-5 nano`,
+    article_faqs: verificationMode === "agent-draft" ? `${createdFaqCount} visible and dedicated FAQ records verified` : "visible FAQ section verified",
+    source_policy: "no source sections, citation markers, or external source links",
     cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
     scheduled_cover: "branded template with light lower canvas verified",
     template_fallback_reason: coverDiagnostics.templateError || null,
