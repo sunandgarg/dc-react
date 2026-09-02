@@ -40,12 +40,17 @@ Parameters:
     Type: String
     Default: 'true'
     AllowedValues: ['true', 'false']
+  CreateSesIdentity:
+    Type: String
+    Default: 'false'
+    AllowedValues: ['true', 'false']
   InitialMediaBaseUrl:
     Type: String
     Default: https://aws-origin.dekhocampus.com/storage/v1/object/public
 
 Conditions:
   UseCloudFront: !Equals [!Ref EnableCloudFront, 'true']
+  ShouldCreateSesIdentity: !Equals [!Ref CreateSesIdentity, 'true']
   HasMediaDomain: !And
     - !Condition UseCloudFront
     - !Not [!Equals [!Ref MediaDomain, '']]
@@ -251,6 +256,7 @@ Resources:
 
   SesDomainIdentity:
     Type: AWS::SES::EmailIdentity
+    Condition: ShouldCreateSesIdentity
     Properties:
       EmailIdentity: dekhocampus.com
 
@@ -347,7 +353,7 @@ Resources:
           AWS_S3_BUCKET=${MediaBucket}
           AWS_ACCESS_KEY_ID=${ApplicationAccessKeyV2}
           AWS_SECRET_ACCESS_KEY=${ApplicationAccessKeyV2.SecretAccessKey}
-          SES_ENABLED=true
+          SES_ENABLED=${CreateSesIdentity}
           SES_REGION=${AWS::Region}
           SES_IDENTITY=dekhocampus.com
           SES_FROM_EMAIL=noreply@dekhocampus.com
@@ -499,16 +505,23 @@ Outputs:
   ApplicationCredentialsSecretArn:
     Value: !Ref ApplicationCredentialsSecret
   SesIdentityArn:
+    Condition: ShouldCreateSesIdentity
     Value: !Sub 'arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/dekhocampus.com'
   SesDkimDnsName1:
+    Condition: ShouldCreateSesIdentity
     Value: !GetAtt SesDomainIdentity.DkimDNSTokenName1
   SesDkimDnsValue1:
+    Condition: ShouldCreateSesIdentity
     Value: !GetAtt SesDomainIdentity.DkimDNSTokenValue1
   SesDkimDnsName2:
+    Condition: ShouldCreateSesIdentity
     Value: !GetAtt SesDomainIdentity.DkimDNSTokenName2
   SesDkimDnsValue2:
+    Condition: ShouldCreateSesIdentity
     Value: !GetAtt SesDomainIdentity.DkimDNSTokenValue2
   SesDkimDnsName3:
+    Condition: ShouldCreateSesIdentity
     Value: !GetAtt SesDomainIdentity.DkimDNSTokenName3
   SesDkimDnsValue3:
+    Condition: ShouldCreateSesIdentity
     Value: !GetAtt SesDomainIdentity.DkimDNSTokenValue3

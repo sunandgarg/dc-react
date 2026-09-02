@@ -27,6 +27,11 @@ on:
         required: false
         default: true
         type: boolean
+      create_ses_identity:
+        description: Create and manage the dekhocampus.com SES identity in this stack
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -129,6 +134,7 @@ jobs:
               InstanceBundleId="$INSTANCE_BUNDLE_ID" \
               SshAllowedCidr="$RUNNER_IP/32" \
               EnableCloudFront='false' \
+              CreateSesIdentity='${{ inputs.create_ses_identity }}' \
               InitialMediaBaseUrl='https://aws-origin.dekhocampus.com/storage/v1/object/public' \
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com'
       - name: Report infrastructure failure details
@@ -306,10 +312,11 @@ jobs:
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
             -i /tmp/tempkey "$SSH_USER@$SSH_IP" \
-            "sudo bash -s -- '$MEDIA_BASE_URL' '$BUCKET'" <<'REMOTE'
+            "sudo bash -s -- '$MEDIA_BASE_URL' '$BUCKET' '${{ inputs.create_ses_identity }}'" <<'REMOTE'
           set -euo pipefail
           MEDIA_BASE_URL="$1"
           BUCKET="$2"
+          SES_ENABLED="$3"
           DB_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/mysql --query SecretString --output text)
           RUNTIME_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/runtime --query SecretString --output text)
           DB_HOST=$(aws lightsail get-relational-database --relational-database-name dc-react-mysql-lightsail --query 'relationalDatabase.masterEndpoint.address' --output text)
@@ -334,7 +341,7 @@ jobs:
           AWS_S3_BUCKET=$BUCKET
           AWS_ACCESS_KEY_ID=$APP_ACCESS_KEY_ID
           AWS_SECRET_ACCESS_KEY=$APP_SECRET_ACCESS_KEY
-          SES_ENABLED=true
+          SES_ENABLED=$SES_ENABLED
           SES_REGION=ap-south-1
           SES_IDENTITY=dekhocampus.com
           SES_FROM_EMAIL=noreply@dekhocampus.com
