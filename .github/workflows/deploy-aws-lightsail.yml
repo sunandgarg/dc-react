@@ -22,6 +22,11 @@ on:
         required: false
         default: false
         type: boolean
+      update_infrastructure:
+        description: Apply the CloudFormation infrastructure template before deploying the application
+        required: false
+        default: true
+        type: boolean
 
 permissions:
   contents: read
@@ -65,6 +70,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Validate and deploy infrastructure
+        if: ${{ inputs.update_infrastructure }}
         run: |
           aws cloudformation validate-template --template-body file://infra/aws/lightsail-production.yaml >/dev/null
           if aws cloudformation describe-stacks --stack-name "$STACK_NAME" >/dev/null 2>&1; then
@@ -125,15 +131,17 @@ jobs:
               EnableCloudFront='false' \
               InitialMediaBaseUrl='https://aws-origin.dekhocampus.com/storage/v1/object/public' \
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com'
-          aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
-            --query 'Stacks[0].Outputs' --output json > /tmp/stack-outputs.json
-
       - name: Report infrastructure failure details
-        if: ${{ failure() }}
+        if: ${{ failure() && inputs.update_infrastructure }}
         run: |
           aws cloudformation describe-stack-events --stack-name "$STACK_NAME" \
             --query "StackEvents[?ResourceStatus=='CREATE_FAILED' || ResourceStatus=='UPDATE_FAILED' || ResourceStatus=='ROLLBACK_FAILED'].[Timestamp,LogicalResourceId,ResourceType,ResourceStatus,ResourceStatusReason]" \
             --output table || true
+
+      - name: Read infrastructure outputs
+        run: |
+          aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+            --query 'Stacks[0].Outputs' --output json > /tmp/stack-outputs.json
 
       - name: Store runtime secrets in AWS Secrets Manager
         env:
