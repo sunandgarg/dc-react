@@ -8,6 +8,7 @@ import type { DbCollege } from "@/hooks/useCollegesData";
 import { CompareToggleButton } from "@/components/CompareToggleButton";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { PriorityBadge } from "@/components/PriorityBadge";
+import { ApplyButton } from "@/components/ApplyButton";
 
 interface CollegeCardProps {
   college: DbCollege;
@@ -126,9 +127,13 @@ function CollegeCardComponent({ college, index }: CollegeCardProps) {
                 Know More
               </Button>
             </Link>
-            <Button className="w-full rounded-xl h-10 text-sm gradient-accent text-white border-0">
-              Apply Now
-            </Button>
+            <ApplyButton
+              collegeSlug={college.slug}
+              collegeName={college.name}
+              applyMode={(college as any).apply_mode}
+              applyUrl={(college as any).apply_url}
+              className="w-full rounded-xl h-10 text-sm gradient-accent text-white border-0"
+            />
           </div>
         </div>
       </article>

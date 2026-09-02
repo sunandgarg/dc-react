@@ -2,9 +2,8 @@ import { StudentAvatars } from "@/components/StudentAvatars";
 import { useEffect, useState } from "react";
 import { ArrowRight, Download, Star, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LeadCaptureForm } from "@/components/LeadCaptureForm";
+import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { IITAlumniBadge } from "@/components/IITAlumniBadge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trackEvent } from "@/lib/analytics";
 
 interface Props {
@@ -18,6 +17,7 @@ interface Props {
  */
 export function ExamDecisionRail({ exam, onDownloadSample }: Props) {
   const [open, setOpen] = useState(false);
+  const [destination, setDestination] = useState<string | null>(null);
   const [countdown, setCountdown] = useState("");
 
   useEffect(() => {
@@ -57,23 +57,19 @@ export function ExamDecisionRail({ exam, onDownloadSample }: Props) {
         <div className="flex justify-center mb-4"><IITAlumniBadge showTagline={false} /></div>
 
         <div className="space-y-3">
-          {exam.registration_url && exam.registration_url !== "#" ? (
-            <a href={exam.registration_url} target="_blank" rel="noopener noreferrer" className="block" onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Apply Now", exam_slug: exam.slug, entity_name: exam.name }); } catch {} }}>
-              <Button className="w-full h-auto bg-[#e85d3a] hover:bg-[#d14b2d] text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-200 hover:scale-[1.02] transition-transform text-sm md:text-base">
-                <ExternalLink className="w-4 h-4 mr-2" /> Apply Now
-              </Button>
-            </a>
-          ) : (
-            <Button
-              onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Apply Now", exam_slug: exam.slug, entity_name: exam.name }); } catch {}; setOpen(true); }}
-              className="w-full h-auto bg-[#e85d3a] hover:bg-[#d14b2d] text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-200 hover:scale-[1.02] transition-transform text-sm md:text-base"
-            >
-              <ArrowRight className="w-4 h-4 mr-2" /> Apply Now
-            </Button>
-          )}
+          <Button
+            onClick={() => {
+              try { trackEvent("cta_click", { page: "exam", cta: "Apply Now", exam_slug: exam.slug, entity_name: exam.name }); } catch {}
+              setDestination(exam.registration_url && exam.registration_url !== "#" ? exam.registration_url : null);
+              setOpen(true);
+            }}
+            className="w-full h-auto bg-[#e85d3a] hover:bg-[#d14b2d] text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-200 hover:scale-[1.02] transition-transform text-sm md:text-base"
+          >
+            {exam.registration_url && exam.registration_url !== "#" ? <ExternalLink className="w-4 h-4 mr-2" /> : <ArrowRight className="w-4 h-4 mr-2" />} Apply Now
+          </Button>
 
           <Button
-            onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Talk to Mentor", exam_slug: exam.slug, entity_name: exam.name }); } catch {}; setOpen(true); }}
+            onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Talk to Mentor", exam_slug: exam.slug, entity_name: exam.name }); } catch {}; setDestination(null); setOpen(true); }}
             variant="outline"
             className="w-full h-auto border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-bold py-4 rounded-2xl"
           >
@@ -106,23 +102,19 @@ export function ExamDecisionRail({ exam, onDownloadSample }: Props) {
         </div>
       </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md p-0 overflow-hidden">
-          <DialogHeader className="px-5 pt-5">
-            <DialogTitle>Get free prep guidance for {exam.name}</DialogTitle>
-          </DialogHeader>
-          <div className="p-5 pt-3">
-            <LeadCaptureForm
-              variant="inline"
-              title=""
-              subtitle="Our mentor will call you back shortly"
-              source={`exam_rail_${exam.slug}`}
-              interestedExamSlug={exam.slug}
-              onSuccess={() => setOpen(false)}
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
+      <LeadGateDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={destination ? `Apply for ${exam.name}` : `Get free prep guidance for ${exam.name}`}
+        subtitle="Share your contact details, then choose your course and location."
+        source={destination ? `exam_apply_${exam.slug}` : `exam_rail_${exam.slug}`}
+        simple
+        interestedExamSlug={exam.slug}
+        onSuccess={() => {
+          setOpen(false);
+          if (destination) window.location.assign(destination);
+        }}
+      />
     </div>
   );
 }

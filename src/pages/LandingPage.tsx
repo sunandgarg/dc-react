@@ -15,6 +15,8 @@ import { trackEvent, trackLeadConversion } from "@/lib/analytics";
 import { isStrictIndianMobile, normalizeIndianMobile } from "@/lib/phone";
 import { LeadConsentCheckbox } from "@/components/LeadConsentCheckbox";
 import { setLeadConsentPreference } from "@/lib/leadConsent";
+import { saveLeadPhase } from "@/lib/twoStepLead";
+import { ProgramModeToggle, type ProgramMode } from "@/components/ProgramModeToggle";
 
 interface LP {
   slug: string;
@@ -93,6 +95,9 @@ export default function LandingPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", city: "", state: "", course: "" });
   const [submitting, setSubmitting] = useState(false);
   const [consentAccepted, setConsentAccepted] = useState(true);
+  const [formStep, setFormStep] = useState<1 | 2>(1);
+  const [leadId, setLeadId] = useState<string | null>(null);
+  const [programMode, setProgramMode] = useState<ProgramMode>("regular");
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin" /></div>;
   if (!data) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Landing page not found.</div>;
@@ -102,22 +107,66 @@ export default function LandingPage() {
     const phone = normalizeIndianMobile(form.phone);
     if (!isStrictIndianMobile(phone)) return toast.error("Enter a valid 10-digit Indian mobile number");
     if (!form.name.trim()) return toast.error("Name is required");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return toast.error("Enter a valid email address");
     setSubmitting(true);
     const utm = {
       utm_source: params.get("utm_source"), utm_medium: params.get("utm_medium"),
       utm_campaign: params.get("utm_campaign"), utm_content: params.get("utm_content"),
       utm_term: params.get("utm_term"), gclid: params.get("gclid"), fbclid: params.get("fbclid"),
     };
-    const { error } = await (backendClient as any).from("landing_page_leads").insert({
-      landing_slug: slug, ...form, phone, ...utm,
-      referrer: document.referrer, page_url: window.location.href, consent: consentAccepted,
-    });
+    if (formStep === 1) {
+      try {
+        const saved = await saveLeadPhase({
+          phase: "identity",
+          name: form.name.trim(),
+          email: form.email.trim().toLowerCase(),
+          phone,
+          source: `landing_${slug}`,
+          cta: data.form_submit_label || "landing_form",
+          page_url: window.location.href,
+          consent_terms_accepted: consentAccepted,
+        });
+        setLeadId(saved.lead_id);
+        setLeadConsentPreference(consentAccepted);
+        setFormStep(2);
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Could not save your details");
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+    if (!form.course || !form.state.trim() || !form.city.trim()) {
+      setSubmitting(false);
+      return toast.error("Choose your course, state and city");
+    }
+    try {
+      await saveLeadPhase({
+        phase: "complete",
+        lead_id: leadId,
+        name: form.name.trim(), email: form.email.trim().toLowerCase(), phone,
+        current_situation: form.course, state: form.state, city: form.city,
+        program_mode: programMode, source: `landing_${slug}`,
+      });
+
+      // Keep the legacy landing report populated without letting a reporting
+      // write cancel or duplicate the durable native lead.
+      const { error } = await (backendClient as any).from("landing_page_leads").insert({
+        landing_slug: slug, ...form, phone, ...utm,
+        referrer: document.referrer, page_url: window.location.href, consent: consentAccepted,
+      });
+      if (error) console.warn("Landing report mirror failed", error);
+    } catch (error) {
+      setSubmitting(false);
+      return toast.error(error instanceof Error ? error.message : "Could not submit - please try again");
+    }
     setSubmitting(false);
-    if (error) return toast.error("Could not submit - please try again");
     setLeadConsentPreference(consentAccepted);
     toast.success("Thanks! Our advisor will call you within 24 hours.");
     trackLeadConversion({ lp_type: data.lp_type || "general", lp_slug: slug, source: "lp_main_form" });
     setForm({ name: "", email: "", phone: "", city: "", state: "", course: "" });
+    setLeadId(null);
+    setFormStep(1);
   };
 
   return (
@@ -179,10 +228,19 @@ export default function LandingPage() {
         <form id="apply-card" onSubmit={onSubmit} className="lp-card p-6 md:p-8 self-start w-full">
           <h3 className="text-xl font-bold">{data.form_title}</h3>
           <p className="text-sm opacity-70 mt-1 mb-5">{data.form_subtitle}</p>
+          <div className="mb-5 flex items-center gap-2 text-xs font-semibold">
+            <span className={`flex h-7 w-7 items-center justify-center rounded-full ${formStep === 1 ? "bg-[var(--lp-primary)] text-white" : "bg-emerald-100 text-emerald-700"}`}>{formStep === 1 ? "1" : "✓"}</span>
+            <span>Contact</span><span className="h-px flex-1 bg-slate-200" />
+            <span className={`flex h-7 w-7 items-center justify-center rounded-full ${formStep === 2 ? "bg-[var(--lp-primary)] text-white" : "bg-slate-100 text-slate-500"}`}>2</span>
+            <span>Preferences</span>
+          </div>
           <div className="space-y-4">
+            {formStep === 1 ? <>
             <div><Label className="text-xs">Full name *</Label><input className="lp-input" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Enter Your Full Name" /></div>
             <div><Label className="text-xs">Email *</Label><input type="email" className="lp-input" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Enter Your Email Address" /></div>
             <div><Label className="text-xs">Phone *</Label><input className="lp-input" required inputMode="numeric" maxLength={15} value={form.phone} onChange={(e) => setForm({ ...form, phone: normalizeIndianMobile(e.target.value) })} placeholder="Enter Your Phone Number" /></div>
+            <LeadConsentCheckbox checked={consentAccepted} onCheckedChange={setConsentAccepted} compact />
+            </> : <>
             <div className="grid grid-cols-2 gap-3">
               <div><Label className="text-xs">City *</Label><input className="lp-input" required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Enter Your City" /></div>
               <div><Label className="text-xs">State *</Label><input className="lp-input" required value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} placeholder="Enter Your State" /></div>
@@ -194,8 +252,9 @@ export default function LandingPage() {
                 {(data.form_courses || []).map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
-            <LeadConsentCheckbox checked={consentAccepted} onCheckedChange={setConsentAccepted} compact />
-            <Button type="submit" disabled={submitting} className="lp-btn-primary w-full rounded-md py-6 text-base font-bold tracking-wide">{submitting ? "Submitting..." : data.form_submit_label}</Button>
+            <ProgramModeToggle value={programMode} onChange={setProgramMode} />
+            </>}
+            <Button type="submit" disabled={submitting} className="lp-btn-primary w-full rounded-md py-6 text-base font-bold tracking-wide">{submitting ? "Saving..." : formStep === 1 ? "Continue" : data.form_submit_label}</Button>
             <p className="text-[11px] opacity-60 leading-relaxed">{data.form_consent_text} <a className="underline" href={data.privacy_url}>Privacy</a> · <a className="underline" href={data.terms_url}>Terms</a></p>
           </div>
         </form>

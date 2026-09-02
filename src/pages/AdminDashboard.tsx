@@ -9,6 +9,7 @@ import {
   BarChart3,
   BookOpen,
   CalendarClock,
+  CircleGauge,
   ChevronDown,
   FileText,
   GraduationCap,
@@ -22,6 +23,7 @@ import {
   Sparkles,
   Star,
   Users,
+  UserCheck,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -51,11 +53,39 @@ export default function AdminDashboard() {
     },
   });
 
+  const { data: operationsKpis } = useQuery({
+    queryKey: ["admin-operations-kpis"],
+    queryFn: async () => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const queries = await Promise.all([
+        backendClient.from("leads").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
+        backendClient.from("leads").select("*", { count: "exact", head: true }).eq("otp_verified", true),
+        backendClient.from("articles").select("*", { count: "exact", head: true }).eq("status", "Published").eq("is_active", true),
+        backendClient.from("articles").select("*", { count: "exact", head: true }).in("status", ["Draft", "Review"]),
+      ]);
+      const firstError = queries.find((result) => result.error)?.error;
+      if (firstError) throw firstError;
+      return {
+        leadsToday: queries[0].count ?? 0,
+        verifiedLeads: queries[1].count ?? 0,
+        publishedArticles: queries[2].count ?? 0,
+        editorialQueue: queries[3].count ?? 0,
+      };
+    },
+    staleTime: 60_000,
+    refetchInterval: 120_000,
+  });
+
   const stats = [
     { label: "Total leads", value: leadsCount ?? 0, icon: Users, tone: "bg-emerald-50 text-emerald-700", href: "/admin/leads" },
     { label: "Active ads", value: ads?.filter((ad) => ad.is_active).length ?? 0, icon: Megaphone, tone: "bg-blue-50 text-blue-700", href: "/admin/ads" },
     { label: "Featured colleges", value: featured?.length ?? 0, icon: Star, tone: "bg-amber-50 text-amber-700", href: "/admin/featured" },
     { label: "Student referrals", value: referralsCount ?? 0, icon: Sparkles, tone: "bg-violet-50 text-violet-700", href: "/admin/referrals" },
+    { label: "Leads today", value: operationsKpis?.leadsToday ?? 0, icon: CircleGauge, tone: "bg-cyan-50 text-cyan-700", href: "/admin/leads" },
+    { label: "OTP verified", value: operationsKpis?.verifiedLeads ?? 0, icon: UserCheck, tone: "bg-teal-50 text-teal-700", href: "/admin/leads" },
+    { label: "Published articles", value: operationsKpis?.publishedArticles ?? 0, icon: Newspaper, tone: "bg-indigo-50 text-indigo-700", href: "/admin/articles" },
+    { label: "Editorial queue", value: operationsKpis?.editorialQueue ?? 0, icon: FileText, tone: "bg-rose-50 text-rose-700", href: "/admin/review" },
   ];
 
   const workspaces = [

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { blogLimits, blogTextProvider, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
+import { blogLimits, blogTextProvider, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent } from "../src/auth.mjs";
 
@@ -212,6 +212,22 @@ test("renders the supplied template as a 16:9 WebP while preserving its own artw
   assert.equal(metadata.width, 1600);
   assert.equal(metadata.height, 900);
   assert.ok(bytes.length > 20_000);
+});
+
+test("derives a stable subject mark when an official logo is unavailable", () => {
+  assert.equal(inferContextLogoName("UPSC NDA 2 admit card released"), "UPSC");
+  assert.equal(inferContextLogoName("Tamil Nadu Public School reopening calendar"), "Tamil Nadu Public School");
+});
+
+test("renders a contextual wordmark without a paid image call", async () => {
+  const source = await readFile(new URL("../assets/dekhocampus-blog-cover-template-v1.png", import.meta.url));
+  const diagnostics = {};
+  const bytes = await renderBlogCover(source, {
+    width: 1600, height: 900, resolution: "web", aspectRatio: "16:9",
+    includeLogo: false, logoUrl: "", contextLogoUrl: "", contextLogoName: "UPSC",
+  }, "NDA application dates students should know", "template", diagnostics);
+  assert.equal((await sharp(bytes).metadata()).format, "webp");
+  assert.equal(diagnostics.logoKind, "context-wordmark");
 });
 
 test("uses the bundled branded template fallback without the legacy dark panel", async () => {

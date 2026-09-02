@@ -224,6 +224,22 @@ export async function templateCoverTitleRasterOverlay(value, options) {
   };
 }
 
+function contextualWordmarkOverlay(value, options) {
+  const name = stripHtml(value).replace(/^dekhocampus\s*:\s*/i, "").trim().slice(0, 72);
+  const acronym = (name.match(/\b[A-Z][A-Z0-9-]{1,10}\b/)?.[0]
+    || name.split(/\s+/).filter(Boolean).slice(0, 5).map((word) => word[0]).join("").toUpperCase()).slice(0, 8);
+  const displayName = name.length > 42 ? `${name.slice(0, 43).replace(/\s+\S*$/, "")}` : name;
+  const width = Math.round(options.width * 0.48);
+  const height = Math.round(options.height * 0.105);
+  const iconSize = Math.round(height * 0.68);
+  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <rect x="1" y="1" width="${width - 2}" height="${height - 2}" rx="${Math.round(height / 2)}" fill="#ffffff" fill-opacity="0.96" stroke="#fed7aa" stroke-width="2"/>
+    <circle cx="${Math.round(height / 2)}" cy="${Math.round(height / 2)}" r="${Math.round(iconSize / 2)}" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
+    <text x="${Math.round(height / 2)}" y="${Math.round(height / 2)}" text-anchor="middle" dominant-baseline="central" font-family="Inter,Arial,sans-serif" font-size="${Math.round(iconSize * 0.31)}" font-weight="700" fill="#c2410c">${escapeCoverText(acronym)}</text>
+    <text x="${Math.round(height * 1.12)}" y="${Math.round(height / 2)}" dominant-baseline="central" font-family="Inter,Arial,sans-serif" font-size="${Math.round(height * 0.25)}" font-weight="600" fill="#111827">${escapeCoverText(displayName)}</text>
+  </svg>`);
+}
+
 export async function createLocalEditorialCover(prompt, options) {
   void prompt;
   void options;
@@ -263,6 +279,28 @@ export async function renderBlogCover(sourceBytes, options, titleHook, sourceMod
         diagnostics.logoApplied = false;
         diagnostics.logoError = String(error?.message || error).slice(0, 200);
       }
+      if (options.contextLogoName) {
+        const wordmarkWidth = Math.round(options.width * 0.48);
+        composites.push({
+          input: contextualWordmarkOverlay(options.contextLogoName, options),
+          left: Math.round((options.width - wordmarkWidth) / 2),
+          top: Math.round(options.height * (usesTemplateArtwork ? 0.20 : 0.045)),
+        });
+        if (diagnostics) diagnostics.logoKind = "context-wordmark-fallback";
+      }
+    }
+  } else if (options.contextLogoName) {
+    const wordmark = contextualWordmarkOverlay(options.contextLogoName, options);
+    const wordmarkWidth = Math.round(options.width * 0.48);
+    composites.push({
+      input: wordmark,
+      left: Math.round((options.width - wordmarkWidth) / 2),
+      top: Math.round(options.height * (usesTemplateArtwork ? 0.20 : 0.045)),
+    });
+    if (diagnostics) {
+      diagnostics.logoApplied = true;
+      diagnostics.logoKind = "context-wordmark";
+      diagnostics.logoName = options.contextLogoName;
     }
   }
   base.composite(composites);
@@ -292,11 +330,24 @@ function selectEntityLogo(entity, table) {
   return { url, name };
 }
 
+export function inferContextLogoName(topic) {
+  const title = stripHtml(topic).replace(/^dekhocampus\s*:\s*/i, "").trim();
+  const acronym = title.match(/\b[A-Z][A-Z0-9-]{1,10}\b/)?.[0];
+  if (acronym) return acronym;
+  const organization = title.match(/^(.{3,80}?\b(?:University|Institute|Board|Agency|Commission|Council|Department|Ministry|Authority|School|Academy))\b/i)?.[1];
+  if (organization) return organization.trim();
+  const words = title.match(/[A-Za-z0-9]+/g) || [];
+  return words.slice(0, Math.min(4, words.length)).join(" ");
+}
+
 export async function resolveContextualBlogLogo(topic, entityContext = null) {
   const schedule = entityContext?.schedule;
   if (schedule && entityContext?.entity) {
     const table = { college: "colleges", course: "courses", exam: "exams" }[schedule.entity_type];
-    return selectEntityLogo(entityContext.entity, table);
+    return selectEntityLogo(entityContext.entity, table) || {
+      url: "",
+      name: String(entityContext.entity.name || entityContext.entity.full_name || schedule.entity_slug),
+    };
   }
 
   const rawTitle = stripHtml(topic).replace(/^dekhocampus\s*:\s*/i, "").trim();
@@ -313,6 +364,7 @@ export async function resolveContextualBlogLogo(topic, entityContext = null) {
   const searchTerms = [...phrases].sort((a, b) => b.length - a.length).slice(0, 24);
   const titleNormalized = normalizeArticleTitle(rawTitle);
   const candidates = [];
+  const namedCandidates = [];
 
   for (const [table, fields] of Object.entries(contextLogoFields)) {
     const aliasFilters = fields.aliases.flatMap((field) => [
@@ -323,18 +375,22 @@ export async function resolveContextualBlogLogo(topic, entityContext = null) {
     const select = Object.fromEntries([...fields.aliases, ...fields.media].map((field) => [field, true]));
     const rows = await prisma[table].findMany({ where: { is_active: true, OR: aliasFilters }, select, take: 30 }).catch(() => []);
     for (const row of rows) {
-      const logo = selectEntityLogo(row, table);
-      if (!logo) continue;
       const matchedAlias = fields.aliases
         .map((field) => String(row[field] || "").trim())
         .filter((alias) => alias.length >= 3)
         .sort((a, b) => b.length - a.length)
         .find((alias) => titleNormalized.includes(normalizeArticleTitle(alias)));
-      if (matchedAlias) candidates.push({ ...logo, score: normalizeArticleTitle(matchedAlias).length });
+      if (!matchedAlias) continue;
+      const score = normalizeArticleTitle(matchedAlias).length;
+      const logo = selectEntityLogo(row, table);
+      if (logo) candidates.push({ ...logo, score });
+      else namedCandidates.push({ url: "", name: matchedAlias, score });
     }
   }
   const match = candidates.sort((a, b) => b.score - a.score)[0];
-  return match ? { url: match.url, name: match.name } : null;
+  if (match) return { url: match.url, name: match.name };
+  const namedMatch = namedCandidates.sort((a, b) => b.score - a.score)[0];
+  return namedMatch || { url: "", name: inferContextLogoName(rawTitle) };
 }
 
 function titleTokens(value) {

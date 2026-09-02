@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useDeferredValue } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
@@ -46,6 +46,7 @@ export default function AdminLeads() {
   const queryClient = useQueryClient();
   const { mask, maskPhone, maskEmail, maskName } = useLeadMask();
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [stateFilter, setStateFilter] = useState<string>("all");
@@ -174,6 +175,9 @@ export default function AdminLeads() {
       }
       return rows;
     },
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: false,
   });
 
   const sources = useMemo(() => Array.from(new Set(leads.map(l => l.source).filter(Boolean))), [leads]);
@@ -206,8 +210,8 @@ export default function AdminLeads() {
   const filtered = useMemo(() => {
     const now = new Date();
     return leads.filter((l: any) => {
-      if (search) {
-        const q = search.toLowerCase();
+      if (deferredSearch) {
+        const q = deferredSearch.toLowerCase();
         const hit = l.name?.toLowerCase().includes(q) || l.phone?.includes(q) || l.email?.toLowerCase().includes(q) || l.city?.toLowerCase().includes(q) || l.source?.toLowerCase().includes(q);
         if (!hit) return false;
       }
@@ -240,7 +244,7 @@ export default function AdminLeads() {
       }
       return true;
     });
-  }, [leads, search, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, dupCounts, dupKey]);
+  }, [leads, deferredSearch, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, dupCounts, dupKey]);
 
   // Reset to page 1 whenever filters change
   useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, sortBy, sortDir, pageSize]);
@@ -278,10 +282,12 @@ export default function AdminLeads() {
     const withPhone = allLeadGroups.filter((group) => group.instances.some((lead) => lead.phone)).length;
     const verified = allLeadGroups.filter((group) => group.instances.some((lead) => lead.otp_verified)).length;
     const online = latestLeads.filter((l: any) => (l.program_mode || "regular") === "online").length;
+    const complete = latestLeads.filter((l: any) => l.phase === "complete" || (l.state && l.city && l.current_situation)).length;
+    const highIntent = latestLeads.filter((l: any) => /apply|brochure|callback|counsell/i.test(`${l.source || ""} ${l.cta || ""}`)).length;
     const verifiedPct = allLeadGroups.length ? Math.round((verified / allLeadGroups.length) * 100) : 0;
     const avgPerDay = Math.round(week / 7);
     const dayDelta = yesterday > 0 ? Math.round(((today - yesterday) / yesterday) * 100) : (today > 0 ? 100 : 0);
-    return { total: allLeadGroups.length, today, week, withPhone, verified, verifiedPct, online, avgPerDay, dayDelta };
+    return { total: allLeadGroups.length, today, week, withPhone, verified, verifiedPct, online, complete, highIntent, avgPerDay, dayDelta };
   }, [allLeadGroups]);
 
   // Top sources & cities
@@ -360,7 +366,7 @@ export default function AdminLeads() {
         <div className="flex items-center gap-2">
           <div className="relative w-[240px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name, phone, email…" className="pl-9 h-9 rounded-lg text-sm" />
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name, phone, email…" className={`pl-9 h-9 rounded-lg text-sm ${search !== deferredSearch ? "border-primary/50" : ""}`} />
           </div>
           <LeadsColumnCustomizer
             columns={ALL_COLUMNS}
@@ -569,7 +575,7 @@ export default function AdminLeads() {
       </div>
 
       {/* KPI strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-9 gap-2 mb-4">
         {[
           { label: "Total", value: stats.total, icon: Users, color: "text-primary", bg: "bg-primary/10" },
           { label: "24h", value: stats.today, icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-500/10", sub: `${stats.dayDelta >= 0 ? "+" : ""}${stats.dayDelta}%` },
@@ -578,6 +584,8 @@ export default function AdminLeads() {
           { label: "Verified", value: stats.verified, icon: ShieldCheck, color: "text-emerald-700", bg: "bg-emerald-500/10", sub: `${stats.verifiedPct}%` },
           { label: "Avg/Day", value: stats.avgPerDay, icon: Zap, color: "text-blue-600", bg: "bg-blue-500/10" },
           { label: "Repeat", value: dupTotal, icon: Flame, color: "text-rose-600", bg: "bg-rose-500/10", onClick: () => setDupOnly((v) => !v), active: dupOnly },
+          { label: "Complete", value: stats.complete, icon: CheckSquare, color: "text-teal-700", bg: "bg-teal-500/10" },
+          { label: "High intent", value: stats.highIntent, icon: Trophy, color: "text-amber-700", bg: "bg-amber-500/10" },
         ].map((s: any) => (
           <button
             key={s.label}
@@ -653,7 +661,7 @@ export default function AdminLeads() {
                       );
                     }
                     case "name":
-                      return <button type="button" onClick={() => setDetailLead(lead)} className="font-semibold text-primary hover:underline">{maskName(lead.name) || "-"}</button>;
+                      return <button type="button" onClick={(event) => { event.stopPropagation(); setDetailLead(lead); }} className="font-semibold text-primary hover:underline">{maskName(lead.name) || "-"}</button>;
                     case "phone":
                       return lead.phone ? (
                         <span className="inline-flex items-center gap-1.5 text-muted-foreground"><Phone className="w-3.5 h-3.5" />+91 {mask ? maskPhone(lead.phone) : lead.phone.replace(/\D/g, "").slice(-10)}</span>
@@ -695,7 +703,7 @@ export default function AdminLeads() {
                       return <span className="text-xs text-muted-foreground">{lead.cta || "-"}</span>;
                     case "landing_page":
                       return lead.page_url ? (
-                        <a href={lead.page_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline inline-flex items-center gap-1 max-w-[220px] truncate" title={lead.page_url}>
+                        <a href={lead.page_url} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()} className="text-xs text-blue-600 hover:underline inline-flex items-center gap-1 max-w-[220px] truncate" title={lead.page_url}>
                           <ExternalLink className="w-3 h-3 flex-shrink-0" /><span className="truncate">{lead.page_url}</span>
                         </a>
                       ) : "-";
@@ -714,14 +722,15 @@ export default function AdminLeads() {
                       return (
                         <div className="flex items-center gap-1">
                           <button
-                            onClick={() => setIntentLead({ id: lead.id, name: lead.name, phone: lead.phone })}
+                            onClick={(event) => { event.stopPropagation(); setIntentLead({ id: lead.id, name: lead.name, phone: lead.phone }); }}
                             className="w-7 h-7 rounded hover:bg-muted flex items-center justify-center"
                             title="Intent analysis"
                           >
                             <Sparkles className="w-3.5 h-3.5 text-orange-600" />
                           </button>
                           <button
-                            onClick={() => {
+                            onClick={(event) => {
+                              event.stopPropagation();
                               const text = `${lead.name || ""} ${tel ? "+91" + tel : ""} ${lead.email || ""}`.trim();
                               navigator.clipboard?.writeText(text);
                               toast.success("Lead details copied");
@@ -731,7 +740,7 @@ export default function AdminLeads() {
                             <Copy className="w-3.5 h-3.5 text-muted-foreground" />
                           </button>
                           <button
-                            onClick={() => deleteLeads(instances.map((instance) => instance.id), `this lead and its full history`)}
+                            onClick={(event) => { event.stopPropagation(); void deleteLeads(instances.map((instance) => instance.id), `this lead and its full history`); }}
                             disabled={deleteBusy}
                             className="w-7 h-7 rounded hover:bg-destructive/10 flex items-center justify-center" title="Delete lead"
                           >
@@ -836,7 +845,8 @@ export default function AdminLeads() {
                         const head = (
                           <tr
                             key={key}
-                            className={`border-b border-border last:border-0 hover:bg-primary/5 transition-colors ${t ? `${t.bg}` : "odd:bg-muted/20"}`}
+                            onClick={() => setDetailLead(lead)}
+                            className={`cursor-pointer border-b border-border last:border-0 hover:bg-primary/5 transition-colors ${t ? `${t.bg}` : "odd:bg-muted/20"}`}
                           >
                             <td className="p-0 w-1">
                               <div className={`w-1 h-10 ${t ? "bg-rose-500" : "bg-primary/60"}`} />
@@ -854,9 +864,9 @@ export default function AdminLeads() {
 
                         if (!isOpen || dn <= 1) return [head];
                         const historyRows = instances.slice(1).map((historicalLead, historyIndex) => (
-                          <tr key={`${key}-history-${historicalLead.id}`} className="border-b border-border/70 bg-muted/35 text-muted-foreground hover:bg-muted/60">
+                          <tr key={`${key}-history-${historicalLead.id}`} onClick={() => setDetailLead(historicalLead)} className="cursor-pointer border-b border-border/70 bg-muted/35 text-muted-foreground hover:bg-muted/60">
                             <td className="p-0 w-1"><div className="ml-0.5 h-10 w-0.5 bg-border" /></td>
-                            <td className="w-10 px-2">
+                            <td className="w-10 px-2" onClick={(event) => event.stopPropagation()}>
                               <Checkbox checked={selectedIds.has(historicalLead.id)} onCheckedChange={() => toggleRowSel([historicalLead.id])} aria-label={`Select previous submission ${historyIndex + 1}`} />
                             </td>
                             {visibleCols.map((col) => (

@@ -7,6 +7,8 @@ import type { DbExam } from "@/hooks/useExamsData";
 import { PriorityBadge } from "@/components/PriorityBadge";
 import { buildExamHref } from "@/lib/entityUrls";
 import { compactDisplayText, displayText } from "@/lib/displayText";
+import { LeadGateDialog } from "@/components/LeadGateDialog";
+import { useState } from "react";
 
 interface ExamCardProps {
   exam: DbExam;
@@ -21,6 +23,7 @@ const statusColors: Record<string, string> = {
 };
 
 export function ExamCard({ exam, index }: ExamCardProps) {
+  const [leadOpen, setLeadOpen] = useState(false);
   const importantDates = Array.isArray(exam.important_dates)
     ? (exam.important_dates as { event: string; date: string }[])
     : [];
@@ -152,11 +155,24 @@ export function ExamCard({ exam, index }: ExamCardProps) {
               View Details
             </Button>
           </Link>
-          <Button className="w-full rounded-xl h-10 text-sm gradient-accent text-white border-0">
+          <Button onClick={() => setLeadOpen(true)} className="w-full rounded-xl h-10 text-sm gradient-accent text-white border-0">
             Apply Now
           </Button>
         </div>
       </article>
+      <LeadGateDialog
+        open={leadOpen}
+        onOpenChange={setLeadOpen}
+        title={`Apply for ${examName}`}
+        subtitle="Share your contact details, then choose your course and location."
+        source={`exam_card_apply_${exam.slug}`}
+        simple
+        interestedExamSlug={exam.slug}
+        onSuccess={() => {
+          setLeadOpen(false);
+          if (exam.registration_url && exam.registration_url !== "#") window.location.assign(exam.registration_url);
+        }}
+      />
     </motion.div>
   );
 }

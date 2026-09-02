@@ -67,7 +67,7 @@ export default function ArticleDetail() {
       const words = text.split(/\s+/).filter(Boolean).length;
       const mins = Math.max(2, Math.round(words / 200));
       return {
-        slug: dbArticle.slug,
+        slug: normalizeSlug(dbArticle.slug),
         title: dbArticle.title,
         excerpt: (dbArticle.description || "").replace(/<[^>]+>/g, " ").slice(0, 240) || text.slice(0, 240),
         content: stripVisibleArticleSources(dbArticle.content || dbArticle.description || ""),

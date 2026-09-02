@@ -12,6 +12,7 @@ import { Footer } from "@/components/Footer";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { AuthorByline } from "@/components/AuthorByline";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
+import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { DynamicAdBanner } from "@/components/DynamicAdBanner";
 import { ScrollSpy, type ScrollSection } from "@/components/ScrollSpy";
 import { FAQSection } from "@/components/FAQSection";
@@ -79,10 +80,15 @@ export default function ExamDetail() {
 
   const [gateOpen, setGateOpen] = useState(false);
   const [gateFile, setGateFile] = useState<{ url: string; name: string; source: string } | null>(null);
+  const [applyGateOpen, setApplyGateOpen] = useState(false);
   const openGate = (url: string, name: string, source: string) => {
     if (!url || url === "#") return;
     setGateFile({ url, name, source });
     setGateOpen(true);
+  };
+  const openApplyGate = () => {
+    try { trackEvent("cta_click", { page: "exam", cta: "Apply Now", exam_slug: exam?.slug }); } catch {}
+    setApplyGateOpen(true);
   };
 
   useSEO({
@@ -224,21 +230,9 @@ export default function ExamDetail() {
 
             <div className="mb-3"><AuthorByline authorId={(exam as any).author_id} /></div>
             <div className="flex items-center gap-2 flex-wrap">
-              {exam.registration_url && exam.registration_url !== "#" ? (
-                <a
-                  href={exam.registration_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Apply Now", exam_slug: exam.slug }); } catch {} }}
-                >
-                  <Button size="sm" className="rounded-xl text-xs gap-1 !bg-[#e85d3a] hover:!bg-[#d14b2d] !text-white font-bold shadow-lg shadow-orange-200/60 h-10 px-4"><ExternalLink className="w-3.5 h-3.5" />Apply Now</Button>
-                </a>
-              ) : (
-                <Button size="sm" className="rounded-xl text-xs gap-1 !bg-[#e85d3a] hover:!bg-[#d14b2d] !text-white font-bold shadow-lg shadow-orange-200/60 h-10 px-4"
-                  onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Apply Now", exam_slug: exam.slug }); } catch {}; openGate("#", `${exam.name}-application.pdf`, `exam_apply_${exam.slug}`); }}>
-                  <ExternalLink className="w-3.5 h-3.5" />Apply Now
-                </Button>
-              )}
+              <Button size="sm" className="rounded-xl text-xs gap-1 !bg-[#e85d3a] hover:!bg-[#d14b2d] !text-white font-bold shadow-lg shadow-orange-200/60 h-10 px-4" onClick={openApplyGate}>
+                <ExternalLink className="w-3.5 h-3.5" />Apply Now
+              </Button>
               <Button
                 size="sm" variant="outline" className="rounded-xl text-xs gap-1 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 h-10 px-4 font-bold"
                 onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Sample Papers", exam_slug: exam.slug }); } catch {}; openGate(exam.sample_paper_url || "#", `${exam.name}-sample-paper.pdf`, `exam_sample_${exam.slug}`); }}
@@ -421,13 +415,9 @@ export default function ExamDetail() {
                   <RichText html={exam.cast_wise_fee} />
                 </div>
               )}
-              {exam.registration_url && exam.registration_url.trim() && exam.registration_url !== "#" && (
-                <div className="mt-3">
-                  <a href={exam.registration_url} target="_blank" rel="noopener noreferrer">
-                    <Button className="rounded-xl gap-1"><ExternalLink className="w-4 h-4" />Apply Now on Official Website</Button>
-                  </a>
-                </div>
-              )}
+              <div className="mt-3">
+                <Button className="rounded-xl gap-1" onClick={openApplyGate}><ExternalLink className="w-4 h-4" />Apply Now{exam.registration_url && exam.registration_url !== "#" ? " on Official Website" : ""}</Button>
+              </div>
             </RichSection>
 
             <LeadCaptureForm variant="inline" title={`📞 Get ${exam.name} preparation guidance`} source={`exam_inline_${exam.slug}`} interestedExamSlug={exam.slug} />
@@ -683,6 +673,19 @@ export default function ExamDetail() {
           meta={{ exam: exam.slug, strategy: strategy?.slug }}
         />
       )}
+      <LeadGateDialog
+        open={applyGateOpen}
+        onOpenChange={setApplyGateOpen}
+        title={`Apply for ${exam.name}`}
+        subtitle="Share your contact details, then choose your course and location."
+        source={`exam_apply_${exam.slug}`}
+        simple
+        interestedExamSlug={exam.slug}
+        onSuccess={() => {
+          setApplyGateOpen(false);
+          if (exam.registration_url && exam.registration_url !== "#") window.location.assign(exam.registration_url);
+        }}
+      />
     </div>
   );
 }

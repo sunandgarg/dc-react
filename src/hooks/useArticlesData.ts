@@ -53,6 +53,8 @@ const normalizeArticleSearch = (value: string | undefined) =>
     .replace(/\s+/g, " ")
     .trim();
 
+export const legacyArticleSlugCandidates = (slug: string) => [`${slug}-`, `${slug},`];
+
 export function useAdminArticles(search: string | undefined, page: number, pageSize: number) {
   const normalizedSearch = normalizeArticleSearch(search);
   const safePage = Math.max(1, Math.floor(page || 1));
@@ -103,7 +105,19 @@ export function useDbArticle(slug: string | undefined) {
         .eq("slug", slug!)
         .maybeSingle();
       if (error) throw error;
-      return data as DbArticle | null;
+      if (data) return data as DbArticle;
+
+      // A small set of imported/AI-created rows were saved before slug
+      // normalization removed terminal punctuation. Keep their public URL
+      // canonical while still resolving the legacy database value.
+      const legacyCandidates = legacyArticleSlugCandidates(slug!);
+      const { data: legacyRows, error: legacyError } = await backendClient
+        .from("articles")
+        .select("*")
+        .in("slug", legacyCandidates)
+        .limit(1);
+      if (legacyError) throw legacyError;
+      return (legacyRows?.[0] || null) as DbArticle | null;
     },
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,

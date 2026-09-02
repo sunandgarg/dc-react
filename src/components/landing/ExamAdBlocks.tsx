@@ -10,6 +10,8 @@ import { normalizeIndianMobile } from "@/lib/phone";
 import { functionUrl } from "@/lib/backendMode";
 import { LeadConsentCheckbox } from "@/components/LeadConsentCheckbox";
 import { setLeadConsentPreference } from "@/lib/leadConsent";
+import { LeadCaptureForm } from "@/components/LeadCaptureForm";
+import { saveLeadPhase } from "@/lib/twoStepLead";
 
 const SEND_OTP_URL = functionUrl("send-otp");
 
@@ -201,12 +203,14 @@ function SectionHeader({ eyebrow, title, subtitle }: { eyebrow?: string; title: 
 function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateMethod; slug: string; source: string; onSuccess: () => void; onClose: () => void }) {
   const [step, setStep] = useState<"form" | "otp">(gate === "otp" ? "otp" : "form");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [busy, setBusy] = useState(false);
   const [consentAccepted, setConsentAccepted] = useState(true);
+  const [leadId, setLeadId] = useState<string | null>(null);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -214,30 +218,29 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
     return () => window.clearInterval(id);
   }, [resendCooldown]);
 
-  const submitLead = async () => {
-    if (!/^[6-9]\d{9}$/.test(phone)) return toast.error("Enter a valid 10-digit Indian mobile number");
-    if (gate === "form" && !name.trim()) return toast.error("Name is required");
-    setBusy(true);
-    const { error } = await (backendClient as any).from("landing_page_leads").insert({
-      landing_slug: slug, name: name || phone, phone,
-      page_url: window.location.href, referrer: document.referrer, consent: consentAccepted,
-      utm_content: source,
-    });
-    setBusy(false);
-    if (error) return toast.error("Could not submit - please try again");
-    setLeadConsentPreference(consentAccepted);
-    trackLeadConversion({ lp_type: "exam_ad", lp_slug: slug, source, gate });
-    trackEvent("lp_unlock_success", { lp_type: "exam_ad", lp_slug: slug, source, gate: "form" });
-    onSuccess();
-  };
-
   const sendOtp = async (resend = false) => {
     if (!/^[6-9]\d{9}$/.test(phone)) return toast.error("Enter a valid 10-digit Indian mobile number");
+    if (!name.trim()) return toast.error("Name is required");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return toast.error("Enter a valid email address");
     setOtpSent(true);
     setOtp("");
     setResendCooldown(45);
     setBusy(true);
     try {
+      let durableLeadId = leadId;
+      if (!durableLeadId) {
+        const saved = await saveLeadPhase({
+          phase: "identity",
+          name: name.trim(), email: email.trim().toLowerCase(), phone,
+          source: `exam_ad_${source}`,
+          cta: "unlock_resource",
+          interested_exam_slug: slug,
+          page_url: window.location.href,
+          consent_terms_accepted: consentAccepted,
+        });
+        durableLeadId = saved.lead_id;
+        setLeadId(saved.lead_id);
+      }
       const response = await fetch(SEND_OTP_URL, {
         method: "POST",
         headers: {
@@ -272,34 +275,50 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
   const verifyOtp = async () => {
     if (otp.length < 4) return toast.error("Enter the OTP");
     setBusy(true);
-    const response = await fetch(SEND_OTP_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        phone: `+91${phone}`,
-        otp,
-        channel: "sms",
-        action: "verify",
-      }),
-    });
-    const result = await response.json().catch(() => ({}));
-    const verified = response.ok && result.verified;
-    if (verified) {
-      await (backendClient as any).from("landing_page_leads").insert({
-        landing_slug: slug, name: name || phone, phone,
-        page_url: window.location.href, referrer: document.referrer, consent: consentAccepted,
-        utm_content: source,
+    try {
+      const response = await fetch(SEND_OTP_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: `+91${phone}`,
+          otp,
+          channel: "sms",
+          action: "verify",
+        }),
       });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.verified) {
+        toast.error(result.error || "Invalid OTP");
+        return;
+      }
+      await saveLeadPhase({
+        phase: "complete", lead_id: leadId,
+        name: name.trim(), email: email.trim().toLowerCase(), phone,
+        source: `exam_ad_${source}`, interested_exam_slug: slug,
+        otp_verified: true,
+      });
+      try {
+        const { error } = await (backendClient as any).from("landing_page_leads").insert({
+          landing_slug: slug, name: name.trim(), email: email.trim().toLowerCase(), phone,
+          page_url: window.location.href, referrer: document.referrer, consent: consentAccepted,
+          utm_content: source,
+        });
+        if (error) console.warn("Exam resource report mirror failed", error);
+      } catch (error) {
+        console.warn("Exam resource report mirror failed", error);
+      }
       setLeadConsentPreference(consentAccepted);
       trackEvent("lp_otp_verified", { lp_type: "exam_ad", lp_slug: slug, source });
       trackLeadConversion({ lp_type: "exam_ad", lp_slug: slug, source, gate: "otp" });
       trackEvent("lp_unlock_success", { lp_type: "exam_ad", lp_slug: slug, source, gate: "otp" });
+      onSuccess();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not verify OTP");
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
-    if (!verified) return toast.error(result.error || "Invalid OTP");
-    onSuccess();
   };
 
   return (
@@ -314,16 +333,24 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
         </p>
 
         {step === "form" && (
-          <div className="space-y-3">
-            <div><Label className="text-xs">Full name *</Label><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" /></div>
-            <div><Label className="text-xs">Mobile *</Label><Input inputMode="numeric" maxLength={10} value={phone} onChange={(e) => setPhone(normalizeIndianMobile(e.target.value))} placeholder="10-digit mobile" /></div>
-            <LeadConsentCheckbox checked={consentAccepted} onCheckedChange={setConsentAccepted} compact />
-            <Button className="lp-btn-primary w-full rounded-md" disabled={busy} onClick={submitLead}>{busy ? "Submitting…" : "Unlock"}</Button>
-          </div>
+          <LeadCaptureForm
+            variant="inline"
+            title="Unlock this resource"
+            subtitle="First save your contact, then choose your course and location."
+            source={`exam_ad_${source}`}
+            interestedExamSlug={slug}
+            onSuccess={() => {
+              trackLeadConversion({ lp_type: "exam_ad", lp_slug: slug, source, gate: "form" });
+              trackEvent("lp_unlock_success", { lp_type: "exam_ad", lp_slug: slug, source, gate: "form" });
+              onSuccess();
+            }}
+          />
         )}
 
         {step === "otp" && (
           <div className="space-y-3">
+            {!otpSent && <div><Label className="text-xs">Full name *</Label><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" /></div>}
+            {!otpSent && <div><Label className="text-xs">Email *</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" /></div>}
             <div><Label className="text-xs">Mobile *</Label><Input inputMode="numeric" maxLength={10} value={phone} onChange={(e) => setPhone(normalizeIndianMobile(e.target.value))} placeholder="10-digit mobile" disabled={otpSent} /></div>
             {otpSent && (
               <>
