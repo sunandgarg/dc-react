@@ -217,23 +217,6 @@ export async function templateCoverTitleRasterOverlay(value, options) {
   };
 }
 
-function contextualWordmarkOverlay(value, options) {
-  const name = stripHtml(value).replace(/^dekhocampus\s*:\s*/i, "").trim().slice(0, 72);
-  const acronym = (name.match(/\b[A-Z][A-Z0-9-]{1,10}\b/)?.[0]
-    || name.split(/\s+/).filter(Boolean).slice(0, 5).map((word) => word[0]).join("").toUpperCase()).slice(0, 8);
-  const clippedName = name.length > 24 ? name.slice(0, 25).replace(/\s+\S*$/, "") : name;
-  const displayName = clippedName.toUpperCase() === acronym ? "" : clippedName;
-  const width = Math.round(options.width * (displayName ? 0.18 : 0.08));
-  const height = Math.round(options.height * 0.105);
-  const iconSize = Math.round(height * 0.68);
-  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-    <rect x="1" y="1" width="${width - 2}" height="${height - 2}" rx="${Math.round(height / 2)}" fill="#ffffff" fill-opacity="0.96" stroke="#fed7aa" stroke-width="2"/>
-    <circle cx="${Math.round(height / 2)}" cy="${Math.round(height / 2)}" r="${Math.round(iconSize / 2)}" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
-    <text x="${Math.round(height / 2)}" y="${Math.round(height / 2)}" text-anchor="middle" dominant-baseline="central" font-family="Inter,Arial,sans-serif" font-size="${Math.round(iconSize * 0.31)}" font-weight="700" fill="#c2410c">${escapeCoverText(acronym)}</text>
-    ${displayName ? `<text x="${Math.round(height * 1.12)}" y="${Math.round(height / 2)}" dominant-baseline="central" font-family="Inter,Arial,sans-serif" font-size="${Math.round(height * 0.19)}" font-weight="600" fill="#111827">${escapeCoverText(displayName)}</text>` : ""}
-  </svg>`);
-}
-
 function stableCoverThemeIndex(value) {
   return [...String(value || "")].reduce((total, character) => ((total * 31) + character.codePointAt(0)) >>> 0, 7) % BLOG_COVER_TEMPLATE_COUNT;
 }
@@ -274,12 +257,15 @@ function editorialFrameOverlay(options) {
   const panelWidth = Math.round(width * 0.836);
   const panelHeight = Math.round(height * 0.82);
   const radius = Math.round(width * 0.024);
+  const categoryY = Math.round(height * 0.35);
+  const categoryHeight = Math.round(height * 0.052);
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
     <defs><filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#0f172a" flood-opacity=".16"/></filter></defs>
-    <rect x="${x}" y="${y}" width="${panelWidth}" height="${panelHeight}" rx="${radius}" fill="#ffffff" fill-opacity=".96" filter="url(#shadow)"/>
+    <rect x="${Math.round(width * 0.27)}" y="0" width="${Math.round(width * 0.46)}" height="${Math.round(height * 0.2)}" fill="#ffffff"/>
+    <rect x="${x}" y="${y}" width="${panelWidth}" height="${panelHeight}" rx="${radius}" fill="#ffffff" filter="url(#shadow)"/>
     <rect x="${x + 25}" y="${y + 25}" width="${panelWidth - 50}" height="${panelHeight - 50}" rx="${Math.max(18, radius - 8)}" fill="none" stroke="#e2e8f0" stroke-width="2"/>
-    <rect x="${Math.round(width * 0.43)}" y="${Math.round(height * 0.35)}" width="${Math.round(width * 0.14)}" height="${Math.round(height * 0.052)}" rx="${Math.round(height * 0.026)}" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
-    <text x="${Math.round(width * 0.5)}" y="${Math.round(height * 0.383)}" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="${Math.round(width * 0.015)}" font-weight="700" letter-spacing="2" fill="#f97316">EDUCATION NEWS</text>
+    <rect x="${Math.round(width * 0.43)}" y="${categoryY}" width="${Math.round(width * 0.14)}" height="${categoryHeight}" rx="${Math.round(categoryHeight / 2)}" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+    <text x="${Math.round(width * 0.5)}" y="${categoryY + Math.round(categoryHeight / 2)}" text-anchor="middle" dominant-baseline="central" font-family="Inter,Arial,sans-serif" font-size="${Math.round(width * 0.015)}" font-weight="700" letter-spacing="2" fill="#f97316">EDUCATION NEWS</text>
     <rect x="${Math.round(width * 0.335)}" y="${Math.round(height * 0.71)}" width="${Math.round(width * 0.33)}" height="${Math.max(5, Math.round(height * 0.008))}" rx="4" fill="#fb923c"/>
     <text x="${Math.round(width * 0.5)}" y="${Math.round(height * 0.805)}" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="${Math.round(width * 0.017)}" font-weight="600" fill="#475569">DekhoCampus editorial brief for students, parents and aspirants</text>
   </svg>`);
@@ -303,53 +289,8 @@ export async function renderBlogCover(sourceBytes, options, titleHook, sourceMod
     diagnostics.layout = "locked-editorial-v2";
     diagnostics.templateVariant = selectBlogCoverTemplate(titleHook);
     diagnostics.logoPreservedFromTemplate = false;
-  }
-  const overlayLogoUrl = options.contextLogoUrl || (options.includeLogo ? options.logoUrl : "");
-  if (overlayLogoUrl) {
-    try {
-      const logoSource = await downloadCoverSource(overlayLogoUrl, "Context logo");
-      const logo = await sharp(logoSource, { limitInputPixels: 20_000_000 })
-        .rotate()
-        .resize({ width: Math.round(options.width * 0.14), height: Math.round(options.height * 0.09), fit: "inside", withoutEnlargement: true })
-        .png()
-        .toBuffer({ resolveWithObject: true });
-      const left = Math.min(
-        options.width - logo.info.width - Math.round(options.width * 0.095),
-        Math.round(options.width * 0.77),
-      );
-      const top = Math.max(24, Math.round(options.height * 0.12));
-      composites.push({ input: logo.data, left, top });
-      if (diagnostics) {
-        diagnostics.logoApplied = true;
-        diagnostics.logoKind = options.contextLogoUrl ? "context" : "brand";
-        diagnostics.logoName = options.contextLogoName || "";
-      }
-    } catch (error) {
-      if (diagnostics) {
-        diagnostics.logoApplied = false;
-        diagnostics.logoError = String(error?.message || error).slice(0, 200);
-      }
-      if (options.contextLogoName) {
-        composites.push({
-          input: contextualWordmarkOverlay(options.contextLogoName, options),
-          left: Math.round(options.width * 0.70),
-          top: Math.round(options.height * 0.12),
-        });
-        if (diagnostics) diagnostics.logoKind = "context-wordmark-fallback";
-      }
-    }
-  } else if (options.contextLogoName) {
-    const wordmark = contextualWordmarkOverlay(options.contextLogoName, options);
-    composites.push({
-      input: wordmark,
-      left: Math.round(options.width * 0.70),
-      top: Math.round(options.height * 0.12),
-    });
-    if (diagnostics) {
-      diagnostics.logoApplied = true;
-      diagnostics.logoKind = "context-wordmark";
-      diagnostics.logoName = options.contextLogoName;
-    }
+    diagnostics.logoApplied = false;
+    diagnostics.logoKind = "brand-only";
   }
   base.composite(composites);
   return base.webp({ quality: options.resolution === "web" ? 82 : 88, effort: 5 }).toBuffer();
@@ -859,7 +800,7 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
     await prisma.ai_usage_events.create({ data: {
       id: randomUUID(), provider: "openai", model: generatedConfig.imageModel, feature: "blog-cover", operation: "image-generation",
       input_tokens: BigInt(inputTokens), output_tokens: BigInt(outputTokens), total_tokens: BigInt(totalTokens), image_count: 1, estimated_cost_usd: 0,
-      metadata: { slug, aspect_ratio: options.aspectRatio, resolution: options.resolution, quality: generatedConfig.imageQuality, reference_guided: true, layout: "locked-editorial-v2", logo_applied: Boolean(options.contextLogoUrl || (options.includeLogo && options.logoUrl)) },
+      metadata: { slug, aspect_ratio: options.aspectRatio, resolution: options.resolution, quality: generatedConfig.imageQuality, reference_guided: true, layout: "locked-editorial-v2", logo_applied: false },
     } }).catch(() => {});
   }
   return upload.publicUrl;

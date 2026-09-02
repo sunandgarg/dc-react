@@ -230,7 +230,7 @@ test("derives a stable subject mark when an official logo is unavailable", () =>
   assert.equal(inferContextLogoName("Tamil Nadu Public School reopening calendar"), "Tamil Nadu Public School");
 });
 
-test("renders a contextual wordmark without a paid image call", async () => {
+test("keeps the cover free of contextual badges and duplicate logos", async () => {
   const source = await readFile(new URL("../assets/dekhocampus-blog-cover-template-v1.png", import.meta.url));
   const diagnostics = {};
   const bytes = await renderBlogCover(source, {
@@ -238,7 +238,8 @@ test("renders a contextual wordmark without a paid image call", async () => {
     includeLogo: false, logoUrl: "", contextLogoUrl: "", contextLogoName: "UPSC",
   }, "NDA application dates students should know", "template", diagnostics);
   assert.equal((await sharp(bytes).metadata()).format, "webp");
-  assert.equal(diagnostics.logoKind, "context-wordmark");
+  assert.equal(diagnostics.logoApplied, false);
+  assert.equal(diagnostics.logoKind, "brand-only");
 });
 
 test("uses the bundled editorial fallback without the legacy dark panel", async () => {
