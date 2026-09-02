@@ -253,11 +253,6 @@ Resources:
     Type: AWS::SES::EmailIdentity
     Properties:
       EmailIdentity: dekhocampus.com
-      Tags:
-        - Key: Project
-          Value: !Ref ProjectName
-        - Key: Purpose
-          Value: transactional-email
 
   ApplicationAccessKeyV2:
     Type: AWS::IAM::AccessKey
