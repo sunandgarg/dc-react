@@ -22,6 +22,11 @@ on:
         required: false
         default: false
         type: boolean
+      repair_article_id:
+        description: Optional allowlisted article ID to repair without deleting its prior cover
+        required: false
+        default: ""
+        type: string
       update_infrastructure:
         description: Apply the CloudFormation infrastructure template before deploying the application
         required: false
@@ -432,11 +437,19 @@ jobs:
           REMOTE
 
       - name: Repair listed production article covers
-        if: ${{ inputs.repair_listed_article_covers }}
+        if: ${{ inputs.repair_listed_article_covers || inputs.repair_article_id != '' }}
+        env:
+          ARTICLE_COVER_REPAIR_ID: ${{ inputs.repair_article_id }}
         run: |
+          echo "::add-mask::$ARTICLE_COVER_REPAIR_ID"
+          if [ -n "$ARTICLE_COVER_REPAIR_ID" ] && ! [[ "$ARTICLE_COVER_REPAIR_ID" =~ ^[0-9a-fA-F-]{36}$ ]]; then
+            echo "The requested article repair ID is invalid."
+            exit 1
+          fi
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
-            "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
+            "$SSH_USER@$SSH_IP" "sudo bash -s -- '$ARTICLE_COVER_REPAIR_ID'" <<'REMOTE'
           set -euo pipefail
+          export ARTICLE_COVER_REPAIR_ID="$1"
           set -a
           source /etc/dc-react.env
           set +a

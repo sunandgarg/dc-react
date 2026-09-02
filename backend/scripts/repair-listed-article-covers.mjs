@@ -38,6 +38,8 @@ const titles = [
   "Bihar Mahila Vishwavidyalaya 2026: Admission Vision, All-Women Faculty Model, and Balika PhD Fellowship Details",
 ];
 
+const requestedArticleId = String(process.env.ARTICLE_COVER_REPAIR_ID || "").trim();
+
 function coverHook(title) {
   const subject = String(title).split(":", 1)[0].trim();
   if (subject.length <= 90) return subject;
@@ -45,17 +47,21 @@ function coverHook(title) {
 }
 
 const matches = await prisma.articles.findMany({
-  where: { title: { in: titles } },
+  where: requestedArticleId
+    ? { id: requestedArticleId, title: { in: titles } }
+    : { title: { in: titles } },
   select: { id: true, title: true, slug: true, featured_image: true },
 });
+const requestedTitles = requestedArticleId ? matches.map((article) => article.title) : titles;
+assert.ok(!requestedArticleId || matches.length === 1, `Article ${requestedArticleId} is not on the repair allowlist`);
 const grouped = Map.groupBy(matches, (article) => article.title);
-const missing = titles.filter((title) => !grouped.has(title));
-const ambiguous = titles.filter((title) => (grouped.get(title)?.length || 0) !== 1);
+const missing = requestedTitles.filter((title) => !grouped.has(title));
+const ambiguous = requestedTitles.filter((title) => (grouped.get(title)?.length || 0) !== 1);
 assert.deepEqual(missing, [], `Missing article titles: ${missing.join(" | ")}`);
 assert.deepEqual(ambiguous, [], `Article titles must match exactly one row: ${ambiguous.join(" | ")}`);
 
 const replacements = [];
-for (const title of titles) {
+for (const title of requestedTitles) {
   const article = grouped.get(title)[0];
   const diagnostics = {};
   const featuredImage = await createBlogCover(article.slug, coverHook(article.title), {
@@ -103,14 +109,15 @@ for (const title of titles) {
 const oldKeys = [...new Set(replacements
   .map((entry) => String(toStoredMediaKeys(entry.old_image) || ""))
   .filter((key) => key.startsWith("admin-uploads/blog-covers/")))];
-if (oldKeys.length) await deleteStorageObjectKeys(oldKeys);
+if (oldKeys.length && !requestedArticleId) await deleteStorageObjectKeys(oldKeys);
 
 console.log(JSON.stringify({
   ok: true,
-  requested: titles.length,
+  requested: requestedTitles.length,
   matched: matches.length,
   replaced: replacements.length,
-  old_s3_objects_deleted: oldKeys.length,
+  old_s3_objects_deleted: requestedArticleId ? 0 : oldKeys.length,
+  rollback_objects_preserved: requestedArticleId ? oldKeys.length : 0,
   openai_image_calls: 0,
   replacements,
 }, null, 2));
