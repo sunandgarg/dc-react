@@ -50,6 +50,41 @@ try {
     where: { feature: { in: ["blog-studio", "blog-agent"] } },
     data: { provider: "openai", model: "gpt-5-nano", updated_at: new Date() },
   });
+  const sesProvider = {
+    display_name: "Amazon SES",
+    api_key: null,
+    api_secret: null,
+    region: process.env.SES_REGION || process.env.AWS_REGION || "ap-south-1",
+    from_email: process.env.SES_FROM_EMAIL || "noreply@dekhocampus.com",
+    from_name: process.env.SES_FROM_NAME || "DekhoCampus",
+    reply_to: null,
+    config_json: {
+      credential_source: "iam_runtime",
+      identity: process.env.SES_IDENTITY || "dekhocampus.com",
+      mode: "transactional",
+    },
+    is_active: String(process.env.SES_ENABLED || "").toLowerCase() === "true",
+    icon_emoji: null,
+    updated_at: new Date(),
+  };
+  const existingSesProviders = await prisma.email_providers.findMany({
+    where: { provider_name: "aws_ses" },
+    select: { id: true },
+    orderBy: { updated_at: "desc" },
+  });
+  if (existingSesProviders.length) {
+    await prisma.email_providers.update({ where: { id: existingSesProviders[0].id }, data: sesProvider });
+    if (existingSesProviders.length > 1) {
+      await prisma.email_providers.updateMany({
+        where: { id: { in: existingSesProviders.slice(1).map(({ id }) => id) } },
+        data: { api_key: null, api_secret: null, is_active: false, updated_at: new Date() },
+      });
+    }
+  } else {
+    await prisma.email_providers.create({
+      data: { id: randomUUID(), provider_name: "aws_ses", ...sesProvider },
+    });
+  }
 
   console.log(JSON.stringify({
     configured: integrations.map(([key]) => key),
@@ -57,6 +92,8 @@ try {
     blog_cover_settings_updated: updated.count,
     low_cost_image_quality_updated: providerSettings.count,
     openai_blog_runtime_controls_updated: runtimeControls.count,
+    ses_provider_configured: true,
+    ses_credential_source: "iam_runtime",
   }));
 } finally {
   await prisma.$disconnect();

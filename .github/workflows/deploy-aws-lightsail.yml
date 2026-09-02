@@ -326,6 +326,11 @@ jobs:
           AWS_S3_BUCKET=$BUCKET
           AWS_ACCESS_KEY_ID=$APP_ACCESS_KEY_ID
           AWS_SECRET_ACCESS_KEY=$APP_SECRET_ACCESS_KEY
+          SES_ENABLED=true
+          SES_REGION=ap-south-1
+          SES_IDENTITY=dekhocampus.com
+          SES_FROM_EMAIL=noreply@dekhocampus.com
+          SES_FROM_NAME=DekhoCampus
           MEDIA_BASE_URL=$MEDIA_BASE_URL
           MEDIA_BUCKET_PREFIXES=admin-uploads,ad-images,legacy-public-assets,study-material,user-documents
           SMS_FAST2SMS_API_KEY=$(jq -r .smsFast2smsApiKey <<<"$RUNTIME_SECRET")

@@ -242,6 +242,22 @@ Resources:
               - Effect: Allow
                 Action: [lightsail:GetRelationalDatabase]
                 Resource: '*'
+              - Effect: Allow
+                Action: [ses:SendEmail, ses:SendRawEmail]
+                Resource: !Sub 'arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/dekhocampus.com'
+              - Effect: Allow
+                Action: [ses:GetAccount, ses:GetEmailIdentity]
+                Resource: '*'
+
+  SesDomainIdentity:
+    Type: AWS::SES::EmailIdentity
+    Properties:
+      EmailIdentity: dekhocampus.com
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Purpose
+          Value: transactional-email
 
   ApplicationAccessKeyV2:
     Type: AWS::IAM::AccessKey
@@ -336,6 +352,11 @@ Resources:
           AWS_S3_BUCKET=${MediaBucket}
           AWS_ACCESS_KEY_ID=${ApplicationAccessKeyV2}
           AWS_SECRET_ACCESS_KEY=${ApplicationAccessKeyV2.SecretAccessKey}
+          SES_ENABLED=true
+          SES_REGION=${AWS::Region}
+          SES_IDENTITY=dekhocampus.com
+          SES_FROM_EMAIL=noreply@dekhocampus.com
+          SES_FROM_NAME=DekhoCampus
           MEDIA_BASE_URL=${InitialMediaBaseUrl}
           MEDIA_BUCKET_PREFIXES=admin-uploads,ad-images,legacy-public-assets,study-material,user-documents
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r '.cloudflarePagesDeployHookUrl // empty' <<<"$RUNTIME_SECRET")
@@ -482,3 +503,17 @@ Outputs:
     Value: !Ref ApplicationAccessKeyV2
   ApplicationCredentialsSecretArn:
     Value: !Ref ApplicationCredentialsSecret
+  SesIdentityArn:
+    Value: !Sub 'arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/dekhocampus.com'
+  SesDkimDnsName1:
+    Value: !GetAtt SesDomainIdentity.DkimDNSTokenName1
+  SesDkimDnsValue1:
+    Value: !GetAtt SesDomainIdentity.DkimDNSTokenValue1
+  SesDkimDnsName2:
+    Value: !GetAtt SesDomainIdentity.DkimDNSTokenName2
+  SesDkimDnsValue2:
+    Value: !GetAtt SesDomainIdentity.DkimDNSTokenValue2
+  SesDkimDnsName3:
+    Value: !GetAtt SesDomainIdentity.DkimDNSTokenName3
+  SesDkimDnsValue3:
+    Value: !GetAtt SesDomainIdentity.DkimDNSTokenValue3

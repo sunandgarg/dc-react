@@ -184,6 +184,16 @@ Resources:
                   - cloudwatch:DescribeAlarms
                   - cloudwatch:PutMetricAlarm
                 Resource: '*'
+              - Sid: CandidateSesIdentity
+                Effect: Allow
+                Action:
+                  - ses:CreateEmailIdentity
+                  - ses:DeleteEmailIdentity
+                  - ses:GetEmailIdentity
+                  - ses:TagResource
+                  - ses:UntagResource
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:ses:ap-south-1:${AWS::AccountId}:identity/dekhocampus.com'
 
 Outputs:
   DeploymentRoleArn:
