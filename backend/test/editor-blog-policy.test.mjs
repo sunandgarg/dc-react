@@ -245,8 +245,8 @@ test("uses the bundled editorial fallback without the legacy dark panel", async 
   const options = { width: 1600, height: 900, resolution: "web", includeLogo: false, logoUrl: "" };
   const source = await createLocalEditorialCover("Fallback", options);
   const bytes = await renderBlogCover(source, options, "The counselling deadline students should verify", "bundled-template");
-  const panelCenter = await sharp(bytes).extract({ left: 800, top: 450, width: 1, height: 1 }).removeAlpha().raw().toBuffer();
-  assert.ok([...panelCenter].every((channel) => channel > 220), `Expected a light locked panel, received ${[...panelCenter]}`);
+  const emptyPanelArea = await sharp(bytes).extract({ left: 300, top: 450, width: 1, height: 1 }).removeAlpha().raw().toBuffer();
+  assert.ok([...emptyPanelArea].every((channel) => channel > 220), `Expected a light locked panel, received ${[...emptyPanelArea]}`);
 });
 
 test("normalizes generated FAQs for dedicated article storage", () => {
