@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, blogLimits, blogTextProvider, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent } from "../src/auth.mjs";
 
@@ -145,6 +145,13 @@ test("renders a local branded cover without an external image provider", async (
   const bytes = await createLocalEditorialCover("JEE Main counselling choices for students", { width: 1600, height: 900 });
   assert.ok(bytes.length > 5_000);
   assert.equal(bytes.subarray(1, 4).toString(), "PNG");
+});
+
+test("keeps the education-news label centered inside its badge", () => {
+  const svg = editorialFrameOverlay({ width: 1600, height: 900 }).toString();
+  assert.match(svg, /<rect x="648" y="315" width="304" height="47"/);
+  assert.match(svg, /<text x="800" y="339" text-anchor="middle" dominant-baseline="middle"/);
+  assert.match(svg, /font-size="22"[^>]*letter-spacing="1\.5"[^>]*>EDUCATION NEWS<\/text>/);
 });
 
 test("keeps cover hooks concise without duplicating the visible brand", () => {

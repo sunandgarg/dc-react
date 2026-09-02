@@ -250,7 +250,7 @@ export async function createLocalEditorialCover(prompt, options) {
   return sharp(localEditorialBackground(prompt, options)).png().toBuffer();
 }
 
-function editorialFrameOverlay(options) {
+export function editorialFrameOverlay(options) {
   const { width, height } = options;
   const x = Math.round(width * 0.082);
   const y = Math.round(height * 0.085);
@@ -259,13 +259,17 @@ function editorialFrameOverlay(options) {
   const radius = Math.round(width * 0.024);
   const categoryY = Math.round(height * 0.35);
   const categoryHeight = Math.round(height * 0.052);
+  const categoryWidth = Math.round(width * 0.19);
+  const categoryX = Math.round((width - categoryWidth) / 2);
+  const categoryCenterY = categoryY + Math.round(categoryHeight / 2);
+  const categoryFontSize = Math.round(width * 0.014);
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
     <defs><filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#0f172a" flood-opacity=".16"/></filter></defs>
     <rect x="${Math.round(width * 0.27)}" y="0" width="${Math.round(width * 0.46)}" height="${Math.round(height * 0.2)}" fill="#ffffff"/>
     <rect x="${x}" y="${y}" width="${panelWidth}" height="${panelHeight}" rx="${radius}" fill="#ffffff" filter="url(#shadow)"/>
     <rect x="${x + 25}" y="${y + 25}" width="${panelWidth - 50}" height="${panelHeight - 50}" rx="${Math.max(18, radius - 8)}" fill="none" stroke="#e2e8f0" stroke-width="2"/>
-    <rect x="${Math.round(width * 0.43)}" y="${categoryY}" width="${Math.round(width * 0.14)}" height="${categoryHeight}" rx="${Math.round(categoryHeight / 2)}" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
-    <text x="${Math.round(width * 0.5)}" y="${categoryY + Math.round(categoryHeight / 2)}" text-anchor="middle" dominant-baseline="central" font-family="Inter,Arial,sans-serif" font-size="${Math.round(width * 0.015)}" font-weight="700" letter-spacing="2" fill="#f97316">EDUCATION NEWS</text>
+    <rect x="${categoryX}" y="${categoryY}" width="${categoryWidth}" height="${categoryHeight}" rx="${Math.round(categoryHeight / 2)}" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+    <text x="${Math.round(width * 0.5)}" y="${categoryCenterY}" text-anchor="middle" dominant-baseline="middle" font-family="Inter,Arial,sans-serif" font-size="${categoryFontSize}" font-weight="700" letter-spacing="1.5" fill="#f97316">EDUCATION NEWS</text>
     <rect x="${Math.round(width * 0.335)}" y="${Math.round(height * 0.71)}" width="${Math.round(width * 0.33)}" height="${Math.max(5, Math.round(height * 0.008))}" rx="4" fill="#fb923c"/>
     <text x="${Math.round(width * 0.5)}" y="${Math.round(height * 0.805)}" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="${Math.round(width * 0.017)}" font-weight="600" fill="#475569">DekhoCampus editorial brief for students, parents and aspirants</text>
   </svg>`);
