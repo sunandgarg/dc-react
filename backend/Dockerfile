@@ -8,6 +8,7 @@ RUN npm ci && DATABASE_URL=mysql://placeholder:placeholder@127.0.0.1:3306/placeh
 
 COPY backend/scripts ./scripts
 COPY backend/src ./src
+COPY backend/assets ./assets
 COPY db-export/full_schema.sql /db-export/full_schema.sql
 EXPOSE 8787
 CMD ["node", "src/server.mjs"]

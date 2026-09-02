@@ -22,7 +22,6 @@ import { HeroCounsellingCard } from "@/components/HeroCounsellingCard";
 import { displayText } from "@/lib/displayText";
 import { searchDirectory } from "@/lib/directorySearch";
 import { SearchResultIcon } from "@/components/SearchResultIcon";
-import campusHeroClassic from "@/assets/campus-hero-classic.webp";
 
 const YEAR = new Date().getFullYear();
 const suggestedPrompts = [
@@ -67,7 +66,9 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
   const { data: textGradientEnabled = true } = useSiteIntegrationEnabled("hero_text_gradient", true);
   const { data: textGradientValue = "0.72" } = useSiteIntegration("hero_text_gradient_strength");
   const textGradientStrength = Math.min(1, Math.max(0.1, Number(textGradientValue) || 0.72));
-  const bgImages = useMemo(() => [campusHeroClassic], []);
+  const bgImages = useMemo(() => {
+    return (heroSettings?.is_active && heroSettings.image_urls?.filter(Boolean)) || [];
+  }, [heroSettings]);
   const rotationMs = (heroSettings?.rotation_seconds ?? 11) * 1000;
 
   // 2026 UX: ambient campus carousel - admin-configurable rotation, respects reduced-motion

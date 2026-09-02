@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { blogLimits, blogTextProvider, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, blogLimits, blogTextProvider, createLocalEditorialCover, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent } from "../src/auth.mjs";
 
@@ -104,6 +104,7 @@ test("normalizes every saved blog cover control into render dimensions", () => {
   assert.deepEqual(normalizeBlogCoverOptions({
     imageMode: "template",
     templateUrl: "https://dekhocampus.com/template.webp",
+    referenceImageUrl: "https://dekhocampus.com/reference.webp",
     promptStyle: " Editorial ",
     includeLogo: true,
     logoUrl: "https://dekhocampus.com/logo.webp",
@@ -116,6 +117,7 @@ test("normalizes every saved blog cover control into render dimensions", () => {
     width: 2048,
     height: 2560,
     templateUrl: "https://dekhocampus.com/template.webp",
+    referenceImageUrl: "https://dekhocampus.com/reference.webp",
     promptStyle: "Editorial",
     includeLogo: true,
     logoUrl: "https://dekhocampus.com/logo.webp",
@@ -145,9 +147,10 @@ test("renders a local branded cover without an external image provider", async (
   assert.equal(bytes.subarray(1, 4).toString(), "PNG");
 });
 
-test("prefixes every cover hook with the DekhoCampus brand", () => {
-  assert.equal(formatBlogCoverTitle("The counselling mistake most students miss"), "DekhoCampus: The counselling mistake most students miss");
-  assert.equal(formatBlogCoverTitle("DekhoCampus: Existing hook"), "DekhoCampus: Existing hook");
+test("keeps cover hooks concise without duplicating the visible brand", () => {
+  assert.equal(formatBlogCoverTitle("The counselling mistake most students miss"), "The counselling mistake most students miss");
+  assert.equal(formatBlogCoverTitle("DekhoCampus: Existing hook"), "Existing hook");
+  assert.doesNotMatch(formatBlogCoverTitle("A very long heading that would otherwise continue beyond the available editorial panel and end with an ugly ellipsis on the final line of the cover"), /\.\.\.|…/);
 });
 
 test("fits template headings into at most four centered lines without adding a panel", () => {
@@ -156,9 +159,9 @@ test("fits template headings into at most four centered lines without adding a p
   const layout = layoutTemplateCoverTitle(title, options);
   assert.ok(layout.lines.length >= 2 && layout.lines.length <= 4);
   assert.equal(layout.lines.join(" "), formatBlogCoverTitle(title));
-  assert.equal(layout.fontSize, 64);
-  assert.equal(layout.lineHeight, 80);
-  assert.equal(layout.centerY, 531);
+  assert.equal(layout.fontSize, 58);
+  assert.equal(layout.lineHeight, 67);
+  assert.equal(layout.centerY, 513);
   const svg = templateCoverTitleOverlay(title, options).toString();
   assert.match(svg, /text-anchor="middle"/);
   assert.doesNotMatch(svg, /<rect/);
@@ -174,8 +177,8 @@ test("uses the verified scheduled entity logo without an AI lookup", async () =>
 test("balances abbreviated article titles without orphan lines", () => {
   const layout = layoutTemplateCoverTitle("ICAR AIEEA PG 2026 Seat Matrix and Choice Locking Strategy", { width: 1600, height: 900 });
   assert.ok(layout.lines.every((line) => line.split(/\s+/).length > 1));
-  assert.equal(layout.lines.join(" "), "DekhoCampus: ICAR AIEEA PG 2026 Seat Matrix and Choice Locking Strategy");
-  assert.equal(layout.fontSize, 64);
+  assert.equal(layout.lines.join(" "), "ICAR AIEEA PG 2026 Seat Matrix and Choice Locking Strategy");
+  assert.equal(layout.fontSize, 58);
 });
 
 test("uses identical typography for short and long template titles", () => {
@@ -186,6 +189,14 @@ test("uses identical typography for short and long template titles", () => {
     { fontSize: short.fontSize, lineHeight: short.lineHeight },
     { fontSize: long.fontSize, lineHeight: long.lineHeight },
   );
+});
+
+test("ships 24 stable zero-credit editorial background templates", () => {
+  assert.equal(BLOG_COVER_TEMPLATE_COUNT, 24);
+  const first = selectBlogCoverTemplate("NEET counselling choices");
+  assert.equal(selectBlogCoverTemplate("NEET counselling choices"), first);
+  assert.ok(first >= 1 && first <= BLOG_COVER_TEMPLATE_COUNT);
+  assert.ok(new Set(Array.from({ length: 100 }, (_, index) => selectBlogCoverTemplate(`topic-${index}`))).size >= 20);
 });
 
 test("rasterizes template headings with the bundled production font", async () => {
@@ -230,12 +241,12 @@ test("renders a contextual wordmark without a paid image call", async () => {
   assert.equal(diagnostics.logoKind, "context-wordmark");
 });
 
-test("uses the bundled branded template fallback without the legacy dark panel", async () => {
+test("uses the bundled editorial fallback without the legacy dark panel", async () => {
   const options = { width: 1600, height: 900, resolution: "web", includeLogo: false, logoUrl: "" };
   const source = await createLocalEditorialCover("Fallback", options);
   const bytes = await renderBlogCover(source, options, "The counselling deadline students should verify", "bundled-template");
-  const bottomCenter = await sharp(bytes).extract({ left: 800, top: 820, width: 1, height: 1 }).removeAlpha().raw().toBuffer();
-  assert.ok([...bottomCenter].every((channel) => channel > 220), `Expected a light template background, received ${[...bottomCenter]}`);
+  const panelCenter = await sharp(bytes).extract({ left: 800, top: 450, width: 1, height: 1 }).removeAlpha().raw().toBuffer();
+  assert.ok([...panelCenter].every((channel) => channel > 220), `Expected a light locked panel, received ${[...panelCenter]}`);
 });
 
 test("normalizes generated FAQs for dedicated article storage", () => {

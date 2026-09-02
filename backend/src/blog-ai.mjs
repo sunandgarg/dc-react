@@ -18,6 +18,24 @@ const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
 const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
 export const DEFAULT_BLOG_COVER_TEMPLATE_KEY = "admin-uploads/blog-templates/dekhocampus-blog-cover-template-v1.png";
 const BLOG_COVER_FONT_FILE = fileURLToPath(new URL("../assets/Inter.ttf", import.meta.url));
+const BLOG_COVER_LOGO_FILE = new URL("../assets/dekhocampus-blog-logo.png", import.meta.url);
+const BLOG_COVER_REFERENCE_FILE = new URL("../assets/dekhocampus-blog-cover-reference-v2.png", import.meta.url);
+
+export const BLOG_COVER_TEMPLATE_COUNT = 24;
+const BLOG_COVER_THEMES = [
+  ["#f97316", "#16a34a", "#fff7ed"], ["#ea580c", "#2563eb", "#fff7ed"],
+  ["#fb923c", "#0f766e", "#fffbeb"], ["#f59e0b", "#15803d", "#fffbeb"],
+  ["#ef4444", "#0369a1", "#fff7ed"], ["#f97316", "#7c3aed", "#fff7ed"],
+  ["#c2410c", "#0891b2", "#fefce8"], ["#ea580c", "#4f46e5", "#fff7ed"],
+  ["#f97316", "#0d9488", "#f0fdf4"], ["#dc2626", "#15803d", "#fff7ed"],
+  ["#fb923c", "#1d4ed8", "#fffbeb"], ["#f59e0b", "#0f766e", "#fefce8"],
+  ["#ea580c", "#4338ca", "#fff7ed"], ["#f97316", "#047857", "#f0fdf4"],
+  ["#e11d48", "#0284c7", "#fff7ed"], ["#f97316", "#6d28d9", "#faf5ff"],
+  ["#d97706", "#0369a1", "#fffbeb"], ["#ea580c", "#0f766e", "#ecfeff"],
+  ["#f97316", "#1e40af", "#eff6ff"], ["#be123c", "#15803d", "#fff7ed"],
+  ["#fb923c", "#4338ca", "#f5f3ff"], ["#f59e0b", "#047857", "#ecfdf5"],
+  ["#ea580c", "#0369a1", "#f0f9ff"], ["#f97316", "#166534", "#f7fee7"],
+];
 
 const COVER_DIMENSIONS = {
   "16:9": { web: [1600, 900], "2k": [2560, 1440], "4k": [3840, 2160] },
@@ -65,6 +83,7 @@ export function normalizeBlogCoverOptions(options = {}) {
     width,
     height,
     templateUrl: String(options.templateUrl || "").trim(),
+    referenceImageUrl: String(options.referenceImageUrl || "").trim(),
     promptStyle: String(options.promptStyle || "Premium editorial, clean, credible, student-focused").trim().slice(0, 600),
     includeLogo: Boolean(options.includeLogo),
     logoUrl: String(options.logoUrl || "").trim(),
@@ -113,42 +132,16 @@ export function formatBlogCoverTitle(value) {
     .replace(/\.{3,}|…/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  const hook = normalized.length <= 120
+  const hook = normalized.length <= 92
     ? normalized
-    : normalized.slice(0, 121).replace(/\s+\S*$/, "").replace(/[,:;\-\s]+$/, "");
-  return `DekhoCampus: ${hook || "Your next education decision, made clearer"}`;
-}
-
-function coverTitleOverlay(value, options) {
-  const words = formatBlogCoverTitle(value).split(/\s+/).filter(Boolean);
-  const lines = [];
-  let line = "";
-  const maxCharacters = options.aspectRatio === "1:1" ? 24 : 34;
-  for (const word of words) {
-    const candidate = `${line} ${word}`.trim();
-    if (candidate.length > maxCharacters && line) {
-      lines.push(line);
-      line = word;
-    } else line = candidate;
-  }
-  if (line) lines.push(line);
-  const visible = lines.slice(0, 4);
-  const fontSize = Math.max(42, Math.round(options.width * (options.aspectRatio === "1:1" ? 0.052 : 0.044)));
-  const lineHeight = Math.round(fontSize * 1.16);
-  const panelHeight = Math.round((visible.length * lineHeight) + options.height * 0.15);
-  const panelY = options.height - panelHeight;
-  const title = visible.map((text, index) => `<text x="${Math.round(options.width * 0.065)}" y="${panelY + Math.round(options.height * 0.09) + index * lineHeight}" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" fill="#ffffff">${escapeCoverText(text)}</text>`).join("");
-  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">
-    <rect x="0" y="${panelY}" width="100%" height="${panelHeight}" fill="#07111f" fill-opacity="0.9"/>
-    <rect x="0" y="${panelY}" width="${Math.round(options.width * 0.018)}" height="${panelHeight}" fill="#f97316"/>
-    ${title}
-  </svg>`);
+    : normalized.slice(0, 93).replace(/\s+\S*$/, "").replace(/[,:;\-\s]+$/, "");
+  return hook || "Make your next education decision with confidence";
 }
 
 export function layoutTemplateCoverTitle(value, options) {
   const words = formatBlogCoverTitle(value).split(/\s+/).filter(Boolean);
   const totalCharacters = words.join(" ").length;
-  const targetLineCount = totalCharacters <= 34 ? 1 : totalCharacters <= 68 ? 2 : totalCharacters <= 98 ? 3 : 4;
+  const targetLineCount = totalCharacters <= 28 ? 1 : totalCharacters <= 64 ? 2 : 3;
   const lineCount = Math.min(targetLineCount, words.length);
   const averageLength = totalCharacters / lineCount;
   const memo = new Map();
@@ -166,7 +159,7 @@ export function layoutTemplateCoverTitle(value, options) {
     for (let end = wordIndex + 1; end <= lastBreak; end += 1) {
       const text = words.slice(wordIndex, end).join(" ");
       const tail = partition(end, linesLeft - 1);
-      const orphanPenalty = end === wordIndex + 1 && words.length > lineCount ? 2_000 : 0;
+      const orphanPenalty = end === wordIndex + 1 && words.length > lineCount ? 100_000 : 0;
       const score = ((text.length - averageLength) ** 2) + orphanPenalty + tail.score;
       if (!best || score < best.score) best = { lines: [text, ...tail.lines], score };
     }
@@ -180,14 +173,14 @@ export function layoutTemplateCoverTitle(value, options) {
     lines[lines.length - 2] = lines[lines.length - 2].split(/\s+/).slice(0, -1).join(" ");
   }
 
-  const fontSize = Math.round(options.width * 0.04);
+  const fontSize = Math.round(options.width * 0.036);
 
   return {
     lines,
     fontSize,
-    lineHeight: Math.round(fontSize * 1.25),
+    lineHeight: Math.round(fontSize * 1.15),
     centerX: Math.round(options.width * 0.5),
-    centerY: Math.round(options.height * 0.59),
+    centerY: Math.round(options.height * 0.57),
   };
 }
 
@@ -204,7 +197,7 @@ export function templateCoverTitleOverlay(value, options) {
 
 export async function templateCoverTitleRasterOverlay(value, options) {
   const layout = layoutTemplateCoverTitle(value, options);
-  const width = Math.round(options.width * 0.72);
+  const width = Math.round(options.width * 0.62);
   const rendered = await sharp({
     text: {
       text: layout.lines.map(escapeCoverText).join("\n"),
@@ -228,36 +221,90 @@ function contextualWordmarkOverlay(value, options) {
   const name = stripHtml(value).replace(/^dekhocampus\s*:\s*/i, "").trim().slice(0, 72);
   const acronym = (name.match(/\b[A-Z][A-Z0-9-]{1,10}\b/)?.[0]
     || name.split(/\s+/).filter(Boolean).slice(0, 5).map((word) => word[0]).join("").toUpperCase()).slice(0, 8);
-  const displayName = name.length > 42 ? `${name.slice(0, 43).replace(/\s+\S*$/, "")}` : name;
-  const width = Math.round(options.width * 0.48);
+  const clippedName = name.length > 24 ? name.slice(0, 25).replace(/\s+\S*$/, "") : name;
+  const displayName = clippedName.toUpperCase() === acronym ? "" : clippedName;
+  const width = Math.round(options.width * (displayName ? 0.18 : 0.08));
   const height = Math.round(options.height * 0.105);
   const iconSize = Math.round(height * 0.68);
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
     <rect x="1" y="1" width="${width - 2}" height="${height - 2}" rx="${Math.round(height / 2)}" fill="#ffffff" fill-opacity="0.96" stroke="#fed7aa" stroke-width="2"/>
     <circle cx="${Math.round(height / 2)}" cy="${Math.round(height / 2)}" r="${Math.round(iconSize / 2)}" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
     <text x="${Math.round(height / 2)}" y="${Math.round(height / 2)}" text-anchor="middle" dominant-baseline="central" font-family="Inter,Arial,sans-serif" font-size="${Math.round(iconSize * 0.31)}" font-weight="700" fill="#c2410c">${escapeCoverText(acronym)}</text>
-    <text x="${Math.round(height * 1.12)}" y="${Math.round(height / 2)}" dominant-baseline="central" font-family="Inter,Arial,sans-serif" font-size="${Math.round(height * 0.25)}" font-weight="600" fill="#111827">${escapeCoverText(displayName)}</text>
+    ${displayName ? `<text x="${Math.round(height * 1.12)}" y="${Math.round(height / 2)}" dominant-baseline="central" font-family="Inter,Arial,sans-serif" font-size="${Math.round(height * 0.19)}" font-weight="600" fill="#111827">${escapeCoverText(displayName)}</text>` : ""}
+  </svg>`);
+}
+
+function stableCoverThemeIndex(value) {
+  return [...String(value || "")].reduce((total, character) => ((total * 31) + character.codePointAt(0)) >>> 0, 7) % BLOG_COVER_TEMPLATE_COUNT;
+}
+
+export function selectBlogCoverTemplate(value) {
+  return stableCoverThemeIndex(value) + 1;
+}
+
+function localEditorialBackground(prompt, options) {
+  const themeIndex = stableCoverThemeIndex(prompt);
+  const [primary, secondary, paper] = BLOG_COVER_THEMES[themeIndex];
+  const width = options.width || 1600;
+  const height = options.height || 900;
+  const variant = themeIndex % 6;
+  const accents = [
+    `<path d="M0 ${height * 0.78} C${width * 0.2} ${height * 0.57},${width * 0.35} ${height * 1.02},${width * 0.58} ${height * 0.78} S${width * 0.86} ${height * 0.55},${width} ${height * 0.72} V${height} H0Z" fill="${secondary}" opacity=".84"/>`,
+    `<path d="M0 0 H${width * 0.38} L${width * 0.15} ${height} H0Z" fill="${primary}" opacity=".78"/><path d="M${width} 0 H${width * 0.72} L${width * 0.9} ${height} H${width}Z" fill="${secondary}" opacity=".76"/>`,
+    `<circle cx="${width * 0.11}" cy="${height * 0.72}" r="${height * 0.34}" fill="${secondary}" opacity=".65"/><path d="M${width * 0.68} 0 H${width} V${height} L${width * 0.82} ${height * 0.64}Z" fill="${primary}" opacity=".78"/>`,
+    `<path d="M0 ${height * 0.24} L${width * 0.32} 0 H0Z" fill="${primary}"/><path d="M${width} ${height * 0.38} L${width * 0.66} ${height} H${width}Z" fill="${secondary}" opacity=".82"/>`,
+    `<path d="M0 ${height} V${height * 0.55} Q${width * 0.23} ${height * 0.32} ${width * 0.4} ${height * 0.68} T${width} ${height * 0.48} V${height}Z" fill="${primary}" opacity=".72"/><circle cx="${width * 0.86}" cy="${height * 0.16}" r="${height * 0.2}" fill="${secondary}" opacity=".58"/>`,
+    `<path d="M0 0 L${width * 0.28} 0 L${width * 0.08} ${height} H0Z" fill="${secondary}" opacity=".76"/><path d="M${width} 0 L${width * 0.76} 0 L${width * 0.94} ${height} H${width}Z" fill="${primary}" opacity=".8"/>`,
+  ][variant];
+  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${paper}"/><stop offset="1" stop-color="#ffffff"/></linearGradient><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#ffffff" stroke-opacity=".32" stroke-width="1"/></pattern></defs>
+    <rect width="100%" height="100%" fill="url(#paper)"/>${accents}<rect width="100%" height="100%" fill="url(#grid)"/>
+    <g fill="none" stroke="#ffffff" stroke-opacity=".24" stroke-width="10"><path d="M${width * 0.04} ${height * 0.2} L${width * 0.18} ${height * 0.07} L${width * 0.32} ${height * 0.2}"/><path d="M${width * 0.76} ${height * 0.82} q${width * 0.09} -${height * 0.18} ${width * 0.18} 0"/></g>
   </svg>`);
 }
 
 export async function createLocalEditorialCover(prompt, options) {
-  void prompt;
-  void options;
-  return readFile(new URL("../assets/dekhocampus-blog-cover-template-v1.png", import.meta.url));
+  return sharp(localEditorialBackground(prompt, options)).png().toBuffer();
+}
+
+function editorialFrameOverlay(options) {
+  const { width, height } = options;
+  const x = Math.round(width * 0.082);
+  const y = Math.round(height * 0.085);
+  const panelWidth = Math.round(width * 0.836);
+  const panelHeight = Math.round(height * 0.82);
+  const radius = Math.round(width * 0.024);
+  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <defs><filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#0f172a" flood-opacity=".16"/></filter></defs>
+    <rect x="${x}" y="${y}" width="${panelWidth}" height="${panelHeight}" rx="${radius}" fill="#ffffff" fill-opacity=".96" filter="url(#shadow)"/>
+    <rect x="${x + 25}" y="${y + 25}" width="${panelWidth - 50}" height="${panelHeight - 50}" rx="${Math.max(18, radius - 8)}" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+    <rect x="${Math.round(width * 0.43)}" y="${Math.round(height * 0.35)}" width="${Math.round(width * 0.14)}" height="${Math.round(height * 0.052)}" rx="${Math.round(height * 0.026)}" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+    <text x="${Math.round(width * 0.5)}" y="${Math.round(height * 0.383)}" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="${Math.round(width * 0.015)}" font-weight="700" letter-spacing="2" fill="#f97316">EDUCATION NEWS</text>
+    <rect x="${Math.round(width * 0.335)}" y="${Math.round(height * 0.71)}" width="${Math.round(width * 0.33)}" height="${Math.max(5, Math.round(height * 0.008))}" rx="4" fill="#fb923c"/>
+    <text x="${Math.round(width * 0.5)}" y="${Math.round(height * 0.805)}" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="${Math.round(width * 0.017)}" font-weight="600" fill="#475569">DekhoCampus editorial brief for students, parents and aspirants</text>
+  </svg>`);
 }
 
 export async function renderBlogCover(sourceBytes, options, titleHook, sourceMode = "generated", diagnostics = null) {
-  const usesTemplateArtwork = ["template", "bundled-template"].includes(sourceMode);
   const base = sharp(sourceBytes, { limitInputPixels: 50_000_000 })
     .rotate()
-    .resize(options.width, options.height, usesTemplateArtwork
-      ? { fit: "fill" }
-      : { fit: "cover", position: "attention" });
-  const composites = [usesTemplateArtwork
-    ? await templateCoverTitleRasterOverlay(titleHook, options)
-    : { input: coverTitleOverlay(titleHook, options), left: 0, top: 0 }];
-  if (usesTemplateArtwork && diagnostics) diagnostics.logoPreservedFromTemplate = true;
-  const overlayLogoUrl = options.contextLogoUrl || (!usesTemplateArtwork && options.includeLogo ? options.logoUrl : "");
+    .resize(options.width, options.height, { fit: "cover", position: "attention" });
+  const brandLogo = await sharp(await readFile(BLOG_COVER_LOGO_FILE))
+    .resize({ width: Math.round(options.width * 0.19), fit: "inside", withoutEnlargement: false })
+    .png().toBuffer({ resolveWithObject: true });
+  const title = await templateCoverTitleRasterOverlay(titleHook, options);
+  const composites = [
+    { input: editorialFrameOverlay(options), left: 0, top: 0 },
+    { input: brandLogo.data, left: Math.round((options.width - brandLogo.info.width) / 2), top: Math.round(options.height * 0.16) },
+    title,
+  ];
+  if (diagnostics) {
+    diagnostics.sourceMode ||= sourceMode;
+    diagnostics.layout = "locked-editorial-v2";
+    diagnostics.templateVariant = selectBlogCoverTemplate(titleHook);
+    diagnostics.logoPreservedFromTemplate = false;
+  }
+  const overlayLogoUrl = options.contextLogoUrl || (options.includeLogo ? options.logoUrl : "");
   if (overlayLogoUrl) {
     try {
       const logoSource = await downloadCoverSource(overlayLogoUrl, "Context logo");
@@ -266,8 +313,11 @@ export async function renderBlogCover(sourceBytes, options, titleHook, sourceMod
         .resize({ width: Math.round(options.width * 0.14), height: Math.round(options.height * 0.09), fit: "inside", withoutEnlargement: true })
         .png()
         .toBuffer({ resolveWithObject: true });
-      const left = Math.max(24, Math.round((options.width - logo.info.width) / 2));
-      const top = Math.max(24, Math.round(options.height * (usesTemplateArtwork ? 0.205 : 0.045)));
+      const left = Math.min(
+        options.width - logo.info.width - Math.round(options.width * 0.095),
+        Math.round(options.width * 0.77),
+      );
+      const top = Math.max(24, Math.round(options.height * 0.12));
       composites.push({ input: logo.data, left, top });
       if (diagnostics) {
         diagnostics.logoApplied = true;
@@ -280,22 +330,20 @@ export async function renderBlogCover(sourceBytes, options, titleHook, sourceMod
         diagnostics.logoError = String(error?.message || error).slice(0, 200);
       }
       if (options.contextLogoName) {
-        const wordmarkWidth = Math.round(options.width * 0.48);
         composites.push({
           input: contextualWordmarkOverlay(options.contextLogoName, options),
-          left: Math.round((options.width - wordmarkWidth) / 2),
-          top: Math.round(options.height * (usesTemplateArtwork ? 0.20 : 0.045)),
+          left: Math.round(options.width * 0.70),
+          top: Math.round(options.height * 0.12),
         });
         if (diagnostics) diagnostics.logoKind = "context-wordmark-fallback";
       }
     }
   } else if (options.contextLogoName) {
     const wordmark = contextualWordmarkOverlay(options.contextLogoName, options);
-    const wordmarkWidth = Math.round(options.width * 0.48);
     composites.push({
       input: wordmark,
-      left: Math.round((options.width - wordmarkWidth) / 2),
-      top: Math.round(options.height * (usesTemplateArtwork ? 0.20 : 0.045)),
+      left: Math.round(options.width * 0.70),
+      top: Math.round(options.height * 0.12),
     });
     if (diagnostics) {
       diagnostics.logoApplied = true;
@@ -724,10 +772,27 @@ async function createGeneratedImage(prompt, options) {
   await assertAiEnabled("blog-cover");
   const config = await aiConfig();
   if (!config.openaiKey) throw Object.assign(new Error("OpenAI API key is not configured for blog images"), { status: 503, code: "OPENAI_NOT_CONFIGURED" });
-  const response = await fetch("https://api.openai.com/v1/images/generations", {
+  let referenceBytes = await readFile(BLOG_COVER_REFERENCE_FILE);
+  if (options.referenceImageUrl) {
+    try {
+      referenceBytes = await downloadCoverSource(options.referenceImageUrl, "Cover style reference");
+    } catch {
+      // The bundled reference keeps generation available when an uploaded reference expires.
+    }
+  }
+  referenceBytes = await sharp(referenceBytes, { limitInputPixels: 50_000_000 }).rotate().png().toBuffer();
+  const form = new FormData();
+  form.append("model", config.imageModel || DEFAULT_OPENAI_IMAGE_MODEL);
+  form.append("image", new Blob([referenceBytes], { type: "image/png" }), "dekhocampus-cover-reference.png");
+  form.append("prompt", `${options.promptStyle}. Use the attached DekhoCampus cover only as a visual-style reference. Create a fresh premium illustrated education background for Indian students about: ${String(prompt).slice(0, 320)}. Generate background artwork only. Do not render text, letters, logos, watermarks, badges, white panels, cards, borders or frames. Keep important visual subjects around the outer edges because the application adds a locked editorial panel in the center.`);
+  form.append("size", options.aspectRatio === "1:1" ? "1024x1024" : options.aspectRatio === "4:5" ? "1024x1536" : "1536x1024");
+  form.append("quality", config.imageQuality);
+  form.append("output_format", "webp");
+  form.append("n", "1");
+  const response = await fetch("https://api.openai.com/v1/images/edits", {
     method: "POST",
-    headers: { authorization: `Bearer ${config.openaiKey}`, "content-type": "application/json" },
-    body: JSON.stringify({ model: config.imageModel || DEFAULT_OPENAI_IMAGE_MODEL, prompt: `${options.promptStyle}. Editorial education news cover for Indian students. No text, no logo, no watermark. Topic: ${String(prompt).slice(0, 500)}`, size: options.aspectRatio === "1:1" ? "1024x1024" : options.aspectRatio === "4:5" ? "1024x1536" : "1536x1024", quality: config.imageQuality, output_format: "webp", n: 1 }),
+    headers: { authorization: `Bearer ${config.openaiKey}` },
+    body: form,
     signal: AbortSignal.timeout(180_000),
   });
   if (!response.ok) throw new Error(`OpenAI image generation failed (${response.status}): ${(await response.text()).slice(0, 500)}`);
@@ -751,8 +816,7 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
   let generatedConfig = null;
   let generatedUsage = null;
   if (options.mode === "template") {
-    if (!options.templateUrl) throw new Error("A cover template is required when image mode is template");
-    try {
+    if (options.templateUrl) try {
       sourceBytes = await downloadCoverSource(options.templateUrl, "Cover template");
       sourceMode = "template";
       if (diagnostics) diagnostics.sourceMode = "template";
@@ -763,6 +827,10 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
         diagnostics.sourceMode = "bundled-template";
         diagnostics.templateError = String(templateError?.message || templateError).slice(0, 200);
       }
+    } else {
+      sourceBytes = await createLocalEditorialCover(prompt, options);
+      sourceMode = "bundled-template";
+      if (diagnostics) diagnostics.sourceMode = "bundled-template";
     }
   } else {
     try {
@@ -791,7 +859,7 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
     await prisma.ai_usage_events.create({ data: {
       id: randomUUID(), provider: "openai", model: generatedConfig.imageModel, feature: "blog-cover", operation: "image-generation",
       input_tokens: BigInt(inputTokens), output_tokens: BigInt(outputTokens), total_tokens: BigInt(totalTokens), image_count: 1, estimated_cost_usd: 0,
-      metadata: { slug, aspect_ratio: options.aspectRatio, resolution: options.resolution, quality: generatedConfig.imageQuality, logo_applied: options.includeLogo && Boolean(options.logoUrl) },
+      metadata: { slug, aspect_ratio: options.aspectRatio, resolution: options.resolution, quality: generatedConfig.imageQuality, reference_guided: true, layout: "locked-editorial-v2", logo_applied: Boolean(options.contextLogoUrl || (options.includeLogo && options.logoUrl)) },
     } }).catch(() => {});
   }
   return upload.publicUrl;
@@ -813,7 +881,7 @@ async function researchSignals(limit = 6) {
 }
 
 function articlePrompt(topic, signals, wordLimit = 1200) {
-  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are private fact-checking context only: ${JSON.stringify(signals)}. Never copy their wording and never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. hero_hook must be a concise 6-12 word English headline, accurate and curiosity-led without clickbait; do not include DekhoCampus, an ellipsis, or trailing punctuation. Write 4-8 distinct search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Write like an experienced Indian education editor: use natural variation in sentence length, specific explanations, restrained transitions, and context-aware phrasing. Avoid repetitive templates, generic filler, exaggerated claims, robotic summaries, first-person claims of lived experience, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". Use descriptive H2/H3 headings, short readable paragraphs, useful lists, and verifiable facts. When evidence is uncertain, tell readers to verify details on the relevant official authority website without naming or linking a research source.`;
+  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are private fact-checking context only: ${JSON.stringify(signals)}. Never copy their wording and never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. Treat hero_hook as the cover's editorial headline: write one specific, high-interest promise in 7-13 English words and 45-88 characters. Preserve the key exam, institution, authority, date or outcome. Lead with the useful consequence, decision, deadline, change or uncommon insight that makes a student want to read. It must remain accurate and natural, never vague or sensational. Do not include DekhoCampus, an ellipsis, a trailing punctuation mark, generic phrases such as Complete Guide or Everything You Need to Know, or unsupported urgency. Write 4-8 distinct search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Write like an experienced Indian education editor: use natural variation in sentence length, specific explanations, restrained transitions, and context-aware phrasing. Avoid repetitive templates, generic filler, exaggerated claims, robotic summaries, first-person claims of lived experience, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". Use descriptive H2/H3 headings, short readable paragraphs, useful lists, and verifiable facts. When evidence is uncertain, tell readers to verify details on the relevant official authority website without naming or linking a research source.`;
 }
 
 const ARTICLE_RESPONSE_SCHEMA = {
@@ -867,7 +935,7 @@ async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = nu
     slug,
     content_html: stripCompetitorCredits(result.content_html),
     tags: Array.isArray(result.tags) ? result.tags : [],
-    hero_hook: formatBlogCoverTitle(result.hero_hook || result.title || topic).replace(/^DekhoCampus:\s*/i, ""),
+    hero_hook: formatBlogCoverTitle(result.hero_hook || result.title || topic),
     faqs: normalizeGeneratedFaqs(result.faqs),
     featured_image: "",
   };
@@ -906,6 +974,7 @@ export async function handleBlogStudio(request) {
   const generated = await generateDraft(topic, { wordLimit: body.word_limit, cover: {
     imageMode: image.mode || savedCover?.image_mode || "none",
     templateUrl: image.template_url || savedCover?.image_template_url,
+    referenceImageUrl: image.reference_image_url || image.template_url || savedCover?.image_template_url,
     promptStyle: image.prompt_style || savedCover?.image_prompt_style,
     includeLogo: image.include_logo ?? savedCover?.include_logo,
     logoUrl: image.logo_url || savedCover?.logo_url,
@@ -979,6 +1048,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
   const generated = await generateDraft(topicTitle, { wordLimit: settings.word_limit, signals, requiredTitle: topicTitle, cover: {
     imageMode: settings.image_mode,
     templateUrl: settings.image_template_url,
+    referenceImageUrl: settings.image_template_url,
     promptStyle: settings.image_prompt_style,
     includeLogo: settings.include_logo,
     logoUrl: settings.logo_url,

@@ -53,7 +53,7 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
           topic,
           word_limit: wordLimit,
           content_goals: ["SEO", "AEO", "GEO", "AIO", "LLMO", "LLM"],
-          image: { mode: imageMode, template_url: templateUrl, include_logo: includeLogo, logo_url: logoUrl, resolution: "web" },
+          image: { mode: imageMode, template_url: templateUrl, reference_image_url: templateUrl, include_logo: includeLogo, logo_url: logoUrl, resolution: "web" },
         },
       });
       if (error || data?.error) throw error || new Error(data.error);
@@ -116,12 +116,14 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
           <div className="mt-2 flex flex-wrap gap-2">
             {([["generated", "New OpenAI image"], ["template", "Use template"], ["none", "No image"]] as const).map(([mode, label]) => <Button key={mode} size="sm" variant={imageMode === mode ? "default" : "outline"} onClick={() => setImageMode(mode)}>{label}</Button>)}
           </div>
-          {imageMode === "template" && <div className="mt-3"><ImageUploadField label="Cover template" value={templateUrl} onChange={setTemplateUrl} folder="blog-templates" /></div>}
+          {imageMode === "template" && <div className="mt-3"><ImageUploadField label="Optional custom background" value={templateUrl} onChange={setTemplateUrl} folder="blog-templates" /></div>}
           {imageMode === "generated" && <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <div className="md:col-span-2"><ImageUploadField label="Optional OpenAI style reference" value={templateUrl} onChange={setTemplateUrl} folder="blog-templates" /></div>
             <label className="flex items-center justify-between rounded-lg border p-3"><span className="text-sm">Place uploaded logo</span><Switch checked={includeLogo} onCheckedChange={setIncludeLogo} /></label>
             {includeLogo && <ImageUploadField label="High-resolution logo" value={logoUrl} onChange={setLogoUrl} folder="blog-brand" />}
           </div>}
-          {imageMode === "template" && <p className="mt-2 text-xs text-muted-foreground">The saved template logo and frame are preserved. A concise cover hook is added without using OpenAI image credits.</p>}
+          {imageMode === "template" && <p className="mt-2 text-xs text-muted-foreground">One of 24 built-in editorial backgrounds is selected automatically. The locked logo, panel and typography use no OpenAI image credits.</p>}
+          {imageMode === "generated" && <p className="mt-2 text-xs text-muted-foreground">OpenAI receives the supplied DekhoCampus cover as a style reference and changes only the illustrated background. Branding and typography are rendered locally and stay fixed.</p>}
         </div>
         <p className="text-xs text-muted-foreground">Competitor research is used for trend awareness only. Every result is checked for duplicate coverage, includes dedicated FAQs, and is saved as Draft for editor review.</p>
         <Button onClick={generate} disabled={busy} className="gap-2">{busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Research, write and generate branded cover</Button>
