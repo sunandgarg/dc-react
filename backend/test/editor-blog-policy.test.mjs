@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent } from "../src/auth.mjs";
 
@@ -57,8 +57,8 @@ test("non-publishing editors are forced into draft state by the server", () => {
 test("enforces conservative auto-blog cadence and volume limits", () => {
   assert.deepEqual(blogLimits, {
     MAX_POSTS_PER_RUN: 10,
-    MAX_DAILY_POSTS: 60,
-    MIN_INTERVAL_MINUTES: 24,
+    MAX_DAILY_POSTS: 72,
+    MIN_INTERVAL_MINUTES: 20,
   });
 });
 
@@ -154,22 +154,23 @@ test("keeps the education-news label centered inside its badge", () => {
   assert.match(svg, /font-size="22"[^>]*letter-spacing="1\.5"[^>]*>EDUCATION NEWS<\/text>/);
 });
 
-test("preserves the complete blog title while removing ellipses", () => {
+test("keeps full short headings and ellipsizes only oversized cover text", () => {
   assert.equal(formatBlogCoverTitle("The counselling mistake most students miss"), "The counselling mistake most students miss");
   assert.equal(formatBlogCoverTitle("DekhoCampus: Existing title"), "DekhoCampus: Existing title");
   const title = "A very long heading that must remain complete across every line of the image even when the original title contains an ellipsis… before its final words";
   const formatted = formatBlogCoverTitle(title);
-  assert.equal(formatted, "A very long heading that must remain complete across every line of the image even when the original title contains an ellipsis before its final words");
-  assert.doesNotMatch(formatted, /\.\.\.|…/);
+  assert.equal(formatted, "A very long heading that must remain complete across every line of the image even...");
+  assert.ok(formatted.length <= BLOG_COVER_TITLE_MAX_CHARACTERS);
+  assert.match(formatted, /\.\.\.$/);
 });
 
-test("fits complete template headings into at most six centered lines without adding a panel", () => {
+test("fits template headings into at most three readable lines without adding a panel", () => {
   const title = "The counselling deadline and document checklist every student should verify before choice filling";
   const options = { width: 1600, height: 900 };
   const layout = layoutTemplateCoverTitle(title, options);
-  assert.ok(layout.lines.length >= 2 && layout.lines.length <= 6);
+  assert.ok(layout.lines.length >= 2 && layout.lines.length <= 3);
   assert.equal(layout.lines.join(" "), formatBlogCoverTitle(title));
-  assert.ok(layout.fontSize >= 22 && layout.fontSize <= 58);
+  assert.ok(layout.fontSize >= 42 && layout.fontSize <= 58);
   assert.equal(layout.lineHeight, Math.round(layout.fontSize * 1.15));
   assert.equal(layout.centerY, 513);
   const svg = templateCoverTitleOverlay(title, options).toString();
@@ -191,14 +192,15 @@ test("balances abbreviated article titles without orphan lines", () => {
   assert.ok(layout.fontSize >= 50 && layout.fontSize <= 58);
 });
 
-test("scales long titles down while retaining every word", () => {
+test("scales long titles down after applying the readable heading budget", () => {
   const options = { width: 1600, height: 900 };
   const short = layoutTemplateCoverTitle("NEET counselling update", options);
   const title = "A pragmatic year-long plan for engineering and technology admissions in India: timelines, counselling workflows, and contingency steps";
   const long = layoutTemplateCoverTitle(title, options);
   assert.ok(long.fontSize < short.fontSize);
-  assert.equal(long.lines.join(" "), title);
-  assert.ok(long.lines.length <= 6);
+  assert.equal(long.lines.join(" "), formatBlogCoverTitle(title));
+  assert.ok(long.lines.length <= 3);
+  assert.ok(long.lines.join(" ").length <= BLOG_COVER_TITLE_MAX_CHARACTERS);
 });
 
 test("ships 24 stable zero-credit editorial background templates", () => {

@@ -66,9 +66,9 @@ type Author = { id: string; name: string; designation?: string; photo?: string }
 const DRAFT_KEY = "dc:admin:blog-agent:draft:v1";
 const DEFAULT_SETTINGS: Settings = {
   enabled: false,
-  interval_minutes: 24,
+  interval_minutes: 20,
   posts_per_run: 1,
-  daily_post_cap: 60,
+  daily_post_cap: 72,
   publish_status: "Published",
   model_provider: "openai",
   text_model: "gpt-5-nano",
@@ -223,7 +223,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     setBusy(true);
     try {
       const nextRun = settings.enabled && !settings.next_run_at ? new Date().toISOString() : settings.next_run_at;
-      const dailyPostCap = Math.min(60, Math.max(1, Math.floor(Number(settings.daily_post_cap) || 60)));
+      const dailyPostCap = Math.min(72, Math.max(1, Math.floor(Number(settings.daily_post_cap) || 72)));
       const normalizedSettings = { ...settings, daily_post_cap: dailyPostCap, model_provider: settings.text_model.startsWith("gemini-") ? "gemini" : "openai", image_provider: "openai" as const, image_model: "gpt-image-1" };
       const legacySettings = {
         enabled: settings.enabled,
@@ -419,7 +419,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         <div className="rounded-xl border p-3">
           <Label className="text-xs">Frequency</Label>
           <div className="mt-3 flex gap-2">
-            {[24, 30, 60].map(minutes => <Button key={minutes} size="sm" variant={settings.interval_minutes === minutes ? "default" : "outline"} onClick={() => updateSetting("interval_minutes", minutes)}>{minutes === 60 ? "1 hour" : `${minutes} min`}</Button>)}
+            {[20, 24, 30, 60].map(minutes => <Button key={minutes} size="sm" variant={settings.interval_minutes === minutes ? "default" : "outline"} onClick={() => updateSetting("interval_minutes", minutes)}>{minutes === 60 ? "1 hour" : `${minutes} min`}</Button>)}
           </div>
         </div>
         <div className="rounded-xl border p-3">
@@ -476,8 +476,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       <div className="mt-3 grid gap-3 lg:grid-cols-3">
         <div>
           <Label className="text-xs">Daily cap</Label>
-          <Input type="number" min={1} max={60} value={settings.daily_post_cap} onChange={e => updateSetting("daily_post_cap", Number(e.target.value || 60))} className="mt-1" />
-          <p className="mt-1 text-[10px] text-muted-foreground">60 per day runs as one article every 24 minutes.</p>
+          <Input type="number" min={1} max={72} value={settings.daily_post_cap} onChange={e => updateSetting("daily_post_cap", Number(e.target.value || 72))} className="mt-1" />
+          <p className="mt-1 text-[10px] text-muted-foreground">Up to 72 per day, evenly spaced as one article every 20 minutes.</p>
         </div>
         <div>
           <Label className="text-xs">Blog AI provider</Label>

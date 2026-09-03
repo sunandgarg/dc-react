@@ -10,8 +10,8 @@ const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
 const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5-nano";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const MAX_POSTS_PER_RUN = 10;
-const MAX_DAILY_POSTS = 60;
-const MIN_INTERVAL_MINUTES = 24;
+const MAX_DAILY_POSTS = 72;
+const MIN_INTERVAL_MINUTES = 20;
 const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
@@ -22,6 +22,7 @@ const BLOG_COVER_LOGO_FILE = new URL("../assets/dekhocampus-blog-logo.png", impo
 const BLOG_COVER_REFERENCE_FILE = new URL("../assets/dekhocampus-blog-cover-reference-v2.png", import.meta.url);
 
 export const BLOG_COVER_TEMPLATE_COUNT = 24;
+export const BLOG_COVER_TITLE_MAX_CHARACTERS = 88;
 const BLOG_COVER_THEMES = [
   ["#f97316", "#16a34a", "#fff7ed"], ["#ea580c", "#2563eb", "#fff7ed"],
   ["#fb923c", "#0f766e", "#fffbeb"], ["#f59e0b", "#15803d", "#fffbeb"],
@@ -131,13 +132,19 @@ export function formatBlogCoverTitle(value) {
     .replace(/\s*(?:\.{3,}|…)\s*/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-  return normalized || "Make your next education decision with confidence";
+  const fallback = "Make your next education decision with confidence";
+  if (!normalized) return fallback;
+  if (normalized.length <= BLOG_COVER_TITLE_MAX_CHARACTERS) return normalized;
+  const excerptLength = BLOG_COVER_TITLE_MAX_CHARACTERS - 3;
+  let excerpt = normalized.slice(0, excerptLength + 1).replace(/\s+\S*$/, "").trim();
+  if (!excerpt) excerpt = normalized.slice(0, excerptLength).trim();
+  return `${excerpt.replace(/[,:;|\-–—\s]+$/, "")}...`;
 }
 
 export function layoutTemplateCoverTitle(value, options) {
   const words = formatBlogCoverTitle(value).split(/\s+/).filter(Boolean);
   const totalCharacters = words.join(" ").length;
-  const targetLineCount = Math.max(1, Math.min(6, Math.ceil(totalCharacters / 42)));
+  const targetLineCount = Math.max(1, Math.min(3, Math.ceil(totalCharacters / 32)));
   const lineCount = Math.min(targetLineCount, words.length);
   const averageLength = totalCharacters / lineCount;
   const memo = new Map();
@@ -171,7 +178,7 @@ export function layoutTemplateCoverTitle(value, options) {
 
   const longestLine = Math.max(...lines.map((line) => line.length), 1);
   const maximumFontSize = Math.round(options.width * 0.036);
-  const minimumFontSize = Math.round(options.width * 0.014);
+  const minimumFontSize = Math.round(options.width * 0.026);
   const widthFit = Math.floor((options.width * 0.62) / (longestLine * 0.58));
   const heightFit = Math.floor((options.height * 0.27) / (lines.length * 1.15));
   const fontSize = Math.max(minimumFontSize, Math.min(maximumFontSize, widthFit, heightFit));
@@ -827,7 +834,7 @@ async function researchSignals(limit = 6) {
 }
 
 function articlePrompt(topic, signals, wordLimit = 1200) {
-  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are private fact-checking context only: ${JSON.stringify(signals)}. Never copy their wording and never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. Treat hero_hook as the cover's editorial headline: write one specific, high-interest promise in 7-13 English words and 45-88 characters. Preserve the key exam, institution, authority, date or outcome. Lead with the useful consequence, decision, deadline, change or uncommon insight that makes a student want to read. It must remain accurate and natural, never vague or sensational. Do not include DekhoCampus, an ellipsis, a trailing punctuation mark, generic phrases such as Complete Guide or Everything You Need to Know, or unsupported urgency. Write 4-8 distinct search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Write like an experienced Indian education editor: use natural variation in sentence length, specific explanations, restrained transitions, and context-aware phrasing. Avoid repetitive templates, generic filler, exaggerated claims, robotic summaries, first-person claims of lived experience, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". Use descriptive H2/H3 headings, short readable paragraphs, useful lists, and verifiable facts. When evidence is uncertain, tell readers to verify details on the relevant official authority website without naming or linking a research source.`;
+  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are private fact-checking context only: ${JSON.stringify(signals)}. Never copy their wording and never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. Write title as a complete, specific headline that preserves the key exam, institution, authority, date or outcome; never truncate it for cover artwork. Set hero_hook exactly equal to title. Lead with the useful consequence, decision, deadline, change or uncommon insight that makes a student want to read. The title must remain accurate and natural, never vague or sensational. Do not include DekhoCampus, an ellipsis, trailing punctuation, generic phrases such as Complete Guide or Everything You Need to Know, or unsupported urgency. Write 4-8 distinct search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Write like an experienced Indian education editor: use natural variation in sentence length, specific explanations, restrained transitions, and context-aware phrasing. Avoid repetitive templates, generic filler, exaggerated claims, robotic summaries, first-person claims of lived experience, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". Use descriptive H2/H3 headings, short readable paragraphs, useful lists, and verifiable facts. When evidence is uncertain, tell readers to verify details on the relevant official authority website without naming or linking a research source.`;
 }
 
 const ARTICLE_RESPONSE_SCHEMA = {
@@ -881,7 +888,7 @@ async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = nu
     slug,
     content_html: stripCompetitorCredits(result.content_html),
     tags: Array.isArray(result.tags) ? result.tags : [],
-    hero_hook: formatBlogCoverTitle(title),
+    hero_hook: title,
     faqs: normalizeGeneratedFaqs(result.faqs),
     featured_image: "",
   };
@@ -1131,7 +1138,7 @@ export async function runBlogAgent(body = {}) {
         ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
         : "";
       const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
-      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Use competitor material only to identify coverage gaps; never copy, cite, link, name, or credit it. Titles must be specific, factual, useful and substantially different from every avoided title. Return topic objects with a non-empty title.`, "blog-agent", {
+      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Use competitor material only to identify coverage gaps; never copy, cite, link, name, or credit it. Each title must be complete, specific, factual, naturally concise, free of ellipses or trailing punctuation, and substantially different from every avoided title. Never truncate a title for cover artwork. Return topic objects with a non-empty title.`, "blog-agent", {
         thinkingLevel: "minimal",
         maxOutputTokens: 1200,
         responseSchema: {

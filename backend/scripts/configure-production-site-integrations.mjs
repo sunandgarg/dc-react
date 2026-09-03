@@ -30,9 +30,9 @@ try {
     data: {
       model_provider: "openai",
       text_model: "gpt-5-nano",
-      interval_minutes: 24,
+      interval_minutes: 20,
       posts_per_run: 1,
-      daily_post_cap: 60,
+      daily_post_cap: 72,
       image_mode: "template",
       image_template_url: DEFAULT_BLOG_COVER_TEMPLATE_KEY,
       include_logo: false,
