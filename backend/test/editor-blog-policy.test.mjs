@@ -154,20 +154,23 @@ test("keeps the education-news label centered inside its badge", () => {
   assert.match(svg, /font-size="22"[^>]*letter-spacing="1\.5"[^>]*>EDUCATION NEWS<\/text>/);
 });
 
-test("keeps cover hooks concise without duplicating the visible brand", () => {
+test("preserves the complete blog title while removing ellipses", () => {
   assert.equal(formatBlogCoverTitle("The counselling mistake most students miss"), "The counselling mistake most students miss");
-  assert.equal(formatBlogCoverTitle("DekhoCampus: Existing hook"), "Existing hook");
-  assert.doesNotMatch(formatBlogCoverTitle("A very long heading that would otherwise continue beyond the available editorial panel and end with an ugly ellipsis on the final line of the cover"), /\.\.\.|…/);
+  assert.equal(formatBlogCoverTitle("DekhoCampus: Existing title"), "DekhoCampus: Existing title");
+  const title = "A very long heading that must remain complete across every line of the image even when the original title contains an ellipsis… before its final words";
+  const formatted = formatBlogCoverTitle(title);
+  assert.equal(formatted, "A very long heading that must remain complete across every line of the image even when the original title contains an ellipsis before its final words");
+  assert.doesNotMatch(formatted, /\.\.\.|…/);
 });
 
-test("fits template headings into at most four centered lines without adding a panel", () => {
+test("fits complete template headings into at most six centered lines without adding a panel", () => {
   const title = "The counselling deadline and document checklist every student should verify before choice filling";
   const options = { width: 1600, height: 900 };
   const layout = layoutTemplateCoverTitle(title, options);
-  assert.ok(layout.lines.length >= 2 && layout.lines.length <= 4);
+  assert.ok(layout.lines.length >= 2 && layout.lines.length <= 6);
   assert.equal(layout.lines.join(" "), formatBlogCoverTitle(title));
-  assert.equal(layout.fontSize, 58);
-  assert.equal(layout.lineHeight, 67);
+  assert.ok(layout.fontSize >= 22 && layout.fontSize <= 58);
+  assert.equal(layout.lineHeight, Math.round(layout.fontSize * 1.15));
   assert.equal(layout.centerY, 513);
   const svg = templateCoverTitleOverlay(title, options).toString();
   assert.match(svg, /text-anchor="middle"/);
@@ -185,17 +188,17 @@ test("balances abbreviated article titles without orphan lines", () => {
   const layout = layoutTemplateCoverTitle("ICAR AIEEA PG 2026 Seat Matrix and Choice Locking Strategy", { width: 1600, height: 900 });
   assert.ok(layout.lines.every((line) => line.split(/\s+/).length > 1));
   assert.equal(layout.lines.join(" "), "ICAR AIEEA PG 2026 Seat Matrix and Choice Locking Strategy");
-  assert.equal(layout.fontSize, 58);
+  assert.ok(layout.fontSize >= 50 && layout.fontSize <= 58);
 });
 
-test("uses identical typography for short and long template titles", () => {
+test("scales long titles down while retaining every word", () => {
   const options = { width: 1600, height: 900 };
   const short = layoutTemplateCoverTitle("NEET counselling update", options);
-  const long = layoutTemplateCoverTitle("The counselling deadline and document checklist every student should verify before choice filling", options);
-  assert.deepEqual(
-    { fontSize: short.fontSize, lineHeight: short.lineHeight },
-    { fontSize: long.fontSize, lineHeight: long.lineHeight },
-  );
+  const title = "A pragmatic year-long plan for engineering and technology admissions in India: timelines, counselling workflows, and contingency steps";
+  const long = layoutTemplateCoverTitle(title, options);
+  assert.ok(long.fontSize < short.fontSize);
+  assert.equal(long.lines.join(" "), title);
+  assert.ok(long.lines.length <= 6);
 });
 
 test("ships 24 stable zero-credit editorial background templates", () => {

@@ -40,12 +40,6 @@ const titles = [
 
 const requestedArticleId = String(process.env.ARTICLE_COVER_REPAIR_ID || "").trim();
 
-function coverHook(title) {
-  const subject = String(title).split(":", 1)[0].trim();
-  if (subject.length <= 90) return subject;
-  return subject.slice(0, 91).replace(/\s+\S*$/, "").replace(/[,:;\-\s]+$/, "");
-}
-
 const matches = await prisma.articles.findMany({
   where: requestedArticleId
     ? { id: requestedArticleId, title: { in: titles } }
@@ -64,7 +58,7 @@ const replacements = [];
 for (const title of requestedTitles) {
   const article = grouped.get(title)[0];
   const diagnostics = {};
-  const featuredImage = await createBlogCover(article.slug, coverHook(article.title), {
+  const featuredImage = await createBlogCover(article.slug, article.title, {
     imageMode: "template",
     templateUrl: DEFAULT_BLOG_COVER_TEMPLATE_KEY,
     includeLogo: false,
@@ -99,7 +93,7 @@ for (const title of requestedTitles) {
     id: article.id,
     slug: article.slug,
     title: article.title,
-    hook: coverHook(article.title),
+    hook: article.title,
     old_image: article.featured_image || null,
     new_image: featuredImage,
     source_mode: diagnostics.sourceMode,

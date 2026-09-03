@@ -128,20 +128,16 @@ function escapeCoverText(value) {
 
 export function formatBlogCoverTitle(value) {
   const normalized = stripHtml(value)
-    .replace(/^dekhocampus\s*:\s*/i, "")
-    .replace(/\.{3,}|…/g, "")
+    .replace(/\s*(?:\.{3,}|…)\s*/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-  const hook = normalized.length <= 92
-    ? normalized
-    : normalized.slice(0, 93).replace(/\s+\S*$/, "").replace(/[,:;\-\s]+$/, "");
-  return hook || "Make your next education decision with confidence";
+  return normalized || "Make your next education decision with confidence";
 }
 
 export function layoutTemplateCoverTitle(value, options) {
   const words = formatBlogCoverTitle(value).split(/\s+/).filter(Boolean);
   const totalCharacters = words.join(" ").length;
-  const targetLineCount = totalCharacters <= 28 ? 1 : totalCharacters <= 64 ? 2 : 3;
+  const targetLineCount = Math.max(1, Math.min(6, Math.ceil(totalCharacters / 42)));
   const lineCount = Math.min(targetLineCount, words.length);
   const averageLength = totalCharacters / lineCount;
   const memo = new Map();
@@ -173,7 +169,12 @@ export function layoutTemplateCoverTitle(value, options) {
     lines[lines.length - 2] = lines[lines.length - 2].split(/\s+/).slice(0, -1).join(" ");
   }
 
-  const fontSize = Math.round(options.width * 0.036);
+  const longestLine = Math.max(...lines.map((line) => line.length), 1);
+  const maximumFontSize = Math.round(options.width * 0.036);
+  const minimumFontSize = Math.round(options.width * 0.014);
+  const widthFit = Math.floor((options.width * 0.62) / (longestLine * 0.58));
+  const heightFit = Math.floor((options.height * 0.27) / (lines.length * 1.15));
+  const fontSize = Math.max(minimumFontSize, Math.min(maximumFontSize, widthFit, heightFit));
 
   return {
     lines,
@@ -880,11 +881,11 @@ async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = nu
     slug,
     content_html: stripCompetitorCredits(result.content_html),
     tags: Array.isArray(result.tags) ? result.tags : [],
-    hero_hook: formatBlogCoverTitle(result.hero_hook || result.title || topic),
+    hero_hook: formatBlogCoverTitle(title),
     faqs: normalizeGeneratedFaqs(result.faqs),
     featured_image: "",
   };
-  draft.featured_image = await createBlogCover(slug, draft.hero_hook, cover);
+  draft.featured_image = await createBlogCover(slug, draft.title, cover);
   return { draft, model, textProvider, research_sources: evidence.map((item) => item.url) };
 }
 
