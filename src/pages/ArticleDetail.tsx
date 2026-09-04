@@ -1,6 +1,5 @@
 import { useParams, Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { Calendar, Tag, ArrowUp, Share2, Bookmark, ChevronDown, Eye, Clock, Link2, Play, Pause, List, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -361,8 +360,11 @@ export default function ArticleDetail() {
                   <img
                     src={article.image}
                     alt={article.title}
+                    width="1600"
+                    height="870"
                     className="h-full w-full object-cover object-center"
                     fetchPriority="high"
+                    loading="eager"
                     decoding="async"
                   />
                 </div>
@@ -431,11 +433,7 @@ export default function ArticleDetail() {
               </div>
 
               {/* Body - explicitly left-aligned, tightened 2026 scale */}
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-5"
-              >
+              <div className="space-y-5">
                 {article.content?.trim().startsWith("<") ? (
                   contentSegments ? (
                     <>
@@ -462,7 +460,7 @@ export default function ArticleDetail() {
                     >{article.content}</ReactMarkdown>
                   </div>
                 )}
-              </motion.div>
+              </div>
 
               {/* Mid-content lead capture - lighter spacing */}
               <div className="my-5 sm:my-7">

@@ -113,9 +113,8 @@ function DeferredGlobalUi() {
     </Suspense>
   );
 }
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-
+const Index = lazyRetry(() => import("./pages/Index"), "Index");
+const NotFound = lazyRetry(() => import("./pages/NotFound"), "NotFound");
 const AllColleges = lazyRetry(() => import("./pages/AllColleges"), "AllColleges");
 const ComparePage = lazyRetry(() => import("./pages/ComparePage"), "compare");
 const AllCourses = lazyRetry(() => import("./pages/AllCourses"), "AllCourses");

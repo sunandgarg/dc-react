@@ -42,6 +42,9 @@
     <meta name="theme-color" content="#ff6b35" />
     <meta name="msapplication-TileColor" content="#ff6b35" />
 
+    <link rel="preconnect" href="https://aws-origin.dekhocampus.com" crossorigin />
+    <link rel="dns-prefetch" href="https://aws-origin.dekhocampus.com" />
+
     <style>
       #dc-first-paint-shell { min-height: 100vh; background: #f8fafc; color: #111827; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
       #dc-first-paint-shell[hidden] { display: none; }
@@ -145,6 +148,59 @@
         if (!shell) return;
         if (location.pathname === "/") shell.hidden = false;
         else shell.remove();
+      })();
+    </script>
+    <script>
+      (() => {
+        const parts = location.pathname.split("/").filter(Boolean);
+        const section = parts[0];
+        const rawSlug = parts[1];
+        if (!rawSlug || (section !== "news" && section !== "exams") || rawSlug === "tag" || rawSlug.startsWith("top-")) return;
+
+        const productionHost = /(^|\.)dekhocampus\.com$/.test(location.hostname) || location.hostname.endsWith(".pages.dev");
+        const apiOrigin = productionHost ? "https://aws-origin.dekhocampus.com" : location.origin;
+        const url = new URL(`/v1/rest/${section === "news" ? "articles" : "exams"}`, apiOrigin);
+        url.searchParams.set("select", "*");
+
+        const decodedSlug = decodeURIComponent(rawSlug);
+        if (section === "news") {
+          const slug = decodedSlug.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+          url.searchParams.set("slug", `eq.${slug}`);
+        } else {
+          const idMatch = decodedSlug.match(/-(\d+)$/);
+          url.searchParams.set(idMatch ? "short_id" : "slug", `eq.${idMatch ? idMatch[1] : decodedSlug}`);
+        }
+        url.searchParams.set("limit", "2");
+
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 8000);
+        const request = fetch(url, { credentials: "omit", signal: controller.signal })
+          .then((response) => {
+            window.clearTimeout(timeout);
+            if (!response.ok) return response;
+            response.clone().json().then((rows) => {
+              const row = Array.isArray(rows) ? rows[0] : rows;
+              const image = section === "news" ? row?.featured_image : row?.image;
+              if (!image) return;
+              const absoluteImage = new URL(image, location.origin);
+              if (absoluteImage.origin !== location.origin && !document.querySelector(`link[rel="preconnect"][href="${absoluteImage.origin}"]`)) {
+                const connection = document.createElement("link");
+                connection.rel = "preconnect";
+                connection.href = absoluteImage.origin;
+                connection.crossOrigin = "anonymous";
+                document.head.appendChild(connection);
+              }
+              const preload = document.createElement("link");
+              preload.rel = "preload";
+              preload.as = "image";
+              preload.href = absoluteImage.toString();
+              preload.fetchPriority = "high";
+              document.head.appendChild(preload);
+            }).catch(() => undefined);
+            return response;
+          })
+          .catch(() => null);
+        (window.__dcEarlyResponses ??= new Map()).set(url.toString(), request);
       })();
     </script>
     <noscript>

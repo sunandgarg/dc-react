@@ -1,6 +1,7 @@
 import { apiBaseUrl, functionUrl, restUrl } from "@/lib/backendMode";
 import { normalizeJsonRequestBody } from "@/lib/typography";
 import { requestProtectedAction } from "@/lib/protectedActions";
+import { consumeEarlyResponse } from "@/lib/earlyResponse";
 
 export type BackendUser = {
   id: string;
@@ -251,7 +252,8 @@ class BackendQuery implements PromiseLike<ClientResult<any>> {
     if (this.body !== undefined) headers.set("content-type", "application/json");
 
     try {
-      const response = await fetch(url, {
+      const earlyResponse = method === "GET" ? await consumeEarlyResponse(url) : null;
+      const response = earlyResponse ?? await fetch(url, {
         method,
         headers,
         signal: this.signal,

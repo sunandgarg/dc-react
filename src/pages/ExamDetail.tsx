@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { buildExamHref } from "@/lib/entityUrls";
 import { useSEO } from "@/hooks/useSEO";
-import { motion } from "framer-motion";
 import { Calendar, Users, FileText, Award, Building, BookOpen, CheckCircle, Clock, Newspaper, CreditCard, MapPin, ClipboardList, ExternalLink, Globe, AlertCircle, Download, Sparkles, FileDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -134,10 +133,17 @@ export default function ExamDetail() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="container py-20 text-center">
-          <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+        <div className="container px-3 md:px-6 py-4 md:py-6" aria-busy="true" aria-label="Loading exam details">
+          <div className="h-4 w-44 rounded bg-muted animate-pulse mb-4" />
+          <div className="overflow-hidden rounded-2xl border border-border bg-card">
+            <div className="h-48 md:h-56 bg-muted animate-pulse" />
+            <div className="p-4 md:p-6 space-y-3">
+              <div className="h-5 w-32 rounded bg-muted animate-pulse" />
+              <div className="h-8 w-3/4 rounded bg-muted animate-pulse" />
+              <div className="h-4 w-1/2 rounded bg-muted animate-pulse" />
+            </div>
+          </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -176,8 +182,7 @@ export default function ExamDetail() {
         ]} />
 
         {strategy && (
-          <motion.section
-            initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+          <section
             className="mb-4 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 md:p-5"
             aria-labelledby="strategy-heading"
           >
@@ -206,12 +211,12 @@ export default function ExamDetail() {
                 </Link>
               </div>
             )}
-          </motion.section>
+          </section>
         )}
         {/* Hero Card */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl border border-border overflow-hidden mb-0">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden mb-0">
           <div className="relative">
-            <img src={exam.image} alt={exam.name} className="w-full h-48 md:h-56 object-cover object-center" />
+            <img src={exam.image} alt={exam.name} width="1600" height="560" loading="eager" decoding="async" fetchPriority="high" className="w-full h-48 md:h-56 object-cover object-center" />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
             {(exam as any).logo && (
               <div className="absolute left-4 -bottom-6 md:left-6 md:-bottom-8 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-card border border-border shadow-md p-1.5 flex items-center justify-center overflow-hidden">
@@ -248,7 +253,7 @@ export default function ExamDetail() {
               <YouTubeVideoButton url={(exam as any).how_to_apply_video_url} fallbackKey="how_to_apply_exam" category="exam" title={`How to Apply ${exam.name}`} label={`Apply for ${compactExamName}`} className="h-10 max-w-full rounded-xl px-3 text-xs" />
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* 2026 Trust bento + AI insight */}
         <div className="mt-4 space-y-4 md:space-y-5">
