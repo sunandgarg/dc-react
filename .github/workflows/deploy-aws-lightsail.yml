@@ -37,6 +37,11 @@ on:
         required: false
         default: false
         type: boolean
+      cleanup_college_editorial_artifacts:
+        description: Back up and remove internal editorial process copy from public college content
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -434,6 +439,20 @@ jobs:
           set +a
           cd /opt/dc-react/app
           npm --prefix backend run revoke:user-sessions
+          REMOTE
+
+      - name: Back up and clean public college editorial artifacts
+        if: ${{ inputs.cleanup_college_editorial_artifacts }}
+        run: |
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
+            -i /tmp/tempkey "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
+          set -euo pipefail
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app
+          npm --prefix backend run cleanup:college-editorial-artifacts -- --apply
           REMOTE
 
       - name: Repair listed production article covers

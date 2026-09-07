@@ -3,6 +3,7 @@ import { prisma, quote, schemaMetadata, tableNames, jsonSafe } from "./db.mjs";
 import { recordContentReviews } from "./content-review.mjs";
 import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 import { invalidateDirectorySearchCache, searchDirectory } from "./directory-search.mjs";
+import { sanitizeCollegePublicContent } from "./college-content-sanitizer.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
@@ -13,6 +14,11 @@ export function omitDerivedFields(table, input) {
   const row = { ...input };
   delete row.courses_count;
   return row;
+}
+
+export function sanitizePublicWritePayload(table, input) {
+  if (table !== "colleges" || !input || typeof input !== "object") return input;
+  return sanitizeCollegePublicContent(input).row;
 }
 
 function stampHomepageExploreSelection(table, input) {
@@ -370,7 +376,7 @@ async function insertRow(table, input, merge, conflictColumns) {
 async function handlePost(table, request, url, context) {
   const input = await request.json();
   const sourceRows = (Array.isArray(input) ? input : [input])
-    .map((row) => stampHomepageExploreSelection(table, omitDerivedFields(table, row)));
+    .map((row) => sanitizePublicWritePayload(table, stampHomepageExploreSelection(table, omitDerivedFields(table, row))));
   const rows = context.forceDraft ? sourceRows.map((row) => forceDraftPayload(table, row)) : sourceRows;
   const prefer = String(request.headers.get("prefer") || "");
   const merge = prefer.includes("resolution=merge-duplicates");
@@ -393,7 +399,10 @@ async function handlePost(table, request, url, context) {
 }
 
 async function handlePatch(table, request, url, context) {
-  const source = stampHomepageExploreSelection(table, omitDerivedFields(table, await request.json()));
+  const source = sanitizePublicWritePayload(
+    table,
+    stampHomepageExploreSelection(table, omitDerivedFields(table, await request.json())),
+  );
   const input = context.forceDraft ? forceDraftPayload(table, source) : source;
   const allowed = schemaMetadata[table].fields;
   if (allowed.updated_at && input.updated_at === undefined) input.updated_at = new Date().toISOString();
