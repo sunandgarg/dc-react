@@ -9,17 +9,20 @@ interface FeaturedCollege {
   state: string | null;
   display_order: number;
   is_active: boolean;
+  updated_at?: string | null;
 }
 
-function uniqueFeatured(rows: FeaturedCollege[], activeOnly = false) {
+export function uniqueFeatured(rows: FeaturedCollege[], activeOnly = false) {
   const bySlug = new Map<string, FeaturedCollege>();
-  [...rows]
-    .filter((row) => row.college_slug && (!activeOnly || row.is_active !== false))
-    .sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999))
-    .forEach((row) => {
-      if (!bySlug.has(row.college_slug)) bySlug.set(row.college_slug, row);
-    });
-  return [...bySlug.values()];
+  rows.filter((row) => row.college_slug).forEach((row) => {
+    const existing = bySlug.get(row.college_slug);
+    const rowUpdated = Date.parse(row.updated_at || "") || 0;
+    const existingUpdated = Date.parse(existing?.updated_at || "") || 0;
+    if (!existing || rowUpdated > existingUpdated) bySlug.set(row.college_slug, row);
+  });
+  return [...bySlug.values()]
+    .filter((row) => !activeOnly || row.is_active !== false)
+    .sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999));
 }
 
 export function useFeaturedColleges(category?: string, state?: string) {

@@ -161,7 +161,16 @@ async function bootstrapPayload() {
   const [heroBanners, heroSettings, featuredColleges, trustedPartners, leadFormSettings, featureToggles, ads, siteIntegrations] = await Promise.all([
     rows("hero_banners", "WHERE `is_active` = 1 ORDER BY `display_order` ASC"),
     rows("hero_settings", "LIMIT 1"),
-    rows("featured_colleges", "WHERE `is_active` = 1 ORDER BY `display_order` ASC"),
+    rows("featured_colleges", `AS featured
+      INNER JOIN (
+        SELECT \`college_slug\`, MAX(\`updated_at\`) AS \`latest_updated_at\`
+          FROM \`featured_colleges\`
+         GROUP BY \`college_slug\`
+      ) AS latest
+        ON latest.\`college_slug\` = featured.\`college_slug\`
+       AND latest.\`latest_updated_at\` = featured.\`updated_at\`
+      WHERE featured.\`is_active\` = 1
+      ORDER BY featured.\`display_order\` ASC`),
     rows("trusted_partners", "WHERE `is_active` = 1 ORDER BY `display_order` ASC"),
     rows("lead_form_settings", "LIMIT 1"),
     rows("feature_toggles"),
