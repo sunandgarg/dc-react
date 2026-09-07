@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Star, MapPin, ArrowRight, GraduationCap, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useDbColleges, useFeaturedCollegeCards } from "@/hooks/useCollegesData";
+import { useFeaturedCollegeCards } from "@/hooks/useCollegesData";
 import { useFeaturedColleges } from "@/hooks/useFeaturedColleges";
 import { useCarouselNav, CarouselControls } from "@/components/CarouselControls";
 import { useEffect, useRef, useState } from "react";
@@ -13,25 +13,13 @@ import { displayRating } from "@/lib/ratings";
 export function TopRankedColleges() {
   const { data: featuredSlugs } = useFeaturedColleges();
   const { data: featuredColleges, isLoading: featuredLoading } = useFeaturedCollegeCards(featuredSlugs ?? []);
-  const { data: allColleges, isLoading: fallbackLoading } = useDbColleges();
   const { ref: scrollRef, pages, active, canLeft, canRight, recompute, scrollByDir, goToPage } = useCarouselNav();
   const [paused, setPaused] = useState(false);
   const pausedRef = useRef(paused);
   pausedRef.current = paused;
 
-  const colleges = (() => {
-    if (featuredColleges?.length) return featuredColleges.slice(0, 8);
-    if (!allColleges?.length) return [];
-    const list = [...allColleges].sort((a, b) => b.rating - a.rating);
-    const seen = new Set<string>();
-    return list.filter((c: any) => {
-      if (seen.has(c.slug)) return false;
-      seen.add(c.slug);
-      return true;
-    }).slice(0, 8);
-  })();
-
-  const isLoading = Boolean((featuredSlugs?.length ? featuredLoading : false) || fallbackLoading);
+  const colleges = featuredColleges?.slice(0, 8) ?? [];
+  const isLoading = Boolean(featuredSlugs?.length && featuredLoading);
 
   // Autoplay: advance every 9s, wrap to start at the end. Pauses on hover/focus.
   useEffect(() => {

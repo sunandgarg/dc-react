@@ -393,18 +393,21 @@ const storage = {
         return this.upload(path, body, { ...options, upsert: true });
       },
       async list(prefix = "", options: { limit?: number; offset?: number; sortBy?: { column?: string; order?: string } } = {}) {
-        return requestJson(`${resolvedApiUrl}/storage/v1/object/list/${bucketPath}`, { method: "POST", body: JSON.stringify({ prefix, limit: options.limit || 100, offset: options.offset || 0, sortBy: options.sortBy }) });
+        const headers = await authorizedHeaders({ "content-type": "application/json" });
+        return requestJson(`${resolvedApiUrl}/storage/v1/object/list/${bucketPath}`, { method: "POST", headers, body: JSON.stringify({ prefix, limit: options.limit || 100, offset: options.offset || 0, sortBy: options.sortBy }) });
       },
       async remove(paths: string[]) {
         const allowed = await requestProtectedAction({ kind: "delete", label: `${paths.length} stored ${paths.length === 1 ? "file" : "files"}`, count: paths.length });
         if (!allowed) return { data: null, error: makeError({ code: "ACTION_CANCELLED", message: "Deletion was cancelled or requires administrator access" }) };
-        return requestJson(`${resolvedApiUrl}/storage/v1/object/${bucketPath}`, { method: "DELETE", body: JSON.stringify({ prefixes: paths }) });
+        const headers = await authorizedHeaders({ "content-type": "application/json" });
+        return requestJson(`${resolvedApiUrl}/storage/v1/object/${bucketPath}`, { method: "DELETE", headers, body: JSON.stringify({ prefixes: paths }) });
       },
       getPublicUrl(path: string) {
         return { data: { publicUrl: `${mediaBaseUrl}/${bucketPath}/${encodePath(path)}` } };
       },
       async createSignedUrl(path: string, expiresIn: number) {
-        return requestJson(`${resolvedApiUrl}/storage/v1/object/sign/${bucketPath}/${encodePath(path)}`, { method: "POST", body: JSON.stringify({ expiresIn }) });
+        const headers = await authorizedHeaders({ "content-type": "application/json" });
+        return requestJson(`${resolvedApiUrl}/storage/v1/object/sign/${bucketPath}/${encodePath(path)}`, { method: "POST", headers, body: JSON.stringify({ expiresIn }) });
       },
       async download(path: string) {
         const allowed = await requestProtectedAction({ kind: "download", label: path.split("/").pop() || "this file" });

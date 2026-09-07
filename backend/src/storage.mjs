@@ -1,5 +1,6 @@
 import { resolveNativeIdentity } from "./auth.mjs";
 import { prisma } from "./db.mjs";
+import { CONTENT_EDITOR_RESOURCES } from "./editor-access.mjs";
 import {
   DeleteObjectsCommand,
   GetObjectCommand,
@@ -100,6 +101,31 @@ async function isAdmin(userId) {
   return rows.length > 0;
 }
 
+export function hasWebsiteMediaPermission(rows = []) {
+  return rows.some((row) => {
+    const resource = String(row.resource || row.module || "");
+    return CONTENT_EDITOR_RESOURCES.has(resource)
+      && Boolean(row.allow)
+      && (Boolean(row.can_create) || Boolean(row.can_edit));
+  });
+}
+
+async function canManageWebsiteMedia(userId) {
+  const contentRole = await prisma.$queryRawUnsafe(
+    "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content' LIMIT 1",
+    userId,
+  );
+  if (contentRole.length) return true;
+  const permissions = await prisma.$queryRawUnsafe(
+    `SELECT \`resource\`,\`module\`,\`allow\`,\`can_create\`,\`can_edit\`
+       FROM \`user_permissions\`
+      WHERE \`user_id\` = ? AND \`allow\` = 1
+        AND (\`can_create\` = 1 OR \`can_edit\` = 1)`,
+    userId,
+  );
+  return hasWebsiteMediaPermission(permissions);
+}
+
 function routeDetails(pathname) {
   const parts = decodeURIComponent(pathname).split("/").filter(Boolean);
   const modifier = ["public", "list", "sign"].includes(parts[3]) ? parts[3] : null;
@@ -137,6 +163,12 @@ async function authorizeStorage(request, route) {
   }
   const isUpload = ["POST", "PUT"].includes(request.method) && route.modifier === null;
   const contentType = String(request.headers.get("content-type") || "").split(";", 1)[0].trim().toLowerCase();
+  if (route.bucket === ADMIN_UPLOAD_BUCKET && await canManageWebsiteMedia(identity.id)) {
+    if (isUpload && !allowedUploadTypes.has(contentType)) {
+      throw Object.assign(new Error("This file type is not allowed for website media"), { status: 415, code: "STORAGE_TYPE_NOT_ALLOWED" });
+    }
+    if (isUpload || (request.method === "POST" && ["list", "sign"].includes(route.modifier))) return;
+  }
   if (route.bucket === USER_DOCUMENT_BUCKET && ownsEveryPath) {
     if (!isUpload || userDocumentTypes.has(contentType)) return;
     throw Object.assign(new Error("This file type is not allowed for user documents"), { status: 415, code: "STORAGE_TYPE_NOT_ALLOWED" });
@@ -258,4 +290,4 @@ export async function handleStorage(request) {
   return s3Storage(request, route, config);
 }
 
-export const storagePolicyInternals = { checkedBody, ownsPath, routeDetails };
+export const storagePolicyInternals = { checkedBody, hasWebsiteMediaPermission, ownsPath, routeDetails };

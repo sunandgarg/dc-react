@@ -46,9 +46,9 @@ async function proxyToApi(request) {
 
 function edgeCacheTtl(request, pathname) {
   if (request.method !== "GET" || request.headers.has("authorization")) return 0;
-  if (pathname.startsWith("/storage/v1/object/public/")) return 60 * 60;
-  if (pathname === "/v1/functions/bootstrap") return 60;
-  if (pathname.startsWith("/v1/rest/")) return 60;
+  if (pathname.startsWith("/storage/v1/object/public/")) return 30 * 24 * 60 * 60;
+  if (pathname === "/v1/functions/bootstrap") return 5 * 60;
+  if (pathname.startsWith("/v1/rest/")) return 5 * 60;
   if (/^\/sitemap(?:-index|-\d+)?\.xml$/.test(pathname) || pathname.startsWith("/sitemap-files/")) return 300;
   return 0;
 }

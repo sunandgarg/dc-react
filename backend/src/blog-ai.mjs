@@ -977,7 +977,7 @@ export async function handleAiGenerate(request) {
   if (!schemaMetadata[table] || !["colleges", "courses", "exams", "articles", "scholarships", "career_profiles"].includes(table)) throw new Error("Unsupported entity type");
   const count = Math.min(20, Math.max(1, Number(body.count || body.names?.length || 1)));
   const fields = Object.entries(schemaMetadata[table].fields).filter(([name, meta]) => !["id", "created_at", "updated_at", "short_id"].includes(name) && !meta.ignored).map(([name, meta]) => `${name}:${meta.type}${meta.nullable ? "?" : ""}`);
-  const prompt = `Generate ${count} production-ready ${table} records for DekhoCampus. Topic: ${body.topic || ""}. Exact requested names: ${JSON.stringify(body.names || [])}. Use official-source-first, conservative facts; omit uncertain values. Return {items:[...]}. Each item must use this schema: ${fields.join(", ")}. JSON fields must be arrays or objects, booleans must be booleans, slugs lowercase-hyphen. Articles must be Draft and contain original HTML without competitor credits.`;
+  const prompt = `Generate ${count} production-ready ${table} records for DekhoCampus. Topic: ${body.topic || ""}. Exact requested names: ${JSON.stringify(body.names || [])}. Use official-source-first, conservative facts; omit uncertain values. Return {items:[...]}. Each item must use this schema: ${fields.join(", ")}. JSON fields must be arrays or objects, booleans must be booleans, slugs lowercase-hyphen. Articles must be Published and contain original HTML without competitor credits.`;
   const generated = table === "articles"
     ? await blogTextJson(prompt, "blog-studio")
     : { ...(await geminiJson(prompt, "admin-ai-generate")), provider: "gemini" };
@@ -987,7 +987,7 @@ export async function handleAiGenerate(request) {
   for (const raw of rawItems) {
     const item = { ...raw };
     if (schemaMetadata[table].fields.slug) item.slug = slugify(item.slug || item.name || item.title);
-    if (table === "articles") { item.status = "Draft"; item.content = stripCompetitorCredits(item.content || item.content_html); delete item.content_html; }
+    if (table === "articles") { item.status = "Published"; item.is_active = true; item.content = stripCompetitorCredits(item.content || item.content_html); delete item.content_html; }
     const existing = item.slug ? await prisma.$queryRawUnsafe(`SELECT 1 FROM \`${table}\` WHERE \`slug\` = ? LIMIT 1`, item.slug) : [];
     items.push({ ...item, _action: existing.length ? "upsert" : "insert", _key: item.slug || item.name || item.title });
   }
@@ -1015,7 +1015,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
   if (findDuplicateArticleTitle(draft, existing)) return null;
   const article = await prisma.$transaction(async (tx) => {
     const created = await tx.articles.create({ data: {
-      id: randomUUID(), status: settings.human_review_required ? "Draft" : settings.publish_status,
+      id: randomUUID(), status: "Published",
       title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: "DekhoCampus Editorial", featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: true, data_source_urls: generated.research_sources, data_clean_state: "not_checked",
     } });
     if (draft.faqs.length) {
@@ -1189,7 +1189,7 @@ export async function runBlogAgent(body = {}) {
     } else {
       await prisma.blog_auto_agent_settings.update({ where: { id: "default" }, data: { interval_minutes: interval, daily_post_cap: dailyCap, posts_per_run: Math.min(MAX_POSTS_PER_RUN, settings.posts_per_run), last_run_at: new Date(), next_run_at: nextRun } });
     }
-    await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { status: "completed", progress: 100, current_step: "Completed", completed_steps: topics.length * 2 + 1, finished_at: new Date(), created_article_ids: ids, message: `Created ${ids.length} draft article(s)` } });
+    await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { status: "completed", progress: 100, current_step: "Completed", completed_steps: topics.length * 2 + 1, finished_at: new Date(), created_article_ids: ids, message: `Published ${ids.length} article(s)` } });
     return { success: true, created_article_ids: ids, topics, next_run_at: nextRun, run_id: run.id, schedule_id: entityContext?.schedule.id || null };
   } catch (error) {
     if (error?.code === "BLOG_RUN_CONTROLLED") return { success: true, run_id: run.id, status: error.status, message: error.message };

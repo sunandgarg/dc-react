@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { storagePolicyInternals } from "../src/storage.mjs";
 
-const { checkedBody, ownsPath, routeDetails } = storagePolicyInternals;
+const { checkedBody, hasWebsiteMediaPermission, ownsPath, routeDetails } = storagePolicyInternals;
 const identity = { id: "12d8b889-5ab9-4f9d-8725-b73444f418d5" };
 
 test("parses public, list, and direct storage routes", () => {
@@ -23,6 +23,13 @@ test("scopes normal user uploads to their document and avatar folders", () => {
   assert.equal(ownsPath(identity, "admin-uploads", `user-avatars/${identity.id}/avatar.webp`), true);
   assert.equal(ownsPath(identity, "admin-uploads", "college-images/banner.webp"), false);
   assert.equal(ownsPath(identity, "ad-images", `${identity.id}/ad.webp`), false);
+});
+
+test("allows website media for editors with create or edit permission", () => {
+  assert.equal(hasWebsiteMediaPermission([{ resource: "colleges", allow: true, can_create: true, can_edit: false }]), true);
+  assert.equal(hasWebsiteMediaPermission([{ module: "articles", allow: true, can_create: false, can_edit: true }]), true);
+  assert.equal(hasWebsiteMediaPermission([{ resource: "colleges", allow: false, can_create: true, can_edit: true }]), false);
+  assert.equal(hasWebsiteMediaPermission([{ resource: "all_leads", allow: true, can_create: true, can_edit: true }]), false);
 });
 
 test("rejects unsafe upload types", async () => {

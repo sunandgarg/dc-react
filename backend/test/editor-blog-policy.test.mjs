@@ -54,6 +54,14 @@ test("non-publishing editors are forced into draft state by the server", () => {
   );
 });
 
+test("administrator AI article paths publish immediately", async () => {
+  const blogSource = await readFile(new URL("../src/blog-ai.mjs", import.meta.url), "utf8");
+  const studioSource = await readFile(new URL("../../src/components/admin/BlogStudioDialog.tsx", import.meta.url), "utf8");
+  assert.match(blogSource, /id: randomUUID\(\), status: "Published"/);
+  assert.match(blogSource, /item\.status = "Published"/);
+  assert.match(studioSource, /featured_image: draft\.featured_image, status: "Published", is_active: true/);
+});
+
 test("enforces conservative auto-blog cadence and volume limits", () => {
   assert.deepEqual(blogLimits, {
     MAX_POSTS_PER_RUN: 10,

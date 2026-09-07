@@ -305,7 +305,7 @@ export async function handleRequest(request) {
     if (functionMatch) {
       if (functionMatch[1] === "send-otp") return json(200, await sendPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
-      if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(), requestId, request, { "cache-control": "public, max-age=60" });
+      if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(), requestId, request, { "cache-control": "public, max-age=300, stale-while-revalidate=600" });
       if (functionMatch[1] === "save-lead") return json(200, await saveLead(request), requestId, request);
       if (functionMatch[1] === "lp-dispatch-lead") {
         const identity = await resolveIdentity(request);

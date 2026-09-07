@@ -4,7 +4,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { functionUrl } from "@/lib/backendMode";
 
-const BOOTSTRAP_TTL = 60_000; // match edge Cache-Control max-age
+const BOOTSTRAP_TTL = 5 * 60_000; // match the Cloudflare edge cache
 
 export interface BootstrapPayload {
   hero_banners?: unknown[];

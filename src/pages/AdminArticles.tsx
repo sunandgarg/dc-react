@@ -191,7 +191,7 @@ export default function AdminArticles() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search articles..." className="pl-10 rounded-xl h-10" />
         </div>
-        {canCreate && <Button onClick={() => setEditing({ ...emptyArticle })} className="rounded-xl gap-2">
+        {canCreate && <Button onClick={() => setEditing({ ...emptyArticle, status: canPublish ? "Published" : "Draft" })} className="rounded-xl gap-2">
           <Plus className="w-4 h-4" /> Add Article
         </Button>}
         {isAdmin && <BulkEditToggle
@@ -417,7 +417,7 @@ export default function AdminArticles() {
                   </Tabs>
                 ) : (
                   <div className="mt-3 flex flex-col gap-2 bg-muted/40 rounded-lg p-3">
-                    <p className="text-xs text-muted-foreground">💡 Save a draft to start tagging colleges, courses, exams, news, careers, scholarships and study material.</p>
+                    <p className="text-xs text-muted-foreground">Save the article to start tagging colleges, courses, exams, news, careers, scholarships and study material.</p>
                     <Button
                       type="button"
                       size="sm"
@@ -426,7 +426,7 @@ export default function AdminArticles() {
                       disabled={!editing.slug || !editing.title || saveArticle.isPending}
                       onClick={async () => {
                         if (!editing.slug || !editing.title) { toast.error("Add Title and Slug first"); return; }
-                        const payload = { ...editing, status: editing.status || "Draft" } as any;
+                        const payload = { ...editing, status: editing.status || (canPublish ? "Published" : "Draft") } as any;
                         const { data, error } = await backendClient
                           .from("articles")
                           .upsert(payload, { onConflict: "slug" })
@@ -434,10 +434,10 @@ export default function AdminArticles() {
                           .single();
                         if (error) { toast.error(error.message); return; }
                         setEditing({ ...(data as any) });
-                        toast.success("Draft saved - you can now tag entities");
+                        toast.success(`${canPublish ? "Article published" : "Draft submitted for review"} - you can now tag entities`);
                       }}
                     >
-                      {saveArticle.isPending ? "Saving…" : "Save Draft to Enable Tagging"}
+                      {saveArticle.isPending ? "Saving…" : `${canPublish ? "Publish" : "Save Draft"} to Enable Tagging`}
                     </Button>
                     <p className="text-[11px] text-muted-foreground">(Requires Title + Slug above)</p>
                   </div>

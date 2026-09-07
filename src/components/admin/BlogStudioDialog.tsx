@@ -74,7 +74,7 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
       const { data: article, error } = await (backendClient as any).from("articles").upsert({
         title: draft.title, slug: slugify(draft.slug), description: draft.description, content: draft.content_html,
         meta_title: draft.meta_title, meta_description: draft.meta_description, meta_keywords: draft.meta_keywords,
-        tags: draft.tags || [], featured_image: draft.featured_image, status: "Draft", is_active: true,
+        tags: draft.tags || [], featured_image: draft.featured_image, status: "Published", is_active: true,
       }, { onConflict: "slug" }).select("id").single();
       if (error) throw error;
       const articleSlug = slugify(draft.slug);
@@ -96,10 +96,10 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
           await (backendClient as any).from("article_links").upsert({ article_id: article.id, entity_type: suggestion.entity_type, entity_slug: suggestion.entity_slug }, { onConflict: "article_id,entity_type,entity_slug" });
         }
       }
-      toast.success("Editorial draft, cover choice and selected links saved");
+      toast.success("Article, cover choice and selected links published");
       setOpen(false); setDraft(null); onSaved?.();
     } catch (error: any) {
-      toast.error(error.message || "Could not save blog draft");
+      toast.error(error.message || "Could not publish the article");
     } finally { setBusy(false); }
   };
 
@@ -125,11 +125,11 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
           {imageMode === "template" && <p className="mt-2 text-xs text-muted-foreground">One of 24 built-in editorial backgrounds is selected automatically. The locked logo, panel and typography use no OpenAI image credits.</p>}
           {imageMode === "generated" && <p className="mt-2 text-xs text-muted-foreground">OpenAI receives the supplied DekhoCampus cover as a style reference and changes only the illustrated background. Branding and typography are rendered locally and stay fixed.</p>}
         </div>
-        <p className="text-xs text-muted-foreground">Competitor research is used for trend awareness only. Every result is checked for duplicate coverage, includes dedicated FAQs, and is saved as Draft for editor review.</p>
+        <p className="text-xs text-muted-foreground">Competitor research is used for trend awareness only. Every result is checked for duplicate coverage, includes dedicated FAQs, and is published immediately.</p>
         <Button onClick={generate} disabled={busy} className="gap-2">{busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Research, write and generate branded cover</Button>
         {draft && <div className="grid lg:grid-cols-[1.2fr_.8fr] gap-4 border-t pt-4">
           <div className="space-y-3"><Input value={draft.title} onChange={event => setDraft({ ...draft, title: event.target.value })} /><Input value={draft.slug} onChange={event => setDraft({ ...draft, slug: event.target.value })} /><Textarea value={draft.description} onChange={event => setDraft({ ...draft, description: event.target.value })} rows={3} /><Textarea value={draft.content_html} onChange={event => setDraft({ ...draft, content_html: event.target.value })} rows={16} /><Textarea value={draft.meta_description} onChange={event => setDraft({ ...draft, meta_description: event.target.value })} rows={2} />{draft.faqs?.length ? <div className="rounded-lg border p-3"><Label>Generated FAQs ({draft.faqs.length})</Label><div className="mt-2 space-y-2">{draft.faqs.map((faq, index) => <div key={`${faq.question}-${index}`} className="text-sm"><p className="font-medium">{faq.question}</p><p className="text-muted-foreground">{faq.answer}</p></div>)}</div></div> : null}</div>
-          <div className="space-y-3">{draft.featured_image ? <div className="rounded-xl overflow-hidden border bg-muted"><img alt="Editorial cover" src={draft.featured_image} className="w-full aspect-video object-cover" loading="lazy" /><div className="p-3 text-xs text-muted-foreground flex gap-2"><ImageIcon className="w-4 h-4" /> Web-optimised editorial cover</div></div> : <div className="rounded-xl border bg-muted p-8 text-center text-sm text-muted-foreground">No cover selected</div>}<Label>Suggested entity links</Label><div className="flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div><Button onClick={save} disabled={busy} className="w-full">Save as Draft with image and links</Button></div>
+          <div className="space-y-3">{draft.featured_image ? <div className="rounded-xl overflow-hidden border bg-muted"><img alt="Editorial cover" src={draft.featured_image} className="w-full aspect-video object-cover" loading="lazy" /><div className="p-3 text-xs text-muted-foreground flex gap-2"><ImageIcon className="w-4 h-4" /> Web-optimised editorial cover</div></div> : <div className="rounded-xl border bg-muted p-8 text-center text-sm text-muted-foreground">No cover selected</div>}<Label>Suggested entity links</Label><div className="flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div><Button onClick={save} disabled={busy} className="w-full">Publish with image and links</Button></div>
         </div>}
       </div>
     </DialogContent></Dialog>
