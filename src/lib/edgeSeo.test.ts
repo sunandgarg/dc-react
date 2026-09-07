@@ -39,7 +39,7 @@ describe("Cloudflare edge SEO", () => {
       author: "DekhoCampus Editorial",
       created_at: "2026-09-07T00:00:00.000Z",
     }, url);
-    const output = applyEdgeSeo('<html><head><title>Home</title></head><body><div id="root"></div></body></html>', metadata);
+    const output = applyEdgeSeo('<html><head><title>Home</title></head><body><div id="root"><div id="dc-first-paint-shell"></div></div></body></html>', metadata);
     expect(output).toContain('"@type":"NewsArticle"');
     expect(output).toContain("What changed");
     expect(output).toContain("Useful details.");

@@ -191,7 +191,7 @@ export function applyEdgeSeo(html, metadata) {
     output = output.replace(/<\/head>/i, `    <script type="application/ld+json" data-dc-edge-schema>${json}</script>\n  </head>`);
   }
   if (metadata.prerenderHtml) {
-    output = output.replace(/<div\s+id=["']root["']\s*><\/div>/i, `<div id="root">${metadata.prerenderHtml}</div>`);
+    output = output.replace(/(<div\s+id=["']root["']\s*>)/i, `$1${metadata.prerenderHtml}`);
   }
   return output;
 }
