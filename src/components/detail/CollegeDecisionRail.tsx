@@ -4,6 +4,7 @@ import { ArrowRight, Download, Star, Play } from "lucide-react";
 import { ApplyButton } from "@/components/ApplyButton";
 import { YouTubeVideoButton } from "@/components/YouTubeVideoButton";
 import { IITAlumniBadge } from "@/components/IITAlumniBadge";
+import { displayRating } from "@/lib/ratings";
 
 function ytId(u?: string) {
   if (!u) return null;
@@ -128,12 +129,10 @@ export function CollegeDecisionRail({ college }: Props) {
             </p>
           </div>
 
-          {college.rating ? (
-            <div className="flex items-center gap-2 text-blue-600 text-xs font-bold">
-              <Star className="w-4 h-4 fill-current" />
-              Verified Review Score: {college.rating} / 5.0
-            </div>
-          ) : null}
+          <div className="flex items-center gap-2 text-blue-600 text-xs font-bold">
+            <Star className="w-4 h-4 fill-current" />
+            College Rating: {displayRating(college.rating)} / 5.0
+          </div>
         </div>
       </div>
 

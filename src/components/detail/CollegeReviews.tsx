@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
+import { STUDENT_RATING_FALLBACK } from "@/lib/ratings";
 
 interface Props {
   collegeSlug: string;
@@ -31,7 +32,7 @@ interface Review {
   status?: string;
 }
 
-export function CollegeReviews({ collegeSlug, collegeName, fallbackRating = 0, fallbackReviewsCount = 0 }: Props) {
+export function CollegeReviews({ collegeSlug, collegeName, fallbackRating = STUDENT_RATING_FALLBACK, fallbackReviewsCount = 0 }: Props) {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);

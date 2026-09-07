@@ -36,6 +36,7 @@ export function useDbArticles() {
         .from("articles")
         .select("id,status,title,slug,description,vertical,category,author,featured_image,views,tags,is_active,featured_rank,created_at,updated_at")
         .eq("is_active", true)
+        .eq("status", "Published")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as DbArticle[];
@@ -103,6 +104,8 @@ export function useDbArticle(slug: string | undefined) {
         .from("articles")
         .select("*")
         .eq("slug", slug!)
+        .eq("is_active", true)
+        .eq("status", "Published")
         .maybeSingle();
       if (error) throw error;
       if (data) return data as DbArticle;
@@ -115,6 +118,8 @@ export function useDbArticle(slug: string | undefined) {
         .from("articles")
         .select("*")
         .in("slug", legacyCandidates)
+        .eq("is_active", true)
+        .eq("status", "Published")
         .limit(1);
       if (legacyError) throw legacyError;
       return (legacyRows?.[0] || null) as DbArticle | null;

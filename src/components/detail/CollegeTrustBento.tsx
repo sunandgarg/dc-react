@@ -1,4 +1,5 @@
 import { Award, TrendingUp, Wallet, Star } from "lucide-react";
+import { displayRating, STUDENT_RATING_FALLBACK } from "@/lib/ratings";
 
 interface Props {
   college: any;
@@ -13,7 +14,7 @@ export function CollegeTrustBento({ college }: Props) {
     {
       icon: Award,
       label: college.nirf_rank ? "NIRF Rank" : "Rating",
-      value: college.nirf_rank ? `#${college.nirf_rank}` : `${college.rating ?? "-"}/5`,
+      value: college.nirf_rank ? `#${college.nirf_rank}` : `${displayRating(college.rating)}/5`,
     },
     {
       icon: TrendingUp,
@@ -28,7 +29,7 @@ export function CollegeTrustBento({ college }: Props) {
     {
       icon: Star,
       label: "Student Rating",
-      value: `${college.rating ?? "-"}/5`,
+      value: `${displayRating((college as any).student_rating, STUDENT_RATING_FALLBACK)}/5`,
     },
   ];
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyEdgeSeo, edgeSeoFor } from "../../public/edge-seo.js";
+import { applyEdgeSeo, articleEdgeSeo, edgeSeoFor } from "../../public/edge-seo.js";
 
 describe("Cloudflare edge SEO", () => {
   it("serves self-canonical metadata for an indexable college filter", () => {
@@ -28,5 +28,21 @@ describe("Cloudflare edge SEO", () => {
     expect(output).toContain("Admission Update 2026 | Education News | DekhoCampus");
     expect(output).toContain('rel="canonical" href="https://dekhocampus.com/news/admission-update-2026"');
     expect(output).not.toContain("<title>Home</title>");
+  });
+
+  it("prerenders published article content and NewsArticle schema", () => {
+    const url = new URL("https://dekhocampus.com/news/neet-update-2026");
+    const metadata = articleEdgeSeo({
+      title: "NEET Update 2026",
+      description: "The latest verified update.",
+      content: "<h2>What changed</h2><p>Useful details.</p><script>alert(1)</script>",
+      author: "DekhoCampus Editorial",
+      created_at: "2026-09-07T00:00:00.000Z",
+    }, url);
+    const output = applyEdgeSeo('<html><head><title>Home</title></head><body><div id="root"></div></body></html>', metadata);
+    expect(output).toContain('"@type":"NewsArticle"');
+    expect(output).toContain("What changed");
+    expect(output).toContain("Useful details.");
+    expect(output).not.toContain("alert(1)");
   });
 });

@@ -1,4 +1,4 @@
-import { applyEdgeSeo, edgeSeoFor } from "./edge-seo.js";
+import { applyEdgeSeo, articleEdgeSeo, edgeSeoFor } from "./edge-seo.js";
 
 const API_ORIGIN = "https://aws-origin.dekhocampus.com";
 
@@ -86,7 +86,27 @@ async function serveAsset(request, env) {
   if (request.method === "GET" && response.ok && response.headers.get("content-type")?.includes("text/html")) {
     const headers = new Headers(response.headers);
     headers.delete("content-length");
-    response = new Response(applyEdgeSeo(await response.text(), edgeSeoFor(url)), {
+    let metadata = edgeSeoFor(url);
+    const articleMatch = url.pathname.match(/^\/news\/([^/]+)\/?$/);
+    if (articleMatch && articleMatch[1] !== "tag") {
+      const query = new URLSearchParams({
+        select: "status,title,slug,description,content,author,featured_image,meta_title,meta_description,created_at,updated_at",
+        slug: `eq.${decodeURIComponent(articleMatch[1])}`,
+        status: "eq.Published",
+        is_active: "eq.true",
+        limit: "1",
+      });
+      const articleResponse = await fetch(`${API_ORIGIN}/v1/rest/articles?${query}`, {
+        headers: { accept: "application/json" },
+        cf: { cacheEverything: true, cacheTtl: 300 },
+      });
+      const payload = articleResponse.ok ? await articleResponse.json().catch(() => []) : [];
+      const article = Array.isArray(payload) ? payload[0] : payload?.data?.[0];
+      metadata = article
+        ? articleEdgeSeo(article, url)
+        : { ...metadata, indexable: false };
+    }
+    response = new Response(applyEdgeSeo(await response.text(), metadata), {
       status: response.status,
       statusText: response.statusText,
       headers,

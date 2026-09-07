@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react";
+import { displayRating } from "@/lib/ratings";
 
 interface Props {
   college: any;
@@ -17,7 +18,7 @@ export function CollegeAIInsight({ college }: Props) {
 
   const fallback = (
     <>
-      {name} is rated <span className="font-bold text-slate-900">{college.rating ?? "-"}/5</span>{" "}
+      {name} is rated <span className="font-bold text-slate-900">{displayRating(college.rating)}/5</span>{" "}
       by students. With{" "}
       <span className="font-bold text-slate-900">{college.courses_count ?? "-"}+ courses</span>{" "}
       and an average placement of{" "}

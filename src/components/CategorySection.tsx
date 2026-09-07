@@ -10,6 +10,7 @@ import { useHomepageCategoryCourses } from "@/hooks/useCoursesData";
 import { useHomepageCategoryExams } from "@/hooks/useExamsData";
 
 import { useStreamCategories } from "@/hooks/useStreamCategories";
+import { displayRating } from "@/lib/ratings";
 
 const DEFAULT_CATEGORY = "Engineering";
 
@@ -180,7 +181,7 @@ export function CategorySection() {
                   </div>
                   <div className="text-right flex-shrink-0">
                     <div className="flex items-center gap-1 text-sm font-bold text-foreground">
-                      <Star className="w-3.5 h-3.5 fill-primary text-primary" /> {college.rating || "-"}
+                      <Star className="w-3.5 h-3.5 fill-primary text-primary" /> {displayRating(college.rating)}
                     </div>
                   </div>
                 </Link>

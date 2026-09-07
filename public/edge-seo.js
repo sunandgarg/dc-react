@@ -127,6 +127,42 @@ function replaceOrInsert(html, pattern, replacement) {
   return html.replace(/<\/head>/i, `    ${replacement}\n  </head>`);
 }
 
+function safeArticleHtml(value) {
+  return String(value || "")
+    .replace(/<(script|style|iframe|object|embed|form)\b[\s\S]*?<\/\1>/gi, "")
+    .replace(/\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/(?:javascript|data):/gi, "");
+}
+
+export function articleEdgeSeo(article, url) {
+  const canonical = `${SITE_URL}${cleanPath(url.pathname)}`;
+  const title = String(article.meta_title || article.title || "Education News").trim();
+  const description = String(article.meta_description || article.description || "").trim();
+  const image = String(article.featured_image || "").trim();
+  const publishedAt = article.published_at || article.created_at;
+  const modifiedAt = article.updated_at || publishedAt;
+  return {
+    canonical,
+    description,
+    image,
+    indexable: true,
+    title: title.includes("DekhoCampus") ? title : `${title} | DekhoCampus`,
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      headline: String(article.title || title),
+      description,
+      ...(image ? { image: [image] } : {}),
+      ...(publishedAt ? { datePublished: publishedAt } : {}),
+      ...(modifiedAt ? { dateModified: modifiedAt } : {}),
+      author: { "@type": "Organization", name: article.author || "DekhoCampus Editorial", url: `${SITE_URL}/about-us` },
+      publisher: { "@type": "Organization", name: "DekhoCampus", url: SITE_URL },
+      mainEntityOfPage: canonical,
+    },
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827"><h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}${safeArticleHtml(article.content)}</article>`,
+  };
+}
+
 export function applyEdgeSeo(html, metadata) {
   const title = escapeHtml(metadata.title);
   const description = escapeHtml(metadata.description);
@@ -145,5 +181,17 @@ export function applyEdgeSeo(html, metadata) {
   output = replaceOrInsert(output, /<meta\s+name=["']twitter:title["'][^>]*>/i, `<meta name="twitter:title" content="${title}">`);
   output = replaceOrInsert(output, /<meta\s+name=["']twitter:description["'][^>]*>/i, `<meta name="twitter:description" content="${description}">`);
   output = replaceOrInsert(output, /<meta\s+name=["']twitter:url["'][^>]*>/i, `<meta name="twitter:url" content="${canonical}">`);
+  if (metadata.image) {
+    const image = escapeHtml(metadata.image);
+    output = replaceOrInsert(output, /<meta\s+property=["']og:image["'][^>]*>/i, `<meta property="og:image" content="${image}">`);
+    output = replaceOrInsert(output, /<meta\s+name=["']twitter:image["'][^>]*>/i, `<meta name="twitter:image" content="${image}">`);
+  }
+  if (metadata.structuredData) {
+    const json = JSON.stringify(metadata.structuredData).replace(/</g, "\\u003c");
+    output = output.replace(/<\/head>/i, `    <script type="application/ld+json" data-dc-edge-schema>${json}</script>\n  </head>`);
+  }
+  if (metadata.prerenderHtml) {
+    output = output.replace(/<div\s+id=["']root["']\s*><\/div>/i, `<div id="root">${metadata.prerenderHtml}</div>`);
+  }
   return output;
 }

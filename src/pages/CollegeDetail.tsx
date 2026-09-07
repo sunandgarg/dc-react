@@ -48,6 +48,7 @@ import { RichText } from "@/components/detail/RichText";
 import { PageSummary } from "@/components/detail/PageSummary";
 import { absoluteSiteUrl } from "@/lib/constant";
 import { formatFeePeriod, formatFeeRange, formatIndianFee, groupCollegeFees, groupCollegeFeesByLevel, inferCourseSpecialization } from "@/lib/courseFeeGroups";
+import { displayRating, STUDENT_RATING_FALLBACK } from "@/lib/ratings";
 
 const COLLEGE_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "College Info" },
@@ -295,7 +296,7 @@ export default function CollegeDetail() {
             {/* Quick Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { icon: Star, label: "Rating", value: `${college.rating}/5`, color: "text-golden" },
+                { icon: Star, label: "Rating", value: `${displayRating(college.rating)}/5`, color: "text-golden" },
                 { icon: GraduationCap, label: "Courses", value: `${college.courses_count}+`, color: "text-primary" },
                 { icon: TrendingUp, label: "Avg Package", value: college.placement, color: "text-success" },
                 { icon: Building, label: "Type", value: college.type, color: "text-accent" },
@@ -698,7 +699,7 @@ export default function CollegeDetail() {
             <CollegeReviews
               collegeSlug={college.slug}
               collegeName={college.short_name || college.name}
-              fallbackRating={college.rating}
+              fallbackRating={STUDENT_RATING_FALLBACK}
               fallbackReviewsCount={college.reviews}
             />
 

@@ -9,6 +9,7 @@ import { CompareToggleButton } from "@/components/CompareToggleButton";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { PriorityBadge } from "@/components/PriorityBadge";
 import { ApplyButton } from "@/components/ApplyButton";
+import { displayRating } from "@/lib/ratings";
 
 interface CollegeCardProps {
   college: DbCollege;
@@ -16,6 +17,7 @@ interface CollegeCardProps {
 }
 
 function CollegeCardComponent({ college, index }: CollegeCardProps) {
+  const rating = displayRating(college.rating);
   return (
     <div className="college-directory-card">
       <article className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
@@ -80,13 +82,13 @@ function CollegeCardComponent({ college, index }: CollegeCardProps) {
                 <Star
                   key={i}
                   className={`w-3.5 h-3.5 ${
-                    i < Math.floor(college.rating)
+                    i < Math.floor(rating)
                       ? "fill-amber-400 text-amber-400"
                       : "text-muted-foreground/30"
                   }`}
                 />
               ))}
-              <span className="text-xs text-muted-foreground ml-1">{college.rating}/5</span>
+              <span className="text-xs text-muted-foreground ml-1">{rating}/5</span>
             </div>
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <MapPin className="w-3 h-3" />

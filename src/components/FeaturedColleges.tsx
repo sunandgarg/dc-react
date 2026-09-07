@@ -12,6 +12,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { ApplyButton } from "@/components/ApplyButton";
+import { displayRating } from "@/lib/ratings";
 
 function formatAdmissionDeadline(value?: string | null) {
   if (!value) return "";
@@ -114,9 +115,9 @@ export function FeaturedColleges() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(college.rating) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+                        <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(displayRating(college.rating)) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
                       ))}
-                      <span className="text-xs text-muted-foreground ml-1">{college.rating}/5</span>
+                      <span className="text-xs text-muted-foreground ml-1">{displayRating(college.rating)}/5</span>
                     </div>
                     <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin className="w-3 h-3" />
