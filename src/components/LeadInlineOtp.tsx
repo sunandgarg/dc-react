@@ -41,6 +41,7 @@ export function useInlineOtp(phone: string, formKey: string) {
   const [sending, setSending] = useState(false);
   const [code, setCode] = useState("");
   const [verified, setVerified] = useState(false);
+  const [verificationToken, setVerificationToken] = useState("");
   const [cooldown, setCooldown] = useState(0);
   const [missing, setMissing] = useState(false);
   const cooldownRef = useRef<number | null>(null);
@@ -67,6 +68,7 @@ export function useInlineOtp(phone: string, formKey: string) {
     setRequestedPhone("");
     setCode("");
     setVerified(false);
+    setVerificationToken("");
     setMissing(false);
   };
 
@@ -111,6 +113,7 @@ export function useInlineOtp(phone: string, formKey: string) {
     setRequestedPhone(phoneAtSend);
     setCode("");
     setVerified(false);
+    setVerificationToken("");
     tickCooldown();
     setSending(true);
     try {
@@ -163,7 +166,8 @@ export function useInlineOtp(phone: string, formKey: string) {
         }),
       });
       const body = await res.json().catch(() => ({}));
-      if (res.ok && body.verified) {
+      if (res.ok && body.verified && body.verification_token) {
+        setVerificationToken(String(body.verification_token));
         setVerified(true);
         clearMissing();
         toast.success("Mobile verified ✓");
@@ -257,5 +261,5 @@ export function useInlineOtp(phone: string, formKey: string) {
   // don't break, but new code should use getOtpButton + verifyBlock.
   const block = verifyBlock;
 
-  return { block, getOtpButton, verifyBlock, verified, requested, markMissing, clearMissing, missing };
+  return { block, getOtpButton, verifyBlock, verified, verificationToken, requested, markMissing, clearMissing, missing };
 }

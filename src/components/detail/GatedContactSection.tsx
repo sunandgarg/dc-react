@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { useAuth } from "@/hooks/useAuth";
+import { safeEmbedUrl, safeHttpUrl } from "@/lib/safeExternalUrl";
 
 interface Contact { address: string; phone: string; email: string; website: string; map_embed: string; }
 const STORAGE_PREFIX = "contact_unlocked_";
@@ -25,6 +26,8 @@ export function GatedContactSection({ collegeSlug, collegeName }: { collegeSlug:
 
   useEffect(() => { if (user) setUnlocked(true); }, [user]);
   if (!c) return null;
+  const websiteUrl = safeHttpUrl(c.website);
+  const mapUrl = safeEmbedUrl(c.map_embed);
 
   const handleUnlock = () => {
     localStorage.setItem(STORAGE_PREFIX + collegeSlug, "1");
@@ -39,8 +42,8 @@ export function GatedContactSection({ collegeSlug, collegeName }: { collegeSlug:
         {c.address && <div className="flex gap-2 text-muted-foreground"><MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" /> {c.address}</div>}
         {c.phone && <div className="flex gap-2 text-muted-foreground"><Phone className="w-4 h-4 mt-0.5 flex-shrink-0" /> <a href={`tel:${c.phone}`} className="hover:text-primary">{c.phone}</a></div>}
         {c.email && <div className="flex gap-2 text-muted-foreground"><Mail className="w-4 h-4 mt-0.5 flex-shrink-0" /> <a href={`mailto:${c.email}`} className="hover:text-primary">{c.email}</a></div>}
-        {c.website && <div className="flex gap-2 text-muted-foreground"><Globe className="w-4 h-4 mt-0.5 flex-shrink-0" /> <a href={c.website} target="_blank" rel="noopener" className="hover:text-primary">{c.website}</a></div>}
-        {c.map_embed && <iframe src={c.map_embed} className="w-full h-64 rounded-xl border-0 mt-3" loading="lazy" />}
+        {websiteUrl && <div className="flex gap-2 text-muted-foreground"><Globe className="w-4 h-4 mt-0.5 flex-shrink-0" /> <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className="hover:text-primary">{c.website}</a></div>}
+        {mapUrl && <iframe title={`${collegeName || "College"} map`} src={mapUrl} className="w-full h-64 rounded-xl border-0 mt-3" loading="lazy" sandbox="allow-scripts allow-same-origin" referrerPolicy="strict-origin-when-cross-origin" />}
       </div>
 
       {!unlocked && (

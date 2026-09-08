@@ -10,6 +10,16 @@ const API_PREFIXES = [
   "/v1/",
 ];
 
+const CACHEABLE_PUBLIC_TABLES = new Set([
+  "article_categories", "article_links", "articles", "authors", "career_profiles",
+  "college_contacts", "college_facilities", "college_programs", "college_reviews", "colleges",
+  "course_fees", "course_specializations", "courses", "exams", "faqs", "featured_colleges",
+  "jobs", "legal_pages", "placement_records", "programs", "scholarships", "study_boards",
+  "study_chapters", "study_resources", "study_subjects", "study_toppers",
+]);
+
+const PUBLIC_STORAGE_PATH = /^\/storage\/v1\/object\/public\/(?:admin-uploads|ad-images|legacy-public-assets|study-material)(?:\/|$)/;
+
 function isApiRequest(pathname) {
   return pathname === "/health"
     || /^\/sitemap(?:-index|-\d+)?\.xml$/.test(pathname)
@@ -21,8 +31,11 @@ function withSecurityHeaders(response) {
   const headers = new Headers(response.headers);
   headers.set("strict-transport-security", "max-age=31536000; includeSubDomains; preload");
   headers.set("x-content-type-options", "nosniff");
+  headers.set("x-frame-options", "SAMEORIGIN");
   headers.set("referrer-policy", "strict-origin-when-cross-origin");
   headers.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
+  headers.set("cross-origin-opener-policy", "same-origin-allow-popups");
+  headers.set("content-security-policy", "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self' https:");
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
@@ -46,9 +59,10 @@ async function proxyToApi(request) {
 
 function edgeCacheTtl(request, pathname) {
   if (request.method !== "GET" || request.headers.has("authorization")) return 0;
-  if (pathname.startsWith("/storage/v1/object/public/")) return 30 * 24 * 60 * 60;
+  if (PUBLIC_STORAGE_PATH.test(pathname)) return 30 * 24 * 60 * 60;
   if (pathname === "/v1/functions/bootstrap") return 5 * 60;
-  if (pathname.startsWith("/v1/rest/")) return 5 * 60;
+  const restTable = pathname.match(/^\/v1\/rest\/([A-Za-z0-9_]+)$/)?.[1];
+  if (restTable && CACHEABLE_PUBLIC_TABLES.has(restTable)) return 5 * 60;
   if (/^\/sitemap(?:-index|-\d+)?\.xml$/.test(pathname) || pathname.startsWith("/sitemap-files/")) return 300;
   return 0;
 }

@@ -298,6 +298,7 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
         name: name.trim(), email: email.trim().toLowerCase(), phone,
         source: `exam_ad_${source}`, interested_exam_slug: slug,
         otp_verified: true,
+        otp_verification_token: result.verification_token,
       });
       try {
         const { error } = await (backendClient as any).from("landing_page_leads").insert({

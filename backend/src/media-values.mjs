@@ -3,7 +3,6 @@ const DEFAULT_BUCKETS = [
   "ad-images",
   "legacy-public-assets",
   "study-material",
-  "user-documents",
 ];
 
 function mediaBaseUrl() {

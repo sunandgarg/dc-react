@@ -144,15 +144,11 @@ export function useUploadDocument() {
         .upload(path, file);
       if (uploadError) throw uploadError;
 
-      const { data: urlData } = backendClient.storage
-        .from("user-documents")
-        .getPublicUrl(path);
-
       const { error: dbError } = await backendClient.from("user_documents").insert({
         user_id: user!.id,
         doc_type: docType,
         file_name: file.name,
-        file_url: urlData.publicUrl,
+        file_url: path,
         file_size: file.size,
       });
       if (dbError) throw dbError;
@@ -169,11 +165,10 @@ export function useDeleteDocument() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (doc: UserDocument) => {
-      // Extract path from URL
-      const urlParts = doc.file_url.split("/user-documents/");
-      if (urlParts[1]) {
-        await backendClient.storage.from("user-documents").remove([urlParts[1]]);
-      }
+      const objectPath = doc.file_url.includes("/user-documents/")
+        ? doc.file_url.split("/user-documents/")[1]
+        : doc.file_url.replace(/^user-documents\//, "");
+      if (objectPath) await backendClient.storage.from("user-documents").remove([objectPath]);
       const { error } = await backendClient.from("user_documents").delete().eq("id", doc.id);
       if (error) throw error;
     },

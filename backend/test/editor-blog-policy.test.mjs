@@ -5,7 +5,7 @@ import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
-import { accessTokenIsCurrent } from "../src/auth.mjs";
+import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
 test("recognizes only the restricted content editor phone", () => {
   assert.equal(isRestrictedEditorPhone("7428966263"), true);
@@ -20,6 +20,20 @@ test("rejects access tokens issued before a user's global session cutoff", () =>
   assert.equal(accessTokenIsCurrent(user, { iat: 1_788_000_000 }), false);
   assert.equal(accessTokenIsCurrent(user, { iat: 1_788_000_001 }), true);
   assert.equal(accessTokenIsCurrent({ user_metadata: { full_name: "Admin" } }, { iat: 1 }), true);
+});
+
+test("lead OTP proofs are signed, short-lived, and bound to one phone", () => {
+  const previous = process.env.AUTH_JWT_SECRET;
+  process.env.AUTH_JWT_SECRET = "test-only-auth-secret-that-is-at-least-32-characters";
+  try {
+    const token = authSecurityInternals.issueLeadOtpProof("+919876543210");
+    assert.equal(verifyLeadOtpProof(token, "+919876543210"), true);
+    assert.equal(verifyLeadOtpProof(token, "+919876543211"), false);
+    assert.equal(verifyLeadOtpProof(`${token}tampered`, "+919876543210"), false);
+  } finally {
+    if (previous === undefined) delete process.env.AUTH_JWT_SECRET;
+    else process.env.AUTH_JWT_SECRET = previous;
+  }
 });
 
 test("content role covers editorial resources without destructive access", () => {

@@ -32,16 +32,16 @@ export function SubjectNewsSection({ subjectSlug, subjectName, subjectId }: Prop
           .order("created_at", { ascending: false })
           .limit(40),
         subjectId
-          ? (backendClient as any)
-              .from("article_links")
-              .select("article_id, articles!inner(id,slug,title,description,featured_image,category,tags,created_at,author,is_active)")
-              .eq("entity_type", "study_subject")
-              .eq("entity_slug", subjectId)
+          ? (backendClient as any).from("article_links").select("article_id").eq("entity_type", "study_subject").eq("entity_slug", subjectId)
           : Promise.resolve({ data: [] as any[] }),
       ]);
-      const linked = ((linkRes as any).data || [])
-        .map((r: any) => r.articles)
-        .filter((a: any) => a && a.is_active);
+      const linkedIds = ((linkRes as any).data || []).map((row: any) => row.article_id).filter(Boolean);
+      const linkedRes = linkedIds.length
+        ? await backendClient.from("articles")
+            .select("id,slug,title,description,featured_image,category,tags,created_at,author")
+            .in("id", linkedIds).eq("status", "Published").eq("is_active", true)
+        : { data: [] as any[] };
+      const linked = (linkedRes.data as any[]) || [];
       const merged = [...((tagRes.data as any[]) || []), ...linked];
       const seen = new Set<string>();
       return merged.filter((a) => (seen.has(a.id) ? false : (seen.add(a.id), true)));

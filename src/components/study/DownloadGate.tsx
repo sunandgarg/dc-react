@@ -16,7 +16,7 @@ import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsent
 import { setLeadConsentPreference } from "@/lib/leadConsent";
 import { saveLeadPhase } from "@/lib/twoStepLead";
 
-const OTP_URL = functionUrl("study-otp");
+const OTP_URL = functionUrl("send-otp");
 
 // NOTE: Free-skip bypass intentionally removed. Every download MUST pass through OTP.
 // Do NOT reintroduce a "first one free" pattern - project rule.
@@ -37,7 +37,7 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", email: "", class: "", state: "", city: "" });
   const [otp, setOtp] = useState("");
-  const [otpToken, setOtpToken] = useState<string | null>(null);
+  const [otpVerificationToken, setOtpVerificationToken] = useState<string | null>(null);
   const [sentOtp, setSentOtp] = useState<string | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [consentAccepted, setConsentAccepted] = useState(true);
@@ -87,13 +87,12 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phone: form.phone, action: "send", channel: otpChannel }),
+        body: JSON.stringify({ phone: `+91${form.phone}`, action: "send", channel: otpChannel }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Failed to send OTP");
-      setOtpToken(json.token);
-      if (json.otp) setSentOtp(json.otp); // dev mode (no provider configured)
-      toast.success(json.sent ? "OTP sent to your mobile" : "OTP generated (dev mode)");
+      if (json.development_otp) setSentOtp(json.development_otp);
+      toast.success("OTP sent to your mobile");
       setResendCooldown(45);
       setStep("otp");
     } catch (err: any) {
@@ -117,7 +116,7 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phone: form.phone, action: "resend", channel: otpChannel }),
+        body: JSON.stringify({ phone: `+91${form.phone}`, action: "resend", channel: otpChannel }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Failed to resend OTP");
@@ -132,7 +131,7 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
 
   const changeNumber = () => {
     setOtp("");
-    setOtpToken(null);
+    setOtpVerificationToken(null);
     setSentOtp(null);
     setResendCooldown(0);
     setStep("identity");
@@ -141,7 +140,6 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
   const verifyIdentity = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.length !== 6) { toast.error("Enter 6-digit OTP"); return; }
-    if (!otpToken) { toast.error("Please request OTP again"); setStep("identity"); return; }
     setLoading(true);
     try {
       const res = await fetch(OTP_URL, {
@@ -149,10 +147,11 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phone: form.phone, otp, token: otpToken, action: "verify", channel: otpChannel }),
+        body: JSON.stringify({ phone: `+91${form.phone}`, otp, action: "verify", channel: otpChannel }),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.success) throw new Error(json.error || "Invalid OTP");
+      if (!res.ok || !json.success || !json.verification_token) throw new Error(json.error || "Invalid OTP");
+      setOtpVerificationToken(String(json.verification_token));
       const saved = await saveLeadPhase({
         phase: "identity",
         name: form.name,
@@ -160,6 +159,7 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         email: form.email,
         source,
         otp_verified: true,
+        otp_verification_token: json.verification_token,
         initial_query: meta ? JSON.stringify(meta) : `Downloaded: ${fileName}`,
         consent_terms_accepted: consentAccepted,
         consent_text: LEAD_CONSENT_TEXT,
@@ -195,6 +195,8 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         state: form.state,
         city: form.city,
         program_mode: "regular",
+        otp_verified: true,
+        otp_verification_token: otpVerificationToken,
       });
       savePrefillCookie({ name: form.name, phone: form.phone, email: form.email, state: form.state, city: form.city, className: form.class });
       toast.success("Verified! Starting download...");

@@ -86,7 +86,13 @@ jobs:
 
       - name: Validate and deploy infrastructure
         if: ${{ inputs.update_infrastructure }}
+        env:
+          BUDGET_EMAIL: ${{ inputs.budget_email }}
         run: |
+          if ! [[ "$BUDGET_EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
+            echo "budget_email must be a valid email address"
+            exit 1
+          fi
           aws cloudformation validate-template --template-body file://infra/aws/lightsail-production.yaml >/dev/null
           if aws cloudformation describe-stacks --stack-name "$STACK_NAME" >/dev/null 2>&1; then
             STACK_STATUS=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].StackStatus' --output text)
@@ -139,7 +145,7 @@ jobs:
             --capabilities CAPABILITY_NAMED_IAM \
             --no-fail-on-empty-changeset \
             --parameter-overrides \
-              BudgetEmail='${{ inputs.budget_email }}' \
+              BudgetEmail="$BUDGET_EMAIL" \
               RelationalDatabaseBlueprintId="$DB_BLUEPRINT_ID" \
               InstanceBundleId="$INSTANCE_BUNDLE_ID" \
               SshAllowedCidr="$RUNNER_IP/32" \

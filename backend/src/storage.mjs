@@ -14,6 +14,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 const DEFAULT_MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 const USER_DOCUMENT_BUCKET = "user-documents";
 const ADMIN_UPLOAD_BUCKET = "admin-uploads";
+const PUBLIC_READ_BUCKETS = new Set(["admin-uploads", "ad-images", "legacy-public-assets", "study-material"]);
 const userAvatarTypes = new Set(["image/avif", "image/gif", "image/jpeg", "image/png", "image/webp"]);
 const userDocumentTypes = new Set([
   "application/msword",
@@ -31,7 +32,6 @@ const allowedUploadTypes = new Set([
   "image/gif",
   "image/jpeg",
   "image/png",
-  "image/svg+xml",
   "image/webp",
   "text/csv",
 ]);
@@ -74,7 +74,9 @@ export async function uploadStorageObject(bucket, objectPath, body, contentType,
     Key: key,
     Body: body,
     ContentType: contentType,
-    CacheControl: options.cacheControl || (String(contentType).startsWith("image/") ? "public,max-age=31536000,immutable" : "public,max-age=3600"),
+    CacheControl: options.cacheControl || (bucket === USER_DOCUMENT_BUCKET
+      ? "private,no-store"
+      : String(contentType).startsWith("image/") ? "public,max-age=31536000,immutable" : "public,max-age=3600"),
     ServerSideEncryption: "AES256",
   }));
   return { key: storageObjectKey(bucket, objectPath), publicUrl: publicMediaUrl(bucket, objectPath) };
@@ -128,7 +130,7 @@ async function canManageWebsiteMedia(userId) {
 
 function routeDetails(pathname) {
   const parts = decodeURIComponent(pathname).split("/").filter(Boolean);
-  const modifier = ["public", "list", "sign"].includes(parts[3]) ? parts[3] : null;
+  const modifier = ["public", "authenticated", "list", "sign"].includes(parts[3]) ? parts[3] : null;
   const bucketIndex = modifier ? 4 : 3;
   return {
     modifier,
@@ -279,15 +281,20 @@ export async function handleStorage(request) {
   const url = new URL(request.url);
   if (!url.pathname.startsWith("/storage/v1/")) return null;
   const decodedPath = decodeURIComponent(url.pathname);
-  const isObjectRoute = /^\/storage\/v1\/object\/(?:public\/|list\/|sign\/)?[A-Za-z0-9._-]+(?:\/.*)?$/.test(decodedPath);
+  const isObjectRoute = /^\/storage\/v1\/object\/(?:public\/|authenticated\/|list\/|sign\/)?[A-Za-z0-9._-]+(?:\/.*)?$/.test(decodedPath);
   if (!isObjectRoute || decodedPath.split("/").includes("..")) {
     throw Object.assign(new Error("Unsupported storage route"), { status: 404, code: "STORAGE_ROUTE_NOT_FOUND" });
   }
   const route = routeDetails(url.pathname);
-  const isPublicRead = ["GET", "HEAD"].includes(request.method) && url.pathname.startsWith("/storage/v1/object/public/");
+  if (route.modifier === "public" && !PUBLIC_READ_BUCKETS.has(route.bucket)) {
+    throw Object.assign(new Error("This storage bucket is private"), { status: 403, code: "STORAGE_BUCKET_PRIVATE" });
+  }
+  const isPublicRead = ["GET", "HEAD"].includes(request.method)
+    && route.modifier === "public"
+    && PUBLIC_READ_BUCKETS.has(route.bucket);
   if (!isPublicRead) await authorizeStorage(request, route);
   const config = storageConfig();
   return s3Storage(request, route, config);
 }
 
-export const storagePolicyInternals = { checkedBody, hasWebsiteMediaPermission, ownsPath, routeDetails };
+export const storagePolicyInternals = { checkedBody, hasWebsiteMediaPermission, ownsPath, routeDetails, PUBLIC_READ_BUCKETS };

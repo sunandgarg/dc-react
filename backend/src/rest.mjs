@@ -305,8 +305,14 @@ function representationBody(request, rows) {
   return safe[0];
 }
 
-async function handleGet(table, request, url) {
+async function handleGet(table, request, url, context) {
   const nodes = parseSelect(url.searchParams.get("select") || "*");
+  if (context.publicAccess && nodes.some((node) => node.kind === "relation")) {
+    const error = new Error("Nested relation reads require an authenticated administrator");
+    error.status = 403;
+    error.code = "PUBLIC_RELATION_NOT_ALLOWED";
+    throw error;
+  }
   const requestedFields = new Set(nodes.filter((node) => node.kind === "field").map((node) => node.field));
   const selectingAll = requestedFields.has("*") || requestedFields.size === 0;
   const hiddenRelationFields = selectingAll ? [] : relationSourceFields(table, nodes).filter((field) => !requestedFields.has(field));
@@ -441,7 +447,7 @@ async function handleDelete(table, request, url) {
 export async function handleRest(table, request, context = {}) {
   if (!tableNames.has(table)) return { status: 404, body: { code: "PGRST205", message: `Table ${table} is unavailable` } };
   const url = new URL(request.url);
-  if (["GET", "HEAD"].includes(request.method)) return handleGet(table, request, url);
+  if (["GET", "HEAD"].includes(request.method)) return handleGet(table, request, url, context);
   if (schemaMetadata[table].ignored) return { status: 405, body: { code: "25006", message: `Resource ${table} is read-only` } };
   let result;
   if (request.method === "POST") result = await handlePost(table, request, url, context);

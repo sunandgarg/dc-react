@@ -12,6 +12,7 @@ import { AuthorByline } from "@/components/AuthorByline";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { PageSummary } from "@/components/detail/PageSummary";
+import { RichText } from "@/components/detail/RichText";
 import { Award, Calendar, IndianRupee, GraduationCap, ArrowUp, Share2, ArrowRight, CheckCircle2, Phone, Sparkles, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -161,16 +162,13 @@ export default function ScholarshipDetail() {
               {s.eligibility && (
                 <motion.div id="eligibility" initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card border border-border rounded-2xl p-5 md:p-6">
                                     <h2 data-h className="text-xl font-extrabold tracking-tight text-foreground mb-2">Eligibility</h2>
-                  <div
-                    className="prose prose-base max-w-none text-foreground prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-[1.75] prose-li:text-foreground/90 prose-a:text-primary"
-                    dangerouslySetInnerHTML={{ __html: /<[a-z][\s\S]*>/i.test(s.eligibility) ? s.eligibility : `<p>${s.eligibility}</p>` }}
-                  />
+                  <RichText html={s.eligibility} />
                 </motion.div>
               )}
               {s.description && (
                 <motion.div id="about" initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card border border-border rounded-2xl p-5 md:p-6">
                                     <h2 data-h className="text-xl font-extrabold tracking-tight text-foreground mb-3">About</h2>
-                  <div className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-[1.75] prose-a:text-primary" dangerouslySetInnerHTML={{ __html: s.description }} />
+                  <RichText html={s.description} />
                 </motion.div>
               )}
               {s.amount && (

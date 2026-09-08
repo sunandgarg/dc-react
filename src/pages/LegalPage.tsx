@@ -5,6 +5,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RichText } from "@/components/detail/RichText";
 
 export default function LegalPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -37,7 +38,7 @@ export default function LegalPage() {
         ) : (
           <article className="max-w-3xl mx-auto prose prose-slate dark:prose-invert">
             <h1 className="text-3xl md:text-4xl font-bold mb-6">{page.title}</h1>
-            <div dangerouslySetInnerHTML={{ __html: page.content }} />
+            <RichText html={page.content} />
             <p className="text-xs text-muted-foreground mt-10">Last updated: {new Date(page.updated_at).toLocaleDateString()}</p>
           </article>
         )}

@@ -42,7 +42,7 @@ describe("Cloudflare edge SEO", () => {
     const metadata = articleEdgeSeo({
       title: "NEET Update 2026",
       description: "The latest verified update.",
-      content: "<h2>What changed</h2><p>Useful details.</p><script>alert(1)</script>",
+      content: '<h2>What changed</h2><p>Useful details.</p><script>alert(1)</script><img src=x onerror="alert(2)"><svg><a href="javascript:alert(3)">bad</a></svg>',
       author: "DekhoCampus Editorial",
       created_at: "2026-09-07T00:00:00.000Z",
     }, url);
@@ -51,5 +51,7 @@ describe("Cloudflare edge SEO", () => {
     expect(output).toContain("What changed");
     expect(output).toContain("Useful details.");
     expect(output).not.toContain("alert(1)");
+    expect(output).not.toContain("onerror");
+    expect(output).not.toContain("javascript:");
   });
 });

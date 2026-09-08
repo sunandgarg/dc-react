@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { storagePolicyInternals } from "../src/storage.mjs";
 
-const { checkedBody, hasWebsiteMediaPermission, ownsPath, routeDetails } = storagePolicyInternals;
+const { checkedBody, hasWebsiteMediaPermission, ownsPath, routeDetails, PUBLIC_READ_BUCKETS } = storagePolicyInternals;
 const identity = { id: "12d8b889-5ab9-4f9d-8725-b73444f418d5" };
 
 test("parses public, list, and direct storage routes", () => {
@@ -15,6 +15,14 @@ test("parses public, list, and direct storage routes", () => {
   assert.deepEqual(routeDetails("/storage/v1/object/user-documents/user/file.pdf"), {
     modifier: null, bucket: "user-documents", objectPath: "user/file.pdf",
   });
+  assert.deepEqual(routeDetails("/storage/v1/object/authenticated/user-documents/user/file.pdf"), {
+    modifier: "authenticated", bucket: "user-documents", objectPath: "user/file.pdf",
+  });
+});
+
+test("keeps identity documents out of the public bucket allowlist", () => {
+  assert.equal(PUBLIC_READ_BUCKETS.has("admin-uploads"), true);
+  assert.equal(PUBLIC_READ_BUCKETS.has("user-documents"), false);
 });
 
 test("scopes normal user uploads to their document and avatar folders", () => {
@@ -39,10 +47,17 @@ test("rejects unsafe upload types", async () => {
   await assert.rejects(() => checkedBody(request), (error) => error.status === 415 && error.code === "STORAGE_TYPE_NOT_ALLOWED");
 });
 
+test("rejects active SVG uploads", async () => {
+  const request = new Request("http://localhost/storage/v1/object/admin-uploads/file.svg", {
+    method: "POST", headers: { "content-type": "image/svg+xml" }, body: "<svg><script>alert(1)</script></svg>",
+  });
+  await assert.rejects(() => checkedBody(request), (error) => error.status === 415 && error.code === "STORAGE_TYPE_NOT_ALLOWED");
+});
+
 test("accepts safe files wrapped by the browser multipart uploader", async () => {
   const form = new FormData();
-  form.append("file", new Blob(["safe image"], { type: "image/svg+xml" }), "qa.svg");
-  const request = new Request("http://localhost/storage/v1/object/admin-uploads/qa.svg", {
+  form.append("file", new Blob(["safe image"], { type: "image/png" }), "qa.png");
+  const request = new Request("http://localhost/storage/v1/object/admin-uploads/qa.png", {
     method: "POST", body: form,
   });
   const body = await checkedBody(request);

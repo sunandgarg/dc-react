@@ -11,6 +11,7 @@ import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { SubjectNewsSection } from "@/components/study/SubjectNewsSection";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
+import { RichText } from "@/components/detail/RichText";
 
 export default function StudySubject() {
   const { classSlug, boardSlug, subjectSlug, chapterSlug } = useParams<{ classSlug: string; boardSlug: string; subjectSlug: string; chapterSlug?: string }>();
@@ -349,10 +350,7 @@ function ChapterRow({ chapter, index, classNum, boardSlug, subjectSlug, onDownlo
                 )}
               </header>
               {r.content_html && (
-                <div
-                  className="prose prose-sm max-w-none text-foreground/90 prose-headings:text-foreground prose-headings:font-bold prose-strong:text-foreground prose-a:text-primary prose-li:my-0.5 prose-p:leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: r.content_html }}
-                />
+                <RichText html={r.content_html} className="prose-sm" />
               )}
               {r.content_images?.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-3">

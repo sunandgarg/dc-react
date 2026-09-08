@@ -5,6 +5,8 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Linkedin, Twitter, Globe, Mail, ArrowRight, Newspaper, GraduationCap, BookOpen, FileText, Award, Briefcase, Library } from "lucide-react";
+import { RichText } from "@/components/detail/RichText";
+import { safeHttpUrl } from "@/lib/safeExternalUrl";
 
 interface Author {
   id: string; slug: string; name: string; designation: string; photo: string;
@@ -55,11 +57,14 @@ export default function AuthorPage() {
     url: `${typeof window !== "undefined" ? window.location.origin : ""}/author/${author.slug}`,
     sameAs: [author.linkedin_url, author.twitter_url, author.website_url].filter(Boolean),
   };
+  const linkedInUrl = safeHttpUrl(author.linkedin_url);
+  const twitterUrl = safeHttpUrl(author.twitter_url);
+  const websiteUrl = safeHttpUrl(author.website_url);
 
   return (
     <div className="min-h-screen bg-background">
       <SEO title={`${author.name}${author.designation ? ` - ${author.designation}` : ""} | DekhoCampus`} description={author.short_bio || `${author.name} on DekhoCampus`} canonical={`/author/${author.slug}`} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldjson) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldjson).replace(/</g, "\\u003c") }} />
       <Navbar />
       <main>
         <section className="bg-gradient-to-br from-primary/5 to-background border-b border-border">
@@ -75,9 +80,9 @@ export default function AuthorPage() {
                 </div>
               )}
               <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
-                {author.linkedin_url && <a href={author.linkedin_url} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Linkedin className="w-4 h-4" /></a>}
-                {author.twitter_url && <a href={author.twitter_url} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Twitter className="w-4 h-4" /></a>}
-                {author.website_url && <a href={author.website_url} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Globe className="w-4 h-4" /></a>}
+                {linkedInUrl && <a href={linkedInUrl} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Linkedin className="w-4 h-4" /></a>}
+                {twitterUrl && <a href={twitterUrl} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Twitter className="w-4 h-4" /></a>}
+                {websiteUrl && <a href={websiteUrl} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Globe className="w-4 h-4" /></a>}
                 {author.email && <a href={`mailto:${author.email}`} className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Mail className="w-4 h-4" /></a>}
               </div>
             </div>
@@ -87,7 +92,7 @@ export default function AuthorPage() {
         {author.bio && (
           <section className="container py-8">
             <h2 className="text-lg font-bold text-foreground mb-3">About {author.name.split(" ")[0]}</h2>
-            <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: author.bio }} />
+            <RichText html={author.bio} className="prose-sm" />
           </section>
         )}
 

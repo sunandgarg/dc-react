@@ -39,7 +39,7 @@ export default function StudyClass() {
         description={`Free Class ${classNum} study material: subjects, chapter notes and last 10 years' question papers (CBSE, ICSE, State Board).`}
         canonical={routeBoard ? `/study-material/class-${classNum}/${routeBoard}` : `/study-material/class-${classNum}`}
       />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd).replace(/</g, "\\u003c") }} />
       <Navbar />
       <main>
         <div className="border-b border-border bg-muted/30">

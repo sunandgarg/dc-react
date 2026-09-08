@@ -20,6 +20,7 @@ import { PremiumAIInsight } from "@/components/detail/PremiumAIInsight";
 import { PremiumDecisionRail } from "@/components/detail/PremiumDecisionRail";
 import { trackEvent } from "@/lib/analytics";
 import { FLOATING_CONTACT_BUTTON_CLASS } from "@/components/WhatsAppButton";
+import { safeEmbedUrl } from "@/lib/safeExternalUrl";
 
 function formatPrice(price: number) {
   if (price >= 100000) return `₹${(price / 100000).toFixed(price % 100000 === 0 ? 0 : 1)}L`;
@@ -122,6 +123,7 @@ export default function PremiumProgramDetail() {
   const legacyPoints: Array<{ title: string; description?: string }> = Array.isArray(program.institute_legacy_points) ? program.institute_legacy_points : [];
 
   const heroImg = program.hero_image || program.image_url;
+  const heroVideoUrl = safeEmbedUrl(program.hero_video_url);
   const navItems: Array<{ id: string; label: string; show: boolean }> = [
     { id: "highlights", label: "Highlights", show: highlights.length > 0 || Object.keys(progStats).length > 0 },
     { id: "why", label: "Why this program", show: !!program.why_this_program },
@@ -163,8 +165,8 @@ export default function PremiumProgramDetail() {
             <div className="relative bg-primary/5">
               {heroImg ? (
                 <img src={heroImg} alt={program.title} className="w-full h-full object-cover min-h-[260px] lg:min-h-[440px]" loading="eager" />
-              ) : program.hero_video_url ? (
-                <iframe src={program.hero_video_url} title={program.title} className="w-full h-full min-h-[260px] lg:min-h-[440px]" allowFullScreen />
+              ) : heroVideoUrl ? (
+                <iframe src={heroVideoUrl} title={program.title} className="w-full h-full min-h-[260px] lg:min-h-[440px]" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" referrerPolicy="strict-origin-when-cross-origin" />
               ) : (
                 <div className="w-full h-full min-h-[260px] lg:min-h-[440px] flex items-center justify-center">
                   <GraduationCap className="w-24 h-24 text-primary/40" />

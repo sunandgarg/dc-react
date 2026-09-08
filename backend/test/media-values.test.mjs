@@ -37,7 +37,7 @@ test("expands known object keys only when returning API data", () => {
     assert.equal(value.logo, "https://media.example/admin-uploads/college/logo.webp");
     assert.equal(value.website, "https://university.example/admissions");
     assert.equal(value.description, "ordinary/path/text");
-    assert.equal(value.nested[0], "https://media.example/user-documents/user/transcript.pdf");
+    assert.equal(value.nested[0], "user-documents/user/transcript.pdf");
     assert.equal(
       toPublicMediaUrls("legacy-public-assets/sanitized/college.webp"),
       "https://media.example/legacy-public-assets/sanitized/college.webp",

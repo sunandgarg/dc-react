@@ -81,11 +81,7 @@ export default function LockTarget() {
     const token = searchParams.get("s");
     if (!token) return;
     (async () => {
-      const { data, error } = await backendClient
-        .from("target_roadmaps")
-        .select("*")
-        .eq("share_token", token)
-        .maybeSingle();
+      const { data, error } = await backendClient.functions.invoke("shared-target-roadmap", { body: { token } });
       if (error || !data) return;
       setTargetCollege(data.target_college || "");
       setTargetCourse(data.target_course || "");
@@ -98,7 +94,7 @@ export default function LockTarget() {
       setWeaknesses(data.weaknesses || "");
       setRoadmap(data.roadmap as RoadmapData);
       setShareToken(data.share_token);
-      setSavedId(data.id);
+      setSavedId(null);
       setPhase("locked");
       setReadOnlyShare(true);
       setTimeout(() => window.scrollTo({ top: 500, behavior: "smooth" }), 100);

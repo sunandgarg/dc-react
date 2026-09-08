@@ -127,11 +127,12 @@ function replaceOrInsert(html, pattern, replacement) {
   return html.replace(/<\/head>/i, `    ${replacement}\n  </head>`);
 }
 
-function safeArticleHtml(value) {
+function articlePlainText(value) {
   return String(value || "")
-    .replace(/<(script|style|iframe|object|embed|form)\b[\s\S]*?<\/\1>/gi, "")
-    .replace(/\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
-    .replace(/(?:javascript|data):/gi, "");
+    .replace(/<(script|style|iframe|object|embed|form)\b[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function articleEdgeSeo(article, url) {
@@ -159,7 +160,7 @@ export function articleEdgeSeo(article, url) {
       publisher: { "@type": "Organization", name: "DekhoCampus", url: SITE_URL },
       mainEntityOfPage: canonical,
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827"><h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}${safeArticleHtml(article.content)}</article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827"><h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}<p>${escapeHtml(articlePlainText(article.content))}</p></article>`,
   };
 }
 

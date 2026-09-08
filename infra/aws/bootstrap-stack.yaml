@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: One-time ECR and GitHub OIDC bootstrap for DekhoCampus.
+Description: Legacy ECR bootstrap with repository-scoped GitHub OIDC access for DekhoCampus.
 
 Parameters:
   ProjectName:
@@ -9,9 +9,6 @@ Parameters:
   GitHubRepository:
     Type: String
     Default: sunandgarg/dc-react
-  GitHubRepositorySubject:
-    Type: String
-    Default: sunandgarg@90310674/dc-react@1342626234
   ExistingGitHubOidcProviderArn:
     Type: String
     Default: ''
@@ -48,38 +45,28 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-              StringLike:
-                token.actions.githubusercontent.com:sub:
-                  - !Sub 'repo:${GitHubRepository}:*'
-                  - !Sub 'repo:${GitHubRepositorySubject}:*'
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/PowerUserAccess
+                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubRepository}:environment:production'
       Policies:
-        - PolicyName: ManageProjectRoles
+        - PolicyName: PushProjectImages
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
-              - Effect: Allow
+              - Sid: GetEcrLogin
+                Effect: Allow
+                Action: ecr:GetAuthorizationToken
+                Resource: '*'
+              - Sid: PushProjectImages
+                Effect: Allow
                 Action:
-                  - iam:AttachRolePolicy
-                  - iam:CreateRole
-                  - iam:DeleteRole
-                  - iam:DeleteRolePolicy
-                  - iam:DetachRolePolicy
-                  - iam:GetRole
-                  - iam:AddRoleToInstanceProfile
-                  - iam:CreateInstanceProfile
-                  - iam:DeleteInstanceProfile
-                  - iam:PassRole
-                  - iam:PutRolePolicy
-                  - iam:GetInstanceProfile
-                  - iam:RemoveRoleFromInstanceProfile
-                  - iam:TagRole
-                  - iam:UntagRole
-                  - iam:UpdateAssumeRolePolicy
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:BatchGetImage
+                  - ecr:CompleteLayerUpload
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:InitiateLayerUpload
+                  - ecr:PutImage
+                  - ecr:UploadLayerPart
                 Resource:
-                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ProjectName}-*'
-                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:instance-profile/${ProjectName}-*'
+                  - !Sub 'arn:${AWS::Partition}:ecr:${AWS::Region}:${AWS::AccountId}:repository/${ProjectName}-*'
 
   ApiRepository:
     Type: AWS::ECR::Repository

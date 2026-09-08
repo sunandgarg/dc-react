@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { handleRest, handleRpc } from "./rest.mjs";
 import { prisma } from "./db.mjs";
-import { handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp } from "./auth.mjs";
+import { handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp, verifyLeadOtpProof } from "./auth.mjs";
 import { handleStorage } from "./storage.mjs";
 import { enqueueLeadAutomation, wakeLeadOutboxWorker } from "./lead-outbox.mjs";
 import { dispatchLead, previewLeadAutomation } from "./lead-automation.mjs";
@@ -24,20 +24,83 @@ const publicReadTables = new Set([
   "college_reviews", "college_semesters", "college_subjects", "college_toppers", "college_universities", "colleges", "companies",
   "course_fees", "course_specializations", "courses", "exams", "facilities_library", "faculty", "faqs", "feature_toggles",
   "featured_colleges", "hero_banners", "hero_categories", "hero_settings", "jobs", "landing_pages", "lead_form_settings",
-  "legal_pages", "placement_records", "popular_places", "program_categories", "programs", "promoted_programs", "push_landing_pages",
+  "legal_pages", "placement_records", "popular_places", "program_categories", "programs", "promoted_programs",
   "scholarships", "site_integrations", "state_cities", "states_cities", "stream_categories", "study_board_links", "study_boards", "study_chapters",
-  "study_resources", "study_subjects", "study_toppers", "target_roadmaps", "trusted_partners", "universities", "url_mappings",
-  "college_editorial_completion_progress", "leads_daily_business_rollup",
+  "study_resources", "study_subjects", "study_toppers", "trusted_partners", "url_mappings",
+  "college_editorial_completion_progress",
 ]);
 
 const publicWriteTables = new Set([
   "ad_analytics_events", "college_applications", "cta_events", "intent_events", "intent_visitors", "job_applications",
-  "landing_page_leads", "leads", "referrals", "url_clicks", "user_consent", "user_events",
+  "landing_page_leads", "url_clicks", "user_consent", "user_events",
 ]);
+
+const publicWriteFields = new Map([
+  ["ad_analytics_events", new Set(["ad_unit_id", "event_type", "device", "page_url", "country"])],
+  ["college_applications", new Set(["name", "email", "phone", "city", "state", "college_slug", "college_name", "course_slug", "course_interest", "message"])],
+  ["cta_events", new Set(["page", "cta", "entity_slug", "entity_name", "session_id", "referrer", "path", "utm_source", "utm_medium", "utm_campaign", "user_agent", "meta"])],
+  ["intent_events", new Set(["event_type", "visitor_id", "session_id", "college_slug", "course_slug", "exam_slug", "university_slug", "device_type", "city", "state", "country", "traffic_source", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "page_url", "referrer", "metadata"])],
+  ["intent_visitors", new Set(["visitor_id", "last_seen_at", "device_type", "city", "state", "country", "user_agent", "utm", "referrer", "landing_url"])],
+  ["job_applications", new Set(["job_id", "job_slug", "job_title", "company", "full_name", "email", "phone", "current_location", "experience", "current_company", "current_designation", "expected_salary", "notice_period", "resume_url", "portfolio_url", "linkedin_url", "cover_letter", "source"])],
+  ["landing_page_leads", new Set(["landing_slug", "name", "email", "phone", "city", "state", "course", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "fbclid", "referrer", "page_url", "consent"])],
+  ["url_clicks", new Set(["url_id", "user_agent", "referrer", "country", "city", "device_type", "browser", "os"])],
+  ["user_consent", new Set(["session_id", "essential", "analytics", "marketing", "prefill", "user_agent"])],
+  ["user_events", new Set(["session_id", "event_type", "path", "element", "metadata", "user_agent", "referrer", "x", "y", "vw", "vh"])],
+]);
+
+const PUBLIC_WRITE_MAX_BYTES = 256 * 1024;
+const PUBLIC_WRITE_MAX_ROWS = 100;
+
+function sanitizePublicWriteValue(value, depth = 0) {
+  if (depth > 8) return null;
+  if (typeof value === "string") return value.slice(0, 20_000);
+  if (value === null || ["number", "boolean"].includes(typeof value)) return value;
+  if (Array.isArray(value)) return value.slice(0, 100).map((item) => sanitizePublicWriteValue(item, depth + 1));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).slice(0, 100)
+      .map(([key, item]) => [key.slice(0, 100), sanitizePublicWriteValue(item, depth + 1)]));
+  }
+  return null;
+}
+
+async function sanitizePublicWriteRequest(table, request) {
+  const declaredSize = Number(request.headers.get("content-length") || 0);
+  if (declaredSize > PUBLIC_WRITE_MAX_BYTES) throw new HttpError(413, "PAYLOAD_TOO_LARGE", "Anonymous event payload is too large");
+  const raw = await request.clone().text();
+  if (new TextEncoder().encode(raw).byteLength > PUBLIC_WRITE_MAX_BYTES) {
+    throw new HttpError(413, "PAYLOAD_TOO_LARGE", "Anonymous event payload is too large");
+  }
+  let input;
+  try { input = JSON.parse(raw); } catch { throw new HttpError(400, "INVALID_JSON", "A valid JSON payload is required"); }
+  const rows = Array.isArray(input) ? input : [input];
+  if (!rows.length || rows.length > PUBLIC_WRITE_MAX_ROWS || rows.some((row) => !row || typeof row !== "object" || Array.isArray(row))) {
+    throw new HttpError(400, "INVALID_PUBLIC_WRITE", "Anonymous writes require 1 to 100 object rows");
+  }
+  const allowed = publicWriteFields.get(table);
+  const sanitized = rows.map((row) => {
+    const safe = Object.fromEntries(Object.entries(row)
+      .filter(([key]) => allowed.has(key))
+      .map(([key, value]) => [key, sanitizePublicWriteValue(value)]));
+    if (["college_applications", "job_applications"].includes(table)) safe.status = "submitted";
+    return safe;
+  });
+  const headers = new Headers(request.headers);
+  headers.set("content-type", "application/json");
+  headers.delete("content-length");
+  return new Request(request.url, { method: request.method, headers, body: JSON.stringify(Array.isArray(input) ? sanitized : sanitized[0]) });
+}
+
+export const apiSecurityInternals = { sanitizePublicWriteRequest };
 
 const ownedTables = new Map([
   ["profiles", "user_id"], ["user_documents", "user_id"], ["user_education_entries", "user_id"],
   ["user_favorites", "user_id"], ["user_sessions", "user_id"], ["wallet_transactions", "user_id"],
+  ["referrals", "referrer_id"], ["target_roadmaps", "user_id"],
+]);
+
+const publicReadSelections = new Map([
+  ["site_integrations", "key,value,enabled"],
+  ["adsense_settings", "id,publisher_id,client_id,account_id,verification_meta,auto_ads_enabled,ads_globally_enabled,enabled_on_mobile,enabled_on_desktop,enabled_for_guests,enabled_for_logged_in,disabled_roles,disabled_pages,ads_per_page_limit,lazy_load_enabled,refresh_interval_seconds,head_scripts,body_scripts,footer_scripts,custom_css,custom_js,created_at,updated_at"],
 ]);
 
 class HttpError extends Error {
@@ -85,8 +148,18 @@ async function isAdmin(userId) {
 }
 
 async function authorizeRest(table, request) {
-  if (["GET", "HEAD"].includes(request.method) && publicReadTables.has(table)) return { request, actorUserId: null };
-  if (publicWriteTables.has(table) && request.method === "POST") return { request, actorUserId: null };
+  if (["GET", "HEAD"].includes(request.method) && publicReadTables.has(table)) {
+    const identity = bearerToken(request) ? await resolveIdentity(request) : null;
+    if (identity && await isAdmin(identity.id)) return { request, actorUserId: identity.id };
+    const safeSelection = publicReadSelections.get(table);
+    if (!safeSelection) return { request, actorUserId: null, publicAccess: true };
+    const url = new URL(request.url);
+    url.searchParams.set("select", safeSelection);
+    return { request: new Request(url, request), actorUserId: null, publicAccess: true };
+  }
+  if (publicWriteTables.has(table) && request.method === "POST") {
+    return { request: await sanitizePublicWriteRequest(table, request), actorUserId: null };
+  }
 
   const identity = await resolveIdentity(request);
   if (!identity) throw new HttpError(401, "AUTH_REQUIRED", "A valid user session is required");
@@ -197,12 +270,15 @@ async function saveLead(request) {
     throw new HttpError(400, "INVALID_LEAD", "Name, email and a valid 10-digit Indian mobile number are required");
   }
   const phase = input.phase === "identity" ? "identity" : "complete";
+  const otpVerified = Boolean(input.otp_verified)
+    && verifyLeadOtpProof(input.otp_verification_token, `+91${phone}`);
   if (input.lead_id) {
     const leadId = String(input.lead_id);
     const result = await prisma.$transaction(async (tx) => {
       const updated = await tx.leads.updateMany({
         where: { id: leadId, phone },
         data: {
+        ...(otpVerified ? { otp_verified: true } : {}),
         current_situation: input.current_situation ? String(input.current_situation) : null,
         city: input.city ? String(input.city).slice(0, 250) : null,
         state: input.state ? String(input.state).slice(0, 250) : null,
@@ -239,7 +315,7 @@ async function saveLead(request) {
       interested_college_slug: phase === "complete" && input.interested_college_slug ? String(input.interested_college_slug) : null,
       interested_course_slug: phase === "complete" && input.interested_course_slug ? String(input.interested_course_slug) : null,
       interested_exam_slug: phase === "complete" && input.interested_exam_slug ? String(input.interested_exam_slug) : null,
-      otp_verified: Boolean(input.otp_verified),
+      otp_verified: otpVerified,
       program_mode: phase === "complete" && input.program_mode ? String(input.program_mode) : "unknown",
       device_type: input.device_type ? String(input.device_type) : null,
       source_category: input.source_category ? String(input.source_category) : null,
@@ -251,6 +327,24 @@ async function saveLead(request) {
   });
   if (phase === "complete") wakeLeadOutboxWorker();
   return { success: true, lead_id: lead.id, phase, existing_count: existingCount };
+}
+
+async function sharedTargetRoadmap(request) {
+  const body = await request.json().catch(() => ({}));
+  const token = String(body.token || "").trim();
+  if (!/^[A-Za-z0-9_-]{12,128}$/.test(token)) throw new HttpError(400, "INVALID_SHARE_TOKEN", "A valid roadmap share token is required");
+  const rows = await prisma.$queryRawUnsafe(
+    `SELECT \`target_college\`, \`target_course\`, \`class_level\`, \`stream\`, \`board\`,
+            \`current_percent\`, \`state\`, \`hours_per_day\`, \`weaknesses\`, \`roadmap\`, \`share_token\`
+       FROM \`target_roadmaps\` WHERE \`share_token\` = ? LIMIT 1`,
+    token,
+  );
+  if (!rows.length) throw new HttpError(404, "ROADMAP_NOT_FOUND", "This shared roadmap is unavailable");
+  const row = rows[0];
+  if (typeof row.roadmap === "string") {
+    try { row.roadmap = JSON.parse(row.roadmap); } catch { row.roadmap = null; }
+  }
+  return row;
 }
 
 async function handleLeadAutomation(request) {
@@ -316,6 +410,7 @@ export async function handleRequest(request) {
       if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(), requestId, request, { "cache-control": "public, max-age=300, stale-while-revalidate=600" });
       if (functionMatch[1] === "save-lead") return json(200, await saveLead(request), requestId, request);
+      if (functionMatch[1] === "shared-target-roadmap") return json(200, await sharedTargetRoadmap(request), requestId, request, { "cache-control": "public, max-age=60, stale-while-revalidate=300" });
       if (functionMatch[1] === "lp-dispatch-lead") {
         const identity = await resolveIdentity(request);
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");

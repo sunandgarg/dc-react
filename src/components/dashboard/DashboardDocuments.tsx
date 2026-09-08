@@ -38,6 +38,18 @@ export function DashboardDocuments() {
     await uploadDoc.mutateAsync({ file, docType });
   };
 
+  const handleView = async (doc: UserDocument) => {
+    const objectPath = doc.file_url.includes("/user-documents/")
+      ? doc.file_url.split("/user-documents/")[1]
+      : doc.file_url.replace(/^user-documents\//, "");
+    const { data, error } = await backendClient.storage.from("user-documents").createSignedUrl(objectPath, 300);
+    if (error || !data?.signedUrl) {
+      toast.error(error?.message || "Could not open this document");
+      return;
+    }
+    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-card rounded-xl border border-border p-6">
@@ -67,7 +79,7 @@ export function DashboardDocuments() {
                         size="sm"
                         variant="outline"
                         className="rounded-lg"
-                        onClick={() => window.open(doc.file_url, "_blank")}
+                        onClick={() => void handleView(doc)}
                       >
                         <Eye className="w-3 h-3 mr-1" /> View
                       </Button>

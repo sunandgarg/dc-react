@@ -183,10 +183,64 @@ export async function resolveNativeIdentity(request) {
   return user ? authUser(user) : null;
 }
 
+function normalizedOtpPhone(value) {
+  return String(value || "").replace(/\s+/g, "");
+}
+
+async function consumePhoneOtp(phone, otp) {
+  if (!/^\+91[6-9]\d{9}$/.test(phone) || !/^\d{6}$/.test(otp)) {
+    throw Object.assign(new Error("Invalid or expired OTP"), { status: 401, code: "INVALID_OTP" });
+  }
+  const challenge = await prisma.app_auth_otps.findFirst({
+    where: { phone, consumed_at: null, expires_at: { gt: new Date() } },
+    orderBy: { created_at: "desc" },
+  });
+  if (!challenge || challenge.attempts >= 5 || challenge.otp_hash !== otpDigest(phone, otp)) {
+    if (challenge) {
+      await prisma.app_auth_otps.updateMany({
+        where: { id: challenge.id, consumed_at: null },
+        data: { attempts: { increment: 1 } },
+      });
+    }
+    throw Object.assign(new Error("Invalid or expired OTP"), { status: 401, code: "INVALID_OTP" });
+  }
+  const consumed = await prisma.app_auth_otps.updateMany({
+    where: { id: challenge.id, consumed_at: null },
+    data: { consumed_at: new Date() },
+  });
+  if (consumed.count !== 1) {
+    throw Object.assign(new Error("Invalid or expired OTP"), { status: 401, code: "INVALID_OTP" });
+  }
+}
+
+function issueLeadOtpProof(phone) {
+  const now = Math.floor(Date.now() / 1000);
+  return signJwt({
+    sub: `lead:${phone}`,
+    phone,
+    purpose: "lead_otp",
+    iat: now,
+    exp: now + 15 * 60,
+  });
+}
+
+export function verifyLeadOtpProof(value, phone) {
+  const payload = verifyAccessToken(String(value || ""));
+  const normalizedPhone = normalizedOtpPhone(phone);
+  return Boolean(payload
+    && payload.purpose === "lead_otp"
+    && payload.phone === normalizedPhone
+    && payload.sub === `lead:${normalizedPhone}`);
+}
+
 export async function sendPhoneOtp(request) {
   const body = await request.json().catch(() => ({}));
-  const phone = String(body.phone || "").replace(/\s+/g, "");
+  const phone = normalizedOtpPhone(body.phone);
   if (!/^\+91[6-9]\d{9}$/.test(phone)) throw Object.assign(new Error("Enter a valid Indian mobile number"), { status: 400, code: "INVALID_PHONE" });
+  if (body.action === "verify") {
+    await consumePhoneOtp(phone, String(body.otp || ""));
+    return { success: true, verified: true, verification_token: issueLeadOtpProof(phone) };
+  }
   const recent = await prisma.app_auth_otps.findFirst({ where: { phone, created_at: { gt: new Date(Date.now() - 45_000) } }, orderBy: { created_at: "desc" } });
   if (recent) throw Object.assign(new Error("Please wait before requesting another OTP"), { status: 429, code: "OTP_RATE_LIMIT" });
   const otp = String(randomInt(100000, 1000000));
@@ -205,14 +259,9 @@ export async function sendPhoneOtp(request) {
 
 export async function verifyPhoneOtp(request) {
   const body = await request.json().catch(() => ({}));
-  const phone = String(body.phone || "").replace(/\s+/g, "");
+  const phone = normalizedOtpPhone(body.phone);
   const otp = String(body.otp || "");
-  const challenge = await prisma.app_auth_otps.findFirst({ where: { phone, consumed_at: null, expires_at: { gt: new Date() } }, orderBy: { created_at: "desc" } });
-  if (!challenge || challenge.attempts >= 5 || challenge.otp_hash !== otpDigest(phone, otp)) {
-    if (challenge) await prisma.app_auth_otps.update({ where: { id: challenge.id }, data: { attempts: { increment: 1 } } });
-    throw Object.assign(new Error("Invalid or expired OTP"), { status: 401, code: "INVALID_OTP" });
-  }
-  await prisma.app_auth_otps.update({ where: { id: challenge.id }, data: { consumed_at: new Date() } });
+  await consumePhoneOtp(phone, otp);
   let user = await prisma.app_auth_users.findUnique({ where: { phone } });
   if (!user) user = await prisma.app_auth_users.create({ data: { id: randomUUID(), phone, provider: "phone", user_metadata: {} } });
   await prisma.$executeRawUnsafe("INSERT INTO `profiles` (`id`,`user_id`,`phone`,`created_at`,`updated_at`) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE `phone`=VALUES(`phone`),`updated_at`=VALUES(`updated_at`)", user.id, user.id, phone, new Date(), new Date());
@@ -267,3 +316,5 @@ export async function handleAuth(request) {
   if (url.pathname === "/auth/v1/authorize") return { status: 501, body: { code: "OAUTH_NOT_CONFIGURED", msg: "Native Google OAuth needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET" } };
   return null;
 }
+
+export const authSecurityInternals = { issueLeadOtpProof };
