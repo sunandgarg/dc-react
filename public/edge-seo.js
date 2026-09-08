@@ -100,7 +100,7 @@ function isIndexableQuery(url, pathname) {
 export function edgeSeoFor(input) {
   const url = input instanceof URL ? input : new URL(input);
   const pathname = cleanPath(url.pathname);
-  const privatePath = PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix));
+  const privatePath = PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
   const indexable = !privatePath && isPublicPath(pathname) && isIndexableQuery(url, pathname);
   const canonicalPath = indexable && url.search ? `${pathname}${url.search}` : pathname;
   const canonical = `${SITE_URL}${canonicalPath === "/" ? "" : canonicalPath}`;

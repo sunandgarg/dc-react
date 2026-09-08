@@ -11,8 +11,15 @@ describe("Cloudflare edge SEO", () => {
 
   it("marks arbitrary search and private URLs noindex", () => {
     expect(edgeSeoFor("https://dekhocampus.com/colleges?q=lpu").indexable).toBe(false);
+    expect(edgeSeoFor("https://dekhocampus.com/auth/callback").indexable).toBe(false);
     expect(edgeSeoFor("https://dekhocampus.com/admin/colleges").indexable).toBe(false);
     expect(edgeSeoFor("https://dekhocampus.com/not-a-real-page").indexable).toBe(false);
+  });
+
+  it("does not treat public author pages as auth routes", () => {
+    const seo = edgeSeoFor("https://dekhocampus.com/author/vartika");
+    expect(seo.indexable).toBe(true);
+    expect(seo.canonical).toBe("https://dekhocampus.com/author/vartika");
   });
 
   it("derives a useful first-response title for canonical detail URLs", () => {
