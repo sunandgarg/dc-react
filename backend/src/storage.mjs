@@ -58,6 +58,19 @@ export function publicMediaUrl(bucket, objectPath) {
   return `${config.mediaBaseUrl}/${storageObjectKey(bucket, objectPath).split("/").map(encodeURIComponent).join("/")}`;
 }
 
+export async function signStorageDownload(bucket, objectPath, options = {}) {
+  const config = storageConfig();
+  const expiresIn = Math.min(3600, Math.max(60, Number(options.expiresIn || 600)));
+  const command = new GetObjectCommand({
+    Bucket: config.bucket,
+    Key: storageObjectKey(bucket, objectPath),
+    ...(options.downloadName
+      ? { ResponseContentDisposition: `attachment; filename=\"${String(options.downloadName).replace(/[\"\\\r\n]/g, "").slice(0, 180)}\"` }
+      : {}),
+  });
+  return getSignedUrl(config.client, command, { expiresIn });
+}
+
 export async function uploadStorageObject(bucket, objectPath, body, contentType, options = {}) {
   const config = storageConfig();
   const key = storageObjectKey(bucket, objectPath);

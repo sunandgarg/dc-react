@@ -24,6 +24,9 @@ const mobileNav = [
     { label: "Class 8",  href: "/study-material/class-8"  },
   ] },
   { label: "CAT Universe", href: "/cat-universe", children: [
+    { label: "Free CAT 2026 Kit", href: "/cat-universe/cat-2026-preparation-kit" },
+    { label: "AI Interview Practice", href: "/cat-universe/ai-interview-practice" },
+    { label: "AI CAT Coach", href: "/cat-universe/ai-coach" },
     { label: "CAT Score Calculator", href: "/cat-universe/cat-score-calculator" },
     { label: "IIM Call Predictor", href: "/cat-universe/iim-call-predictor" },
     { label: "XAT Score Calculator", href: "/cat-universe/xat-score-calculator" },

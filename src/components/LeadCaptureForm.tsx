@@ -30,7 +30,7 @@ interface LeadCaptureFormProps {
   interestedCollegeSlug?: string;
   interestedCourseSlug?: string;
   interestedExamSlug?: string;
-  onSuccess?: () => void;
+  onSuccess?: (leadId?: string) => void;
   /** Optional context-specific replacement for the default course interest. */
   interestLabel?: string;
   interestOptions?: string[];
@@ -148,35 +148,35 @@ export function LeadCaptureForm({
   const submitLead = async () => {
     setIsLoading(true);
     try {
-      await saveLeadPhase({
-          ...identityPayload(),
-          phase: "complete",
-          lead_id: leadId,
-          city: formData.city || null, state: formData.state || null,
-          current_situation: formData.course || null, source,
-          cta: source,
-          page_url: typeof window !== "undefined" ? window.location.pathname + window.location.search : null,
-          interested_college_slug: interestedCollegeSlug || null,
-          interested_course_slug: interestedCourseSlug || null,
-          interested_exam_slug: interestedExamSlug || null,
-          otp_verified: otp.verified,
-          otp_verification_token: otp.verificationToken,
-          program_mode: programMode,
-          device_type: detectDeviceType(),
-          source_category: inferSourceCategory(source),
-          consent_terms_accepted: authorized,
-          consent_text: LEAD_CONSENT_TEXT,
-          consent_at: new Date().toISOString(),
+      const saved = await saveLeadPhase({
+        ...identityPayload(),
+        phase: "complete",
+        lead_id: leadId,
+        city: formData.city || null, state: formData.state || null,
+        current_situation: formData.course || null, source,
+        cta: source,
+        page_url: typeof window !== "undefined" ? window.location.pathname + window.location.search : null,
+        interested_college_slug: interestedCollegeSlug || null,
+        interested_course_slug: interestedCourseSlug || null,
+        interested_exam_slug: interestedExamSlug || null,
+        otp_verified: otp.verified,
+        otp_verification_token: otp.verificationToken,
+        program_mode: programMode,
+        device_type: detectDeviceType(),
+        source_category: inferSourceCategory(source),
+        consent_terms_accepted: authorized,
+        consent_text: LEAD_CONSENT_TEXT,
+        consent_at: new Date().toISOString(),
       });
-        setIsSubmitted(true);
-        toast.success("Thank you! Our counselor will contact you soon.");
-        setLeadConsentPreference(authorized);
-        savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city });
-        markLeadSubmitted();
-        try { (window as any).fireGoogleAdsConversion?.({ value: 1, currency: "INR", source }); } catch {}
-        trackLeadConversion({ source, variant, has_email: !!formData.email, has_phone: !!formData.phone });
-        trackEvent("lead_form_submit_success", { source, variant });
-        onSuccess?.();
+      setIsSubmitted(true);
+      toast.success("Thank you! Our counselor will contact you soon.");
+      setLeadConsentPreference(authorized);
+      savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city });
+      markLeadSubmitted();
+      try { (window as any).fireGoogleAdsConversion?.({ value: 1, currency: "INR", source }); } catch {}
+      trackLeadConversion({ source, variant, has_email: !!formData.email, has_phone: !!formData.phone });
+      trackEvent("lead_form_submit_success", { source, variant });
+      onSuccess?.(saved.lead_id);
     } catch (error) {
       console.error("Lead submission error:", error);
       trackEvent("lead_form_submit_error", { source, variant });

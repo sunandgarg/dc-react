@@ -229,6 +229,9 @@ const LockTarget = lazyRetry(() => import("./pages/LockTarget"), "LockTarget");
 const TargetDashboard = lazyRetry(() => import("./pages/TargetDashboard"), "TargetDashboard");
 const CatUniverse = lazyRetry(() => import("./pages/CatUniverse"), "CatUniverse");
 const CatUniverseModulePage = lazyRetry(() => import("./pages/CatUniverseModulePage"), "CatUniverseModulePage");
+const CatPreparationKit = lazyRetry(() => import("./pages/CatPreparationKit"), "CatPreparationKit");
+const CatInterviewPractice = lazyRetry(() => import("./pages/CatInterviewPractice"), "CatInterviewPractice");
+const CatAiCoach = lazyRetry(() => import("./pages/CatAiCoach"), "CatAiCoach");
 const AdminCatUniverse = lazyRetry(() => import("./pages/AdminCatUniverse"), "AdminCatUniverse");
 
 
@@ -343,6 +346,9 @@ const App = () => (
               <Route path="/college-predictor" element={<CollegePredictor />} />
               <Route path="/college-predictor/:slug" element={<CollegePredictor />} />
               <Route path="/cat-universe" element={<CatUniverse />} />
+              <Route path="/cat-universe/cat-2026-preparation-kit" element={<CatPreparationKit />} />
+              <Route path="/cat-universe/ai-interview-practice" element={<CatInterviewPractice />} />
+              <Route path="/cat-universe/ai-coach" element={<CatAiCoach />} />
               <Route path="/cat-universe/:slug" element={<CatUniverseModulePage />} />
               <Route path="/lock-target" element={<LockTarget />} />
               <Route path="/lock-target/:slug" element={<LockTarget />} />

@@ -230,6 +230,11 @@ export function MegaMenu() {
       label: "CAT Universe",
       href: "/cat-universe",
       columns: [
+        { title: "AI-first prep", items: [
+          { label: "Free CAT 2026 Kit", href: "/cat-universe/cat-2026-preparation-kit" },
+          { label: "AI Interview Practice", href: "/cat-universe/ai-interview-practice" },
+          { label: "AI CAT Coach", href: "/cat-universe/ai-coach" },
+        ] },
         { title: "Post Exam", items: [
           { label: "CAT Score Calculator", href: "/cat-universe/cat-score-calculator" },
           { label: "XAT Score Calculator", href: "/cat-universe/xat-score-calculator" },

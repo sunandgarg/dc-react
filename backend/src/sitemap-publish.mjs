@@ -24,6 +24,11 @@ const REBUILT_ROOTS = [
   "/cat-universe/", "/premium-programs/", "/jobs/", "/vacancies/", "/author/", "/legal/",
   "/study-material/", "/college-study-material/",
 ];
+const CAT_EXPERIENCE_ENTRIES = [
+  { path: "/cat-universe/cat-2026-preparation-kit", changefreq: "weekly", priority: "0.86" },
+  { path: "/cat-universe/ai-interview-practice", changefreq: "weekly", priority: "0.82" },
+  { path: "/cat-universe/ai-coach", changefreq: "weekly", priority: "0.82" },
+];
 
 function publishError(status, code, message) {
   const error = new Error(message);
@@ -407,6 +412,7 @@ async function dynamicEntries(prismaClient) {
     ...simpleEntities("/careers", careers, "0.72", ["image"]),
     ...simpleEntities("/scholarships", scholarships, "0.72", ["image"]),
     ...simpleEntities("/landing", landing, "0.65", ["logo_url", "og_image"]),
+    ...CAT_EXPERIENCE_ENTRIES,
     ...simpleEntities("/cat-universe", catModules, "0.75"),
     ...simpleEntities("/premium-programs", programs, "0.86", ["image_url", "hero_image", "certificate_image", "degree_image", "institute_logo"]),
     ...simpleEntities("/jobs", jobs, "0.75", ["company_logo"]),

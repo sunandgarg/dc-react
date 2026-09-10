@@ -20,6 +20,21 @@ const LISTING_QUERY_KEYS = {
   "/exams": new Set(["category", "stream", "group", "level"]),
 };
 
+const STATIC_METADATA = new Map([
+  ["/cat-universe/cat-2026-preparation-kit", {
+    title: "Free CAT 2026 Preparation Kit, Papers and AI Coach | DekhoCampus",
+    description: "Download a free CAT 2026 preparation kit with actual papers, solutions, practice banks, short methods and a practical preparation roadmap.",
+  }],
+  ["/cat-universe/ai-interview-practice", {
+    title: "Free AI IIM Interview Practice for CAT 2026 | DekhoCampus",
+    description: "Practise IIM and MBA interview questions and improve clarity, structure, relevance, evidence and confidence with immediate guided feedback.",
+  }],
+  ["/cat-universe/ai-coach", {
+    title: "Free AI CAT Coach and Study Planner 2026 | DekhoCampus",
+    description: "Build a practical CAT study plan from your target percentile, available time and weakest section, then track daily and weekly checkpoints.",
+  }],
+]);
+
 const ACRONYMS = new Map([
   ["ai", "AI"], ["aicte", "AICTE"], ["ba", "BA"], ["bba", "BBA"], ["bca", "BCA"],
   ["bcom", "B.Com"], ["btech", "B.Tech"], ["cat", "CAT"], ["cbse", "CBSE"],
@@ -114,7 +129,7 @@ export function edgeSeoFor(input) {
     };
   }
 
-  const metadata = LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname);
+  const metadata = STATIC_METADATA.get(pathname) || (LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname));
   return { ...metadata, canonical, indexable };
 }
 

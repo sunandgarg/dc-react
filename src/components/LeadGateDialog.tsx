@@ -18,7 +18,7 @@ interface LeadGateDialogProps {
   title?: string;
   subtitle?: string;
   source?: string;
-  onSuccess?: () => void;
+  onSuccess?: (leadId?: string) => void;
   /** When true, always show the lead form even if the user is already known (skips silent save). Use for high-intent CTAs like Apply / Brochure where we need fresh program-specific intent. */
   forceShow?: boolean;
   /** Strip counselling/slots urgency for clean Apply/Brochure forms. */
@@ -65,10 +65,10 @@ export function LeadGateDialog({
     }
   }, [open, source]);
 
-  const handleSuccess = () => {
+  const handleSuccess = (leadId?: string) => {
     successRef.current = true;
     trackEvent("lp_popup_submit", { source });
-    onSuccess?.();
+    onSuccess?.(leadId);
   };
 
   // UI/UX 2026: if user is already known (logged-in OR has prefill cookie OR

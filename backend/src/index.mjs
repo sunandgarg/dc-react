@@ -14,6 +14,7 @@ import { storageConfig } from "./storage.mjs";
 import { publishSitemap, readPublishedSitemap } from "./sitemap-publish.mjs";
 import { handleClarityExport } from "./clarity-export.mjs";
 import { handleEmailAdmin } from "./email.mjs";
+import { handleCatExperience } from "./cat-experience.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -410,6 +411,9 @@ export async function handleRequest(request) {
       if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(), requestId, request, { "cache-control": "public, max-age=300, stale-while-revalidate=600" });
       if (functionMatch[1] === "save-lead") return json(200, await saveLead(request), requestId, request);
+      if (functionMatch[1] === "cat-experience") {
+        return json(200, await handleCatExperience(request), requestId, request, { "cache-control": "private, no-store" });
+      }
       if (functionMatch[1] === "shared-target-roadmap") return json(200, await sharedTargetRoadmap(request), requestId, request, { "cache-control": "public, max-age=60, stale-while-revalidate=300" });
       if (functionMatch[1] === "lp-dispatch-lead") {
         const identity = await resolveIdentity(request);
