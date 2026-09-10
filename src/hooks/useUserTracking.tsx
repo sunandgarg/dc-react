@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { restUrl } from "@/lib/backendMode";
+import { COOKIE_RESOLVED_EVENT } from "@/lib/promptSequence";
 
 const SESSION_KEY = "dc_session_id";
 const SESSION_STARTED_KEY = "dc_session_started";
@@ -98,6 +99,7 @@ if (typeof window !== "undefined") {
 export function UserTrackingProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { user } = useAuth();
+  const [consentRevision, setConsentRevision] = useState(0);
   const sessionIdRef = useRef<string>(getOrCreateSession());
   const pageStartRef = useRef<number>(Date.now());
   const lastPathRef = useRef<string>("");
@@ -105,6 +107,45 @@ export function UserTrackingProvider({ children }: { children: React.ReactNode }
   const totalTimeRef = useRef<number>(0);
   const lastClickRef = useRef<{ t: number; x: number; y: number } | null>(null);
   const rageRef = useRef<number>(0);
+  const analyticsPathRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const handleConsentResolved = () => setConsentRevision((revision) => revision + 1);
+    window.addEventListener(COOKIE_RESOLVED_EVENT, handleConsentResolved);
+    return () => window.removeEventListener(COOKIE_RESOLVED_EVENT, handleConsentResolved);
+  }, []);
+
+  // Queue route views immediately. GTM owns the first page load; subsequent
+  // client-side navigations are sent directly once its scripts become ready.
+  useEffect(() => {
+    const analyticsWindow = window as Window & {
+      dataLayer?: unknown[];
+      gtag?: (...args: unknown[]) => void;
+      fbq?: (...args: unknown[]) => void;
+    };
+    const pagePath = `${location.pathname}${location.search}`;
+    analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
+    analyticsWindow.dataLayer.push({
+      event: "virtual_page_view",
+      page_location: window.location.href,
+      page_path: pagePath,
+      page_title: document.title,
+    });
+    if (analyticsPathRef.current && analyticsPathRef.current !== pagePath) {
+      if (!analyticsWindow.gtag) {
+        analyticsWindow.gtag = (...args: unknown[]) => {
+          analyticsWindow.dataLayer!.push(args);
+        };
+      }
+      analyticsWindow.gtag("event", "page_view", {
+        page_location: window.location.href,
+        page_path: pagePath,
+        page_title: document.title,
+      });
+      analyticsWindow.fbq?.("track", "PageView");
+    }
+    analyticsPathRef.current = pagePath;
+  }, [location.pathname, location.search]);
 
   // Page navigation tracking
   useEffect(() => {
@@ -160,7 +201,7 @@ export function UserTrackingProvider({ children }: { children: React.ReactNode }
       max_scroll_pct: maxScrollRef.current,
       opt_in: (() => { try { return JSON.parse(localStorage.getItem(PREFS_KEY) || "{}"); } catch { return {}; } })(),
     }, { onConflict: "session_id" }).then(() => {}, () => {});
-  }, [location.pathname, location.search, user?.id]);
+  }, [location.pathname, location.search, user?.id, consentRevision]);
 
   // Clicks (with coords for heatmap), submits, scroll, copy, visibility, rage
   useEffect(() => {

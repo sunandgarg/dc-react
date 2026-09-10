@@ -36,6 +36,7 @@ interface LeadCaptureFormProps {
   interestOptions?: string[];
   /** Strip urgency hooks (slots/counselling pitch) and tagline. Used for high-intent Apply/Brochure CTAs. */
   simple?: boolean;
+  theme?: "default" | "cat-kit";
 }
 
 const courseOptions = [
@@ -63,6 +64,7 @@ export function LeadCaptureForm({
   interestLabel = "Course",
   interestOptions = courseOptions,
   simple = false,
+  theme = "default",
 }: LeadCaptureFormProps) {
   const interestPrompt = interestLabel === "Course" ? "Interested Course" : interestLabel;
   const [formData, setFormData] = useState({
@@ -327,14 +329,30 @@ export function LeadCaptureForm({
 
   // Card variant
   if (variant === "card") {
+    const isCatKit = theme === "cat-kit";
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="bg-card rounded-2xl border border-border p-4 shadow-soft"
+        className={isCatKit
+          ? "overflow-hidden rounded-xl border border-orange-200 bg-card p-0 shadow-2xl"
+          : "bg-card rounded-2xl border border-border p-4 shadow-soft"}
       >
-        <div className="flex items-center justify-between mb-4">
+        {isCatKit && (
+          <div className="border-b-4 border-orange-500 bg-slate-950 px-5 py-4 text-white">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-[11px] font-bold uppercase text-orange-300">Free CAT 2026 collection</div>
+              <div className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 text-[10px] font-bold text-emerald-200">Instant access</div>
+            </div>
+            <div className="mt-2 grid grid-cols-3 gap-3 text-center">
+              <div><div className="text-xl font-extrabold">16</div><div className="text-[10px] text-slate-300">resources</div></div>
+              <div><div className="text-xl font-extrabold">9</div><div className="text-[10px] text-slate-300">actual papers</div></div>
+              <div><div className="text-xl font-extrabold">1</div><div className="text-[10px] text-slate-300">complete ZIP</div></div>
+            </div>
+          </div>
+        )}
+        <div className={`${isCatKit ? "px-5 pt-5" : ""} flex items-center justify-between mb-4`}>
           <div className="flex items-center gap-3">
             <img src={dcLogo} alt="DekhoCampus" className="w-10 h-10 object-contain" />
             <div>
@@ -347,7 +365,7 @@ export function LeadCaptureForm({
             </div>
           </div>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-2.5">
+        <form onSubmit={handleSubmit} className={`${isCatKit ? "px-5 pb-5" : ""} space-y-2.5`}>
           {renderTwoStepFields()}
         </form>
         {otpPortal}

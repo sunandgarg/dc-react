@@ -16,6 +16,9 @@ const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
 const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
+const MAX_RESEARCH_SOURCES = 4;
+const MAX_RESEARCH_SIGNAL_CHARACTERS = 800;
+const MAX_TOPIC_PROMPT_FINGERPRINTS = 100;
 export const DEFAULT_BLOG_COVER_TEMPLATE_KEY = "admin-uploads/blog-templates/dekhocampus-blog-cover-template-v1.png";
 const BLOG_COVER_FONT_FILE = fileURLToPath(new URL("../assets/Inter.ttf", import.meta.url));
 const BLOG_COVER_LOGO_FILE = new URL("../assets/dekhocampus-blog-logo.png", import.meta.url);
@@ -315,6 +318,157 @@ export const normalizeArticleTitle = (value) => String(value || "")
   .replace(/[^a-z0-9]+/g, " ")
   .trim()
   .replace(/\s+/g, " ");
+
+const TOPIC_STOP_WORDS = new Set([
+  ...TITLE_STOP_WORDS,
+  "all", "announcement", "best", "check", "checking", "complete", "date", "dates", "day", "details", "download",
+  "education", "exam", "explained", "guide", "how", "india", "indian", "instructions", "key", "know", "latest",
+  "new", "official", "process", "release", "released", "rules", "student", "students", "step", "steps", "update",
+  "updates", "what", "when", "where", "which", "why", "workflow", "you", "your",
+]);
+const TOPIC_INTENT_PATTERNS = {
+  "admit-card": [/\badmit card\b/, /\bhall ticket\b/],
+  "answer-key": [/\banswer key\b/, /\bresponse sheet\b/],
+  counselling: [/\bcounselling\b/, /\bcounseling\b/, /\bseat allotment\b/, /\bseat allocation\b/],
+  "choice-filling": [/\bchoice filling\b/, /\bchoice locking\b/, /\bpreference form\b/],
+  cutoff: [/\bcut ?off\b/, /\bqualifying marks?\b/],
+  dates: [/\bdate sheet\b/, /\bexam dates?\b/, /\bschedule\b/, /\btimetable\b/, /\bcalendar\b/, /\btimeline\b/],
+  documents: [/\bdocuments?\b/, /\bcertificate verification\b/, /\bdocument verification\b/],
+  eligibility: [/\beligibility\b/, /\bage limit\b/, /\bqualification criteria\b/],
+  fees: [/\bfees?\b/, /\bapplication charge\b/, /\btuition\b/],
+  "merit-list": [/\bmerit list\b/, /\brank list\b/, /\bstate rank\b/],
+  pattern: [/\bexam pattern\b/, /\bmarking scheme\b/, /\bpaper pattern\b/],
+  placement: [/\bplacements?\b/, /\bsalary package\b/, /\bmedian salary\b/],
+  preparation: [/\bpreparation\b/, /\bstudy plan\b/, /\brevision\b/, /\bmock test\b/],
+  ranking: [/\brankings?\b/, /\bnirf\b/],
+  registration: [/\bregistration\b/, /\bapplication form\b/, /\bapply online\b/],
+  result: [/\bresults?\b/, /\bscore ?cards?\b/],
+  scholarship: [/\bscholarships?\b/, /\bfinancial aid\b/, /\bstipend\b/],
+  "seat-matrix": [/\bseat matrix\b/, /\bseat intake\b/, /\bavailable seats?\b/],
+  syllabus: [/\bsyllabus\b/, /\btopics? and weightage\b/, /\bchapter weightage\b/],
+};
+const TOPIC_INTENT_WORDS = new Set(Object.values(TOPIC_INTENT_PATTERNS)
+  .flatMap((patterns) => patterns.flatMap((pattern) => pattern.source.replace(/\\b/g, " ").replace(/[^a-z ]/g, " ").split(/\s+/)))
+  .filter(Boolean));
+
+function topicInputText(value) {
+  if (typeof value === "string") return { title: value, context: value, primaryEntity: "" };
+  const title = String(value?.title || value?.headline || value?.topic || value?.slug || "");
+  const tags = Array.isArray(value?.tags) ? value.tags.join(" ") : String(value?.tags || "");
+  const primaryEntity = String(value?.primary_entity || "");
+  const context = [title, value?.angle, value?.search_intent, value?.primary_entity, value?.unique_value, value?.description, value?.meta_keywords, tags]
+    .filter(Boolean)
+    .join(" ");
+  return { title, context, primaryEntity };
+}
+
+function normalizedTopicLanguage(value) {
+  return normalizeArticleTitle(value)
+    .replace(/\bcounseling\b/g, "counselling")
+    .replace(/\bhall tickets?\b/g, "admit card")
+    .replace(/\bscore cards?\b/g, "result")
+    .replace(/\brank lists?\b/g, "merit list")
+    .replace(/\bseat allocation\b/g, "seat allotment")
+    .replace(/\bnda ii\b/g, "nda 2")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function setOverlap(left, right) {
+  if (!left.size || !right.size) return { intersection: 0, jaccard: 0, containment: 0 };
+  const intersection = [...left].filter((item) => right.has(item)).length;
+  return {
+    intersection,
+    jaccard: intersection / new Set([...left, ...right]).size,
+    containment: intersection / Math.min(left.size, right.size),
+  };
+}
+
+export function articleTopicProfile(value) {
+  const input = topicInputText(value);
+  const title = normalizedTopicLanguage(input.title);
+  const context = normalizedTopicLanguage(input.context);
+  const primaryEntity = normalizedTopicLanguage(input.primaryEntity);
+  const years = new Set(title.match(/\b20\d{2}\b/g) || []);
+  const intents = new Set(Object.entries(TOPIC_INTENT_PATTERNS)
+    .filter(([, patterns]) => patterns.some((pattern) => pattern.test(context)))
+    .map(([intent]) => intent));
+  const anchors = new Set(title.split(" ").filter((token) => (
+    (token.length > 1 || /^\d+$/.test(token))
+    && !years.has(token)
+    && !TOPIC_STOP_WORDS.has(token)
+    && !TOPIC_INTENT_WORDS.has(token)
+  )));
+  const entityAnchors = new Set(primaryEntity.split(" ").filter((token) => (
+    (token.length > 1 || /^\d+$/.test(token))
+    && !TOPIC_STOP_WORDS.has(token)
+    && !TOPIC_INTENT_WORDS.has(token)
+  )));
+  for (const token of entityAnchors) anchors.add(token);
+  const qualifiers = new Map();
+  for (const match of title.matchAll(/\b(slot|session|round|phase|paper|part)\s+(\d+)\b/g)) qualifiers.set(match[1], match[2]);
+  return { title, context, years, intents, anchors, entityAnchors, qualifiers };
+}
+
+export function articleTopicSimilarity(left, right) {
+  const leftProfile = articleTopicProfile(left);
+  const rightProfile = articleTopicProfile(right);
+  const titleScore = articleTitleSimilarity(leftProfile.title, rightProfile.title);
+  const years = setOverlap(leftProfile.years, rightProfile.years);
+  if (leftProfile.years.size && rightProfile.years.size && !years.intersection) return Math.min(titleScore, 0.55);
+  for (const [qualifier, value] of leftProfile.qualifiers) {
+    if (rightProfile.qualifiers.has(qualifier) && rightProfile.qualifiers.get(qualifier) !== value) return Math.min(titleScore, 0.55);
+  }
+  const anchors = setOverlap(leftProfile.anchors, rightProfile.anchors);
+  const intents = setOverlap(leftProfile.intents, rightProfile.intents);
+  if (leftProfile.intents.size && rightProfile.intents.size && !intents.intersection) return Math.min(titleScore, 0.68);
+  const explicitEntity = leftProfile.entityAnchors.size ? leftProfile.entityAnchors : rightProfile.entityAnchors;
+  const otherAnchors = leftProfile.entityAnchors.size ? rightProfile.anchors : leftProfile.anchors;
+  const entityMatch = setOverlap(explicitEntity, otherAnchors);
+  if (explicitEntity.size && entityMatch.containment >= 0.8 && (!leftProfile.intents.size || !rightProfile.intents.size || intents.jaccard >= 0.66)) {
+    return Math.max(titleScore, 0.95);
+  }
+  if (titleScore >= 0.88) return titleScore;
+  const hasStableSubject = anchors.intersection >= 2 || (anchors.intersection === 1 && Math.min(leftProfile.anchors.size, rightProfile.anchors.size) === 1);
+  if (hasStableSubject && anchors.containment >= 0.72 && intents.jaccard >= 0.66) return Math.max(titleScore, 0.94);
+  if (hasStableSubject && anchors.containment >= 0.82 && (!leftProfile.intents.size || !rightProfile.intents.size)) return Math.max(titleScore, 0.84);
+  return Math.max(titleScore, (anchors.jaccard * 0.62) + (intents.jaccard * 0.38));
+}
+
+export function findDuplicateArticleTopic(candidate, existing, threshold = 0.82) {
+  return existing.find((article) => (
+    slugify(article.slug || article.title) === slugify(candidate.slug || candidate.title || candidate)
+    || articleTopicSimilarity(article, candidate) >= threshold
+  )) || null;
+}
+
+export function compactArticleCoverage(value) {
+  const profile = articleTopicProfile(value);
+  const parts = [
+    [...profile.anchors].sort().join(" "),
+    [...profile.intents].sort().join("+"),
+    [...profile.years].sort().join("+"),
+    [...profile.qualifiers].map(([name, number]) => `${name}-${number}`).sort().join("+"),
+  ].filter(Boolean);
+  return parts.join(" | ").slice(0, 180);
+}
+
+const ARTICLE_COVERAGE_SELECT = {
+  id: true,
+  slug: true,
+  title: true,
+  description: true,
+  meta_keywords: true,
+  tags: true,
+};
+
+async function loadArticleCoverage() {
+  return prisma.articles.findMany({
+    orderBy: { created_at: "desc" },
+    take: 5000,
+    select: ARTICLE_COVERAGE_SELECT,
+  });
+}
 
 const contextLogoFields = {
   colleges: { aliases: ["name", "short_name"], media: ["logo", "image"] },
@@ -818,7 +972,7 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
   return upload.publicUrl;
 }
 
-async function researchSignals(limit = 6) {
+async function researchSignals(limit = MAX_RESEARCH_SOURCES) {
   const configured = await prisma.blog_research_sources.findMany({ where: { is_active: true }, orderBy: { display_order: "asc" }, take: limit });
   const defaults = [
     { name: "Google News Education India", url: "https://news.google.com/rss/search?q=education+college+admission+exam+India&hl=en-IN&gl=IN&ceid=IN:en", source_type: "public_signal" },
@@ -828,13 +982,32 @@ async function researchSignals(limit = 6) {
   const settled = await Promise.allSettled(sources.slice(0, limit).map(async (source) => {
     const response = await fetch(source.url, { headers: { "user-agent": "DekhoCampus editorial research/2.0" }, signal: AbortSignal.timeout(12_000) });
     if (!response.ok) throw new Error(String(response.status));
-    return { name: source.name, url: source.url, source_type: source.source_type, signal: stripHtml((await response.text()).slice(0, 40_000)).slice(0, 1200) };
+    return {
+      name: source.name,
+      url: source.url,
+      source_type: source.source_type,
+      signal: stripHtml((await response.text()).slice(0, 24_000)).slice(0, MAX_RESEARCH_SIGNAL_CHARACTERS),
+    };
   }));
   return settled.flatMap((item) => item.status === "fulfilled" ? [item.value] : []);
 }
 
-function articlePrompt(topic, signals, wordLimit = 1200) {
-  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article about ${topic} for Indian students and parents. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. Research signals are private fact-checking context only: ${JSON.stringify(signals)}. Never copy their wording and never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. Write title as a complete, specific headline of roughly 55-85 characters that preserves the key exam, institution, authority, date or outcome; never truncate it for cover artwork. Write meta_title at 50-65 characters and meta_description at 140-160 characters. Set hero_hook exactly equal to title. Lead with the useful consequence, decision, deadline, change or uncommon insight that makes a student want to read. Answer one identifiable search intent and add information, comparison, calculation, timeline, checklist or analysis beyond a rewritten announcement. The title must remain accurate and natural, never vague or sensational. Do not include DekhoCampus, an ellipsis, trailing punctuation, generic phrases such as Complete Guide or Everything You Need to Know, or unsupported urgency. Write 4-8 distinct search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Write like an experienced Indian education editor: use natural variation in sentence length, specific explanations, restrained transitions, and context-aware phrasing. Avoid repetitive templates, generic filler, exaggerated claims, robotic summaries, first-person claims of lived experience, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". Use descriptive H2/H3 headings, short readable paragraphs, useful lists, and verifiable facts. When evidence is uncertain, tell readers to verify details on the relevant official authority website without naming or linking a research source.`;
+function articlePrompt(topic, signals, wordLimit = 1200, correctionIssues = []) {
+  const topicBrief = typeof topic === "string"
+    ? { title: topic }
+    : {
+      title: String(topic?.title || topic?.headline || topic?.topic || ""),
+      angle: String(topic?.angle || ""),
+      search_intent: String(topic?.search_intent || ""),
+      primary_entity: String(topic?.primary_entity || ""),
+      unique_value: String(topic?.unique_value || ""),
+      category: String(topic?.category || "Education"),
+      tags: Array.isArray(topic?.tags) ? topic.tags : [],
+    };
+  const correction = correctionIssues.length
+    ? `A previous draft failed these publishing checks: ${correctionIssues.join("; ")}. Correct every item without discussing the checks.`
+    : "";
+  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article for Indian students and parents from this editorial brief: ${JSON.stringify(topicBrief)}. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. ${correction} Research signals are private fact-checking context only: ${JSON.stringify(signals)}. Never copy their wording and never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. Write title as a complete, specific headline of roughly 55-85 characters that preserves the key exam, institution, authority, date or outcome; never truncate it for cover artwork. Write meta_title at 50-65 characters and meta_description at 140-160 characters. Set hero_hook exactly equal to title. Lead with the useful consequence, decision, deadline, change or uncommon insight that makes a student want to read. Answer one identifiable search intent and deliver the unique value in the brief through information, comparison, calculation, timeline, checklist or analysis beyond a rewritten announcement. Build the structure around this topic instead of reusing a standard article outline. Every major section must help the reader make a decision, complete a task, avoid a mistake or understand a concrete consequence. The title must remain accurate and natural, never vague or sensational. Do not include DekhoCampus, an ellipsis, trailing punctuation, generic phrases such as Complete Guide or Everything You Need to Know, or unsupported urgency. Write 4-8 distinct search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Write in a natural, reader-first editorial voice with varied sentence lengths, specific explanations, restrained transitions and context-aware phrasing. Never invent interviews, testing, personal experience, quotes, statistics or official facts. Avoid repetitive templates, generic filler, exaggerated claims, robotic summaries, first-person claims of lived experience, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". Use descriptive H2/H3 headings, short readable paragraphs, at least one useful list or table, and verifiable facts. When evidence is uncertain, tell readers to verify details on the relevant official authority website without naming or linking a research source.`;
 }
 
 const ARTICLE_RESPONSE_SCHEMA = {
@@ -872,28 +1045,77 @@ export function normalizeGeneratedFaqs(value) {
   }).slice(0, 10);
 }
 
+export function assessGeneratedArticle(draft, topic, wordLimit = 1200) {
+  const contentHtml = String(draft?.content_html || "");
+  const body = stripHtml(contentHtml);
+  const words = body.match(/[A-Za-z0-9][A-Za-z0-9'/-]*/g) || [];
+  const targetWords = Math.min(2200, Math.max(700, Number(wordLimit) || 1200));
+  const minimumWords = Math.max(550, Math.min(1200, Math.floor(targetWords * 0.65)));
+  const issues = [];
+  if (words.length < minimumWords) issues.push(`article has ${words.length} words; minimum is ${minimumWords}`);
+  if ((contentHtml.match(/<h[23]\b/gi) || []).length < 3) issues.push("article needs at least three descriptive H2/H3 sections");
+  if (!/<(?:ul|ol|table)\b/i.test(contentHtml)) issues.push("article needs at least one useful list or table");
+  if (normalizeGeneratedFaqs(draft?.faqs).length < 4) issues.push("article needs at least four distinct FAQs");
+  if (!/frequently asked|\bfaqs?\b|common questions/i.test(contentHtml)) issues.push("article needs a visible FAQ section");
+  if (String(draft?.description || "").trim().length < 70) issues.push("description is too thin");
+  if (/https?:\/\/|\bwww\./i.test(contentHtml)) issues.push("published content contains a source URL");
+  if (/\b(?:as an ai|language model|in today's fast-paced world|it is important to note|in conclusion|delve into)\b/i.test(body)) issues.push("article contains generic or machine-oriented boilerplate");
+
+  const topicProfile = articleTopicProfile(topic);
+  const searchableBody = normalizedTopicLanguage(`${draft?.title || ""} ${draft?.description || ""} ${body}`);
+  if (topicProfile.anchors.size >= 2) {
+    const coveredAnchors = [...topicProfile.anchors].filter((anchor) => new RegExp(`\\b${anchor.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(searchableBody));
+    if (coveredAnchors.length / topicProfile.anchors.size < 0.6) issues.push("article does not stay focused on the requested subject");
+  }
+
+  const paragraphs = [...contentHtml.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map((match) => normalizeArticleTitle(stripHtml(match[1])))
+    .filter((paragraph) => paragraph.length >= 100);
+  if (new Set(paragraphs).size < paragraphs.length) issues.push("article repeats one or more paragraphs");
+  return { passed: issues.length === 0, issues, word_count: words.length, minimum_words: minimumWords };
+}
+
 async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = null, requiredTitle = "" } = {}) {
-  const evidence = signals || await researchSignals(6);
+  const evidence = signals || await researchSignals();
   const maxOutputTokens = Math.min(7000, Math.max(3200, Math.trunc(Number(wordLimit || 1200) * 4.5)));
-  const { result, model, provider: textProvider } = await blogTextJson(articlePrompt(topic, evidence, wordLimit), "blog-studio", {
-    maxOutputTokens,
-    thinkingLevel: "low",
-    responseSchema: ARTICLE_RESPONSE_SCHEMA,
-  });
-  const title = String(requiredTitle || result.title || topic).trim();
-  const slug = slugify(requiredTitle || result.slug || result.title || topic);
-  const draft = {
-    ...result,
-    title,
-    slug,
-    content_html: stripCompetitorCredits(result.content_html),
-    tags: Array.isArray(result.tags) ? result.tags : [],
-    hero_hook: title,
-    faqs: normalizeGeneratedFaqs(result.faqs),
-    featured_image: "",
-  };
+  const fallbackTitle = typeof topic === "string" ? topic : topic?.title || topic?.headline || topic?.topic || "";
+  let draft;
+  let model;
+  let textProvider;
+  let quality;
+  let correctionIssues = [];
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const generated = await blogTextJson(articlePrompt(topic, evidence, wordLimit, correctionIssues), "blog-studio", {
+      maxOutputTokens,
+      thinkingLevel: "low",
+      responseSchema: ARTICLE_RESPONSE_SCHEMA,
+    });
+    model = generated.model;
+    textProvider = generated.provider;
+    const title = String(requiredTitle || generated.result.title || fallbackTitle).trim();
+    const slug = slugify(requiredTitle || generated.result.slug || generated.result.title || fallbackTitle);
+    draft = {
+      ...generated.result,
+      title,
+      slug,
+      content_html: stripCompetitorCredits(generated.result.content_html),
+      tags: Array.isArray(generated.result.tags) ? generated.result.tags : [],
+      hero_hook: title,
+      faqs: normalizeGeneratedFaqs(generated.result.faqs),
+      featured_image: "",
+    };
+    quality = assessGeneratedArticle(draft, topic, wordLimit);
+    if (quality.passed) break;
+    correctionIssues = quality.issues;
+  }
+  if (!quality?.passed) {
+    const error = new Error(`Article failed the editorial quality gate: ${quality?.issues.join("; ") || "unknown quality issue"}`);
+    error.status = 422;
+    error.code = "ARTICLE_QUALITY_GATE_FAILED";
+    throw error;
+  }
   draft.featured_image = await createBlogCover(slug, draft.title, cover);
-  return { draft, model, textProvider, research_sources: evidence.map((item) => item.url) };
+  return { draft, model, textProvider, quality, research_sources: evidence.map((item) => item.url) };
 }
 
 export async function handleBlogAiSettings(request, userId) {
@@ -920,6 +1142,11 @@ export async function handleBlogStudio(request) {
   const body = await request.json().catch(() => ({}));
   const topic = String(body.topic || "").trim();
   if (!topic) throw Object.assign(new Error("A blog topic is required"), { status: 400 });
+  const existing = await loadArticleCoverage();
+  const existingTopic = findDuplicateArticleTopic({ title: topic }, existing);
+  if (existingTopic) {
+    throw Object.assign(new Error(`DekhoCampus already covers this topic: ${existingTopic.title}`), { status: 409, code: "DUPLICATE_ARTICLE" });
+  }
   const savedCover = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } }).catch(() => null);
   const image = body.image && typeof body.image === "object" ? body.image : {};
   const coverDiagnostics = {};
@@ -937,8 +1164,7 @@ export async function handleBlogStudio(request) {
     resolution: image.resolution || savedCover?.output_resolution,
     diagnostics: coverDiagnostics,
   } });
-  const existing = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { id: true, slug: true, title: true } });
-  const duplicate = findDuplicateArticleTitle(generated.draft, existing);
+  const duplicate = findDuplicateArticleTopic(generated.draft, existing);
   if (duplicate) {
     throw Object.assign(new Error(`DekhoCampus already covers this topic: ${duplicate.title}`), { status: 409, code: "DUPLICATE_ARTICLE" });
   }
@@ -947,6 +1173,7 @@ export async function handleBlogStudio(request) {
     model_used: `${generated.textProvider}:${generated.model}`,
     image_model_used: coverDiagnostics.sourceMode === "generated" ? "openai" : coverDiagnostics.sourceMode || "none",
     cover_diagnostics: coverDiagnostics,
+    quality: generated.quality,
     research_sources: generated.research_sources,
   };
 }
@@ -994,11 +1221,13 @@ export async function handleAiGenerate(request) {
   return { items, model_used: `${generated.provider}:${model}`, counts: { inserts: items.filter((item) => item._action === "insert").length, upserts: items.filter((item) => item._action === "upsert").length }, duplicate_titles_skipped: [] };
 }
 
-async function saveGeneratedArticle(topic, settings, signals, entityContext = null) {
+async function saveGeneratedArticle(topic, settings, signals, entityContext = null, existingCoverage = null) {
   const topicTitle = String(topic?.title || topic).trim();
+  const existing = existingCoverage || await loadArticleCoverage();
+  if (findDuplicateArticleTopic(topic, existing)) return null;
   const schedule = entityContext?.schedule || null;
   const contextLogo = await resolveContextualBlogLogo(topicTitle, entityContext);
-  const generated = await generateDraft(topicTitle, { wordLimit: settings.word_limit, signals, requiredTitle: topicTitle, cover: {
+  const generated = await generateDraft(topic, { wordLimit: settings.word_limit, signals, requiredTitle: topicTitle, cover: {
     imageMode: settings.image_mode,
     templateUrl: settings.image_template_url,
     referenceImageUrl: settings.image_template_url,
@@ -1011,8 +1240,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     resolution: settings.output_resolution,
   } });
   const draft = generated.draft;
-  const existing = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { id: true, slug: true, title: true } });
-  if (findDuplicateArticleTitle(draft, existing)) return null;
+  if (findDuplicateArticleTopic(draft, existing)) return null;
   const article = await prisma.$transaction(async (tx) => {
     const created = await tx.articles.create({ data: {
       id: randomUUID(), status: "Published",
@@ -1026,6 +1254,14 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
       await tx.entity_article_publications.create({ data: { id: randomUUID(), schedule_id: schedule.id, article_id: created.id, entity_type: schedule.entity_type, entity_slug: schedule.entity_slug, topic_kind: "researched_update", generated_for_date: new Date() } });
     }
     return created;
+  });
+  if (existingCoverage) existingCoverage.unshift({
+    id: article.id,
+    slug: article.slug,
+    title: article.title,
+    description: article.description,
+    meta_keywords: article.meta_keywords,
+    tags: article.tags,
   });
   return article.id;
 }
@@ -1123,22 +1359,25 @@ export async function runBlogAgent(body = {}) {
     ? await prisma.blog_auto_agent_runs.update({ where: { id: body.resume_run_id }, data: { status: "running", resumed_at: new Date(), finished_at: null, message: "Resumed", current_step: "Resuming education research", control_note: executionToken } })
     : await prisma.blog_auto_agent_runs.create({ data: { id: randomUUID(), status: "running", trigger_type: triggerType, interval_minutes: interval, model_provider: blogTextProvider(settings.text_model || DEFAULT_OPENAI_TEXT_MODEL), word_limit: settings.word_limit, sources: [], selected_topics: [], created_article_ids: [], message: "Researching", progress: 5, current_step: "Researching education signals", estimated_seconds: postCount * 90, completed_steps: 0, total_steps: postCount * 2 + 1, control_note: executionToken, entity_schedule_id: entityContext?.schedule.id || null, agent_mode: entityContext ? "entity_schedule" : "general" } });
   try {
-    const signals = await researchSignals(6);
+    const signals = await researchSignals();
     await assertRunActive(run.id, executionToken);
-    const recent = await prisma.articles.findMany({ orderBy: { created_at: "desc" }, take: 5000, select: { title: true, slug: true } });
+    const recent = await loadArticleCoverage();
     const entityInstruction = entityContext
       ? `Generate only for this ${entityContext.schedule.entity_type}: ${JSON.stringify({ name: entityContext.schedule.entity_name, slug: entityContext.schedule.entity_slug, facts: entityContext.entity, topic_focus: entityContext.schedule.topic_focus })}. Prefer a timely verified update; otherwise create an evergreen student guide. Every topic must be specifically useful for this entity.`
       : "Cover the strongest Indian education opportunities across admissions, exams, counselling, scholarships, careers and college decisions.";
-    const promptTitles = recent.slice(0, 80).map((article) => article.title);
+    // The local semantic gate still compares against all loaded articles. The
+    // model only needs a representative recent sample to avoid costly retries.
+    const promptCoverage = [...new Set(recent.map(compactArticleCoverage).filter(Boolean))]
+      .slice(0, MAX_TOPIC_PROMPT_FINGERPRINTS);
     const topics = [];
-    const comparedTitles = [...recent];
+    const comparedCoverage = [...recent];
     const rejected = [];
     for (let round = 1; round <= 3 && topics.length < postCount; round += 1) {
       const rejectedInstruction = rejected.length
         ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
         : "";
       const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
-      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} Recent DekhoCampus titles to avoid: ${JSON.stringify(promptTitles)}. ${rejectedInstruction} Use competitor material only to identify coverage gaps; never copy, cite, link, name, or credit it. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. Each title must answer one identifiable search intent, be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation, and substantially different from every avoided title. Never truncate a title for cover artwork. Return topic objects with a non-empty title.`, "blog-agent", {
+      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} Existing DekhoCampus subject + intent fingerprints to avoid: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Use competitor material only to identify coverage gaps; never copy, cite, link, name, or credit it. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic. Each proposal needs one primary entity, one precise search intent, and a non-empty unique value that is materially absent from existing coverage. Each title must be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation, and substantially different from every avoided fingerprint. Never truncate a title for cover artwork.`, "blog-agent", {
         thinkingLevel: "minimal",
         maxOutputTokens: 1200,
         responseSchema: {
@@ -1151,10 +1390,13 @@ export async function runBlogAgent(body = {}) {
                 properties: {
                   title: { type: "STRING" },
                   angle: { type: "STRING" },
+                  search_intent: { type: "STRING" },
+                  primary_entity: { type: "STRING" },
+                  unique_value: { type: "STRING" },
                   category: { type: "STRING" },
                   tags: { type: "ARRAY", items: { type: "STRING" } },
                 },
-                required: ["title"],
+                required: ["title", "angle", "search_intent", "primary_entity", "unique_value"],
               },
             },
           },
@@ -1163,13 +1405,13 @@ export async function runBlogAgent(body = {}) {
       });
       await assertRunActive(run.id, executionToken);
       for (const topic of normalizeTopicSuggestions(result)) {
-        const duplicate = findDuplicateArticleTitle(topic, comparedTitles);
+        const duplicate = findDuplicateArticleTopic(topic, comparedCoverage);
         if (duplicate) {
           rejected.push({ suggested: topic.title, conflicts_with: duplicate.title });
           continue;
         }
         topics.push(topic);
-        comparedTitles.push({ title: topic.title, slug: slugify(topic.title) });
+        comparedCoverage.push({ ...topic, slug: slugify(topic.title) });
         if (topics.length >= postCount) break;
       }
     }
@@ -1178,7 +1420,7 @@ export async function runBlogAgent(body = {}) {
     const ids = [];
     for (const topic of topics) {
       await assertRunActive(run.id, executionToken);
-      const id = await saveGeneratedArticle(topic, settings, signals, entityContext);
+      const id = await saveGeneratedArticle(topic, settings, signals, entityContext, recent);
       await assertRunActive(run.id, executionToken);
       if (id) ids.push(id);
     }

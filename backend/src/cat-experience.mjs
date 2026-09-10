@@ -5,7 +5,8 @@ import { signStorageDownload, storageConfig, storageObjectKey } from "./storage.
 
 const KIT_BUCKET = "user-documents";
 const KIT_OBJECT_PATH = "cat-kits/CAT-2026-Preparation-Kit.zip";
-const KIT_DOWNLOAD_NAME = "DekhoCampus-CAT-2026-Preparation-Kit.zip";
+const KIT_DOWNLOAD_NAME = "DekhoCampus-CAT-2026-Collection.zip";
+const KIT_MINIMUM_BYTES = 100 * 1024 * 1024;
 const REQUEST_WINDOW_MS = 60 * 60 * 1000;
 const REQUEST_LIMIT = 40;
 const requestWindows = new Map();
@@ -285,15 +286,23 @@ async function coachQuestion(body) {
 async function downloadKit() {
   const config = storageConfig();
   const key = storageObjectKey(KIT_BUCKET, KIT_OBJECT_PATH);
+  let object;
   try {
-    await config.client.send(new HeadObjectCommand({ Bucket: config.bucket, Key: key }));
+    object = await config.client.send(new HeadObjectCommand({ Bucket: config.bucket, Key: key }));
   } catch {
     throw Object.assign(new Error("The CAT preparation kit is being published. Please try again shortly."), { status: 503, code: "CAT_KIT_UNAVAILABLE" });
+  }
+  const fileSize = Number(object.ContentLength || 0);
+  if (fileSize < KIT_MINIMUM_BYTES) {
+    throw Object.assign(new Error("The CAT preparation kit is still being verified. Please try again shortly."), { status: 503, code: "CAT_KIT_INCOMPLETE" });
   }
   return {
     download_url: await signStorageDownload(KIT_BUCKET, KIT_OBJECT_PATH, { expiresIn: 600, downloadName: KIT_DOWNLOAD_NAME }),
     expires_in: 600,
     file_name: KIT_DOWNLOAD_NAME,
+    file_size: fileSize,
+    version: String(object.ETag || "").replaceAll('"', ""),
+    checksum: String(object.Metadata?.sha256 || ""),
   };
 }
 

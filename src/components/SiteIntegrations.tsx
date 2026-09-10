@@ -1,21 +1,7 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { backendClient } from "@/integrations/backend/client";
 
 export function SiteIntegrations() {
-  const location = useLocation();
-
-  useEffect(() => {
-    const analyticsWindow = window as Window & { dataLayer?: Array<Record<string, unknown>> };
-    const dataLayer = (analyticsWindow.dataLayer = analyticsWindow.dataLayer || []);
-    dataLayer.push({
-      event: "virtual_page_view",
-      page_location: window.location.href,
-      page_path: `${location.pathname}${location.search}`,
-      page_title: document.title,
-    });
-  }, [location.pathname, location.search]);
-
   useEffect(() => {
     let cancelled = false;
     const cleanupFns: Array<() => void> = [];

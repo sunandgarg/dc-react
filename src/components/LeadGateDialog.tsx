@@ -28,6 +28,7 @@ interface LeadGateDialogProps {
   interestedCollegeSlug?: string;
   interestedCourseSlug?: string;
   interestedExamSlug?: string;
+  theme?: "default" | "cat-kit";
 }
 
 
@@ -46,6 +47,7 @@ export function LeadGateDialog({
   interestedCollegeSlug,
   interestedCourseSlug,
   interestedExamSlug,
+  theme = "default",
 }: LeadGateDialogProps) {
   const { user } = useAuth();
   const { data: profile } = useUserProfile();
@@ -115,7 +117,7 @@ export function LeadGateDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="w-[calc(100vw-2rem)] sm:w-full max-w-md mx-auto p-0 gap-0 rounded-2xl border-0 bg-transparent shadow-none overflow-visible"
+        className={`${theme === "cat-kit" ? "max-w-lg" : "max-w-md"} w-[calc(100vw-2rem)] sm:w-full mx-auto p-0 gap-0 rounded-2xl border-0 bg-transparent shadow-none overflow-visible`}
         aria-describedby={undefined}
         onPointerDownOutside={(e) => { if ((e.target as HTMLElement)?.closest?.('#searchable-select-portal-active')) e.preventDefault(); }}
         onInteractOutside={(e) => { if ((e.target as HTMLElement)?.closest?.('#searchable-select-portal-active')) e.preventDefault(); }}
@@ -137,6 +139,7 @@ export function LeadGateDialog({
           interestedCollegeSlug={interestedCollegeSlug}
           interestedCourseSlug={interestedCourseSlug}
           interestedExamSlug={interestedExamSlug}
+          theme={theme}
         />
       </DialogContent>
     </Dialog>

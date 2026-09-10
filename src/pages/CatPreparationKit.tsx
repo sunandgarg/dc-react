@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, BrainCircuit, Check, Clock3, Download, FileText, Loader2, ShieldCheck, Sparkles } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
@@ -8,7 +8,7 @@ import { CatAccessGate } from "@/components/cat/CatAccessGate";
 import { CatExperienceNav } from "@/components/cat/CatExperienceNav";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { useSEO } from "@/hooks/useSEO";
-import { CAT_KIT_RESOURCES, catExperience, readCatAccess } from "@/lib/catExperience";
+import { CAT_KIT_RESOURCES, catExperience } from "@/lib/catExperience";
 import { trackEvent } from "@/lib/analytics";
 import { toast } from "sonner";
 
@@ -21,7 +21,9 @@ const faqItems = [
 
 export default function CatPreparationKit() {
   const [gateOpen, setGateOpen] = useState(false);
+  const [gateSource, setGateSource] = useState("hero");
   const [downloading, setDownloading] = useState(false);
+  const downloadSource = useRef("hero");
 
   useSEO({
     title: "Free CAT 2026 Preparation Kit, AI Coach and Interview Practice",
@@ -54,23 +56,35 @@ export default function CatPreparationKit() {
 
   const beginDownload = async (leadId: string) => {
     setDownloading(true);
+    trackEvent("cat_kit_download_request", { source: downloadSource.current, resource_count: CAT_KIT_RESOURCES.length });
     try {
-      const result = await catExperience<{ download_url: string }>("download-kit", leadId);
-      trackEvent("cat_kit_download", { source: "cat_2026_kit", resource_count: CAT_KIT_RESOURCES.length });
-      window.location.assign(result.download_url);
+      const result = await catExperience<{ download_url: string; file_name: string; file_size: number }>("download-kit", leadId);
+      trackEvent("cat_kit_download", {
+        source: downloadSource.current,
+        resource_count: CAT_KIT_RESOURCES.length,
+        file_size: result.file_size,
+      });
+      const link = document.createElement("a");
+      link.href = result.download_url;
+      link.rel = "noopener";
+      link.setAttribute("download", result.file_name);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
       toast.success("Your CAT 2026 kit is downloading");
     } catch (error) {
+      trackEvent("cat_kit_download_error", { source: downloadSource.current });
       toast.error(error instanceof Error ? error.message : "The kit could not be downloaded");
     } finally {
       setDownloading(false);
     }
   };
 
-  const requestDownload = () => {
-    trackEvent("cta_click", { page: "cat_2026_kit", cta: "download_kit" });
-    const access = readCatAccess();
-    if (access) void beginDownload(access);
-    else setGateOpen(true);
+  const requestDownload = (source: string) => {
+    downloadSource.current = source;
+    setGateSource(source);
+    trackEvent("cta_click", { page: "cat_2026_kit", cta: "download_kit", source });
+    setGateOpen(true);
   };
 
   const resourceGroups = [...new Set(CAT_KIT_RESOURCES.map((item) => item.group))];
@@ -103,7 +117,7 @@ export default function CatPreparationKit() {
                 Nine actual papers with solutions, practice banks, short methods, a preparation roadmap and mock-test psychology in one download.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <Button size="lg" onClick={requestDownload} disabled={downloading} className="h-12 rounded-md bg-orange-500 px-6 text-white hover:bg-orange-600">
+                <Button size="lg" onClick={() => requestDownload("hero")} disabled={downloading} className="h-12 rounded-md bg-orange-500 px-6 text-white hover:bg-orange-600">
                   {downloading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Download className="h-5 w-5" />}
                   Download the free kit
                 </Button>
@@ -130,7 +144,7 @@ export default function CatPreparationKit() {
                 <p className="mt-4 max-w-lg leading-7 text-muted-foreground">
                   The collection covers paper familiarity, timed practice, review discipline and section-specific repair work.
                 </p>
-                <Button onClick={requestDownload} disabled={downloading} variant="outline" className="mt-6 rounded-md">
+                <Button onClick={() => requestDownload("resource_library")} disabled={downloading} variant="outline" className="mt-6 rounded-md">
                   <Download className="h-4 w-4" /> Get all 16 resources
                 </Button>
               </div>
@@ -192,12 +206,26 @@ export default function CatPreparationKit() {
             </div>
           </div>
         </section>
+
+        <section className="border-y border-orange-200 bg-orange-50 py-10">
+          <div className="container flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
+            <div>
+              <div className="text-sm font-bold uppercase text-orange-700">Ready when you are</div>
+              <h2 className="mt-1 text-2xl font-bold text-slate-950">Put the complete CAT library on your study desk</h2>
+              <p className="mt-2 text-slate-600">Verify your details once, then receive a private download immediately.</p>
+            </div>
+            <Button size="lg" onClick={() => requestDownload("final_cta")} disabled={downloading} className="h-12 shrink-0 rounded-md bg-slate-950 px-6 text-white hover:bg-slate-800">
+              {downloading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Download className="h-5 w-5" />}
+              Download all 16 resources
+            </Button>
+          </div>
+        </section>
       </main>
       <Footer />
       <CatAccessGate
         open={gateOpen}
         onOpenChange={setGateOpen}
-        source="cat_2026_kit_download"
+        source={`cat_2026_kit_${gateSource}`}
         title="Unlock the free CAT 2026 kit"
         onGranted={(leadId) => void beginDownload(leadId)}
       />

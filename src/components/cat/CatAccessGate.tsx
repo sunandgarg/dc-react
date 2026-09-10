@@ -22,13 +22,14 @@ export function CatAccessGate({ open, onOpenChange, onGranted, source, title }: 
       open={open}
       onOpenChange={onOpenChange}
       title={title}
-      subtitle="Create your free access pass and keep your progress connected."
+      subtitle="Two quick steps, then the complete 16-resource ZIP starts downloading."
       source={source}
       forceShow
       simple
       interestLabel="CAT goal"
       interestOptions={catGoals}
       interestedExamSlug="cat"
+      theme="cat-kit"
       onSuccess={(leadId) => {
         if (!leadId) return;
         saveCatAccess(leadId);

@@ -40,3 +40,12 @@ test("guided CAT coach creates a complete daily and weekly plan", () => {
   assert.equal(plan.checkpoints.length, 3);
   assert.match(plan.headline, /97 percentile/);
 });
+
+test("CAT bundle delivery keeps the collection on private AWS storage", async () => {
+  const source = await import("node:fs/promises").then(({ readFile }) => readFile(new URL("../src/cat-experience.mjs", import.meta.url), "utf8"));
+  assert.match(source, /const KIT_BUCKET = "user-documents"/);
+  assert.match(source, /const KIT_OBJECT_PATH = "cat-kits\/CAT-2026-Preparation-Kit\.zip"/);
+  assert.match(source, /KIT_MINIMUM_BYTES/);
+  assert.match(source, /signStorageDownload\(KIT_BUCKET, KIT_OBJECT_PATH/);
+  assert.doesNotMatch(source, /storage\/v1\/object\/public.*CAT-2026/);
+});

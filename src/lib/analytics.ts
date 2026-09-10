@@ -24,6 +24,20 @@ export type LpEventName =
 
 export type AnalyticsParams = Record<string, string | number | boolean | null | undefined>;
 
+function ensureGtag() {
+  const analyticsWindow = window as Window & {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  };
+  analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
+  if (!analyticsWindow.gtag) {
+    analyticsWindow.gtag = (...args: unknown[]) => {
+      analyticsWindow.dataLayer!.push(args);
+    };
+  }
+  return analyticsWindow.gtag;
+}
+
 export function getUtmParams(): AnalyticsParams {
   if (typeof window === "undefined") return {};
   const sp = new URLSearchParams(window.location.search);
@@ -39,7 +53,7 @@ export function trackEvent(name: LpEventName | string, params: AnalyticsParams =
   if (typeof window === "undefined") return;
   const payload = { ...getUtmParams(), ...params, event_time: Date.now() };
   try {
-    (window as any).gtag?.("event", name, payload);
+    ensureGtag()("event", name, payload);
   } catch {/* noop */}
   try {
     (window as any).fbq?.("trackCustom", name, payload);

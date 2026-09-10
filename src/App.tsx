@@ -11,6 +11,7 @@ import { CompareProvider } from "@/contexts/CompareContext";
 import { HomeMobileBottomNav } from "@/components/HomeMobileBottomNav";
 import { GlobalInternalAds } from "@/components/GlobalInternalAds";
 import { AdminActionGuard } from "@/components/AdminActionGuard";
+import { UserTrackingProvider } from "@/hooks/useUserTracking";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ScrollLockGuard } from "@/components/ScrollLockGuard";
@@ -28,7 +29,6 @@ const WhatsAppButton = lazyRetry(() => import("@/components/WhatsAppButton").the
 const PreferredSourceNudge = lazyRetry(() => import("@/components/PreferredSourceNudge").then((module) => ({ default: module.PreferredSourceNudge })), "PreferredSourceNudge");
 const SiteIntegrations = lazyRetry(() => import("@/components/SiteIntegrations").then((module) => ({ default: module.SiteIntegrations })), "SiteIntegrations");
 const AdsenseLoader = lazyRetry(() => import("@/components/ads/AdsenseLoader").then((module) => ({ default: module.AdsenseLoader })), "AdsenseLoader");
-const UserTrackingProvider = lazyRetry(() => import("@/hooks/useUserTracking").then((module) => ({ default: module.UserTrackingProvider })), "UserTrackingProvider");
 const IntentTrackingProvider = lazyRetry(() => import("@/components/IntentTrackingProvider").then((module) => ({ default: module.IntentTrackingProvider })), "IntentTrackingProvider");
 
 function GlobalWhatsApp() {
@@ -105,7 +105,6 @@ function DeferredGlobalUi() {
       <CompareFloatingBar />
       <LockTargetFloatingPromo />
       <CookieConsent />
-      <UserTrackingProvider>{null}</UserTrackingProvider>
       <IntentTrackingProvider>{null}</IntentTrackingProvider>
       <GlobalWhatsApp />
       <GlobalDiya />
@@ -317,6 +316,7 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <ScrollLockGuard />
+            <UserTrackingProvider>{null}</UserTrackingProvider>
             <ChunkErrorBoundary>
             <Suspense fallback={<PageLoader />}>
             <RouteSeoPolicy />
