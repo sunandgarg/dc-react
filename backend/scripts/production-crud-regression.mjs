@@ -38,7 +38,7 @@ const PUBLIC_READ_TABLES = new Set([
   "scholarships", "site_integrations", "stream_categories", "trusted_partners", "url_mappings", "study_boards",
   "study_subjects", "study_chapters", "study_resources", "study_board_links", "study_toppers", "college_programs",
   "college_universities", "college_semesters", "college_subjects", "college_resources", "college_quick_links",
-  "college_few_links", "college_toppers", "universities",
+  "college_few_links", "college_toppers",
 ]);
 
 const DETAIL_ROUTES = {
