@@ -719,8 +719,8 @@ jobs:
           aws lightsail put-instance-public-ports \
             --instance-name "$INSTANCE_NAME" \
             --port-infos "$PORT_INFOS" >/dev/null
-          aws lightsail get-instance-port-states \
-            --instance-name "$INSTANCE_NAME" \
-            --output json \
-            | jq -e '[.portStates[] | select(.fromPort == 22 and .state == "open")] | length == 0' >/dev/null
+          if [ -n "${SSH_IP:-}" ] && timeout 10 bash -c "</dev/tcp/$SSH_IP/22" 2>/dev/null; then
+            echo "Temporary SSH access is still reachable after cleanup."
+            exit 1
+          fi
           echo "Temporary SSH access is closed."
