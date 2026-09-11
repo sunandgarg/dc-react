@@ -141,6 +141,11 @@ async function payloadFor(table) {
   if (metadata.fields.is_active && KEEP_DISABLED.has(table)) payload.is_active = false;
   if (metadata.fields.enabled && KEEP_DISABLED.has(table)) payload.enabled = false;
   if (metadata.fields.status && ["articles", "colleges", "courses"].includes(table)) payload.status = "Draft";
+  if (table === "articles") {
+    payload.site_scope = "dekhocampus";
+    payload.status = "Published";
+    payload.is_active = true;
+  }
   if (metadata.fields.data_clean_state) payload.data_clean_state = "never_checked";
   return payload;
 }

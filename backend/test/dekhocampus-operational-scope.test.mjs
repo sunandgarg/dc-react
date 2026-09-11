@@ -58,3 +58,8 @@ test("generic DekhoCampus article operations carry an explicit scope", async () 
   assert.match(rest, /table === "articles" \? " WHERE `site_scope` = 'dekhocampus'"/);
   assert.match(adminBulk, /scope=\{t\.table === "articles" \? DEKHOCAMPUS_ARTICLE_SCOPE : undefined\}/);
 });
+
+test("production public CRUD regression uses a visible DekhoCampus article", async () => {
+  const source = await readFile(new URL("../scripts/production-crud-regression.mjs", import.meta.url), "utf8");
+  assert.match(source, /if \(table === "articles"\) \{\s+payload\.site_scope = "dekhocampus";\s+payload\.status = "Published";\s+payload\.is_active = true;/);
+});
