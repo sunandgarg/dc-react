@@ -173,8 +173,8 @@ try {
   assert.match(String(coverResponse.headers.get("content-type")), /^image\/webp/);
   assert.ok((await coverResponse.arrayBuffer()).byteLength > 10_000, "Generated cover is unexpectedly small");
   assert.equal(coverDiagnostics.sourceMode, "template", coverDiagnostics.templateError || "Branded fallback cover did not use the saved template");
-  assert.equal(coverDiagnostics.logoPreservedFromTemplate, true, "The template's embedded logo was not preserved");
-  assert.equal(coverDiagnostics.logoApplied, undefined, "A second logo was unexpectedly applied over the saved template");
+  assert.equal(coverDiagnostics.logoPreservedFromTemplate, false, "The source template logo was not masked before rendering");
+  assert.equal(coverDiagnostics.logoApplied, true, "The canonical DekhoCampus logo was not applied exactly once");
 
   console.log(JSON.stringify({
     ok: true,

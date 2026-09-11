@@ -424,7 +424,7 @@ test("derives a stable subject mark when an official logo is unavailable", () =>
   assert.equal(inferContextLogoName("Tamil Nadu Public School reopening calendar"), "Tamil Nadu Public School");
 });
 
-test("keeps the cover free of contextual badges and duplicate logos", async () => {
+test("keeps the cover free of contextual badges and applies one canonical brand logo", async () => {
   const source = await readFile(new URL("../assets/dekhocampus-blog-cover-template-v1.png", import.meta.url));
   const diagnostics = {};
   const bytes = await renderBlogCover(source, {
@@ -432,7 +432,8 @@ test("keeps the cover free of contextual badges and duplicate logos", async () =
     includeLogo: false, logoUrl: "", contextLogoUrl: "", contextLogoName: "UPSC",
   }, "NDA application dates students should know", "template", diagnostics);
   assert.equal((await sharp(bytes).metadata()).format, "webp");
-  assert.equal(diagnostics.logoApplied, false);
+  assert.equal(diagnostics.logoPreservedFromTemplate, false);
+  assert.equal(diagnostics.logoApplied, true);
   assert.equal(diagnostics.logoKind, "brand-only");
 });
 

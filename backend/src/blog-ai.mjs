@@ -362,7 +362,7 @@ export async function renderBlogCover(sourceBytes, options, titleHook, sourceMod
     diagnostics.layout = "locked-editorial-v2";
     diagnostics.templateVariant = selectBlogCoverTemplate(titleHook);
     diagnostics.logoPreservedFromTemplate = false;
-    diagnostics.logoApplied = false;
+    diagnostics.logoApplied = true;
     diagnostics.logoKind = "brand-only";
   }
   base.composite(composites);
@@ -1293,7 +1293,7 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
     await prisma.ai_usage_events.create({ data: {
       id: randomUUID(), provider: "openai", model: generatedConfig.imageModel, feature: "blog-cover", operation: "image-generation",
       input_tokens: BigInt(inputTokens), output_tokens: BigInt(outputTokens), total_tokens: BigInt(totalTokens), image_count: 1, estimated_cost_usd: 0,
-      metadata: { slug, aspect_ratio: options.aspectRatio, resolution: options.resolution, quality: generatedConfig.imageQuality, reference_guided: true, layout: "locked-editorial-v2", logo_applied: false, site_scope: rawOptions.siteScope ? normalizeArticleSiteScope(rawOptions.siteScope) : null },
+      metadata: { slug, aspect_ratio: options.aspectRatio, resolution: options.resolution, quality: generatedConfig.imageQuality, reference_guided: true, layout: "locked-editorial-v2", logo_applied: true, site_scope: rawOptions.siteScope ? normalizeArticleSiteScope(rawOptions.siteScope) : null },
     } }).catch(() => {});
   }
   return upload.publicUrl;
