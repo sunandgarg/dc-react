@@ -475,12 +475,12 @@ model blog_auto_agent_runs {
 model blog_auto_agent_settings {
   id                          String    @id @db.VarChar(191)
   enabled                     Boolean   @default(false)
-  interval_minutes            Int       @default(60)
-  posts_per_run               Int       @default(2)
-  daily_post_cap              Int       @default(12)
+  interval_minutes            Int       @default(180)
+  posts_per_run               Int       @default(1)
+  daily_post_cap              Int       @default(8)
   publish_status              String    @db.LongText
   model_provider              String    @db.LongText
-  word_limit                  Int       @default(1200)
+  word_limit                  Int       @default(0)
   last_run_at                 DateTime? @db.DateTime(3)
   next_run_at                 DateTime? @db.DateTime(3)
   created_at                  DateTime  @default(now()) @db.DateTime(3)
@@ -498,12 +498,12 @@ model blog_auto_agent_settings {
   content_goals               Json
   required_sections           Json
   minimum_sources             Int       @default(2)
-  editorial_quality_target    Int       @default(80)
-  human_review_required       Boolean   @default(true)
+  editorial_quality_target    Int       @default(90)
+  human_review_required       Boolean   @default(false)
   image_mode                  String    @db.LongText
   image_template_url          String    @db.LongText
   image_prompt_style          String    @db.LongText
-  include_logo                Boolean   @default(true)
+  include_logo                Boolean   @default(false)
   logo_url                    String    @db.LongText
   logo_position               String    @db.LongText
   image_aspect_ratio          String    @db.LongText
@@ -1349,7 +1349,7 @@ model entity_article_schedules {
   articles_per_day      Int       @default(1)
   interval_minutes      Int       @default(1440)
   publish_status        String    @db.LongText
-  human_review_required Boolean   @default(true)
+  human_review_required Boolean   @default(false)
   topic_focus           Json
   last_run_at           DateTime? @db.DateTime(3)
   next_run_at           DateTime  @default(now()) @db.DateTime(3)

@@ -51,8 +51,8 @@ const defaultSelection = (row: EntityRow, entityType: EntityType): Selection => 
   entity_type: entityType,
   articles_per_day: 1,
   interval_minutes: 1440,
-  publish_status: "Draft",
-  human_review_required: true,
+  publish_status: "Published",
+  human_review_required: false,
 });
 
 const formatDate = (value?: string | null) => value

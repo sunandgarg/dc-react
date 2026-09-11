@@ -114,7 +114,7 @@ try {
       word_limit: 900,
       image: { mode: "template", template_url: originalSettings.image_template_url },
     }) });
-    assert.match(studio.model_used, /^openai:gpt-5-nano$/, "Blog Studio did not use OpenAI GPT-5 nano");
+    assert.match(studio.model_used, /^openai:gpt-5\.4-mini$/, "Blog Studio did not use OpenAI GPT-5.4 mini");
     article = studio.draft;
   } else {
     assert.equal(result.success, true, result.message || "Blog-agent smoke run was not successful");

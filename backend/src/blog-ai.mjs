@@ -7,18 +7,25 @@ import { uploadStorageObject } from "./storage.mjs";
 import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
-const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5-nano";
+const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5.4-mini";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
-const MAX_POSTS_PER_RUN = 10;
-const MAX_DAILY_POSTS = 72;
-const MIN_INTERVAL_MINUTES = 20;
+const RECOMMENDED_DAILY_POSTS = 8;
+const MAX_POSTS_PER_RUN = 3;
+const MAX_DAILY_POSTS = 24;
+const MIN_INTERVAL_MINUTES = 60;
 const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
 const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
-const MAX_RESEARCH_SOURCES = 4;
-const MAX_RESEARCH_SIGNAL_CHARACTERS = 800;
-const MAX_TOPIC_PROMPT_FINGERPRINTS = 100;
+const MAX_RESEARCH_SOURCES = 6;
+const MAX_RESEARCH_SIGNAL_CHARACTERS = 1_500;
+const MAX_TOPIC_PROMPT_FINGERPRINTS = 160;
+const DEFAULT_CONTENT_GOALS = ["SEO", "AEO", "GEO", "LLMO"];
+const DEFAULT_REQUIRED_SECTIONS = ["Answer first", "Key facts", "Decision guidance", "FAQs"];
+const OPENAI_TEXT_PRICING_PER_MILLION = {
+  "gpt-5.4-mini": { input: 0.75, cachedInput: 0.075, output: 4.5 },
+  "gpt-5-nano": { input: 0.05, cachedInput: 0.005, output: 0.4 },
+};
 export const DEFAULT_BLOG_COVER_TEMPLATE_KEY = "admin-uploads/blog-templates/dekhocampus-blog-cover-template-v1.png";
 const BLOG_COVER_FONT_FILE = fileURLToPath(new URL("../assets/Inter.ttf", import.meta.url));
 const BLOG_COVER_LOGO_FILE = new URL("../assets/dekhocampus-blog-logo.png", import.meta.url);
@@ -63,6 +70,53 @@ export const normalizeBlogTextModel = (value) => {
   return DEFAULT_OPENAI_TEXT_MODEL;
 };
 export const blogTextProvider = (model) => normalizeBlogTextModel(model).startsWith("gemini-") ? "gemini" : "openai";
+const normalizeStringList = (value, fallback, maximum = 12) => {
+  if (!Array.isArray(value)) return [...fallback];
+  const normalized = [...new Set(value.map((item) => String(item || "").trim()).filter(Boolean))].slice(0, maximum);
+  return normalized.length ? normalized : [...fallback];
+};
+
+export function normalizeBlogAgentSettings(value = {}) {
+  const textModel = normalizeBlogTextModel(value.text_model || DEFAULT_OPENAI_TEXT_MODEL);
+  const authorMode = ["none", "single", "round_robin"].includes(value.author_mode) ? value.author_mode : "none";
+  const configuredWordLimit = Math.trunc(Number(value.word_limit));
+  const configuredSections = normalizeStringList(value.required_sections, [], 8);
+  return {
+    ...value,
+    enabled: Boolean(value.enabled),
+    interval_minutes: Math.min(24 * 60, Math.max(MIN_INTERVAL_MINUTES, Math.trunc(Number(value.interval_minutes) || 180))),
+    posts_per_run: Math.min(MAX_POSTS_PER_RUN, Math.max(1, Math.trunc(Number(value.posts_per_run) || 1))),
+    daily_post_cap: Math.min(MAX_DAILY_POSTS, Math.max(1, Math.trunc(Number(value.daily_post_cap) || RECOMMENDED_DAILY_POSTS))),
+    publish_status: value.publish_status === "Draft" ? "Draft" : "Published",
+    model_provider: blogTextProvider(textModel),
+    text_model: textModel,
+    word_limit: configuredWordLimit === 0 ? 0 : Math.min(2_200, Math.max(700, configuredWordLimit || 0)),
+    author_mode: authorMode,
+    author_ids: normalizeStringList(value.author_ids, [], 20),
+    language: String(value.language || "English").trim().slice(0, 80) || "English",
+    audience: String(value.audience || "Indian students and parents").trim().slice(0, 240) || "Indian students and parents",
+    tone: String(value.tone || "Clear, practical, trustworthy").trim().slice(0, 240) || "Clear, practical, trustworthy",
+    content_goals: [...DEFAULT_CONTENT_GOALS],
+    required_sections: [...new Set([...DEFAULT_REQUIRED_SECTIONS, ...configuredSections])].slice(0, 12),
+    minimum_sources: Math.min(MAX_RESEARCH_SOURCES, Math.max(2, Math.trunc(Number(value.minimum_sources) || 2))),
+    editorial_quality_target: Math.min(98, Math.max(75, Math.trunc(Number(value.editorial_quality_target) || 90))),
+    human_review_required: Boolean(value.human_review_required),
+    image_mode: ["generated", "template", "none"].includes(value.image_mode) ? value.image_mode : "template",
+    image_provider: "openai",
+    image_model: DEFAULT_OPENAI_IMAGE_MODEL,
+    image_template_url: String(value.image_template_url || DEFAULT_BLOG_COVER_TEMPLATE_KEY).trim(),
+    image_prompt_style: String(value.image_prompt_style || "Premium editorial, clean, credible, student-focused").trim().slice(0, 600),
+    include_logo: Boolean(value.include_logo),
+    logo_url: String(value.logo_url || "").trim(),
+    logo_position: "top-center",
+    image_aspect_ratio: ["16:9", "1:1", "4:5"].includes(value.image_aspect_ratio) ? value.image_aspect_ratio : "16:9",
+    output_resolution: ["web", "2k", "4k"].includes(String(value.output_resolution || "").toLowerCase())
+      ? String(value.output_resolution).toLowerCase()
+      : "web",
+    google_trends_daily_enabled: value.google_trends_daily_enabled !== false,
+    google_trends_daily_posts: Math.min(3, Math.max(1, Math.trunc(Number(value.google_trends_daily_posts) || 3))),
+  };
+}
 export const stripPublishedSourceReferences = (value) => String(value || "")
   .replace(/<h[1-6][^>]*>\s*(sources?|references?|citations?)[\s\S]*$/i, "")
   .replace(/<p[^>]*>(?:(?!<\/p>)[\s\S])*(collegedunia|collegedekho|shiksha|careers360|kollegeapply|getmyuni|pagalguy)(?:(?!<\/p>)[\s\S])*<\/p>/gi, "")
@@ -453,6 +507,22 @@ export function compactArticleCoverage(value) {
   return parts.join(" | ").slice(0, 180);
 }
 
+export function rankArticleTopicConflicts(candidate, existing, limit = 8) {
+  return existing
+    .map((article) => ({ article, score: articleTopicSimilarity(candidate, article) }))
+    .sort((left, right) => right.score - left.score)
+    .slice(0, Math.max(1, limit));
+}
+
+export function resolveArticleWordTarget(topic, configuredWordLimit = 0) {
+  const configured = Math.trunc(Number(configuredWordLimit));
+  if (configured > 0) return Math.min(2_200, Math.max(700, configured));
+  const profile = articleTopicProfile(topic);
+  if (["result", "admit-card", "answer-key"].some((intent) => profile.intents.has(intent))) return 900;
+  if (["preparation", "counselling", "choice-filling", "placement", "syllabus"].some((intent) => profile.intents.has(intent))) return 1_500;
+  return 1_200;
+}
+
 const ARTICLE_COVERAGE_SELECT = {
   id: true,
   slug: true,
@@ -465,7 +535,6 @@ const ARTICLE_COVERAGE_SELECT = {
 async function loadArticleCoverage() {
   return prisma.articles.findMany({
     orderBy: { created_at: "desc" },
-    take: 5000,
     select: ARTICLE_COVERAGE_SELECT,
   });
 }
@@ -599,7 +668,7 @@ export function normalizeTopicSuggestions(result) {
   return suggestions.flatMap((suggestion) => {
     if (typeof suggestion === "string") {
       const title = suggestion.trim();
-      return title ? [{ title, angle: "", category: "Education", tags: [] }] : [];
+      return title ? [{ title, angle: "", category: "Education", tags: [], trend_based: false }] : [];
     }
     if (!suggestion || typeof suggestion !== "object") return [];
     const title = String(suggestion.title || suggestion.topic || suggestion.headline || "").trim();
@@ -610,6 +679,7 @@ export function normalizeTopicSuggestions(result) {
       angle: String(suggestion.angle || "").trim(),
       category: String(suggestion.category || "Education").trim() || "Education",
       tags: Array.isArray(suggestion.tags) ? suggestion.tags.map(String).filter(Boolean) : [],
+      trend_based: suggestion.trend_based === true,
     }];
   });
 }
@@ -737,8 +807,9 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
   const control = await assertAiEnabled(feature);
   const config = await aiConfig();
   if (!config.openaiKey) throw Object.assign(new Error("OpenAI API key is not configured in AWS or Admin - AI Providers"), { status: 503, code: "OPENAI_NOT_CONFIGURED" });
-  const configuredModel = control?.provider === "openai" && control?.model ? control.model : config.textModel;
+  const configuredModel = options.model || (control?.provider === "openai" && control?.model ? control.model : config.textModel);
   const model = normalizeBlogTextModel(configuredModel).startsWith("gpt-") ? normalizeBlogTextModel(configuredModel) : DEFAULT_OPENAI_TEXT_MODEL;
+  const reasoningEffort = ["none", "low", "medium", "high"].includes(options.reasoningEffort) ? options.reasoningEffort : "low";
   const requestBody = JSON.stringify({
     model,
     messages: [
@@ -746,7 +817,7 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
       { role: "user", content: prompt },
     ],
     response_format: { type: "json_object" },
-    reasoning_effort: "minimal",
+    reasoning_effort: reasoningEffort,
     ...(options.maxOutputTokens ? { max_completion_tokens: Math.max(256, Math.trunc(options.maxOutputTokens)) } : {}),
   });
   let response;
@@ -770,20 +841,96 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
   const inputTokens = Math.max(0, Math.trunc(Number(usage.prompt_tokens || 0)));
   const outputTokens = Math.max(0, Math.trunc(Number(usage.completion_tokens || 0)));
   const totalTokens = Math.max(0, Math.trunc(Number(usage.total_tokens || inputTokens + outputTokens)));
-  const estimatedCost = (inputTokens * 0.05 + outputTokens * 0.40) / 1_000_000;
+  const cachedInputTokens = Math.max(0, Math.min(inputTokens, Math.trunc(Number(usage.prompt_tokens_details?.cached_tokens || 0))));
+  const pricing = OPENAI_TEXT_PRICING_PER_MILLION[model];
+  const estimatedCost = pricing
+    ? (((inputTokens - cachedInputTokens) * pricing.input) + (cachedInputTokens * pricing.cachedInput) + (outputTokens * pricing.output)) / 1_000_000
+    : 0;
   await prisma.ai_usage_events.create({ data: {
     id: randomUUID(), provider: "openai", model, feature, operation: "text-generation",
     input_tokens: BigInt(inputTokens), output_tokens: BigInt(outputTokens), total_tokens: BigInt(totalTokens), image_count: 0, estimated_cost_usd: estimatedCost,
-    metadata: { cached_input_tokens: Math.max(0, Math.trunc(Number(usage.prompt_tokens_details?.cached_tokens || 0))), max_output_tokens: options.maxOutputTokens || null },
+    metadata: { cached_input_tokens: cachedInputTokens, max_output_tokens: options.maxOutputTokens || null, reasoning_effort: reasoningEffort, cost_estimate_available: Boolean(pricing) },
   } }).catch(() => {});
   return { result: parseOpenAiJsonPayload(payload), model, provider: "openai" };
 }
 
 async function blogTextJson(prompt, feature = "blog-studio", options = {}) {
   const config = await aiConfig();
-  if (blogTextProvider(config.textModel) === "openai") return openAiJson(prompt, feature, options);
-  const generated = await geminiJson(prompt, feature, options);
+  const model = normalizeBlogTextModel(options.model || config.textModel);
+  if (blogTextProvider(model) === "openai") return openAiJson(prompt, feature, { ...options, model });
+  const generated = await geminiJson(prompt, feature, { ...options, model });
   return { ...generated, provider: "gemini" };
+}
+
+const TOPIC_NOVELTY_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    verdicts: {
+      type: "ARRAY",
+      items: {
+        type: "OBJECT",
+        properties: {
+          candidate_index: { type: "INTEGER" },
+          is_duplicate: { type: "BOOLEAN" },
+          confidence: { type: "NUMBER" },
+          conflicts_with: { type: "STRING" },
+          reason: { type: "STRING" },
+        },
+        required: ["candidate_index", "is_duplicate", "confidence", "reason"],
+      },
+    },
+  },
+  required: ["verdicts"],
+};
+
+async function filterSemanticallyNovelTopics(candidates, existing, model, feature = "blog-agent") {
+  if (!candidates.length || !existing.length) return { accepted: candidates, rejected: [], model: null };
+  const comparisons = candidates.map((candidate, candidateIndex) => ({
+    candidate_index: candidateIndex,
+    candidate: {
+      title: String(candidate.title || candidate),
+      primary_entity: String(candidate.primary_entity || ""),
+      search_intent: String(candidate.search_intent || ""),
+      angle: String(candidate.angle || ""),
+      unique_value: String(candidate.unique_value || ""),
+    },
+    closest_existing: rankArticleTopicConflicts(candidate, existing, 8).map(({ article, score }) => ({
+      title: article.title,
+      description: String(article.description || "").slice(0, 240),
+      keywords: String(article.meta_keywords || "").slice(0, 160),
+      tags: Array.isArray(article.tags) ? article.tags.slice(0, 8) : [],
+      local_similarity: Number(score.toFixed(3)),
+    })),
+  }));
+  const generated = await blogTextJson(`Act as DekhoCampus's independent topic editor. Decide whether each proposed article is materially new compared with its closest existing coverage: ${JSON.stringify(comparisons)}. Treat the same primary entity, time period, student search intent, decision or outcome as a duplicate even when the headline, synonyms, word order, format or minor angle changes. A checklist, guide, explainer, update or strategy is not new when it answers the same practical question. Allow a topic only when it serves a genuinely different intent or supplies a distinct, evidence-backed outcome. Return one verdict for every candidate_index. Set confidence from 0 to 1 and name the conflicting existing title when duplicate.`, feature, {
+    model,
+    reasoningEffort: "low",
+    thinkingLevel: "low",
+    maxOutputTokens: 1_600,
+    responseSchema: TOPIC_NOVELTY_SCHEMA,
+  });
+  const verdicts = Array.isArray(generated.result?.verdicts) ? generated.result.verdicts : [];
+  const accepted = [];
+  const rejected = [];
+  for (let index = 0; index < candidates.length; index += 1) {
+    const verdict = verdicts.find((item) => Number(item?.candidate_index) === index);
+    if (!verdict) {
+      rejected.push({ suggested: candidates[index].title, reason: "semantic novelty review returned no verdict" });
+      continue;
+    }
+    const confidence = Math.min(1, Math.max(0, Number(verdict.confidence) || 0));
+    if (verdict.is_duplicate === true && confidence >= 0.72) {
+      rejected.push({
+        suggested: candidates[index].title,
+        conflicts_with: String(verdict.conflicts_with || "existing DekhoCampus coverage"),
+        reason: String(verdict.reason || "same entity and search intent"),
+        confidence,
+      });
+    } else {
+      accepted.push(candidates[index]);
+    }
+  }
+  return { accepted, rejected, model: `${generated.provider}:${generated.model}` };
 }
 
 async function assertAiEnabled(feature) {
@@ -798,7 +945,8 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
   const control = await assertAiEnabled(feature);
   const config = await aiConfig();
   if (!config.geminiKey) throw Object.assign(new Error("Gemini API key is not configured in AWS or Admin - AI Providers"), { status: 503, code: "GEMINI_NOT_CONFIGURED" });
-  const model = normalizeGeminiModel(control?.provider === "gemini" && control?.model ? control.model : config.geminiModel);
+  const requestedModel = options.model || (control?.provider === "gemini" && control?.model ? control.model : config.geminiModel);
+  const model = normalizeGeminiModel(requestedModel);
   const requestBody = JSON.stringify({
     systemInstruction: { parts: [{ text: "Return valid JSON only. Use factual, original language. Never use an em dash." }] },
     contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -973,12 +1121,14 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
 }
 
 async function researchSignals(limit = MAX_RESEARCH_SOURCES) {
-  const configured = await prisma.blog_research_sources.findMany({ where: { is_active: true }, orderBy: { display_order: "asc" }, take: limit });
+  const configured = await prisma.blog_research_sources.findMany({ where: { is_active: true }, orderBy: { display_order: "asc" }, take: MAX_RESEARCH_SOURCES });
   const defaults = [
     { name: "Google News Education India", url: "https://news.google.com/rss/search?q=education+college+admission+exam+India&hl=en-IN&gl=IN&ceid=IN:en", source_type: "public_signal" },
     { name: "Google Trends India", url: "https://trends.google.com/trending/rss?geo=IN", source_type: "public_signal" },
   ];
-  const sources = configured.length ? configured : defaults;
+  const sources = [...configured, ...defaults]
+    .filter((source, index, values) => values.findIndex((candidate) => candidate.url === source.url) === index)
+    .slice(0, Math.min(MAX_RESEARCH_SOURCES, Math.max(2, Number(limit) || MAX_RESEARCH_SOURCES)));
   const settled = await Promise.allSettled(sources.slice(0, limit).map(async (source) => {
     const response = await fetch(source.url, { headers: { "user-agent": "DekhoCampus editorial research/2.0" }, signal: AbortSignal.timeout(12_000) });
     if (!response.ok) throw new Error(String(response.status));
@@ -992,7 +1142,9 @@ async function researchSignals(limit = MAX_RESEARCH_SOURCES) {
   return settled.flatMap((item) => item.status === "fulfilled" ? [item.value] : []);
 }
 
-function articlePrompt(topic, signals, wordLimit = 1200, correctionIssues = []) {
+function articlePrompt(topic, signals, wordLimit = 0, correctionIssues = [], rawEditorialSettings = {}) {
+  const editorial = normalizeBlogAgentSettings(rawEditorialSettings);
+  const targetWords = resolveArticleWordTarget(topic, wordLimit);
   const topicBrief = typeof topic === "string"
     ? { title: topic }
     : {
@@ -1007,7 +1159,24 @@ function articlePrompt(topic, signals, wordLimit = 1200, correctionIssues = []) 
   const correction = correctionIssues.length
     ? `A previous draft failed these publishing checks: ${correctionIssues.join("; ")}. Correct every item without discussing the checks.`
     : "";
-  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article for Indian students and parents from this editorial brief: ${JSON.stringify(topicBrief)}. Target ${Math.min(2200, Math.max(700, Number(wordLimit)))} words. ${correction} Research signals are private fact-checking context only: ${JSON.stringify(signals)}. Never copy their wording and never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html. Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. Write title as a complete, specific headline of roughly 55-85 characters that preserves the key exam, institution, authority, date or outcome; never truncate it for cover artwork. Write meta_title at 50-65 characters and meta_description at 140-160 characters. Set hero_hook exactly equal to title. Lead with the useful consequence, decision, deadline, change or uncommon insight that makes a student want to read. Answer one identifiable search intent and deliver the unique value in the brief through information, comparison, calculation, timeline, checklist or analysis beyond a rewritten announcement. Build the structure around this topic instead of reusing a standard article outline. Every major section must help the reader make a decision, complete a task, avoid a mistake or understand a concrete consequence. The title must remain accurate and natural, never vague or sensational. Do not include DekhoCampus, an ellipsis, trailing punctuation, generic phrases such as Complete Guide or Everything You Need to Know, or unsupported urgency. Write 4-8 distinct search-intent FAQs, include the same questions and answers in a visible FAQ section inside content_html, and also return them in faqs. Write in a natural, reader-first editorial voice with varied sentence lengths, specific explanations, restrained transitions and context-aware phrasing. Never invent interviews, testing, personal experience, quotes, statistics or official facts. Avoid repetitive templates, generic filler, exaggerated claims, robotic summaries, first-person claims of lived experience, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". Use descriptive H2/H3 headings, short readable paragraphs, at least one useful list or table, and verifiable facts. When evidence is uncertain, tell readers to verify details on the relevant official authority website without naming or linking a research source.`;
+  return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original DekhoCampus education article from this editorial brief: ${JSON.stringify(topicBrief)}.
+
+Editorial contract:
+- Audience: ${editorial.audience}.
+- Language: ${editorial.language}.
+- Voice: ${editorial.tone}.
+- Discovery goals: ${editorial.content_goals.join(", ")}. SEO means precise search intent and metadata; AEO means a direct answer near the start; GEO and LLMO mean unambiguous entities, dates, claims, relationships and self-contained explanations.
+- Target about ${targetWords} words, using only the length the topic genuinely needs.
+- Required reader modules: ${editorial.required_sections.join("; ")}.
+- Use at least ${editorial.minimum_sources} independent private research signals before stating time-sensitive facts.
+- Editorial acceptance target: ${editorial.editorial_quality_target}/100.
+${correction}
+
+Private fact-checking context: ${JSON.stringify(signals)}. Synthesize facts and add original decision value. Never copy distinctive wording. Never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html.
+
+Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. Write a complete, specific, accurate title of roughly 55-85 characters preserving the key exam, institution, authority, date or outcome. Write meta_title at 50-65 characters and meta_description at 140-160 characters. Set hero_hook exactly equal to title. Open with a concise answer that identifies the entity, current consequence and next useful action. Answer one identifiable search intent and deliver the unique value through evidence-backed comparison, calculation, timeline, checklist, interpretation or decision guidance beyond a rewritten announcement. Build topic-specific sections instead of a reusable template. Every section must help the reader decide, act, avoid a mistake or understand a concrete consequence.
+
+Do not put DekhoCampus in the title, use an ellipsis, add trailing punctuation, or use generic phrases such as Complete Guide or Everything You Need to Know. Write 4-8 distinct search-intent FAQs and include the exact same questions and answers in a visible FAQ section in content_html. Use descriptive H2/H3 headings, short readable paragraphs, and at least one useful list or table. Use natural, reader-first editorial prose with varied sentence lengths and restrained transitions. Never invent interviews, first-hand testing, personal experience, quotes, statistics or official facts. Avoid repetitive outlines, generic filler, exaggerated claims, robotic summaries, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". When evidence is uncertain, clearly tell readers what detail to verify on the relevant official authority website without naming or linking a research source.`;
 }
 
 const ARTICLE_RESPONSE_SCHEMA = {
@@ -1045,49 +1214,137 @@ export function normalizeGeneratedFaqs(value) {
   }).slice(0, 10);
 }
 
-export function assessGeneratedArticle(draft, topic, wordLimit = 1200) {
+function sectionIsPresent(section, headings) {
+  const wanted = normalizeArticleTitle(section);
+  const joined = headings.join(" ");
+  const aliases = {
+    "answer first": /answer first|quick answer|at a glance|what changed|bottom line|key update/,
+    "quick answer": /answer first|quick answer|at a glance|what changed|bottom line|key update/,
+    "key facts": /key facts|important facts|important dates|key dates|highlights|overview/,
+    "decision guidance": /decision|what should|next steps|how to|checklist|strategy|action plan/,
+    faqs: /frequently asked|faqs?|common questions/,
+  };
+  if (aliases[wanted]) return aliases[wanted].test(joined);
+  const terms = wanted.split(" ").filter((term) => term.length > 2);
+  return terms.length ? headings.some((heading) => terms.filter((term) => heading.includes(term)).length >= Math.ceil(terms.length * 0.6)) : true;
+}
+
+export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorialSettings = {}) {
+  const editorial = normalizeBlogAgentSettings(rawEditorialSettings);
   const contentHtml = String(draft?.content_html || "");
   const body = stripHtml(contentHtml);
   const words = body.match(/[A-Za-z0-9][A-Za-z0-9'/-]*/g) || [];
-  const targetWords = Math.min(2200, Math.max(700, Number(wordLimit) || 1200));
+  const targetWords = resolveArticleWordTarget(topic, wordLimit);
   const minimumWords = Math.max(550, Math.min(1200, Math.floor(targetWords * 0.65)));
   const issues = [];
-  if (words.length < minimumWords) issues.push(`article has ${words.length} words; minimum is ${minimumWords}`);
-  if ((contentHtml.match(/<h[23]\b/gi) || []).length < 3) issues.push("article needs at least three descriptive H2/H3 sections");
-  if (!/<(?:ul|ol|table)\b/i.test(contentHtml)) issues.push("article needs at least one useful list or table");
-  if (normalizeGeneratedFaqs(draft?.faqs).length < 4) issues.push("article needs at least four distinct FAQs");
-  if (!/frequently asked|\bfaqs?\b|common questions/i.test(contentHtml)) issues.push("article needs a visible FAQ section");
-  if (String(draft?.description || "").trim().length < 70) issues.push("description is too thin");
-  if (/https?:\/\/|\bwww\./i.test(contentHtml)) issues.push("published content contains a source URL");
-  if (/\b(?:as an ai|language model|in today's fast-paced world|it is important to note|in conclusion|delve into)\b/i.test(body)) issues.push("article contains generic or machine-oriented boilerplate");
+  const checks = [];
+  let score = 0;
+  const check = (name, passed, points, issue, critical = false) => {
+    checks.push({ name, passed, points: passed ? points : 0, possible: points });
+    if (passed) score += points;
+    else if (issue) issues.push(`${critical ? "Critical: " : ""}${issue}`);
+  };
+  const titleLength = String(draft?.title || "").trim().length;
+  const metaTitleLength = String(draft?.meta_title || "").trim().length;
+  const metaDescriptionLength = String(draft?.meta_description || "").trim().length;
+  const descriptionLength = String(draft?.description || "").trim().length;
+  const headings = [...contentHtml.matchAll(/<h[23]\b[^>]*>([\s\S]*?)<\/h[23]>/gi)].map((match) => normalizeArticleTitle(stripHtml(match[1]))).filter(Boolean);
+  const faqs = normalizeGeneratedFaqs(draft?.faqs);
+  const uniqueFaqQuestions = new Set(faqs.map((faq) => normalizeArticleTitle(faq.question)));
+
+  check("Specific title", titleLength >= 45 && titleLength <= 95 && !/\.\.\.|complete guide|everything you need to know/i.test(String(draft?.title || "")), 5, "title must be specific, complete and 45-95 characters");
+  check("Search metadata", metaTitleLength >= 45 && metaTitleLength <= 70 && metaDescriptionLength >= 120 && metaDescriptionLength <= 170, 8, "meta title or description is outside its useful search length");
+  check("Editorial summary", descriptionLength >= 80 && descriptionLength <= 360, 4, "description must clearly summarize the article in 80-360 characters");
+  check("Useful depth", words.length >= minimumWords && words.length <= Math.ceil(targetWords * 1.45), 13, `article has ${words.length} words; useful range is ${minimumWords}-${Math.ceil(targetWords * 1.45)}`, true);
+  check("Descriptive structure", headings.length >= 3, 7, "article needs at least three descriptive H2/H3 sections");
+  check("Scannable evidence", /<(?:ul|ol|table)\b/i.test(contentHtml), 5, "article needs at least one useful list or table");
+  const missingSections = editorial.required_sections.filter((section) => !sectionIsPresent(section, headings));
+  check("Required reader modules", !missingSections.length, 10, `required sections are missing: ${missingSections.join(", ")}`, true);
+  check("Distinct FAQs", faqs.length >= 4 && uniqueFaqQuestions.size === faqs.length, 8, "article needs at least four distinct FAQs", true);
+  const mirroredFaqs = faqs.filter((faq) => body.toLowerCase().includes(stripHtml(faq.question).toLowerCase())).length;
+  check("Visible FAQ parity", faqs.length >= 4 && mirroredFaqs === faqs.length, 7, "every dedicated FAQ must also appear visibly in the article", true);
 
   const topicProfile = articleTopicProfile(topic);
   const searchableBody = normalizedTopicLanguage(`${draft?.title || ""} ${draft?.description || ""} ${body}`);
+  const introduction = normalizedTopicLanguage(body.split(/\s+/).slice(0, 110).join(" "));
+  const introAnchors = [...topicProfile.anchors].filter((anchor) => introduction.includes(anchor)).length;
+  check("Answer-first opening", topicProfile.anchors.size < 2 || introAnchors >= Math.min(2, topicProfile.anchors.size), 8, "opening does not answer the requested topic directly");
+  let topicFocused = true;
   if (topicProfile.anchors.size >= 2) {
     const coveredAnchors = [...topicProfile.anchors].filter((anchor) => new RegExp(`\\b${anchor.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(searchableBody));
-    if (coveredAnchors.length / topicProfile.anchors.size < 0.6) issues.push("article does not stay focused on the requested subject");
+    topicFocused = coveredAnchors.length / topicProfile.anchors.size >= 0.6;
   }
+  check("Intent and entity focus", topicFocused, 10, "article does not stay focused on the requested subject", true);
+  check("No published research leakage", !/https?:\/\/|\bwww\.|<h[2-4][^>]*>\s*(sources?|references?|citations?)/i.test(contentHtml), 5, "published content contains a source URL or source section", true);
+  check("Natural editorial language", !/\b(?:as an ai|language model|in today's fast-paced world|it is important to note|in conclusion|delve into)\b/i.test(body), 5, "article contains generic or machine-oriented boilerplate", true);
 
   const paragraphs = [...contentHtml.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
     .map((match) => normalizeArticleTitle(stripHtml(match[1])))
     .filter((paragraph) => paragraph.length >= 100);
-  if (new Set(paragraphs).size < paragraphs.length) issues.push("article repeats one or more paragraphs");
-  return { passed: issues.length === 0, issues, word_count: words.length, minimum_words: minimumWords };
+  check("Original paragraph flow", new Set(paragraphs).size === paragraphs.length, 5, "article repeats one or more paragraphs", true);
+  return {
+    passed: !issues.some((issue) => issue.startsWith("Critical:")) && score >= editorial.editorial_quality_target,
+    score,
+    target_score: editorial.editorial_quality_target,
+    issues,
+    checks,
+    word_count: words.length,
+    target_words: targetWords,
+    minimum_words: minimumWords,
+  };
 }
 
-async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = null, requiredTitle = "" } = {}) {
-  const evidence = signals || await researchSignals();
-  const maxOutputTokens = Math.min(7000, Math.max(3200, Math.trunc(Number(wordLimit || 1200) * 4.5)));
+const ARTICLE_REVIEW_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    score: { type: "INTEGER" },
+    publishable: { type: "BOOLEAN" },
+    issues: { type: "ARRAY", items: { type: "STRING" } },
+    strengths: { type: "ARRAY", items: { type: "STRING" } },
+  },
+  required: ["score", "publishable", "issues"],
+};
+
+async function reviewGeneratedDraft(draft, topic, signals, editorial, model, feature) {
+  const generated = await blogTextJson(`Independently review this proposed DekhoCampus article before publication. Topic brief: ${JSON.stringify(topic)}. Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, target_score: editorial.editorial_quality_target })}. Private evidence signals: ${JSON.stringify(signals)}. Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}. Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help a student act or decide. Return concise actionable issues.`, feature, {
+    model,
+    reasoningEffort: "medium",
+    thinkingLevel: "medium",
+    maxOutputTokens: 1_200,
+    responseSchema: ARTICLE_REVIEW_SCHEMA,
+  });
+  const score = Math.min(100, Math.max(0, Math.trunc(Number(generated.result?.score) || 0)));
+  const issues = Array.isArray(generated.result?.issues) ? generated.result.issues.map((issue) => stripHtml(issue).slice(0, 240)).filter(Boolean).slice(0, 8) : [];
+  return {
+    score,
+    publishable: generated.result?.publishable === true && score >= editorial.editorial_quality_target,
+    issues,
+    strengths: Array.isArray(generated.result?.strengths) ? generated.result.strengths.map((value) => stripHtml(value).slice(0, 200)).filter(Boolean).slice(0, 6) : [],
+    model_used: `${generated.provider}:${generated.model}`,
+  };
+}
+
+async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null, requiredTitle = "", editorialSettings = {}, model: requestedModel = "", feature = "blog-studio" } = {}) {
+  const editorial = normalizeBlogAgentSettings(editorialSettings);
+  const evidence = signals || await researchSignals(Math.max(4, editorial.minimum_sources));
+  const independentEvidence = evidence.filter((source) => source.source_type !== "own");
+  if (independentEvidence.length < editorial.minimum_sources) {
+    throw Object.assign(new Error(`Only ${independentEvidence.length} independent research source(s) were available; ${editorial.minimum_sources} are required by the editorial settings`), { status: 422, code: "INSUFFICIENT_EDITORIAL_SOURCES" });
+  }
+  const targetWords = resolveArticleWordTarget(topic, wordLimit);
+  const maxOutputTokens = Math.min(8_000, Math.max(3_600, Math.trunc(targetWords * 4.5)));
   const fallbackTitle = typeof topic === "string" ? topic : topic?.title || topic?.headline || topic?.topic || "";
   let draft;
-  let model;
+  let model = requestedModel || editorial.text_model;
   let textProvider;
   let quality;
   let correctionIssues = [];
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const generated = await blogTextJson(articlePrompt(topic, evidence, wordLimit, correctionIssues), "blog-studio", {
+    const generated = await blogTextJson(articlePrompt(topic, evidence, wordLimit, correctionIssues, editorial), feature, {
+      model,
       maxOutputTokens,
-      thinkingLevel: "low",
+      reasoningEffort: "medium",
+      thinkingLevel: "medium",
       responseSchema: ARTICLE_RESPONSE_SCHEMA,
     });
     model = generated.model;
@@ -1104,7 +1361,20 @@ async function generateDraft(topic, { wordLimit = 1200, cover = {}, signals = nu
       faqs: normalizeGeneratedFaqs(generated.result.faqs),
       featured_image: "",
     };
-    quality = assessGeneratedArticle(draft, topic, wordLimit);
+    const deterministic = assessGeneratedArticle(draft, topic, wordLimit, editorial);
+    if (!deterministic.passed) {
+      quality = deterministic;
+      correctionIssues = deterministic.issues;
+      continue;
+    }
+    const modelReview = await reviewGeneratedDraft(draft, topic, evidence, editorial, model || editorial.text_model, feature);
+    quality = {
+      ...deterministic,
+      score: Math.min(deterministic.score, modelReview.score),
+      passed: deterministic.passed && modelReview.publishable,
+      model_review: modelReview,
+      issues: [...deterministic.issues, ...modelReview.issues.map((issue) => `Editorial review: ${issue}`)],
+    };
     if (quality.passed) break;
     correctionIssues = quality.issues;
   }
@@ -1129,17 +1399,124 @@ export async function handleBlogAiSettings(request, userId) {
   const updates = { text_model: normalizeBlogTextModel(requestedTextModel), image_model: DEFAULT_OPENAI_IMAGE_MODEL, image_quality: ["low", "medium", "high"].includes(body.image_quality) ? body.image_quality : "low", updated_at: new Date(), updated_by: userId };
   const current = await prisma.blog_ai_provider_settings.findUnique({ where: { id: "default" } });
   await prisma.blog_ai_provider_settings.upsert({ where: { id: "default" }, create: { id: "default", claude_api_key_ciphertext: current?.claude_api_key_ciphertext || "", openai_api_key_ciphertext: current?.openai_api_key_ciphertext || "", ...updates }, update: updates });
-  for (const [name, key, model] of [["gemini", body.gemini_api_key, DEFAULT_GEMINI_MODEL], ["openai", body.openai_api_key, updates.text_model]]) {
+  for (const [name, key, model] of [["gemini", body.gemini_api_key, DEFAULT_GEMINI_MODEL], ["openai", body.openai_api_key, updates.text_model.startsWith("gpt-") ? updates.text_model : DEFAULT_OPENAI_TEXT_MODEL]]) {
     if (!String(key || "").trim()) continue;
     const existing = await provider(name);
     if (existing) await prisma.ai_providers.update({ where: { id: existing.id }, data: { api_key_encrypted: String(key).trim(), default_model: model, updated_at: new Date() } });
-    else await prisma.ai_providers.create({ data: { id: randomUUID(), provider_name: name, display_name: name === "gemini" ? "Google Gemini" : "OpenAI", api_key_encrypted: String(key).trim(), base_url: name === "gemini" ? "https://generativelanguage.googleapis.com/v1beta" : "https://api.openai.com/v1", default_model: model, is_active: false, icon_emoji: name === "gemini" ? "G" : "AI" } });
+    else await prisma.ai_providers.create({ data: { id: randomUUID(), provider_name: name, display_name: name === "gemini" ? "Google Gemini" : "OpenAI", api_key_encrypted: String(key).trim(), base_url: name === "gemini" ? "https://generativelanguage.googleapis.com/v1beta" : "https://api.openai.com/v1", default_model: model, is_active: true, icon_emoji: name === "gemini" ? "G" : "AI" } });
   }
   return { success: true };
 }
 
-export async function handleBlogStudio(request) {
+function normalizeStudioDraft(value = {}) {
+  return {
+    title: stripHtml(value.title).trim().slice(0, 300),
+    slug: slugify(value.slug || value.title),
+    description: stripHtml(value.description).trim().slice(0, 1_000),
+    content_html: stripCompetitorCredits(value.content_html || value.content),
+    meta_title: stripHtml(value.meta_title || value.title).trim().slice(0, 300),
+    meta_description: stripHtml(value.meta_description || value.description).trim().slice(0, 1_000),
+    meta_keywords: stripHtml(value.meta_keywords).trim().slice(0, 2_000),
+    tags: normalizeStringList(value.tags, [], 30),
+    category: stripHtml(value.category || "Education").trim().slice(0, 160) || "Education",
+    vertical: stripHtml(value.vertical || "General").trim().slice(0, 160) || "General",
+    featured_image: String(toStoredMediaKeys(value.featured_image || "")).trim(),
+    faqs: normalizeGeneratedFaqs(value.faqs),
+  };
+}
+
+async function publishBlogStudioDraft(body, userId) {
+  const saved = normalizeBlogAgentSettings(await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } }).catch(() => null) || {});
+  const draft = normalizeStudioDraft(body.draft);
+  if (!draft.title || !draft.slug || !draft.content_html) {
+    throw Object.assign(new Error("Title, slug and article content are required"), { status: 400, code: "ARTICLE_FIELDS_REQUIRED" });
+  }
+  const existing = await loadArticleCoverage();
+  const localConflict = findDuplicateArticleTopic(draft, existing);
+  if (localConflict) {
+    throw Object.assign(new Error(`DekhoCampus already covers this topic: ${localConflict.title}`), { status: 409, code: "DUPLICATE_ARTICLE" });
+  }
+  const semantic = await filterSemanticallyNovelTopics([draft], existing, saved.text_model, "blog-studio");
+  if (!semantic.accepted.length) {
+    const conflict = semantic.rejected[0] || {};
+    throw Object.assign(new Error(`This draft overlaps existing coverage${conflict.conflicts_with ? `: ${conflict.conflicts_with}` : ""}`), { status: 409, code: "SEMANTIC_DUPLICATE_ARTICLE" });
+  }
+  const deterministicQuality = assessGeneratedArticle(draft, draft, saved.word_limit, saved);
+  if (!deterministicQuality.passed) {
+    throw Object.assign(new Error(`Article no longer meets the publishing quality gate: ${deterministicQuality.issues.join("; ")}`), { status: 422, code: "ARTICLE_QUALITY_GATE_FAILED" });
+  }
+  const researchSources = normalizeStringList(body.research_sources, [], MAX_RESEARCH_SOURCES);
+  const modelReview = await reviewGeneratedDraft(
+    draft,
+    draft,
+    researchSources.map((url) => ({ url, source_type: "research" })),
+    saved,
+    saved.text_model,
+    "blog-studio",
+  );
+  const quality = {
+    ...deterministicQuality,
+    score: Math.min(deterministicQuality.score, modelReview.score),
+    passed: deterministicQuality.passed && modelReview.publishable,
+    model_review: modelReview,
+    issues: [...deterministicQuality.issues, ...modelReview.issues.map((issue) => `Editorial review: ${issue}`)],
+  };
+  if (!quality.passed) {
+    throw Object.assign(new Error(`Article did not pass the independent publishing review: ${quality.issues.join("; ") || "editorial score below target"}`), { status: 422, code: "ARTICLE_QUALITY_GATE_FAILED" });
+  }
+  const requestedStatus = body.status === "Draft" ? "Draft" : "Published";
+  const links = Array.isArray(body.entity_links)
+    ? body.entity_links.flatMap((link) => {
+      const entityType = String(link?.entity_type || "").replace(/s$/, "");
+      const entitySlug = slugify(link?.entity_slug);
+      return ["college", "course", "exam"].includes(entityType) && entitySlug ? [{ entity_type: entityType, entity_slug: entitySlug }] : [];
+    })
+    : [];
+  const uniqueLinks = links.filter((link, index) => links.findIndex((candidate) => (
+    candidate.entity_type === link.entity_type && candidate.entity_slug === link.entity_slug
+  )) === index);
+  const article = await prisma.$transaction(async (tx) => {
+    const raced = await tx.articles.findFirst({ where: { OR: [{ slug: draft.slug }, { title: draft.title }] }, select: { title: true } });
+    if (raced) throw Object.assign(new Error(`DekhoCampus already covers this topic: ${raced.title}`), { status: 409, code: "DUPLICATE_ARTICLE" });
+    const created = await tx.articles.create({ data: {
+      id: randomUUID(),
+      status: requestedStatus,
+      title: draft.title,
+      slug: draft.slug,
+      description: draft.description,
+      content: draft.content_html,
+      vertical: draft.vertical,
+      category: draft.category,
+      author: "DekhoCampus Editorial",
+      featured_image: draft.featured_image,
+      views: 0,
+      tags: draft.tags,
+      meta_title: draft.meta_title,
+      meta_description: draft.meta_description,
+      meta_keywords: draft.meta_keywords,
+      is_active: requestedStatus === "Published",
+      created_by: userId || null,
+      data_source_urls: researchSources,
+      data_quality_score: quality.score,
+      data_clean_state: "not_checked",
+    } });
+    if (draft.faqs.length) {
+      await tx.faqs.createMany({ data: draft.faqs.map((faq, index) => ({
+        id: randomUUID(), page: "articles", item_slug: created.slug, question: faq.question, answer: faq.answer,
+        display_order: (index + 1) * 10, is_active: requestedStatus === "Published",
+      })) });
+    }
+    for (const link of uniqueLinks) {
+      await tx.article_links.create({ data: { id: randomUUID(), article_id: created.id, ...link } });
+    }
+    return created;
+  });
+  return { success: true, article: { id: article.id, slug: article.slug, status: article.status }, quality, semantic_review: semantic.model };
+}
+
+export async function handleBlogStudio(request, userId = null) {
   const body = await request.json().catch(() => ({}));
+  if (body.action === "publish") return publishBlogStudioDraft(body, userId);
   const topic = String(body.topic || "").trim();
   if (!topic) throw Object.assign(new Error("A blog topic is required"), { status: 400 });
   const existing = await loadArticleCoverage();
@@ -1148,10 +1525,27 @@ export async function handleBlogStudio(request) {
     throw Object.assign(new Error(`DekhoCampus already covers this topic: ${existingTopic.title}`), { status: 409, code: "DUPLICATE_ARTICLE" });
   }
   const savedCover = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } }).catch(() => null);
+  const editorial = normalizeBlogAgentSettings({
+    ...(savedCover || {}),
+    ...(body.word_limit !== undefined ? { word_limit: body.word_limit } : {}),
+    ...(body.content_goals !== undefined ? { content_goals: body.content_goals } : {}),
+    ...(body.required_sections !== undefined ? { required_sections: body.required_sections } : {}),
+    ...(body.minimum_sources !== undefined ? { minimum_sources: body.minimum_sources } : {}),
+    ...(body.editorial_quality_target !== undefined ? { editorial_quality_target: body.editorial_quality_target } : {}),
+    ...(body.language !== undefined ? { language: body.language } : {}),
+    ...(body.audience !== undefined ? { audience: body.audience } : {}),
+    ...(body.tone !== undefined ? { tone: body.tone } : {}),
+    ...(body.model ? { text_model: body.model } : {}),
+  });
+  const semantic = await filterSemanticallyNovelTopics([{ title: topic }], existing, editorial.text_model, "blog-studio");
+  if (!semantic.accepted.length) {
+    const conflict = semantic.rejected[0] || {};
+    throw Object.assign(new Error(`DekhoCampus already covers this student intent${conflict.conflicts_with ? `: ${conflict.conflicts_with}` : ""}`), { status: 409, code: "SEMANTIC_DUPLICATE_ARTICLE" });
+  }
   const image = body.image && typeof body.image === "object" ? body.image : {};
   const coverDiagnostics = {};
   const contextLogo = await resolveContextualBlogLogo(topic);
-  const generated = await generateDraft(topic, { wordLimit: body.word_limit, cover: {
+  const generated = await generateDraft({ title: topic }, { wordLimit: editorial.word_limit, editorialSettings: editorial, model: editorial.text_model, feature: "blog-studio", cover: {
     imageMode: image.mode || savedCover?.image_mode || "none",
     templateUrl: image.template_url || savedCover?.image_template_url,
     referenceImageUrl: image.reference_image_url || image.template_url || savedCover?.image_template_url,
@@ -1174,6 +1568,8 @@ export async function handleBlogStudio(request) {
     image_model_used: coverDiagnostics.sourceMode === "generated" ? "openai" : coverDiagnostics.sourceMode || "none",
     cover_diagnostics: coverDiagnostics,
     quality: generated.quality,
+    editorial_settings: editorial,
+    semantic_review: semantic.model,
     research_sources: generated.research_sources,
   };
 }
@@ -1201,20 +1597,20 @@ export async function handleArticleCover(request) {
 export async function handleAiGenerate(request) {
   const body = await request.json().catch(() => ({}));
   const table = String(body.entity_type || "");
-  if (!schemaMetadata[table] || !["colleges", "courses", "exams", "articles", "scholarships", "career_profiles"].includes(table)) throw new Error("Unsupported entity type");
+  if (table === "articles") {
+    throw Object.assign(new Error("Use Editorial Blog Studio for articles so research, semantic duplicate detection, FAQs and the publishing quality gate cannot be bypassed"), { status: 409, code: "USE_EDITORIAL_BLOG_STUDIO" });
+  }
+  if (!schemaMetadata[table] || !["colleges", "courses", "exams", "scholarships", "career_profiles"].includes(table)) throw new Error("Unsupported entity type");
   const count = Math.min(20, Math.max(1, Number(body.count || body.names?.length || 1)));
   const fields = Object.entries(schemaMetadata[table].fields).filter(([name, meta]) => !["id", "created_at", "updated_at", "short_id"].includes(name) && !meta.ignored).map(([name, meta]) => `${name}:${meta.type}${meta.nullable ? "?" : ""}`);
   const prompt = `Generate ${count} production-ready ${table} records for DekhoCampus. Topic: ${body.topic || ""}. Exact requested names: ${JSON.stringify(body.names || [])}. Use official-source-first, conservative facts; omit uncertain values. Return {items:[...]}. Each item must use this schema: ${fields.join(", ")}. JSON fields must be arrays or objects, booleans must be booleans, slugs lowercase-hyphen. Articles must be Published and contain original HTML without competitor credits.`;
-  const generated = table === "articles"
-    ? await blogTextJson(prompt, "blog-studio")
-    : { ...(await geminiJson(prompt, "admin-ai-generate")), provider: "gemini" };
+  const generated = { ...(await geminiJson(prompt, "admin-ai-generate")), provider: "gemini" };
   const { result, model } = generated;
   const rawItems = Array.isArray(result.items) ? result.items.slice(0, count) : [];
   const items = [];
   for (const raw of rawItems) {
     const item = { ...raw };
     if (schemaMetadata[table].fields.slug) item.slug = slugify(item.slug || item.name || item.title);
-    if (table === "articles") { item.status = "Published"; item.is_active = true; item.content = stripCompetitorCredits(item.content || item.content_html); delete item.content_html; }
     const existing = item.slug ? await prisma.$queryRawUnsafe(`SELECT 1 FROM \`${table}\` WHERE \`slug\` = ? LIMIT 1`, item.slug) : [];
     items.push({ ...item, _action: existing.length ? "upsert" : "insert", _key: item.slug || item.name || item.title });
   }
@@ -1222,39 +1618,76 @@ export async function handleAiGenerate(request) {
 }
 
 async function saveGeneratedArticle(topic, settings, signals, entityContext = null, existingCoverage = null) {
+  const editorial = normalizeBlogAgentSettings(settings);
   const topicTitle = String(topic?.title || topic).trim();
   const existing = existingCoverage || await loadArticleCoverage();
   if (findDuplicateArticleTopic(topic, existing)) return null;
   const schedule = entityContext?.schedule || null;
   const contextLogo = await resolveContextualBlogLogo(topicTitle, entityContext);
-  const generated = await generateDraft(topic, { wordLimit: settings.word_limit, signals, requiredTitle: topicTitle, cover: {
-    imageMode: settings.image_mode,
-    templateUrl: settings.image_template_url,
-    referenceImageUrl: settings.image_template_url,
-    promptStyle: settings.image_prompt_style,
-    includeLogo: settings.include_logo,
-    logoUrl: settings.logo_url,
-    contextLogoUrl: contextLogo?.url,
-    contextLogoName: contextLogo?.name,
-    aspectRatio: settings.image_aspect_ratio,
-    resolution: settings.output_resolution,
-  } });
+  const generated = await generateDraft(topic, {
+    wordLimit: editorial.word_limit,
+    signals,
+    requiredTitle: topicTitle,
+    editorialSettings: editorial,
+    model: editorial.text_model,
+    feature: "blog-agent",
+    cover: {
+      imageMode: editorial.image_mode,
+      templateUrl: editorial.image_template_url,
+      referenceImageUrl: editorial.image_template_url,
+      promptStyle: editorial.image_prompt_style,
+      includeLogo: editorial.include_logo,
+      logoUrl: editorial.logo_url,
+      contextLogoUrl: contextLogo?.url,
+      contextLogoName: contextLogo?.name,
+      aspectRatio: editorial.image_aspect_ratio,
+      resolution: editorial.output_resolution,
+    },
+  });
   const draft = generated.draft;
   if (findDuplicateArticleTopic(draft, existing)) return null;
+  const shouldReview = editorial.human_review_required || editorial.publish_status === "Draft";
+  const status = shouldReview ? "Draft" : "Published";
+  const selectedAuthors = editorial.author_ids.length
+    ? await prisma.authors.findMany({
+      where: { id: { in: editorial.author_ids }, is_active: true },
+      select: { id: true, name: true },
+    })
+    : [];
+  const orderedAuthors = editorial.author_ids.flatMap((id) => {
+    const author = selectedAuthors.find((candidate) => candidate.id === id);
+    return author ? [author] : [];
+  });
+  let selectedAuthor = null;
+  let nextAuthorIndex = editorial.last_author_index || 0;
+  if (editorial.author_mode === "single") selectedAuthor = orderedAuthors[0] || null;
+  if (editorial.author_mode === "round_robin" && orderedAuthors.length) {
+    nextAuthorIndex = (Math.max(-1, Number(editorial.last_author_index) || -1) + 1) % orderedAuthors.length;
+    selectedAuthor = orderedAuthors[nextAuthorIndex];
+  }
   const article = await prisma.$transaction(async (tx) => {
+    const raced = await tx.articles.findFirst({
+      where: { OR: [{ slug: draft.slug }, { title: String(draft.title || topic) }] },
+      select: { id: true },
+    });
+    if (raced) return null;
     const created = await tx.articles.create({ data: {
-      id: randomUUID(), status: "Published",
-      title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: "DekhoCampus Editorial", featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: true, data_source_urls: generated.research_sources, data_clean_state: "not_checked",
+      id: randomUUID(), status,
+      title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: selectedAuthor?.name || "DekhoCampus Editorial", author_id: selectedAuthor?.id || null, featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(topic?.trend_based === true ? ["google-trends-daily"] : []), ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: status === "Published", data_source_urls: generated.research_sources, data_quality_score: generated.quality.score, data_clean_state: "not_checked",
     } });
     if (draft.faqs.length) {
-      await tx.faqs.createMany({ data: draft.faqs.map((faq, index) => ({ id: randomUUID(), page: "articles", item_slug: created.slug, question: faq.question, answer: faq.answer, display_order: (index + 1) * 10, is_active: true })) });
+      await tx.faqs.createMany({ data: draft.faqs.map((faq, index) => ({ id: randomUUID(), page: "articles", item_slug: created.slug, question: faq.question, answer: faq.answer, display_order: (index + 1) * 10, is_active: status === "Published" })) });
     }
     if (schedule) {
       await tx.article_links.create({ data: { id: randomUUID(), article_id: created.id, entity_type: schedule.entity_type.replace(/s$/, ""), entity_slug: schedule.entity_slug } });
       await tx.entity_article_publications.create({ data: { id: randomUUID(), schedule_id: schedule.id, article_id: created.id, entity_type: schedule.entity_type, entity_slug: schedule.entity_slug, topic_kind: "researched_update", generated_for_date: new Date() } });
     }
+    if (editorial.author_mode === "round_robin" && selectedAuthor) {
+      await tx.blog_auto_agent_settings.update({ where: { id: "default" }, data: { last_author_index: nextAuthorIndex } }).catch(() => null);
+    }
     return created;
   });
+  if (!article) return null;
   if (existingCoverage) existingCoverage.unshift({
     id: article.id,
     slug: article.slug,
@@ -1337,34 +1770,45 @@ async function entityRunContext(body, settings) {
 export async function runBlogAgent(body = {}) {
   if (body.action) return controlBlogRun(body);
   await assertAiEnabled("blog-agent");
-  let settings = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } });
-  if (!settings) throw new Error("Auto Blog Agent settings are missing");
+  const storedSettings = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } });
+  if (!storedSettings) throw new Error("Auto Blog Agent settings are missing");
+  let settings = normalizeBlogAgentSettings(storedSettings);
   const triggerType = body.trigger_type || "manual";
   const entityContext = await entityRunContext(body, settings);
   if (entityContext?.skipped) return { skipped: true, message: entityContext.message, schedule_id: entityContext.schedule.id };
-  if (entityContext) settings = entityContext.settings;
+  if (entityContext) settings = normalizeBlogAgentSettings(entityContext.settings);
   if (!entityContext && triggerType === "schedule" && !settings.enabled) return { skipped: true, message: "Blog auto agent is disabled" };
   if (!entityContext && triggerType === "schedule" && settings.next_run_at && settings.next_run_at > new Date()) return { skipped: true, message: "Next run time has not arrived yet", next_run_at: settings.next_run_at };
-  const interval = Math.max(MIN_INTERVAL_MINUTES, Number(settings.interval_minutes || 60));
-  const dailyCap = Math.min(MAX_DAILY_POSTS, Math.max(1, Number(settings.daily_post_cap || 12)));
+  const interval = settings.interval_minutes;
+  const dailyCap = settings.daily_post_cap;
   const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0);
   const todayCount = await prisma.$queryRawUnsafe("SELECT COUNT(*) AS total FROM `articles` WHERE `created_at` >= ? AND JSON_CONTAINS(`tags`, JSON_QUOTE('auto-blog-agent'))", dayStart);
   const remaining = Math.max(0, dailyCap - Number(todayCount[0]?.total || 0));
   if (!remaining) return { skipped: true, message: "Daily post cap reached", count: dailyCap };
   const postCount = Math.min(MAX_POSTS_PER_RUN, remaining, entityContext?.postCount || Math.max(1, Number(settings.posts_per_run || 1)));
+  const todayTrendCount = !entityContext && settings.google_trends_daily_enabled
+    ? await prisma.$queryRawUnsafe("SELECT COUNT(*) AS total FROM `articles` WHERE `created_at` >= ? AND JSON_CONTAINS(`tags`, JSON_QUOTE('google-trends-daily'))", dayStart)
+    : [{ total: 0 }];
+  const trendPostsDue = !entityContext && settings.google_trends_daily_enabled
+    ? Math.min(postCount, Math.max(0, settings.google_trends_daily_posts - Number(todayTrendCount[0]?.total || 0)))
+    : 0;
   const running = await prisma.blog_auto_agent_runs.findFirst({ where: { status: "running", ...(body.resume_run_id ? { NOT: { id: body.resume_run_id } } : {}) }, select: { id: true } });
   if (running) return { skipped: true, message: "Another blog run is already active", run_id: running.id };
   const executionToken = `executor:${randomUUID()}`;
   const run = body.resume_run_id
     ? await prisma.blog_auto_agent_runs.update({ where: { id: body.resume_run_id }, data: { status: "running", resumed_at: new Date(), finished_at: null, message: "Resumed", current_step: "Resuming education research", control_note: executionToken } })
-    : await prisma.blog_auto_agent_runs.create({ data: { id: randomUUID(), status: "running", trigger_type: triggerType, interval_minutes: interval, model_provider: blogTextProvider(settings.text_model || DEFAULT_OPENAI_TEXT_MODEL), word_limit: settings.word_limit, sources: [], selected_topics: [], created_article_ids: [], message: "Researching", progress: 5, current_step: "Researching education signals", estimated_seconds: postCount * 90, completed_steps: 0, total_steps: postCount * 2 + 1, control_note: executionToken, entity_schedule_id: entityContext?.schedule.id || null, agent_mode: entityContext ? "entity_schedule" : "general" } });
+    : await prisma.blog_auto_agent_runs.create({ data: { id: randomUUID(), status: "running", trigger_type: triggerType, interval_minutes: interval, model_provider: blogTextProvider(settings.text_model), word_limit: settings.word_limit, sources: [], selected_topics: [], created_article_ids: [], message: "Researching", progress: 5, current_step: "Researching education signals", estimated_seconds: postCount * 180, completed_steps: 0, total_steps: postCount * 2 + 1, control_note: executionToken, entity_schedule_id: entityContext?.schedule.id || null, agent_mode: entityContext ? "entity_schedule" : "general" } });
   try {
-    const signals = await researchSignals();
+    const signals = await researchSignals(Math.max(4, settings.minimum_sources));
     await assertRunActive(run.id, executionToken);
     const recent = await loadArticleCoverage();
     const entityInstruction = entityContext
       ? `Generate only for this ${entityContext.schedule.entity_type}: ${JSON.stringify({ name: entityContext.schedule.entity_name, slug: entityContext.schedule.entity_slug, facts: entityContext.entity, topic_focus: entityContext.schedule.topic_focus })}. Prefer a timely verified update; otherwise create an evergreen student guide. Every topic must be specifically useful for this entity.`
       : "Cover the strongest Indian education opportunities across admissions, exams, counselling, scholarships, careers and college decisions.";
+    const hasTrendSignal = signals.some((source) => /google trends/i.test(String(source.name || "")));
+    const trendInstruction = trendPostsDue && hasTrendSignal
+      ? `Prioritize ${trendPostsDue} proposal(s) supported by the Google Trends signal and mark only those proposals trend_based=true. A trend alone is not enough: it still needs a precise student intent, reliable evidence and material novelty. Never label an unsupported topic as trend based.`
+      : "Set trend_based=false for every proposal.";
     // The local semantic gate still compares against all loaded articles. The
     // model only needs a representative recent sample to avoid costly retries.
     const promptCoverage = [...new Set(recent.map(compactArticleCoverage).filter(Boolean))]
@@ -1377,7 +1821,9 @@ export async function runBlogAgent(body = {}) {
         ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
         : "";
       const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
-      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} Existing DekhoCampus subject + intent fingerprints to avoid: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Use competitor material only to identify coverage gaps; never copy, cite, link, name, or credit it. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic. Each proposal needs one primary entity, one precise search intent, and a non-empty unique value that is materially absent from existing coverage. Each title must be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation, and substantially different from every avoided fingerprint. Never truncate a title for cover artwork.`, "blog-agent", {
+      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} ${trendInstruction} Existing DekhoCampus subject + intent fingerprints to avoid: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Use competitor material only to identify coverage gaps; never copy, cite, link, name, or credit it. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic. Each proposal needs one primary entity, one precise search intent, and a non-empty unique value that is materially absent from existing coverage. Each title must be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation, and substantially different from every avoided fingerprint. Never truncate a title for cover artwork.`, "blog-agent", {
+        model: settings.text_model,
+        reasoningEffort: "low",
         thinkingLevel: "minimal",
         maxOutputTokens: 1200,
         responseSchema: {
@@ -1395,8 +1841,9 @@ export async function runBlogAgent(body = {}) {
                   unique_value: { type: "STRING" },
                   category: { type: "STRING" },
                   tags: { type: "ARRAY", items: { type: "STRING" } },
+                  trend_based: { type: "BOOLEAN" },
                 },
-                required: ["title", "angle", "search_intent", "primary_entity", "unique_value"],
+                required: ["title", "angle", "search_intent", "primary_entity", "unique_value", "trend_based"],
               },
             },
           },
@@ -1404,12 +1851,21 @@ export async function runBlogAgent(body = {}) {
         },
       });
       await assertRunActive(run.id, executionToken);
+      const locallyNovel = [];
       for (const topic of normalizeTopicSuggestions(result)) {
         const duplicate = findDuplicateArticleTopic(topic, comparedCoverage);
         if (duplicate) {
           rejected.push({ suggested: topic.title, conflicts_with: duplicate.title });
           continue;
         }
+        locallyNovel.push(topic);
+      }
+      const semantic = await filterSemanticallyNovelTopics(locallyNovel, comparedCoverage, settings.text_model, "blog-agent");
+      rejected.push(...semantic.rejected);
+      const rankedTopics = trendPostsDue
+        ? [...semantic.accepted].sort((left, right) => Number(right.trend_based === true) - Number(left.trend_based === true))
+        : semantic.accepted;
+      for (const topic of rankedTopics) {
         topics.push(topic);
         comparedCoverage.push({ ...topic, slug: slugify(topic.title) });
         if (topics.length >= postCount) break;
@@ -1431,8 +1887,9 @@ export async function runBlogAgent(body = {}) {
     } else {
       await prisma.blog_auto_agent_settings.update({ where: { id: "default" }, data: { interval_minutes: interval, daily_post_cap: dailyCap, posts_per_run: Math.min(MAX_POSTS_PER_RUN, settings.posts_per_run), last_run_at: new Date(), next_run_at: nextRun } });
     }
-    await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { status: "completed", progress: 100, current_step: "Completed", completed_steps: topics.length * 2 + 1, finished_at: new Date(), created_article_ids: ids, message: `Published ${ids.length} article(s)` } });
-    return { success: true, created_article_ids: ids, topics, next_run_at: nextRun, run_id: run.id, schedule_id: entityContext?.schedule.id || null };
+    const actionLabel = settings.human_review_required || settings.publish_status === "Draft" ? "Created for review" : "Published";
+    await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { status: "completed", progress: 100, current_step: "Completed", completed_steps: topics.length * 2 + 1, finished_at: new Date(), created_article_ids: ids, message: `${actionLabel} ${ids.length} article(s); ${rejected.length} duplicate topic(s) rejected` } });
+    return { success: true, created_article_ids: ids, topics, duplicate_topics_rejected: rejected, next_run_at: nextRun, run_id: run.id, schedule_id: entityContext?.schedule.id || null };
   } catch (error) {
     if (error?.code === "BLOG_RUN_CONTROLLED") return { success: true, run_id: run.id, status: error.status, message: error.message };
     await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { status: "failed", progress: 100, current_step: "Failed", finished_at: new Date(), message: String(error?.message || error).slice(0, 2000) } });

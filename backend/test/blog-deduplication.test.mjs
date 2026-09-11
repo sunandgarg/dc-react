@@ -71,9 +71,11 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
   const good = assessGeneratedArticle({
     title: "CAT 2026 Preparation Plan for Working Graduates",
     description: "A practical CAT 2026 plan that helps working graduates divide practice, review errors and protect mock-test time each week.",
-    content_html: `<h2>Set a workable baseline</h2><p>${usefulParagraph}</p><h2>Divide the weekly workload</h2><ul><li>Practise</li><li>Review</li></ul><h2>Measure correction quality</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>`,
+    meta_title: "CAT 2026 Preparation Plan for Working Graduates",
+    meta_description: "Build a realistic CAT 2026 study plan around a full-time job, weekly mock analysis, focused revision blocks and measurable improvement priorities.",
+    content_html: `<h2>Answer first</h2><p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p><p>${usefulParagraph}</p><h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul><h2>Decision guidance</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
     faqs: [1, 2, 3, 4].map((number) => ({ question: `Question ${number}?`, answer: `Useful answer ${number}.` })),
-  }, "CAT 2026 preparation plan for working graduates", 700);
+  }, "CAT 2026 preparation plan for working graduates", 1200);
   assert.equal(good.passed, true, good.issues.join("; "));
 
   const bad = assessGeneratedArticle({
@@ -92,6 +94,7 @@ test("normalizes Gemini topic strings and alternate object keys", () => {
     angle: "",
     category: "Education",
     tags: [],
+    trend_based: false,
   }]);
   assert.deepEqual(normalizeTopicSuggestions({ opportunities: [{ headline: "IIT application document guide", tags: "admissions" }] }), [{
     headline: "IIT application document guide",
@@ -99,6 +102,7 @@ test("normalizes Gemini topic strings and alternate object keys", () => {
     angle: "",
     category: "Education",
     tags: [],
+    trend_based: false,
   }]);
   assert.deepEqual(normalizeTopicSuggestions({ research: { article_opportunities: { first: { topic: "CUET subject choice guide" } } } }), [{
     topic: "CUET subject choice guide",
@@ -106,5 +110,6 @@ test("normalizes Gemini topic strings and alternate object keys", () => {
     angle: "",
     category: "Education",
     tags: [],
+    trend_based: false,
   }]);
 });

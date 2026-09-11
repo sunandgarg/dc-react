@@ -1,5 +1,4 @@
 import { PermGate } from "@/components/PermGate";
-import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
 import { BlogStudioDialog } from "@/components/admin/BlogStudioDialog";
 import { BlogAutoAgentPanel } from "@/components/admin/BlogAutoAgentPanel";
 import { EntityResearchBlogPanel } from "@/components/admin/EntityResearchBlogPanel";
@@ -183,7 +182,7 @@ export default function AdminArticles() {
 
   return (
     <AdminLayout title="Articles Manager">
-      {isAdmin && <div className="mb-3 flex flex-wrap gap-2"><BlogStudioDialog onSaved={() => { void refetchArticles(); }} /><AIGenerateDialog entityType="articles" table="articles" /></div>}
+      {isAdmin && <div className="mb-3 flex flex-wrap gap-2"><BlogStudioDialog onSaved={() => { void refetchArticles(); }} /></div>}
       {isAdmin && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />}
       {isAdmin && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
       <div className="flex flex-col sm:flex-row gap-3 mb-3">

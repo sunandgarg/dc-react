@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bot, CheckCircle2, CirclePause, Clock, ExternalLink, ImageIcon, Loader2, OctagonX, Play, Plus, RotateCcw, Save, Sparkles, Square, Timer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
@@ -66,40 +66,40 @@ type Author = { id: string; name: string; designation?: string; photo?: string }
 const DRAFT_KEY = "dc:admin:blog-agent:draft:v1";
 const DEFAULT_SETTINGS: Settings = {
   enabled: false,
-  interval_minutes: 20,
+  interval_minutes: 180,
   posts_per_run: 1,
-  daily_post_cap: 72,
+  daily_post_cap: 8,
   publish_status: "Published",
   model_provider: "openai",
-  text_model: "gpt-5-nano",
-  word_limit: 1200,
+  text_model: "gpt-5.4-mini",
+  word_limit: 0,
   author_mode: "none",
   author_ids: [],
   language: "English",
   audience: "Indian students and parents",
   tone: "Clear, practical, trustworthy",
-  content_goals: ["SEO", "AEO", "GEO", "AIO", "LLMO", "LLM"],
-  required_sections: ["Quick answer", "Key facts", "Step-by-step guidance", "FAQs"],
-  minimum_sources: 1,
-  editorial_quality_target: 80,
-  human_review_required: true,
-  image_mode: "generated",
+  content_goals: ["SEO", "AEO", "GEO", "LLMO"],
+  required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],
+  minimum_sources: 2,
+  editorial_quality_target: 90,
+  human_review_required: false,
+  image_mode: "template",
   image_provider: "openai",
   image_model: "gpt-image-1",
   image_template_url: "",
   image_prompt_style: "Premium editorial, clean, credible, student-focused",
-  include_logo: true,
-  logo_url: "https://dekhocampus.com/brand/dekhocampus-blog-logo.png",
+  include_logo: false,
+  logo_url: "",
   logo_position: "top-center",
   image_aspect_ratio: "16:9",
-  output_resolution: "4k",
+  output_resolution: "web",
   google_trends_daily_enabled: true,
   google_trends_daily_posts: 3,
 };
 
 const DEFAULT_SOURCES: Source[] = [
-  { name: "Google News Education", url: "https://news.google.com/rss/search?q=education%20admission%20India", source_type: "own", is_active: true },
-  { name: "Google News Exams", url: "https://news.google.com/rss/search?q=exam%20counselling%20admission%20India", source_type: "own", is_active: true },
+  { name: "Google News Education", url: "https://news.google.com/rss/search?q=education%20admission%20India", source_type: "public_signal", is_active: true },
+  { name: "Google News Exams", url: "https://news.google.com/rss/search?q=exam%20counselling%20admission%20India", source_type: "public_signal", is_active: true },
   { name: "Google Trends India", url: "https://trends.google.com/trending/rss?geo=IN", source_type: "public_signal", is_active: true },
   { name: "DekhoCampus", url: "https://dekhocampus.com/news", source_type: "own", is_active: true },
 ];
@@ -201,7 +201,6 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ settings, sources }));
   }, [settings, sources, loading]);
 
-  const activeSourceCount = useMemo(() => sources.filter(s => s.is_active).length, [sources]);
   const updateSetting = (key: keyof Settings, value: any) => setSettings(prev => ({
     ...prev,
     [key]: IMAGE_URL_SETTING_KEYS.has(key) ? normalizeImageSettingUrl(value) : value,
@@ -223,16 +222,34 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     setBusy(true);
     try {
       const nextRun = settings.enabled && !settings.next_run_at ? new Date().toISOString() : settings.next_run_at;
-      const dailyPostCap = Math.min(72, Math.max(1, Math.floor(Number(settings.daily_post_cap) || 72)));
-      const normalizedSettings = { ...settings, daily_post_cap: dailyPostCap, model_provider: settings.text_model.startsWith("gemini-") ? "gemini" : "openai", image_provider: "openai" as const, image_model: "gpt-image-1" };
+      const dailyPostCap = Math.min(24, Math.max(1, Math.floor(Number(settings.daily_post_cap) || 8)));
+      const intervalMinutes = Math.min(1440, Math.max(60, Math.floor(Number(settings.interval_minutes) || 180)));
+      const postsPerRun = Math.min(3, Math.max(1, Math.floor(Number(settings.posts_per_run) || 1)));
+      const wordLimit = Number(settings.word_limit) === 0 ? 0 : Math.min(2200, Math.max(700, Math.floor(Number(settings.word_limit) || 0)));
+      const minimumSources = Math.min(6, Math.max(2, Math.floor(Number(settings.minimum_sources) || 2)));
+      const qualityTarget = Math.min(98, Math.max(75, Math.floor(Number(settings.editorial_quality_target) || 90)));
+      const normalizedSettings = {
+        ...settings,
+        interval_minutes: intervalMinutes,
+        posts_per_run: postsPerRun,
+        daily_post_cap: dailyPostCap,
+        word_limit: wordLimit,
+        content_goals: [...DEFAULT_SETTINGS.content_goals],
+        required_sections: [...new Set([...DEFAULT_SETTINGS.required_sections, ...settings.required_sections])].slice(0, 12),
+        minimum_sources: minimumSources,
+        editorial_quality_target: qualityTarget,
+        model_provider: settings.text_model.startsWith("gemini-") ? "gemini" : "openai",
+        image_provider: "openai" as const,
+        image_model: "gpt-image-1",
+      };
       const legacySettings = {
         enabled: settings.enabled,
-        interval_minutes: settings.interval_minutes,
-        posts_per_run: Math.min(3, settings.posts_per_run),
+        interval_minutes: intervalMinutes,
+        posts_per_run: postsPerRun,
         daily_post_cap: dailyPostCap,
         publish_status: settings.publish_status,
         model_provider: settings.text_model.startsWith("gemini-") ? "gemini" : "openai",
-        word_limit: settings.word_limit,
+        word_limit: wordLimit,
         author_mode: settings.author_mode,
         author_ids: settings.author_ids,
         next_run_at: nextRun,
@@ -263,7 +280,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
           .insert({ id: "default", ...cleanedPayload });
         if (createError) throw createError;
       }
-      setSettings((current) => ({ ...current, daily_post_cap: dailyPostCap }));
+      setSettings((current) => ({ ...current, ...normalizedSettings }));
       for (const [index, source] of sources.entries()) {
         await (backendClient as any).from("blog_research_sources").upsert({ ...source, display_order: (index + 1) * 10 }, { onConflict: "url" });
       }
@@ -359,14 +376,14 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             <Badge variant={settings.enabled ? "default" : "secondary"}>{settings.enabled ? "Running" : "Paused"}</Badge>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Uses low-cost OpenAI GPT-5 nano for source-aware editorial drafts. Review gates, schedules and templates remain under your control.
+            Uses a quality-first model, evidence checks and semantic duplicate detection before an article can publish.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={save} disabled={busy} className="gap-2 rounded-xl">
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save
           </Button>
-          <Button onClick={runNow} disabled={busy || !!currentRun || activeSourceCount < 2} className="gap-2 rounded-xl">
+          <Button onClick={runNow} disabled={busy || !!currentRun} className="gap-2 rounded-xl">
             {busy || activeRun ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />} {activeRun ? "Agent running" : pausedRun ? "Resume paused run" : "Run now"}
           </Button>
         </div>
@@ -418,17 +435,17 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         </div>
         <div className="rounded-xl border p-3">
           <Label className="text-xs">Frequency</Label>
-          <div className="mt-3 flex gap-2">
-            {[20, 24, 30, 60].map(minutes => <Button key={minutes} size="sm" variant={settings.interval_minutes === minutes ? "default" : "outline"} onClick={() => updateSetting("interval_minutes", minutes)}>{minutes === 60 ? "1 hour" : `${minutes} min`}</Button>)}
+          <div className="mt-3 flex flex-wrap gap-2">
+            {[60, 120, 180, 360].map(minutes => <Button key={minutes} size="sm" variant={settings.interval_minutes === minutes ? "default" : "outline"} onClick={() => updateSetting("interval_minutes", minutes)}>{minutes < 60 ? `${minutes} min` : `${minutes / 60} hr`}</Button>)}
           </div>
         </div>
         <div className="rounded-xl border p-3">
           <Label className="text-xs">Articles per run</Label>
           <div className="mt-3 flex flex-wrap gap-2">
             {[1, 2, 3].map(count => <Button key={count} size="sm" variant={settings.posts_per_run === count ? "default" : "outline"} onClick={() => updateSetting("posts_per_run", count)}>{count}</Button>)}
-            <Input aria-label="Custom articles per run" type="number" min={1} max={20} value={settings.posts_per_run} onChange={(event) => updateSetting("posts_per_run", Math.min(20, Math.max(1, Number(event.target.value || 1))))} className="h-9 w-20" />
+            <Input aria-label="Custom articles per run" type="number" min={1} max={3} value={settings.posts_per_run} onChange={(event) => updateSetting("posts_per_run", Math.min(3, Math.max(1, Number(event.target.value || 1))))} className="h-9 w-20" />
           </div>
-          <p className="mt-2 text-[10px] text-muted-foreground">Custom: 1-20. Higher counts take longer and use more AI credits.</p>
+          <p className="mt-2 text-[10px] text-muted-foreground">One is recommended. A run can create at most three thoroughly checked articles.</p>
         </div>
         <div className="rounded-xl border p-3">
           <Label className="text-xs">Publish mode</Label>
@@ -476,13 +493,13 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       <div className="mt-3 grid gap-3 lg:grid-cols-3">
         <div>
           <Label className="text-xs">Daily cap</Label>
-          <Input type="number" min={1} max={72} value={settings.daily_post_cap} onChange={e => updateSetting("daily_post_cap", Number(e.target.value || 72))} className="mt-1" />
-          <p className="mt-1 text-[10px] text-muted-foreground">Up to 72 per day, evenly spaced as one article every 20 minutes.</p>
+          <Input type="number" min={1} max={24} value={settings.daily_post_cap} onChange={e => updateSetting("daily_post_cap", Math.min(24, Math.max(1, Number(e.target.value || 8))))} className="mt-1" />
+          <p className="mt-1 text-[10px] text-muted-foreground">8 per day is recommended. Quality controls enforce an absolute maximum of 24.</p>
         </div>
         <div>
           <Label className="text-xs">Blog AI provider</Label>
           <div className="mt-1"><Button type="button" size="sm" variant="default" disabled>{settings.text_model.startsWith("gemini-") ? "Google Gemini" : "OpenAI"}</Button></div>
-          <p className="mt-1 text-[10px] text-muted-foreground">GPT-5 nano is the temporary lowest-cost default for blog text. Gemini remains available as a fallback.</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">GPT-5.4 mini is recommended for research synthesis and editorial consistency.</p>
           {supportsAdvancedSettings && (
             <select
               aria-label="Blog text model"
@@ -490,24 +507,24 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("text_model", event.target.value)}
               className="mt-2 h-9 w-full rounded-md border bg-background px-2 text-xs"
             >
-              <option value="gpt-5-nano">OpenAI GPT-5 nano - lowest cost</option>
-              <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
-              <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite - lowest cost</option>
-              <option value="gemini-3.7-flash">Gemini 3.7 Flash - latest Flash</option>
+              <option value="gpt-5.4-mini">OpenAI GPT-5.4 mini - recommended</option>
+              <option value="gpt-5-nano">OpenAI GPT-5 nano - economy</option>
+              <option value="gemini-3.6-flash">Gemini 3.6 Flash - alternative</option>
             </select>
           )}
         </div>
         <div>
           <Label className="text-xs">Word limit</Label>
-          <div className="mt-1 flex gap-2">
-            {[800, 1200, 1800].map(limit => <Button key={limit} size="sm" variant={settings.word_limit === limit ? "default" : "outline"} onClick={() => updateSetting("word_limit", limit)}>{limit}</Button>)}
+          <div className="mt-1 flex flex-wrap gap-2">
+            {[0, 900, 1200, 1500, 1800].map(limit => <Button key={limit} size="sm" variant={settings.word_limit === limit ? "default" : "outline"} onClick={() => updateSetting("word_limit", limit)}>{limit === 0 ? "Adaptive" : limit}</Button>)}
           </div>
+          <p className="mt-1 text-[10px] text-muted-foreground">Adaptive chooses length from the search intent instead of padding every topic.</p>
         </div>
         {supportsGoogleTrendsSettings && <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 lg:col-span-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <Label className="text-sm font-semibold">Daily Google Trends articles</Label>
-              <p className="mt-1 text-xs text-muted-foreground">At the first scheduled run each day, the agent selects the top Indian education trends by Google Trends' published traffic estimate and writes distinct articles before normal research runs continue.</p>
+              <p className="mt-1 text-xs text-muted-foreground">Prioritizes evidence-backed education topics found in Google Trends. Trend topics still require a distinct intent and must pass every editorial gate.</p>
             </div>
             <Switch checked={settings.google_trends_daily_enabled} onCheckedChange={(value) => updateSetting("google_trends_daily_enabled", value)} />
           </div>
@@ -522,28 +539,13 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             <p className="mt-1 text-xs text-muted-foreground">Configure reader intent, answer structure, factual sourcing, and the editorial review threshold.</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {["SEO", "AEO", "GEO", "AIO", "LLMO", "LLM"].map((goal) => {
-              const selected = settings.content_goals.includes(goal);
-              return (
-                <Button
-                  key={goal}
-                  type="button"
-                  size="sm"
-                  variant={selected ? "default" : "outline"}
-                  onClick={() => updateSetting("content_goals", selected
-                    ? settings.content_goals.filter((item) => item !== goal)
-                    : [...settings.content_goals, goal])}
-                >
-                  {goal}
-                </Button>
-              );
-            })}
+            {["SEO", "AEO", "GEO", "LLMO"].map((goal) => <Badge key={goal} variant="default">{goal}</Badge>)}
           </div>
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           <div><Label>Language</Label><Input value={settings.language} onChange={(event) => updateSetting("language", event.target.value)} className="mt-1" /></div>
           <div><Label>Audience</Label><Input value={settings.audience} onChange={(event) => updateSetting("audience", event.target.value)} className="mt-1" /></div>
-          <div><Label>Minimum independent sources</Label><Input type="number" min={1} max={10} value={settings.minimum_sources} onChange={(event) => updateSetting("minimum_sources", Math.min(10, Math.max(1, Number(event.target.value || 2))))} className="mt-1" /></div>
+          <div><Label>Minimum independent sources</Label><Input type="number" min={2} max={6} value={settings.minimum_sources} onChange={(event) => updateSetting("minimum_sources", Math.min(6, Math.max(2, Number(event.target.value || 2))))} className="mt-1" /></div>
           <div className="md:col-span-2 lg:col-span-3"><Label>Tone and editorial voice</Label><Input value={settings.tone} onChange={(event) => updateSetting("tone", event.target.value)} className="mt-1" /></div>
           <div className="md:col-span-2">
             <Label>Required sections (one per line)</Label>
@@ -553,11 +555,12 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("required_sections", event.target.value.split(/\r?\n/).map((value) => value.trim()).filter(Boolean))}
               className="mt-1"
             />
+            <p className="mt-1 text-[10px] text-muted-foreground">The four core modules remain mandatory. Add extra sections here when a topic needs them.</p>
           </div>
           <div className="space-y-3 rounded-xl border p-3">
             <div>
               <Label>Editorial quality target</Label>
-              <Input type="number" min={0} max={100} value={settings.editorial_quality_target} onChange={(event) => updateSetting("editorial_quality_target", Math.min(100, Math.max(0, Number(event.target.value || 80))))} className="mt-1" />
+              <Input type="number" min={75} max={98} value={settings.editorial_quality_target} onChange={(event) => updateSetting("editorial_quality_target", Math.min(98, Math.max(75, Number(event.target.value || 90))))} className="mt-1" />
               <p className="mt-1 text-[10px] text-muted-foreground">A completeness target, not an AI-detector score.</p>
             </div>
             <label className="flex items-center justify-between gap-3">

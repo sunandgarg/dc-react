@@ -11,6 +11,7 @@ const integrations = [
   ["ms_clarity_id", "Microsoft Clarity Project ID", "analytics", "y9bvg8jdmr"],
   ["facebook_pixel_id", "Meta Pixel / Dataset ID", "analytics", "28062999866677764"],
 ];
+const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
 
 try {
   for (const [key, label, category, value] of integrations) {
@@ -25,31 +26,63 @@ try {
     upsert: true,
     cacheControl: "public,max-age=31536000,immutable",
   });
-  const updated = await prisma.blog_auto_agent_settings.updateMany({
-    where: { id: "default" },
-    data: {
-      model_provider: "openai",
-      text_model: "gpt-5-nano",
-      interval_minutes: 20,
-      posts_per_run: 1,
-      daily_post_cap: 72,
-      image_mode: "template",
-      image_template_url: DEFAULT_BLOG_COVER_TEMPLATE_KEY,
-      include_logo: false,
-      image_aspect_ratio: "16:9",
-      output_resolution: "web",
-      updated_at: new Date(),
-    },
-  });
-  if (updated.count !== 1) throw new Error("Auto Blog Agent default settings are missing");
-  const providerSettings = await prisma.blog_ai_provider_settings.updateMany({
-    where: { id: "default" },
-    data: { text_model: "gpt-5-nano", image_quality: "low", updated_at: new Date() },
-  });
-  const runtimeControls = await prisma.ai_runtime_controls.updateMany({
-    where: { feature: { in: ["blog-studio", "blog-agent"] } },
-    data: { provider: "openai", model: "gpt-5-nano", updated_at: new Date() },
-  });
+  const editorialPolicyMigration = await prisma.app_settings.findUnique({ where: { key: BLOG_EDITORIAL_POLICY_MIGRATION_KEY } });
+  let blogSettingsUpdated = 0;
+  let providerSettingsUpdated = 0;
+  let runtimeControlsUpdated = 0;
+  let entitySchedulesUpdated = 0;
+  if (!editorialPolicyMigration) {
+    const updated = await prisma.blog_auto_agent_settings.updateMany({
+      where: { id: "default" },
+      data: {
+        model_provider: "openai",
+        text_model: "gpt-5.4-mini",
+        interval_minutes: 180,
+        posts_per_run: 1,
+        daily_post_cap: 8,
+        publish_status: "Published",
+        word_limit: 0,
+        language: "English",
+        audience: "Indian students and parents",
+        tone: "Clear, practical, trustworthy",
+        content_goals: ["SEO", "AEO", "GEO", "LLMO"],
+        required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],
+        minimum_sources: 2,
+        editorial_quality_target: 90,
+        human_review_required: false,
+        image_mode: "template",
+        image_template_url: DEFAULT_BLOG_COVER_TEMPLATE_KEY,
+        include_logo: false,
+        image_aspect_ratio: "16:9",
+        output_resolution: "web",
+        google_trends_daily_enabled: true,
+        google_trends_daily_posts: 3,
+        updated_at: new Date(),
+      },
+    });
+    if (updated.count !== 1) throw new Error("Auto Blog Agent default settings are missing");
+    blogSettingsUpdated = updated.count;
+    const providerSettings = await prisma.blog_ai_provider_settings.updateMany({
+      where: { id: "default" },
+      data: { text_model: "gpt-5.4-mini", image_quality: "low", updated_at: new Date() },
+    });
+    providerSettingsUpdated = providerSettings.count;
+    const runtimeControls = await prisma.ai_runtime_controls.updateMany({
+      where: { feature: { in: ["blog-studio", "blog-agent"] } },
+      data: { provider: "openai", model: "gpt-5.4-mini", updated_at: new Date() },
+    });
+    runtimeControlsUpdated = runtimeControls.count;
+    const entitySchedules = await prisma.entity_article_schedules.updateMany({
+      data: { publish_status: "Published", human_review_required: false, updated_at: new Date() },
+    });
+    entitySchedulesUpdated = entitySchedules.count;
+    await prisma.app_settings.create({
+      data: {
+        key: BLOG_EDITORIAL_POLICY_MIGRATION_KEY,
+        value: JSON.stringify({ model: "gpt-5.4-mini", daily_post_cap: 8, interval_minutes: 180, applied_at: new Date().toISOString() }),
+      },
+    });
+  }
   const sesProvider = {
     display_name: "Amazon SES",
     api_key: null,
@@ -89,9 +122,11 @@ try {
   console.log(JSON.stringify({
     configured: integrations.map(([key]) => key),
     blog_cover_template: template.publicUrl,
-    blog_cover_settings_updated: updated.count,
-    low_cost_image_quality_updated: providerSettings.count,
-    openai_blog_runtime_controls_updated: runtimeControls.count,
+    blog_editorial_policy_migrated: blogSettingsUpdated === 1,
+    blog_cover_settings_updated: blogSettingsUpdated,
+    low_cost_image_quality_updated: providerSettingsUpdated,
+    openai_blog_runtime_controls_updated: runtimeControlsUpdated,
+    entity_article_schedules_auto_publish_enabled: entitySchedulesUpdated,
     ses_provider_configured: true,
     ses_credential_source: "iam_runtime",
   }));

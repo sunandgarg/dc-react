@@ -468,7 +468,7 @@ export async function handleRequest(request) {
           if (!early.settled) void task.catch((error) => console.error("Manual blog agent run failed", error));
         } else {
           result = functionMatch[1] === "admin-blog-ai-settings" ? await handleBlogAiSettings(request, identity.id)
-            : functionMatch[1] === "admin-blog-studio" ? await handleBlogStudio(request)
+            : functionMatch[1] === "admin-blog-studio" ? await handleBlogStudio(request, identity.id)
             : functionMatch[1] === "admin-blog-agent" ? await runBlogAgent(body)
             : await handleAiGenerate(request);
         }

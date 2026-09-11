@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -71,16 +71,20 @@ test("non-publishing editors are forced into draft state by the server", () => {
 test("administrator AI article paths publish immediately", async () => {
   const blogSource = await readFile(new URL("../src/blog-ai.mjs", import.meta.url), "utf8");
   const studioSource = await readFile(new URL("../../src/components/admin/BlogStudioDialog.tsx", import.meta.url), "utf8");
-  assert.match(blogSource, /id: randomUUID\(\), status: "Published"/);
-  assert.match(blogSource, /item\.status = "Published"/);
-  assert.match(studioSource, /featured_image: draft\.featured_image, status: "Published", is_active: true/);
+  const articlesPageSource = await readFile(new URL("../../src/pages/AdminArticles.tsx", import.meta.url), "utf8");
+  assert.match(blogSource, /const status = shouldReview \? "Draft" : "Published"/);
+  assert.match(blogSource, /const requestedStatus = body\.status === "Draft" \? "Draft" : "Published"/);
+  assert.match(blogSource, /USE_EDITORIAL_BLOG_STUDIO/);
+  assert.match(studioSource, /action: "publish", status: "Published"/);
+  assert.doesNotMatch(studioSource, /\.from\("articles"\)\.upsert/);
+  assert.doesNotMatch(articlesPageSource, /AIGenerateDialog/);
 });
 
 test("enforces conservative auto-blog cadence and volume limits", () => {
   assert.deepEqual(blogLimits, {
-    MAX_POSTS_PER_RUN: 10,
-    MAX_DAILY_POSTS: 72,
-    MIN_INTERVAL_MINUTES: 20,
+    MAX_POSTS_PER_RUN: 3,
+    MAX_DAILY_POSTS: 24,
+    MIN_INTERVAL_MINUTES: 60,
   });
 });
 
@@ -97,12 +101,35 @@ test("normalizes legacy Gemini models and classifies quota errors", () => {
   assert.match(classified.message, /Enable billing/);
 });
 
-test("selects the lowest-cost OpenAI blog model and parses structured output", () => {
-  assert.equal(normalizeBlogTextModel(""), "gpt-5-nano");
+test("selects the quality-first OpenAI blog model and parses structured output", () => {
+  assert.equal(normalizeBlogTextModel(""), "gpt-5.4-mini");
   assert.equal(normalizeBlogTextModel("gpt-5-nano"), "gpt-5-nano");
   assert.equal(blogTextProvider("gpt-5-nano"), "openai");
   assert.equal(blogTextProvider("gemini-3.6-flash"), "gemini");
   assert.deepEqual(parseOpenAiJsonPayload({ choices: [{ message: { content: '{"title":"Natural draft"}' } }] }), { title: "Natural draft" });
+});
+
+test("normalizes editorial controls and adapts depth to student intent", () => {
+  const normalized = normalizeBlogAgentSettings({
+    interval_minutes: 5,
+    posts_per_run: 99,
+    daily_post_cap: 72,
+    word_limit: 0,
+    content_goals: ["SEO", "AIO", "LLMO"],
+    minimum_sources: 1,
+    editorial_quality_target: 100,
+  });
+  assert.equal(normalized.interval_minutes, 60);
+  assert.equal(normalized.posts_per_run, 3);
+  assert.equal(normalized.daily_post_cap, 24);
+  assert.equal(normalized.word_limit, 0);
+  assert.deepEqual(normalized.content_goals, ["SEO", "AEO", "GEO", "LLMO"]);
+  assert.deepEqual(normalized.required_sections, ["Answer first", "Key facts", "Decision guidance", "FAQs"]);
+  assert.equal(normalized.minimum_sources, 2);
+  assert.equal(normalized.editorial_quality_target, 98);
+  assert.equal(resolveArticleWordTarget({ title: "NEET result and scorecard release" }, 0), 900);
+  assert.equal(resolveArticleWordTarget({ title: "JEE counselling and choice filling strategy" }, 0), 1500);
+  assert.equal(resolveArticleWordTarget({ title: "BTech admission eligibility" }, 0), 1200);
 });
 
 test("removes visible source references from publishable article HTML", () => {
