@@ -100,3 +100,27 @@ test("AWS production deploy removes every temporary SSH rule during cleanup", as
   assert.match(cleanup, /timeout 10 bash -c "<\/dev\/tcp\/\$CLEANUP_IP\/22"/);
   assert.match(cleanup, /Temporary SSH access is still reachable on \$CLEANUP_INSTANCE_NAME after cleanup/);
 });
+
+test("long production AI and sitemap tasks keep their SSH sessions alive", async () => {
+  const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
+  const aiStart = workflow.indexOf("- name: Verify live AI blog agent and cover pipeline");
+  const sitemapStart = workflow.indexOf("- name: Publish complete MySQL sitemap generation");
+  const crudStart = workflow.indexOf("- name: Run reversible production admin CRUD regression");
+  const aiStep = workflow.slice(aiStart, sitemapStart);
+  const sitemapStep = workflow.slice(sitemapStart, crudStart);
+
+  for (const step of [aiStep, sitemapStep]) {
+    assert.match(step, /ServerAliveInterval=30/);
+    assert.match(step, /ServerAliveCountMax=120/);
+  }
+});
+
+test("AWS runtime allows a low-memory API enough time to become healthy", async () => {
+  const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
+  const runtimeStart = workflow.indexOf("- name: Configure AWS runtime");
+  const sitemapStart = workflow.indexOf("- name: Generate tenant-scoped sitemap after database migration");
+  const runtimeStep = workflow.slice(runtimeStart, sitemapStart);
+
+  assert.match(runtimeStep, /for attempt in \$\(seq 1 90\)/);
+  assert.match(runtimeStep, /pm2 logs dc-react-api --lines 120 --nostream/);
+});

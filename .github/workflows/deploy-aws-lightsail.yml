@@ -536,12 +536,16 @@ jobs:
             --redirect \
             --keep-until-expiring
           systemctl enable --now certbot.timer
-          for attempt in $(seq 1 30); do
+          for attempt in $(seq 1 90); do
             HEALTH=$(curl --fail --silent --show-error --max-time 10 https://aws-origin.dekhocampus.com/health || true)
             if jq -e '.ok == true and .database == "mysql" and .storage == "s3"' <<<"$HEALTH" >/dev/null 2>&1; then
               break
             fi
-            [ "$attempt" -eq 30 ] && { echo "$HEALTH"; exit 1; }
+            if [ "$attempt" -eq 90 ]; then
+              echo "$HEALTH"
+              pm2 logs dc-react-api --lines 120 --nostream || true
+              exit 1
+            fi
             sleep 2
           done
           REMOTE
@@ -650,7 +654,8 @@ jobs:
       - name: Verify live AI blog agent and cover pipeline
         if: ${{ inputs.run_ai_smoke }}
         run: |
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=120 -i /tmp/tempkey \
             "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
           set -euo pipefail
           set -a
@@ -673,7 +678,8 @@ jobs:
           chmod 600 /tmp/tempkey
           chmod 644 /tmp/tempkey-cert.pub
           rm -f /tmp/lightsail-access-refresh.json
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=120 -i /tmp/tempkey \
             "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
           set -euo pipefail
           set -a
