@@ -1015,11 +1015,13 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
   } catch (error) {
     const recoverable = ["OPENAI_RESPONSE_TRUNCATED", "OPENAI_EMPTY_RESPONSE", "OPENAI_INVALID_JSON"].includes(error?.code);
     const currentBudget = Math.max(256, Math.trunc(Number(options.maxOutputTokens || 0)));
-    if (recoverable && !options.truncationRetry && currentBudget < MAX_OPENAI_OUTPUT_TOKENS) {
+    const truncationRetries = Math.max(0, Math.trunc(Number(options.truncationRetries || 0)));
+    const maxTruncationRetries = Math.min(3, Math.max(1, Math.trunc(Number(options.maxTruncationRetries || 1))));
+    if (recoverable && truncationRetries < maxTruncationRetries && currentBudget < MAX_OPENAI_OUTPUT_TOKENS) {
       return openAiJson(prompt, feature, {
         ...options,
         maxOutputTokens: nextOpenAiOutputBudget(currentBudget),
-        truncationRetry: true,
+        truncationRetries: truncationRetries + 1,
       });
     }
     throw error;
@@ -1555,9 +1557,10 @@ async function reviewGeneratedDraft(draft, topic, signals, editorial, model, fea
   const independentReviewThreshold = independentArticleReviewThreshold(editorial.editorial_quality_target);
   const generated = await blogTextJson(`Independently review this proposed ${profile.brand} article before publication. Topic brief: ${JSON.stringify(topic)}. Required subject scope: ${profile.subject}. Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, deterministic_target_score: editorial.editorial_quality_target, independent_review_threshold: independentReviewThreshold })}. Private evidence signals: ${JSON.stringify(signals)}. Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}. Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. Mark publishable false only for a material factual, safety, intent, completeness or reader-action defect. Optional polish must not block publication; an article scoring 85-89 can be publishable when it is accurate, complete and useful. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`, feature, {
     model,
-    reasoningEffort: "medium",
-    thinkingLevel: "medium",
-    maxOutputTokens: 1_200,
+    reasoningEffort: "low",
+    thinkingLevel: "low",
+    maxOutputTokens: 2_500,
+    maxTruncationRetries: 2,
     responseSchema: ARTICLE_REVIEW_SCHEMA,
     siteScope: normalizedScope,
   });
@@ -1663,7 +1666,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
     error.details = { ...quality, issues: failureIssues };
     throw error;
   }
-  draft.featured_image = await createBlogCover(slug, draft.title, { ...cover, siteScope: normalizedScope });
+  draft.featured_image = await createBlogCover(draft.slug, draft.title, { ...cover, siteScope: normalizedScope });
   return { draft, model, textProvider, quality, research_sources: evidence.map((item) => item.url) };
 }
 

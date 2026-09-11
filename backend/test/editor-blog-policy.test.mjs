@@ -156,6 +156,18 @@ test("detects incomplete OpenAI responses and bounds one recovery budget", () =>
   assert.equal(nextOpenAiOutputBudget(12_000), 12_000);
 });
 
+test("production article generation retries compact reviews and renders the validated draft slug", async () => {
+  const source = await readFile(new URL("../src/blog-ai.mjs", import.meta.url), "utf8");
+  const reviewSource = source.slice(source.indexOf("async function reviewGeneratedDraft"), source.indexOf("export function articleRevisionPrompt"));
+  const finalizationSource = source.slice(source.indexOf("async function generateDraft"), source.indexOf("export async function handleBlogAiSettings"));
+
+  assert.match(reviewSource, /reasoningEffort: "low"/);
+  assert.match(reviewSource, /maxOutputTokens: 2_500/);
+  assert.match(reviewSource, /maxTruncationRetries: 2/);
+  assert.match(finalizationSource, /createBlogCover\(draft\.slug, draft\.title/);
+  assert.doesNotMatch(finalizationSource, /createBlogCover\(slug, draft\.title/);
+});
+
 test("normalizes wrapped article payloads and always explains reviewer rejection", () => {
   assert.deepEqual(normalizeGeneratedArticlePayload({ article: {
     title: "Student decision guide",
