@@ -339,9 +339,6 @@ async function ensureSiteIsolationSchema(report) {
     report.createdRuntimeColumns.push(`${table}.${column}`);
   }
 
-  await prisma.$executeRawUnsafe("UPDATE `articles` SET `site_scope` = 'dekhocampus' WHERE `site_scope` IS NULL OR BINARY `site_scope` NOT IN ('dekhocampus', 'sarkari')");
-  await prisma.$executeRawUnsafe("UPDATE `leads` SET `site_scope` = 'dekhocampus' WHERE `site_scope` IS NULL OR BINARY `site_scope` NOT IN ('dekhocampus', 'sarkari')");
-
   for (const table of ["articles", "leads"]) {
     const constraintName = `chk_${table}_site_scope`;
     const existingConstraint = await prisma.$queryRawUnsafe(
@@ -353,6 +350,9 @@ async function ensureSiteIsolationSchema(report) {
       report.existing.push(constraintName);
       continue;
     }
+    await prisma.$executeRawUnsafe(
+      `UPDATE ${quote(table)} SET \`site_scope\` = 'dekhocampus' WHERE \`site_scope\` IS NULL OR BINARY \`site_scope\` NOT IN ('dekhocampus', 'sarkari')`,
+    );
     await prisma.$executeRawUnsafe(`ALTER TABLE ${quote(table)} ADD CONSTRAINT ${quote(constraintName)} CHECK (BINARY \`site_scope\` IN ('dekhocampus', 'sarkari'))`);
     report.createdCheckConstraints.push(constraintName);
   }

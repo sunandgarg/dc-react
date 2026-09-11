@@ -49,6 +49,14 @@ test("daily lead rollups keep tenants in separate groups", async () => {
   assert.match(migration, /GROUP BY site_scope, lead_day, identity_key/);
 });
 
+test("routine parity skips completed tenant-scope backfills", async () => {
+  const migration = await readSource("../scripts/apply-mysql-parity.mjs");
+
+  assert.match(migration, /if \(existingConstraint\.length\) \{[\s\S]*?continue;[\s\S]*?UPDATE \$\{quote\(table\)\}/);
+  assert.doesNotMatch(migration, /UPDATE `articles` SET `site_scope`/);
+  assert.doesNotMatch(migration, /UPDATE `leads` SET `site_scope`/);
+});
+
 test("generic DekhoCampus article operations carry an explicit scope", async () => {
   const [rest, adminBulk] = await Promise.all([
     readSource("../src/rest.mjs"),
