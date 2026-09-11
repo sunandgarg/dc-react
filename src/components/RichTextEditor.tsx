@@ -16,7 +16,7 @@ import {
   Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, List, ListOrdered, Quote, Link as LinkIcon,
   Image as ImageIcon, Table as TableIcon, Minus, Code2, Maximize2, RemoveFormatting, Strikethrough,
-  ChevronDown, Palette, Highlighter, Eye, Pencil, FileText, Trash2,
+  ChevronDown, Palette, Highlighter, Eye, Pencil, FileText, Trash2, Pilcrow, Undo2, Redo2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { RichText } from "@/components/detail/RichText";
@@ -29,16 +29,24 @@ interface RichTextEditorProps {
   rows?: number;
   placeholder?: string;
   bare?: boolean;
+  autoGrow?: boolean;
+}
+
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
+export function applyBlockHeading(editor: Editor, level: HeadingLevel) {
+  return editor.chain().focus().toggleHeading({ level }).run();
 }
 
 /**
  * TipTap-based WYSIWYG editor. Outputs HTML. Renders bold as bold, headings as headings,
  * tables as tables in real-time. Toolbar mirrors the requested layout.
  */
-export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, bare = false }: RichTextEditorProps) {
+export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, bare = false, autoGrow = false }: RichTextEditorProps) {
   const [fullscreen, setFullscreen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const lastEmittedHtml = useRef(value || "");
 
   const editor = useEditor({
     extensions: [
@@ -62,26 +70,43 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
         class: "prose prose-sm max-w-none focus:outline-none px-3 py-2 min-h-[120px]",
       },
     },
-    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      lastEmittedHtml.current = html;
+      onChange(html);
+    },
   });
 
-  // Sync external value changes (e.g., loading edit form)
+  // Sync a genuinely external record change without resetting the writer's
+  // selection when the parent echoes the HTML emitted by this editor.
   useEffect(() => {
     if (!editor) return;
-    const current = editor.getHTML();
-    if (value !== current && value !== undefined) {
-      editor.commands.setContent(value || "", { emitUpdate: false });
-    }
+    const nextValue = value || "";
+    if (nextValue === lastEmittedHtml.current) return;
+    if (nextValue !== editor.getHTML()) editor.commands.setContent(nextValue, { emitUpdate: false });
+    lastEmittedHtml.current = nextValue;
   }, [value, editor]);
+
+  useEffect(() => {
+    if (!fullscreen) return;
+    const exitFullscreen = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFullscreen(false);
+    };
+    window.addEventListener("keydown", exitFullscreen);
+    return () => window.removeEventListener("keydown", exitFullscreen);
+  }, [fullscreen]);
 
   if (!editor) return null;
 
   return (
     <div ref={wrapperRef} className={fullscreen ? "fixed inset-0 z-[100] bg-background p-4 flex flex-col" : ""}>
       {label && !bare && <label className="text-xs font-medium text-muted-foreground">{label}</label>}
-      <div className={`mt-1 rounded-lg border border-border bg-card focus-within:ring-2 focus-within:ring-ring/40 ${fullscreen ? "flex-1 flex flex-col" : ""}`}>
+      <div className={`mt-1 overflow-hidden rounded-lg border border-border bg-card focus-within:ring-2 focus-within:ring-ring/40 ${fullscreen ? "flex-1 flex flex-col" : ""}`}>
         <Toolbar editor={editor} fullscreen={fullscreen} setFullscreen={setFullscreen} previewMode={previewMode} setPreviewMode={setPreviewMode} />
-        <div className={fullscreen ? "flex-1 overflow-y-auto" : ""} style={!fullscreen ? { maxHeight: `${Math.max(rows, 4) * 32 + 60}px`, overflowY: "auto" } : undefined}>
+        <div
+          className={fullscreen ? "flex-1 overflow-y-auto" : autoGrow ? "min-h-[320px]" : "overflow-y-auto"}
+          style={!fullscreen && !autoGrow ? { maxHeight: `${Math.max(rows, 4) * 32 + 60}px` } : undefined}
+        >
           {previewMode ? (
             <div className="px-4 py-3 bg-background">
               <RichText html={value} />
@@ -114,6 +139,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   const Btn = ({ icon: Icon, title, onClick, active }: any) => (
     <button
       type="button"
+      onMouseDown={(event) => event.preventDefault()}
       onClick={onClick}
       title={title}
       className={`p-1.5 rounded transition-colors ${active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
@@ -122,39 +148,12 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
     </button>
   );
 
-  const applyHeading = (level: 1 | 2 | 3 | 4 | 5 | 6) => {
-    const { from, to, empty } = editor.state.selection;
-    if (empty) {
-      editor.chain().focus().toggleHeading({ level }).run();
-      return;
-    }
-    const $from = editor.state.doc.resolve(from);
-    const blockStart = $from.start();
-    const blockEnd = $from.end();
-    // Whole block selected (or selection spans multiple blocks) → toggle the block heading
-    if ((from <= blockStart && to >= blockEnd) || to > blockEnd) {
-      editor.chain().focus().toggleHeading({ level }).run();
-      return;
-    }
-    const text = editor.state.doc.textBetween(from, to, " ");
-    if (!text.trim()) {
-      editor.chain().focus().toggleHeading({ level }).run();
-      return;
-    }
-    const esc = (s: string) => s.replace(/[<>&]/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]!));
-    // Splits the current paragraph: text before stays as <p>, selection becomes <hN>, text after stays as <p>
-    editor.chain().focus()
-      .deleteRange({ from, to })
-      .insertContent(`<h${level}>${esc(text)}</h${level}>`)
-      .run();
-  };
-
   const HBtn = ({ level, Icon }: any) => (
     <Btn
       icon={Icon}
-      title={`Heading ${level} (works on selected words too)`}
+      title={`Heading ${level} for the current paragraph or selected paragraphs`}
       active={editor.isActive("heading", { level })}
-      onClick={() => applyHeading(level)}
+      onClick={() => applyBlockHeading(editor, level)}
     />
   );
 
@@ -239,12 +238,16 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   };
 
   return (
-    <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted/30 flex-wrap">
+    <div className="sticky top-0 z-20 flex items-center gap-0.5 border-b border-border bg-background/95 px-2 py-1.5 backdrop-blur flex-wrap">
+      <Btn icon={Undo2} title="Undo" onClick={() => editor.chain().focus().undo().run()} />
+      <Btn icon={Redo2} title="Redo" onClick={() => editor.chain().focus().redo().run()} />
+      <span className="w-px h-4 bg-border mx-1" />
       <Btn icon={Bold} title="Bold" active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()} />
       <Btn icon={Italic} title="Italic" active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()} />
       <Btn icon={UnderlineIcon} title="Underline" active={editor.isActive("underline")} onClick={() => editor.chain().focus().toggleUnderline().run()} />
       <Btn icon={Strikethrough} title="Strike" active={editor.isActive("strike")} onClick={() => editor.chain().focus().toggleStrike().run()} />
       <span className="w-px h-4 bg-border mx-1" />
+      <Btn icon={Pilcrow} title="Paragraph" active={editor.isActive("paragraph")} onClick={() => editor.chain().focus().setParagraph().run()} />
       <HBtn level={1} Icon={Heading1} />
       <HBtn level={2} Icon={Heading2} />
       <HBtn level={3} Icon={Heading3} />

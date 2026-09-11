@@ -7,6 +7,7 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { useAdminArticles, useSaveArticle, useDeleteArticle, type DbArticle } from "@/hooks/useArticlesData";
 import { AdminFormSection } from "@/components/AdminFormSection";
 import { RichTextEditor } from "@/components/RichTextEditor";
+import { RichText } from "@/components/detail/RichText";
 import { ArrayFieldEditor } from "@/components/ArrayFieldEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -363,13 +364,15 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
       </div>
 
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="flex h-[94dvh] max-h-[94dvh] w-[min(96vw,1200px)] max-w-[1200px] flex-col gap-0 overflow-hidden p-0">
+          <DialogHeader className="shrink-0 border-b border-border px-5 py-4 pr-24 sm:px-6">
             <DialogTitle className="flex items-center gap-2"><Newspaper className="w-5 h-5" /> {editing?.id ? "Edit" : "Add"} Article</DialogTitle>
           </DialogHeader>
-          {editing?.id && !isSarkari && <LinksSummary articleId={editing.id as string} tags={editing.tags || []} />}
           {editing && (
-            <div className="space-y-4">
+            <>
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
+            <div className="mx-auto max-w-6xl space-y-4">
+              {editing.id && !isSarkari && <LinksSummary articleId={editing.id as string} tags={editing.tags || []} />}
               {/* ── Basic Info ── */}
               <AdminFormSection title="Basic Information" icon={<Info className="w-4 h-4 text-primary" />}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -405,10 +408,6 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                   <div><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Title *</label><Input value={editing.title || ""} onChange={(e) => update("title", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="my-article-slug" className="rounded-lg h-9 text-sm" /></div>
-                  <div className="sm:col-span-2">
-                    <ImageUploadField label="Featured Image" value={editing.featured_image || ""} onChange={(v) => update("featured_image", v)} preset="article" folder="article-images" />
-                    <ArticleCoverGenerator title={editing.title || ""} slug={editing.slug} siteScope={siteScope} onGenerated={(url) => update("featured_image", url)} />
-                  </div>
                   <div><label className="text-xs font-medium text-muted-foreground">Views</label><Input type="number" value={editing.views ?? 0} onChange={(e) => update("views", parseInt(e.target.value) || 0)} className="rounded-lg h-9 text-sm" /></div>
                   <div className="sm:col-span-2 lg:col-span-3"><FeaturedRankPicker value={(editing as any).featured_rank} onChange={(v) => update("featured_rank" as any, v)} label={isSarkari ? "Pin to Sarkari homepage top" : "Pin to News page top"} maxSlots={4} slotLabel={(r) => `#${r}${r === 1 ? " (Big Hero)" : ` (Small ${r - 1})`}`} helpText={isSarkari ? "Controls the four highlighted Sarkari update slots. Rankings are isolated from DekhoCampus news." : "#1 = big hero card on /news. #2-4 = the three small cards beside it. Picking a slot pushes existing pinned items down; anything beyond #4 unpins automatically."} /></div>
                 </div>
@@ -419,9 +418,21 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                 </div>
               </AdminFormSection>
 
+              <AdminFormSection title="Featured image and article cover" icon={<Eye className="w-4 h-4 text-primary" />}>
+                {editing.featured_image && (
+                  <div className="flex aspect-video max-h-[320px] w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/20">
+                    <img src={editing.featured_image} alt="Article cover preview" className="h-full w-full object-contain" />
+                  </div>
+                )}
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                  <ImageUploadField label="Featured image" value={editing.featured_image || ""} onChange={(v) => update("featured_image", v)} preset="article" folder="article-images" />
+                  <ArticleCoverGenerator title={editing.title || ""} slug={editing.slug} siteScope={siteScope} onGenerated={(url) => update("featured_image", url)} />
+                </div>
+              </AdminFormSection>
+
               {/* ── Content ── */}
               <AdminFormSection title="Content" icon={<FileText className="w-4 h-4 text-primary" />}>
-                <RichTextEditor label="Article Content" value={editing.content || ""} onChange={(v) => update("content", v)} rows={12} />
+                <RichTextEditor label="Article Content" value={editing.content || ""} onChange={(v) => update("content", v)} rows={12} autoGrow />
               </AdminFormSection>
 
               {/* ── Links (multi-category) ── */}
@@ -493,13 +504,38 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                 </div>
               </AdminFormSection>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={() => setEditing(null)} className="rounded-xl">Cancel</Button>
-                <Button onClick={handleSave} disabled={saveArticle.isPending} className="rounded-xl">
+              <AdminFormSection title="Live article preview" icon={<Eye className="w-4 h-4 text-primary" />}>
+                <article className="mx-auto w-full max-w-4xl overflow-hidden rounded-lg border border-border bg-background">
+                  {editing.featured_image && (
+                    <div className="aspect-video w-full border-b border-border bg-muted/20">
+                      <img src={editing.featured_image} alt="" className="h-full w-full object-contain" />
+                    </div>
+                  )}
+                  <div className="space-y-3 p-4 sm:p-6">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      {editing.category && <Badge variant="secondary">{editing.category}</Badge>}
+                      <span>{editing.author || "DekhoCampus Editorial"}</span>
+                    </div>
+                    <h1 className="text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">{editing.title || "Untitled article"}</h1>
+                    {editing.description ? <RichText html={editing.description} className="text-muted-foreground" /> : <p className="text-sm text-muted-foreground">Article description will appear here.</p>}
+                    <div className="border-t border-border pt-2">
+                      {editing.content ? <RichText html={editing.content} /> : <p className="py-8 text-center text-sm text-muted-foreground">Article content will appear here.</p>}
+                    </div>
+                  </div>
+                </article>
+              </AdminFormSection>
+            </div>
+            </div>
+            <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border bg-background px-5 py-3 sm:px-6">
+              <p className="hidden text-xs text-muted-foreground sm:block">{editing.status || "Draft"}</p>
+              <div className="ml-auto flex items-center gap-2">
+                <Button variant="outline" onClick={() => setEditing(null)} className="rounded-lg">Cancel</Button>
+                <Button onClick={handleSave} disabled={saveArticle.isPending} className="rounded-lg">
                   {saveArticle.isPending ? "Saving..." : canPublish ? "Save Article" : "Save as draft"}
                 </Button>
               </div>
             </div>
+            </>
           )}
         </DialogContent>
       </Dialog>

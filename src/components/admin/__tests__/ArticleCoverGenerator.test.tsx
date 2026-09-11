@@ -48,4 +48,15 @@ describe("ArticleCoverGenerator", () => {
       body: { title: "SSC CGL notification", slug: undefined, site_scope: "sarkari" },
     }));
   });
+
+  it("reports a failed cover request and re-enables generation", async () => {
+    invoke.mockRejectedValueOnce(new Error("Cover service unavailable"));
+    render(<ArticleCoverGenerator title="NEET counselling checklist" onGenerated={vi.fn()} />);
+    const button = screen.getByRole("button", { name: /generate branded cover/i });
+
+    fireEvent.click(button);
+
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith("Cover service unavailable"));
+    expect(button).toBeEnabled();
+  });
 });

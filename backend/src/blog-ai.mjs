@@ -1372,6 +1372,12 @@ ${correction}
 
 Private fact-checking context: ${JSON.stringify(signals)}. Synthesize facts and add original decision value. Never copy distinctive wording. Never expose source names, publisher names, URLs, citations, footnotes, attribution, a bibliography, or research_notes inside content_html.
 
+People-first trust contract:
+- WHO: write for the stated student and parent audience under the real configured byline; never invent credentials, interviews, personal use, first-hand testing or lived experience.
+- HOW: use the private research only to verify claims, distinguish confirmed facts from interpretation, and make time-sensitive uncertainty explicit.
+- WHY: help the reader make a safer education decision or complete a concrete next step, not merely attract search visits or restate another page.
+- Add substantial topic-specific value through comparison, calculation, chronology, eligibility interpretation, document planning, mistake prevention or decision guidance. If the evidence cannot support a useful claim, omit it.
+
 Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}. Write a complete, specific, accurate title of roughly 55-85 characters preserving the key exam, institution, authority, date or outcome. Write meta_title at 50-65 characters and meta_description at 140-160 characters. Set hero_hook exactly equal to title. Open with a concise answer that identifies the entity, current consequence and next useful action. Answer one identifiable search intent and deliver the unique value through evidence-backed comparison, calculation, timeline, checklist, interpretation or decision guidance beyond a rewritten announcement. Build topic-specific sections instead of a reusable template. Every section must help the reader decide, act, avoid a mistake or understand a concrete consequence.
 
 Do not put ${profile.brand} in the title, use an ellipsis, add trailing punctuation, or use generic phrases such as Complete Guide or Everything You Need to Know. Write 4-8 distinct search-intent FAQs and include the exact same questions and answers in a visible FAQ section in content_html. Use descriptive H2/H3 headings, short readable paragraphs, and at least one useful list or table. Use natural, reader-first editorial prose with varied sentence lengths and restrained transitions. Never invent interviews, first-hand testing, personal experience, quotes, statistics or official facts. Avoid repetitive outlines, generic filler, exaggerated claims, robotic summaries, and phrases such as "delve", "in today's fast-paced world", "it is important to note", or "in conclusion". When evidence is uncertain, clearly tell readers what detail to verify on the relevant official authority website without naming or linking a research source.`;
@@ -1413,12 +1419,18 @@ export function normalizeGeneratedFaqs(value) {
 }
 
 export function normalizeGeneratedArticlePayload(value = {}) {
-  const wrappers = [value, value?.article, value?.result?.article, value?.result, value?.data];
-  const source = wrappers.find((candidate) => (
-    candidate && typeof candidate === "object" && (
-      candidate.content_html || candidate.content || candidate.body_html || candidate.html || candidate.title
-    )
-  )) || {};
+  const wrappers = [value, value?.article, value?.result?.article, value?.result, value?.data]
+    .filter((candidate) => candidate && typeof candidate === "object" && !Array.isArray(candidate));
+  const completeness = (candidate) => {
+    const content = String(candidate.content_html || candidate.content || candidate.body_html || candidate.html || "").trim();
+    const faqs = candidate.faqs || candidate.faq || candidate.questions;
+    return (content.length * 10)
+      + (String(candidate.title || candidate.headline || "").trim() ? 100 : 0)
+      + (String(candidate.description || candidate.summary || "").trim() ? 50 : 0)
+      + (String(candidate.meta_title || candidate.seo_title || "").trim() ? 25 : 0)
+      + (Array.isArray(faqs) ? faqs.length * 20 : 0);
+  };
+  const source = wrappers.sort((left, right) => completeness(right) - completeness(left))[0] || {};
   return {
     ...source,
     title: String(source.title || source.headline || "").trim(),
@@ -1555,7 +1567,17 @@ async function reviewGeneratedDraft(draft, topic, signals, editorial, model, fea
   const normalizedScope = normalizeArticleSiteScope(siteScope);
   const profile = articleSiteProfile(normalizedScope);
   const independentReviewThreshold = independentArticleReviewThreshold(editorial.editorial_quality_target);
-  const generated = await blogTextJson(`Independently review this proposed ${profile.brand} article before publication. Topic brief: ${JSON.stringify(topic)}. Required subject scope: ${profile.subject}. Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, deterministic_target_score: editorial.editorial_quality_target, independent_review_threshold: independentReviewThreshold })}. Private evidence signals: ${JSON.stringify(signals)}. Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}. Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. Mark publishable false only for a material factual, safety, intent, completeness or reader-action defect. Optional polish must not block publication; an article scoring 85-89 can be publishable when it is accurate, complete and useful. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`, feature, {
+  const reviewPrompt = `Independently review this proposed ${profile.brand} article before publication.
+Topic brief: ${JSON.stringify(topic)}.
+Required subject scope: ${profile.subject}.
+Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, deterministic_target_score: editorial.editorial_quality_target, independent_review_threshold: independentReviewThreshold })}.
+Private evidence signals: ${JSON.stringify(signals)}.
+Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}.
+
+Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Apply a people-first trust review: the article must clearly serve the intended reader, add substantial topic-specific value, distinguish verified facts from interpretation, avoid fabricated experience or expertise, and exist to help a decision or action rather than merely capture search traffic.
+
+Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. Mark publishable false only for a material factual, safety, intent, completeness or reader-action defect. Optional polish must not block publication; an article scoring 85-89 can be publishable when it is accurate, complete and useful. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`;
+  const generated = await blogTextJson(reviewPrompt, feature, {
     model,
     reasoningEffort: "low",
     thinkingLevel: "low",
@@ -1588,7 +1610,7 @@ Review corrections: ${JSON.stringify(feedback)}
 Private fact-checking context: ${JSON.stringify(signals)}
 Existing draft: ${JSON.stringify({ title: draft?.title, slug: draft?.slug, description: draft?.description, content_html: draft?.content_html, meta_title: draft?.meta_title, meta_description: draft?.meta_description, meta_keywords: draft?.meta_keywords, tags: draft?.tags, category: draft?.category, hero_hook: draft?.hero_hook, faqs: draft?.faqs })}
 
-Return the complete replacement {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}, not a patch. Preserve the article's exact search intent and answer it immediately. For any time-sensitive detail not established by the private context, remove unsupported certainty, state what the reader must verify on the relevant official authority portal, and do not invent a date, option, process or URL. Keep meta_title at 50-65 characters, meta_description at 140-160 characters, 4-8 distinct FAQs, and mirror the same FAQ questions and answers in content_html. Never expose source names, publisher names, URLs, citations, research notes or the review feedback in publishable content.`;
+Return the complete replacement {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}, not a patch. Preserve the article's exact search intent and answer it immediately. Make the revision people-first: serve the stated audience, add topic-specific decision value, separate verified facts from interpretation, and never invent personal experience, expertise, interviews or testing. For any time-sensitive detail not established by the private context, remove unsupported certainty, state what the reader must verify on the relevant official authority portal, and do not invent a date, option, process or URL. Keep meta_title at 50-65 characters, meta_description at 140-160 characters, 4-8 distinct FAQs, and mirror the same FAQ questions and answers in content_html. Never expose source names, publisher names, URLs, citations, research notes or the review feedback in publishable content.`;
 }
 
 async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null, requiredTitle = "", editorialSettings = {}, model: requestedModel = "", feature = "blog-studio", siteScope = "dekhocampus" } = {}) {
@@ -1617,6 +1639,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
       maxOutputTokens,
       reasoningEffort: "low",
       thinkingLevel: "low",
+      maxTruncationRetries: 2,
       responseSchema: ARTICLE_RESPONSE_SCHEMA,
       siteScope: normalizedScope,
     });
@@ -1789,6 +1812,7 @@ async function publishBlogStudioDraft(body, userId) {
       is_active: requestedStatus === "Published",
       created_by: userId || null,
       data_source_urls: researchSources,
+      data_verified_at: new Date(),
       data_quality_score: quality.score,
       data_clean_state: "not_checked",
     } });
@@ -1977,7 +2001,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
       await assertArticleTopicsAvailable([draft], { client: tx, siteScope });
       const created = await tx.articles.create({ data: {
         id: randomUUID(), site_scope: siteScope, status,
-        title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: selectedAuthor?.name || "DekhoCampus Editorial", author_id: selectedAuthor?.id || null, featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(topic?.trend_based === true ? ["google-trends-daily"] : []), ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: status === "Published", data_source_urls: generated.research_sources, data_quality_score: generated.quality.score, data_clean_state: "not_checked",
+        title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: selectedAuthor?.name || "DekhoCampus Editorial", author_id: selectedAuthor?.id || null, featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(topic?.trend_based === true ? ["google-trends-daily"] : []), ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: status === "Published", data_source_urls: generated.research_sources, data_verified_at: new Date(), data_quality_score: generated.quality.score, data_clean_state: "not_checked",
       } });
       if (draft.faqs.length) {
         await tx.faqs.createMany({ data: draft.faqs.map((faq, index) => ({ id: randomUUID(), page: "articles", item_slug: created.slug, question: faq.question, answer: faq.answer, display_order: (index + 1) * 10, is_active: status === "Published" })) });

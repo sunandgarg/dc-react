@@ -164,6 +164,8 @@ test("production article generation retries compact reviews and renders the vali
   assert.match(reviewSource, /reasoningEffort: "low"/);
   assert.match(reviewSource, /maxOutputTokens: 2_500/);
   assert.match(reviewSource, /maxTruncationRetries: 2/);
+  assert.match(reviewSource, /people-first trust review/);
+  assert.match(finalizationSource, /maxTruncationRetries: 2/);
   assert.match(finalizationSource, /createBlogCover\(draft\.slug, draft\.title/);
   assert.doesNotMatch(finalizationSource, /createBlogCover\(slug, draft\.title/);
 });
@@ -201,6 +203,19 @@ test("normalizes wrapped article payloads and always explains reviewer rejection
   assert.deepEqual(strictDeterministicTarget.issues, []);
   assert.equal(independentArticleReviewThreshold(90), 85);
   assert.equal(independentArticleReviewThreshold(80), 80);
+
+  const completeNestedArticle = normalizeGeneratedArticlePayload({
+    title: "Envelope title only",
+    article: {
+      title: "Complete student decision guide",
+      description: "A complete summary for students making this decision.",
+      content_html: "<h2>Answer first</h2><p>This is the complete article body.</p>",
+      meta_title: "Complete student decision guide for 2026",
+      faqs: [{ question: "What changed?", answer: "The published process changed." }],
+    },
+  });
+  assert.equal(completeNestedArticle.title, "Complete student decision guide");
+  assert.match(completeNestedArticle.content_html, /complete article body/);
 });
 
 test("builds a complete targeted revision prompt from editorial feedback", () => {
@@ -214,6 +229,8 @@ test("builds a complete targeted revision prompt from editorial feedback", () =>
   assert.match(prompt, /Return the complete replacement/);
   assert.match(prompt, /State where candidates should check the allotment result/);
   assert.match(prompt, /remove unsupported certainty/);
+  assert.match(prompt, /Make the revision people-first/);
+  assert.match(prompt, /never invent personal experience/);
 });
 
 test("normalizes editorial controls and adapts depth to student intent", () => {

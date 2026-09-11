@@ -21,16 +21,21 @@ export function ArticleCoverGenerator({ title, slug, onGenerated, siteScope = DE
       return;
     }
     setBusy(true);
-    const { data, error } = await backendClient.functions.invoke("admin-article-cover", {
-      body: { title: title.trim(), slug: slug?.trim(), site_scope: siteScope },
-    });
-    setBusy(false);
-    if (error || !data?.featured_image) {
-      toast.error(error?.message || "Could not generate the article cover");
-      return;
+    try {
+      const { data, error } = await backendClient.functions.invoke("admin-article-cover", {
+        body: { title: title.trim(), slug: slug?.trim(), site_scope: siteScope },
+      });
+      if (error || !data?.featured_image) {
+        throw error || new Error("The cover service did not return an image");
+      }
+      onGenerated(data.featured_image);
+      toast.success("Branded cover generated");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Could not generate the article cover";
+      toast.error(message || "Could not generate the article cover");
+    } finally {
+      setBusy(false);
     }
-    onGenerated(data.featured_image);
-    toast.success("Branded cover generated");
   };
 
   return (

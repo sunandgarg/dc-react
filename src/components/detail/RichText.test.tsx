@@ -16,4 +16,11 @@ describe("RichText", () => {
     render(<RichText html={"Eligibility varies by programme."} />);
     expect(screen.getByText("Eligibility varies by programme.")).toBeInTheDocument();
   });
+
+  it("preserves article heading levels on the public page", () => {
+    const { container } = render(<RichText html="<h2>Admissions overview</h2><p>Start here.</p><h3>Eligibility details</h3>" />);
+
+    expect(container.querySelector("h2")?.textContent).toBe("Admissions overview");
+    expect(container.querySelector("h3")?.textContent).toBe("Eligibility details");
+  });
 });
