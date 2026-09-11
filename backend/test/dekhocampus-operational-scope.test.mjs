@@ -116,10 +116,33 @@ test("long production AI and sitemap tasks keep their SSH sessions alive", async
   }
 });
 
+test("AWS production uses an immutable static seed before the direct MySQL sitemap publish", async () => {
+  const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
+  const staticStart = workflow.indexOf("- name: Generate static sitemap seed and site metadata");
+  const uploadStart = workflow.indexOf("- name: Upload immutable build sitemap seed to private S3");
+  const publishStart = workflow.indexOf("- name: Publish complete MySQL sitemap generation");
+  assert.ok(staticStart >= 0 && uploadStart > staticStart && publishStart > uploadStart);
+
+  const staticStep = workflow.slice(staticStart, uploadStart);
+  assert.match(staticStep, /SITEMAP_API_URL: none/);
+  assert.match(staticStep, /SITEMAP_SEED_URL: none/);
+  assert.match(staticStep, /run: npm run postbuild/);
+
+  const uploadStep = workflow.slice(uploadStart, publishStart);
+  assert.match(uploadStep, /SEED_PREFIX="system-sitemaps\/build-seeds\/\$SEED_SHA"/);
+  assert.match(uploadStep, /sitemap-\[0-9\]\*\.xml[^\n]*sitemap-index\.xml[^\n]*sitemap\.xml/);
+  assert.doesNotMatch(uploadStep, /s3:\/\/\$BUCKET\/system-sitemaps\/public/);
+
+  const publishStep = workflow.slice(publishStart);
+  assert.match(publishStep, /sudo bash -s -- '\$\{\{ github\.sha \}\}'/);
+  assert.match(publishStep, /export BUILD_SEED_SHA/);
+  assert.match(publishStep, /build_seed_sha: process\.env\.BUILD_SEED_SHA/);
+});
+
 test("AWS runtime allows a low-memory API enough time to become healthy", async () => {
   const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
   const runtimeStart = workflow.indexOf("- name: Configure AWS runtime");
-  const sitemapStart = workflow.indexOf("- name: Generate tenant-scoped sitemap after database migration");
+  const sitemapStart = workflow.indexOf("- name: Generate static sitemap seed and site metadata");
   const runtimeStep = workflow.slice(runtimeStart, sitemapStart);
 
   assert.match(runtimeStep, /for attempt in \$\(seq 1 90\)/);

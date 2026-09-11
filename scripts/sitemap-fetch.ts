@@ -7,7 +7,6 @@ export interface SitemapFetchOptions {
   sleep?: (delayMs: number) => Promise<void>;
   onRetry?: (event: { attempt: number; delayMs: number; error: Error }) => void;
 }
-
 export class SitemapFetchError extends Error {
   status?: number;
 
@@ -147,4 +146,3 @@ export function createFailFastTaskLimiter(concurrency: number) {
     });
   };
 }
-

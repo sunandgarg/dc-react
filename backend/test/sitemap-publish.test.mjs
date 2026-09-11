@@ -55,10 +55,14 @@ function memoryRepository() {
     ["system-sitemaps/public/sitemap.xml", { body: '<?xml version="1.0"?><urlset><url><loc>https://dekhocampus.com/</loc><priority>1.0</priority></url><url><loc>https://dekhocampus.com/colleges?group=Unverified&amp;state=Nowhere</loc></url></urlset>' }],
     ["system-sitemaps/generations/old-generation/sitemap-1.xml", { body: "old", lastModified: new Date("2026-01-01T00:00:00Z") }],
   ]);
+  const reads = [];
+  const writes = [];
   return {
     objects,
-    async get(key) { return objects.get(key) || null; },
-    async put(key, body, contentType) { objects.set(key, { body, contentType, lastModified: new Date("2026-08-28T00:00:00Z") }); },
+    reads,
+    writes,
+    async get(key) { reads.push(key); return objects.get(key) || null; },
+    async put(key, body, contentType) { writes.push(key); objects.set(key, { body, contentType, lastModified: new Date("2026-08-28T00:00:00Z") }); },
     async list(prefix) { return [...objects.entries()].filter(([key]) => key.startsWith(prefix)).map(([key, value]) => ({ key, lastModified: value.lastModified })); },
     async delete(keys) { keys.forEach((key) => objects.delete(key)); },
   };
@@ -82,6 +86,55 @@ test("sitemap publishing leaves one Prisma connection free", async () => {
   assert.equal(result.status, "published");
   assert.equal(database.peak(), 2);
   assert.deepEqual(result.source_counts, { colleges: 3, courses: 1, exams: 1, articles: 1 });
+});
+
+test("workflow publishing reads its immutable build seed instead of the large live generation", async () => {
+  const repository = memoryRepository();
+  const buildSeedSha = "a".repeat(40);
+  const seedPrefix = `system-sitemaps/build-seeds/${buildSeedSha}`;
+  repository.objects.set(`${seedPrefix}/sitemap.xml`, {
+    body: '<?xml version="1.0"?><sitemapindex><sitemap><loc>https://dekhocampus.com/sitemap-1.xml</loc></sitemap></sitemapindex>',
+  });
+  repository.objects.set(`${seedPrefix}/sitemap-1.xml`, {
+    body: '<?xml version="1.0"?><urlset><url><loc>https://dekhocampus.com/</loc></url><url><loc>https://dekhocampus.com/tools/build-owned-route</loc></url></urlset>',
+  });
+
+  const result = await publishSitemap(request({ build_seed_sha: buildSeedSha }), {
+    prismaClient: populatedDb(),
+    repository,
+  });
+
+  assert.equal(result.status, "published");
+  assert.deepEqual(repository.reads.slice(0, 2), [`${seedPrefix}/sitemap.xml`, `${seedPrefix}/sitemap-1.xml`]);
+  assert.equal(repository.reads.includes("system-sitemaps/public/sitemap.xml"), false);
+  const chunk = repository.objects.get(`system-sitemaps/generations/${result.generation}/sitemap-1.xml`)?.body || "";
+  assert.match(chunk, /\/tools\/build-owned-route/);
+});
+
+test("an incomplete immutable build seed leaves the live sitemap pointer unchanged", async () => {
+  const repository = memoryRepository();
+  const buildSeedSha = "b".repeat(40);
+  const seedPrefix = `system-sitemaps/build-seeds/${buildSeedSha}`;
+  const originalRoot = repository.objects.get("system-sitemaps/public/sitemap.xml").body;
+  repository.objects.set(`${seedPrefix}/sitemap.xml`, {
+    body: '<?xml version="1.0"?><sitemapindex><sitemap><loc>https://dekhocampus.com/sitemap-1.xml</loc></sitemap></sitemapindex>',
+  });
+
+  await assert.rejects(
+    publishSitemap(request({ build_seed_sha: buildSeedSha }), { prismaClient: populatedDb(), repository }),
+    (error) => error.code === "SITEMAP_SEED_INCOMPLETE" && error.status === 503,
+  );
+  assert.equal(repository.objects.get("system-sitemaps/public/sitemap.xml").body, originalRoot);
+  assert.deepEqual(repository.writes, []);
+});
+
+test("build seed identifiers cannot escape the immutable sitemap prefix", async () => {
+  const repository = memoryRepository();
+  await assert.rejects(
+    publishSitemap(request({ build_seed_sha: "../../public" }), { prismaClient: populatedDb(), repository }),
+    (error) => error.code === "INVALID_SITEMAP_SEED" && error.status === 400,
+  );
+  assert.deepEqual(repository.writes, []);
 });
 
 test("sitemap publishing replaces the root index with AWS-backed immutable chunks", async () => {
@@ -115,6 +168,8 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.equal(result.removed_objects, 1);
   assert.ok(result.image_count > 0);
   assert.ok(result.filter_url_count > 0);
+  assert.equal(repository.writes.at(-1), "system-sitemaps/public/sitemap.xml");
+  assert.ok(repository.writes.indexOf("system-sitemaps/public/manifest.json") < repository.writes.indexOf("system-sitemaps/public/sitemap.xml"));
   assert.equal(repository.objects.has("system-sitemaps/generations/old-generation/sitemap-1.xml"), false);
 });
 
