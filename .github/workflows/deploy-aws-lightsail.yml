@@ -373,13 +373,18 @@ jobs:
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
             -i /tmp/tempkey "$SSH_USER@$SSH_IP" \
-            "sudo bash -s -- '$MEDIA_BASE_URL' '$BUCKET' '${{ inputs.create_ses_identity }}' '$NODE_HEAP_MB' '$PM2_MEMORY_LIMIT'" <<'REMOTE'
+            "sudo bash -s -- '$MEDIA_BASE_URL' '$BUCKET' '${{ inputs.create_ses_identity }}' '$NODE_HEAP_MB' '$PM2_MEMORY_LIMIT' '${{ github.sha }}'" <<'REMOTE'
           set -euo pipefail
           MEDIA_BASE_URL="$1"
           BUCKET="$2"
           SES_ENABLED="$3"
           NODE_HEAP_MB="$4"
           PM2_MEMORY_LIMIT="$5"
+          DEPLOY_SHA="$6"
+          if ! [[ "$DEPLOY_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Invalid immutable deployment SHA: $DEPLOY_SHA"
+            exit 1
+          fi
           DB_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/mysql --query SecretString --output text)
           RUNTIME_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/runtime --query SecretString --output text)
           DB_HOST=$(aws lightsail get-relational-database --relational-database-name dc-react-mysql-lightsail --query 'relationalDatabase.masterEndpoint.address' --output text)
@@ -424,10 +429,11 @@ jobs:
           install -m 600 "$ENV_FILE" /etc/dc-react.env
           rm -f "$ENV_FILE"
           cd /opt/dc-react/app
-          git fetch origin main
-          # This is a deployment checkout. Keep it identical to the approved
-          # production branch even after an intentional force-with-lease rollback.
-          git reset --hard origin/main
+          # Deploy the immutable revision verified by this workflow run. The main
+          # branch may advance while CI or the database migration is running.
+          git fetch --no-tags origin "$DEPLOY_SHA"
+          git reset --hard "$DEPLOY_SHA"
+          test "$(git rev-parse HEAD)" = "$DEPLOY_SHA"
           npm --prefix backend ci
           npm --prefix backend run prisma:generate
           set -a
@@ -704,7 +710,17 @@ jobs:
             echo "No instance was opened for this run."
             exit 0
           fi
-          aws lightsail close-instance-public-ports \
+          PORT_INFOS=$(jq -nc '[
+            {fromPort:80,toPort:80,protocol:"tcp",cidrs:["0.0.0.0/0"],ipv6Cidrs:["::/0"]},
+            {fromPort:443,toPort:443,protocol:"tcp",cidrs:["0.0.0.0/0"],ipv6Cidrs:["::/0"]}
+          ]')
+          # Replace the complete public-port set instead of issuing a partial
+          # close that can miss a CIDR-scoped port-22 rule.
+          aws lightsail put-instance-public-ports \
             --instance-name "$INSTANCE_NAME" \
-            --port-info fromPort=22,toPort=22,protocol=tcp >/dev/null
+            --port-infos "$PORT_INFOS" >/dev/null
+          aws lightsail get-instance-port-states \
+            --instance-name "$INSTANCE_NAME" \
+            --output json \
+            | jq -e '[.portStates[] | select(.fromPort == 22 and .state == "open")] | length == 0' >/dev/null
           echo "Temporary SSH access is closed."
