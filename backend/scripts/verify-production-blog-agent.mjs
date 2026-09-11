@@ -125,8 +125,16 @@ try {
     assert.ok(article, "Generated smoke-test article was not saved in AWS MySQL");
     assert.equal(article.status, "Draft");
     createdArticleSlugs = [article.slug];
-    createdFaqCount = await prisma.faqs.count({ where: { page: "articles", item_slug: article.slug, is_active: true } });
+    const createdFaqs = await prisma.faqs.findMany({
+      where: { page: "articles", item_slug: article.slug },
+      select: { id: true, is_active: true },
+    });
+    createdFaqCount = createdFaqs.length;
     assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
+    assert.ok(
+      createdFaqs.every((faq) => faq.is_active === false),
+      "Draft article FAQ records must remain inactive until publication",
+    );
   }
   const articleContent = String(article.content || article.content_html || "");
   assert.match(articleContent, /<\w+/i, "Generated article has no HTML content");
@@ -171,8 +179,8 @@ try {
 
   console.log(JSON.stringify({
     ok: true,
-    openai_blog: `${verificationMode} verified with GPT-5 nano`,
-    article_faqs: verificationMode === "agent-draft" ? `${createdFaqCount} visible and dedicated FAQ records verified` : "visible FAQ section verified",
+    openai_blog: `${verificationMode} verified with GPT-5.4 mini`,
+    article_faqs: verificationMode === "agent-draft" ? `${createdFaqCount} dedicated FAQ records stored inactive pending review; visible FAQ section verified in draft HTML` : "visible FAQ section verified",
     source_policy: "no source sections, citation markers, or external source links",
     cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
     scheduled_cover: "branded template with light lower canvas verified",

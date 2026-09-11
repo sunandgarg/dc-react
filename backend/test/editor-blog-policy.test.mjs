@@ -85,6 +85,13 @@ test("administrator AI article paths publish immediately", async () => {
   assert.doesNotMatch(articlesPageSource, /AIGenerateDialog/);
 });
 
+test("production AI smoke verifies draft FAQs without publishing them", async () => {
+  const smokeSource = await readFile(new URL("../scripts/verify-production-blog-agent.mjs", import.meta.url), "utf8");
+  assert.match(smokeSource, /where: \{ page: "articles", item_slug: article\.slug \}/);
+  assert.match(smokeSource, /createdFaqs\.every\(\(faq\) => faq\.is_active === false\)/);
+  assert.doesNotMatch(smokeSource, /item_slug: article\.slug, is_active: true/);
+});
+
 test("enforces conservative auto-blog cadence and volume limits", () => {
   assert.deepEqual(blogLimits, {
     MAX_POSTS_PER_RUN: 3,
