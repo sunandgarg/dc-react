@@ -27,6 +27,8 @@ export function SubjectNewsSection({ subjectSlug, subjectName, subjectId }: Prop
         backendClient
           .from("articles")
           .select("id,slug,title,description,featured_image,category,tags,created_at,author")
+          .eq("site_scope", "dekhocampus")
+          .eq("status", "Published")
           .eq("is_active", true)
           .overlaps("tags", tags)
           .order("created_at", { ascending: false })
@@ -37,9 +39,9 @@ export function SubjectNewsSection({ subjectSlug, subjectName, subjectId }: Prop
       ]);
       const linkedIds = ((linkRes as any).data || []).map((row: any) => row.article_id).filter(Boolean);
       const linkedRes = linkedIds.length
-        ? await backendClient.from("articles")
+          ? await backendClient.from("articles")
             .select("id,slug,title,description,featured_image,category,tags,created_at,author")
-            .in("id", linkedIds).eq("status", "Published").eq("is_active", true)
+            .in("id", linkedIds).eq("site_scope", "dekhocampus").eq("status", "Published").eq("is_active", true)
         : { data: [] as any[] };
       const linked = (linkedRes.data as any[]) || [];
       const merged = [...((tagRes.data as any[]) || []), ...linked];

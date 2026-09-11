@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { buildDefaultFaqs, type FaqEntityType } from "@/lib/defaultFaqs";
 
 interface Props {
-  page: "colleges" | "courses" | "exams" | "articles";
+  page: "colleges" | "courses" | "exams" | "articles" | "sarkari_articles";
   itemSlug: string;
   /** Optional name for template generation */
   itemName?: string;
@@ -70,7 +70,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
     }
     const payload: any = { ...draft, page, item_slug: itemSlug };
     const { error } = draft.id
-      ? await backendClient.from("faqs").update(payload).eq("id", draft.id)
+      ? await backendClient.from("faqs").update(payload).eq("id", draft.id).eq("page", page).eq("item_slug", itemSlug)
       : await backendClient.from("faqs").insert(payload);
     if (error) {
       const msg = error.message.includes("row-level security")
@@ -85,7 +85,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this FAQ?")) return;
-    const { error } = await backendClient.from("faqs").delete().eq("id", id);
+    const { error } = await backendClient.from("faqs").delete().eq("id", id).eq("page", page).eq("item_slug", itemSlug);
     if (error) toast.error(error.message);
     else { toast.success("Deleted"); reload(); }
   };
@@ -96,8 +96,8 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
     const a = rows[idx], b = rows[j];
     // Swap display_order persistently
     const ops = await Promise.all([
-      backendClient.from("faqs").update({ display_order: b.display_order }).eq("id", a.id),
-      backendClient.from("faqs").update({ display_order: a.display_order }).eq("id", b.id),
+      backendClient.from("faqs").update({ display_order: b.display_order }).eq("id", a.id).eq("page", page).eq("item_slug", itemSlug),
+      backendClient.from("faqs").update({ display_order: a.display_order }).eq("id", b.id).eq("page", page).eq("item_slug", itemSlug),
     ]);
     const err = ops.find(o => o.error)?.error;
     if (err) toast.error(err.message); else reload();

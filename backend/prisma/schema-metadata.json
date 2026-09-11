@@ -2218,6 +2218,14 @@
         "default": "gen_random_uuid()",
         "foreignKey": null
       },
+      "site_scope": {
+        "type": "String",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "text",
+        "default": "dekhocampus",
+        "foreignKey": null
+      },
       "status": {
         "type": "String",
         "nullable": false,
@@ -11920,6 +11928,14 @@
         "default": "gen_random_uuid()",
         "foreignKey": null
       },
+      "site_scope": {
+        "type": "String",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "text",
+        "default": "dekhocampus",
+        "foreignKey": null
+      },
       "name": {
         "type": "String",
         "nullable": true,
@@ -12087,6 +12103,30 @@
         "format": "uuid",
         "default": null,
         "foreignKey": null
+      },
+      "consent_terms_accepted": {
+        "type": "Boolean",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "boolean",
+        "default": false,
+        "foreignKey": null
+      },
+      "consent_text": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "text",
+        "default": null,
+        "foreignKey": null
+      },
+      "consent_at": {
+        "type": "DateTime",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "timestamp with time zone",
+        "default": null,
+        "foreignKey": null
       }
     },
     "ignored": false
@@ -12099,6 +12139,14 @@
         "nullable": true,
         "primaryKey": false,
         "format": "uuid",
+        "default": null,
+        "foreignKey": null
+      },
+      "site_scope": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "text",
         "default": null,
         "foreignKey": null
       },

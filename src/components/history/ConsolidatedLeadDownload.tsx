@@ -13,6 +13,7 @@ import {
 import { backendClient } from '@/integrations/backend/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { downloadCSV, toCSV } from '@/lib/csv';
 
 interface University {
   id: string;
@@ -84,36 +85,23 @@ export function ConsolidatedLeadDownload({ universities }: ConsolidatedLeadDownl
       }
 
       const universityName = universities.find(u => u.id === selectedUniversity)?.name || 'Unknown';
-      const headers = ['Batch ID', 'File Name', 'Total Leads', 'Success', 'Failed', 'Duplicate', 'Status', 'Created At', 'Completed At'];
-      const csvRows = [headers.join(',')];
-
-      batches.forEach(batch => {
-        const row = [
-          `"${batch.id}"`,
-          `"${(batch.file_name || '').replace(/"/g, '""')}"`,
-          batch.total_leads,
-          batch.success_count,
-          batch.fail_count,
-          batch.duplicate_count || 0,
-          `"${batch.status}"`,
-          `"${batch.created_at ? format(new Date(batch.created_at), 'yyyy-MM-dd HH:mm:ss') : ''}"`,
-          `"${batch.completed_at ? format(new Date(batch.completed_at), 'yyyy-MM-dd HH:mm:ss') : ''}"`,
-        ];
-        csvRows.push(row.join(','));
-      });
-
-      const csvContent = csvRows.join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
+      const columns = ['Batch ID', 'File Name', 'Total Leads', 'Success', 'Failed', 'Duplicate', 'Status', 'Created At', 'Completed At'];
+      const csvRows = batches.map((batch) => ({
+        'Batch ID': batch.id,
+        'File Name': batch.file_name || '',
+        'Total Leads': batch.total_leads,
+        Success: batch.success_count,
+        Failed: batch.fail_count,
+        Duplicate: batch.duplicate_count || 0,
+        Status: batch.status,
+        'Created At': batch.created_at ? format(new Date(batch.created_at), 'yyyy-MM-dd HH:mm:ss') : '',
+        'Completed At': batch.completed_at ? format(new Date(batch.completed_at), 'yyyy-MM-dd HH:mm:ss') : '',
+      }));
 
       const dateStr = dateFrom && dateTo ? `${dateFrom}_to_${dateTo}` : format(new Date(), 'yyyy-MM-dd');
       const fileName = `${universityName.replace(/\s+/g, '_')}_batch_summary_${dateStr}.csv`;
 
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      a.click();
-      URL.revokeObjectURL(url);
+      downloadCSV(fileName, toCSV(csvRows, columns));
 
       toast({ title: 'Download Complete', description: `Downloaded ${batches.length} batch records` });
     } catch (error) {

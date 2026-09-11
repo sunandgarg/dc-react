@@ -10,6 +10,7 @@ import { BarChart3, MousePointerClick, Users, Sparkles, Download, Info, Lock } f
 import { useAuth } from "@/hooks/useAuth";
 
 import { CSVTools } from "@/components/CSVTools";
+import { downloadCSV, toCSV } from "@/lib/csv";
 type Row = {
   id: string;
   page: string;
@@ -103,18 +104,8 @@ export default function AdminCtaConversions() {
 
   const exportCsv = () => {
     const cols = exportCols.length ? exportCols : [...ALL_COLS];
-    const header = cols.join(",");
-    const body = filtered.map((r: any) =>
-      cols.map((c) => `"${String(r[c] ?? "").replace(/"/g, '""')}"`).join(",")
-    ).join("\n");
-    const blob = new Blob([header + "\n" + body], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
     const parts = [range, pageFilter !== "all" ? pageFilter : null, query ? `q-${query.slice(0, 12)}` : null].filter(Boolean).join("_");
-    a.download = `cta-conversions_${parts}_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCSV(`cta-conversions_${parts}_${new Date().toISOString().slice(0,10)}.csv`, toCSV(filtered, cols));
     setExportOpen(false);
   };
 

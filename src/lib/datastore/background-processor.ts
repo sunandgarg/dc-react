@@ -194,7 +194,8 @@ class BackgroundProcessor {
               api_response: summarizeStoredResponse(result.response),
               processed_at: new Date().toISOString(),
             })
-            .eq('id', lead.id),
+            .eq('id', lead.id)
+            .eq('site_scope', 'dekhocampus'),
           backendClient.rpc(
             result.success ? 'increment_batch_success' : 'increment_batch_fail',
             { batch_uuid: upload.id },

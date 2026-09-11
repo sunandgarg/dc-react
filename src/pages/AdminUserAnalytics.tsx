@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
+import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,18 +12,12 @@ import { Sparkles, Monitor, Smartphone, Tablet, Clock, MousePointer, Eye, Downlo
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import { downloadCSV as saveCSV, toCSV } from "@/lib/csv";
 
 function downloadCsv(filename: string, rows: any[]) {
   if (!rows.length) return toast.error("Nothing to export");
   const headers = Object.keys(rows[0]);
-  const csv = [headers, ...rows.map(r => headers.map(h => r[h]))]
-    .map(r => r.map((v: any) => `"${(v ?? "").toString().replace(/"/g, '""')}"`).join(","))
-    .join("\n");
-  const blob = new Blob([csv], { type: "text/csv" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
+  saveCSV(filename, toCSV(rows, headers));
 }
 
 export default function AdminUserAnalytics() {
@@ -47,11 +42,12 @@ export default function AdminUserAnalytics() {
 
   // Backfill identity from leads where session row missing it
   const { data: leadIndex = {} } = useQuery({
-    queryKey: ["admin-recent-leads-map"],
+    queryKey: ["admin-recent-leads-map", DEFAULT_SITE_SCOPE],
     queryFn: async () => {
       const { data } = await (backendClient as any)
         .from("leads")
         .select("name, phone, email, created_at")
+        .eq("site_scope", DEFAULT_SITE_SCOPE)
         .order("created_at", { ascending: false })
         .limit(500);
       const map: Record<string, any> = {};
@@ -111,7 +107,7 @@ export default function AdminUserAnalytics() {
   const summarize = async (sid: string) => {
     setLoadingSummary(true);
     try {
-      const { data, error } = await backendClient.functions.invoke("summarize-user-session", { body: { session_id: sid } });
+      const { data, error } = await backendClient.functions.invoke("summarize-user-session", { body: { session_id: sid, site_scope: DEFAULT_SITE_SCOPE } });
       if (error) throw error;
       setSummary((s) => ({ ...s, [sid]: (data as any)?.summary || "(no summary)" }));
       toast.success("AI summary generated");

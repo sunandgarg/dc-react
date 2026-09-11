@@ -2,6 +2,9 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BulkEditGrid, type BulkColumn } from "@/components/admin/BulkEditGrid";
 import { GraduationCap, BookOpen, FileText, Newspaper, Award, Briefcase } from "lucide-react";
+import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
+
+const DEKHOCAMPUS_ARTICLE_SCOPE = { column: "site_scope", value: DEFAULT_SITE_SCOPE } as const;
 
 const collegeCols: BulkColumn[] = [
   { key: "name", label: "Name", width: 240 },
@@ -125,6 +128,7 @@ export default function AdminBulk() {
               columns={t.cols}
               searchKeys={t.search}
               orderBy={{ column: "updated_at", ascending: false }}
+              scope={t.table === "articles" ? DEKHOCAMPUS_ARTICLE_SCOPE : undefined}
             />
           </TabsContent>
         ))}

@@ -7,8 +7,9 @@ import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { Loader2, GitMerge, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
+import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 
-export function MergeLeadsDialog({ leads, open, onClose, onMerged }: { leads: any[]; open: boolean; onClose: () => void; onMerged: () => void }) {
+export function MergeLeadsDialog({ leads, open, onClose, onMerged, siteScope = DEFAULT_SITE_SCOPE }: { leads: any[]; open: boolean; onClose: () => void; onMerged: () => void; siteScope?: SiteScope }) {
   const [primaryId, setPrimaryId] = useState<string>(leads[0]?.id || "");
   const [busy, setBusy] = useState(false);
 
@@ -18,19 +19,32 @@ export function MergeLeadsDialog({ leads, open, onClose, onMerged }: { leads: an
 
   const merge = async () => {
     if (!primary || duplicates.length === 0) return;
+    if (leads.some((lead) => (lead.site_scope || DEFAULT_SITE_SCOPE) !== siteScope)) {
+      toast.error("Merge blocked: selected leads do not belong to the same site workspace.");
+      return;
+    }
     setBusy(true);
     try {
+      const selectedIds = leads.map((lead) => lead.id);
+      const { data: ownedRows, error: ownershipError } = await (backendClient as any)
+        .from("leads")
+        .select("id")
+        .eq("site_scope", siteScope)
+        .in("id", selectedIds);
+      if (ownershipError) throw ownershipError;
+      if ((ownedRows || []).length !== selectedIds.length) throw new Error("Merge blocked: a selected lead is outside this site workspace.");
       // Move notes from duplicates onto primary
       const dupIds = duplicates.map((d) => d.id);
-      await (backendClient as any).from("lead_notes").update({ lead_id: primary.id }).in("lead_id", dupIds);
+      const { error: notesMoveError } = await (backendClient as any).from("lead_notes").update({ lead_id: primary.id }).in("lead_id", dupIds);
+      if (notesMoveError) throw notesMoveError;
       // Log merge
       await (backendClient as any).from("lead_notes").insert({
         lead_id: primary.id, kind: "note",
         body: `Merged ${duplicates.length} duplicate lead${duplicates.length === 1 ? "" : "s"}: ${duplicates.map((d) => `${d.name || d.phone || d.id.slice(0, 6)}`).join(", ")}`,
-        meta: { merged_from: dupIds },
+        meta: { merged_from: dupIds, site_scope: siteScope },
       });
       // Delete duplicates
-      const { error } = await (backendClient as any).from("leads").delete().in("id", dupIds);
+      const { error } = await (backendClient as any).from("leads").delete().in("id", dupIds).eq("site_scope", siteScope);
       if (error) throw error;
       toast.success(`Merged ${duplicates.length} duplicate${duplicates.length === 1 ? "" : "s"} into ${primary.name || "lead"}`);
       onMerged();

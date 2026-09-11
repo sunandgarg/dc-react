@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useToast } from '@/hooks/use-toast';
 import { backendClient } from '@/integrations/backend/client';
 import { generateShortCode, isValidUrl } from '@/utils/base62';
+import { downloadCSV, toCSV } from '@/lib/csv';
 
 interface BulkImportRow {
   original_url: string;
@@ -189,17 +190,7 @@ export const UrlBulkImport = memo(function UrlBulkImport() {
     const errors = rows.filter(r => r.status === 'error');
     if (errors.length === 0) return;
 
-    const csv = 'original_url,error\n' + errors.map(r => 
-      `"${r.original_url}","${r.error}"`
-    ).join('\n');
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'import_errors.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCSV('import_errors.csv', toCSV(errors, ['original_url', 'error']));
   };
 
   const downloadSampleCsv = () => {

@@ -77,7 +77,10 @@ async function requireLead(body) {
   if (!/^[0-9a-f-]{32,40}$/i.test(leadId)) {
     throw Object.assign(new Error("Complete the free access form before continuing"), { status: 401, code: "CAT_ACCESS_REQUIRED" });
   }
-  const lead = await prisma.leads.findUnique({ where: { id: leadId }, select: { id: true, created_at: true } });
+  const lead = await prisma.leads.findFirst({
+    where: { id: leadId, site_scope: "dekhocampus" },
+    select: { id: true, created_at: true },
+  });
   if (!lead) throw Object.assign(new Error("Your CAT access pass could not be verified"), { status: 401, code: "CAT_ACCESS_REQUIRED" });
   rateLimit(`${lead.id}:${cleanText(body.action, 40)}`);
   return lead;

@@ -21,6 +21,7 @@ import {
   CheckCircle2, XCircle, AlertCircle, Clock, ChevronRight, Filter, Workflow, Rocket, X, Check, ChevronsUpDown, BookOpen,
 } from "lucide-react";
 import { useDraftState } from "@/hooks/useDraftState";
+import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
 
 
 type Rule = {
@@ -238,8 +239,8 @@ export default function AdminMarketingAutomation() {
     refetchInterval: 15000,
   });
   const { data: recentLeads = [] } = useQuery<any[]>({
-    queryKey: ["leads_all_for_routing"],
-    queryFn: async () => ((await backendClient.from("leads").select(LEAD_SELECT).order("created_at", { ascending: false }).limit(250)).data || []) as any,
+    queryKey: ["leads_all_for_routing", DEFAULT_SITE_SCOPE],
+    queryFn: async () => ((await backendClient.from("leads").select(LEAD_SELECT).eq("site_scope", DEFAULT_SITE_SCOPE).order("created_at", { ascending: false }).limit(250)).data || []) as any,
     staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
@@ -661,9 +662,9 @@ function useRuleOptions() {
     refetchOnWindowFocus: false,
   });
   const { data: leadFacets = { cities: [], states: [], sources: [], ctas: [] } } = useQuery<any>({
-    queryKey: ["lp_opts_lead_facets"],
+    queryKey: ["lp_opts_lead_facets", DEFAULT_SITE_SCOPE],
     queryFn: async () => {
-      const { data } = await backendClient.from("leads").select("city,state,source,cta").order("created_at", { ascending: false }).limit(1500);
+      const { data } = await backendClient.from("leads").select("city,state,source,cta").eq("site_scope", DEFAULT_SITE_SCOPE).order("created_at", { ascending: false }).limit(1500);
       const cities = new Set<string>(), states = new Set<string>(), sources = new Set<string>(), ctas = new Set<string>();
       (data || []).forEach((l: any) => {
         if (l.city) cities.add(l.city);

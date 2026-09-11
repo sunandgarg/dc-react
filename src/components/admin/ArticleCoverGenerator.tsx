@@ -3,14 +3,16 @@ import { ImagePlus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
+import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 
 type Props = {
   title: string;
   slug?: string;
   onGenerated: (url: string) => void;
+  siteScope?: SiteScope;
 };
 
-export function ArticleCoverGenerator({ title, slug, onGenerated }: Props) {
+export function ArticleCoverGenerator({ title, slug, onGenerated, siteScope = DEFAULT_SITE_SCOPE }: Props) {
   const [busy, setBusy] = useState(false);
 
   const generate = async () => {
@@ -20,7 +22,7 @@ export function ArticleCoverGenerator({ title, slug, onGenerated }: Props) {
     }
     setBusy(true);
     const { data, error } = await backendClient.functions.invoke("admin-article-cover", {
-      body: { title: title.trim(), slug: slug?.trim() },
+      body: { title: title.trim(), slug: slug?.trim(), site_scope: siteScope },
     });
     setBusy(false);
     if (error || !data?.featured_image) {

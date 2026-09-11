@@ -10,6 +10,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { leadConsentLabel } from "@/lib/leadConsent";
+import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 
 export const LEAD_STATUSES = [
   { value: "new",        label: "New",        color: "bg-blue-500/10 text-blue-700 border-blue-500/30" },
@@ -26,9 +27,10 @@ export const statusBadge = (s?: string | null) => {
 
 type Note = { id: string; kind: string; body: string | null; created_at: string; author_id: string | null; meta: any };
 
-export function LeadDetailDrawer({ lead, onClose, onChanged }: { lead: any | null; onClose: () => void; onChanged?: () => void }) {
+export function LeadDetailDrawer({ lead, onClose, onChanged, siteScope = DEFAULT_SITE_SCOPE }: { lead: any | null; onClose: () => void; onChanged?: () => void; siteScope?: SiteScope }) {
   const { user } = useAuth();
-  const open = !!lead;
+  const scopeMismatch = Boolean(lead && (lead.site_scope || DEFAULT_SITE_SCOPE) !== siteScope);
+  const open = !!lead && !scopeMismatch;
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(false);
   const [draft, setDraft] = useState("");
@@ -37,7 +39,7 @@ export function LeadDetailDrawer({ lead, onClose, onChanged }: { lead: any | nul
 
   useEffect(() => {
     setStatus(lead?.status || "new");
-    if (!lead?.id) { setNotes([]); return; }
+    if (!lead?.id || (lead.site_scope || DEFAULT_SITE_SCOPE) !== siteScope) { setNotes([]); return; }
     setLoading(true);
     (async () => {
       const { data } = await (backendClient as any)
@@ -48,14 +50,14 @@ export function LeadDetailDrawer({ lead, onClose, onChanged }: { lead: any | nul
       setNotes((data as Note[]) || []);
       setLoading(false);
     })();
-  }, [lead?.id, lead?.status]);
+  }, [lead?.id, lead?.status, lead?.site_scope, siteScope]);
 
-  if (!lead) return null;
+  if (!lead || scopeMismatch) return null;
   const tel = (lead.phone || "").replace(/\D/g, "").slice(-10);
   const sb = statusBadge(status);
 
   const log = async (kind: string, body: string, meta: any = {}) => {
-    await (backendClient as any).from("lead_notes").insert({ lead_id: lead.id, author_id: user?.id ?? null, kind, body, meta });
+    await (backendClient as any).from("lead_notes").insert({ lead_id: lead.id, author_id: user?.id ?? null, kind, body, meta: { ...meta, site_scope: siteScope } });
     const { data } = await (backendClient as any).from("lead_notes").select("*").eq("lead_id", lead.id).order("created_at", { ascending: false });
     setNotes((data as Note[]) || []);
   };
@@ -69,7 +71,7 @@ export function LeadDetailDrawer({ lead, onClose, onChanged }: { lead: any | nul
 
   const changeStatus = async (next: string) => {
     setStatus(next);
-    const { error } = await (backendClient as any).from("leads").update({ status: next }).eq("id", lead.id);
+    const { error } = await (backendClient as any).from("leads").update({ status: next }).eq("id", lead.id).eq("site_scope", siteScope);
     if (error) { toast.error("Could not update status"); return; }
     await log("status_change", `Status → ${LEAD_STATUSES.find((s) => s.value === next)?.label || next}`, { from: lead.status, to: next });
     toast.success("Status updated");

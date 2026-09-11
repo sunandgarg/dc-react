@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
+import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 
 function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
@@ -26,15 +27,17 @@ export type DbArticle = {
   featured_rank?: number | null;
   created_at: string;
   updated_at: string;
+  site_scope: SiteScope;
 };
 
-export function useDbArticles() {
+export function useDbArticles(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   return useQuery({
-    queryKey: ["db-articles"],
+    queryKey: ["db-articles", siteScope],
     queryFn: async () => {
       const { data, error } = await backendClient
         .from("articles")
-        .select("id,status,title,slug,description,vertical,category,author,featured_image,views,tags,is_active,featured_rank,created_at,updated_at")
+        .select("id,status,title,slug,description,vertical,category,author,featured_image,views,tags,is_active,featured_rank,created_at,updated_at,site_scope")
+        .eq("site_scope", siteScope)
         .eq("is_active", true)
         .eq("status", "Published")
         .order("created_at", { ascending: false });
@@ -56,17 +59,18 @@ const normalizeArticleSearch = (value: string | undefined) =>
 
 export const legacyArticleSlugCandidates = (slug: string) => [`${slug}-`, `${slug},`];
 
-export function useAdminArticles(search: string | undefined, page: number, pageSize: number) {
+export function useAdminArticles(search: string | undefined, page: number, pageSize: number, siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   const normalizedSearch = normalizeArticleSearch(search);
   const safePage = Math.max(1, Math.floor(page || 1));
   const safePageSize = Math.min(500, Math.max(1, Math.floor(pageSize || 20)));
 
   return useQuery({
-    queryKey: ["db-articles-admin", normalizedSearch, safePage, safePageSize],
+    queryKey: ["db-articles-admin", siteScope, normalizedSearch, safePage, safePageSize],
     queryFn: async () => {
       let query = backendClient
         .from("articles")
         .select("*", { count: "exact" })
+        .eq("site_scope", siteScope)
         .order("created_at", { ascending: false });
 
       if (normalizedSearch) {
@@ -96,14 +100,15 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
   });
 }
 
-export function useDbArticle(slug: string | undefined) {
+export function useDbArticle(slug: string | undefined, siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   return useQuery({
-    queryKey: ["db-article", slug],
+    queryKey: ["db-article", siteScope, slug],
     queryFn: async () => {
       const { data, error } = await backendClient
         .from("articles")
         .select("*")
         .eq("slug", slug!)
+        .eq("site_scope", siteScope)
         .eq("is_active", true)
         .eq("status", "Published")
         .maybeSingle();
@@ -118,6 +123,7 @@ export function useDbArticle(slug: string | undefined) {
         .from("articles")
         .select("*")
         .in("slug", legacyCandidates)
+        .eq("site_scope", siteScope)
         .eq("is_active", true)
         .eq("status", "Published")
         .limit(1);
@@ -129,7 +135,7 @@ export function useDbArticle(slug: string | undefined) {
   });
 }
 
-export function useSaveArticle() {
+export function useSaveArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (article: Partial<DbArticle> & { slug: string; title: string }) => {
@@ -141,10 +147,10 @@ export function useSaveArticle() {
         .normalize("NFKD")
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
-      const normalized = { ...article, slug: cleanSlug || article.slug };
+      const normalized = { ...article, slug: cleanSlug || article.slug, site_scope: siteScope };
       if (normalized.id) {
         const { id, created_at, updated_at, ...rest } = normalized;
-        const response = await backendClient.from("articles").update(rest).eq("id", id);
+        const response = await backendClient.from("articles").update(rest).eq("id", id).eq("site_scope", siteScope);
         const { error } = response;
         if (error) throw error;
         pendingReview = isPendingReview(response);
@@ -158,24 +164,24 @@ export function useSaveArticle() {
       return { pendingReview };
     },
     onSuccess: (result) => {
-      qc.invalidateQueries({ queryKey: ["db-articles"] });
-      qc.invalidateQueries({ queryKey: ["db-articles-admin"] });
+      qc.invalidateQueries({ queryKey: ["db-articles", siteScope] });
+      qc.invalidateQueries({ queryKey: ["db-articles-admin", siteScope] });
       toast.success(result.pendingReview ? "Article draft submitted for admin review." : "Article saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });
 }
 
-export function useDeleteArticle() {
+export function useDeleteArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await backendClient.from("articles").delete().eq("id", id);
+      const { error } = await backendClient.from("articles").delete().eq("id", id).eq("site_scope", siteScope);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["db-articles"] });
-      qc.invalidateQueries({ queryKey: ["db-articles-admin"] });
+      qc.invalidateQueries({ queryKey: ["db-articles", siteScope] });
+      qc.invalidateQueries({ queryKey: ["db-articles-admin", siteScope] });
       toast.success("Article deleted!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),

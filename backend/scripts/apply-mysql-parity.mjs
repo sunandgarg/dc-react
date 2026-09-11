@@ -37,7 +37,7 @@ const quote = (identifier) => `\`${String(identifier).replaceAll("`", "``")}\``;
 // cannot be represented by a normal MySQL unique index.
 const uniqueIndexes = [
   ["user_sessions", "session_id"], ["approval_bodies", "code"], ["college_programs", "slug"],
-  ["articles", "slug"], ["ai_providers", "provider_name"], ["legal_pages", "slug"],
+  ["articles", "site_scope", "slug"], ["ai_providers", "provider_name"], ["legal_pages", "slug"],
   ["career_profiles", "slug"], ["companies", "name"], ["facilities_library", "name"],
   ["college_contacts", "college_slug"], ["study_boards", "slug"],
   ["study_subjects", "class_num", "board_slug", "slug"], ["study_chapters", "subject_id", "slug"],
@@ -112,11 +112,19 @@ async function indexExists(table, name) {
 
 async function columnInfo(table, column) {
   const rows = await prisma.$queryRawUnsafe(
-    "SELECT DATA_TYPE AS dataType, IS_NULLABLE AS isNullable FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?",
+    "SELECT DATA_TYPE AS dataType, IS_NULLABLE AS isNullable, EXTRA AS extra FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?",
     table,
     column,
   );
   return rows[0] || null;
+}
+
+async function ensureIntentRuntimeSchema(report) {
+  const id = await columnInfo("intent_events", "id");
+  if (!String(id?.extra || "").toLowerCase().includes("auto_increment")) {
+    await prisma.$executeRawUnsafe("ALTER TABLE `intent_events` MODIFY `id` BIGINT NOT NULL AUTO_INCREMENT");
+    report.createdRuntimeColumns.push("intent_events.id:auto_increment");
+  }
 }
 
 async function makeUniqueIndex(table, columns, report) {
@@ -260,6 +268,103 @@ async function ensureLeadAutomationPerformanceIndexes(report) {
       }).join(", ")})`,
     );
     report.createdReferenceIndexes.push(name);
+  }
+}
+
+async function ensureSiteIsolationSchema(report) {
+  const columns = [
+    ["articles", "site_scope", "VARCHAR(32) NOT NULL DEFAULT 'dekhocampus'"],
+    ["leads", "site_scope", "VARCHAR(32) NOT NULL DEFAULT 'dekhocampus'"],
+    ["leads", "consent_terms_accepted", "BOOLEAN NOT NULL DEFAULT FALSE"],
+    ["leads", "consent_text", "LONGTEXT NULL"],
+    ["leads", "consent_at", "DATETIME(3) NULL"],
+  ];
+  for (const [table, column, definition] of columns) {
+    if (await columnInfo(table, column)) continue;
+    await prisma.$executeRawUnsafe(`ALTER TABLE ${quote(table)} ADD COLUMN ${quote(column)} ${definition}`);
+    report.createdRuntimeColumns.push(`${table}.${column}`);
+  }
+
+  await prisma.$executeRawUnsafe("UPDATE `articles` SET `site_scope` = 'dekhocampus' WHERE `site_scope` IS NULL OR BINARY `site_scope` NOT IN ('dekhocampus', 'sarkari')");
+  await prisma.$executeRawUnsafe("UPDATE `leads` SET `site_scope` = 'dekhocampus' WHERE `site_scope` IS NULL OR BINARY `site_scope` NOT IN ('dekhocampus', 'sarkari')");
+
+  for (const table of ["articles", "leads"]) {
+    const constraintName = `chk_${table}_site_scope`;
+    const existingConstraint = await prisma.$queryRawUnsafe(
+      "SELECT 1 FROM information_schema.table_constraints WHERE constraint_schema = DATABASE() AND table_name = ? AND constraint_name = ? AND constraint_type = 'CHECK' LIMIT 1",
+      table,
+      constraintName,
+    );
+    if (existingConstraint.length) {
+      report.existing.push(constraintName);
+      continue;
+    }
+    await prisma.$executeRawUnsafe(`ALTER TABLE ${quote(table)} ADD CONSTRAINT ${quote(constraintName)} CHECK (BINARY \`site_scope\` IN ('dekhocampus', 'sarkari'))`);
+    report.createdCheckConstraints.push(constraintName);
+  }
+
+  const indexes = [
+    ["articles", "ix_articles_site_public", ["site_scope", "is_active", "status(32)", "created_at"]],
+    ["articles", "ix_articles_site_category_public", ["site_scope", "is_active", "status(32)", "category(64)", "created_at"]],
+    ["articles", "ix_articles_site_featured_public", ["site_scope", "is_active", "status(32)", "featured_rank"]],
+    ["leads", "ix_leads_site_created", ["site_scope", "created_at"]],
+    ["leads", "ix_leads_site_status_created", ["site_scope", "status(32)", "created_at"]],
+  ];
+  for (const [table, name, indexColumns] of indexes) {
+    if (await indexExists(table, name)) {
+      report.existing.push(name);
+      continue;
+    }
+    const expressions = indexColumns.map((column) => {
+      const match = column.match(/^(\w+)\((\d+)\)$/);
+      return match ? `${quote(match[1])}(${match[2]})` : quote(column);
+    });
+    await prisma.$executeRawUnsafe(`CREATE INDEX ${quote(name)} ON ${quote(table)} (${expressions.join(", ")})`);
+    report.createdReferenceIndexes.push(name);
+  }
+}
+
+async function ensureArticleWriteLockSchema(report) {
+  const existing = await prisma.$queryRawUnsafe(
+    "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'article_write_locks' AND table_type = 'BASE TABLE' LIMIT 1",
+  );
+  await prisma.$executeRawUnsafe(`
+    CREATE TABLE IF NOT EXISTS \`article_write_locks\` (
+      \`site_scope\` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+      PRIMARY KEY (\`site_scope\`),
+      CONSTRAINT \`chk_article_write_locks_site_scope\` CHECK (BINARY \`site_scope\` IN ('dekhocampus', 'sarkari'))
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  `);
+  if (existing.length) report.existing.push("article_write_locks");
+  else report.createdRuntimeTables.push("article_write_locks");
+  await prisma.$executeRawUnsafe(
+    "INSERT IGNORE INTO `article_write_locks` (`site_scope`) VALUES ('dekhocampus'), ('sarkari')",
+  );
+}
+
+async function retireLegacyArticleSlugIndexes(report) {
+  const replacementName = "uq_articles_site_scope_slug";
+  const replacementRows = await prisma.$queryRawUnsafe(
+    "SELECT COLUMN_NAME AS columnName, SEQ_IN_INDEX AS sequence, NON_UNIQUE AS nonUnique, SUB_PART AS subPart FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'articles' AND index_name = ? ORDER BY seq_in_index",
+    replacementName,
+  );
+  const replacementColumns = replacementRows.map((row) => row.columnName);
+  const replacementIsExactUnique = replacementRows.length === 2
+    && replacementRows.every((row) => Number(row.nonUnique) === 0 && row.subPart === null)
+    && replacementColumns[0] === "site_scope"
+    && replacementColumns[1] === "slug";
+  if (!replacementIsExactUnique) {
+    throw new Error(`Tenant isolation requires ${replacementName} to be an exact UNIQUE index on (site_scope, slug); refusing to retire legacy slug protection`);
+  }
+  const rows = await prisma.$queryRawUnsafe(
+    "SELECT INDEX_NAME AS indexName, COLUMN_NAME AS columnName, SEQ_IN_INDEX AS sequence FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'articles' AND non_unique = 0 AND index_name <> 'PRIMARY' ORDER BY index_name, seq_in_index",
+  );
+  const indexes = new Map();
+  for (const row of rows) indexes.set(row.indexName, [...(indexes.get(row.indexName) || []), row.columnName]);
+  for (const [name, columns] of indexes) {
+    if (columns.length !== 1 || columns[0] !== "slug") continue;
+    await prisma.$executeRawUnsafe(`DROP INDEX ${quote(name)} ON \`articles\``);
+    report.droppedLegacyIndexes.push(name);
   }
 }
 
@@ -423,6 +528,7 @@ async function createViews() {
     CREATE VIEW \`leads_daily_business_rollup\` AS
     SELECT
       MIN(id) AS representative_id,
+      site_scope,
       DATE(CONVERT_TZ(created_at, '+00:00', '+05:30')) AS lead_day,
       COALESCE(
         NULLIF(REGEXP_REPLACE(COALESCE(phone, ''), '[^0-9]', ''), ''),
@@ -437,7 +543,7 @@ async function createViews() {
       MIN(created_at) AS first_seen_at,
       MAX(created_at) AS last_seen_at
     FROM \`leads\`
-    GROUP BY lead_day, identity_key
+    GROUP BY site_scope, lead_day, identity_key
   `);
 
   await prepareView("college_editorial_completion_progress");
@@ -457,13 +563,17 @@ async function createViews() {
   `);
 }
 
-const report = { createdRuntimeColumns: [], createdUnique: [], createdReferenceIndexes: [], createdForeignKeyIndexes: [], createdForeignKeys: [], createdTriggers: [], existing: [], skipped: [], views: [] };
+const report = { createdRuntimeColumns: [], createdRuntimeTables: [], createdUnique: [], createdReferenceIndexes: [], createdForeignKeyIndexes: [], createdForeignKeys: [], createdTriggers: [], createdCheckConstraints: [], droppedLegacyIndexes: [], existing: [], skipped: [], views: [] };
 try {
+  await ensureSiteIsolationSchema(report);
+  await ensureArticleWriteLockSchema(report);
+  await ensureIntentRuntimeSchema(report);
   await ensureHomepageExploreSchema(report);
   await ensureCourseFeeGroupingSchema(report);
   await ensureLeadAutomationAuditSchema(report);
   await ensureLeadAutomationPerformanceIndexes(report);
   for (const [table, ...columns] of uniqueIndexes) await makeUniqueIndex(table, columns, report);
+  await retireLegacyArticleSlugIndexes(report);
   await makeReferenceIndexes(report);
   await makeForeignKeyIndexes(report);
   await makeForeignKeys(report);

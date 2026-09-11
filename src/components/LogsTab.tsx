@@ -1,5 +1,6 @@
 import { useState, Fragment, useMemo } from 'react';
 import { Download, RefreshCw, ChevronDown, ChevronRight, Search, Filter, Calendar, X } from 'lucide-react';
+import { downloadCSV, toCSVRows } from '@/lib/csv';
 
 interface University {
   id: string;
@@ -169,21 +170,10 @@ export function LogsTab({ universities, logs, batches = [], onRefresh }: LogsTab
       log.source || '',
       log.medium || '',
       log.campaign || '',
-      (log.response || '').replace(/"/g, '""')
+      log.response || ''
     ]);
 
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `api_logs_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCSV(`api_logs_${new Date().toISOString().split('T')[0]}.csv`, toCSVRows([headers, ...rows]));
   };
 
   const getStatusBadge = (status: string) => {

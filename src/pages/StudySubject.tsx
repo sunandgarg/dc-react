@@ -380,18 +380,20 @@ function ChapterArticles({ chapterId, chapterSlug }: { chapterId: string; chapte
       const [linkRes, tagRes] = await Promise.all([
         (backendClient as any)
           .from("article_links")
-          .select("article_id, articles!inner(id,slug,title,description,featured_image,is_active)")
+          .select("article_id, articles!inner(id,slug,title,description,featured_image,is_active,status,site_scope)")
           .eq("entity_type", "study_chapter")
           .eq("entity_slug", chapterId),
         backendClient
           .from("articles")
           .select("id,slug,title,description,featured_image,is_active")
+          .eq("site_scope", "dekhocampus")
+          .eq("status", "Published")
           .eq("is_active", true)
           .overlaps("tags", [chapterSlug, `${chapterSlug}-notes`])
           .limit(20),
       ]);
       const merged = [
-        ...(((linkRes as any).data || []).map((r: any) => r.articles).filter((a: any) => a?.is_active)),
+        ...(((linkRes as any).data || []).map((r: any) => r.articles).filter((a: any) => a?.is_active && a?.status === "Published" && a?.site_scope === "dekhocampus")),
         ...((tagRes.data as any[]) || []),
       ];
       const seen = new Set<string>();

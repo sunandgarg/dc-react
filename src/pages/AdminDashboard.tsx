@@ -28,6 +28,7 @@ import {
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
+import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
 
 const formatNumber = (value: number) => new Intl.NumberFormat("en-IN", { notation: value > 99_999 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
 
@@ -36,9 +37,12 @@ export default function AdminDashboard() {
   const { data: featured } = useAllFeaturedColleges();
 
   const { data: leadsCount } = useQuery({
-    queryKey: ["leads-count"],
+    queryKey: ["leads-count", DEFAULT_SITE_SCOPE],
     queryFn: async () => {
-      const { count, error } = await backendClient.from("leads").select("*", { count: "exact", head: true });
+      const { count, error } = await backendClient
+        .from("leads")
+        .select("*", { count: "exact", head: true })
+        .eq("site_scope", DEFAULT_SITE_SCOPE);
       if (error) throw error;
       return count ?? 0;
     },
@@ -54,15 +58,15 @@ export default function AdminDashboard() {
   });
 
   const { data: operationsKpis } = useQuery({
-    queryKey: ["admin-operations-kpis"],
+    queryKey: ["admin-operations-kpis", DEFAULT_SITE_SCOPE],
     queryFn: async () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const queries = await Promise.all([
-        backendClient.from("leads").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
-        backendClient.from("leads").select("*", { count: "exact", head: true }).eq("otp_verified", true),
-        backendClient.from("articles").select("*", { count: "exact", head: true }).eq("status", "Published").eq("is_active", true),
-        backendClient.from("articles").select("*", { count: "exact", head: true }).in("status", ["Draft", "Review"]),
+        backendClient.from("leads").select("*", { count: "exact", head: true }).eq("site_scope", DEFAULT_SITE_SCOPE).gte("created_at", today.toISOString()),
+        backendClient.from("leads").select("*", { count: "exact", head: true }).eq("site_scope", DEFAULT_SITE_SCOPE).eq("otp_verified", true),
+        backendClient.from("articles").select("*", { count: "exact", head: true }).eq("site_scope", DEFAULT_SITE_SCOPE).eq("status", "Published").eq("is_active", true),
+        backendClient.from("articles").select("*", { count: "exact", head: true }).eq("site_scope", DEFAULT_SITE_SCOPE).in("status", ["Draft", "Review"]),
       ]);
       const firstError = queries.find((result) => result.error)?.error;
       if (firstError) throw firstError;

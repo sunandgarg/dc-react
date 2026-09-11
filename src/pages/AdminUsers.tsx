@@ -13,6 +13,7 @@ import { AppRole } from "@/lib/rbac";
 import { PermissionEditor } from "@/components/admin/PermissionEditor";
 import { TeamPanel } from "@/components/admin/TeamPanel";
 import { isSyntheticPhoneEmail } from "@/lib/authIdentity";
+import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
 
 import { CSVTools } from "@/components/CSVTools";
 const ASSIGNABLE_ROLES: AppRole[] = ["admin", "manager", "content", "editor", "contributor"];
@@ -41,7 +42,7 @@ export default function AdminUsers() {
       const [profilesRes, rolesRes, leadsRes, appsRes] = await Promise.all([
         backendClient.from("profiles").select("*").order("created_at", { ascending: false }),
         backendClient.from("user_roles").select("user_id, role"),
-        backendClient.from("leads").select("phone, email, source, created_at"),
+        backendClient.from("leads").select("phone, email, source, created_at").eq("site_scope", DEFAULT_SITE_SCOPE),
         backendClient.from("college_applications").select("user_id, college_name, created_at"),
       ]);
 

@@ -1,19 +1,34 @@
 /**
  * CSV utilities - no extra dependencies.
- * Handles quoted values, commas, newlines and escapes.
+ * Handles quoted values, commas, newlines and spreadsheet-formula injection.
  */
+
+// Excel, Numbers and LibreOffice can execute a text cell as a formula even when
+// the formula marker follows whitespace or a control character. Keep the
+// original value visible, but force spreadsheet applications to treat it as
+// text. This must happen before RFC 4180 quoting.
+const SPREADSHEET_FORMULA_PREFIX = /^[\s\p{Cc}\p{Cf}]*[=+\-@]/u;
+
+export function neutralizeSpreadsheetFormula(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  const text = typeof value === "object" ? JSON.stringify(value) : String(value);
+  return typeof value === "string" && SPREADSHEET_FORMULA_PREFIX.test(text) ? `'${text}` : text;
+}
+
+export function escapeCSVCell(value: unknown): string {
+  const text = neutralizeSpreadsheetFormula(value);
+  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+export function toCSVRows(rows: readonly (readonly unknown[])[]): string {
+  return rows.map((row) => row.map(escapeCSVCell).join(",")).join("\n");
+}
 
 export function toCSV(rows: Record<string, any>[], columns?: string[]): string {
   if (!rows.length) return "";
   const cols = columns || Object.keys(rows[0]);
-  const escape = (v: any): string => {
-    if (v === null || v === undefined) return "";
-    let s = typeof v === "object" ? JSON.stringify(v) : String(v);
-    if (/[",\n\r]/.test(s)) s = `"${s.replace(/"/g, '""')}"`;
-    return s;
-  };
-  const head = cols.join(",");
-  const body = rows.map(r => cols.map(c => escape(r[c])).join(",")).join("\n");
+  const head = cols.map(escapeCSVCell).join(",");
+  const body = rows.map(r => cols.map(c => escapeCSVCell(r[c])).join(",")).join("\n");
   return head + "\n" + body;
 }
 
@@ -25,7 +40,7 @@ export function downloadCSV(filename: string, csv: string) {
   URL.revokeObjectURL(url);
 }
 
-export function parseCSV(text: string): Record<string, string>[] {
+export function parseCSVRows(text: string): string[][] {
   const rows: string[][] = [];
   let cur: string[] = [];
   let field = "";
@@ -45,8 +60,18 @@ export function parseCSV(text: string): Record<string, string>[] {
     }
   }
   if (field.length || cur.length) { cur.push(field); rows.push(cur); }
+  return rows;
+}
+
+/** Re-encodes an existing CSV so configured/sample files are safe to open. */
+export function sanitizeCSVText(text: string): string {
+  return toCSVRows(parseCSVRows(text));
+}
+
+export function parseCSV(text: string): Record<string, string>[] {
+  const rows = parseCSVRows(text);
   if (!rows.length) return [];
-  const headers = rows.shift()!.map(h => h.trim());
+  const headers = rows.shift()!.map((h, index) => (index === 0 ? h.replace(/^\uFEFF/, "") : h).trim());
   return rows.filter(r => r.some(c => c.length)).map(r => {
     const o: Record<string, string> = {};
     headers.forEach((h, i) => { o[h] = r[i] ?? ""; });

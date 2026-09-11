@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { DEFAULT_SITE_SCOPE, siteScopeLabel, type SiteScope } from "@/lib/siteScope";
 
 type Suggestion = { entity_type: string; entity_slug: string; label: string };
 type DraftFaq = { question: string; answer: string };
@@ -39,9 +40,16 @@ const DEFAULT_EDITORIAL_SETTINGS: EditorialSettings = {
   audience: "Indian students and parents",
   tone: "Clear, practical, trustworthy",
 };
+const SARKARI_CATEGORIES = ["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"];
 
-export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
-  const [open, setOpen] = useState(false);
+interface BlogStudioDialogProps {
+  onSaved?: () => void;
+  siteScope?: SiteScope;
+  initiallyOpen?: boolean;
+}
+
+export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, initiallyOpen = false }: BlogStudioDialogProps) {
+  const [open, setOpen] = useState(initiallyOpen);
   const [topic, setTopic] = useState("");
   const [wordLimit, setWordLimit] = useState<number>(0);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -59,10 +67,19 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
   useEffect(() => {
     if (!open) return;
     void (async () => {
-      const { data } = await (backendClient as any).from("blog_auto_agent_settings")
+      const settingsId = siteScope === "sarkari" ? "sarkari" : "default";
+      const { data: scopedData } = await (backendClient as any).from("blog_auto_agent_settings")
         .select("image_mode,image_template_url,include_logo,logo_url,text_model,word_limit,content_goals,required_sections,minimum_sources,editorial_quality_target,language,audience,tone")
-        .eq("id", "default")
+        .eq("id", settingsId)
         .maybeSingle();
+      let data = scopedData;
+      if (!data && settingsId !== "default") {
+        const fallback = await (backendClient as any).from("blog_auto_agent_settings")
+          .select("image_mode,image_template_url,include_logo,logo_url,text_model,word_limit,content_goals,required_sections,minimum_sources,editorial_quality_target,language,audience,tone")
+          .eq("id", "default")
+          .maybeSingle();
+        data = fallback.data;
+      }
       if (!data) return;
       setImageMode(data.image_mode || "template");
       setTemplateUrl(data.image_template_url || "");
@@ -72,7 +89,7 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
       setEditorial(nextEditorial);
       setWordLimit(Number(nextEditorial.word_limit) || 0);
     })();
-  }, [open]);
+  }, [open, siteScope]);
 
   const functionErrorMessage = async (error: any, fallback: string) => {
     try {
@@ -92,6 +109,8 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
       const { data, error } = await backendClient.functions.invoke("admin-blog-studio", {
         body: {
           topic,
+          site_scope: siteScope,
+          content_type: siteScope === "sarkari" ? "sarkari_job_update" : "editorial_article",
           word_limit: wordLimit,
           model: editorial.text_model,
           content_goals: editorial.content_goals,
@@ -121,14 +140,29 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
     if (!draft) return;
     setBusy(true);
     try {
-      const entityLinks = (draft.entity_suggestions || []).filter((suggestion) => (
+      const entityLinks = siteScope === "dekhocampus" ? (draft.entity_suggestions || []).filter((suggestion) => (
         selected.has(`${suggestion.entity_type}:${suggestion.entity_slug}`)
-      )).map(({ entity_type, entity_slug }) => ({ entity_type, entity_slug }));
+      )).map(({ entity_type, entity_slug }) => ({ entity_type, entity_slug })) : [];
+      const publishDraft = {
+        ...draft,
+        slug: slugify(draft.slug),
+        ...(siteScope === "sarkari" ? {
+          category: SARKARI_CATEGORIES.includes(draft.category) ? draft.category : "Latest Jobs",
+          vertical: draft.vertical || "Government Jobs",
+        } : {}),
+      };
       const { data, error } = await backendClient.functions.invoke("admin-blog-studio", {
-        body: { action: "publish", status: "Published", draft: { ...draft, slug: slugify(draft.slug) }, entity_links: entityLinks, research_sources: researchSources },
+        body: {
+          action: "publish",
+          status: "Published",
+          site_scope: siteScope,
+          draft: publishDraft,
+          entity_links: entityLinks,
+          research_sources: researchSources,
+        },
       });
       if (error || data?.error) throw error || new Error(data.error);
-      toast.success(`Published after quality and duplicate checks (${data?.quality?.score || quality?.score || 0}/100)`);
+      toast.success(`${siteScopeLabel(siteScope)} article published after quality and duplicate checks (${data?.quality?.score || quality?.score || 0}/100)`);
       setOpen(false); setDraft(null); onSaved?.();
     } catch (error: any) {
       toast.error(await functionErrorMessage(error, "Could not publish the article"));
@@ -136,13 +170,13 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
   };
 
   return <>
-    <Button className="gap-2 rounded-xl" onClick={() => setOpen(true)}><Sparkles className="w-4 h-4" /> AI Blog Studio</Button>
+    <Button className="gap-2 rounded-xl" onClick={() => setOpen(true)}><Sparkles className="w-4 h-4" /> {siteScope === "sarkari" ? "Sarkari Job AI Studio" : "AI Blog Studio"}</Button>
     <Dialog open={open} onOpenChange={setOpen}><DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
-      <DialogHeader><DialogTitle className="flex items-center gap-2"><BookOpenCheck className="w-5 h-5 text-primary" /> Editorial Blog Studio</DialogTitle></DialogHeader>
+      <DialogHeader><DialogTitle className="flex items-center gap-2"><BookOpenCheck className="w-5 h-5 text-primary" /> {siteScope === "sarkari" ? "Sarkari Job Editorial Studio" : "Editorial Blog Studio"}</DialogTitle></DialogHeader>
       <div className="space-y-4">
-        <div><Label>Topic</Label><Input value={topic} onChange={event => setTopic(event.target.value)} placeholder="e.g. JEE Main counselling dates and choice filling guide" /></div>
-        <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {editorial.text_model}. It performs topic novelty review, evidence synthesis, drafting and a second quality review. OpenAI image generation runs only when you choose a new image.</div>
-        <div><Label>Optimised word limit</Label><div className="mt-2 flex flex-wrap gap-2">{LENGTHS.map(length => <Button key={length} variant={wordLimit === length ? "default" : "outline"} onClick={() => setWordLimit(length)}>{length === 0 ? "Adaptive" : `${length} words`}</Button>)}</div><p className="mt-2 text-xs text-muted-foreground">Adaptive is recommended: concise updates stay short, while counselling and decision guides receive more depth.</p></div>
+        <div><Label>Topic</Label><Input value={topic} onChange={event => setTopic(event.target.value)} placeholder={siteScope === "sarkari" ? "e.g. SSC CGL notification, eligibility, dates and application process" : "e.g. JEE Main counselling dates and choice filling guide"} /></div>
+        <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {editorial.text_model}. It checks novelty within the {siteScopeLabel(siteScope)} library, synthesises evidence, drafts the article and performs a second quality review. OpenAI image generation runs only when you choose a new image.</div>
+        <div><Label>Optimised word limit</Label><div className="mt-2 flex flex-wrap gap-2">{LENGTHS.map(length => <Button key={length} variant={wordLimit === length ? "default" : "outline"} onClick={() => setWordLimit(length)}>{length === 0 ? "Adaptive" : `${length} words`}</Button>)}</div><p className="mt-2 text-xs text-muted-foreground">Adaptive is recommended: concise updates stay short, while detailed guides receive more depth.</p></div>
         <div className="rounded-xl border p-3">
           <Label>Cover workflow</Label>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -169,7 +203,7 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
               <div><Label>Meta title</Label><Input value={draft.meta_title || ""} onChange={event => setDraft({ ...draft, meta_title: event.target.value })} className="mt-1" /></div>
               <div><Label>Meta keywords</Label><Input value={draft.meta_keywords || ""} onChange={event => setDraft({ ...draft, meta_keywords: event.target.value })} className="mt-1" /></div>
               <div className="md:col-span-2"><Label>Meta description</Label><Textarea value={draft.meta_description || ""} onChange={event => setDraft({ ...draft, meta_description: event.target.value })} rows={2} className="mt-1" /></div>
-              <div><Label>Category</Label><Input value={draft.category || "Education"} onChange={event => setDraft({ ...draft, category: event.target.value })} className="mt-1" /></div>
+              <div><Label>Category</Label>{siteScope === "sarkari" ? <select value={draft.category || "Latest Jobs"} onChange={event => setDraft({ ...draft, category: event.target.value })} className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm">{SARKARI_CATEGORIES.map(category => <option key={category} value={category}>{category}</option>)}</select> : <Input value={draft.category || "Education"} onChange={event => setDraft({ ...draft, category: event.target.value })} className="mt-1" />}</div>
               <div><Label>Vertical</Label><Input value={draft.vertical || "General"} onChange={event => setDraft({ ...draft, vertical: event.target.value })} className="mt-1" /></div>
               <div className="md:col-span-2"><Label>Tags</Label><Input value={(draft.tags || []).join(", ")} onChange={event => setDraft({ ...draft, tags: event.target.value.split(",").map(value => value.trim()).filter(Boolean) })} className="mt-1" /></div>
             </div>
@@ -188,8 +222,8 @@ export function BlogStudioDialog({ onSaved }: { onSaved?: () => void }) {
               <p className="mt-2 text-xs text-muted-foreground">Model: {modelUsed || editorial.text_model}. Private sources checked: {researchSources.length}.</p>
               {!!quality?.issues?.length && <p className="mt-2 text-xs text-amber-700">{quality.issues.join("; ")}</p>}
             </div>
-            <div><Label>Suggested entity links</Label><div className="mt-2 flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div></div>
-            <Button onClick={save} disabled={busy} className="w-full">{busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}Publish after final checks</Button>
+            {siteScope === "dekhocampus" && <div><Label>Suggested entity links</Label><div className="mt-2 flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div></div>}
+            <Button onClick={save} disabled={busy} className="w-full">{busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}{siteScope === "sarkari" ? "Publish Sarkari article after final checks" : "Publish after final checks"}</Button>
           </div>
         </div>}
       </div>

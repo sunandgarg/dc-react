@@ -17,6 +17,7 @@ import {
 import { backendClient } from "@/integrations/backend/client";
 import { UniversityImportExport } from "./UniversityImportExport";
 import { MultiPushDefaultsEditor } from "./MultiPushDefaultsEditor";
+import { downloadCSV as saveCSV, sanitizeCSVText } from "@/lib/csv";
 import {
   UpgradConfigSection,
   DEFAULT_UPGRAD_CONFIG,
@@ -1009,13 +1010,7 @@ export function EditUniversityModal({ isOpen, university, onClose, onSave }: Edi
                 <button
                   type="button"
                   onClick={() => {
-                    const blob = new Blob([sampleCsvContent], { type: "text/csv" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `${formData.name || "university"}_sample.csv`;
-                    a.click();
-                    URL.revokeObjectURL(url);
+                    saveCSV(`${formData.name || "university"}_sample.csv`, sanitizeCSVText(sampleCsvContent));
                   }}
                   className="flex items-center gap-1 text-sm text-primary hover:underline"
                 >

@@ -58,6 +58,10 @@ export function isLeadReadyForAutomation(lead) {
   return Boolean(lead?.city && lead?.state && course);
 }
 
+export function isLeadAutomationAllowed(lead) {
+  return (lead?.site_scope || "dekhocampus") === "dekhocampus";
+}
+
 function leadData(lead) {
   return {
     name: lead.name || "", email: lead.email || "", mobile: lead.phone || "", phone: lead.phone || "",
@@ -218,7 +222,7 @@ export function buildAutomationPreview(plan, universities, lead) {
 }
 
 async function loadAutomationPlan(lead) {
-  if (!isLeadReadyForAutomation(lead)) return { plan: buildAutomationPlan([], lead || {}), activeFlows: [], multiFlows: [] };
+  if (!isLeadAutomationAllowed(lead) || !isLeadReadyForAutomation(lead)) return { plan: buildAutomationPlan([], lead || {}), activeFlows: [], multiFlows: [] };
   const [directRules, flows, multiFlows] = await Promise.all([
     prisma.lp_automation_rules.findMany({ where: { is_active: true, auto_dispatch: true }, orderBy: { priority: "asc" } }),
     prisma.lp_marketing_flows.findMany({ where: { is_active: true } }),
@@ -233,6 +237,7 @@ async function loadAutomationPlan(lead) {
 }
 
 export async function previewLeadAutomation(lead) {
+  if (!isLeadAutomationAllowed(lead)) return { dispatched: 0, reason: "Sarkari leads are isolated from DekhoCampus partner automation", matchedRules: [], results: [] };
   if (!isLeadReadyForAutomation(lead)) return { dispatched: 0, reason: "Add city, state and course to preview routing", matchedRules: [], results: [] };
   const { plan } = await loadAutomationPlan(lead);
   const universityIds = plan.deliveries.map((delivery) => delivery.universityId);
@@ -250,6 +255,7 @@ export async function previewLeadAutomation(lead) {
 
 export async function dispatchLead(leadId) {
   const lead = await prisma.leads.findUnique({ where: { id: leadId } });
+  if (!isLeadAutomationAllowed(lead)) return { dispatched: 0, reason: "Sarkari leads are isolated from DekhoCampus partner automation" };
   if (!isLeadReadyForAutomation(lead)) return { dispatched: 0, reason: "lead incomplete" };
   const { plan, activeFlows, multiFlows } = await loadAutomationPlan(lead);
   if (!plan.deliveries.length) return { dispatched: 0, reason: "no rules matched", matchedRuleIds: plan.matchedRules.map((rule) => rule.id) };

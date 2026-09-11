@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildAutomationPlan, buildAutomationPreview, buildPartnerRequest, getPrefillOverrides, isLeadReadyForAutomation, ruleMatches } from "../src/lead-automation.mjs";
+import { buildAutomationPlan, buildAutomationPreview, buildPartnerRequest, getPrefillOverrides, isLeadAutomationAllowed, isLeadReadyForAutomation, ruleMatches } from "../src/lead-automation.mjs";
 import { retryDelayMs } from "../src/lead-outbox.mjs";
 
 test("matches lead automation conditions with all and any modes", () => {
@@ -20,6 +20,12 @@ test("matches punctuation-normalized courses and generic specialization fields",
 test("accepts a complete routing lead when its course is stored in the course slug", () => {
   assert.equal(isLeadReadyForAutomation({ city: "New Delhi", state: "Delhi", interested_course_slug: "btech" }), true);
   assert.equal(isLeadReadyForAutomation({ city: "New Delhi", state: "Delhi" }), false);
+});
+
+test("keeps Sarkari leads out of DekhoCampus partner automation", () => {
+  assert.equal(isLeadAutomationAllowed({ site_scope: "dekhocampus" }), true);
+  assert.equal(isLeadAutomationAllowed({}), true);
+  assert.equal(isLeadAutomationAllowed({ site_scope: "sarkari" }), false);
 });
 
 test("runs every matching automation and sends a university only once", () => {

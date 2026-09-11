@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFile } from "node:fs/promises";
 import { publishSitemap, readPublishedSitemap } from "../src/sitemap-publish.mjs";
 
 const request = (body = {}) => new Request("https://api.example/v1/functions/publish-sitemap", {
@@ -46,6 +47,11 @@ test("sitemap publishing rejects incomplete core catalog data", async () => {
     publishSitemap(request(), { prismaClient: populatedDb(0), repository: memoryRepository() }),
     (error) => error.code === "SITEMAP_SOURCE_INCOMPLETE" && error.status === 409,
   );
+});
+
+test("DekhoCampus sitemap SQL excludes Sarkari articles", async () => {
+  const source = await readFile(new URL("../src/sitemap-publish.mjs", import.meta.url), "utf8");
+  assert.equal((source.match(/`site_scope` = 'dekhocampus'/g) || []).length, 2);
 });
 
 test("sitemap publishing replaces the root index with AWS-backed immutable chunks", async () => {

@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp } from "lucide-react";
+import { downloadCSV, toCSVRows } from "@/lib/csv";
 
 export interface PayloadField {
   id: string;
@@ -536,34 +537,20 @@ export function generateSampleCSVFromPayloadFields(
   });
 
   const hasComments = commentValues.some((v) => v !== "");
-  const csvLines: string[] = [];
-
-  if (hasComments) {
-    csvLines.push("# " + commentValues.map((val) => (val ? `"${val}"` : '""')).join(","));
-  }
-
-  csvLines.push(headers.join(","));
-  csvLines.push(sampleRow.map((val) => `"${val}"`).join(","));
-
-  csvLines.push(
-    headers
-      .map((header, i) => {
-        const val = sampleRow[i];
-        if (header === "name") return '"Jane Smith"';
-        if (header === "email") return '"jane.smith@example.com"';
-        if (header === "mobile") return '"9123456780"';
-        if (header === "state") return '"Maharashtra"';
-        if (header === "city") return '"Mumbai"';
-
-        const customCol = customColumns.find((cc) => cc.columnKey === header);
-        if (customCol && customCol.values.length > 1) {
-          return `"${customCol.values[1].value}"`;
-        }
-
-        return `"${val}"`;
-      })
-      .join(","),
-  );
+  const secondSampleRow = headers.map((header, i) => {
+    const val = sampleRow[i];
+    if (header === "name") return "Jane Smith";
+    if (header === "email") return "jane.smith@example.com";
+    if (header === "mobile") return "9123456780";
+    if (header === "state") return "Maharashtra";
+    if (header === "city") return "Mumbai";
+    const customCol = customColumns.find((cc) => cc.columnKey === header);
+    return customCol && customCol.values.length > 1 ? customCol.values[1].value : val;
+  });
+  const csvLines = [
+    ...(hasComments ? [toCSVRows([[`# ${commentValues[0] || ""}`, ...commentValues.slice(1)]])] : []),
+    toCSVRows([headers, sampleRow, secondSampleRow]),
+  ];
 
   return {
     headers,
@@ -579,13 +566,7 @@ export function downloadSampleCSV(
   customColumns: CustomColumnForCSV[] = [],
 ) {
   const { csv } = generateSampleCSVFromPayloadFields(fields, universityName, customColumns);
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${universityName.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_sample_leads.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+  downloadCSV(`${universityName.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_sample_leads.csv`, csv);
 }
 
 export function createDefaultPayloadFields(): PayloadField[] {

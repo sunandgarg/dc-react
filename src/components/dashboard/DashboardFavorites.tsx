@@ -36,6 +36,7 @@ export function DashboardFavorites() {
         .from("articles")
         .select("id, slug, title, featured_image, category, updated_at, created_at")
         .in("id", ids)
+        .eq("site_scope", "dekhocampus")
         .eq("status", "Published")
         .eq("is_active", true)
         .order("updated_at", { ascending: false })

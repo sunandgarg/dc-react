@@ -34,6 +34,7 @@ import { Alert } from "../Alert";
 import { backendClient } from "@/integrations/backend/client";
 import { useUploadStatePersistence } from "@/hooks/useUploadStatePersistence";
 import { appCache } from "@/hooks/useAppCache";
+import { downloadCSV, sanitizeCSVText } from "@/lib/csv";
 
 interface CustomColumn {
   columnKey: string;
@@ -2508,13 +2509,7 @@ export function UploadLeadsTab({
           {selectedUniversity?.sample_csv_content && (
             <button
               onClick={() => {
-                const blob = new Blob([selectedUniversity.sample_csv_content!], { type: "text/csv" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `${selectedUniversity.name}_sample.csv`;
-                a.click();
-                URL.revokeObjectURL(url);
+                downloadCSV(`${selectedUniversity.name}_sample.csv`, sanitizeCSVText(selectedUniversity.sample_csv_content!));
               }}
               className="flex items-center gap-2 text-success hover:underline font-medium"
             >

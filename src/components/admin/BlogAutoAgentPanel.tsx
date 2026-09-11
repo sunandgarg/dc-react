@@ -160,6 +160,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         if (ids.length) {
           const { data } = await (backendClient as any).from("articles")
             .select("id,title,slug,featured_image,status,description")
+            .eq("site_scope", "dekhocampus")
             .in("id", ids);
           setGeneratedArticles(data || []);
         }

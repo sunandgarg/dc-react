@@ -901,6 +901,7 @@ export type Database = {
           meta_description: string
           meta_keywords: string
           meta_title: string
+          site_scope: string
           slug: string
           status: string
           tags: string[]
@@ -924,6 +925,7 @@ export type Database = {
           meta_description?: string
           meta_keywords?: string
           meta_title?: string
+          site_scope?: string
           slug: string
           status?: string
           tags?: string[]
@@ -947,6 +949,7 @@ export type Database = {
           meta_description?: string
           meta_keywords?: string
           meta_title?: string
+          site_scope?: string
           slug?: string
           status?: string
           tags?: string[]
@@ -3760,6 +3763,9 @@ export type Database = {
         Row: {
           assigned_to: string | null
           city: string | null
+          consent_at: string | null
+          consent_terms_accepted: boolean
+          consent_text: string | null
           created_at: string
           cta: string | null
           current_situation: string | null
@@ -3777,6 +3783,7 @@ export type Database = {
           program_mode: string
           source: string | null
           source_category: string | null
+          site_scope: string
           state: string | null
           status: string
           updated_at: string
@@ -3784,6 +3791,9 @@ export type Database = {
         Insert: {
           assigned_to?: string | null
           city?: string | null
+          consent_at?: string | null
+          consent_terms_accepted?: boolean
+          consent_text?: string | null
           created_at?: string
           cta?: string | null
           current_situation?: string | null
@@ -3801,6 +3811,7 @@ export type Database = {
           program_mode?: string
           source?: string | null
           source_category?: string | null
+          site_scope?: string
           state?: string | null
           status?: string
           updated_at?: string
@@ -3808,6 +3819,9 @@ export type Database = {
         Update: {
           assigned_to?: string | null
           city?: string | null
+          consent_at?: string | null
+          consent_terms_accepted?: boolean
+          consent_text?: string | null
           created_at?: string
           cta?: string | null
           current_situation?: string | null
@@ -3825,6 +3839,7 @@ export type Database = {
           program_mode?: string
           source?: string | null
           source_category?: string | null
+          site_scope?: string
           state?: string | null
           status?: string
           updated_at?: string

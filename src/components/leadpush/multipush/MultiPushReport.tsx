@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { downloadCSV, toCSVRows } from '@/lib/csv';
 import type { PushResult } from './MultiPushView';
 
 interface Props {
@@ -38,14 +39,7 @@ export const MultiPushReport = memo(function MultiPushReport({ results, universi
         (r.response || '').replace(/[\n\r,]/g, ' ').slice(0, 300),
       ]),
     ];
-    const csv = rows.map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `multi-push-report-${Date.now()}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCSV(`multi-push-report-${Date.now()}.csv`, toCSVRows(rows));
   };
 
   return (

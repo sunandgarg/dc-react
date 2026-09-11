@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { CSVRowScope } from "@/components/CSVTools";
 
 export type BulkColumn = {
   key: string;
@@ -46,6 +47,7 @@ interface Props {
   orderBy?: { column: string; ascending?: boolean };
   selectExtra?: string[];
   pageSize?: number;
+  scope?: CSVRowScope;
 }
 
 /**
@@ -62,6 +64,7 @@ export function BulkEditGrid({
   orderBy = { column: "updated_at", ascending: false },
   selectExtra = [],
   pageSize = 300,
+  scope,
 }: Props) {
   const qc = useQueryClient();
   const [q, setQ] = useState("");
@@ -73,15 +76,17 @@ export function BulkEditGrid({
     Object.fromEntries(columns.map((c) => [c.key, c.defaultVisible !== false]))
   );
 
-  const selectCols = Array.from(new Set(["id", ...columns.map((c) => c.key), ...selectExtra]));
+  const selectCols = Array.from(new Set(["id", ...columns.map((c) => c.key), ...selectExtra, ...(scope ? [scope.column] : [])]));
 
   const { data: rows = [], isLoading } = useQuery({
-    queryKey: ["bulk-edit", table, pageSize, normalizedQ, searchKeys.join("|")],
+    queryKey: ["bulk-edit", table, scope?.column ?? "all", scope?.value ?? "all", pageSize, normalizedQ, searchKeys.join("|")],
     queryFn: async () => {
       let query = (backendClient as any)
         .from(table)
         .select(selectCols.join(","))
         .order(orderBy.column, { ascending: orderBy.ascending ?? false });
+
+      if (scope) query = query.eq(scope.column, scope.value);
 
       if (normalizedQ) {
         const ilikeTerm = `%${normalizedQ.replace(/\s+/g, "%")}%`;
@@ -126,9 +131,11 @@ export function BulkEditGrid({
     if (!dirtyIds.length) return;
     setSaving(true);
     try {
-      const updates = dirtyIds.map((id) =>
-        (backendClient as any).from(table).update(draft[id]).eq("id", id)
-      );
+      const updates = dirtyIds.map((id) => {
+        let query = (backendClient as any).from(table).update(draft[id]).eq("id", id);
+        if (scope) query = query.eq(scope.column, scope.value);
+        return query;
+      });
       const results = await Promise.all(updates);
       const failed = results.filter((r: any) => r.error);
       if (failed.length) {

@@ -20,6 +20,7 @@ import { backendClient } from '@/integrations/backend/client';
 import { useToast } from '@/hooks/use-toast';
 import { generateSlug } from '@/lib/datastore/slug-utils';
 import { format } from 'date-fns';
+import { downloadCSV, toCSV } from '@/lib/csv';
 
 interface UploadBatch {
   id: string;
@@ -198,20 +199,14 @@ export function UploadTracker({ universities, onViewBatch }: UploadTrackerProps)
       return;
     }
 
-    const csvContent = [
-      'Name,Email,Mobile,Status,Error',
-      ...failedLeads.map(l => 
-        `"${l.name}","${l.email}","${l.mobile}","${l.status}","${l.apiResponse || ''}"`
-      )
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `failed_leads_${batchId.slice(0, 8)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const rows = failedLeads.map((lead) => ({
+      Name: lead.name,
+      Email: lead.email,
+      Mobile: lead.mobile,
+      Status: lead.status,
+      Error: lead.apiResponse || '',
+    }));
+    downloadCSV(`failed_leads_${batchId.slice(0, 8)}.csv`, toCSV(rows));
   };
 
   // Filter batches

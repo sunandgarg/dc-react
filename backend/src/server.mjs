@@ -1,4 +1,5 @@
 import http from "node:http";
+import { isIP } from "node:net";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { handleRequest } from "./index.mjs";
@@ -16,18 +17,34 @@ await ensureContentReviewTable();
 await provisionExistingRestrictedEditor();
 await ensureSupportedAiModels();
 await warmDirectorySearchCache();
-await startLeadOutboxWorker();
-await startBlogAgentWorker();
-startDataCleanerWorker();
+const backgroundWorkersEnabled = String(process.env.RUN_BACKGROUND_WORKERS || "yes").toLowerCase() !== "no";
+if (backgroundWorkersEnabled) {
+  await startLeadOutboxWorker();
+  await startBlogAgentWorker();
+  startDataCleanerWorker();
+} else {
+  console.log("Background workers are disabled for this standby instance");
+}
+
+function requestClientIp(req) {
+  const realIp = String(req.headers["x-real-ip"] || "").trim();
+  if (isIP(realIp)) return realIp;
+  const remote = String(req.socket.remoteAddress || "").replace(/^::ffff:/, "");
+  return isIP(remote) ? remote : "unknown";
+}
 
 const server = http.createServer(async (req, res) => {
   const origin = `http://${req.headers.host || `localhost:${port}`}`;
   try {
     if (String(process.env.REQUEST_LOG || "").toLowerCase() === "yes") console.info(`${req.method} ${req.url}`);
     const hasBody = !["GET", "HEAD"].includes(req.method);
+    const headers = new Headers(req.headers);
+    // Never trust a caller-provided rate-limit identity. Nginx overwrites
+    // X-Real-IP and Node overwrites this internal header again.
+    headers.set("x-dc-client-ip", requestClientIp(req));
     const request = new Request(new URL(req.url, origin), {
       method: req.method,
-      headers: req.headers,
+      headers,
       body: hasBody ? req : undefined,
       ...(hasBody ? { duplex: "half" } : {}),
     });

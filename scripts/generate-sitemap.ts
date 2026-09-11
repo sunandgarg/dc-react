@@ -425,7 +425,7 @@ function writeSitemaps(entries: SitemapEntry[]) {
     fetchRows("exams", "slug,short_id,updated_at,image,logo", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("career_profiles", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("scholarships", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("articles", "slug,updated_at,tags,featured_image", (q) => q.eq("is_active", true).eq("status", "Published").not("slug", "is", null)),
+    fetchRows("articles", "slug,updated_at,tags,featured_image", (q) => q.eq("site_scope", "dekhocampus").eq("is_active", true).eq("status", "Published").not("slug", "is", null)),
     fetchRows("landing_pages", "slug,updated_at,logo_url,og_image", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("cat_universe_modules", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("promoted_programs", "slug,updated_at,image_url,hero_image,certificate_image,degree_image,institute_logo", (q) => q.eq("is_active", true).not("slug", "is", null)),

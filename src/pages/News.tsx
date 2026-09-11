@@ -177,6 +177,8 @@ export default function News() {
       const { data, error } = await backendClient
         .from("articles")
         .select(ARTICLE_COLS)
+        .eq("site_scope", "dekhocampus")
+        .eq("status", "Published")
         .eq("is_active", true)
         .not("featured_rank", "is", null)
         .order("featured_rank", { ascending: true })
@@ -201,6 +203,8 @@ export default function News() {
       let q = backendClient
         .from("articles")
         .select(ARTICLE_COLS)
+        .eq("site_scope", "dekhocampus")
+        .eq("status", "Published")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
 

@@ -4,34 +4,41 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BookmarkPlus, Bookmark, Trash2, Check, Star } from "lucide-react";
 import { toast } from "sonner";
+import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 
 export type LeadFiltersSnapshot = Record<string, any>;
 export type LeadPreset = { id: string; name: string; filters: LeadFiltersSnapshot; createdAt: number };
 
-const KEY = "admin_leads_presets_v1";
+const KEY = "admin_leads_presets_v2";
+const LEGACY_KEY = "admin_leads_presets_v1";
+const storageKey = (siteScope: SiteScope) => `${KEY}:${siteScope}`;
 
-export function loadPresets(): LeadPreset[] {
-  try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; }
+export function loadPresets(siteScope: SiteScope = DEFAULT_SITE_SCOPE): LeadPreset[] {
+  try {
+    const scoped = localStorage.getItem(storageKey(siteScope));
+    const legacy = siteScope === DEFAULT_SITE_SCOPE ? localStorage.getItem(LEGACY_KEY) : null;
+    return JSON.parse(scoped || legacy || "[]");
+  } catch { return []; }
 }
-export function savePresets(list: LeadPreset[]) {
-  try { localStorage.setItem(KEY, JSON.stringify(list)); } catch { /* noop */ }
+export function savePresets(list: LeadPreset[], siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
+  try { localStorage.setItem(storageKey(siteScope), JSON.stringify(list)); } catch { /* noop */ }
 }
 
-export function LeadFilterPresets({ current, onApply }: { current: LeadFiltersSnapshot; onApply: (f: LeadFiltersSnapshot) => void }) {
+export function LeadFilterPresets({ current, onApply, siteScope = DEFAULT_SITE_SCOPE }: { current: LeadFiltersSnapshot; onApply: (f: LeadFiltersSnapshot) => void; siteScope?: SiteScope }) {
   const [presets, setPresets] = useState<LeadPreset[]>([]);
   const [name, setName] = useState("");
   const [open, setOpen] = useState(false);
 
-  useEffect(() => { setPresets(loadPresets()); }, [open]);
+  useEffect(() => { setPresets(loadPresets(siteScope)); }, [open, siteScope]);
 
   const save = () => {
     if (!name.trim()) { toast.error("Name this preset first"); return; }
     const next: LeadPreset[] = [{ id: crypto.randomUUID(), name: name.trim(), filters: current, createdAt: Date.now() }, ...presets].slice(0, 20);
-    setPresets(next); savePresets(next); setName("");
+    setPresets(next); savePresets(next, siteScope); setName("");
     toast.success(`Saved “${next[0].name}”`);
   };
   const remove = (id: string) => {
-    const next = presets.filter((p) => p.id !== id); setPresets(next); savePresets(next);
+    const next = presets.filter((p) => p.id !== id); setPresets(next); savePresets(next, siteScope);
   };
 
   return (

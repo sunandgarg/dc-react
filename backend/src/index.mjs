@@ -15,6 +15,8 @@ import { publishSitemap, readPublishedSitemap } from "./sitemap-publish.mjs";
 import { handleClarityExport } from "./clarity-export.mjs";
 import { handleEmailAdmin } from "./email.mjs";
 import { handleCatExperience } from "./cat-experience.mjs";
+import { handleIntentExport, handlePredictLeadIntent, handleSummarizeUserSession, linkIntentActivityToLead } from "./intent-intelligence.mjs";
+import { consumePublicWriteLimit } from "./public-write-rate-limit.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -51,6 +53,22 @@ const publicWriteFields = new Map([
 
 const PUBLIC_WRITE_MAX_BYTES = 256 * 1024;
 const PUBLIC_WRITE_MAX_ROWS = 100;
+const PUBLIC_INTENT_MAX_DISTINCT_SUBJECTS = 10;
+const SAVE_LEAD_MAX_BYTES = 64 * 1024;
+
+function assertPublicIntentSubjectLimit(table, rows) {
+  if (table !== "intent_events") return;
+  const subjects = new Set();
+  for (const row of rows) {
+    const userId = String(row?.user_id || "").trim();
+    const visitorId = String(row?.visitor_id || "").trim();
+    if (userId) subjects.add(`user:${userId}`);
+    else if (visitorId) subjects.add(`visitor:${visitorId}`);
+  }
+  if (subjects.size > PUBLIC_INTENT_MAX_DISTINCT_SUBJECTS) {
+    throw new HttpError(400, "INTENT_SUBJECT_LIMIT", `Anonymous intent batches may contain at most ${PUBLIC_INTENT_MAX_DISTINCT_SUBJECTS} distinct subjects`);
+  }
+}
 
 function sanitizePublicWriteValue(value, depth = 0) {
   if (depth > 8) return null;
@@ -77,6 +95,12 @@ async function sanitizePublicWriteRequest(table, request) {
   if (!rows.length || rows.length > PUBLIC_WRITE_MAX_ROWS || rows.some((row) => !row || typeof row !== "object" || Array.isArray(row))) {
     throw new HttpError(400, "INVALID_PUBLIC_WRITE", "Anonymous writes require 1 to 100 object rows");
   }
+  assertPublicIntentSubjectLimit(table, rows);
+  consumePublicWriteLimit({
+    clientKey: request.headers.get("x-dc-client-ip") || "unknown",
+    table,
+    units: rows.length,
+  });
   const allowed = publicWriteFields.get(table);
   const sanitized = rows.map((row) => {
     const safe = Object.fromEntries(Object.entries(row)
@@ -91,7 +115,45 @@ async function sanitizePublicWriteRequest(table, request) {
   return new Request(request.url, { method: request.method, headers, body: JSON.stringify(Array.isArray(input) ? sanitized : sanitized[0]) });
 }
 
-export const apiSecurityInternals = { sanitizePublicWriteRequest };
+async function readRateLimitedPublicJson(request, table, maxBytes) {
+  const declaredSize = Number(request.headers.get("content-length") || 0);
+  if (declaredSize > maxBytes) throw new HttpError(413, "PAYLOAD_TOO_LARGE", "Request payload is too large");
+  const raw = await request.text();
+  if (new TextEncoder().encode(raw).byteLength > maxBytes) {
+    throw new HttpError(413, "PAYLOAD_TOO_LARGE", "Request payload is too large");
+  }
+  let input;
+  try { input = JSON.parse(raw); } catch { throw new HttpError(400, "INVALID_JSON", "A valid JSON payload is required"); }
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    throw new HttpError(400, "INVALID_JSON", "A JSON object is required");
+  }
+  consumePublicWriteLimit({
+    clientKey: request.headers.get("x-dc-client-ip") || "unknown",
+    table,
+    units: 1,
+  });
+  return input;
+}
+
+const SITE_SCOPED_TABLES = new Set(["articles", "leads"]);
+const VALID_SITE_SCOPES = new Set(["dekhocampus", "sarkari"]);
+
+function assertValidSiteScopePayload(table, input) {
+  if (!SITE_SCOPED_TABLES.has(table)) return;
+  const rows = Array.isArray(input) ? input : [input];
+  if (rows.some((row) => row && typeof row === "object" && Object.hasOwn(row, "site_scope") && !VALID_SITE_SCOPES.has(row.site_scope))) {
+    throw new HttpError(400, "INVALID_SITE_SCOPE", "site_scope must be dekhocampus or sarkari");
+  }
+}
+
+async function validateSiteScopeWriteRequest(table, request) {
+  if (!SITE_SCOPED_TABLES.has(table) || !["POST", "PUT", "PATCH"].includes(request.method)) return request;
+  const input = await request.clone().json().catch(() => undefined);
+  if (input !== undefined) assertValidSiteScopePayload(table, input);
+  return request;
+}
+
+export const apiSecurityInternals = { sanitizePublicWriteRequest, readRateLimitedPublicJson, siteScopeForRequest, enforcePublicArticlePolicy, assertValidSiteScopePayload, assertPublicIntentSubjectLimit };
 
 const ownedTables = new Map([
   ["profiles", "user_id"], ["user_documents", "user_id"], ["user_education_entries", "user_id"],
@@ -100,6 +162,7 @@ const ownedTables = new Map([
 ]);
 
 const publicReadSelections = new Map([
+  ["articles", "id,site_scope,status,title,slug,description,content,vertical,category,author,author_id,featured_image,views,tags,meta_title,meta_description,meta_keywords,is_active,featured_rank,official_website,data_verified_at,created_at,updated_at"],
   ["site_integrations", "key,value,enabled"],
   ["adsense_settings", "id,publisher_id,client_id,account_id,verification_meta,auto_ads_enabled,ads_globally_enabled,enabled_on_mobile,enabled_on_desktop,enabled_for_guests,enabled_for_logged_in,disabled_roles,disabled_pages,ads_per_page_limit,lazy_load_enabled,refresh_interval_seconds,head_scripts,body_scripts,footer_scripts,custom_css,custom_js,created_at,updated_at"],
 ]);
@@ -112,7 +175,29 @@ class HttpError extends Error {
   }
 }
 
-const allowedOrigins = String(process.env.CORS_ORIGIN || "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080,https://dekhocampus.com")
+const SARKARI_SITE_ORIGINS = new Set([
+  "https://sarkari.dekhocampus.com",
+  "https://sarkari-dekhocampus.pages.dev",
+]);
+
+function normalizedOrigin(value) {
+  try { return new URL(String(value || "")).origin; } catch { return ""; }
+}
+
+function siteScopeForRequest(request) {
+  return SARKARI_SITE_ORIGINS.has(normalizedOrigin(request.headers.get("origin"))) ? "sarkari" : "dekhocampus";
+}
+
+function enforcePublicArticlePolicy(request) {
+  const url = new URL(request.url);
+  const requestedScope = String(url.searchParams.get("site_scope") || "").match(/^eq\.(dekhocampus|sarkari)$/)?.[1];
+  url.searchParams.set("site_scope", `eq.${requestedScope || siteScopeForRequest(request)}`);
+  url.searchParams.set("status", "eq.Published");
+  url.searchParams.set("is_active", "eq.true");
+  return new Request(url, request);
+}
+
+const allowedOrigins = String(process.env.CORS_ORIGIN || "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080,https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com,https://sarkari-dekhocampus.pages.dev,https://sarkari.dekhocampus.com")
   .split(",").map((value) => value.trim()).filter(Boolean);
 
 function corsHeaders(request) {
@@ -122,7 +207,7 @@ function corsHeaders(request) {
   return {
     "access-control-allow-origin": allowedOrigin,
     "access-control-allow-headers": "accept, accept-profile, authorization, apikey, content-profile, content-type, prefer, range, range-unit, x-client-info, x-request-id, x-upsert",
-    "access-control-expose-headers": "content-range, range-unit, x-request-id",
+    "access-control-expose-headers": "content-range, range-unit, retry-after, x-request-id",
     "access-control-allow-methods": "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS",
     vary: "Origin",
   };
@@ -152,19 +237,28 @@ async function authorizeRest(table, request) {
   if (["GET", "HEAD"].includes(request.method) && publicReadTables.has(table)) {
     const identity = bearerToken(request) ? await resolveIdentity(request) : null;
     if (identity && await isAdmin(identity.id)) return { request, actorUserId: identity.id };
+    const publicRequest = table === "articles" ? enforcePublicArticlePolicy(request) : request;
     const safeSelection = publicReadSelections.get(table);
-    if (!safeSelection) return { request, actorUserId: null, publicAccess: true };
-    const url = new URL(request.url);
+    if (!safeSelection) return { request: publicRequest, actorUserId: null, publicAccess: true };
+    const url = new URL(publicRequest.url);
     url.searchParams.set("select", safeSelection);
-    return { request: new Request(url, request), actorUserId: null, publicAccess: true };
+    return { request: new Request(url, publicRequest), actorUserId: null, publicAccess: true };
   }
   if (publicWriteTables.has(table) && request.method === "POST") {
-    return { request: await sanitizePublicWriteRequest(table, request), actorUserId: null };
+    const trackingIdentity = bearerToken(request) && ["intent_events", "user_events"].includes(table)
+      ? await resolveIdentity(request)
+      : null;
+    return {
+      request: await sanitizePublicWriteRequest(table, request),
+      actorUserId: null,
+      siteScope: siteScopeForRequest(request),
+      trackingUserId: trackingIdentity?.id || null,
+    };
   }
 
   const identity = await resolveIdentity(request);
   if (!identity) throw new HttpError(401, "AUTH_REQUIRED", "A valid user session is required");
-  if (await isAdmin(identity.id)) return { request, actorUserId: null };
+  if (await isAdmin(identity.id)) return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: null, siteScope: siteScopeForRequest(request) };
   const ownerColumn = ownedTables.get(table);
   if (request.method === "DELETE" && !ownerColumn) {
     throw new HttpError(403, "ADMIN_REQUIRED", "Only an administrator can permanently delete website data");
@@ -185,7 +279,7 @@ async function authorizeRest(table, request) {
       identity.id,
     );
     if (contentRole.length && canContentEditorAccess(table, action)) {
-      return { request, actorUserId: identity.id, stageReview: action !== "view", forceDraft: action !== "view" };
+      return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: identity.id, stageReview: action !== "view", forceDraft: action !== "view" };
     }
     const permission = await prisma.$queryRawUnsafe(
       `SELECT \`can_publish\` FROM \`user_permissions\`
@@ -199,7 +293,7 @@ async function authorizeRest(table, request) {
     );
     if (!permission.length) throw new HttpError(403, "PERMISSION_DENIED", `You do not have ${action} permission for ${table}`);
     const requiresReview = !Boolean(permission[0]?.can_publish);
-    return { request, actorUserId: identity.id, stageReview: requiresReview, forceDraft: requiresReview };
+    return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: identity.id, stageReview: requiresReview, forceDraft: requiresReview };
   }
   if (request.method === "POST") {
     const input = await request.clone().json();
@@ -263,8 +357,25 @@ async function bootstrapPayload() {
   };
 }
 
+async function linkSavedLeadIntent(input, leadId, siteScope) {
+  if (!input.intent_visitor_id && !input.intent_session_id) return undefined;
+  try {
+    await linkIntentActivityToLead({
+      leadId,
+      visitorId: input.intent_visitor_id,
+      sessionId: input.intent_session_id,
+      siteScope,
+    });
+    return true;
+  } catch (error) {
+    console.warn("Saved lead intent linkage was rejected", error?.code || error?.message || error);
+    return false;
+  }
+}
+
 async function saveLead(request) {
-  const input = await request.json().catch(() => ({}));
+  const siteScope = siteScopeForRequest(request);
+  const input = await readRateLimitedPublicJson(request, "save-lead", SAVE_LEAD_MAX_BYTES);
   const phone = String(input.phone || "").replace(/\D/g, "").slice(-10);
   const email = String(input.email || "").trim().toLowerCase();
   if (!input.name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^[6-9]\d{9}$/.test(phone)) {
@@ -273,11 +384,25 @@ async function saveLead(request) {
   const phase = input.phase === "identity" ? "identity" : "complete";
   const otpVerified = Boolean(input.otp_verified)
     && verifyLeadOtpProof(input.otp_verification_token, `+91${phone}`);
+  const hasConsentAccepted = Object.hasOwn(input, "consent_terms_accepted");
+  const hasConsentText = Object.hasOwn(input, "consent_text");
+  const consentAccepted = input.consent_terms_accepted === true;
+  const consentText = input.consent_text === null || input.consent_text === undefined
+    ? null
+    : String(input.consent_text).slice(0, 20_000);
+  if (siteScope === "sarkari" && ((!input.lead_id && !consentAccepted) || (hasConsentAccepted && !consentAccepted))) {
+    throw new HttpError(400, "CONSENT_REQUIRED", "Accept the Privacy Policy and Terms before requesting Sarkari updates");
+  }
+  const consentAt = consentAccepted ? new Date() : null;
+  const consentUpdate = {
+    ...(hasConsentAccepted ? { consent_terms_accepted: consentAccepted, consent_at: consentAt } : {}),
+    ...(hasConsentText ? { consent_text: consentText } : {}),
+  };
   if (input.lead_id) {
     const leadId = String(input.lead_id);
     const result = await prisma.$transaction(async (tx) => {
       const updated = await tx.leads.updateMany({
-        where: { id: leadId, phone },
+        where: { id: leadId, phone, site_scope: siteScope },
         data: {
         ...(otpVerified ? { otp_verified: true } : {}),
         current_situation: input.current_situation ? String(input.current_situation) : null,
@@ -289,20 +414,23 @@ async function saveLead(request) {
         program_mode: input.program_mode ? String(input.program_mode) : "unknown",
         status: "new",
         updated_at: new Date(),
+        ...consentUpdate,
         },
       });
-      if (updated.count) await enqueueLeadAutomation(tx, leadId);
+      if (updated.count && siteScope === "dekhocampus") await enqueueLeadAutomation(tx, leadId);
       return updated;
     });
     if (!result.count) throw new HttpError(404, "LEAD_NOT_FOUND", "The saved lead could not be updated");
-    wakeLeadOutboxWorker();
-    return { success: true, lead_id: leadId, phase: "complete" };
+    const intentLinked = await linkSavedLeadIntent(input, leadId, siteScope);
+    if (siteScope === "dekhocampus") wakeLeadOutboxWorker();
+    return { success: true, lead_id: leadId, phase: "complete", site_scope: siteScope, ...(intentLinked === undefined ? {} : { intent_linked: intentLinked }) };
   }
-  const existingCount = await prisma.leads.count({ where: { OR: [{ phone }, { email }] } });
+  const existingCount = await prisma.leads.count({ where: { site_scope: siteScope, OR: [{ phone }, { email }] } });
   const lead = await prisma.$transaction(async (tx) => {
     const created = await tx.leads.create({
       data: {
       id: randomUUID(),
+      site_scope: siteScope,
       name: String(input.name).slice(0, 250),
       email: email.slice(0, 320),
       phone,
@@ -321,13 +449,17 @@ async function saveLead(request) {
       device_type: input.device_type ? String(input.device_type) : null,
       source_category: input.source_category ? String(input.source_category) : null,
       status: "new",
+      consent_terms_accepted: consentAccepted,
+      consent_text: consentText,
+      consent_at: consentAt,
       },
     });
-    if (phase === "complete") await enqueueLeadAutomation(tx, created.id);
+    if (phase === "complete" && siteScope === "dekhocampus") await enqueueLeadAutomation(tx, created.id);
     return created;
   });
-  if (phase === "complete") wakeLeadOutboxWorker();
-  return { success: true, lead_id: lead.id, phase, existing_count: existingCount };
+  const intentLinked = await linkSavedLeadIntent(input, lead.id, siteScope);
+  if (phase === "complete" && siteScope === "dekhocampus") wakeLeadOutboxWorker();
+  return { success: true, lead_id: lead.id, phase, existing_count: existingCount, site_scope: siteScope, ...(intentLinked === undefined ? {} : { intent_linked: intentLinked }) };
 }
 
 async function sharedTargetRoadmap(request) {
@@ -401,9 +533,13 @@ export async function handleRequest(request) {
     }
     const restMatch = url.pathname.match(/^\/v1\/rest\/([A-Za-z0-9_]+)$/);
     if (restMatch) {
-      const authorization = await authorizeRest(restMatch[1], request);
-      const result = await handleRest(restMatch[1], authorization.request, authorization);
-      return json(result.status, result.body, requestId, request, result.headers);
+      const table = restMatch[1];
+      const authorization = await authorizeRest(table, request);
+      const result = await handleRest(table, authorization.request, authorization);
+      const publicArticleCache = authorization.publicAccess && table === "articles" && result.status < 400
+        ? { "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600" }
+        : {};
+      return json(result.status, result.body, requestId, request, { ...result.headers, ...publicArticleCache });
     }
     const functionMatch = url.pathname.match(/^\/v1\/functions\/([A-Za-z0-9_-]+)$/);
     if (functionMatch) {
@@ -479,12 +615,28 @@ export async function handleRequest(request) {
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
         return json(200, await handleDataCleaner(request, identity.id), requestId, request, { "cache-control": "private, no-store" });
       }
+      if (["predict-lead-intent", "intent-export-csv", "summarize-user-session"].includes(functionMatch[1])) {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        if (functionMatch[1] === "predict-lead-intent") {
+          return json(200, await handlePredictLeadIntent(request), requestId, request, { "cache-control": "private, no-store" });
+        }
+        if (functionMatch[1] === "summarize-user-session") {
+          return json(200, await handleSummarizeUserSession(request), requestId, request, { "cache-control": "private, no-store" });
+        }
+        const exportResponse = await handleIntentExport(request, identity.id);
+        const headers = new Headers(exportResponse.headers);
+        Object.entries(corsHeaders(request)).forEach(([key, value]) => headers.set(key, value));
+        headers.set("x-request-id", requestId);
+        return new Response(exportResponse.body, { status: exportResponse.status, headers });
+      }
       return json(501, { code: "FUNCTION_NOT_MIGRATED", error: `Function ${functionMatch[1]} has no native Node handler` }, requestId, request);
     }
     return json(404, { error: "Route not found", requestId }, requestId, request);
   } catch (error) {
     const status = Number(error?.status || 400);
     if (status >= 500 || !error?.status) console.error(`[${requestId}]`, error);
-    return json(status, { code: error?.code || "NODE_API_ERROR", message: error instanceof Error ? error.message : "Request failed", requestId }, requestId, request);
+    const retryHeaders = error?.retryAfter ? { "retry-after": String(error.retryAfter) } : {};
+    return json(status, { code: error?.code || "NODE_API_ERROR", message: error instanceof Error ? error.message : "Request failed", requestId }, requestId, request, retryHeaders);
   }
 }

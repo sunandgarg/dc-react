@@ -23,6 +23,7 @@ export function LiveNewsStrip() {
       const { data } = await (backendClient as any)
         .from("articles")
         .select("id,slug,title")
+        .eq("site_scope", "dekhocampus")
         .eq("status", "Published")
         .eq("is_active", true)
         .order("created_at", { ascending: false })

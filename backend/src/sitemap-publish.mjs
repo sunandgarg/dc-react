@@ -367,7 +367,7 @@ async function dynamicEntries(prismaClient) {
     rows(prismaClient, "colleges", ["slug", "short_id", "updated_at", "state", "city", "type", "category", "image", "logo", "carousel_images", "gallery_images"]),
     rows(prismaClient, "courses", ["slug", "short_id", "updated_at", "category", "mode", "duration", "image"]),
     rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "image", "logo"]),
-    rows(prismaClient, "articles", ["slug", "updated_at", "tags", "featured_image"], true, " AND LOWER(TRIM(`status`)) = 'published'"),
+    rows(prismaClient, "articles", ["slug", "updated_at", "tags", "featured_image"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
     rows(prismaClient, "career_profiles", ["slug", "updated_at", "image"]),
     rows(prismaClient, "scholarships", ["slug", "updated_at", "image"]),
     rows(prismaClient, "landing_pages", ["slug", "updated_at", "logo_url", "og_image"]),
@@ -431,7 +431,7 @@ async function dynamicEntries(prismaClient) {
 }
 
 async function activeCount(table, prismaClient) {
-  const publishedOnly = table === "articles" ? " AND LOWER(TRIM(`status`)) = 'published'" : "";
+  const publishedOnly = table === "articles" ? " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'" : "";
   const result = await prismaClient.$queryRawUnsafe(`SELECT COUNT(*) AS \`count\` FROM \`${table}\` WHERE \`is_active\` = 1 AND \`slug\` IS NOT NULL${publishedOnly}`);
   return Number(result[0]?.count || 0);
 }

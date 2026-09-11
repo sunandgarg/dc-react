@@ -3,43 +3,49 @@ import { backendClient } from "@/integrations/backend/client";
 import { X, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 
 interface Props {
   table: "articles" | "colleges";
   detailPath: (slug: string) => string;
+  siteScope?: SiteScope;
 }
 
 /** Top-of-admin panel showing the current pinned items with one-click remove.
  *  Articles use 4 slots (1 big hero + 3 small) on /news.
  *  Colleges use 5 slots on listing pages.
  */
-export function FeaturedRankPanel({ table, detailPath }: Props) {
+export function FeaturedRankPanel({ table, detailPath, siteScope = DEFAULT_SITE_SCOPE }: Props) {
   const qc = useQueryClient();
   const maxSlots = table === "articles" ? 4 : 5;
   const slots = Array.from({ length: maxSlots }, (_, i) => i + 1);
 
   const { data = [], isLoading } = useQuery({
-    queryKey: ["featured-rank", table],
+    queryKey: ["featured-rank", table, siteScope],
     queryFn: async () => {
       const cols =
         table === "articles"
           ? "id,slug,title,featured_image,featured_rank"
           : "id,slug,name,image,featured_rank";
-      const { data } = await (backendClient as any)
+      let query = (backendClient as any)
         .from(table)
         .select(cols)
-        .not("featured_rank", "is", null)
-        .order("featured_rank", { ascending: true });
+        .not("featured_rank", "is", null);
+      if (table === "articles") query = query.eq("site_scope", siteScope);
+      const { data } = await query.order("featured_rank", { ascending: true });
       return data || [];
     },
   });
 
   const remove = async (id: string) => {
-    const { error } = await (backendClient as any).rpc("clear_featured_rank", { _table: table, _id: id });
+    const response = table === "articles"
+      ? await (backendClient as any).from(table).update({ featured_rank: null }).eq("id", id).eq("site_scope", siteScope)
+      : await (backendClient as any).rpc("clear_featured_rank", { _table: table, _id: id });
+    const { error } = response;
     if (error) { toast.error(error.message); return; }
     toast.success("Removed from featured");
-    qc.invalidateQueries({ queryKey: ["featured-rank", table] });
-    qc.invalidateQueries({ queryKey: ["news-articles"] });
+    qc.invalidateQueries({ queryKey: ["featured-rank", table, siteScope] });
+    qc.invalidateQueries({ queryKey: ["news-articles", siteScope] });
     qc.invalidateQueries({ queryKey: ["all-colleges"] });
   };
 
@@ -47,11 +53,15 @@ export function FeaturedRankPanel({ table, detailPath }: Props) {
 
   const heading =
     table === "articles"
-      ? `Pinned on News page (Top ${maxSlots})`
+      ? siteScope === "sarkari"
+        ? `Pinned on Sarkari homepage (Top ${maxSlots})`
+        : `Pinned on News page (Top ${maxSlots})`
       : `Featured (Top ${maxSlots} pinned)`;
   const sub =
     table === "articles"
-      ? "#1 is the big hero, #2-4 are the three small cards on /news. Click x to unpin."
+      ? siteScope === "sarkari"
+        ? "#1 is the big hero, #2-4 are the three supporting updates. Click x to unpin."
+        : "#1 is the big hero, #2-4 are the three small cards on /news. Click x to unpin."
       : "#1 is the big hero, #2-5 are the four small cards. Click x to unpin.";
 
   return (

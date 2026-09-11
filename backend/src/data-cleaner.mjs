@@ -14,8 +14,15 @@ const ENTITIES = {
   cat_universe: { table: "cat_universe_modules", name: "title" },
 };
 
-const SYSTEM_FIELDS = new Set(["id", "created_at", "updated_at", "data_clean_attempts", "data_clean_successes", "data_last_checked_at", "data_clean_state", "data_verified_at", "data_quality_score", "data_source_urls"]);
+const SYSTEM_FIELDS = new Set(["id", "site_scope", "created_at", "updated_at", "data_clean_attempts", "data_clean_successes", "data_last_checked_at", "data_clean_state", "data_verified_at", "data_quality_score", "data_source_urls"]);
+const ARTICLE_IDENTITY_FIELDS = new Set(["title", "slug"]);
 const terminal = new Set(["completed", "cancelled", "failed"]);
+
+export function isDataCleanerFieldEditable(table, field) {
+  return Boolean(schemaMetadata[table]?.fields[field])
+    && !SYSTEM_FIELDS.has(field)
+    && !(table === "articles" && ARTICLE_IDENTITY_FIELDS.has(field));
+}
 
 function normalizeDbValue(table, field, value) {
   const meta = schemaMetadata[table]?.fields[field];
@@ -28,7 +35,7 @@ function normalizeDbValue(table, field, value) {
 }
 
 async function applyProposedData(table, entityId, proposed, sourceUrls) {
-  const fields = Object.keys(proposed).filter((field) => !SYSTEM_FIELDS.has(field) && schemaMetadata[table]?.fields[field]);
+  const fields = Object.keys(proposed).filter((field) => isDataCleanerFieldEditable(table, field));
   if (fields.length) {
     const values = fields.map((field) => normalizeDbValue(table, field, proposed[field]));
     await prisma.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${fields.map((field) => `${quote(field)} = ?`).join(",")}, \`data_clean_successes\` = COALESCE(\`data_clean_successes\`,0) + 1, \`data_clean_state\` = 'cleaned', \`data_verified_at\` = ?, \`data_source_urls\` = ?, \`updated_at\` = ? WHERE \`id\` = ?`, ...values, new Date(), JSON.stringify(sourceUrls), new Date(), entityId);
@@ -41,11 +48,11 @@ async function processItem(job, entityType, row) {
   const before = { ...row };
   await prisma.data_cleaning_items.create({ data: { id: itemId, job_id: job.id, entity_type: entityType, entity_id: String(row.id), entity_slug: row.slug || null, entity_name: String(row[config.name] || row.slug || row.id), status: "processing", attempt: Number(row.data_clean_attempts || 0) + 1, source_urls: [], before_data: before, proposed_data: {}, changed_fields: [], warnings: [], started_at: new Date(), cleaning_pass: Number(row.data_clean_attempts || 0) + 1, previous_attempts: Number(row.data_clean_attempts || 0) } });
   try {
-    const editableFields = Object.entries(schemaMetadata[config.table].fields).filter(([name]) => !SYSTEM_FIELDS.has(name)).map(([name, meta]) => `${name}:${meta.type}${meta.nullable ? "?" : ""}`);
+    const editableFields = Object.entries(schemaMetadata[config.table].fields).filter(([name]) => isDataCleanerFieldEditable(config.table, name)).map(([name, meta]) => `${name}:${meta.type}${meta.nullable ? "?" : ""}`);
     const { result } = await generateGeminiJson(`Audit this ${entityType} record against its official website and authoritative regulator/government sources. Current record: ${JSON.stringify(before)}. Allowed fields: ${editableFields.join(", ")}. Return {proposed_data:{only confidently corrected fields},source_urls:[official URLs actually used],confidence:0..1,warnings:[...]}. Never use an aggregator as evidence. Never invent a value. Preserve existing values unless an official source proves a correction.`, "data-cleaner", { research: true });
     const proposed = result.proposed_data && typeof result.proposed_data === "object" ? result.proposed_data : {};
     const sourceUrls = Array.isArray(result.source_urls) ? result.source_urls.filter((url) => /^https?:\/\//i.test(String(url))).slice(0, 20) : [];
-    const changed = Object.keys(proposed).filter((field) => schemaMetadata[config.table]?.fields[field] && JSON.stringify(before[field]) !== JSON.stringify(proposed[field]));
+    const changed = Object.keys(proposed).filter((field) => isDataCleanerFieldEditable(config.table, field) && JSON.stringify(before[field]) !== JSON.stringify(proposed[field]));
     const confidence = Math.max(0, Math.min(1, Number(result.confidence || 0)));
     const safe = changed.length > 0 && sourceUrls.length > 0 && confidence >= 0.75;
     const autoApply = job.apply_mode === "auto" && safe;
@@ -78,7 +85,9 @@ async function processNextJob() {
       const config = ENTITIES[entityType];
       if (!config || processed >= maximum) continue;
       const remaining = maximum - processed;
-      const rows = await prisma.$queryRawUnsafe(`SELECT t.* FROM ${quote(config.table)} t LEFT JOIN \`data_cleaning_exclusions\` e ON e.\`entity_type\` = ? AND e.\`entity_id\` = t.\`id\` WHERE e.\`id\` IS NULL AND COALESCE(t.\`data_clean_state\`,'') <> 'awaiting_review' AND COALESCE(t.\`data_clean_attempts\`,0) = (SELECT MIN(COALESCE(candidate.\`data_clean_attempts\`,0)) FROM ${quote(config.table)} candidate WHERE COALESCE(candidate.\`data_clean_state\`,'') <> 'awaiting_review') ORDER BY t.\`updated_at\` ASC LIMIT ${remaining}`, entityType);
+      const articleScope = config.table === "articles" ? " AND t.`site_scope` = 'dekhocampus'" : "";
+      const candidateArticleScope = config.table === "articles" ? " AND candidate.`site_scope` = 'dekhocampus'" : "";
+      const rows = await prisma.$queryRawUnsafe(`SELECT t.* FROM ${quote(config.table)} t LEFT JOIN \`data_cleaning_exclusions\` e ON e.\`entity_type\` = ? AND e.\`entity_id\` = t.\`id\` WHERE e.\`id\` IS NULL${articleScope} AND COALESCE(t.\`data_clean_state\`,'') <> 'awaiting_review' AND COALESCE(t.\`data_clean_attempts\`,0) = (SELECT MIN(COALESCE(candidate.\`data_clean_attempts\`,0)) FROM ${quote(config.table)} candidate WHERE COALESCE(candidate.\`data_clean_state\`,'') <> 'awaiting_review'${candidateArticleScope}) ORDER BY t.\`updated_at\` ASC LIMIT ${remaining}`, entityType);
       for (const row of rows) {
         const state = await prisma.data_cleaning_jobs.findUnique({ where: { id: job.id }, select: { status: true } });
         if (!state || state.status === "paused" || state.status === "cancelled") return;

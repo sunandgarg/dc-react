@@ -21,6 +21,7 @@ const groups: NavGroup[] = [
     items: [
       { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
       { label: "All Leads", href: "/admin/leads", icon: Users, module: "leads" },
+      { label: "Sarkari Leads", href: "/admin/sarkari/leads", icon: Users, module: "leads" },
       { label: "Applications", href: "/admin/applications", icon: ClipboardList, module: "applications" },
       { label: "Lead Push", href: "/admin/lead-push", icon: Network },
       { label: "URL Short", href: "/admin/url-shortener", icon: Link2 },
@@ -57,6 +58,8 @@ const groups: NavGroup[] = [
       { label: "Exams", href: "/admin/exams", icon: FileText, module: "exams" },
       { label: "Clean Data", href: "/admin/clean-data", icon: DatabaseZap, module: "content" },
       { label: "Articles", href: "/admin/articles", icon: Newspaper, module: "articles" },
+      { label: "Sarkari Articles", href: "/admin/sarkari/articles", icon: Newspaper, module: "articles" },
+      { label: "Sarkari Job AI Studio", href: "/admin/sarkari/ai-studio", icon: Sparkles, module: "articles" },
       { label: "Content Review", href: "/admin/content-review", icon: GitCompareArrows },
       { label: "Article Tags", href: "/admin/tags", icon: Sparkles, module: "articles" },
       { label: "Article Categories", href: "/admin/article-categories", icon: Sparkles, module: "articles" },
@@ -150,7 +153,7 @@ const groups: NavGroup[] = [
 ];
 
 interface AdminLayoutProps { children: ReactNode; title: string; }
-const RESTRICTED_CONTENT_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles"]);
+const RESTRICTED_CONTENT_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles", "/admin/sarkari/articles", "/admin/sarkari/ai-studio"]);
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
   const location = useLocation();

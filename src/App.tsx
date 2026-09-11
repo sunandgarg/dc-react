@@ -374,6 +374,7 @@ const App = () => (
               <Route path="/admin/adsense" element={<ProtectedRoute module="ads"><AdminAdsense /></ProtectedRoute>} />
               <Route path="/admin/featured" element={<ProtectedRoute module="featured"><AdminFeatured /></ProtectedRoute>} />
               <Route path="/admin/leads" element={<ProtectedRoute module="leads"><AdminLeads /></ProtectedRoute>} />
+              <Route path="/admin/sarkari/leads" element={<ProtectedRoute module="leads"><AdminLeads siteScope="sarkari" /></ProtectedRoute>} />
               <Route path="/admin/lead-push" element={<ProtectedRoute requireAdmin><AdminLeadPushV2 /></ProtectedRoute>} />
               <Route path="/admin/lead-intelligence" element={<ProtectedRoute requireAdmin><AdminLeadIntelligence /></ProtectedRoute>} />
               <Route path="/admin/lead-intelligence/config" element={<ProtectedRoute requireAdmin><AdminIntentConfig /></ProtectedRoute>} />
@@ -387,6 +388,8 @@ const App = () => (
               <Route path="/admin/url-shortener" element={<ProtectedRoute requireAdmin><AdminUrlShortener /></ProtectedRoute>} />
               <Route path="/admin/url-shortener/:tab" element={<ProtectedRoute requireAdmin><AdminUrlShortener /></ProtectedRoute>} />
               <Route path="/admin/articles" element={<ProtectedRoute module="articles"><AdminArticles /></ProtectedRoute>} />
+              <Route path="/admin/sarkari/articles" element={<ProtectedRoute module="articles"><AdminArticles siteScope="sarkari" /></ProtectedRoute>} />
+              <Route path="/admin/sarkari/ai-studio" element={<ProtectedRoute module="articles"><AdminArticles siteScope="sarkari" studioMode /></ProtectedRoute>} />
               <Route path="/admin/content-review" element={<ProtectedRoute requireAdmin><AdminContentReview /></ProtectedRoute>} />
               <Route path="/admin/clean-data" element={<ProtectedRoute module="content"><AdminDataCleaner /></ProtectedRoute>} />
               <Route path="/admin/clean-data/preview/:itemId" element={<ProtectedRoute module="content"><AdminDataCleanerPreview /></ProtectedRoute>} />

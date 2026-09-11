@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Download, Upload, Users, TrendingUp, Phone, Mail, Calendar as CalendarIcon, MapPin, Star, Flame, ChevronRight, ChevronDown, ChevronLeft, ChevronsLeft, ChevronsRight, Layers, FileText, MessageCircle, ArrowUpDown, ArrowUp, ArrowDown, Filter, ShieldCheck, Zap, Trophy, GraduationCap, Copy, ExternalLink, GitMerge, CheckSquare, Square, X as XIcon, Tag, Trash2, Maximize2, Minimize2 } from "lucide-react";
-import { differenceInCalendarDays, format, subDays, isAfter } from "date-fns";
+import { differenceInCalendarDays, format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLeadMask } from "@/hooks/useLeadMask";
@@ -22,6 +22,17 @@ import { LeadFilterPresets } from "@/components/leads/LeadFilterPresets";
 import { Sparkles } from "lucide-react";
 import { leadConsentLabel } from "@/lib/leadConsent";
 import { groupLeadsByIdentity, type LeadIdentityGroup } from "@/lib/leadIdentity";
+import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
+import { downloadCSV, toCSV } from "@/lib/csv";
+import {
+  ADMIN_LEAD_BATCH_SIZE,
+  MAX_ADMIN_LEAD_BULK_ROWS,
+  MAX_ADMIN_LEAD_PAGE_SIZE,
+  applyAdminLeadFilters,
+  normalizeAdminLeadPageSize,
+  normalizeAdminLeadSort,
+  type AdminLeadFilters,
+} from "@/lib/adminLeadQuery";
 
 /** Compact labeled chip wrapper - CRM-style floating-label field. */
 function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
@@ -35,6 +46,27 @@ function FilterField({ label, children }: { label: string; children: React.React
 
 type LeadGroup = LeadIdentityGroup<any>;
 
+const LEAD_FACET_COLUMNS = "source,city,state,interested_college_slug,interested_course_slug,current_situation,source_category";
+const HISTORY_IDENTITY_LIMIT = 50;
+
+async function fetchPageIdentityHistory(siteScope: SiteScope, pageRows: any[]) {
+  const phones = Array.from(new Set(pageRows.map((lead) => String(lead.phone || "").trim()).filter((value) => value && value.length <= 64))).slice(0, HISTORY_IDENTITY_LIMIT);
+  const emails = Array.from(new Set(pageRows.map((lead) => String(lead.email || "").trim()).filter((value) => value && value.length <= 254))).slice(0, HISTORY_IDENTITY_LIMIT);
+  const requests: PromiseLike<any>[] = [];
+  if (phones.length) requests.push(backendClient.from("leads").select("*").eq("site_scope", siteScope).in("phone", phones).limit(1_000));
+  if (emails.length) requests.push(backendClient.from("leads").select("*").eq("site_scope", siteScope).in("email", emails).limit(1_000));
+  const results = await Promise.all(requests);
+  const rows: any[] = [];
+  let truncated = pageRows.length > HISTORY_IDENTITY_LIMIT;
+  results.forEach(({ data, error }) => {
+    if (error) throw error;
+    const chunk = (data || []) as any[];
+    if (chunk.length === 1_000) truncated = true;
+    rows.push(...chunk);
+  });
+  return { rows, truncated };
+}
+
 /**
  * AdminLeads - Interactive dashboard for managing inbound leads with:
  * - Top stat cards (total, today, this week, conversion-ready)
@@ -42,7 +74,10 @@ type LeadGroup = LeadIdentityGroup<any>;
  * - CSV export of the filtered set
  * - Color-coded source badges and quick contact actions
  */
-export default function AdminLeads() {
+interface AdminLeadsProps { siteScope?: SiteScope; }
+
+export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLeadsProps) {
+  const isSarkari = siteScope === "sarkari";
   const queryClient = useQueryClient();
   const { mask, maskPhone, maskEmail, maskName } = useLeadMask();
   const [search, setSearch] = useState("");
@@ -73,7 +108,10 @@ export default function AdminLeads() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showImport, setShowImport] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const [exportBusy, setExportBusy] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [dupOnly, setDupOnly] = useState(false);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!isFullscreen) return;
@@ -88,14 +126,16 @@ export default function AdminLeads() {
     setDeleteBusy(true);
     let deleteError: any = null;
     for (let index = 0; index < uniqueIds.length; index += 200) {
-      const { error } = await (backendClient as any).from("leads").delete().in("id", uniqueIds.slice(index, index + 200));
+      const { error } = await (backendClient as any).from("leads").delete().in("id", uniqueIds.slice(index, index + 200)).eq("site_scope", siteScope);
       if (error) { deleteError = error; break; }
     }
     setDeleteBusy(false);
     if (deleteError) return toast.error(deleteError.message);
     toast.success(`Deleted ${uniqueIds.length} lead submission${uniqueIds.length === 1 ? "" : "s"}`);
     setSelectedIds(new Set());
-    await queryClient.invalidateQueries({ queryKey: ["admin-leads"] });
+    await queryClient.invalidateQueries({ queryKey: ["admin-leads", siteScope] });
+    await queryClient.invalidateQueries({ queryKey: ["admin-lead-stats", siteScope] });
+    await queryClient.invalidateQueries({ queryKey: ["admin-lead-facets", siteScope] });
   };
 
 
@@ -127,28 +167,55 @@ export default function AdminLeads() {
     { key: "registered_at", label: "Date of Registration", defaultVisible: false },
     { key: "actions", label: "Actions", defaultVisible: true },
   ];
-  const STORAGE_KEY = "admin_leads_columns_v4"; // bump key so the Consent default column appears once
+  const STORAGE_KEY = `admin_leads_columns_v5:${siteScope}`;
+  const LEGACY_STORAGE_KEY = "admin_leads_columns_v4";
   const defaultOrder = ALL_COLUMNS.map((c) => c.key);
   const defaultVisible = Object.fromEntries(ALL_COLUMNS.map((c) => [c.key, c.defaultVisible !== false])) as Record<string, boolean>;
   const [columnOrder, setColumnOrder] = useState<string[]>(defaultOrder);
   const [columnVisible, setColumnVisible] = useState<Record<string, boolean>>(defaultVisible);
 
   useEffect(() => {
+    let nextOrder = defaultOrder;
+    let nextVisible = defaultVisible;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY)
+        || (siteScope === DEFAULT_SITE_SCOPE ? localStorage.getItem(LEGACY_STORAGE_KEY) : null);
       if (raw) {
         const parsed = JSON.parse(raw);
         // merge with defaults so new columns appear automatically
-        const order = Array.isArray(parsed.order)
+        nextOrder = Array.isArray(parsed.order)
           ? [...parsed.order.filter((k: string) => defaultOrder.includes(k)), ...defaultOrder.filter((k) => !parsed.order.includes(k))]
           : defaultOrder;
-        const vis = { ...defaultVisible, ...(parsed.visible || {}) };
-        setColumnOrder(order);
-        setColumnVisible(vis);
+        nextVisible = { ...defaultVisible, ...(parsed.visible || {}) };
       }
     } catch { /* ignore */ }
+    setColumnOrder(nextOrder);
+    setColumnVisible(nextVisible);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [STORAGE_KEY]);
+
+  useEffect(() => {
+    setSelectedIds(new Set());
+    setDetailLead(null);
+    setMergeRows(null);
+    setIntentLead(null);
+    setExpanded(new Set());
+    setSearch("");
+    setSourceFilter("all");
+    setCityFilter("all");
+    setStateFilter("all");
+    setCollegeFilter("all");
+    setCourseFilter("all");
+    setModeFilter("all");
+    setCategoryFilter("all");
+    setDeviceFilter("all");
+    setStatusFilter("all");
+    setRangeFilter("all");
+    setCustomFrom("");
+    setCustomTo("");
+    setDupOnly(false);
+    setPage(1);
+  }, [siteScope]);
 
   const persistColumns = (order: string[], visible: Record<string, boolean>) => {
     setColumnOrder(order);
@@ -162,38 +229,88 @@ export default function AdminLeads() {
   };
 
 
-  const { data: leads = [], isLoading } = useQuery({
-    queryKey: ["admin-leads"],
+  const leadFilters = useMemo<AdminLeadFilters>(() => ({
+    search: deferredSearch,
+    source: sourceFilter,
+    city: cityFilter,
+    state: stateFilter,
+    college: collegeFilter,
+    course: courseFilter,
+    mode: modeFilter,
+    category: categoryFilter,
+    device: deviceFilter,
+    status: statusFilter,
+    range: rangeFilter,
+    customFrom,
+    customTo,
+  }), [deferredSearch, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo]);
+  const effectivePageSize = normalizeAdminLeadPageSize(pageSize);
+  const serverSort = normalizeAdminLeadSort(sortBy);
+
+  const { data: leadPage, isLoading, isError: isLeadError, dataUpdatedAt } = useQuery({
+    queryKey: ["admin-leads", siteScope, leadFilters, serverSort, sortDir, page, effectivePageSize],
     queryFn: async () => {
-      const rows: any[] = [];
-      const batchSize = 1000;
-      for (let from = 0; ; from += batchSize) {
-        const { data, error } = await backendClient.from("leads").select("*").order("created_at", { ascending: false }).range(from, from + batchSize - 1);
-        if (error) throw error;
-        rows.push(...(data || []));
-        if (!data || data.length < batchSize) break;
-      }
-      return rows;
+      const from = (page - 1) * effectivePageSize;
+      let query = backendClient.from("leads").select("*", { count: "exact" });
+      query = applyAdminLeadFilters(query, siteScope, leadFilters);
+      const { data, error, count } = await query
+        .order(serverSort, { ascending: sortDir === "asc" })
+        .order("id", { ascending: sortDir === "asc" })
+        .range(from, from + effectivePageSize - 1);
+      if (error) throw error;
+
+      const pageRows = (data || []) as any[];
+      const history = await fetchPageIdentityHistory(siteScope, pageRows);
+      const byId = new Map<string, any>();
+      [...pageRows, ...history.rows].forEach((lead) => { if (lead?.id) byId.set(lead.id, lead); });
+      const mergedRows = Array.from(byId.values());
+      const pageIds = new Set(pageRows.map((lead) => lead.id));
+      const pageOrder = new Map(pageRows.map((lead, index) => [lead.id, index]));
+      const groups = groupLeadsByIdentity(mergedRows)
+        .filter((group) => group.instances.some((lead) => pageIds.has(lead.id)))
+        .sort((left, right) => {
+          const leftIndex = Math.min(...left.instances.filter((lead) => pageIds.has(lead.id)).map((lead) => pageOrder.get(lead.id) ?? Number.MAX_SAFE_INTEGER));
+          const rightIndex = Math.min(...right.instances.filter((lead) => pageIds.has(lead.id)).map((lead) => pageOrder.get(lead.id) ?? Number.MAX_SAFE_INTEGER));
+          return leftIndex - rightIndex;
+        });
+      return { rows: mergedRows, groups, count: count ?? pageRows.length, historyTruncated: history.truncated };
     },
     staleTime: 30_000,
     refetchInterval: 60_000,
     refetchOnWindowFocus: false,
   });
 
-  const sources = useMemo(() => Array.from(new Set(leads.map(l => l.source).filter(Boolean))), [leads]);
-  const cities = useMemo(() => Array.from(new Set(leads.map(l => l.city).filter(Boolean))), [leads]);
-  const states = useMemo(() => Array.from(new Set(leads.map((l: any) => l.state).filter(Boolean))) as string[], [leads]);
-  const collegeSlugs = useMemo(() => Array.from(new Set(leads.map((l: any) => l.interested_college_slug).filter(Boolean))) as string[], [leads]);
-  const categories = useMemo(() => Array.from(new Set(leads.map((l: any) => l.source_category).filter(Boolean))) as string[], [leads]);
-  const courseInterests = useMemo(() => Array.from(new Set(leads.flatMap((lead: any) => [lead.interested_course_slug, lead.current_situation]).filter(Boolean))) as string[], [leads]);
-
-  const allLeadGroups = useMemo<LeadGroup[]>(() => groupLeadsByIdentity(leads as any[]), [leads]);
-  const identityKeyById = useMemo(() => new Map(allLeadGroups.flatMap((group) => group.instances.map((lead) => [lead.id, group.key]))), [allLeadGroups]);
-  const dupKey = useCallback((lead: any) => identityKeyById.get(lead.id) || `id:${lead.id}`, [identityKeyById]);
-  const dupCounts = useMemo(() => new Map(allLeadGroups.map((group) => [group.key, group.instances.length])), [allLeadGroups]);
-  const [dupOnly, setDupOnly] = useState(false);
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const leads = useMemo(() => leadPage?.rows || [], [leadPage?.rows]);
+  const allLeadGroups = useMemo(() => (leadPage?.groups || []) as LeadGroup[], [leadPage?.groups]);
+  const filteredLeadGroups = useMemo(
+    () => dupOnly ? allLeadGroups.filter((group) => group.instances.length > 1) : allLeadGroups,
+    [allLeadGroups, dupOnly],
+  );
+  const filteredSubmissionCount = leadPage?.count || 0;
   const dupTotal = useMemo(() => allLeadGroups.filter((group) => group.instances.length > 1).length, [allLeadGroups]);
+  const selectedPersonCount = useMemo(() => allLeadGroups.filter((group) => group.instances.some((lead) => selectedIds.has(lead.id))).length, [allLeadGroups, selectedIds]);
+
+  const { data: facetRows = [] } = useQuery({
+    queryKey: ["admin-lead-facets", siteScope],
+    queryFn: async () => {
+      const { data, error } = await backendClient.from("leads").select(LEAD_FACET_COLUMNS).eq("site_scope", siteScope).order("created_at", { ascending: false }).limit(1_000);
+      if (error) throw error;
+      return (data || []) as any[];
+    },
+    staleTime: 10 * 60_000,
+    refetchOnWindowFocus: false,
+  });
+
+  const facetValues = useCallback((values: unknown[], current: string) => Array.from(new Set([
+    ...(current !== "all" ? [current] : []),
+    ...values.map((value) => String(value || "").trim()).filter(Boolean),
+  ])).sort((left, right) => left.localeCompare(right)), []);
+  const sources = useMemo(() => facetValues(facetRows.map((lead: any) => lead.source), sourceFilter), [facetRows, sourceFilter, facetValues]);
+  const cities = useMemo(() => facetValues(facetRows.map((lead: any) => lead.city), cityFilter), [facetRows, cityFilter, facetValues]);
+  const states = useMemo(() => facetValues(facetRows.map((lead: any) => lead.state), stateFilter), [facetRows, stateFilter, facetValues]);
+  const collegeSlugs = useMemo(() => facetValues(facetRows.map((lead: any) => lead.interested_college_slug), collegeFilter), [facetRows, collegeFilter, facetValues]);
+  const categories = useMemo(() => facetValues(facetRows.map((lead: any) => lead.source_category), categoryFilter), [facetRows, categoryFilter, facetValues]);
+  const courseInterests = useMemo(() => facetValues(facetRows.flatMap((lead: any) => [lead.interested_course_slug, lead.current_situation]), courseFilter), [facetRows, courseFilter, facetValues]);
 
   // Tier color by repeat count (2 → 10+)
   const dupTier = (n: number) => {
@@ -207,105 +324,114 @@ export default function AdminLeads() {
     return { ring: "ring-purple-500", bg: "bg-purple-50", chip: "bg-purple-100 text-purple-800 border-purple-500", label: `${n}× 🔥 Top Lead` };
   };
 
-  const filtered = useMemo(() => {
-    const now = new Date();
-    return leads.filter((l: any) => {
-      if (deferredSearch) {
-        const q = deferredSearch.toLowerCase();
-        const hit = l.name?.toLowerCase().includes(q) || l.phone?.includes(q) || l.email?.toLowerCase().includes(q) || l.city?.toLowerCase().includes(q) || l.source?.toLowerCase().includes(q);
-        if (!hit) return false;
-      }
-      if (sourceFilter !== "all" && l.source !== sourceFilter) return false;
-      if (cityFilter !== "all" && l.city !== cityFilter) return false;
-      if (stateFilter !== "all" && (l as any).state !== stateFilter) return false;
-      if (collegeFilter !== "all" && l.interested_college_slug !== collegeFilter) return false;
-      if (courseFilter !== "all") {
-        const courseText = [l.interested_course_slug, l.current_situation, l.initial_query].filter(Boolean).join(" ").toLowerCase();
-        if (!courseText.includes(courseFilter.toLowerCase())) return false;
-      }
-      if (modeFilter !== "all" && (l.program_mode || "regular") !== modeFilter) return false;
-      if (categoryFilter !== "all" && (l.source_category || "") !== categoryFilter) return false;
-      if (deviceFilter !== "all" && (l.device_type || "") !== deviceFilter) return false;
-      if (statusFilter !== "all" && (l.status || "new") !== statusFilter) return false;
-      if (rangeFilter !== "all") {
-        const d = l.created_at ? new Date(l.created_at) : null;
-        if (!d) return false;
-        if (rangeFilter === "custom") {
-          if (customFrom && d < new Date(customFrom)) return false;
-          if (customTo && d > new Date(customTo + "T23:59:59")) return false;
-        } else {
-          const days = rangeFilter === "1d" ? 1 : rangeFilter === "2d" ? 2 : rangeFilter === "7d" ? 7 : rangeFilter === "15d" ? 15 : 30;
-          if (!isAfter(d, subDays(now, days))) return false;
-        }
-      }
-      if (dupOnly) {
-        const k = dupKey(l);
-        if (!k || (dupCounts.get(k) || 0) < 2) return false;
-      }
-      return true;
-    });
-  }, [leads, deferredSearch, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, dupCounts, dupKey]);
-
   // Reset to page 1 whenever filters change
   useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, sortBy, sortDir, pageSize]);
 
-  const filteredLeadGroups = useMemo<LeadGroup[]>(() => {
-    const matchingIds = new Set(filtered.map((lead: any) => lead.id));
-    const groups = allLeadGroups.filter((group) => group.instances.some((lead) => matchingIds.has(lead.id)));
-    groups.sort((a, b) => {
-      const av = a.primary?.[sortBy]; const bv = b.primary?.[sortBy];
-      if (av == null && bv == null) return 0;
-      if (av == null) return 1;
-      if (bv == null) return -1;
-      if (sortBy === "created_at") {
-        return (new Date(av).getTime() - new Date(bv).getTime()) * (sortDir === "asc" ? 1 : -1);
-      }
-      return String(av).localeCompare(String(bv)) * (sortDir === "asc" ? 1 : -1);
-    });
-    return groups;
-  }, [allLeadGroups, filtered, sortBy, sortDir]);
-  const filteredSubmissionIds = useMemo(() => filteredLeadGroups.flatMap((group) => group.instances.map((lead) => lead.id)), [filteredLeadGroups]);
-  const selectedPersonCount = useMemo(() => allLeadGroups.filter((group) => group.instances.some((lead) => selectedIds.has(lead.id))).length, [allLeadGroups, selectedIds]);
+  useEffect(() => { setSelectedIds(new Set()); setExpanded(new Set()); }, [page]);
+  useEffect(() => {
+    const totalPages = Math.max(1, Math.ceil(filteredSubmissionCount / effectivePageSize));
+    if (page > totalPages) setPage(totalPages);
+  }, [effectivePageSize, filteredSubmissionCount, page]);
 
+  const { data: stats = { total: 0, today: 0, week: 0, withPhone: 0, verified: 0, verifiedPct: 0, complete: 0, highIntent: 0, avgPerDay: 0, dayDelta: 0 } } = useQuery({
+    queryKey: ["admin-lead-stats", siteScope],
+    queryFn: async () => {
+      const count = async (configure?: (query: any) => any) => {
+        let query: any = backendClient.from("leads").select("id", { count: "exact", head: true }).eq("site_scope", siteScope);
+        if (configure) query = configure(query);
+        const result = await query;
+        if (result.error) throw result.error;
+        return result.count || 0;
+      };
+      const now = Date.now();
+      const dayAgo = new Date(now - 86_400_000).toISOString();
+      const twoDaysAgo = new Date(now - 2 * 86_400_000).toISOString();
+      const weekAgo = new Date(now - 7 * 86_400_000).toISOString();
+      const [total, today, yesterday, week, withPhone, verified, complete, highIntent] = await Promise.all([
+        count(),
+        count((query) => query.gte("created_at", dayAgo)),
+        count((query) => query.gte("created_at", twoDaysAgo).lt("created_at", dayAgo)),
+        count((query) => query.gte("created_at", weekAgo)),
+        count((query) => query.not("phone", "is", null)),
+        count((query) => query.eq("otp_verified", true)),
+        count((query) => query.not("state", "is", null).not("city", "is", null).not("current_situation", "is", null)),
+        count((query) => query.or("source.ilike.*apply*,source.ilike.*brochure*,source.ilike.*callback*,source.ilike.*counsell*,cta.ilike.*apply*,cta.ilike.*brochure*,cta.ilike.*callback*,cta.ilike.*counsell*")),
+      ]);
+      const verifiedPct = total ? Math.round((verified / total) * 100) : 0;
+      const avgPerDay = Math.round(week / 7);
+      const dayDelta = yesterday > 0 ? Math.round(((today - yesterday) / yesterday) * 100) : (today > 0 ? 100 : 0);
+      return { total, today, week, withPhone, verified, verifiedPct, complete, highIntent, avgPerDay, dayDelta };
+    },
+    staleTime: 5 * 60_000,
+    refetchInterval: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
 
-  // Stats
-  const stats = useMemo(() => {
-    const now = new Date();
-    const latestLeads = allLeadGroups.map((group) => group.primary);
-    const today = latestLeads.filter((l: any) => l.created_at && isAfter(new Date(l.created_at), subDays(now, 1))).length;
-    const week = latestLeads.filter((l: any) => l.created_at && isAfter(new Date(l.created_at), subDays(now, 7))).length;
-    const yesterday = latestLeads.filter((l: any) => {
-      if (!l.created_at) return false;
-      const d = new Date(l.created_at);
-      return isAfter(d, subDays(now, 2)) && !isAfter(d, subDays(now, 1));
-    }).length;
-    const withPhone = allLeadGroups.filter((group) => group.instances.some((lead) => lead.phone)).length;
-    const verified = allLeadGroups.filter((group) => group.instances.some((lead) => lead.otp_verified)).length;
-    const online = latestLeads.filter((l: any) => (l.program_mode || "regular") === "online").length;
-    const complete = latestLeads.filter((l: any) => l.phase === "complete" || (l.state && l.city && l.current_situation)).length;
-    const highIntent = latestLeads.filter((l: any) => /apply|brochure|callback|counsell/i.test(`${l.source || ""} ${l.cta || ""}`)).length;
-    const verifiedPct = allLeadGroups.length ? Math.round((verified / allLeadGroups.length) * 100) : 0;
-    const avgPerDay = Math.round(week / 7);
-    const dayDelta = yesterday > 0 ? Math.round(((today - yesterday) / yesterday) * 100) : (today > 0 ? 100 : 0);
-    return { total: allLeadGroups.length, today, week, withPhone, verified, verifiedPct, online, complete, highIntent, avgPerDay, dayDelta };
-  }, [allLeadGroups]);
+  const fetchFilteredRows = useCallback(async (columns: string) => {
+    if (filteredSubmissionCount > MAX_ADMIN_LEAD_BULK_ROWS) {
+      throw new Error(`This action is limited to ${MAX_ADMIN_LEAD_BULK_ROWS.toLocaleString()} submissions. Narrow the filters first.`);
+    }
+    const rows: any[] = [];
+    for (let from = 0; from < MAX_ADMIN_LEAD_BULK_ROWS; from += ADMIN_LEAD_BATCH_SIZE) {
+      let query = backendClient.from("leads").select(columns);
+      query = applyAdminLeadFilters(query, siteScope, leadFilters);
+      const { data, error } = await query
+        .order(serverSort, { ascending: sortDir === "asc" })
+        .order("id", { ascending: sortDir === "asc" })
+        .range(from, from + ADMIN_LEAD_BATCH_SIZE - 1);
+      if (error) throw error;
+      const chunk = (data || []) as any[];
+      rows.push(...chunk);
+      if (chunk.length < ADMIN_LEAD_BATCH_SIZE) break;
+    }
+    if (rows.length >= MAX_ADMIN_LEAD_BULK_ROWS && filteredSubmissionCount > rows.length) {
+      throw new Error(`This action is limited to ${MAX_ADMIN_LEAD_BULK_ROWS.toLocaleString()} submissions. Narrow the filters first.`);
+    }
+    return rows;
+  }, [filteredSubmissionCount, leadFilters, serverSort, siteScope, sortDir]);
 
-  // Top sources & cities
-  const topSources = useMemo(() => {
-    const map = new Map<string, number>();
-    allLeadGroups.forEach(({ primary: l }) => map.set(l.source || "unknown", (map.get(l.source || "unknown") || 0) + 1));
-    return Array.from(map.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  }, [allLeadGroups]);
+  const exportCSV = async () => {
+    setExportBusy(true);
+    try {
+      const exported = await fetchFilteredRows("*");
+      const groups = groupLeadsByIdentity(exported).filter((group) => !dupOnly || group.instances.length > 1);
+      const columns = ["Name", "Phone", "Email", "City", "State", "Source", "Mode", "OTP Verified", "Consent", "Query", "Latest Created", "Submission Count"];
+      const rows = groups.map(({ primary: lead, instances }) => ({
+        Name: lead.name,
+        Phone: lead.phone,
+        Email: lead.email,
+        City: lead.city,
+        State: lead.state,
+        Source: lead.source,
+        Mode: lead.program_mode || "regular",
+        "OTP Verified": lead.otp_verified ? "Yes" : "No",
+        Consent: leadConsentLabel(lead),
+        Query: lead.initial_query || "",
+        "Latest Created": lead.created_at,
+        "Submission Count": instances.length,
+      }));
+      downloadCSV(`${siteScope}-leads-${Date.now()}.csv`, toCSV(rows, columns));
+      toast.success(`Exported ${rows.length.toLocaleString()} lead${rows.length === 1 ? "" : "s"}`);
+    } catch (error: any) {
+      toast.error(error?.message || "Lead export failed");
+    } finally {
+      setExportBusy(false);
+    }
+  };
 
-  const exportCSV = () => {
-    const headers = ["Name", "Phone", "Email", "City", "State", "Source", "Mode", "OTP Verified", "Consent", "Query", "Latest Created", "Submission Count"];
-    const rows = filteredLeadGroups.map(({ primary: l, instances }) => [l.name, l.phone, l.email, l.city, l.state, l.source, (l.program_mode || "regular"), l.otp_verified ? "Yes" : "No", leadConsentLabel(l), (l.initial_query || "").replace(/[\r\n,]+/g, " "), l.created_at, instances.length]);
-    const csv = [headers, ...rows].map(r => r.map(v => `"${(v ?? "").toString().replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `leads-${Date.now()}.csv`; a.click();
-    URL.revokeObjectURL(url);
+  const deleteAllFiltered = async () => {
+    setDeleteBusy(true);
+    try {
+      const matchingRows = await fetchFilteredRows("id,phone,email,created_at");
+      const ids = dupOnly
+        ? groupLeadsByIdentity(matchingRows).filter((group) => group.instances.length > 1).flatMap((group) => group.instances.map((lead) => lead.id))
+        : matchingRows.map((lead) => lead.id);
+      setDeleteBusy(false);
+      await deleteLeads(ids, `${dupOnly ? "repeated " : "filtered "}lead submissions`);
+    } catch (error: any) {
+      setDeleteBusy(false);
+      toast.error(error?.message || "Could not load filtered leads for deletion");
+    }
   };
 
   const sourceColor = (s: string) => {
@@ -332,15 +458,16 @@ export default function AdminLeads() {
     dupOnly,
   ].filter(Boolean).length;
 
-  const lastSync = leads[0]?.created_at ? new Date(leads[0].created_at) : new Date();
+  const lastSync = dataUpdatedAt ? new Date(dataUpdatedAt) : new Date();
 
   return (
-    <AdminLayout title="Lead Manager">
+    <AdminLayout title={isSarkari ? "Sarkari Leads" : "Lead Manager"}>
       <div className={isFullscreen ? "fixed inset-0 z-[100] overflow-auto bg-background p-4 md:p-6" : ""}>
+      {isSarkari && <div className="mb-4 rounded-2xl border border-orange-200 bg-orange-50/80 p-4 text-sm text-orange-950"><p className="font-bold">Sarkari leads workspace</p><p className="mt-1 text-xs text-orange-800">This dashboard is isolated to <code>site_scope=sarkari</code>. DekhoCampus enquiries are not included in counts, exports or actions.</p></div>}
       {/* ─── Header: title · Quick View · last sync · tools ─── */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex flex-wrap items-center gap-4">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Lead Manager</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{isSarkari ? "Sarkari Lead Manager" : "Lead Manager"}</h1>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-muted-foreground">Quick View :</span>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
@@ -376,6 +503,7 @@ export default function AdminLeads() {
             onReset={resetColumns}
           />
           <LeadFilterPresets
+            siteScope={siteScope}
             current={{ search, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly }}
             onApply={(f: any) => {
               setSearch(f.search ?? ""); setSourceFilter(f.sourceFilter ?? "all"); setCityFilter(f.cityFilter ?? "all"); setStateFilter(f.stateFilter ?? "all");
@@ -387,8 +515,8 @@ export default function AdminLeads() {
           <Button onClick={() => setShowImport((v) => !v)} variant="outline" size="sm" className="rounded-lg gap-1.5 h-9">
             <Upload className="w-3.5 h-3.5" /> Import
           </Button>
-          <Button onClick={exportCSV} variant="outline" size="sm" className="rounded-lg gap-1.5 h-9">
-            <Download className="w-3.5 h-3.5" /> Export
+          <Button onClick={() => void exportCSV()} disabled={exportBusy || isLoading} variant="outline" size="sm" className="rounded-lg gap-1.5 h-9">
+            <Download className="w-3.5 h-3.5" /> {exportBusy ? "Exporting…" : "Export"}
           </Button>
           <Button onClick={() => setIsFullscreen((value) => !value)} variant="outline" size="icon" className="h-9 w-9 rounded-lg" title={isFullscreen ? "Exit full page (Esc)" : "Open full page"}>
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -542,7 +670,7 @@ export default function AdminLeads() {
             {[
               { id: "today", label: "Today", active: rangeFilter === "1d", apply: () => setRangeFilter(rangeFilter === "1d" ? "all" : "1d") },
               { id: "7d", label: "Last 7d", active: rangeFilter === "7d", apply: () => setRangeFilter(rangeFilter === "7d" ? "all" : "7d") },
-              { id: "repeat", label: `Repeat (${dupTotal})`, active: dupOnly, apply: () => setDupOnly((v) => !v) },
+              { id: "repeat", label: `Repeat on page (${dupTotal})`, active: dupOnly, apply: () => setDupOnly((v) => !v) },
               { id: "online", label: "Online", active: modeFilter === "online", apply: () => setModeFilter(modeFilter === "online" ? "all" : "online") },
             ].map((c) => (
               <button
@@ -563,7 +691,7 @@ export default function AdminLeads() {
             )}
           </div>
           <p className="text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">{filteredLeadGroups.length.toLocaleString()}</span> of {allLeadGroups.length.toLocaleString()} unique leads
+            <span className="font-semibold text-foreground">{filteredSubmissionCount.toLocaleString()}</span> matching submissions
             <span className="mx-2 text-border">·</span>
             <span className="font-semibold text-emerald-600">{stats.today}</span> last 24h
             <span className="mx-2 text-border">·</span>
@@ -583,7 +711,7 @@ export default function AdminLeads() {
           { label: "With Phone", value: stats.withPhone, icon: Phone, color: "text-orange-600", bg: "bg-orange-500/10" },
           { label: "Verified", value: stats.verified, icon: ShieldCheck, color: "text-emerald-700", bg: "bg-emerald-500/10", sub: `${stats.verifiedPct}%` },
           { label: "Avg/Day", value: stats.avgPerDay, icon: Zap, color: "text-blue-600", bg: "bg-blue-500/10" },
-          { label: "Repeat", value: dupTotal, icon: Flame, color: "text-rose-600", bg: "bg-rose-500/10", onClick: () => setDupOnly((v) => !v), active: dupOnly },
+          { label: "Repeat page", value: dupTotal, icon: Flame, color: "text-rose-600", bg: "bg-rose-500/10", onClick: () => setDupOnly((v) => !v), active: dupOnly },
           { label: "Complete", value: stats.complete, icon: CheckSquare, color: "text-teal-700", bg: "bg-teal-500/10" },
           { label: "High intent", value: stats.highIntent, icon: Trophy, color: "text-amber-700", bg: "bg-amber-500/10" },
         ].map((s: any) => (
@@ -605,20 +733,23 @@ export default function AdminLeads() {
         ))}
       </div>
 
-      <details className="mb-3">
+      <details className="mb-3" open={showImport} onToggle={(event) => setShowImport(event.currentTarget.open)}>
         <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground inline-flex items-center gap-1">
           <ChevronRight className="w-3 h-3" /> Bulk CSV import / export
         </summary>
-        <div className="mt-2"><CSVTools table="leads" filename="leads.csv" columns="*" upsertKey="id" /></div>
+        <div className="mt-2"><CSVTools table="leads" filename={`${siteScope}-leads.csv`} columns="*" upsertKey="id" scope={{ column: "site_scope", value: siteScope }} /></div>
       </details>
 
       <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border bg-card p-2.5">
         <span className="text-xs text-muted-foreground">{selectedPersonCount} people · {selectedIds.size} submissions selected</span>
+        <Button size="sm" variant="outline" disabled={selectedIds.size < 2} onClick={() => setMergeRows(leads.filter((lead: any) => selectedIds.has(lead.id)))} className="gap-1.5"><GitMerge className="h-3.5 w-3.5" /> Merge selected</Button>
         <Button size="sm" variant="destructive" disabled={deleteBusy || !selectedIds.size} onClick={() => deleteLeads(Array.from(selectedIds), `${selectedPersonCount} selected lead${selectedPersonCount === 1 ? "" : "s"}`)} className="gap-1.5"><Trash2 className="h-3.5 w-3.5" /> Delete selected</Button>
-        <Button size="sm" variant="outline" disabled={deleteBusy || !filteredLeadGroups.length} onClick={() => deleteLeads(filteredSubmissionIds, `${filteredLeadGroups.length} filtered lead${filteredLeadGroups.length === 1 ? "" : "s"}`)} className="gap-1.5 text-destructive"><Trash2 className="h-3.5 w-3.5" /> Delete all filtered ({filteredLeadGroups.length})</Button>
+        <Button size="sm" variant="outline" disabled={deleteBusy || !filteredSubmissionCount} onClick={() => void deleteAllFiltered()} className="gap-1.5 text-destructive"><Trash2 className="h-3.5 w-3.5" /> Delete {dupOnly ? "repeats" : "all filtered"} ({dupOnly ? dupTotal : filteredSubmissionCount.toLocaleString()})</Button>
       </div>
 
-      {isLoading ? (
+      {isLeadError ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-8 text-center text-sm text-destructive">Could not load this lead workspace. No data from another site scope is shown.</div>
+      ) : isLoading ? (
         <div className="text-center py-8 text-muted-foreground">Loading leads...</div>
       ) : (
         <div className="bg-card rounded-xl border border-border overflow-hidden">
@@ -763,10 +894,7 @@ export default function AdminLeads() {
                     return next;
                   });
                 };
-                const effectivePageSize = pageSize === -1 ? Math.max(1, rows.length) : pageSize;
-                const totalPages = Math.max(1, Math.ceil(rows.length / effectivePageSize));
-                const safePage = Math.min(page, totalPages);
-                const visibleRows = rows.slice((safePage - 1) * effectivePageSize, safePage * effectivePageSize);
+                const visibleRows = rows;
                 const visibleIds = visibleRows.flatMap((row) => row.instances.map((lead) => lead.id));
                 const allOnPageSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
                 const toggleAllOnPage = () => {
@@ -889,20 +1017,21 @@ export default function AdminLeads() {
             </table>
           </div>
           {filteredLeadGroups.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">No leads match your filters.</div>
+            <div className="text-center py-8 text-muted-foreground">{dupOnly ? "No repeated identities were found on this loaded page." : "No leads match your filters."}</div>
           )}
 
           {/* Bottom bar - true pagination */}
           {(() => {
-            const effectivePageSize = pageSize === -1 ? Math.max(1, filteredLeadGroups.length) : pageSize;
-            const totalPages = Math.max(1, Math.ceil(filteredLeadGroups.length / effectivePageSize));
+            const totalPages = Math.max(1, Math.ceil(filteredSubmissionCount / effectivePageSize));
             const safePage = Math.min(page, totalPages);
-            const start = filteredLeadGroups.length === 0 ? 0 : (safePage - 1) * effectivePageSize + 1;
-            const end = Math.min(safePage * effectivePageSize, filteredLeadGroups.length);
+            const start = filteredSubmissionCount === 0 ? 0 : (safePage - 1) * effectivePageSize + 1;
+            const end = Math.min(safePage * effectivePageSize, filteredSubmissionCount);
             return (
               <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-border bg-muted/30">
                 <div className="text-xs text-muted-foreground">
-                  Showing <span className="font-semibold text-foreground">{start}-{end}</span> of <span className="font-semibold text-foreground">{filteredLeadGroups.length.toLocaleString()}</span> unique leads
+                  Showing submissions <span className="font-semibold text-foreground">{start}-{end}</span> of <span className="font-semibold text-foreground">{filteredSubmissionCount.toLocaleString()}</span>
+                  {dupOnly ? <span className="ml-1">· repeat filter is evaluated on this loaded page</span> : null}
+                  {leadPage?.historyTruncated ? <span className="ml-1">· some long histories are collapsed</span> : null}
                 </div>
                 <div className="flex items-center gap-1">
                   <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setPage(1)} disabled={safePage <= 1}><ChevronsLeft className="w-3.5 h-3.5" /></Button>
@@ -916,11 +1045,9 @@ export default function AdminLeads() {
             <div className="flex items-center gap-2 ml-auto">
               <span className="text-xs text-muted-foreground">Show Rows</span>
               <Select
-                value={pageSize === -1 ? "all" : [10, 20, 50, 100].includes(pageSize) ? String(pageSize) : "custom"}
+                value={[10, 20, 50, 100, 200].includes(pageSize) ? String(pageSize) : "custom"}
                 onValueChange={(v) => {
-                  if (v === "all") {
-                    setPageSize(-1); setCustomSize(""); setPage(1);
-                  } else if (v === "custom") {
+                  if (v === "custom") {
                     setCustomSize(String(pageSize));
                   } else {
                     setPageSize(Number(v));
@@ -934,19 +1061,19 @@ export default function AdminLeads() {
                   <SelectItem value="20">20</SelectItem>
                   <SelectItem value="50">50</SelectItem>
                   <SelectItem value="100">100</SelectItem>
+                  <SelectItem value="200">200</SelectItem>
                   <SelectItem value="custom">Custom…</SelectItem>
-                  <SelectItem value="all">All rows</SelectItem>
                 </SelectContent>
               </Select>
-              {pageSize !== -1 && (![10, 20, 50, 100].includes(pageSize) || customSize !== "") ? (
+              {(![10, 20, 50, 100, 200].includes(pageSize) || customSize !== "") ? (
                 <Input
                   type="number"
                   min={1}
-                  max={10000}
+                  max={MAX_ADMIN_LEAD_PAGE_SIZE}
                   value={customSize || pageSize}
                   onChange={(e) => {
                     setCustomSize(e.target.value);
-                    const n = Math.max(1, Math.min(10000, Number(e.target.value) || 1));
+                    const n = normalizeAdminLeadPageSize(Number(e.target.value) || 1);
                     setPageSize(n);
                   }}
                   className="h-8 w-[90px] rounded-lg text-xs"
@@ -963,10 +1090,11 @@ export default function AdminLeads() {
         leadId={intentLead?.id ?? null}
         leadName={intentLead?.name}
         leadPhone={intentLead?.phone}
+        siteScope={siteScope}
         onClose={() => setIntentLead(null)}
       />
-      <LeadDetailDrawer lead={detailLead} onClose={() => setDetailLead(null)} onChanged={() => { /* react-query will refetch on next tick */ }} />
-      {mergeRows && <MergeLeadsDialog leads={mergeRows} open={!!mergeRows} onClose={() => setMergeRows(null)} onMerged={() => { setSelectedIds(new Set()); setMergeRows(null); }} />}
+      <LeadDetailDrawer lead={detailLead} siteScope={siteScope} onClose={() => setDetailLead(null)} onChanged={() => { void queryClient.invalidateQueries({ queryKey: ["admin-leads", siteScope] }); }} />
+      {mergeRows && <MergeLeadsDialog leads={mergeRows} siteScope={siteScope} open={!!mergeRows} onClose={() => setMergeRows(null)} onMerged={() => { setSelectedIds(new Set()); setMergeRows(null); void queryClient.invalidateQueries({ queryKey: ["admin-leads", siteScope] }); }} />}
       </div>
     </AdminLayout>
 

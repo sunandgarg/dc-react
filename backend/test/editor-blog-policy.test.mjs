@@ -75,7 +75,12 @@ test("administrator AI article paths publish immediately", async () => {
   assert.match(blogSource, /const status = shouldReview \? "Draft" : "Published"/);
   assert.match(blogSource, /const requestedStatus = body\.status === "Draft" \? "Draft" : "Published"/);
   assert.match(blogSource, /USE_EDITORIAL_BLOG_STUDIO/);
-  assert.match(studioSource, /action: "publish", status: "Published"/);
+  assert.match(blogSource, /const siteScope = normalizeArticleSiteScope\(body\.site_scope\)/);
+  assert.match(blogSource, /site_scope: siteScope/);
+  assert.match(blogSource, /siteScope === "sarkari" \? "sarkari_articles" : "articles"/);
+  assert.match(studioSource, /action: "publish"/);
+  assert.match(studioSource, /status: "Published"/);
+  assert.match(studioSource, /site_scope: siteScope/);
   assert.doesNotMatch(studioSource, /\.from\("articles"\)\.upsert/);
   assert.doesNotMatch(articlesPageSource, /AIGenerateDialog/);
 });

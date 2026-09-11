@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
+import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Users, GraduationCap, FileText, BookOpen, Briefcase, Activity, Megaphone, Globe } from "lucide-react";
@@ -30,11 +31,14 @@ const RANGES = [
   { key: "custom", label: "Custom" },
 ];
 
-function useCount(table: string) {
+function useCount(table: string, siteScope?: string) {
   return useQuery({
-    queryKey: [`count-${table}`],
+    queryKey: [`count-${table}`, siteScope || "all"],
     queryFn: async () => {
-      const { count } = await backendClient.from(table as any).select("*", { count: "exact", head: true });
+      let query = backendClient.from(table as any).select("*", { count: "exact", head: true });
+      if (siteScope) query = (query as any).eq("site_scope", siteScope);
+      const { count, error } = await query;
+      if (error) throw error;
       return count ?? 0;
     },
   });
@@ -62,13 +66,19 @@ export function AdminInsights() {
   const colleges = useCount("colleges");
   const courses = useCount("courses");
   const exams = useCount("exams");
-  const articles = useCount("articles");
+  const articles = useCount("articles", DEFAULT_SITE_SCOPE);
   const careers = useCount("career_profiles");
 
   const leadsRange = useQuery({
-    queryKey: ["leads-range", range, since],
+    queryKey: ["leads-range", DEFAULT_SITE_SCOPE, range, since],
     queryFn: async () => {
-      const { data } = await backendClient.from("leads").select("created_at,source").gte("created_at", since).limit(5000);
+      const { data, error } = await backendClient
+        .from("leads")
+        .select("created_at,source")
+        .eq("site_scope", DEFAULT_SITE_SCOPE)
+        .gte("created_at", since)
+        .limit(5000);
+      if (error) throw error;
       return data || [];
     },
   });

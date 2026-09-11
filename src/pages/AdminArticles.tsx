@@ -35,14 +35,19 @@ import { backendClient } from "@/integrations/backend/client";
 import { Link } from "react-router-dom";
 import { useDraftState } from "@/hooks/useDraftState";
 import { syncAutoSlug } from "@/lib/slugify";
+import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 
 const STATUSES = ["Draft", "Published"];
 const VERTICALS = ["Engineering", "Medical", "Management", "Law", "Design", "Science", "General"];
+const SARKARI_VERTICALS = ["Government Jobs", "Central Government", "State Government", "Railways", "Banking", "Defence", "Teaching", "Police", "PSU"];
+const SARKARI_CATEGORIES = ["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"]
+  .map((name) => ({ slug: name.toLowerCase().replace(/\s+/g, "-"), name }));
 
-function useArticleCategories() {
+function useArticleCategories(enabled = true) {
   return useQuery({
     queryKey: ["article_categories"],
     staleTime: 5 * 60 * 1000,
+    enabled,
     queryFn: async () => {
       const { data } = await (backendClient as any)
         .from("article_categories")
@@ -70,17 +75,25 @@ const normalizeAdminArticleSearch = (value: unknown) =>
     .trim()
     .toLowerCase();
 
-export default function AdminArticles() {
+interface AdminArticlesProps {
+  siteScope?: SiteScope;
+  studioMode?: boolean;
+}
+
+export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMode = false }: AdminArticlesProps) {
+  const isSarkari = siteScope === "sarkari";
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [customPageSize, setCustomPageSize] = useState(200);
-  const { data: articlePage, isLoading, refetch: refetchArticles } = useAdminArticles(deferredSearch, page, pageSize);
-  const { data: CATEGORIES = [] } = useArticleCategories();
-  const saveArticle = useSaveArticle();
-  const deleteArticle = useDeleteArticle();
-  const [editing, setEditing] = useDraftState<Partial<DbArticle> | null>('admin.articles.editing.v1', null);
+  const { data: articlePage, isLoading, refetch: refetchArticles } = useAdminArticles(deferredSearch, page, pageSize, siteScope);
+  const { data: articleCategories = [] } = useArticleCategories(!isSarkari);
+  const CATEGORIES = isSarkari ? SARKARI_CATEGORIES : articleCategories;
+  const verticalOptions = isSarkari ? SARKARI_VERTICALS : VERTICALS;
+  const saveArticle = useSaveArticle(siteScope);
+  const deleteArticle = useDeleteArticle(siteScope);
+  const [editing, setEditing] = useDraftState<Partial<DbArticle> | null>(`admin.articles.editing.v2.${siteScope}`, null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
   const [bulkStatus, setBulkStatus] = useState("");
@@ -95,7 +108,7 @@ export default function AdminArticles() {
   const totalPages = Math.max(1, Math.ceil(totalArticles / pageSize));
   const standardPageSizes = [10, 20, 30, 40, 50, 100];
 
-  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [normalizedSearch, pageSize]);
+  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [normalizedSearch, pageSize, siteScope]);
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [page, totalPages]);
 
   const { can, isAdmin } = useAuth();
@@ -109,7 +122,7 @@ export default function AdminArticles() {
       return toast.error("You do not have permission to publish articles.");
     }
     setBulkBusy(true);
-    const { error } = await (backendClient as any).from("articles").update(updates).in("id", ids);
+    const { error } = await (backendClient as any).from("articles").update(updates).in("id", ids).eq("site_scope", siteScope);
     setBulkBusy(false);
     if (error) return toast.error(error.message);
     toast.success(`${label}: ${ids.length} article(s)`);
@@ -136,7 +149,7 @@ export default function AdminArticles() {
   const bulkDelete = async (ids = Array.from(selectedIds)) => {
     if (!ids.length || !confirm(`Delete ${ids.length} selected article(s)? This cannot be undone.`)) return;
     setBulkBusy(true);
-    const { error } = await (backendClient as any).from("articles").delete().in("id", ids);
+    const { error } = await (backendClient as any).from("articles").delete().in("id", ids).eq("site_scope", siteScope);
     setBulkBusy(false);
     if (error) return toast.error(error.message);
     toast.success(`Deleted ${ids.length} article(s)`);
@@ -157,15 +170,21 @@ export default function AdminArticles() {
       return;
     }
     const { featured_rank: _omit, ...payload } = editing as any;
+    if (isSarkari) {
+      payload.site_scope = "sarkari";
+      payload.vertical = payload.vertical || "Government Jobs";
+      payload.category = payload.category || "Latest Jobs";
+      payload.author = payload.author || "Sarkari DekhoCampus Desk";
+    }
     saveArticle.mutate(payload, {
       onSuccess: async () => {
         let id = (editing as any).id;
         if (!id && editing.slug) {
-          const { data: row } = await backendClient.from("articles").select("id").eq("slug", editing.slug).maybeSingle();
+          const { data: row } = await backendClient.from("articles").select("id").eq("slug", editing.slug).eq("site_scope", siteScope).maybeSingle();
           id = row?.id;
         }
         if (id && isAdmin) {
-          const { error } = await (backendClient as any).rpc("set_featured_rank", { _table: "articles", _id: id, _rank: desiredRank });
+          const { error } = await (backendClient as any).from("articles").update({ featured_rank: desiredRank }).eq("id", id).eq("site_scope", siteScope);
           if (error) toast.error(`Featured: ${error.message}`);
         }
         setEditing(null);
@@ -181,17 +200,23 @@ export default function AdminArticles() {
   });
 
   return (
-    <AdminLayout title="Articles Manager">
-      {isAdmin && <div className="mb-3 flex flex-wrap gap-2"><BlogStudioDialog onSaved={() => { void refetchArticles(); }} /></div>}
-      {isAdmin && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />}
-      {isAdmin && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
+    <AdminLayout title={isSarkari ? (studioMode ? "Sarkari Job AI Studio" : "Sarkari Articles") : "Articles Manager"}>
+      {isSarkari && (
+        <div className="mb-4 rounded-2xl border border-orange-200 bg-orange-50/80 p-4 text-sm text-orange-950">
+          <p className="font-bold">Sarkari workspace</p>
+          <p className="mt-1 text-xs text-orange-800">Only <code>site_scope=sarkari</code> content is listed, imported, edited and deleted here. DekhoCampus articles remain separate.</p>
+        </div>
+      )}
+      {isAdmin && <div className="mb-3 flex flex-wrap gap-2"><BlogStudioDialog siteScope={siteScope} initiallyOpen={studioMode} onSaved={() => { void refetchArticles(); }} /></div>}
+      {isAdmin && !isSarkari && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />}
+      {isAdmin && !isSarkari && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search articles..." className="pl-10 rounded-xl h-10" />
         </div>
-        {canCreate && <Button onClick={() => setEditing({ ...emptyArticle, status: canPublish ? "Published" : "Draft" })} className="rounded-xl gap-2">
-          <Plus className="w-4 h-4" /> Add Article
+        {canCreate && <Button onClick={() => setEditing({ ...emptyArticle, site_scope: siteScope, vertical: isSarkari ? "Government Jobs" : "", category: isSarkari ? "Latest Jobs" : "", author: isSarkari ? "Sarkari DekhoCampus Desk" : "", status: canPublish ? "Published" : "Draft" })} className="rounded-xl gap-2">
+          <Plus className="w-4 h-4" /> Add {isSarkari ? "Sarkari Article" : "Article"}
         </Button>}
         {isAdmin && <BulkEditToggle
           table="articles"
@@ -205,6 +230,7 @@ export default function AdminArticles() {
             { key: "is_active", label: "Active", type: "boolean", width: 80 },
             { key: "views", label: "Views", type: "number", width: 80 },
           ]}
+          scope={{ column: "site_scope", value: siteScope }}
         />}
       </div>
 
@@ -244,7 +270,7 @@ export default function AdminArticles() {
           <select value={bulkVertical} onChange={(e) => setBulkVertical(e.target.value)} className="h-9 rounded-lg border border-border bg-background px-3 text-sm">
             <option value="">Bulk vertical - keep unchanged</option>
             <option value="__clear__">Clear vertical</option>
-            {VERTICALS.map((vertical) => <option key={vertical} value={vertical}>{vertical}</option>)}
+            {verticalOptions.map((vertical) => <option key={vertical} value={vertical}>{vertical}</option>)}
           </select>
           <Button size="sm" disabled={bulkBusy || !selectedIds.size} onClick={bulkApplyFields} className="h-9 rounded-lg">
             Apply bulk edit
@@ -258,14 +284,15 @@ export default function AdminArticles() {
       {isAdmin && <div className="mb-4">
         <CSVTools
           table="articles"
-          filename="articles.csv"
+          filename={isSarkari ? "sarkari-articles.csv" : "dekhocampus-articles.csv"}
           columns="*"
           typeHints={{ tags: "array", views: "number", is_active: "boolean" }}
+          scope={{ column: "site_scope", value: siteScope }}
           onImported={() => { void refetchArticles(); }}
         />
       </div>}
 
-      {isAdmin && <FeaturedRankPanel table="articles" detailPath={(slug) => `/news/${slug}`} />}
+      {isAdmin && <FeaturedRankPanel table="articles" siteScope={siteScope} detailPath={(slug) => isSarkari ? `https://sarkari.dekhocampus.com/news/${slug}` : `/news/${slug}`} />}
 
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground">Loading...</div>
@@ -291,7 +318,7 @@ export default function AdminArticles() {
                 <p className="text-xs text-muted-foreground truncate">{a.author} • {a.views} views • {new Date(a.created_at).toLocaleDateString()}</p>
               </div>
               <div className="flex gap-1">
-                <a href={`/news/${a.slug}`} target="_blank" rel="noopener noreferrer" title="Open public page" className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted text-muted-foreground hover:text-primary"><ExternalLink className="w-3.5 h-3.5" /></a>
+                <a href={isSarkari ? `https://sarkari.dekhocampus.com/news/${a.slug}` : `/news/${a.slug}`} target="_blank" rel="noopener noreferrer" title="Open public page" className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted text-muted-foreground hover:text-primary"><ExternalLink className="w-3.5 h-3.5" /></a>
                 {canEdit && <Button variant="ghost" size="icon" onClick={() => setEditing({ ...a })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="articles" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteArticle.mutate(a.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
@@ -340,7 +367,7 @@ export default function AdminArticles() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2"><Newspaper className="w-5 h-5" /> {editing?.id ? "Edit" : "Add"} Article</DialogTitle>
           </DialogHeader>
-          {editing?.id && <LinksSummary articleId={editing.id as string} tags={editing.tags || []} />}
+          {editing?.id && !isSarkari && <LinksSummary articleId={editing.id as string} tags={editing.tags || []} />}
           {editing && (
             <div className="space-y-4">
               {/* ── Basic Info ── */}
@@ -365,18 +392,25 @@ export default function AdminArticles() {
                       <option value="">Select</option>
                       {CATEGORIES.map((c) => <option key={c.slug} value={c.name}>{c.name}</option>)}
                     </select>
-                    <Link to="/admin/article-categories" className="text-[10px] text-primary hover:underline">+ Manage categories</Link>
+                    {!isSarkari && <Link to="/admin/article-categories" className="text-[10px] text-primary hover:underline">+ Manage categories</Link>}
                   </div>
                   <div><label className="text-xs font-medium text-muted-foreground">Author (legacy text)</label><Input value={editing.author || ""} onChange={(e) => update("author", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">{isSarkari ? "Department / Area" : "Vertical"}</label>
+                    <select value={editing.vertical || ""} onChange={(e) => update("vertical", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm h-9">
+                      <option value="">Select</option>
+                      {verticalOptions.map((vertical) => <option key={vertical} value={vertical}>{vertical}</option>)}
+                    </select>
+                  </div>
                   <div><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Title *</label><Input value={editing.title || ""} onChange={(e) => update("title", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="my-article-slug" className="rounded-lg h-9 text-sm" /></div>
                   <div className="sm:col-span-2">
                     <ImageUploadField label="Featured Image" value={editing.featured_image || ""} onChange={(v) => update("featured_image", v)} preset="article" folder="article-images" />
-                    <ArticleCoverGenerator title={editing.title || ""} slug={editing.slug} onGenerated={(url) => update("featured_image", url)} />
+                    <ArticleCoverGenerator title={editing.title || ""} slug={editing.slug} siteScope={siteScope} onGenerated={(url) => update("featured_image", url)} />
                   </div>
                   <div><label className="text-xs font-medium text-muted-foreground">Views</label><Input type="number" value={editing.views ?? 0} onChange={(e) => update("views", parseInt(e.target.value) || 0)} className="rounded-lg h-9 text-sm" /></div>
-                  <div className="sm:col-span-2 lg:col-span-3"><FeaturedRankPicker value={(editing as any).featured_rank} onChange={(v) => update("featured_rank" as any, v)} label="Pin to News page top" maxSlots={4} slotLabel={(r) => `#${r}${r === 1 ? " (Big Hero)" : ` (Small ${r - 1})`}`} helpText="#1 = big hero card on /news. #2-4 = the three small cards beside it. Picking a slot pushes existing pinned items down; anything beyond #4 unpins automatically." /></div>
+                  <div className="sm:col-span-2 lg:col-span-3"><FeaturedRankPicker value={(editing as any).featured_rank} onChange={(v) => update("featured_rank" as any, v)} label={isSarkari ? "Pin to Sarkari homepage top" : "Pin to News page top"} maxSlots={4} slotLabel={(r) => `#${r}${r === 1 ? " (Big Hero)" : ` (Small ${r - 1})`}`} helpText={isSarkari ? "Controls the four highlighted Sarkari update slots. Rankings are isolated from DekhoCampus news." : "#1 = big hero card on /news. #2-4 = the three small cards beside it. Picking a slot pushes existing pinned items down; anything beyond #4 unpins automatically."} /></div>
                 </div>
                 <RichTextEditor label="Description *" value={editing.description || ""} onChange={(v) => update("description", v)} rows={3} />
                 <div className="flex items-center gap-2">
@@ -391,9 +425,9 @@ export default function AdminArticles() {
               </AdminFormSection>
 
               {/* ── Links (multi-category) ── */}
-              <AdminFormSection title="Links - tag this article to colleges, courses, exams, news, careers, scholarships & study material" icon={<Link2 className="w-4 h-4 text-primary" />}>
+              <AdminFormSection title={isSarkari ? "Search and discovery tags" : "Links - tag this article to colleges, courses, exams, news, careers, scholarships & study material"} icon={<Link2 className="w-4 h-4 text-primary" />}>
                 <ArrayFieldEditor label="Free-form Tags" values={editing.tags || []} onChange={(v) => update("tags", v)} placeholder="Add tag..." />
-                {editing.id ? (
+                {!isSarkari && (editing.id ? (
                   <Tabs defaultValue="entities" className="mt-4">
                     <TabsList className="w-full justify-start flex-wrap h-auto gap-1 bg-muted/40 p-1 rounded-xl">
                       <TabsTrigger value="entities" className="rounded-lg text-xs">Colleges / Courses / Exams / News / Careers / Scholarships</TabsTrigger>
@@ -425,10 +459,10 @@ export default function AdminArticles() {
                       disabled={!editing.slug || !editing.title || saveArticle.isPending}
                       onClick={async () => {
                         if (!editing.slug || !editing.title) { toast.error("Add Title and Slug first"); return; }
-                        const payload = { ...editing, status: editing.status || (canPublish ? "Published" : "Draft") } as any;
+                        const payload = { ...editing, site_scope: siteScope, status: editing.status || (canPublish ? "Published" : "Draft") } as any;
                         const { data, error } = await backendClient
                           .from("articles")
-                          .upsert(payload, { onConflict: "slug" })
+                          .upsert(payload, { onConflict: "site_scope,slug" })
                           .select()
                           .single();
                         if (error) { toast.error(error.message); return; }
@@ -440,12 +474,12 @@ export default function AdminArticles() {
                     </Button>
                     <p className="text-[11px] text-muted-foreground">(Requires Title + Slug above)</p>
                   </div>
-                )}
+                ))}
               </AdminFormSection>
 
               {/* ── FAQs ── */}
               <AdminFormSection title="FAQs (shown on article page)" icon={<HelpCircle className="w-4 h-4 text-primary" />} defaultOpen={false}>
-                <FaqInlineEditor page="articles" itemSlug={editing.slug || ""} itemName={editing.title} />
+                <FaqInlineEditor page={isSarkari ? "sarkari_articles" : "articles"} itemSlug={editing.slug || ""} itemName={editing.title} />
               </AdminFormSection>
 
               {/* ── SEO ── */}

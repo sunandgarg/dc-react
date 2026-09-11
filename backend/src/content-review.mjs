@@ -29,6 +29,11 @@ function changedFields(before, after) {
   return [...keys].filter((key) => !IGNORED_FIELDS.has(key) && jsonValue(before?.[key]) !== jsonValue(after?.[key]));
 }
 
+function reviewRowKey(table, row) {
+  const identity = String(row?.id || row?.slug || "");
+  return table === "articles" ? `${String(row?.site_scope || "")}:${identity}` : identity;
+}
+
 export async function ensureContentReviewTable() {
   await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS \`content_change_reviews\` (
@@ -57,9 +62,9 @@ export async function ensureContentReviewTable() {
 
 export async function recordContentReviews({ table, operation, actorUserId, beforeRows = [], afterRows = [] }) {
   if (!actorUserId || !REVIEWED_TABLES.has(table)) return;
-  const beforeById = new Map(beforeRows.map((row) => [String(row.id || row.slug || ""), row]));
+  const beforeById = new Map(beforeRows.map((row) => [reviewRowKey(table, row), row]));
   for (const after of afterRows) {
-    const key = String(after.id || after.slug || "");
+    const key = reviewRowKey(table, after);
     const before = beforeById.get(key) || null;
     const fields = changedFields(before, after);
     if (!fields.length) continue;
@@ -93,13 +98,50 @@ function parseReviewJson(value, fallback) {
   try { return JSON.parse(value); } catch { return fallback; }
 }
 
-async function applyApprovedReview(tx, review) {
+const ARTICLE_SITE_SCOPES = new Set(["dekhocampus", "sarkari"]);
+
+function canonicalArticleSiteScope(value) {
+  const siteScope = String(value || "").trim().toLowerCase();
+  if (!ARTICLE_SITE_SCOPES.has(siteScope)) {
+    throw Object.assign(new Error("Article review has an invalid or missing site_scope"), {
+      status: 409,
+      code: "INVALID_ARTICLE_SITE_SCOPE",
+    });
+  }
+  return siteScope;
+}
+
+export function resolveArticleReviewSiteScope(review) {
+  if (review?.entity_type !== "articles") return null;
+  const before = parseReviewJson(review.before_json, null);
+  const after = parseReviewJson(review.after_json, {});
+  const beforeScope = before && Object.hasOwn(before, "site_scope")
+    ? canonicalArticleSiteScope(before.site_scope)
+    : null;
+  const afterScope = after && Object.hasOwn(after, "site_scope")
+    ? canonicalArticleSiteScope(after.site_scope)
+    : null;
+  if (!beforeScope && !afterScope) return canonicalArticleSiteScope(null);
+  if (beforeScope && afterScope && beforeScope !== afterScope) {
+    throw Object.assign(new Error("Article site_scope cannot be changed during review approval"), {
+      status: 409,
+      code: "ARTICLE_SITE_SCOPE_IMMUTABLE",
+    });
+  }
+  return afterScope || beforeScope;
+}
+
+export async function applyApprovedReview(tx, review) {
   const table = review.entity_type;
   if (!REVIEWED_TABLES.has(table) || !schemaMetadata[table]) throw new Error("Review targets an unsupported resource");
   const after = parseReviewJson(review.after_json, {});
   const changed = parseReviewJson(review.changed_fields, []);
   const fields = schemaMetadata[table].fields;
-  const isWritableField = (column) => fields[column] && !(table === "colleges" && column === "courses_count");
+  const articleSiteScope = table === "articles" ? resolveArticleReviewSiteScope(review) : null;
+  if (articleSiteScope) after.site_scope = articleSiteScope;
+  const isWritableField = (column) => fields[column]
+    && !(table === "colleges" && column === "courses_count")
+    && !(table === "articles" && review.operation !== "create" && column === "site_scope");
 
   if (review.operation === "create") {
     if (["colleges", "courses", "exams"].includes(table) && fields.short_id && after.short_id === undefined) {
@@ -109,16 +151,18 @@ async function applyApprovedReview(tx, review) {
     }
     const columns = Object.keys(after).filter(isWritableField);
     if (!columns.length) throw new Error("Reviewed create contains no writable fields");
-    const existing = after.id
-      ? await tx.$queryRawUnsafe(`SELECT 1 FROM ${quote(table)} WHERE \`id\` = ? LIMIT 1`, after.id)
-      : [];
-    if (existing.length) {
-      const updates = columns.filter((column) => !["id", "created_at"].includes(column));
-      await tx.$executeRawUnsafe(
-        `UPDATE ${quote(table)} SET ${updates.map((column) => `${quote(column)} = ?`).join(",")} WHERE \`id\` = ?`,
-        ...updates.map((column) => databaseValue(table, column, after[column])), after.id,
+    const targetIds = [...new Set([after.id, review.entity_id].filter(Boolean).map(String))];
+    for (const targetId of targetIds) {
+      const existing = await tx.$queryRawUnsafe(
+        `SELECT 1 FROM ${quote(table)} WHERE \`id\` = ? LIMIT 1 FOR UPDATE`,
+        targetId,
       );
-      return;
+      if (existing.length) {
+        throw Object.assign(new Error("A reviewed create cannot replace an existing record"), {
+          status: 409,
+          code: "REVIEW_CREATE_TARGET_EXISTS",
+        });
+      }
     }
     await tx.$executeRawUnsafe(
       `INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`,
@@ -133,11 +177,22 @@ async function applyApprovedReview(tx, review) {
   const identityValue = review.entity_id || review.entity_slug;
   if (!identityValue) throw new Error("Reviewed update has no stable entity identity");
   const result = await tx.$executeRawUnsafe(
-    `UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${fields.updated_at ? ",`updated_at` = ?" : ""} WHERE ${quote(identityField)} = ?`,
+    `UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${fields.updated_at ? ",`updated_at` = ?" : ""} WHERE ${quote(identityField)} = ?${articleSiteScope ? " AND `site_scope` = ?" : ""}`,
     ...columns.map((column) => databaseValue(table, column, after[column])),
-    ...(fields.updated_at ? [new Date()] : []), identityValue,
+    ...(fields.updated_at ? [new Date()] : []), identityValue, ...(articleSiteScope ? [articleSiteScope] : []),
   );
-  if (!result) throw new Error("The reviewed record no longer exists");
+  if (!result) {
+    const existing = await tx.$queryRawUnsafe(
+      `SELECT 1 FROM ${quote(table)} WHERE ${quote(identityField)} = ?${articleSiteScope ? " AND `site_scope` = ?" : ""} LIMIT 1 FOR UPDATE`,
+      identityValue, ...(articleSiteScope ? [articleSiteScope] : []),
+    );
+    if (!existing.length) {
+      throw Object.assign(new Error("The reviewed record no longer exists"), {
+        status: 404,
+        code: "REVIEW_TARGET_NOT_FOUND",
+      });
+    }
+  }
 }
 
 export async function handleContentReviews(request, reviewerId) {
@@ -163,7 +218,13 @@ export async function handleContentReviews(request, reviewerId) {
   }
   if (request.method === "PATCH") {
     const body = await request.json().catch(() => ({}));
-    const status = ["approved", "needs_changes"].includes(body.status) ? body.status : "approved";
+    if (!["approved", "needs_changes"].includes(body.status)) {
+      throw Object.assign(new Error("Review status must be approved or needs_changes"), {
+        status: 400,
+        code: "INVALID_REVIEW_STATUS",
+      });
+    }
+    const status = body.status;
     const reviewId = String(body.id || "");
     await withArticleWriteLock(async (tx) => {
       const rows = await tx.$queryRawUnsafe("SELECT * FROM `content_change_reviews` WHERE `id` = ? FOR UPDATE", reviewId);
@@ -173,9 +234,22 @@ export async function handleContentReviews(request, reviewerId) {
       if (status === "approved") {
         if (review.entity_type === "articles") {
           const after = parseReviewJson(review.after_json, {});
-          await assertArticleTopicsAvailable([after], {
+          const before = parseReviewJson(review.before_json, null);
+          const siteScope = resolveArticleReviewSiteScope(review);
+          const excludeIds = review.operation === "create"
+            ? []
+            : [...new Set([after.id, before?.id, review.entity_id].filter(Boolean).map(String))];
+          if (review.operation !== "create" && !excludeIds.length && review.entity_slug) {
+            const current = await tx.$queryRawUnsafe(
+              "SELECT `id` FROM `articles` WHERE `site_scope` = ? AND `slug` = ? LIMIT 1",
+              siteScope, review.entity_slug,
+            );
+            if (current[0]?.id) excludeIds.push(String(current[0].id));
+          }
+          await assertArticleTopicsAvailable([{ ...after, site_scope: siteScope }], {
             client: tx,
-            excludeIds: after.id ? [after.id] : [],
+            excludeIds,
+            siteScope,
           });
         }
         await applyApprovedReview(tx, review);

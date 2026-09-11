@@ -61,3 +61,45 @@ test("anonymous writes cap nested analytics metadata", async () => {
   const sanitized = await apiSecurityInternals.sanitizePublicWriteRequest("user_events", request);
   assert.doesNotMatch(JSON.stringify(await sanitized.json()), /too-deep/);
 });
+
+test("site scope is derived only from a trusted Sarkari origin", () => {
+  assert.equal(apiSecurityInternals.siteScopeForRequest(new Request("https://aws-origin.dekhocampus.com/v1/save-lead", {
+    headers: { origin: "https://sarkari.dekhocampus.com" },
+  })), "sarkari");
+  assert.equal(apiSecurityInternals.siteScopeForRequest(new Request("https://aws-origin.dekhocampus.com/v1/save-lead", {
+    headers: { origin: "https://sarkari-dekhocampus.pages.dev" },
+  })), "sarkari");
+  assert.equal(apiSecurityInternals.siteScopeForRequest(new Request("https://aws-origin.dekhocampus.com/v1/save-lead", {
+    headers: { origin: "https://attacker.example" },
+  })), "dekhocampus");
+  assert.equal(apiSecurityInternals.siteScopeForRequest(new Request("https://aws-origin.dekhocampus.com/v1/save-lead")), "dekhocampus");
+});
+
+test("anonymous article policy overrides caller filters", () => {
+  const request = new Request("https://aws-origin.dekhocampus.com/rest/v1/articles?site_scope=eq.invalid&status=eq.Draft&is_active=eq.false", {
+    headers: { origin: "https://sarkari.dekhocampus.com" },
+  });
+  const secured = apiSecurityInternals.enforcePublicArticlePolicy(request);
+  const url = new URL(secured.url);
+  assert.equal(url.searchParams.get("site_scope"), "eq.sarkari");
+  assert.equal(url.searchParams.get("status"), "eq.Published");
+  assert.equal(url.searchParams.get("is_active"), "eq.true");
+});
+
+test("anonymous article policy preserves an allowlisted explicit scope for server-side sitemap builds", () => {
+  const request = new Request("https://aws-origin.dekhocampus.com/rest/v1/articles?site_scope=eq.sarkari&status=eq.Draft");
+  const secured = apiSecurityInternals.enforcePublicArticlePolicy(request);
+  const url = new URL(secured.url);
+  assert.equal(url.searchParams.get("site_scope"), "eq.sarkari");
+  assert.equal(url.searchParams.get("status"), "eq.Published");
+  assert.equal(url.searchParams.get("is_active"), "eq.true");
+});
+
+test("admin article and lead writes reject non-canonical site scopes", () => {
+  assert.doesNotThrow(() => apiSecurityInternals.assertValidSiteScopePayload("articles", { site_scope: "sarkari" }));
+  assert.doesNotThrow(() => apiSecurityInternals.assertValidSiteScopePayload("leads", [{ site_scope: "dekhocampus" }]));
+  assert.throws(
+    () => apiSecurityInternals.assertValidSiteScopePayload("articles", { site_scope: "other-site" }),
+    (error) => error.status === 400 && error.code === "INVALID_SITE_SCOPE",
+  );
+});

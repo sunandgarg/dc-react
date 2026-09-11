@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  articlePrompt,
+  articleSiteProfile,
   articleTitleSimilarity,
   articleTopicSimilarity,
   assessGeneratedArticle,
@@ -8,10 +10,45 @@ import {
   compactArticleCoverage,
   findDuplicateArticleTitle,
   findDuplicateArticleTopic,
+  handleArticleCover,
+  handleBlogStudio,
   normalizeArticleTitle,
+  normalizeArticleSiteScope,
   normalizeTopicSuggestions,
   STRICT_ARTICLE_DUPLICATE_THRESHOLD,
 } from "../src/blog-ai.mjs";
+
+test("Sarkari studio uses a dedicated government-job editorial profile", () => {
+  assert.equal(normalizeArticleSiteScope("sarkari"), "sarkari");
+  assert.equal(normalizeArticleSiteScope(""), "dekhocampus");
+  assert.equal(normalizeArticleSiteScope(null), "dekhocampus");
+  assert.throws(
+    () => normalizeArticleSiteScope("unknown"),
+    (error) => error?.status === 400 && error?.code === "INVALID_ARTICLE_SITE_SCOPE",
+  );
+  assert.throws(
+    () => normalizeArticleSiteScope(" sarkari "),
+    (error) => error?.status === 400 && error?.code === "INVALID_ARTICLE_SITE_SCOPE",
+  );
+  assert.equal(articleSiteProfile("sarkari").defaultCategory, "Latest Jobs");
+  const prompt = articlePrompt("SSC CGL 2026 notification", [], 800, [], "sarkari");
+  assert.match(prompt, /Sarkari DekhoCampus/);
+  assert.match(prompt, /Latest Jobs, Results, Admit Card, Answer Key, Admissions, Syllabus, Scholarships/);
+  assert.match(prompt, /Never imply that Sarkari DekhoCampus is the recruiting authority/);
+});
+
+test("custom article AI endpoints reject explicit non-canonical tenant scopes", async () => {
+  for (const handler of [handleBlogStudio, handleArticleCover]) {
+    await assert.rejects(
+      handler(new Request("http://localhost/admin/ai", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ site_scope: " sarkari ", topic: "SSC CGL 2026" }),
+      })),
+      (error) => error?.status === 400 && error?.code === "INVALID_ARTICLE_SITE_SCOPE",
+    );
+  }
+});
 
 test("normalizes article titles without collapsing meaningful numbers", () => {
   assert.equal(normalizeArticleTitle("JEE Main 2026: Dates & Registration"), "jee main 2026 dates and registration");

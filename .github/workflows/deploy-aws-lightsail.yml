@@ -30,7 +30,7 @@ on:
       update_infrastructure:
         description: Apply the CloudFormation infrastructure template before deploying the application
         required: false
-        default: true
+        default: false
         type: boolean
       create_ses_identity:
         description: Create and manage the dekhocampus.com SES identity in this stack
@@ -77,7 +77,10 @@ jobs:
           npm test
           npm --prefix backend test
           npm run lint
-          npm run build
+          npm run check:typography
+          # Compile the client before deployment, but defer the live-data sitemap
+          # until after db:setup:runtime has added the tenant scope columns.
+          npx vite build
 
       - uses: aws-actions/configure-aws-credentials@v6
         with:
@@ -105,34 +108,28 @@ jobs:
               aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
             fi
           fi
-          if ! aws cloudformation describe-stacks --stack-name "$STACK_NAME" >/dev/null 2>&1; then
-            for secret in "$PROJECT_NAME/lightsail/mysql" "$PROJECT_NAME/lightsail/runtime"; do
-              if aws secretsmanager describe-secret --secret-id "$secret" >/dev/null 2>&1; then
-                echo "Deleting orphaned candidate secret: $secret"
-                aws secretsmanager delete-secret --secret-id "$secret" --force-delete-without-recovery >/dev/null
-                for attempt in $(seq 1 30); do
-                  if ! aws secretsmanager describe-secret --secret-id "$secret" >/dev/null 2>&1; then break; fi
-                  sleep 2
-                done
-              fi
-            done
-          fi
+          # Production credentials are intentionally never deleted by this
+          # workflow. If a failed stack leaves retained secrets behind, the
+          # recovery/import path must reuse them or be handled explicitly by
+          # an administrator with a verified backup and recovery window.
           DB_BLUEPRINT_ID=$(aws lightsail get-relational-database-blueprints \
             --query "blueprints[?engine=='mysql'] | sort_by(@,&engineVersion)[-1].blueprintId" \
             --output text)
           test -n "$DB_BLUEPRINT_ID"
-          INSTANCE_BUNDLE_ID=$(aws lightsail get-bundles --include-inactive \
-            --query 'bundles[?isActive == `true` && ramSizeInGb == `1.0` && cpuCount == `2` && price == `7.0`].bundleId | [0]' \
-            --output text)
-          if [ -z "$INSTANCE_BUNDLE_ID" ] || [ "$INSTANCE_BUNDLE_ID" = "None" ]; then
-            echo "No active 1 GB, 2-vCPU, USD 7 Lightsail bundle exists in $AWS_REGION. Refusing a costlier plan."
+          TARGET_INSTANCE_BUNDLE_ID=micro_3_1
+          INSTANCE_BUNDLE=$(aws lightsail get-bundles --include-inactive \
+            --query "bundles[?bundleId=='$TARGET_INSTANCE_BUNDLE_ID'] | [0]" \
+            --output json)
+          if ! jq -e '.isActive == true and .ramSizeInGb == 1 and .cpuCount == 2 and .price == 7 and (.supportedPlatforms | index("LINUX_UNIX") != null)' <<<"$INSTANCE_BUNDLE" >/dev/null; then
+            echo "$TARGET_INSTANCE_BUNDLE_ID is not the active legacy Linux/Unix 1 GB, 2-vCPU, USD 7 Lightsail bundle in $AWS_REGION. Refusing an in-place bundle change."
             aws lightsail get-bundles --include-inactive \
-              --query 'bundles[?isActive == `true` && ramSizeInGb == `1.0`].[bundleId,cpuCount,ramSizeInGb,price]' \
+              --query 'bundles[?isActive == `true` && ramSizeInGb == `1.0`].[bundleId,cpuCount,ramSizeInGb,price,supportedPlatforms]' \
               --output table
             exit 1
           fi
+          INSTANCE_BUNDLE_ID=$(jq -r '.bundleId' <<<"$INSTANCE_BUNDLE")
           echo "Using Lightsail MySQL blueprint: $DB_BLUEPRINT_ID"
-          echo "Using Lightsail API bundle: $INSTANCE_BUNDLE_ID (1 GB, 2 vCPU, USD 7/month)"
+          echo "Using verified legacy Lightsail API bundle: $INSTANCE_BUNDLE_ID (Linux/Unix, 1 GB, 2 vCPU, USD 7/month)"
           RUNNER_IP=$(curl -fsS https://checkip.amazonaws.com | tr -d '[:space:]')
           if ! [[ "$RUNNER_IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
             echo "Could not determine a valid GitHub runner IPv4 address."
@@ -152,7 +149,7 @@ jobs:
               EnableCloudFront='false' \
               CreateSesIdentity='${{ inputs.create_ses_identity }}' \
               InitialMediaBaseUrl='https://aws-origin.dekhocampus.com/storage/v1/object/public' \
-              CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com'
+              CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com,https://sarkari-dekhocampus.pages.dev,https://sarkari.dekhocampus.com'
       - name: Report infrastructure failure details
         if: ${{ failure() && inputs.update_infrastructure }}
         run: |
@@ -194,15 +191,27 @@ jobs:
           CLARITY_DATA_EXPORT_TOKEN: ${{ secrets.CLARITY_DATA_EXPORT_TOKEN }}
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}
         run: |
+          CURRENT_RUNTIME_SECRET=$(aws secretsmanager get-secret-value \
+            --secret-id "$PROJECT_NAME/lightsail/runtime" \
+            --query SecretString \
+            --output text)
           jq -n \
+            --argjson current "$CURRENT_RUNTIME_SECRET" \
             --arg authJwtSecret "$AUTH_JWT_SECRET" \
             --arg smsFast2smsApiKey "$SMS_FAST2SMS_API_KEY" \
             --arg geminiApiKey "$GEMINI_API_KEY" \
             --arg openaiApiKey "$OPENAI_API_KEY" \
             --arg clarityDataExportToken "$CLARITY_DATA_EXPORT_TOKEN" \
             --arg cloudflarePagesDeployHookUrl "$CLOUDFLARE_PAGES_DEPLOY_HOOK_URL" \
-            '{authJwtSecret:$authJwtSecret,smsFast2smsApiKey:$smsFast2smsApiKey,geminiApiKey:$geminiApiKey,openaiApiKey:$openaiApiKey,clarityDataExportToken:$clarityDataExportToken,cloudflarePagesDeployHookUrl:$cloudflarePagesDeployHookUrl}' \
+            '$current
+              + (if $authJwtSecret != "" then {authJwtSecret:$authJwtSecret} else {} end)
+              + (if $smsFast2smsApiKey != "" then {smsFast2smsApiKey:$smsFast2smsApiKey} else {} end)
+              + (if $geminiApiKey != "" then {geminiApiKey:$geminiApiKey} else {} end)
+              + (if $openaiApiKey != "" then {openaiApiKey:$openaiApiKey} else {} end)
+              + (if $clarityDataExportToken != "" then {clarityDataExportToken:$clarityDataExportToken} else {} end)
+              + (if $cloudflarePagesDeployHookUrl != "" then {cloudflarePagesDeployHookUrl:$cloudflarePagesDeployHookUrl} else {} end)' \
             > /tmp/runtime-secret.json
+          jq -e '.authJwtSecret | type == "string" and length >= 32' /tmp/runtime-secret.json >/dev/null
           aws secretsmanager put-secret-value \
             --secret-id "$PROJECT_NAME/lightsail/runtime" \
             --secret-string file:///tmp/runtime-secret.json >/dev/null
@@ -345,14 +354,32 @@ jobs:
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
           test -n "$MEDIA_BASE_URL"
           test -n "$BUCKET"
+          INSTANCE_RAM_GB=$(aws lightsail get-instance --instance-name "$INSTANCE_NAME" --query 'instance.hardware.ramSizeInGb' --output text)
+          case "$INSTANCE_RAM_GB" in
+            1|1.0)
+              NODE_HEAP_MB=640
+              PM2_MEMORY_LIMIT=720M
+              ;;
+            2|2.0)
+              NODE_HEAP_MB=1280
+              PM2_MEMORY_LIMIT=1536M
+              ;;
+            *)
+              echo "Unsupported Lightsail RAM size: $INSTANCE_RAM_GB"
+              exit 1
+              ;;
+          esac
+          echo "Using Node heap $NODE_HEAP_MB MB and PM2 restart limit $PM2_MEMORY_LIMIT for ${INSTANCE_RAM_GB} GB RAM"
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
             -i /tmp/tempkey "$SSH_USER@$SSH_IP" \
-            "sudo bash -s -- '$MEDIA_BASE_URL' '$BUCKET' '${{ inputs.create_ses_identity }}'" <<'REMOTE'
+            "sudo bash -s -- '$MEDIA_BASE_URL' '$BUCKET' '${{ inputs.create_ses_identity }}' '$NODE_HEAP_MB' '$PM2_MEMORY_LIMIT'" <<'REMOTE'
           set -euo pipefail
           MEDIA_BASE_URL="$1"
           BUCKET="$2"
           SES_ENABLED="$3"
+          NODE_HEAP_MB="$4"
+          PM2_MEMORY_LIMIT="$5"
           DB_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/mysql --query SecretString --output text)
           RUNTIME_SECRET=$(aws secretsmanager get-secret-value --secret-id dc-react/lightsail/runtime --query SecretString --output text)
           DB_HOST=$(aws lightsail get-relational-database --relational-database-name dc-react-mysql-lightsail --query 'relationalDatabase.masterEndpoint.address' --output text)
@@ -364,7 +391,8 @@ jobs:
           ENV_FILE=$(mktemp)
           cat >"$ENV_FILE" <<ENV
           NODE_ENV=production
-          NODE_OPTIONS=--max-old-space-size=640
+          NODE_OPTIONS=--max-old-space-size=$NODE_HEAP_MB
+          RUN_BACKGROUND_WORKERS=yes
           HOST=127.0.0.1
           PORT=8787
           DB_HOST=$DB_HOST
@@ -389,7 +417,7 @@ jobs:
           OPENAI_API_KEY=$(jq -r .openaiApiKey <<<"$RUNTIME_SECRET")
           CLARITY_DATA_EXPORT_TOKEN=$(jq -r .clarityDataExportToken <<<"$RUNTIME_SECRET")
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r .cloudflarePagesDeployHookUrl <<<"$RUNTIME_SECRET")
-          CORS_ORIGIN=https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com
+          CORS_ORIGIN=https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com,https://sarkari-dekhocampus.pages.dev,https://sarkari.dekhocampus.com
           STORAGE_MAX_UPLOAD_BYTES=20971520
           REQUEST_LOG=yes
           ENV
@@ -409,7 +437,7 @@ jobs:
           node backend/scripts/configure-production-site-integrations.mjs
           npm --prefix backend run db:normalize:media
           npm --prefix backend run verify:integrations
-          pm2 reload dc-react-api --update-env
+          pm2 reload dc-react-api --update-env --max-memory-restart "$PM2_MEMORY_LIMIT"
           pm2 save
           if ! command -v certbot >/dev/null 2>&1; then
             apt-get -o DPkg::Lock::Timeout=120 update
@@ -441,6 +469,9 @@ jobs:
             sleep 2
           done
           REMOTE
+
+      - name: Generate tenant-scoped sitemap after database migration
+        run: npm run postbuild
 
       - name: Revoke requested user sessions
         if: ${{ inputs.revoke_phone != '' }}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Card } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { Sparkles, Flame, Snowflake, Activity, GraduationCap } from "lucide-react";
+import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 
 const CAT: Record<string, { label: string; cls: string; icon: any }> = {
   cold:             { label: "Cold",            cls: "bg-slate-100 text-slate-700",   icon: Snowflake },
@@ -19,15 +20,28 @@ interface Props {
   leadId: string | null;
   leadPhone?: string | null;
   leadName?: string | null;
+  siteScope?: SiteScope;
   onClose: () => void;
 }
 
-export function LeadIntentDrawer({ leadId, leadPhone, leadName, onClose }: Props) {
+export function LeadIntentDrawer({ leadId, leadPhone, leadName, siteScope = DEFAULT_SITE_SCOPE, onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const [score, setScore] = useState<any>(null);
   const [timeline, setTimeline] = useState<any[]>([]);
   const [prediction, setPrediction] = useState<any>(null);
   const [aiLoading, setAiLoading] = useState(false);
+
+  const runPrediction = useCallback(async (id: string, mode: "heuristic" | "ai") => {
+    setAiLoading(true);
+    try {
+      const { data, error } = await backendClient.functions.invoke("predict-lead-intent", { body: { lead_score_id: id, mode, site_scope: siteScope } });
+      if (error) throw error;
+      setPrediction(data);
+      if (Array.isArray((data as any)?.timeline)) setTimeline((data as any).timeline);
+    } catch (e: any) {
+      toast({ title: "Prediction failed", description: e?.message, variant: "destructive" });
+    } finally { setAiLoading(false); }
+  }, [siteScope]);
 
   useEffect(() => {
     if (!leadId) return;
@@ -39,29 +53,11 @@ export function LeadIntentDrawer({ leadId, leadPhone, leadName, onClose }: Props
         .from("intent_lead_scores").select("*").eq("lead_id", leadId).maybeSingle();
       setScore(s);
       if (s) {
-        const col = s.subject_type === "user" ? "user_id" : "visitor_id";
-        const { data: ev } = await backendClient.from("intent_events")
-          .select("occurred_at,event_type,college_slug,course_slug,page_url,city,state")
-          .eq(col, s.subject_id)
-          .order("occurred_at", { ascending: false })
-          .limit(200);
-        setTimeline(ev || []);
-        runPrediction(s.id, "heuristic");
+        await runPrediction(s.id, "heuristic");
       }
       setLoading(false);
     })();
-  }, [leadId]);
-
-  const runPrediction = async (id: string, mode: "heuristic" | "ai") => {
-    setAiLoading(true);
-    try {
-      const { data, error } = await backendClient.functions.invoke("predict-lead-intent", { body: { lead_score_id: id, mode } });
-      if (error) throw error;
-      setPrediction(data);
-    } catch (e: any) {
-      toast({ title: "Prediction failed", description: e?.message, variant: "destructive" });
-    } finally { setAiLoading(false); }
-  };
+  }, [leadId, runPrediction]);
 
   const c = score ? (CAT[score.category] || CAT.cold) : null;
   const Icon = c?.icon;

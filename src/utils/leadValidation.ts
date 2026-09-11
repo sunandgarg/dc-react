@@ -1,3 +1,5 @@
+import { toCSV } from '../lib/csv';
+
 export interface ValidationResult {
   isValid: boolean;
   errors: string[];
@@ -182,6 +184,7 @@ export async function checkDatabaseDuplicates(
     .from('leads')
     .select('id, email, mobile')
     .eq('university_id', universityId)
+    .eq('site_scope', 'dekhocampus')
     .or(conditions.join(','));
 
   if (error) {
@@ -205,27 +208,21 @@ export async function checkDatabaseDuplicates(
 export function generateLeadsCSV(leads: Lead[], customColumns?: string[]): string {
   const baseHeaders = ['name', 'email', 'mobile', 'state', 'city', 'course', 'specialization', 'source', 'medium', 'campaign'];
   const headers = [...baseHeaders, ...(customColumns || [])];
-  
-  const rows = leads.map(lead => {
-    const baseValues = [
-      lead.name || '',
-      lead.email || '',
-      lead.mobile || '',
-      lead.state || '',
-      lead.city || '',
-      lead.course || '',
-      lead.specialization || '',
-      lead.leadSource || '',
-      lead.leadMedium || '',
-      lead.leadCampaign || '',
-    ];
-    
-    const customValues = (customColumns || []).map(col => lead[col] || '');
-    
-    return [...baseValues, ...customValues].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
-  });
+  const rows = leads.map((lead) => ({
+    name: lead.name || '',
+    email: lead.email || '',
+    mobile: lead.mobile || '',
+    state: lead.state || '',
+    city: lead.city || '',
+    course: lead.course || '',
+    specialization: lead.specialization || '',
+    source: lead.leadSource || '',
+    medium: lead.leadMedium || '',
+    campaign: lead.leadCampaign || '',
+    ...Object.fromEntries((customColumns || []).map((column) => [column, lead[column] || ''])),
+  }));
 
-  return [headers.join(','), ...rows].join('\n');
+  return toCSV(rows, headers);
 }
 
 // Build validation config from university custom columns

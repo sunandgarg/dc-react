@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { functionUrl } from "@/lib/backendMode";
+import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
 import { Download, Sparkles, Flame, Snowflake, Activity, GraduationCap } from "lucide-react";
 
 interface ScoreRow {
@@ -23,7 +24,29 @@ interface ScoreRow {
   event_count: number;
   last_event_type: string | null;
   last_event_at: string | null;
+  lead_id: string | null;
   updated_at: string;
+}
+
+async function keepDekhoCampusLeadScores<T extends { lead_id?: string | null }>(scores: T[]): Promise<T[]> {
+  const leadIds = Array.from(new Set(scores.map((score) => score.lead_id).filter((id): id is string => Boolean(id))));
+  if (!leadIds.length) return [];
+
+  const allowedLeadIds = new Set<string>();
+  for (let index = 0; index < leadIds.length; index += 100) {
+    const { data, error } = await backendClient
+      .from("leads")
+      .select("id")
+      .eq("site_scope", DEFAULT_SITE_SCOPE)
+      .in("id", leadIds.slice(index, index + 100));
+    if (error) throw error;
+    for (const lead of data || []) allowedLeadIds.add(lead.id);
+  }
+
+  // Unlinked intent rows cannot be attributed to a tenant safely, so this
+  // DekhoCampus-only screen intentionally shows only scores linked to a
+  // DekhoCampus lead.
+  return scores.filter((score) => Boolean(score.lead_id && allowedLeadIds.has(score.lead_id)));
 }
 
 const CAT_STYLE: Record<string, { label: string; cls: string; icon: any }> = {
@@ -47,52 +70,73 @@ export default function AdminLeadIntelligence() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    let q = backendClient.from("intent_lead_scores").select("*").order("score", { ascending: false }).limit(500);
-    if (category !== "all") q = q.eq("category", category);
-    if (college) q = q.eq("top_college_slug", college);
-    if (course)  q = q.eq("top_course_slug",  course);
-    if (min)     q = q.gte("score", Number(min));
-    if (max)     q = q.lte("score", Number(max));
-    if (from)    q = q.gte("updated_at", from);
-    if (to)      q = q.lte("updated_at", to);
-    const { data, error } = await q;
-    if (error) toast({ title: "Failed to load", description: error.message, variant: "destructive" });
-    const list = (data as any) || [];
-    setRows(list);
+    try {
+      let q = backendClient.from("intent_lead_scores").select("*").order("score", { ascending: false }).limit(500);
+      if (category !== "all") q = q.eq("category", category);
+      if (college) q = q.eq("top_college_slug", college);
+      if (course)  q = q.eq("top_course_slug",  course);
+      if (min)     q = q.gte("score", Number(min));
+      if (max)     q = q.lte("score", Number(max));
+      if (from)    q = q.gte("updated_at", from);
+      if (to)      q = q.lte("updated_at", to);
+      const { data, error } = await q;
+      if (error) throw error;
+      const list = await keepDekhoCampusLeadScores(((data as ScoreRow[]) || []));
+      setRows(list);
 
-    // Enrich with name/email/mobile/state/city/course by joining profiles + leads
-    const userIds = list.filter((r: ScoreRow) => r.subject_type === "user").map((r: ScoreRow) => r.subject_id);
-    const visitorIds = list.filter((r: ScoreRow) => r.subject_type === "visitor").map((r: ScoreRow) => r.subject_id);
-    const map: Record<string, any> = {};
-    if (userIds.length) {
-      const { data: profs } = await backendClient.from("profiles").select("user_id,display_name,email,phone,city,state").in("user_id", userIds);
-      for (const p of profs || []) {
-        map[`user:${p.user_id}`] = { name: p.display_name, email: p.email, phone: p.phone, city: p.city, state: p.state };
-      }
-      // overlay with latest lead row by phone match (best-effort)
-      const { data: ulds } = await backendClient.from("leads").select("name,email,phone,city,state,interested_course_slug,source,created_at").in("phone", (profs||[]).map((p:any)=>p.phone).filter(Boolean)).order("created_at",{ascending:false}).limit(500);
-      for (const l of ulds || []) {
-        const owner = (profs||[]).find((p:any)=> p.phone && p.phone === l.phone);
-        if (owner) {
-          const k = `user:${owner.user_id}`;
-          map[k] = { ...map[k], name: map[k]?.name || l.name, email: map[k]?.email || l.email, city: map[k]?.city || l.city, state: map[k]?.state || l.state, course: l.interested_course_slug, source: l.source };
+      // Enrich with name/email/mobile/state/city/course by joining profiles +
+      // DekhoCampus leads only. The score list above is already tenant-gated.
+      const userIds = list.filter((r) => r.subject_type === "user").map((r) => r.subject_id);
+      const visitorIds = list.filter((r) => r.subject_type === "visitor").map((r) => r.subject_id);
+      const map: Record<string, any> = {};
+      if (userIds.length) {
+        const { data: profs, error: profilesError } = await backendClient.from("profiles").select("user_id,display_name,email,phone,city,state").in("user_id", userIds);
+        if (profilesError) throw profilesError;
+        for (const p of profs || []) {
+          map[`user:${p.user_id}`] = { name: p.display_name, email: p.email, phone: p.phone, city: p.city, state: p.state };
+        }
+        // Overlay with the latest scoped lead row by phone match (best-effort).
+        const phones = (profs || []).map((profile: any) => profile.phone).filter(Boolean);
+        if (phones.length) {
+          const { data: ulds, error: leadsError } = await backendClient
+            .from("leads")
+            .select("name,email,phone,city,state,interested_course_slug,source,created_at")
+            .eq("site_scope", DEFAULT_SITE_SCOPE)
+            .in("phone", phones)
+            .order("created_at", { ascending: false })
+            .limit(500);
+          if (leadsError) throw leadsError;
+          for (const l of ulds || []) {
+            const owner = (profs || []).find((profile: any) => profile.phone && profile.phone === l.phone);
+            if (owner) {
+              const key = `user:${owner.user_id}`;
+              map[key] = { ...map[key], name: map[key]?.name || l.name, email: map[key]?.email || l.email, city: map[key]?.city || l.city, state: map[key]?.state || l.state, course: l.interested_course_slug, source: l.source };
+            }
+          }
         }
       }
-    }
-    if (visitorIds.length) {
-      // visitors: try to find a lead via intent_events join (best-effort: latest event with phone via leads)
-      for (const vid of visitorIds) map[`visitor:${vid}`] = {};
-    }
-    setEnrich(map);
+      if (visitorIds.length) {
+        for (const visitorId of visitorIds) map[`visitor:${visitorId}`] = {};
+      }
+      setEnrich(map);
 
-    const { data: all } = await backendClient.from("intent_lead_scores").select("category");
-    const s = { total: 0, cold: 0, warm: 0, hot: 0, admission_ready: 0 };
-    for (const r of (all as any[]) || []) {
-      s.total++;
-      (s as any)[r.category] = ((s as any)[r.category] || 0) + 1;
+      const { data: all, error: statsError } = await backendClient.from("intent_lead_scores").select("category,lead_id").limit(5000);
+      if (statsError) throw statsError;
+      const scopedScores = await keepDekhoCampusLeadScores((all as Array<{ category: string; lead_id: string | null }>) || []);
+      const nextStats = { total: 0, cold: 0, warm: 0, hot: 0, admission_ready: 0 };
+      for (const score of scopedScores) {
+        nextStats.total++;
+        (nextStats as any)[score.category] = ((nextStats as any)[score.category] || 0) + 1;
+      }
+      setStats(nextStats);
+    } catch (error: any) {
+      setRows([]);
+      setEnrich({});
+      setStats({ total: 0, cold: 0, warm: 0, hot: 0, admission_ready: 0 });
+      toast({ title: "Failed to load", description: error?.message || "Lead intelligence could not be loaded", variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
-    setStats(s);
-    setLoading(false);
   }, [category, college, course, from, max, min, to]);
 
   useEffect(() => { load(); }, [load]);
@@ -115,16 +159,10 @@ export default function AdminLeadIntelligence() {
   }, [rows, enrich, filters.q, filters.city, filters.state]);
 
 
-  const openLead = async (row: ScoreRow) => {
+  const openLead = (row: ScoreRow) => {
     setSelected(row);
     setPrediction(null);
-    const col = row.subject_type === "user" ? "user_id" : "visitor_id";
-    const { data } = await backendClient.from("intent_events")
-      .select("occurred_at,event_type,college_slug,course_slug,page_url")
-      .eq(col, row.subject_id)
-      .order("occurred_at", { ascending: false })
-      .limit(100);
-    setTimeline(data || []);
+    setTimeline([]);
     // Heuristic prediction (instant)
     runPrediction(row.id, "heuristic");
   };
@@ -132,9 +170,10 @@ export default function AdminLeadIntelligence() {
   const runPrediction = async (id: string, mode: "heuristic" | "ai") => {
     setAiLoading(true);
     try {
-      const { data, error } = await backendClient.functions.invoke("predict-lead-intent", { body: { lead_score_id: id, mode } });
+      const { data, error } = await backendClient.functions.invoke("predict-lead-intent", { body: { lead_score_id: id, mode, site_scope: DEFAULT_SITE_SCOPE } });
       if (error) throw error;
       setPrediction(data);
+      if (Array.isArray((data as any)?.timeline)) setTimeline((data as any).timeline);
     } catch (e: any) {
       toast({ title: "Prediction failed", description: e?.message, variant: "destructive" });
     } finally { setAiLoading(false); }
@@ -150,7 +189,7 @@ export default function AdminLeadIntelligence() {
           "Content-Type": "application/json",
           ...(session.session?.access_token ? { Authorization: `Bearer ${session.session.access_token}` } : {}),
         },
-        body: JSON.stringify({ ...filters, format: "csv" }),
+        body: JSON.stringify({ ...filters, format: "csv", site_scope: DEFAULT_SITE_SCOPE }),
       });
       const blob = await res.blob();
       const link = document.createElement("a");

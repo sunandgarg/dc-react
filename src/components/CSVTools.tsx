@@ -7,7 +7,12 @@ import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
 import { toCSV, downloadCSV, parseCSV, coerceRow } from "@/lib/csv";
 import { downloadJSON, parseJSONImport, buildFilename, rowsToJSON } from "@/lib/adminIO";
-import { discoverTable, sniffSchema, inferSchemaFromRows, STRIPPED } from "@/lib/adminIOAuto";
+import { inferSchemaFromRows } from "@/lib/adminIOAuto";
+
+export interface CSVRowScope {
+  column: string;
+  value: string;
+}
 
 interface Props {
   table: string;
@@ -18,18 +23,20 @@ interface Props {
   required?: string[];
   upsertKey?: string;
   onImported?: () => void;
+  /** Restrict every read and write to one tenant/site and force this value on imports. */
+  scope?: CSVRowScope;
 }
 
 interface HistoryEntry { at: string; table: string; count: number; ok: boolean; fmt?: string; }
 
 const HKEY = "csv-tools-history";
 
-function readHistory(): HistoryEntry[] {
-  try { return JSON.parse(localStorage.getItem(HKEY) || "[]"); } catch { return []; }
+function readHistory(key = HKEY): HistoryEntry[] {
+  try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; }
 }
-function pushHistory(e: HistoryEntry) {
-  const list = [e, ...readHistory()].slice(0, 20);
-  localStorage.setItem(HKEY, JSON.stringify(list));
+function pushHistory(e: HistoryEntry, key = HKEY) {
+  const list = [e, ...readHistory(key)].slice(0, 20);
+  localStorage.setItem(key, JSON.stringify(list));
 }
 
 /**
@@ -37,7 +44,7 @@ function pushHistory(e: HistoryEntry) {
  * Supports CSV + JSON, bulk + single-row, with upsert-by-slug semantics.
  * Pass columns="*" to auto-discover every DB column so nothing is dropped.
  */
-export function CSVTools({ table, filename, columns: columnsProp, typeHints: typeHintsProp = {}, required = [], upsertKey = "slug", onImported }: Props) {
+export function CSVTools({ table, filename, columns: columnsProp, typeHints: typeHintsProp = {}, required = [], upsertKey = "slug", onImported, scope }: Props) {
   const csvFileRef = useRef<HTMLInputElement>(null);
   const jsonFileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -50,19 +57,31 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
   const [autoHints, setAutoHints] = useState<Record<string, "number" | "boolean" | "array" | "json">>({});
   const baseName = filename.replace(/\.csv$/i, "").replace(/\.json$/i, "");
   const isAuto = columnsProp === "*";
+  const scopeColumn = scope?.column;
+  const scopeValue = scope?.value;
+  const scopeKey = scopeColumn ? `${scopeColumn}:${scopeValue}` : "all";
+  const historyKey = `${HKEY}:${table}:${scopeKey}`;
+  const conflictTarget = scope && upsertKey !== "id" ? `${scope.column},${upsertKey}` : upsertKey;
+  const schemaFallbackKey = JSON.stringify([upsertKey, ...required, ...Object.keys(typeHintsProp).sort(), ...(scope ? [scope.column] : [])]);
+  const schemaFallbackColumns = useMemo<string[]>(() => JSON.parse(schemaFallbackKey), [schemaFallbackKey]);
 
-  useEffect(() => { setHistory(readHistory()); }, [showHistory]);
+  useEffect(() => { setHistory(readHistory(historyKey)); }, [showHistory, historyKey]);
 
   useEffect(() => {
     if (!isAuto) return;
     let cancelled = false;
-    sniffSchema(table).then((s) => {
+    void (async () => {
+      let query = backendClient.from(table as any).select("*");
+      if (scopeColumn) query = (query as any).eq(scopeColumn, scopeValue);
+      const { data, error } = await query.limit(50);
+      if (error) throw error;
       if (cancelled) return;
-      setAutoCols(s.columns);
-      setAutoHints(s.typeHints);
-    }).catch(() => {});
+      const schema = inferSchemaFromRows(data || []);
+      setAutoCols(Array.from(new Set([...schema.columns, ...schemaFallbackColumns])));
+      setAutoHints(schema.typeHints);
+    })().catch(() => {});
     return () => { cancelled = true; };
-  }, [table, isAuto]);
+  }, [table, isAuto, scopeColumn, scopeValue, schemaFallbackColumns]);
 
   const columns = useMemo<string[]>(
     () => (isAuto ? (autoCols ?? []) : (columnsProp as string[])),
@@ -72,19 +91,29 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
 
   const fetchAll = async () => {
     if (isAuto) {
-      const { rows, schema } = await discoverTable(table);
-      // refresh hints/cols from full data - guarantees nothing is dropped on export
-      setAutoCols(schema.columns);
+      const rows: any[] = [];
+      for (let from = 0; ; from += 1000) {
+        let query = backendClient.from(table as any).select("*");
+        if (scope) query = (query as any).eq(scope.column, scope.value);
+        const { data, error } = await query.range(from, from + 999);
+        if (error) throw error;
+        const chunk = (data || []) as any[];
+        rows.push(...chunk);
+        if (chunk.length < 1000 || from >= 50_000) break;
+      }
+      const schema = inferSchemaFromRows(rows);
+      setAutoCols(Array.from(new Set([...schema.columns, ...schemaFallbackColumns])));
       setAutoHints(schema.typeHints);
       return rows;
     }
     const all: any[] = [];
     let from = 0;
     while (true) {
-      const { data, error } = await backendClient
+      let query = backendClient
         .from(table as any)
         .select((columnsProp as string[]).join(","))
-        .range(from, from + 999);
+      if (scope) query = (query as any).eq(scope.column, scope.value);
+      const { data, error } = await query.range(from, from + 999);
       if (error) throw error;
       const chunk = (data || []) as any[];
       all.push(...chunk);
@@ -100,8 +129,10 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
     try {
       const data = await fetchAll();
       // When auto, use the union of every key present in the fetched data so
-      // no field is ever dropped. Otherwise use the explicit columns list.
-      const cols = isAuto ? inferSchemaFromRows(data).columns : columns;
+      // no field is ever dropped. Empty scoped tables still export a useful
+      // header row from the stable schema fallback discovered at mount time.
+      const inferredColumns = isAuto ? inferSchemaFromRows(data).columns : [];
+      const cols = isAuto ? (inferredColumns.length ? inferredColumns : columns) : columns;
       const rows = data.map((r: any) => {
         const o: any = {};
         cols.forEach((c) => {
@@ -119,19 +150,21 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
     setBusy(true);
     try {
       const data = await fetchAll();
-      const cols = isAuto ? inferSchemaFromRows(data).columns : columns;
+      const inferredColumns = isAuto ? inferSchemaFromRows(data).columns : [];
+      const cols = isAuto ? (inferredColumns.length ? inferredColumns : columns) : columns;
       downloadJSON(buildFilename(baseName, ["all"], "json"), rowsToJSON(data, cols));
       toast.success(`Exported ${data.length} rows · ${cols.length} fields (JSON)`);
     } catch (e: any) { toast.error(e.message); } finally { setBusy(false); }
   };
 
   const handleTemplate = () => {
-    const cols = columns.length ? columns : Object.keys(typeHints);
+    const cols = Array.from(new Set([...(columns.length ? columns : Object.keys(typeHints)), ...(scope ? [scope.column] : [])]));
     const sample: any = {};
     cols.forEach((c) => {
       const t = typeHints[c];
       sample[c] = t === "number" ? 0 : t === "boolean" ? "true" : t === "array" ? "value1|value2" : t === "json" ? "{}" : required.includes(c) ? `<required>` : "";
     });
+    if (scope) sample[scope.column] = scope.value;
     downloadCSV(`${baseName}-template.csv`, toCSV([sample], cols));
   };
 
@@ -186,6 +219,7 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
           raw = parsed.length;
           rows = parsed.map(coerceJsonRow);
         }
+        if (scope) rows = rows.map((row) => ({ ...row, [scope.column]: scope.value }));
         if (rows.length > 10_000) {
           toast.error("Max 10,000 rows per import. Split the file.");
           return;
@@ -204,17 +238,31 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
     const valid = preview.rows.filter((_, i) => !preview.errors.some((e) => e.row === i + 2));
     setBusy(true);
     // Chunk to keep payloads safe and surface progress
-    const CHUNK = 500;
+    // Article writes run a strict tenant-scoped duplicate check while holding a
+    // transaction lock. Smaller batches keep large imports well inside the API
+    // transaction deadline; other data tools retain their higher throughput.
+    const CHUNK = table === "articles" ? 50 : 500;
     let done = 0;
     let lastError: any = null;
+    if (scope && upsertKey === "id") {
+      const ids = valid.map((row) => row.id).filter(Boolean);
+      if (ids.length) {
+        const { data: existing, error } = await (backendClient as any).from(table).select(`id,${scope.column}`).in("id", ids);
+        if (error) { setBusy(false); return toast.error(error.message); }
+        if ((existing || []).some((row: any) => row[scope.column] !== scope.value)) {
+          setBusy(false);
+          return toast.error("Import blocked: one or more IDs belong to another site scope.");
+        }
+      }
+    }
     for (let i = 0; i < valid.length; i += CHUNK) {
       const slice = valid.slice(i, i + CHUNK);
-      const { error } = await backendClient.from(table as any).upsert(slice as any, { onConflict: upsertKey });
+      const { error } = await backendClient.from(table as any).upsert(slice as any, { onConflict: conflictTarget });
       if (error) { lastError = error; break; }
       done += slice.length;
     }
     setBusy(false);
-    pushHistory({ at: new Date().toISOString(), table, count: done, ok: !lastError, fmt: preview.fmt });
+    pushHistory({ at: new Date().toISOString(), table: scope ? `${table} (${scope.value})` : table, count: done, ok: !lastError, fmt: preview.fmt }, historyKey);
     if (lastError) return toast.error(`Imported ${done}/${valid.length} before error: ${lastError.message}`);
     toast.success(`Imported / updated ${done} rows`);
     setPreview(null);
@@ -242,9 +290,15 @@ export function CSVTools({ table, filename, columns: columnsProp, typeHints: typ
       }
       const missing = required.filter((k) => row[k] === undefined || String(row[k]).trim() === "");
       if (missing.length) throw new Error(`Missing required: ${missing.join(", ")}`);
-      const { error } = await backendClient.from(table as any).upsert([row] as any, { onConflict: upsertKey });
+      if (scope) row = { ...row, [scope.column]: scope.value };
+      if (scope && upsertKey === "id" && row.id) {
+        const { data: existing, error: lookupError } = await (backendClient as any).from(table).select(`id,${scope.column}`).eq("id", row.id).maybeSingle();
+        if (lookupError) throw lookupError;
+        if (existing && existing[scope.column] !== scope.value) throw new Error("Import blocked: this ID belongs to another site scope.");
+      }
+      const { error } = await backendClient.from(table as any).upsert([row] as any, { onConflict: conflictTarget });
       if (error) throw error;
-      pushHistory({ at: new Date().toISOString(), table, count: 1, ok: true, fmt: "single" });
+      pushHistory({ at: new Date().toISOString(), table: scope ? `${table} (${scope.value})` : table, count: 1, ok: true, fmt: "single" }, historyKey);
       toast.success(`Imported 1 ${table} row`);
       setSingleOpen(false);
       setSingleText("");

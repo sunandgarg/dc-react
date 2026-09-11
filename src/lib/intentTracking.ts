@@ -193,6 +193,7 @@ export async function mergeVisitorIntoUser(userId: string) {
     await (backendClient as any).rpc("intent_merge_visitor", {
       _visitor_id: visitor,
       _user_id:    userId,
+      _site_scope: typeof location !== "undefined" && location.hostname.startsWith("sarkari.") ? "sarkari" : "dekhocampus",
     });
   } catch { /* ignore */ }
 }

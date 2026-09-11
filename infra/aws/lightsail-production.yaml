@@ -14,7 +14,7 @@ Parameters:
     Default: main
   CorsOrigins:
     Type: String
-    Default: https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com
+    Default: https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com,https://sarkari-dekhocampus.pages.dev,https://sarkari.dekhocampus.com
   MediaDomain:
     Type: String
     Default: ''
@@ -30,7 +30,7 @@ Parameters:
     AllowedPattern: '[a-z0-9_]+'
   InstanceBundleId:
     Type: String
-    Default: micro_3_0
+    Default: micro_3_1
     AllowedPattern: '[a-z0-9_]+'
   SshAllowedCidr:
     Type: String
@@ -341,6 +341,7 @@ Resources:
           cat >/etc/${ProjectName}.env <<ENV
           NODE_ENV=production
           NODE_OPTIONS=--max-old-space-size=640
+          RUN_BACKGROUND_WORKERS=yes
           HOST=127.0.0.1
           PORT=8787
           DB_HOST=$DB_HOST

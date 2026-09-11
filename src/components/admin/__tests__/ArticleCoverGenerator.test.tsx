@@ -33,9 +33,19 @@ describe("ArticleCoverGenerator", () => {
     fireEvent.click(screen.getByRole("button", { name: /generate branded cover/i }));
 
     await waitFor(() => expect(invoke).toHaveBeenCalledWith("admin-article-cover", {
-      body: { title: "NEET counselling checklist", slug: "neet-checklist" },
+      body: { title: "NEET counselling checklist", slug: "neet-checklist", site_scope: "dekhocampus" },
     }));
     await waitFor(() => expect(onGenerated).toHaveBeenCalledWith("https://cdn.example.com/cover.webp"));
     expect(toastSuccess).toHaveBeenCalledWith("Branded cover generated");
+  });
+
+  it("keeps Sarkari cover generation in the Sarkari workspace", async () => {
+    invoke.mockResolvedValue({ data: { featured_image: "https://cdn.example.com/sarkari-cover.webp" }, error: null });
+    render(<ArticleCoverGenerator title="SSC CGL notification" siteScope="sarkari" onGenerated={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: /generate branded cover/i }));
+
+    await waitFor(() => expect(invoke).toHaveBeenCalledWith("admin-article-cover", {
+      body: { title: "SSC CGL notification", slug: undefined, site_scope: "sarkari" },
+    }));
   });
 });

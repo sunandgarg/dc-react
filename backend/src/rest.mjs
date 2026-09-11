@@ -4,11 +4,23 @@ import { recordContentReviews } from "./content-review.mjs";
 import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 import { invalidateDirectorySearchCache, searchDirectory } from "./directory-search.mjs";
 import { sanitizeCollegePublicContent } from "./college-content-sanitizer.mjs";
-import { assertArticleTopicsAvailable, withArticleWriteLock } from "./blog-ai.mjs";
+import { assertArticleTopicsAvailable, loadArticleCoverage, withArticleWriteLock } from "./blog-ai.mjs";
+import { mergeIntentVisitor, prepareIntentEvents, stampTrackingSiteScope, updateIntentScoresForEvents } from "./intent-intelligence.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
 const HOMEPAGE_EXPLORE_TABLES = new Set(["colleges", "courses", "exams"]);
+const SITE_SCOPED_UPSERT_TABLES = new Set(["articles", "leads"]);
+const ARTICLE_WRITE_BATCH_LIMIT = 50;
+
+export function assertSiteScopedRowOwnership(table, row, existingRow) {
+  if (!SITE_SCOPED_UPSERT_TABLES.has(table) || !existingRow) return;
+  if (existingRow.site_scope === row.site_scope) return;
+  const error = new Error("The supplied ID belongs to another site workspace");
+  error.status = 409;
+  error.code = "SITE_SCOPE_CONFLICT";
+  throw error;
+}
 
 export function omitDerivedFields(table, input) {
   if (table !== "colleges" || !input || typeof input !== "object") return input;
@@ -127,13 +139,204 @@ export function nextShortIdValue(table, currentMax) {
 export function resolveConflictColumns(table, requestedColumns = "") {
   const explicit = String(requestedColumns)
     .split(",")
+    .map((column) => column.trim())
     .filter((column) => schemaMetadata[table].fields[column]);
   return explicit.length ? explicit : schemaMetadata[table].primaryKeys;
+}
+
+export function assertAllowedArticleConflictColumns(table, conflictColumns, requestedColumns = "") {
+  if (table !== "articles") return;
+  const requested = String(requestedColumns).split(",").map((column) => column.trim()).filter(Boolean);
+  const target = requested.length ? requested : conflictColumns;
+  const matchesResolved = target.length === conflictColumns.length
+    && target.every((column, index) => column === conflictColumns[index]);
+  const allowed = matchesResolved && (target.length === 1 && target[0] === "id"
+    || target.length === 2 && target[0] === "site_scope" && target[1] === "slug");
+  if (allowed) return;
+  const error = new Error("Article upserts require on_conflict=id or on_conflict=site_scope,slug");
+  error.status = 400;
+  error.code = "INVALID_ARTICLE_CONFLICT_TARGET";
+  throw error;
+}
+
+export function upsertUpdateColumns(table, input, conflictColumns) {
+  const allowed = schemaMetadata[table]?.fields || {};
+  const primaryKeys = new Set(schemaMetadata[table]?.primaryKeys || []);
+  const conflicts = new Set(conflictColumns);
+  return Object.keys(input || {}).filter((column) =>
+    allowed[column] && !primaryKeys.has(column) && !conflicts.has(column));
 }
 
 function isDuplicateKeyError(error) {
   const detail = `${error?.message || ""} ${error?.meta?.message || ""} ${error?.meta?.code || ""}`;
   return error?.code === "P2002" || /duplicate entry|\b1062\b/i.test(detail);
+}
+
+function canonicalArticleScope(value) {
+  return value === "sarkari" ? "sarkari" : "dekhocampus";
+}
+
+function upsertLookupColumnSets(table, conflictColumns) {
+  const sets = table === "articles"
+    ? [["id"], ["site_scope", "slug"]]
+    : [conflictColumns, schemaMetadata[table]?.primaryKeys || []];
+  const seen = new Set();
+  return sets.filter((columns) => {
+    if (!columns.length) return false;
+    const key = columns.join("\u0000");
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+async function findExactRow(table, row, columns, client, lock = false) {
+  const allowed = schemaMetadata[table]?.fields || {};
+  if (!columns.length || columns.some((column) => !allowed[column])) return null;
+  const rawValues = columns.map((column) => row[column]);
+  // A nullable unique key cannot identify the row MySQL will conflict with,
+  // because MySQL permits multiple NULL values in a unique index.
+  if (rawValues.some((value) => value === undefined || value === null)) return null;
+  const values = rawValues.map((value, index) => normalizeForDatabase(value, allowed[columns[index]]));
+  const where = columns.map((column) => `${quote(column)} = ?`).join(" AND ");
+  const rows = await client.$queryRawUnsafe(
+    `SELECT * FROM ${quote(table)} WHERE ${where} LIMIT 1${lock ? " FOR UPDATE" : ""}`,
+    ...values,
+  );
+  return rows[0] || null;
+}
+
+function persistedRowKey(table, row) {
+  if (row?.id !== undefined && row?.id !== null) return `id:${row.id}`;
+  const primaryKeys = schemaMetadata[table]?.primaryKeys || [];
+  return primaryKeys.map((column) => `${column}:${String(row?.[column])}`).join("|") || JSON.stringify(row);
+}
+
+/**
+ * Resolve only rows addressed by the caller's exact upsert target (plus the
+ * primary key). This supports article self-exclusion and prevents a malformed
+ * target from silently moving a scoped record between workspaces.
+ */
+export async function findExistingUpsertRows(table, inputs, conflictColumns, client = prisma, { lock = false } = {}) {
+  assertAllowedArticleConflictColumns(table, conflictColumns);
+  const lookupSets = upsertLookupColumnSets(table, conflictColumns);
+  const matchesByInput = [];
+  for (const input of inputs) {
+    const matches = new Map();
+    const matchesByColumns = new Map();
+    for (const columns of lookupSets) {
+      const existing = await findExactRow(table, input, columns, client, lock);
+      if (!existing) continue;
+      assertSiteScopedRowOwnership(table, input, existing);
+      matches.set(persistedRowKey(table, existing), existing);
+      matchesByColumns.set(columns.join("\u0000"), existing);
+    }
+    if (matches.size > 1) {
+      const error = new Error("The supplied upsert keys identify different existing rows");
+      error.status = 409;
+      error.code = "UPSERT_TARGET_CONFLICT";
+      throw error;
+    }
+    if (table === "articles") {
+      const targetKey = conflictColumns.join("\u0000");
+      const target = matchesByColumns.get(targetKey) || null;
+      const nonTarget = [...matchesByColumns.entries()].find(([key]) => key !== targetKey)?.[1] || null;
+      if (!target && nonTarget) {
+        const error = new Error("The article conflicts with a unique key outside the declared upsert target");
+        error.status = 409;
+        error.code = "ARTICLE_NON_TARGET_UNIQUE_CONFLICT";
+        throw error;
+      }
+      matchesByInput.push(target ? [target] : []);
+    } else {
+      matchesByInput.push([...matches.values()]);
+    }
+  }
+  return matchesByInput;
+}
+
+/**
+ * Run the strict topic gate without collapsing a mixed-site batch onto its
+ * first row. Exact upsert targets are excluded per candidate, never globally.
+ */
+export async function assertArticleBatchTopicsAvailable(candidates, {
+  client = prisma,
+  excludeIdsByCandidate = [],
+} = {}) {
+  if (!candidates.length) return true;
+
+  // Check candidates against one another first, partitioned by their own
+  // site_scope inside the canonical strict gate.
+  await assertArticleTopicsAvailable(candidates, {
+    client: { articles: { findMany: async () => [] } },
+  });
+
+  const coverageByScope = new Map();
+  for (const candidate of candidates) {
+    const scope = canonicalArticleScope(candidate?.site_scope);
+    if (!coverageByScope.has(scope)) {
+      coverageByScope.set(scope, await loadArticleCoverage(scope, client));
+    }
+  }
+
+  for (let index = 0; index < candidates.length; index += 1) {
+    const candidate = candidates[index];
+    const scope = canonicalArticleScope(candidate?.site_scope);
+    const coverage = coverageByScope.get(scope) || [];
+    await assertArticleTopicsAvailable([candidate], {
+      client: { articles: { findMany: async () => coverage } },
+      excludeIds: excludeIdsByCandidate[index] || [],
+      siteScope: scope,
+    });
+  }
+  return true;
+}
+
+export function assertArticleSiteScopeUnchanged(input, existingRows) {
+  if (!Object.hasOwn(input || {}, "site_scope")) return;
+  const requestedScope = input.site_scope;
+  if (existingRows.some((row) => row.site_scope !== requestedScope)) {
+    const error = new Error("An article cannot be moved between site workspaces");
+    error.status = 409;
+    error.code = "ARTICLE_SITE_SCOPE_IMMUTABLE";
+    throw error;
+  }
+}
+
+function explicitDatabaseFields(table, input) {
+  const allowed = schemaMetadata[table]?.fields || {};
+  return Object.fromEntries(Object.entries(input || {}).filter(([column]) => allowed[column]));
+}
+
+export function prepareStagedArticleUpsertReviews(explicitRows, stagedRows, existingByCandidate, conflictColumns = []) {
+  const creates = [];
+  const updatesBefore = [];
+  const updatesAfter = [];
+  const responseRows = [];
+  const gateCandidates = [];
+  const excludeIdsByCandidate = [];
+
+  for (let index = 0; index < stagedRows.length; index += 1) {
+    const existing = existingByCandidate[index]?.[0] || null;
+    if (!existing) {
+      creates.push(stagedRows[index]);
+      responseRows.push(stagedRows[index]);
+      gateCandidates.push(stagedRows[index]);
+      excludeIdsByCandidate.push([]);
+      continue;
+    }
+    const updateColumns = new Set(upsertUpdateColumns("articles", explicitRows[index], conflictColumns));
+    const explicitUpdates = Object.fromEntries(Object.entries(explicitDatabaseFields("articles", explicitRows[index]))
+      .filter(([column]) => updateColumns.has(column)));
+    const after = { ...existing, ...explicitUpdates, id: existing.id, site_scope: existing.site_scope };
+    updatesBefore.push(existing);
+    updatesAfter.push(after);
+    responseRows.push(after);
+    gateCandidates.push(after);
+    excludeIdsByCandidate.push(existing.id ? [existing.id] : []);
+  }
+
+  return { creates, updatesBefore, updatesAfter, responseRows, gateCandidates, excludeIdsByCandidate };
 }
 
 export function decodeRow(table, row) {
@@ -291,7 +494,7 @@ async function hydrateRelations(table, rows, nodes) {
 
 function responseHeaders(total, start, count) {
   const end = count ? start + count - 1 : start;
-  return { "content-range": `${start}-${end}/${total}`, "range-unit": "items" };
+  return { "content-range": `${start}-${end}/${total === null ? "*" : total}`, "range-unit": "items" };
 }
 
 function representationBody(request, rows) {
@@ -319,8 +522,10 @@ async function handleGet(table, request, url, context) {
   const hiddenRelationFields = selectingAll ? [] : relationSourceFields(table, nodes).filter((field) => !requestedFields.has(field));
   const params = [];
   const where = buildWhere(table, url, params);
-  const countRows = await prisma.$queryRawUnsafe(`SELECT COUNT(*) AS total FROM ${quote(table)}${where}`, ...params);
-  const total = Number(countRows[0]?.total || 0);
+  const wantsCount = /(?:^|,)\s*count=(?:exact|planned|estimated)(?:,|$)/i.test(request.headers.get("prefer") || "");
+  const total = wantsCount
+    ? Number((await prisma.$queryRawUnsafe(`SELECT COUNT(*) AS total FROM ${quote(table)}${where}`, ...params))[0]?.total || 0)
+    : null;
   const range = request.headers.get("range")?.split("-").map(Number);
   const offset = Number(url.searchParams.get("offset") ?? range?.[0] ?? 0);
   const requestedLimit = Number(url.searchParams.get("limit") ?? (range ? range[1] - range[0] + 1 : 1000));
@@ -340,24 +545,102 @@ async function handleGet(table, request, url, context) {
   return { status: 200, body: safe, headers: responseHeaders(total, offset, safe.length) };
 }
 
-async function insertRow(table, input, merge, conflictColumns, client = prisma) {
-  const row = applyDefaults(table, input);
+async function executeArticleUpsert(input, row, conflictColumns, client) {
+  const table = "articles";
+  const allowed = schemaMetadata[table].fields;
+  const columns = Object.keys(row).filter((column) => allowed[column]);
+  const values = columns.map((column) => normalizeForDatabase(row[column], allowed[column]));
+  const existing = (await findExistingUpsertRows(table, [row], conflictColumns, client))[0]?.[0] || null;
+
+  if (existing) {
+    const updates = upsertUpdateColumns(table, input, conflictColumns);
+    if (updates.length) {
+      try {
+        await client.$executeRawUnsafe(
+          `UPDATE ${quote(table)} SET ${updates.map((column) => `${quote(column)} = ?`).join(",")} WHERE \`id\` = ? AND \`site_scope\` = ?`,
+          ...updates.map((column) => normalizeForDatabase(row[column], allowed[column])),
+          existing.id,
+          existing.site_scope,
+        );
+      } catch (error) {
+        if (!isDuplicateKeyError(error)) throw error;
+        // This re-resolution either identifies the conflicting non-target row
+        // and throws a precise 409, or confirms an otherwise unknown unique
+        // collision which is still returned as a deterministic conflict.
+        await findExistingUpsertRows(table, [row], conflictColumns, client);
+        const conflict = new Error("The article update conflicts with an existing unique key");
+        conflict.status = 409;
+        conflict.code = "ARTICLE_UNIQUE_CONFLICT";
+        throw conflict;
+      }
+    }
+  } else {
+    try {
+      await client.$executeRawUnsafe(
+        `INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`,
+        ...values,
+      );
+    } catch (error) {
+      if (!isDuplicateKeyError(error)) throw error;
+      const raced = (await findExistingUpsertRows(table, [row], conflictColumns, client))[0]?.[0] || null;
+      const conflict = new Error(raced
+        ? "The article upsert target changed during this request; retry with the persisted row"
+        : "The article conflicts with an existing unique key");
+      conflict.status = 409;
+      conflict.code = raced ? "ARTICLE_UPSERT_RACE" : "ARTICLE_UNIQUE_CONFLICT";
+      if (raced?.id) conflict.conflict_id = raced.id;
+      throw conflict;
+    }
+  }
+
+  const persisted = (await findExistingUpsertRows(table, [row], conflictColumns, client))[0]?.[0];
+  if (!persisted) {
+    const error = new Error("The persisted article changed during this request; retry the upsert");
+    error.status = 409;
+    error.code = "ARTICLE_UPSERT_RACE";
+    throw error;
+  }
+  return decodeRow(table, persisted);
+}
+
+export async function insertRow(table, input, merge, conflictColumns, client = prisma, materializedRow = null) {
+  const row = materializedRow || applyDefaults(table, input);
   const allowed = schemaMetadata[table].fields;
   const providedColumns = Object.keys(row).filter((column) => allowed[column]);
   if (merge && conflictColumns.length) {
-    const conflictValues = conflictColumns.map((column) => normalizeForDatabase(row[column], allowed[column]));
-    if (conflictValues.every((value) => value !== undefined)) {
+    const rawConflictValues = conflictColumns.map((column) => row[column]);
+    if (rawConflictValues.every((value) => value !== undefined)) {
+      const conflictValues = rawConflictValues.map((value, index) => normalizeForDatabase(value, allowed[conflictColumns[index]]));
       const columns = providedColumns;
       const values = columns.map((column) => normalizeForDatabase(row[column], allowed[column]));
-      const updates = columns.filter((column) => !conflictColumns.includes(column));
-      const duplicateClause = updates.length
-        ? updates.map((column) => `${quote(column)} = VALUES(${quote(column)})`).join(",")
-        : `${quote(conflictColumns[0])} = VALUES(${quote(conflictColumns[0])})`;
-      await client.$executeRawUnsafe(
-        `INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")}) ON DUPLICATE KEY UPDATE ${duplicateClause}`,
-        ...values,
-      );
-      return row;
+      const updates = upsertUpdateColumns(table, input, conflictColumns);
+      const duplicateClause = updates.map((column) => `${quote(column)} = VALUES(${quote(column)})`).join(",");
+      const insertSql = `INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`;
+      if (table === "articles") return executeArticleUpsert(input, row, conflictColumns, client);
+      let existing = (await findExistingUpsertRows(table, [row], conflictColumns, client))[0];
+      if (updates.length) {
+        await client.$executeRawUnsafe(`${insertSql} ON DUPLICATE KEY UPDATE ${duplicateClause}`, ...values);
+      } else if (conflictValues.some((value) => value === null)) {
+        // MySQL unique indexes allow multiple NULL values, so no conflict row
+        // can be identified safely in this case.
+        await client.$executeRawUnsafe(insertSql, ...values);
+      } else if (!existing.length) {
+        try {
+          await client.$executeRawUnsafe(insertSql, ...values);
+        } catch (error) {
+          if (!isDuplicateKeyError(error)) throw error;
+          existing = (await findExistingUpsertRows(table, [row], conflictColumns, client))[0];
+          if (!existing.length) throw error;
+        }
+      }
+      const persisted = (await findExistingUpsertRows(table, [row], conflictColumns, client))[0]?.[0];
+      if (!persisted) {
+        const error = new Error(`Unable to resolve persisted ${table} upsert row`);
+        error.status = 500;
+        error.code = "UPSERT_RESULT_NOT_FOUND";
+        throw error;
+      }
+      return decodeRow(table, persisted);
     }
   }
 
@@ -382,17 +665,57 @@ async function insertRow(table, input, merge, conflictColumns, client = prisma) 
 
 async function handlePost(table, request, url, context) {
   const input = await request.json();
-  const sourceRows = (Array.isArray(input) ? input : [input])
+  const inputRows = Array.isArray(input) ? input : [input];
+  if (table === "articles" && inputRows.length > ARTICLE_WRITE_BATCH_LIMIT) {
+    const error = new Error(`Article writes are limited to ${ARTICLE_WRITE_BATCH_LIMIT} rows per request`);
+    error.status = 413;
+    error.code = "ARTICLE_BATCH_TOO_LARGE";
+    throw error;
+  }
+  let sourceRows = inputRows
     .map((row) => sanitizePublicWritePayload(table, stampHomepageExploreSelection(table, omitDerivedFields(table, row))));
+  if (["intent_events", "user_events"].includes(table) && context.trackingUserId) {
+    sourceRows = sourceRows.map((row) => ({ ...row, user_id: context.trackingUserId }));
+  }
+  if (table === "intent_events") sourceRows = await prepareIntentEvents(sourceRows, context.siteScope);
+  else if (table === "user_events") sourceRows = stampTrackingSiteScope(sourceRows, context.siteScope);
   const rows = context.forceDraft ? sourceRows.map((row) => forceDraftPayload(table, row)) : sourceRows;
   const prefer = String(request.headers.get("prefer") || "");
   const merge = prefer.includes("resolution=merge-duplicates");
+  const requestedConflictColumns = url.searchParams.get("on_conflict") || "";
   const conflictColumns = merge
-    ? resolveConflictColumns(table, url.searchParams.get("on_conflict") || "")
+    ? resolveConflictColumns(table, requestedConflictColumns)
     : [];
+  if (merge) assertAllowedArticleConflictColumns(table, conflictColumns, requestedConflictColumns);
   if (context.stageReview) {
     const staged = rows.map((row) => applyDefaults(table, row));
-    if (table === "articles") await assertArticleTopicsAvailable(staged);
+    if (table === "articles") {
+      const existingByCandidate = merge
+        ? await findExistingUpsertRows(table, staged, conflictColumns)
+        : staged.map(() => []);
+      const reviews = prepareStagedArticleUpsertReviews(rows, staged, existingByCandidate, conflictColumns);
+      await assertArticleBatchTopicsAvailable(reviews.gateCandidates, {
+        excludeIdsByCandidate: reviews.excludeIdsByCandidate,
+      });
+      await recordContentReviews({
+        table,
+        operation: "create",
+        actorUserId: context.actorUserId,
+        afterRows: reviews.creates,
+      });
+      await recordContentReviews({
+        table,
+        operation: "update",
+        actorUserId: context.actorUserId,
+        beforeRows: reviews.updatesBefore,
+        afterRows: reviews.updatesAfter,
+      });
+      return {
+        status: 202,
+        body: prefer.includes("return=representation") ? representationBody(request, reviews.responseRows) : null,
+        headers: { "x-dc-review-status": "pending" },
+      };
+    }
     await recordContentReviews({ table, operation: "create", actorUserId: context.actorUserId, afterRows: staged });
     return {
       status: 202,
@@ -403,16 +726,27 @@ async function handlePost(table, request, url, context) {
   const prepared = rows.map((row) => applyDefaults(table, row));
   const inserted = table === "articles"
     ? await withArticleWriteLock(async (tx) => {
-      await assertArticleTopicsAvailable(prepared, { client: tx });
+      const existingByCandidate = merge
+        ? await findExistingUpsertRows(table, prepared, conflictColumns, tx, { lock: true })
+        : prepared.map(() => []);
+      await assertArticleBatchTopicsAvailable(prepared, {
+        client: tx,
+        excludeIdsByCandidate: existingByCandidate.map((matches) => matches.map((row) => row.id).filter(Boolean)),
+      });
       const saved = [];
-      for (const row of prepared) saved.push(await insertRow(table, row, merge, conflictColumns, tx));
+      for (let index = 0; index < prepared.length; index += 1) {
+        saved.push(await insertRow(table, rows[index], merge, conflictColumns, tx, prepared[index]));
+      }
       return saved;
-    })
+    }, [...new Set(prepared.map((row) => canonicalArticleScope(row.site_scope)))].sort())
     : await (async () => {
       const saved = [];
-      for (const row of prepared) saved.push(await insertRow(table, row, merge, conflictColumns));
+      for (let index = 0; index < prepared.length; index += 1) {
+        saved.push(await insertRow(table, rows[index], merge, conflictColumns, prisma, prepared[index]));
+      }
       return saved;
     })();
+  if (table === "intent_events") await updateIntentScoresForEvents(inserted, context.siteScope);
   await recordContentReviews({ table, operation: "create", actorUserId: context.actorUserId, afterRows: inserted });
   return { status: 201, body: prefer.includes("return=representation") ? representationBody(request, inserted) : null };
 }
@@ -431,14 +765,19 @@ async function handlePatch(table, request, url, context) {
   if (!where) throw new Error("Refusing unfiltered update");
   const prefer = String(request.headers.get("prefer") || "");
   const checkArticleTopic = table === "articles" && (Object.hasOwn(input, "title") || Object.hasOwn(input, "slug"));
-  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic;
+  const checkArticleScope = table === "articles" && Object.hasOwn(input, "site_scope");
+  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic || checkArticleScope;
   const whereParams = params.slice(columns.length);
   let before = [];
   if (context.stageReview) {
     if (needsBefore) before = await prisma.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where}`, ...whereParams);
+    if (checkArticleScope) assertArticleSiteScopeUnchanged(input, before);
     const body = before.map((row) => ({ ...row, ...input }));
     if (checkArticleTopic) {
-      await assertArticleTopicsAvailable(body, { excludeIds: before.map((row) => row.id) });
+      const excludedIds = before.map((row) => row.id).filter(Boolean);
+      await assertArticleBatchTopicsAvailable(body, {
+        excludeIdsByCandidate: body.map(() => excludedIds),
+      });
     }
     await recordContentReviews({ table, operation: "update", actorUserId: context.actorUserId, beforeRows: before, afterRows: body });
     return {
@@ -448,14 +787,21 @@ async function handlePatch(table, request, url, context) {
     };
   }
   let body;
-  if (checkArticleTopic) {
+  if (checkArticleTopic || checkArticleScope) {
     ({ before, body } = await withArticleWriteLock(async (tx) => {
       const lockedBefore = await tx.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where} FOR UPDATE`, ...whereParams);
+      if (checkArticleScope) assertArticleSiteScopeUnchanged(input, lockedBefore);
       const nextRows = lockedBefore.map((row) => ({ ...row, ...input }));
-      await assertArticleTopicsAvailable(nextRows, { client: tx, excludeIds: lockedBefore.map((row) => row.id) });
+      if (checkArticleTopic) {
+        const excludedIds = lockedBefore.map((row) => row.id).filter(Boolean);
+        await assertArticleBatchTopicsAvailable(nextRows, {
+          client: tx,
+          excludeIdsByCandidate: nextRows.map(() => excludedIds),
+        });
+      }
       await tx.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
       return { before: lockedBefore, body: nextRows };
-    }));
+    }, ["dekhocampus", "sarkari"]));
   } else {
     if (needsBefore) before = await prisma.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where}`, ...whereParams);
     body = before.map((row) => ({ ...row, ...input }));
@@ -508,8 +854,7 @@ export async function handleRpc(name, request) {
     return { status: 200, body: null };
   }
   if (name === "intent_merge_visitor") {
-    await prisma.$executeRawUnsafe("UPDATE `intent_events` SET `user_id` = ? WHERE `visitor_id` = ? AND `user_id` IS NULL", body._user_id, body._visitor_id);
-    await prisma.$executeRawUnsafe("UPDATE `intent_visitors` SET `user_id` = ?, `updated_at` = CURRENT_TIMESTAMP(3) WHERE `id` = ?", body._user_id, body._visitor_id);
+    await mergeIntentVisitor(body._visitor_id, body._user_id, body._site_scope);
     return { status: 200, body: null };
   }
   if (name === "increment_url_clicks") {
@@ -535,7 +880,8 @@ export async function handleRpc(name, request) {
     ];
     const rows = [];
     for (const [entityType, table] of mappings) {
-      const [row] = await prisma.$queryRawUnsafe(`SELECT COUNT(*) AS total_records, SUM(data_clean_attempts = 0) AS never_checked, SUM(data_clean_attempts > 0) AS checked_records, SUM(data_clean_successes > 0) AS cleaned_records, SUM(data_clean_state = 'awaiting_review') AS pending_reviews, SUM(data_clean_state = 'failed') AS failed_checks, COALESCE(MIN(data_clean_attempts), 0) + 1 AS current_pass FROM ${quote(table)}`);
+      const articleScope = table === "articles" ? " WHERE `site_scope` = 'dekhocampus'" : "";
+      const [row] = await prisma.$queryRawUnsafe(`SELECT COUNT(*) AS total_records, SUM(data_clean_attempts = 0) AS never_checked, SUM(data_clean_attempts > 0) AS checked_records, SUM(data_clean_successes > 0) AS cleaned_records, SUM(data_clean_state = 'awaiting_review') AS pending_reviews, SUM(data_clean_state = 'failed') AS failed_checks, COALESCE(MIN(data_clean_attempts), 0) + 1 AS current_pass FROM ${quote(table)}${articleScope}`);
       rows.push({ entity_type: entityType, ...jsonSafe(row) });
     }
     return { status: 200, body: rows };
