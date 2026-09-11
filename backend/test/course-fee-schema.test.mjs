@@ -20,3 +20,9 @@ test("college course counts are derived from unique saved course offerings", () 
   assert.match(parityScript, /trg_sync_course_fees_upd/);
   assert.match(parityScript, /trg_sync_course_fees_del/);
 });
+
+test("routine deployments do not rerun the full college course-count backfill", () => {
+  assert.match(parityScript, /const courseCountTriggersPresent = requiredTriggers\.every/);
+  assert.match(parityScript, /if \(courseCountTriggersPresent\) \{[\s\S]*?return;[\s\S]*?UPDATE \\`colleges\\` college/);
+  assert.match(parityScript, /WHERE NOT \(college\.\\`courses_count\\` <=> COALESCE\(fees\.\\`offering_count\\`, 0\)\)/);
+});

@@ -256,6 +256,29 @@ async function ensureCourseFeeGroupingSchema(report) {
     await prisma.$executeRawUnsafe(`CREATE INDEX ${quote(indexName)} ON \`course_fees\` (\`college_slug\`(191), \`course_group\`)`);
     report.createdReferenceIndexes.push(indexName);
   }
+
+  // The three sync triggers are created only after the initial aggregate
+  // backfill succeeds. Their presence is therefore the durable migration
+  // marker for an installation that is already current. Re-running the
+  // aggregate UPDATE on every deployment rewrites every college (and fires
+  // the updated_at trigger), which can monopolize a small managed MySQL
+  // instance for minutes and starve the public API connection pool.
+  const requiredTriggers = [
+    "trg_sync_course_fees_ins",
+    "trg_sync_course_fees_upd",
+    "trg_sync_course_fees_del",
+  ];
+  const triggerRows = await prisma.$queryRawUnsafe(
+    "SELECT TRIGGER_NAME AS triggerName FROM information_schema.triggers WHERE trigger_schema = DATABASE() AND trigger_name IN (?,?,?)",
+    ...requiredTriggers,
+  );
+  const existingTriggers = new Set(triggerRows.map((row) => row.triggerName));
+  const courseCountTriggersPresent = requiredTriggers.every((name) => existingTriggers.has(name));
+  if (courseCountTriggersPresent) {
+    report.existing.push("course_fee_count_backfill");
+    return;
+  }
+
   await prisma.$executeRawUnsafe(`
     UPDATE \`colleges\` college
     LEFT JOIN (
@@ -267,6 +290,7 @@ async function ensureCourseFeeGroupingSchema(report) {
       GROUP BY \`college_slug\`
     ) fees ON fees.\`college_slug\` = college.\`slug\`
     SET college.\`courses_count\` = COALESCE(fees.\`offering_count\`, 0)
+    WHERE NOT (college.\`courses_count\` <=> COALESCE(fees.\`offering_count\`, 0))
   `);
 }
 
