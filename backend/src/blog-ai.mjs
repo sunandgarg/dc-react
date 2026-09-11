@@ -1528,9 +1528,9 @@ const ARTICLE_REVIEW_SCHEMA = {
 
 export function normalizeArticleReviewResult(value = {}, targetScore = 90) {
   const score = Math.min(100, Math.max(0, Math.trunc(Number(value?.score) || 0)));
-  const reviewThreshold = Math.min(90, Math.max(0, Math.trunc(Number(targetScore) || 90)));
+  const reviewThreshold = independentArticleReviewThreshold(targetScore);
   const publishable = value?.publishable === true && score >= reviewThreshold;
-  const issues = Array.isArray(value?.issues) ? value.issues.map((issue) => stripHtml(issue).slice(0, 240)).filter(Boolean).slice(0, 8) : [];
+  const issues = Array.isArray(value?.issues) ? value.issues.map((issue) => stripHtml(issue).slice(0, 500)).filter(Boolean).slice(0, 8) : [];
   if (!publishable && !issues.length) {
     issues.push(score < reviewThreshold
       ? `independent editorial score ${score}/100 is below the required ${reviewThreshold}/100`
@@ -1545,11 +1545,15 @@ export function normalizeArticleReviewResult(value = {}, targetScore = 90) {
   };
 }
 
+export function independentArticleReviewThreshold(targetScore = 90) {
+  return Math.min(85, Math.max(75, Math.trunc(Number(targetScore) || 90)));
+}
+
 async function reviewGeneratedDraft(draft, topic, signals, editorial, model, feature, siteScope = "dekhocampus") {
   const normalizedScope = normalizeArticleSiteScope(siteScope);
   const profile = articleSiteProfile(normalizedScope);
-  const independentReviewThreshold = Math.min(90, editorial.editorial_quality_target);
-  const generated = await blogTextJson(`Independently review this proposed ${profile.brand} article before publication. Topic brief: ${JSON.stringify(topic)}. Required subject scope: ${profile.subject}. Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, deterministic_target_score: editorial.editorial_quality_target, independent_review_threshold: independentReviewThreshold })}. Private evidence signals: ${JSON.stringify(signals)}. Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}. Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`, feature, {
+  const independentReviewThreshold = independentArticleReviewThreshold(editorial.editorial_quality_target);
+  const generated = await blogTextJson(`Independently review this proposed ${profile.brand} article before publication. Topic brief: ${JSON.stringify(topic)}. Required subject scope: ${profile.subject}. Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, deterministic_target_score: editorial.editorial_quality_target, independent_review_threshold: independentReviewThreshold })}. Private evidence signals: ${JSON.stringify(signals)}. Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}. Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. Mark publishable false only for a material factual, safety, intent, completeness or reader-action defect. Optional polish must not block publication; an article scoring 85-89 can be publishable when it is accurate, complete and useful. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`, feature, {
     model,
     reasoningEffort: "medium",
     thinkingLevel: "medium",
@@ -1562,6 +1566,26 @@ async function reviewGeneratedDraft(draft, topic, signals, editorial, model, fea
     ...review,
     model_used: `${generated.provider}:${generated.model}`,
   };
+}
+
+export function articleRevisionPrompt(draft, topic, signals, correctionIssues = [], rawEditorialSettings = {}, requestedSiteScope = "dekhocampus") {
+  const normalizedScope = normalizeArticleSiteScope(requestedSiteScope);
+  const profile = articleSiteProfile(normalizedScope);
+  const editorial = normalizeBlogAgentSettings({ audience: profile.audience, ...rawEditorialSettings });
+  const feedback = correctionIssues
+    .map((issue) => stripHtml(issue).trim())
+    .filter(Boolean)
+    .slice(0, 8);
+  return `Revise this proposed ${profile.brand} article so it passes publication review. Keep its verified useful material, but directly correct every review item. Do not describe the editing process.
+
+Topic brief: ${JSON.stringify(topic)}
+Required subject scope: ${profile.subject}
+Publishing requirements: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, deterministic_target_score: editorial.editorial_quality_target })}
+Review corrections: ${JSON.stringify(feedback)}
+Private fact-checking context: ${JSON.stringify(signals)}
+Existing draft: ${JSON.stringify({ title: draft?.title, slug: draft?.slug, description: draft?.description, content_html: draft?.content_html, meta_title: draft?.meta_title, meta_description: draft?.meta_description, meta_keywords: draft?.meta_keywords, tags: draft?.tags, category: draft?.category, hero_hook: draft?.hero_hook, faqs: draft?.faqs })}
+
+Return the complete replacement {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,research_notes,faqs:[{question,answer}]}, not a patch. Preserve the article's exact search intent and answer it immediately. For any time-sensitive detail not established by the private context, remove unsupported certainty, state what the reader must verify on the relevant official authority portal, and do not invent a date, option, process or URL. Keep meta_title at 50-65 characters, meta_description at 140-160 characters, 4-8 distinct FAQs, and mirror the same FAQ questions and answers in content_html. Never expose source names, publisher names, URLs, citations, research notes or the review feedback in publishable content.`;
 }
 
 async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null, requiredTitle = "", editorialSettings = {}, model: requestedModel = "", feature = "blog-studio", siteScope = "dekhocampus" } = {}) {
@@ -1581,8 +1605,11 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
   let textProvider;
   let quality;
   let correctionIssues = [];
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    const generated = await blogTextJson(articlePrompt(topic, evidence, wordLimit, correctionIssues, editorial, normalizedScope), feature, {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const prompt = attempt > 0 && draft && correctionIssues.length
+      ? articleRevisionPrompt(draft, topic, evidence, correctionIssues, editorial, normalizedScope)
+      : articlePrompt(topic, evidence, wordLimit, correctionIssues, editorial, normalizedScope);
+    const generated = await blogTextJson(prompt, feature, {
       model,
       maxOutputTokens,
       reasoningEffort: "low",

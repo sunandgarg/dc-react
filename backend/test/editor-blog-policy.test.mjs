@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articleRevisionPrompt, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -179,14 +179,29 @@ test("normalizes wrapped article payloads and always explains reviewer rejection
     tags: [],
     faqs: [{ question: "What changed?", answer: "The date changed." }],
   });
-  const review = normalizeArticleReviewResult({ score: 88, publishable: false, issues: [] }, 90);
+  const review = normalizeArticleReviewResult({ score: 84, publishable: false, issues: [] }, 90);
   assert.equal(review.publishable, false);
-  assert.deepEqual(review.issues, ["independent editorial score 88/100 is below the required 90/100"]);
+  assert.deepEqual(review.issues, ["independent editorial score 84/100 is below the required 85/100"]);
 
   const strictDeterministicTarget = normalizeArticleReviewResult({ score: 92, publishable: true, issues: [] }, 98);
   assert.equal(strictDeterministicTarget.publishable, true);
-  assert.equal(strictDeterministicTarget.required_score, 90);
+  assert.equal(strictDeterministicTarget.required_score, 85);
   assert.deepEqual(strictDeterministicTarget.issues, []);
+  assert.equal(independentArticleReviewThreshold(90), 85);
+  assert.equal(independentArticleReviewThreshold(80), 80);
+});
+
+test("builds a complete targeted revision prompt from editorial feedback", () => {
+  const prompt = articleRevisionPrompt(
+    { title: "Bihar BEd CET allotment update", content_html: "<p>Check your result.</p>", faqs: [] },
+    { title: "Bihar BEd CET allotment update", primary_entity: "Bihar BEd CET" },
+    [{ source_type: "public_signal", signal: "The counselling portal published an allotment update." }],
+    ["State where candidates should check the allotment result."],
+    { editorial_quality_target: 90 },
+  );
+  assert.match(prompt, /Return the complete replacement/);
+  assert.match(prompt, /State where candidates should check the allotment result/);
+  assert.match(prompt, /remove unsupported certainty/);
 });
 
 test("normalizes editorial controls and adapts depth to student intent", () => {
