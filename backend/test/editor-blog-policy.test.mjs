@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -107,6 +107,81 @@ test("selects the quality-first OpenAI blog model and parses structured output",
   assert.equal(blogTextProvider("gpt-5-nano"), "openai");
   assert.equal(blogTextProvider("gemini-3.6-flash"), "gemini");
   assert.deepEqual(parseOpenAiJsonPayload({ choices: [{ message: { content: '{"title":"Natural draft"}' } }] }), { title: "Natural draft" });
+});
+
+test("converts provider-neutral schemas into strict OpenAI structured output", () => {
+  assert.deepEqual(toOpenAiJsonSchema({
+    type: "OBJECT",
+    properties: {
+      title: { type: "STRING" },
+      faqs: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: { question: { type: "STRING" }, answer: { type: "STRING" } },
+          required: ["question"],
+        },
+      },
+    },
+    required: ["title"],
+  }), {
+    type: "object",
+    properties: {
+      title: { type: "string" },
+      faqs: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: { question: { type: "string" }, answer: { type: "string" } },
+          additionalProperties: false,
+          required: ["question", "answer"],
+        },
+      },
+    },
+    additionalProperties: false,
+    required: ["title", "faqs"],
+  });
+});
+
+test("detects incomplete OpenAI responses and bounds one recovery budget", () => {
+  assert.throws(() => parseOpenAiJsonPayload({ choices: [{ finish_reason: "length", message: { content: '{"title":"unfinished' } }] }), (error) => error.code === "OPENAI_RESPONSE_TRUNCATED");
+  assert.throws(() => parseOpenAiJsonPayload({ choices: [{ finish_reason: "stop", message: { content: "" } }] }), (error) => error.code === "OPENAI_EMPTY_RESPONSE");
+  assert.equal(nextOpenAiOutputBudget(5_000), 7_500);
+  assert.equal(nextOpenAiOutputBudget(9_000), 12_000);
+  assert.equal(nextOpenAiOutputBudget(12_000), 12_000);
+});
+
+test("normalizes wrapped article payloads and always explains reviewer rejection", () => {
+  assert.deepEqual(normalizeGeneratedArticlePayload({ article: {
+    title: "Student decision guide",
+    summary: "A useful summary",
+    content: "<h2>Answer first</h2><p>Start here.</p>",
+    seo_title: "Student decision guide for 2026",
+    seo_description: "A useful search description",
+    questions: [{ question: "What changed?", answer: "The date changed." }],
+  } }), {
+    title: "Student decision guide",
+    summary: "A useful summary",
+    content: "<h2>Answer first</h2><p>Start here.</p>",
+    seo_title: "Student decision guide for 2026",
+    seo_description: "A useful search description",
+    questions: [{ question: "What changed?", answer: "The date changed." }],
+    description: "A useful summary",
+    content_html: "<h2>Answer first</h2><p>Start here.</p>",
+    meta_title: "Student decision guide for 2026",
+    meta_description: "A useful search description",
+    meta_keywords: "",
+    tags: [],
+    faqs: [{ question: "What changed?", answer: "The date changed." }],
+  });
+  const review = normalizeArticleReviewResult({ score: 88, publishable: false, issues: [] }, 90);
+  assert.equal(review.publishable, false);
+  assert.deepEqual(review.issues, ["independent editorial score 88/100 is below the required 90/100"]);
+
+  const strictDeterministicTarget = normalizeArticleReviewResult({ score: 92, publishable: true, issues: [] }, 98);
+  assert.equal(strictDeterministicTarget.publishable, true);
+  assert.equal(strictDeterministicTarget.required_score, 90);
+  assert.deepEqual(strictDeterministicTarget.issues, []);
 });
 
 test("normalizes editorial controls and adapts depth to student intent", () => {

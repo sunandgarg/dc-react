@@ -17,6 +17,7 @@ const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
 const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
+const MAX_OPENAI_OUTPUT_TOKENS = 12_000;
 const MAX_RESEARCH_SOURCES = 6;
 const MAX_RESEARCH_SIGNAL_CHARACTERS = 1_500;
 const MAX_TOPIC_PROMPT_FINGERPRINTS = 160;
@@ -836,11 +837,47 @@ function openAiErrorMessage(status, payloadText) {
   return `OpenAI request failed (${status}): ${String(providerMessage).slice(0, 300)}`;
 }
 
+export function toOpenAiJsonSchema(schema) {
+  if (Array.isArray(schema)) return schema.map((value) => toOpenAiJsonSchema(value));
+  if (!schema || typeof schema !== "object") return schema;
+  const normalized = {};
+  for (const [key, value] of Object.entries(schema)) {
+    if (key === "type") normalized.type = String(value).toLowerCase();
+    else if (key === "properties") normalized.properties = Object.fromEntries(Object.entries(value || {}).map(([name, child]) => [name, toOpenAiJsonSchema(child)]));
+    else if (key === "items") normalized.items = toOpenAiJsonSchema(value);
+    else if (key !== "required" && key !== "additionalProperties") normalized[key] = toOpenAiJsonSchema(value);
+  }
+  if (normalized.type === "object") {
+    normalized.additionalProperties = false;
+    normalized.required = Object.keys(normalized.properties || {});
+  }
+  return normalized;
+}
+
+export function nextOpenAiOutputBudget(current) {
+  const tokens = Math.max(256, Math.trunc(Number(current || 0)));
+  return Math.min(MAX_OPENAI_OUTPUT_TOKENS, Math.max(tokens + 1_000, Math.ceil(tokens * 1.5)));
+}
+
 export function parseOpenAiJsonPayload(payload) {
-  const content = payload?.choices?.[0]?.message?.content;
+  const choice = payload?.choices?.[0];
+  const refusal = choice?.message?.refusal;
+  if (refusal) {
+    throw Object.assign(new Error(`OpenAI declined the structured response: ${String(refusal).slice(0, 240)}`), { code: "OPENAI_RESPONSE_REFUSED" });
+  }
+  if (choice?.finish_reason === "length") {
+    throw Object.assign(new Error("OpenAI stopped before the structured response was complete"), { code: "OPENAI_RESPONSE_TRUNCATED" });
+  }
+  if (choice?.finish_reason === "content_filter") {
+    throw Object.assign(new Error("OpenAI could not return the article because the response was filtered"), { code: "OPENAI_RESPONSE_REFUSED" });
+  }
+  const content = choice?.message?.content;
   const text = Array.isArray(content)
     ? content.map((part) => part?.text || part?.content || "").join("")
-    : String(content || "{}");
+    : String(content || "");
+  if (!text.trim()) {
+    throw Object.assign(new Error("OpenAI returned an empty structured response"), { code: "OPENAI_EMPTY_RESPONSE" });
+  }
   try { return JSON.parse(cleanJson(text)); }
   catch (error) {
     throw Object.assign(new Error("OpenAI returned invalid structured JSON"), { code: "OPENAI_INVALID_JSON", cause: error });
@@ -854,13 +891,23 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
   const configuredModel = options.model || (control?.provider === "openai" && control?.model ? control.model : config.textModel);
   const model = normalizeBlogTextModel(configuredModel).startsWith("gpt-") ? normalizeBlogTextModel(configuredModel) : DEFAULT_OPENAI_TEXT_MODEL;
   const reasoningEffort = ["none", "low", "medium", "high"].includes(options.reasoningEffort) ? options.reasoningEffort : "low";
+  const responseFormat = options.responseSchema
+    ? {
+        type: "json_schema",
+        json_schema: {
+          name: `dekhocampus_${String(feature || "structured_response").replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 44)}`,
+          strict: true,
+          schema: toOpenAiJsonSchema(options.responseSchema),
+        },
+      }
+    : { type: "json_object" };
   const requestBody = JSON.stringify({
     model,
     messages: [
       { role: "system", content: "Return valid JSON only. Write factual, original, natural editorial English. Never expose sources, citations, URLs, competitor names, research notes, or AI process in publishable content. Never use an em dash." },
       { role: "user", content: prompt },
     ],
-    response_format: { type: "json_object" },
+    response_format: responseFormat,
     reasoning_effort: reasoningEffort,
     ...(options.maxOutputTokens ? { max_completion_tokens: Math.max(256, Math.trunc(options.maxOutputTokens)) } : {}),
   });
@@ -893,9 +940,24 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
   await prisma.ai_usage_events.create({ data: {
     id: randomUUID(), provider: "openai", model, feature, operation: "text-generation",
     input_tokens: BigInt(inputTokens), output_tokens: BigInt(outputTokens), total_tokens: BigInt(totalTokens), image_count: 0, estimated_cost_usd: estimatedCost,
-    metadata: { cached_input_tokens: cachedInputTokens, max_output_tokens: options.maxOutputTokens || null, reasoning_effort: reasoningEffort, cost_estimate_available: Boolean(pricing) },
+    metadata: { cached_input_tokens: cachedInputTokens, max_output_tokens: options.maxOutputTokens || null, reasoning_effort: reasoningEffort, structured_schema: Boolean(options.responseSchema), finish_reason: payload.choices?.[0]?.finish_reason || null, cost_estimate_available: Boolean(pricing) },
   } }).catch(() => {});
-  return { result: parseOpenAiJsonPayload(payload), model, provider: "openai" };
+  let result;
+  try {
+    result = parseOpenAiJsonPayload(payload);
+  } catch (error) {
+    const recoverable = ["OPENAI_RESPONSE_TRUNCATED", "OPENAI_EMPTY_RESPONSE", "OPENAI_INVALID_JSON"].includes(error?.code);
+    const currentBudget = Math.max(256, Math.trunc(Number(options.maxOutputTokens || 0)));
+    if (recoverable && !options.truncationRetry && currentBudget < MAX_OPENAI_OUTPUT_TOKENS) {
+      return openAiJson(prompt, feature, {
+        ...options,
+        maxOutputTokens: nextOpenAiOutputBudget(currentBudget),
+        truncationRetry: true,
+      });
+    }
+    throw error;
+  }
+  return { result, model, provider: "openai" };
 }
 
 async function blogTextJson(prompt, feature = "blog-studio", options = {}) {
@@ -1258,6 +1320,26 @@ export function normalizeGeneratedFaqs(value) {
   }).slice(0, 10);
 }
 
+export function normalizeGeneratedArticlePayload(value = {}) {
+  const wrappers = [value, value?.article, value?.result?.article, value?.result, value?.data];
+  const source = wrappers.find((candidate) => (
+    candidate && typeof candidate === "object" && (
+      candidate.content_html || candidate.content || candidate.body_html || candidate.html || candidate.title
+    )
+  )) || {};
+  return {
+    ...source,
+    title: String(source.title || source.headline || "").trim(),
+    description: String(source.description || source.summary || "").trim(),
+    content_html: String(source.content_html || source.content || source.body_html || source.html || "").trim(),
+    meta_title: String(source.meta_title || source.seo_title || "").trim(),
+    meta_description: String(source.meta_description || source.seo_description || "").trim(),
+    meta_keywords: String(source.meta_keywords || source.keywords || "").trim(),
+    tags: Array.isArray(source.tags) ? source.tags : [],
+    faqs: source.faqs || source.faq || source.questions || [],
+  };
+}
+
 function sectionIsPresent(section, headings) {
   const wanted = normalizeArticleTitle(section);
   const joined = headings.join(" ");
@@ -1349,21 +1431,37 @@ const ARTICLE_REVIEW_SCHEMA = {
   required: ["score", "publishable", "issues"],
 };
 
+export function normalizeArticleReviewResult(value = {}, targetScore = 90) {
+  const score = Math.min(100, Math.max(0, Math.trunc(Number(value?.score) || 0)));
+  const reviewThreshold = Math.min(90, Math.max(0, Math.trunc(Number(targetScore) || 90)));
+  const publishable = value?.publishable === true && score >= reviewThreshold;
+  const issues = Array.isArray(value?.issues) ? value.issues.map((issue) => stripHtml(issue).slice(0, 240)).filter(Boolean).slice(0, 8) : [];
+  if (!publishable && !issues.length) {
+    issues.push(score < reviewThreshold
+      ? `independent editorial score ${score}/100 is below the required ${reviewThreshold}/100`
+      : "independent editorial reviewer marked the article as not publishable without diagnostic detail");
+  }
+  return {
+    score,
+    publishable,
+    required_score: reviewThreshold,
+    issues,
+    strengths: Array.isArray(value?.strengths) ? value.strengths.map((item) => stripHtml(item).slice(0, 200)).filter(Boolean).slice(0, 6) : [],
+  };
+}
+
 async function reviewGeneratedDraft(draft, topic, signals, editorial, model, feature) {
-  const generated = await blogTextJson(`Independently review this proposed DekhoCampus article before publication. Topic brief: ${JSON.stringify(topic)}. Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, target_score: editorial.editorial_quality_target })}. Private evidence signals: ${JSON.stringify(signals)}. Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}. Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help a student act or decide. Return concise actionable issues.`, feature, {
+  const independentReviewThreshold = Math.min(90, editorial.editorial_quality_target);
+  const generated = await blogTextJson(`Independently review this proposed DekhoCampus article before publication. Topic brief: ${JSON.stringify(topic)}. Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, deterministic_target_score: editorial.editorial_quality_target, independent_review_threshold: independentReviewThreshold })}. Private evidence signals: ${JSON.stringify(signals)}. Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}. Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help a student act or decide. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`, feature, {
     model,
     reasoningEffort: "medium",
     thinkingLevel: "medium",
     maxOutputTokens: 1_200,
     responseSchema: ARTICLE_REVIEW_SCHEMA,
   });
-  const score = Math.min(100, Math.max(0, Math.trunc(Number(generated.result?.score) || 0)));
-  const issues = Array.isArray(generated.result?.issues) ? generated.result.issues.map((issue) => stripHtml(issue).slice(0, 240)).filter(Boolean).slice(0, 8) : [];
+  const review = normalizeArticleReviewResult(generated.result, editorial.editorial_quality_target);
   return {
-    score,
-    publishable: generated.result?.publishable === true && score >= editorial.editorial_quality_target,
-    issues,
-    strengths: Array.isArray(generated.result?.strengths) ? generated.result.strengths.map((value) => stripHtml(value).slice(0, 200)).filter(Boolean).slice(0, 6) : [],
+    ...review,
     model_used: `${generated.provider}:${generated.model}`,
   };
 }
@@ -1376,7 +1474,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
     throw Object.assign(new Error(`Only ${independentEvidence.length} independent research source(s) were available; ${editorial.minimum_sources} are required by the editorial settings`), { status: 422, code: "INSUFFICIENT_EDITORIAL_SOURCES" });
   }
   const targetWords = resolveArticleWordTarget(topic, wordLimit);
-  const maxOutputTokens = Math.min(8_000, Math.max(3_600, Math.trunc(targetWords * 4.5)));
+  const maxOutputTokens = Math.min(MAX_OPENAI_OUTPUT_TOKENS, Math.max(5_000, Math.trunc(targetWords * 6)));
   const fallbackTitle = typeof topic === "string" ? topic : topic?.title || topic?.headline || topic?.topic || "";
   let draft;
   let model = requestedModel || editorial.text_model;
@@ -1387,22 +1485,23 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
     const generated = await blogTextJson(articlePrompt(topic, evidence, wordLimit, correctionIssues, editorial), feature, {
       model,
       maxOutputTokens,
-      reasoningEffort: "medium",
-      thinkingLevel: "medium",
+      reasoningEffort: "low",
+      thinkingLevel: "low",
       responseSchema: ARTICLE_RESPONSE_SCHEMA,
     });
     model = generated.model;
     textProvider = generated.provider;
-    const title = String(requiredTitle || generated.result.title || fallbackTitle).trim();
-    const slug = slugify(requiredTitle || generated.result.slug || generated.result.title || fallbackTitle);
+    const generatedArticle = normalizeGeneratedArticlePayload(generated.result);
+    const title = String(requiredTitle || generatedArticle.title || fallbackTitle).trim();
+    const slug = slugify(requiredTitle || generatedArticle.slug || generatedArticle.title || fallbackTitle);
     draft = {
-      ...generated.result,
+      ...generatedArticle,
       title,
       slug,
-      content_html: stripCompetitorCredits(generated.result.content_html),
-      tags: Array.isArray(generated.result.tags) ? generated.result.tags : [],
+      content_html: stripCompetitorCredits(generatedArticle.content_html),
+      tags: Array.isArray(generatedArticle.tags) ? generatedArticle.tags : [],
       hero_hook: title,
-      faqs: normalizeGeneratedFaqs(generated.result.faqs),
+      faqs: normalizeGeneratedFaqs(generatedArticle.faqs),
       featured_image: "",
     };
     const deterministic = assessGeneratedArticle(draft, topic, wordLimit, editorial);
@@ -1423,9 +1522,16 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
     correctionIssues = quality.issues;
   }
   if (!quality?.passed) {
-    const error = new Error(`Article failed the editorial quality gate: ${quality?.issues.join("; ") || "unknown quality issue"}`);
+    const failureIssues = Array.isArray(quality?.issues) ? quality.issues.map((issue) => String(issue || "").trim()).filter(Boolean) : [];
+    if (!failureIssues.length) {
+      failureIssues.push(Number.isFinite(Number(quality?.score))
+        ? `editorial score ${quality.score}/100 is below the required ${quality.target_score || editorial.editorial_quality_target}/100`
+        : "the text provider did not return a complete article in the required structure");
+    }
+    const error = new Error(`Article failed the editorial quality gate: ${failureIssues.join("; ")}`);
     error.status = 422;
     error.code = "ARTICLE_QUALITY_GATE_FAILED";
+    error.details = { ...quality, issues: failureIssues };
     throw error;
   }
   draft.featured_image = await createBlogCover(slug, draft.title, cover);
