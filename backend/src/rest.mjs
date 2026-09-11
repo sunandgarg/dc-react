@@ -4,6 +4,7 @@ import { recordContentReviews } from "./content-review.mjs";
 import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 import { invalidateDirectorySearchCache, searchDirectory } from "./directory-search.mjs";
 import { sanitizeCollegePublicContent } from "./college-content-sanitizer.mjs";
+import { assertArticleTopicsAvailable, withArticleWriteLock } from "./blog-ai.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
@@ -339,7 +340,7 @@ async function handleGet(table, request, url, context) {
   return { status: 200, body: safe, headers: responseHeaders(total, offset, safe.length) };
 }
 
-async function insertRow(table, input, merge, conflictColumns) {
+async function insertRow(table, input, merge, conflictColumns, client = prisma) {
   const row = applyDefaults(table, input);
   const allowed = schemaMetadata[table].fields;
   const providedColumns = Object.keys(row).filter((column) => allowed[column]);
@@ -352,7 +353,7 @@ async function insertRow(table, input, merge, conflictColumns) {
       const duplicateClause = updates.length
         ? updates.map((column) => `${quote(column)} = VALUES(${quote(column)})`).join(",")
         : `${quote(conflictColumns[0])} = VALUES(${quote(conflictColumns[0])})`;
-      await prisma.$executeRawUnsafe(
+      await client.$executeRawUnsafe(
         `INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")}) ON DUPLICATE KEY UPDATE ${duplicateClause}`,
         ...values,
       );
@@ -363,14 +364,14 @@ async function insertRow(table, input, merge, conflictColumns) {
   const generateShortId = row.short_id === undefined && SHORT_ID_STARTS[table];
   for (let attempt = 0; attempt < 4; attempt += 1) {
     if (generateShortId) {
-      const maximum = await prisma.$queryRawUnsafe(`SELECT MAX(${quote("short_id")}) AS maximum FROM ${quote(table)}`);
+      const maximum = await client.$queryRawUnsafe(`SELECT MAX(${quote("short_id")}) AS maximum FROM ${quote(table)}`);
       row.short_id = nextShortIdValue(table, maximum[0]?.maximum);
     }
     const columns = Object.keys(row).filter((column) => allowed[column]);
     if (!columns.length) throw new Error("Insert contains no known columns");
     const values = columns.map((column) => normalizeForDatabase(row[column], allowed[column]));
     try {
-      await prisma.$executeRawUnsafe(`INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`, ...values);
+      await client.$executeRawUnsafe(`INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`, ...values);
       return row;
     } catch (error) {
       if (!generateShortId || !isDuplicateKeyError(error) || attempt === 3) throw error;
@@ -391,6 +392,7 @@ async function handlePost(table, request, url, context) {
     : [];
   if (context.stageReview) {
     const staged = rows.map((row) => applyDefaults(table, row));
+    if (table === "articles") await assertArticleTopicsAvailable(staged);
     await recordContentReviews({ table, operation: "create", actorUserId: context.actorUserId, afterRows: staged });
     return {
       status: 202,
@@ -398,8 +400,19 @@ async function handlePost(table, request, url, context) {
       headers: { "x-dc-review-status": "pending" },
     };
   }
-  const inserted = [];
-  for (const row of rows) inserted.push(await insertRow(table, row, merge, conflictColumns));
+  const prepared = rows.map((row) => applyDefaults(table, row));
+  const inserted = table === "articles"
+    ? await withArticleWriteLock(async (tx) => {
+      await assertArticleTopicsAvailable(prepared, { client: tx });
+      const saved = [];
+      for (const row of prepared) saved.push(await insertRow(table, row, merge, conflictColumns, tx));
+      return saved;
+    })
+    : await (async () => {
+      const saved = [];
+      for (const row of prepared) saved.push(await insertRow(table, row, merge, conflictColumns));
+      return saved;
+    })();
   await recordContentReviews({ table, operation: "create", actorUserId: context.actorUserId, afterRows: inserted });
   return { status: 201, body: prefer.includes("return=representation") ? representationBody(request, inserted) : null };
 }
@@ -417,11 +430,16 @@ async function handlePatch(table, request, url, context) {
   const where = buildWhere(table, url, params);
   if (!where) throw new Error("Refusing unfiltered update");
   const prefer = String(request.headers.get("prefer") || "");
-  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId);
+  const checkArticleTopic = table === "articles" && (Object.hasOwn(input, "title") || Object.hasOwn(input, "slug"));
+  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic;
+  const whereParams = params.slice(columns.length);
   let before = [];
-  if (needsBefore) before = await prisma.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where}`, ...params.slice(columns.length));
-  const body = before.map((row) => ({ ...row, ...input }));
   if (context.stageReview) {
+    if (needsBefore) before = await prisma.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where}`, ...whereParams);
+    const body = before.map((row) => ({ ...row, ...input }));
+    if (checkArticleTopic) {
+      await assertArticleTopicsAvailable(body, { excludeIds: before.map((row) => row.id) });
+    }
     await recordContentReviews({ table, operation: "update", actorUserId: context.actorUserId, beforeRows: before, afterRows: body });
     return {
       status: 202,
@@ -429,7 +447,20 @@ async function handlePatch(table, request, url, context) {
       headers: { "x-dc-review-status": "pending" },
     };
   }
-  await prisma.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
+  let body;
+  if (checkArticleTopic) {
+    ({ before, body } = await withArticleWriteLock(async (tx) => {
+      const lockedBefore = await tx.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where} FOR UPDATE`, ...whereParams);
+      const nextRows = lockedBefore.map((row) => ({ ...row, ...input }));
+      await assertArticleTopicsAvailable(nextRows, { client: tx, excludeIds: lockedBefore.map((row) => row.id) });
+      await tx.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
+      return { before: lockedBefore, body: nextRows };
+    }));
+  } else {
+    if (needsBefore) before = await prisma.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where}`, ...whereParams);
+    body = before.map((row) => ({ ...row, ...input }));
+    await prisma.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
+  }
   await recordContentReviews({ table, operation: "update", actorUserId: context.actorUserId, beforeRows: before, afterRows: body });
   return { status: 200, body: prefer.includes("return=representation") ? representationBody(request, body) : null };
 }

@@ -20,6 +20,8 @@ const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
 const MAX_RESEARCH_SOURCES = 6;
 const MAX_RESEARCH_SIGNAL_CHARACTERS = 1_500;
 const MAX_TOPIC_PROMPT_FINGERPRINTS = 160;
+const ARTICLE_WRITE_LOCK_NAME = "dc_articles_strict_dedup";
+export const STRICT_ARTICLE_DUPLICATE_THRESHOLD = 0.72;
 const DEFAULT_CONTENT_GOALS = ["SEO", "AEO", "GEO", "LLMO"];
 const DEFAULT_REQUIRED_SECTIONS = ["Answer first", "Key facts", "Decision guidance", "FAQs"];
 const OPENAI_TEXT_PRICING_PER_MILLION = {
@@ -496,6 +498,13 @@ export function findDuplicateArticleTopic(candidate, existing, threshold = 0.82)
   )) || null;
 }
 
+function duplicateArticleError(conflict) {
+  return Object.assign(
+    new Error(`DekhoCampus already covers this topic: ${conflict.title}`),
+    { status: 409, code: "DUPLICATE_ARTICLE", conflict },
+  );
+}
+
 export function compactArticleCoverage(value) {
   const profile = articleTopicProfile(value);
   const parts = [
@@ -532,11 +541,46 @@ const ARTICLE_COVERAGE_SELECT = {
   tags: true,
 };
 
-async function loadArticleCoverage() {
-  return prisma.articles.findMany({
+export async function loadArticleCoverage(client = prisma) {
+  return client.articles.findMany({
     orderBy: { created_at: "desc" },
     select: ARTICLE_COVERAGE_SELECT,
   });
+}
+
+export async function assertArticleTopicsAvailable(candidates, {
+  client = prisma,
+  excludeIds = [],
+  threshold = STRICT_ARTICLE_DUPLICATE_THRESHOLD,
+} = {}) {
+  const excluded = new Set(excludeIds.filter(Boolean).map(String));
+  const coverage = (await loadArticleCoverage(client)).filter((article) => !excluded.has(String(article.id)));
+  for (const candidate of candidates) {
+    const conflict = findDuplicateArticleTopic(candidate, coverage, threshold);
+    if (conflict) throw duplicateArticleError(conflict);
+    coverage.unshift(candidate);
+  }
+  return true;
+}
+
+export async function withArticleWriteLock(operation) {
+  return prisma.$transaction(async (tx) => {
+    const rows = await tx.$queryRawUnsafe(
+      "SELECT GET_LOCK(?, 20) AS acquired",
+      ARTICLE_WRITE_LOCK_NAME,
+    );
+    if (Number(rows[0]?.acquired) !== 1) {
+      throw Object.assign(new Error("Article publishing is busy. Please retry in a few seconds."), {
+        status: 503,
+        code: "ARTICLE_WRITE_BUSY",
+      });
+    }
+    try {
+      return await operation(tx);
+    } finally {
+      await tx.$queryRawUnsafe("SELECT RELEASE_LOCK(?) AS released", ARTICLE_WRITE_LOCK_NAME).catch(() => null);
+    }
+  }, { maxWait: 25_000, timeout: 60_000 });
 }
 
 const contextLogoFields = {
@@ -1475,9 +1519,8 @@ async function publishBlogStudioDraft(body, userId) {
   const uniqueLinks = links.filter((link, index) => links.findIndex((candidate) => (
     candidate.entity_type === link.entity_type && candidate.entity_slug === link.entity_slug
   )) === index);
-  const article = await prisma.$transaction(async (tx) => {
-    const raced = await tx.articles.findFirst({ where: { OR: [{ slug: draft.slug }, { title: draft.title }] }, select: { title: true } });
-    if (raced) throw Object.assign(new Error(`DekhoCampus already covers this topic: ${raced.title}`), { status: 409, code: "DUPLICATE_ARTICLE" });
+  const article = await withArticleWriteLock(async (tx) => {
+    await assertArticleTopicsAvailable([draft], { client: tx });
     const created = await tx.articles.create({ data: {
       id: randomUUID(),
       status: requestedStatus,
@@ -1665,28 +1708,30 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     nextAuthorIndex = (Math.max(-1, Number(editorial.last_author_index) || -1) + 1) % orderedAuthors.length;
     selectedAuthor = orderedAuthors[nextAuthorIndex];
   }
-  const article = await prisma.$transaction(async (tx) => {
-    const raced = await tx.articles.findFirst({
-      where: { OR: [{ slug: draft.slug }, { title: String(draft.title || topic) }] },
-      select: { id: true },
+  let article;
+  try {
+    article = await withArticleWriteLock(async (tx) => {
+      await assertArticleTopicsAvailable([draft], { client: tx });
+      const created = await tx.articles.create({ data: {
+        id: randomUUID(), status,
+        title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: selectedAuthor?.name || "DekhoCampus Editorial", author_id: selectedAuthor?.id || null, featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(topic?.trend_based === true ? ["google-trends-daily"] : []), ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: status === "Published", data_source_urls: generated.research_sources, data_quality_score: generated.quality.score, data_clean_state: "not_checked",
+      } });
+      if (draft.faqs.length) {
+        await tx.faqs.createMany({ data: draft.faqs.map((faq, index) => ({ id: randomUUID(), page: "articles", item_slug: created.slug, question: faq.question, answer: faq.answer, display_order: (index + 1) * 10, is_active: status === "Published" })) });
+      }
+      if (schedule) {
+        await tx.article_links.create({ data: { id: randomUUID(), article_id: created.id, entity_type: schedule.entity_type.replace(/s$/, ""), entity_slug: schedule.entity_slug } });
+        await tx.entity_article_publications.create({ data: { id: randomUUID(), schedule_id: schedule.id, article_id: created.id, entity_type: schedule.entity_type, entity_slug: schedule.entity_slug, topic_kind: "researched_update", generated_for_date: new Date() } });
+      }
+      if (editorial.author_mode === "round_robin" && selectedAuthor) {
+        await tx.blog_auto_agent_settings.update({ where: { id: "default" }, data: { last_author_index: nextAuthorIndex } }).catch(() => null);
+      }
+      return created;
     });
-    if (raced) return null;
-    const created = await tx.articles.create({ data: {
-      id: randomUUID(), status,
-      title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: selectedAuthor?.name || "DekhoCampus Editorial", author_id: selectedAuthor?.id || null, featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(topic?.trend_based === true ? ["google-trends-daily"] : []), ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: status === "Published", data_source_urls: generated.research_sources, data_quality_score: generated.quality.score, data_clean_state: "not_checked",
-    } });
-    if (draft.faqs.length) {
-      await tx.faqs.createMany({ data: draft.faqs.map((faq, index) => ({ id: randomUUID(), page: "articles", item_slug: created.slug, question: faq.question, answer: faq.answer, display_order: (index + 1) * 10, is_active: status === "Published" })) });
-    }
-    if (schedule) {
-      await tx.article_links.create({ data: { id: randomUUID(), article_id: created.id, entity_type: schedule.entity_type.replace(/s$/, ""), entity_slug: schedule.entity_slug } });
-      await tx.entity_article_publications.create({ data: { id: randomUUID(), schedule_id: schedule.id, article_id: created.id, entity_type: schedule.entity_type, entity_slug: schedule.entity_slug, topic_kind: "researched_update", generated_for_date: new Date() } });
-    }
-    if (editorial.author_mode === "round_robin" && selectedAuthor) {
-      await tx.blog_auto_agent_settings.update({ where: { id: "default" }, data: { last_author_index: nextAuthorIndex } }).catch(() => null);
-    }
-    return created;
-  });
+  } catch (error) {
+    if (error?.code === "DUPLICATE_ARTICLE") return null;
+    throw error;
+  }
   if (!article) return null;
   if (existingCoverage) existingCoverage.unshift({
     id: article.id,

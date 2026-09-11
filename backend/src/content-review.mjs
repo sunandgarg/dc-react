@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata } from "./db.mjs";
+import { assertArticleTopicsAvailable, withArticleWriteLock } from "./blog-ai.mjs";
 
 const REVIEWED_TABLES = new Set([
   "articles", "article_categories", "article_links", "authors",
@@ -164,12 +165,21 @@ export async function handleContentReviews(request, reviewerId) {
     const body = await request.json().catch(() => ({}));
     const status = ["approved", "needs_changes"].includes(body.status) ? body.status : "approved";
     const reviewId = String(body.id || "");
-    await prisma.$transaction(async (tx) => {
+    await withArticleWriteLock(async (tx) => {
       const rows = await tx.$queryRawUnsafe("SELECT * FROM `content_change_reviews` WHERE `id` = ? FOR UPDATE", reviewId);
       const review = rows[0];
       if (!review) throw Object.assign(new Error("Review was not found"), { status: 404, code: "REVIEW_NOT_FOUND" });
       if (review.status !== "pending") throw Object.assign(new Error("Review has already been decided"), { status: 409, code: "REVIEW_ALREADY_DECIDED" });
-      if (status === "approved") await applyApprovedReview(tx, review);
+      if (status === "approved") {
+        if (review.entity_type === "articles") {
+          const after = parseReviewJson(review.after_json, {});
+          await assertArticleTopicsAvailable([after], {
+            client: tx,
+            excludeIds: after.id ? [after.id] : [],
+          });
+        }
+        await applyApprovedReview(tx, review);
+      }
       await tx.$executeRawUnsafe(
         "UPDATE `content_change_reviews` SET `status` = ?, `reviewed_by` = ?, `review_notes` = ?, `reviewed_at` = ? WHERE `id` = ?",
         status, reviewerId, String(body.review_notes || "").slice(0, 4000) || null, new Date(), reviewId,

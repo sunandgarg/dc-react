@@ -4,11 +4,13 @@ import {
   articleTitleSimilarity,
   articleTopicSimilarity,
   assessGeneratedArticle,
+  assertArticleTopicsAvailable,
   compactArticleCoverage,
   findDuplicateArticleTitle,
   findDuplicateArticleTopic,
   normalizeArticleTitle,
   normalizeTopicSuggestions,
+  STRICT_ARTICLE_DUPLICATE_THRESHOLD,
 } from "../src/blog-ai.mjs";
 
 test("normalizes article titles without collapsing meaningful numbers", () => {
@@ -53,6 +55,33 @@ test("allows the same exam to answer a materially different intent", () => {
 test("keeps separate sessions and annual editions distinct", () => {
   assert.ok(articleTopicSimilarity("CAT 2025 Slot 1 Paper Analysis", "CAT 2025 Slot 2 Paper Analysis") < 0.82);
   assert.ok(articleTopicSimilarity("NEET UG 2025 Counselling Dates", "NEET UG 2026 Counselling Dates") < 0.82);
+});
+
+test("the final write gate blocks renamed coverage below the suggestion threshold", async () => {
+  const existing = [{
+    id: "existing-article",
+    title: "JEE Main 2026 Counselling Schedule and Process",
+    slug: "jee-main-2026-counselling-schedule-and-process",
+  }];
+  const candidate = { title: "JEE Main 2026 Counselling Dates Complete Student Guide" };
+  const score = articleTopicSimilarity(existing[0], candidate);
+  assert.ok(score >= STRICT_ARTICLE_DUPLICATE_THRESHOLD && score < 0.82);
+  await assert.rejects(
+    assertArticleTopicsAvailable([candidate], { client: { articles: { findMany: async () => existing } } }),
+    (error) => error?.status === 409 && error?.code === "DUPLICATE_ARTICLE" && /already covers/i.test(error.message),
+  );
+});
+
+test("the final write gate excludes the article being legitimately edited", async () => {
+  const existing = [{
+    id: "current-article",
+    title: "JEE Main 2026 Counselling Schedule and Process",
+    slug: "jee-main-2026-counselling-schedule-and-process",
+  }];
+  await assert.doesNotReject(assertArticleTopicsAvailable([existing[0]], {
+    client: { articles: { findMany: async () => existing } },
+    excludeIds: [existing[0].id],
+  }));
 });
 
 test("compresses prior coverage into an inexpensive subject and intent fingerprint", () => {
