@@ -122,8 +122,38 @@ async function columnInfo(table, column) {
 async function ensureIntentRuntimeSchema(report) {
   const id = await columnInfo("intent_events", "id");
   if (!String(id?.extra || "").toLowerCase().includes("auto_increment")) {
-    await prisma.$executeRawUnsafe("ALTER TABLE `intent_events` MODIFY `id` BIGINT NOT NULL AUTO_INCREMENT");
-    report.createdRuntimeColumns.push("intent_events.id:auto_increment");
+    await mysqlConnection.query("LOCK TABLES `intent_events` WRITE");
+    try {
+      const [lockedColumns] = await mysqlConnection.query("SHOW COLUMNS FROM `intent_events` LIKE 'id'");
+      if (String(lockedColumns[0]?.Extra || "").toLowerCase().includes("auto_increment")) {
+        report.existing.push("intent_events.id:auto_increment");
+        return;
+      }
+      const [statsRows] = await mysqlConnection.query(
+        "SELECT CAST(COALESCE(MAX(`id`), 0) AS CHAR) AS maxId, SUM(`id` = 0) AS zeroIds FROM `intent_events`",
+      );
+      const zeroIds = Number(statsRows[0]?.zeroIds || 0);
+      if (!Number.isInteger(zeroIds) || zeroIds < 0 || zeroIds > 1) {
+        throw new Error(`intent_events has an unsafe zero-ID count: ${zeroIds}`);
+      }
+      if (zeroIds === 1) {
+        const maximumSignedBigInt = 9_223_372_036_854_775_807n;
+        const maxId = BigInt(String(statsRows[0]?.maxId || "0"));
+        if (maxId >= maximumSignedBigInt) throw new Error("intent_events has exhausted the signed BIGINT ID range");
+        const nextId = (maxId + 1n).toString();
+        const [repair] = await mysqlConnection.execute("UPDATE `intent_events` SET `id` = ? WHERE `id` = 0", [nextId]);
+        if (Number(repair.affectedRows) !== zeroIds) {
+          throw new Error(`intent_events zero-ID repair affected ${repair.affectedRows} row(s); expected ${zeroIds}`);
+        }
+        const [remainingRows] = await mysqlConnection.query("SELECT COUNT(*) AS zeroIds FROM `intent_events` WHERE `id` = 0");
+        if (Number(remainingRows[0]?.zeroIds || 0) !== 0) throw new Error("intent_events zero-ID repair did not complete");
+        report.createdRuntimeColumns.push("intent_events.id:zero-resequenced");
+      }
+      await mysqlConnection.query("ALTER TABLE `intent_events` MODIFY `id` BIGINT NOT NULL AUTO_INCREMENT");
+      report.createdRuntimeColumns.push("intent_events.id:auto_increment");
+    } finally {
+      await mysqlConnection.query("UNLOCK TABLES");
+    }
   }
 }
 

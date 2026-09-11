@@ -112,5 +112,13 @@ test("native intent functions are routed and fresh databases auto-increment even
   assert.match(restSource, /updateIntentScoresForEvents\(inserted, context\.siteScope\)/);
   assert.match(restSource, /mergeIntentVisitor\(body\._visitor_id, body\._user_id, body\._site_scope\)/);
   assert.match(schema, /model intent_events \{\s+id\s+BigInt\s+@id @default\(autoincrement\(\)\)/);
-  assert.match(parity, /ALTER TABLE `intent_events` MODIFY `id` BIGINT NOT NULL AUTO_INCREMENT/);
+  const writeLock = parity.indexOf("LOCK TABLES `intent_events` WRITE");
+  const zeroIdRepair = parity.indexOf("UPDATE `intent_events` SET `id` = ? WHERE `id` = 0");
+  const autoIncrementAlter = parity.indexOf("ALTER TABLE `intent_events` MODIFY `id` BIGINT NOT NULL AUTO_INCREMENT");
+  assert.ok(writeLock >= 0, "intent migration must block concurrent event inserts");
+  assert.ok(zeroIdRepair >= 0, "legacy zero IDs must be resequenced before enabling AUTO_INCREMENT");
+  assert.ok(writeLock < zeroIdRepair && zeroIdRepair < autoIncrementAlter, "the lock, repair, and AUTO_INCREMENT alteration must stay ordered");
+  assert.match(parity, /Number\(repair\.affectedRows\) !== zeroIds/);
+  assert.match(parity, /SELECT COUNT\(\*\) AS zeroIds FROM `intent_events` WHERE `id` = 0/);
+  assert.match(parity, /finally \{\s+await mysqlConnection\.query\("UNLOCK TABLES"\)/);
 });
