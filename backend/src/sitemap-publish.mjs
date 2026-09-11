@@ -5,6 +5,7 @@ import { storageConfig } from "./storage.mjs";
 
 const PUBLISH_TARGET = "https://dekhocampus.com";
 const SITEMAP_PREFIX = "system-sitemaps";
+const BUILD_SEED_PREFIX = `${SITEMAP_PREFIX}/build-seeds`;
 const CHUNK_SIZE = 3_000;
 const MIN_FILTER_RESULTS = 3;
 const GENERATION_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
@@ -263,17 +264,32 @@ function keyForPublicPath(pathname) {
   return publicKey(pathname) || `${SITEMAP_PREFIX}/public/${pathname.replace(/^\//, "")}`;
 }
 
-async function currentSeedEntries(repository) {
-  const root = await repository.get(`${SITEMAP_PREFIX}/public/sitemap.xml`);
+async function currentSeedEntries(repository, buildSeedSha) {
+  const requestedSeed = String(buildSeedSha || "").trim();
+  if (requestedSeed && !/^[0-9a-f]{40}$/.test(requestedSeed)) {
+    throw publishError(400, "INVALID_SITEMAP_SEED", "The build sitemap seed must be identified by a full commit SHA");
+  }
+  const seedPrefix = requestedSeed ? `${BUILD_SEED_PREFIX}/${requestedSeed}` : `${SITEMAP_PREFIX}/public`;
+  const root = await repository.get(`${seedPrefix}/sitemap.xml`);
   if (!root) throw publishError(503, "SITEMAP_SEED_MISSING", "The deployed sitemap seed is missing from AWS S3");
   const documents = [];
   if (/<sitemapindex\b/i.test(root.body)) {
-    const locations = [...root.body.matchAll(/<loc>([\s\S]*?)<\/loc>/gi)].map((match) => canonicalPath(match[1])).filter(Boolean);
+    const locations = [...root.body.matchAll(/<loc>([\s\S]*?)<\/loc>/gi)].map((match) => canonicalPath(match[1]));
+    if (!locations.length || locations.some((location) => !location)) {
+      throw publishError(503, "SITEMAP_SEED_INCOMPLETE", "The deployed sitemap seed index is empty or invalid");
+    }
     const loaded = await boundedMap(locations, OBJECT_IO_CONCURRENCY, async (location) => {
-      const object = await repository.get(keyForPublicPath(new URL(location, PUBLISH_TARGET).pathname));
-      return object?.body || null;
+      const pathname = new URL(location, PUBLISH_TARGET).pathname;
+      const filename = pathname.split("/").at(-1);
+      if (requestedSeed && !/^sitemap-\d+\.xml$/.test(filename || "")) {
+        throw publishError(503, "SITEMAP_SEED_INCOMPLETE", "The immutable build seed references an invalid child sitemap");
+      }
+      const key = requestedSeed ? `${seedPrefix}/${filename}` : keyForPublicPath(pathname);
+      const object = await repository.get(key);
+      if (!object) throw publishError(503, "SITEMAP_SEED_INCOMPLETE", `The deployed sitemap seed is missing ${filename || "a child sitemap"}`);
+      return object.body;
     });
-    documents.push(...loaded.filter(Boolean));
+    documents.push(...loaded);
   } else {
     documents.push(root.body);
   }
@@ -477,7 +493,7 @@ export async function publishSitemap(request, options = {}) {
   const repository = options.repository || objectRepository();
   publishing = true;
   try {
-    const [seed, dynamicResult] = await Promise.all([currentSeedEntries(repository), dynamicEntries(prismaClient)]);
+    const [seed, dynamicResult] = await Promise.all([currentSeedEntries(repository, body.build_seed_sha), dynamicEntries(prismaClient)]);
     const counts = dynamicResult.sourceCounts;
     if (Object.values(counts).some((count) => count === 0)) throw publishError(409, "SITEMAP_SOURCE_INCOMPLETE", "Publishing stopped because one or more core public catalogs are empty");
     const entries = mergeEntries(seed, dynamicResult.entries);
@@ -488,9 +504,12 @@ export async function publishSitemap(request, options = {}) {
     for (let index = 0; index < entries.length; index += CHUNK_SIZE) chunks.push(entries.slice(index, index + CHUNK_SIZE));
     await boundedMap(chunks, OBJECT_IO_CONCURRENCY, (chunk, index) => repository.put(`${SITEMAP_PREFIX}/generations/${generation}/sitemap-${index + 1}.xml`, sitemapXml(chunk)));
     const indexXml = sitemapIndex(generation, chunks.length);
+    const manifest = JSON.stringify({ generation, url_count: entries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() });
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap-index.xml`, indexXml);
+    await repository.put(`${SITEMAP_PREFIX}/public/manifest.json`, manifest, "application/json; charset=utf-8");
+    // The canonical root is the single-object publication pointer. Keep it
+    // unchanged unless all immutable chunks and publication metadata exist.
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap.xml`, indexXml);
-    await repository.put(`${SITEMAP_PREFIX}/public/manifest.json`, JSON.stringify({ generation, url_count: entries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() }), "application/json; charset=utf-8");
     let removedObjects = 0;
     if (typeof repository.list === "function" && typeof repository.delete === "function") {
       const currentPrefix = `${SITEMAP_PREFIX}/generations/${generation}/`;

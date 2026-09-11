@@ -60,4 +60,3 @@ describe("production sitemap fetching", () => {
     expect(sleep).not.toHaveBeenCalled();
   });
 });
-
