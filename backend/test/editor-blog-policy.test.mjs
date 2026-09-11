@@ -89,7 +89,9 @@ test("production AI smoke verifies draft FAQs without publishing them", async ()
   const smokeSource = await readFile(new URL("../scripts/verify-production-blog-agent.mjs", import.meta.url), "utf8");
   assert.match(smokeSource, /where: \{ page: "articles", item_slug: article\.slug \}/);
   assert.match(smokeSource, /createdFaqs\.every\(\(faq\) => faq\.is_active === false\)/);
+  assert.match(smokeSource, /const coverMode = "template"/);
   assert.doesNotMatch(smokeSource, /item_slug: article\.slug, is_active: true/);
+  assert.doesNotMatch(smokeSource, /Production is not configured to use the saved blog cover template/);
 });
 
 test("enforces conservative auto-blog cadence and volume limits", () => {

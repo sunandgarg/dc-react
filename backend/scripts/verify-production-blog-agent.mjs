@@ -155,9 +155,8 @@ try {
     .toBuffer();
   assert.ok([...generatedBottomCenter].every((channel) => channel > 220), "Scheduled agent cover contains the retired dark-panel composition");
 
-  const coverMode = originalSettings.image_mode === "template" && originalSettings.image_template_url ? "template" : "generated";
-  assert.equal(coverMode, "template", "Production is not configured to use the saved blog cover template");
-  assert.equal(originalSettings.image_template_url, DEFAULT_BLOG_COVER_TEMPLATE_KEY, "Production points to an unexpected blog cover template");
+  const coverMode = "template";
+  assert.equal(originalSettings.image_template_url, DEFAULT_BLOG_COVER_TEMPLATE_KEY, "Production points to an unexpected branded fallback template");
   coverUrl = await createBlogCover(testSlug, "Indian higher education admissions and student success", {
     imageMode: coverMode,
     templateUrl: originalSettings.image_template_url,
@@ -173,13 +172,14 @@ try {
   assert.equal(coverResponse.ok, true, `Generated AWS cover is not publicly readable (${coverResponse.status})`);
   assert.match(String(coverResponse.headers.get("content-type")), /^image\/webp/);
   assert.ok((await coverResponse.arrayBuffer()).byteLength > 10_000, "Generated cover is unexpectedly small");
-  assert.equal(coverDiagnostics.sourceMode, "template", coverDiagnostics.templateError || "Production cover did not use the saved template");
+  assert.equal(coverDiagnostics.sourceMode, "template", coverDiagnostics.templateError || "Branded fallback cover did not use the saved template");
   assert.equal(coverDiagnostics.logoPreservedFromTemplate, true, "The template's embedded logo was not preserved");
   assert.equal(coverDiagnostics.logoApplied, undefined, "A second logo was unexpectedly applied over the saved template");
 
   console.log(JSON.stringify({
     ok: true,
     openai_blog: `${verificationMode} verified with GPT-5.4 mini`,
+    production_cover_mode: originalSettings.image_mode,
     article_faqs: verificationMode === "agent-draft" ? `${createdFaqCount} dedicated FAQ records stored inactive pending review; visible FAQ section verified in draft HTML` : "visible FAQ section verified",
     source_policy: "no source sections, citation markers, or external source links",
     cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
