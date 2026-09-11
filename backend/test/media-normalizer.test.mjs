@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { normalizeExternalStorageValue } from "../src/media-normalizer.mjs";
+
+const [normalizationScript, deploymentWorkflow] = await Promise.all([
+  readFile(new URL("../scripts/normalize-external-media.mjs", import.meta.url), "utf8"),
+  readFile(new URL("../../.github/workflows/deploy-aws-lightsail.yml", import.meta.url), "utf8"),
+]);
 
 test("normalizes existing external storage URLs to provider-neutral keys", async () => {
   const result = await normalizeExternalStorageValue(
@@ -27,4 +33,13 @@ test("rewrites embedded media URLs without changing ordinary external links", as
   );
   assert.match(result.value, /https:\/\/dekhocampus\.com\/storage\/v1\/object\/public\/admin-uploads\/a\.webp/);
   assert.match(result.value, /https:\/\/college\.example/);
+});
+
+test("routine deployments cannot launch the full-database media migration", () => {
+  const runtimeStep = deploymentWorkflow.slice(
+    deploymentWorkflow.indexOf("- name: Configure AWS runtime"),
+    deploymentWorkflow.indexOf("- name: Generate tenant-scoped sitemap"),
+  );
+  assert.doesNotMatch(runtimeStep, /npm --prefix backend run db:normalize:media/);
+  assert.match(normalizationScript, /process\.argv\.includes\("--confirmed-one-time"\)/);
 });

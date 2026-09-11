@@ -509,7 +509,9 @@ jobs:
           set +a
           npm --prefix backend run db:setup:runtime
           node backend/scripts/configure-production-site-integrations.mjs
-          npm --prefix backend run db:normalize:media
+          # External media normalization is a one-time, explicitly confirmed
+          # maintenance migration. A routine deploy must never rescan every
+          # string/JSON field in every table while the public API is serving.
           npm --prefix backend run verify:integrations
           pm2 reload dc-react-api --update-env --max-memory-restart "$PM2_MEMORY_LIMIT"
           pm2 save

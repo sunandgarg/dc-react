@@ -2,6 +2,10 @@ import { HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma, quote, schemaMetadata } from "../src/db.mjs";
 import { normalizeExternalStorageValue } from "../src/media-normalizer.mjs";
 
+if (!process.argv.includes("--confirmed-one-time")) {
+  throw new Error("External media normalization is a full-database maintenance migration. Re-run with --confirmed-one-time during an approved maintenance window.");
+}
+
 const bucket = String(process.env.AWS_S3_BUCKET || "").trim();
 const mediaBaseUrl = String(process.env.MEDIA_BASE_URL || "").replace(/\/$/, "");
 if (!bucket || !mediaBaseUrl) throw new Error("AWS_S3_BUCKET and MEDIA_BASE_URL are required");
