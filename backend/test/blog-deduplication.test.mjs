@@ -144,6 +144,19 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
   }, "CAT 2026 preparation plan for working graduates", 1200);
   assert.equal(good.passed, true, good.issues.join("; "));
 
+  const semanticAnswerFirst = assessGeneratedArticle({
+    ...{
+      title: "CAT 2026 Preparation Plan for Working Graduates",
+      description: "A practical CAT 2026 plan that helps working graduates divide practice, review errors and protect mock-test time each week.",
+      meta_title: "CAT 2026 Preparation Plan for Working Graduates",
+      meta_description: "Build a realistic CAT 2026 study plan around a full-time job, weekly mock analysis, focused revision blocks and measurable improvement priorities.",
+      content_html: `<p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p><p>${usefulParagraph}</p><h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul><h2>Decision guidance</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
+      faqs: [1, 2, 3, 4].map((number) => ({ question: `Question ${number}?`, answer: `Useful answer ${number}.` })),
+    },
+  }, "CAT 2026 preparation plan for working graduates", 1200);
+  assert.equal(semanticAnswerFirst.passed, true, semanticAnswerFirst.issues.join("; "));
+  assert.equal(semanticAnswerFirst.checks.find((check) => check.name === "Required reader modules")?.passed, true);
+
   const bad = assessGeneratedArticle({
     title: "CAT update",
     description: "Thin copy",

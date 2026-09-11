@@ -1467,6 +1467,11 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   const headings = [...contentHtml.matchAll(/<h[23]\b[^>]*>([\s\S]*?)<\/h[23]>/gi)].map((match) => normalizeArticleTitle(stripHtml(match[1]))).filter(Boolean);
   const faqs = normalizeGeneratedFaqs(draft?.faqs);
   const uniqueFaqQuestions = new Set(faqs.map((faq) => normalizeArticleTitle(faq.question)));
+  const topicProfile = articleTopicProfile(topic);
+  const searchableBody = normalizedTopicLanguage(`${draft?.title || ""} ${draft?.description || ""} ${body}`);
+  const introduction = normalizedTopicLanguage(body.split(/\s+/).slice(0, 110).join(" "));
+  const introAnchors = [...topicProfile.anchors].filter((anchor) => introduction.includes(anchor)).length;
+  const hasAnswerFirstOpening = topicProfile.anchors.size < 2 || introAnchors >= Math.min(2, topicProfile.anchors.size);
 
   check("Specific title", titleLength >= 45 && titleLength <= 95 && !/\.\.\.|complete guide|everything you need to know/i.test(String(draft?.title || "")), 5, "title must be specific, complete and 45-95 characters");
   check("Search metadata", metaTitleLength >= 45 && metaTitleLength <= 70 && metaDescriptionLength >= 120 && metaDescriptionLength <= 170, 8, "meta title or description is outside its useful search length");
@@ -1474,17 +1479,17 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   check("Useful depth", words.length >= minimumWords && words.length <= Math.ceil(targetWords * 1.45), 13, `article has ${words.length} words; useful range is ${minimumWords}-${Math.ceil(targetWords * 1.45)}`, true);
   check("Descriptive structure", headings.length >= 3, 7, "article needs at least three descriptive H2/H3 sections");
   check("Scannable evidence", /<(?:ul|ol|table)\b/i.test(contentHtml), 5, "article needs at least one useful list or table");
-  const missingSections = editorial.required_sections.filter((section) => !sectionIsPresent(section, headings));
+  const missingSections = editorial.required_sections.filter((section) => {
+    const normalizedSection = normalizeArticleTitle(section);
+    if (["answer first", "quick answer"].includes(normalizedSection) && hasAnswerFirstOpening) return false;
+    return !sectionIsPresent(section, headings);
+  });
   check("Required reader modules", !missingSections.length, 10, `required sections are missing: ${missingSections.join(", ")}`, true);
   check("Distinct FAQs", faqs.length >= 4 && uniqueFaqQuestions.size === faqs.length, 8, "article needs at least four distinct FAQs", true);
   const mirroredFaqs = faqs.filter((faq) => body.toLowerCase().includes(stripHtml(faq.question).toLowerCase())).length;
   check("Visible FAQ parity", faqs.length >= 4 && mirroredFaqs === faqs.length, 7, "every dedicated FAQ must also appear visibly in the article", true);
 
-  const topicProfile = articleTopicProfile(topic);
-  const searchableBody = normalizedTopicLanguage(`${draft?.title || ""} ${draft?.description || ""} ${body}`);
-  const introduction = normalizedTopicLanguage(body.split(/\s+/).slice(0, 110).join(" "));
-  const introAnchors = [...topicProfile.anchors].filter((anchor) => introduction.includes(anchor)).length;
-  check("Answer-first opening", topicProfile.anchors.size < 2 || introAnchors >= Math.min(2, topicProfile.anchors.size), 8, "opening does not answer the requested topic directly");
+  check("Answer-first opening", hasAnswerFirstOpening, 8, "opening does not answer the requested topic directly");
   let topicFocused = true;
   if (topicProfile.anchors.size >= 2) {
     const coveredAnchors = [...topicProfile.anchors].filter((anchor) => new RegExp(`\\b${anchor.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(searchableBody));
