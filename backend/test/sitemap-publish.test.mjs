@@ -14,6 +14,7 @@ function populatedDb(coreCount = 1) {
     async $queryRawUnsafe(sql) {
       if (sql.includes("COUNT(*)")) return [{ count: BigInt(coreCount) }];
       const table = sql.match(/FROM `([^`]+)`/)?.[1];
+      if (coreCount === 0 && ["colleges", "courses", "exams", "articles"].includes(table)) return [];
       const base = { slug: `${table}-sample`, short_id: 101, updated_at: new Date("2026-08-27T00:00:00Z"), image: "https://cdn.dekhocampus.com/catalog/sample.webp" };
       if (table === "colleges") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, state: "Delhi NCR", city: "New Delhi", type: "Private", category: "Management", logo: "https://old-origin.example/storage/v1/object/public/admin-uploads/logos/sample.webp", carousel_images: [{ url: "https://www.youtube.com/embed/not-an-image", caption: "Campus tour" }], gallery_images: [] }));
       if (table === "course_fees") return [1, 2, 3].map((number) => ({ college_slug: number === 1 ? "colleges-sample" : `colleges-sample-${number}`, course_group: "MBA" }));
@@ -25,6 +26,27 @@ function populatedDb(coreCount = 1) {
       if (table === "college_subjects") return [{ ...base, semester_num: 1, program_slug: "btech", university_slug: "sample-university" }];
       return [base];
     },
+  };
+}
+
+function trackedDb() {
+  const delegate = populatedDb();
+  let active = 0;
+  let peak = 0;
+  return {
+    client: {
+      async $queryRawUnsafe(...args) {
+        active += 1;
+        peak = Math.max(peak, active);
+        await new Promise((resolve) => setTimeout(resolve, 2));
+        try {
+          return await delegate.$queryRawUnsafe(...args);
+        } finally {
+          active -= 1;
+        }
+      },
+    },
+    peak: () => peak,
   };
 }
 
@@ -51,7 +73,15 @@ test("sitemap publishing rejects incomplete core catalog data", async () => {
 
 test("DekhoCampus sitemap SQL excludes Sarkari articles", async () => {
   const source = await readFile(new URL("../src/sitemap-publish.mjs", import.meta.url), "utf8");
-  assert.equal((source.match(/`site_scope` = 'dekhocampus'/g) || []).length, 2);
+  assert.equal((source.match(/`site_scope` = 'dekhocampus'/g) || []).length, 1);
+});
+
+test("sitemap publishing leaves one Prisma connection free", async () => {
+  const database = trackedDb();
+  const result = await publishSitemap(request(), { prismaClient: database.client, repository: memoryRepository() });
+  assert.equal(result.status, "published");
+  assert.equal(database.peak(), 2);
+  assert.deepEqual(result.source_counts, { colleges: 3, courses: 1, exams: 1, articles: 1 });
 });
 
 test("sitemap publishing replaces the root index with AWS-backed immutable chunks", async () => {

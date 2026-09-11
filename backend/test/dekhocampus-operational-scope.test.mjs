@@ -106,6 +106,7 @@ test("long production AI and sitemap tasks keep their SSH sessions alive", async
   const aiStart = workflow.indexOf("- name: Verify live AI blog agent and cover pipeline");
   const sitemapStart = workflow.indexOf("- name: Publish complete MySQL sitemap generation");
   const crudStart = workflow.indexOf("- name: Run reversible production admin CRUD regression");
+  assert.ok(aiStart >= 0 && sitemapStart > aiStart && crudStart > sitemapStart);
   const aiStep = workflow.slice(aiStart, sitemapStart);
   const sitemapStep = workflow.slice(sitemapStart, crudStart);
 
