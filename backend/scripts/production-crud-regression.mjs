@@ -226,6 +226,17 @@ async function exerciseTable(table) {
 
   let publicRead = false;
   if (PUBLIC_READ_TABLES.has(table)) {
+    if (table === "articles") {
+      const hiddenDraftRows = await publicRows(table, filters);
+      if (!Array.isArray(hiddenDraftRows) || hiddenDraftRows.length !== 0) {
+        throw new Error("public API exposed the draft article");
+      }
+      const publish = await handleRest(table, requestFor(table, "PATCH", {
+        filters,
+        body: { status: "Published", is_active: true },
+      }));
+      if (publish.status !== 200) throw new Error(`article publish returned ${publish.status}`);
+    }
     const rows = await publicRows(table, filters);
     if (!Array.isArray(rows) || rows.length !== 1) throw new Error("public API did not return the inserted row");
     publicRead = true;
