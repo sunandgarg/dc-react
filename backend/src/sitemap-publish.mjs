@@ -3,12 +3,13 @@ import { DeleteObjectsCommand, GetObjectCommand, ListObjectsV2Command, PutObject
 import { prisma } from "./db.mjs";
 import { storageConfig } from "./storage.mjs";
 
-const CORE_TABLES = ["colleges", "courses", "exams", "articles"];
 const PUBLISH_TARGET = "https://dekhocampus.com";
 const SITEMAP_PREFIX = "system-sitemaps";
 const CHUNK_SIZE = 3_000;
 const MIN_FILTER_RESULTS = 3;
 const GENERATION_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+const DB_QUERY_CONCURRENCY = 2;
+const OBJECT_IO_CONCURRENCY = 4;
 const COLLEGE_TABS = ["overview", "highlights", "courses", "admissions", "placements", "cutoff", "rankings", "reviews", "infrastructure", "gallery", "scholarships", "hostel", "compare", "faculty", "recruiters", "contact", "news", "faq"];
 const COURSE_TABS = ["overview", "highlights", "eligibility", "syllabus", "fees", "admission", "career", "placements", "specializations", "top-exams", "top-colleges", "cutoff", "faq"];
 const EXAM_TABS = ["overview", "highlights", "dates", "application", "eligibility", "syllabus", "pattern", "preparation", "admit-card", "answer-key", "results", "counselling", "cutoff", "colleges", "faq"];
@@ -29,6 +30,27 @@ const CAT_EXPERIENCE_ENTRIES = [
   { path: "/cat-universe/ai-interview-practice", changefreq: "weekly", priority: "0.82" },
   { path: "/cat-universe/ai-coach", changefreq: "weekly", priority: "0.82" },
 ];
+
+async function boundedMap(values, concurrency, mapper) {
+  const output = new Array(values.length);
+  let cursor = 0;
+  let terminalError;
+  const workers = Array.from({ length: Math.min(Math.max(1, concurrency), values.length) }, async () => {
+    while (!terminalError) {
+      const index = cursor;
+      cursor += 1;
+      if (index >= values.length) return;
+      try {
+        output[index] = await mapper(values[index], index);
+      } catch (error) {
+        terminalError = error;
+      }
+    }
+  });
+  await Promise.all(workers);
+  if (terminalError) throw terminalError;
+  return output;
+}
 
 function publishError(status, code, message) {
   const error = new Error(message);
@@ -247,10 +269,11 @@ async function currentSeedEntries(repository) {
   const documents = [];
   if (/<sitemapindex\b/i.test(root.body)) {
     const locations = [...root.body.matchAll(/<loc>([\s\S]*?)<\/loc>/gi)].map((match) => canonicalPath(match[1])).filter(Boolean);
-    for (const location of locations) {
+    const loaded = await boundedMap(locations, OBJECT_IO_CONCURRENCY, async (location) => {
       const object = await repository.get(keyForPublicPath(new URL(location, PUBLISH_TARGET).pathname));
-      if (object) documents.push(object.body);
-    }
+      return object?.body || null;
+    });
+    documents.push(...loaded.filter(Boolean));
   } else {
     documents.push(root.body);
   }
@@ -363,27 +386,32 @@ function filterEntries(colleges, courses, exams, courseFees) {
 }
 
 async function dynamicEntries(prismaClient) {
-  const [colleges, courses, exams, articles, careers, scholarships, landing, catModules, programs, jobs, authors, legal, subjects, chapters, collegePrograms, universities, semesters, collegeSubjects, courseFees] = await Promise.all([
-    rows(prismaClient, "colleges", ["slug", "short_id", "updated_at", "state", "city", "type", "category", "image", "logo", "carousel_images", "gallery_images"]),
-    rows(prismaClient, "courses", ["slug", "short_id", "updated_at", "category", "mode", "duration", "image"]),
-    rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "image", "logo"]),
-    rows(prismaClient, "articles", ["slug", "updated_at", "tags", "featured_image"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
-    rows(prismaClient, "career_profiles", ["slug", "updated_at", "image"]),
-    rows(prismaClient, "scholarships", ["slug", "updated_at", "image"]),
-    rows(prismaClient, "landing_pages", ["slug", "updated_at", "logo_url", "og_image"]),
-    rows(prismaClient, "cat_universe_modules", ["slug", "updated_at"]),
-    rows(prismaClient, "promoted_programs", ["slug", "updated_at", "image_url", "hero_image", "certificate_image", "degree_image", "institute_logo"]),
-    rows(prismaClient, "jobs", ["slug", "updated_at", "company_logo"]),
-    rows(prismaClient, "authors", ["slug", "updated_at", "photo"]),
-    rows(prismaClient, "legal_pages", ["slug", "updated_at"]),
-    rows(prismaClient, "study_subjects", ["id", "slug", "class_num", "board_slug", "updated_at"]),
-    rows(prismaClient, "study_chapters", ["slug", "subject_id", "updated_at"]),
-    rows(prismaClient, "college_programs", ["slug", "updated_at"]),
-    rows(prismaClient, "college_universities", ["slug", "program_slug", "updated_at"]),
-    rows(prismaClient, "college_semesters", ["semester_num", "program_slug", "university_slug", "updated_at"], false),
-    rows(prismaClient, "college_subjects", ["slug", "semester_num", "program_slug", "university_slug", "updated_at"]),
-    prismaClient.$queryRawUnsafe("SELECT `college_slug`,`course_group` FROM `course_fees` WHERE `course_group` IS NOT NULL AND TRIM(`course_group`) <> ''"),
-  ]);
+  const queryLoaders = [
+    () => rows(prismaClient, "colleges", ["slug", "short_id", "updated_at", "state", "city", "type", "category", "image", "logo", "carousel_images", "gallery_images"]),
+    () => rows(prismaClient, "courses", ["slug", "short_id", "updated_at", "category", "mode", "duration", "image"]),
+    () => rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "image", "logo"]),
+    () => rows(prismaClient, "articles", ["slug", "updated_at", "tags", "featured_image"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
+    () => rows(prismaClient, "career_profiles", ["slug", "updated_at", "image"]),
+    () => rows(prismaClient, "scholarships", ["slug", "updated_at", "image"]),
+    () => rows(prismaClient, "landing_pages", ["slug", "updated_at", "logo_url", "og_image"]),
+    () => rows(prismaClient, "cat_universe_modules", ["slug", "updated_at"]),
+    () => rows(prismaClient, "promoted_programs", ["slug", "updated_at", "image_url", "hero_image", "certificate_image", "degree_image", "institute_logo"]),
+    () => rows(prismaClient, "jobs", ["slug", "updated_at", "company_logo"]),
+    () => rows(prismaClient, "authors", ["slug", "updated_at", "photo"]),
+    () => rows(prismaClient, "legal_pages", ["slug", "updated_at"]),
+    () => rows(prismaClient, "study_subjects", ["id", "slug", "class_num", "board_slug", "updated_at"]),
+    () => rows(prismaClient, "study_chapters", ["slug", "subject_id", "updated_at"]),
+    () => rows(prismaClient, "college_programs", ["slug", "updated_at"]),
+    () => rows(prismaClient, "college_universities", ["slug", "program_slug", "updated_at"]),
+    () => rows(prismaClient, "college_semesters", ["semester_num", "program_slug", "university_slug", "updated_at"], false),
+    () => rows(prismaClient, "college_subjects", ["slug", "semester_num", "program_slug", "university_slug", "updated_at"]),
+    () => prismaClient.$queryRawUnsafe("SELECT `college_slug`,`course_group` FROM `course_fees` WHERE `course_group` IS NOT NULL AND TRIM(`course_group`) <> ''"),
+  ];
+  const [colleges, courses, exams, articles, careers, scholarships, landing, catModules, programs, jobs, authors, legal, subjects, chapters, collegePrograms, universities, semesters, collegeSubjects, courseFees] = await boundedMap(
+    queryLoaders,
+    DB_QUERY_CONCURRENCY,
+    (load) => load(),
+  );
   const subjectById = new Map(subjects.map((subject) => [subject.id, subject]));
   const classBoards = new Map();
   for (const subject of subjects) classBoards.set(`${subject.class_num}/${subject.board_slug}`, { path: `/study-material/class-${subject.class_num}/${subject.board_slug}`, lastmod: dateOnly(subject.updated_at), changefreq: "weekly", priority: "0.62" });
@@ -395,7 +423,7 @@ async function dynamicEntries(prismaClient) {
       if (slug) tags.add(slug);
     }
   }
-  return [
+  const entries = [
     ...colleges.flatMap((row) => canonicalEntity("/colleges", row, "0.88", ["image", "logo", "carousel_images", "gallery_images"], COLLEGE_TABS)),
     ...courses.flatMap((row) => canonicalEntity("/courses", row, "0.85", ["image"], COURSE_TABS)),
     ...exams.flatMap((row) => [
@@ -428,12 +456,15 @@ async function dynamicEntries(prismaClient) {
     ...collegeSubjects.map((row) => ({ path: `/college-study-material/${row.program_slug}/${row.university_slug}/semester-${row.semester_num}/${row.slug}`, lastmod: dateOnly(row.updated_at), changefreq: "weekly", priority: "0.52" })),
     ...filterEntries(colleges, courses, exams, courseFees),
   ];
-}
-
-async function activeCount(table, prismaClient) {
-  const publishedOnly = table === "articles" ? " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'" : "";
-  const result = await prismaClient.$queryRawUnsafe(`SELECT COUNT(*) AS \`count\` FROM \`${table}\` WHERE \`is_active\` = 1 AND \`slug\` IS NOT NULL${publishedOnly}`);
-  return Number(result[0]?.count || 0);
+  return {
+    entries,
+    sourceCounts: {
+      colleges: colleges.length,
+      courses: courses.length,
+      exams: exams.length,
+      articles: articles.length,
+    },
+  };
 }
 
 let publishing = false;
@@ -446,16 +477,16 @@ export async function publishSitemap(request, options = {}) {
   const repository = options.repository || objectRepository();
   publishing = true;
   try {
-    const counts = Object.fromEntries(await Promise.all(CORE_TABLES.map(async (table) => [table, await activeCount(table, prismaClient)])));
+    const [seed, dynamicResult] = await Promise.all([currentSeedEntries(repository), dynamicEntries(prismaClient)]);
+    const counts = dynamicResult.sourceCounts;
     if (Object.values(counts).some((count) => count === 0)) throw publishError(409, "SITEMAP_SOURCE_INCOMPLETE", "Publishing stopped because one or more core public catalogs are empty");
-    const [seed, dynamic] = await Promise.all([currentSeedEntries(repository), dynamicEntries(prismaClient)]);
-    const entries = mergeEntries(seed, dynamic);
+    const entries = mergeEntries(seed, dynamicResult.entries);
     const imageCount = entries.reduce((total, entry) => total + (entry.images?.length || 0), 0);
     const filterUrlCount = entries.filter((entry) => /^\/(colleges|courses|exams)\?/.test(entry.path)).length;
     const generation = randomUUID();
     const chunks = [];
     for (let index = 0; index < entries.length; index += CHUNK_SIZE) chunks.push(entries.slice(index, index + CHUNK_SIZE));
-    await Promise.all(chunks.map((chunk, index) => repository.put(`${SITEMAP_PREFIX}/generations/${generation}/sitemap-${index + 1}.xml`, sitemapXml(chunk))));
+    await boundedMap(chunks, OBJECT_IO_CONCURRENCY, (chunk, index) => repository.put(`${SITEMAP_PREFIX}/generations/${generation}/sitemap-${index + 1}.xml`, sitemapXml(chunk)));
     const indexXml = sitemapIndex(generation, chunks.length);
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap-index.xml`, indexXml);
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap.xml`, indexXml);

@@ -34,6 +34,7 @@ import {
 } from "../src/data/indianLocations";
 import { collegeApprovals, collegeNaacGrades } from "../src/data/colleges";
 import { SITE_URL } from "../src/lib/constant";
+import { createFailFastTaskLimiter, fetchJsonWithRetry, fetchTextWithRetry } from "./sitemap-fetch";
 
 const fileEnv = loadEnv(process.env.NODE_ENV || "production", process.cwd(), "");
 const env = { ...fileEnv, ...process.env };
@@ -45,6 +46,26 @@ const SITEMAP_SEED_URL = env.SITEMAP_SEED_URL === "none"
   ? ""
   : env.SITEMAP_SEED_URL || "https://dekhocampus.com/sitemap.xml";
 const PAGE_SIZE = 1000;
+
+function boundedInteger(value: unknown, fallback: number, minimum: number, maximum: number) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? Math.min(maximum, Math.max(minimum, Math.floor(parsed))) : fallback;
+}
+
+// The production API intentionally uses a small Prisma pool. Keep one slot free
+// for health checks and visitors while the postbuild walks all sitemap tables.
+const FETCH_CONCURRENCY = boundedInteger(env.SITEMAP_FETCH_CONCURRENCY, 2, 1, 2);
+const FETCH_TIMEOUT_MS = boundedInteger(env.SITEMAP_FETCH_TIMEOUT_MS, 20_000, 2_000, 60_000);
+const FETCH_ATTEMPTS = boundedInteger(env.SITEMAP_FETCH_ATTEMPTS, 4, 1, 5);
+const limitSitemapSource = createFailFastTaskLimiter(FETCH_CONCURRENCY);
+
+const retryOptions = (label: string) => ({
+  timeoutMs: FETCH_TIMEOUT_MS,
+  maxAttempts: FETCH_ATTEMPTS,
+  onRetry: ({ attempt, delayMs, error }: { attempt: number; delayMs: number; error: Error }) => {
+    console.warn(`[sitemap] ${label}: ${error.message}; retry ${attempt + 1}/${FETCH_ATTEMPTS} in ${delayMs} ms`);
+  },
+});
 
 interface SitemapEntry {
   path: string;
@@ -61,7 +82,10 @@ class SitemapQuery implements PromiseLike<{ data: any[] | null; error: Error | n
   private from = 0;
   private to = PAGE_SIZE - 1;
 
-  constructor(private table: string, private columns: string) {}
+  constructor(private table: string, private columns: string) {
+    const selected = columns.split(",").map((column) => column.trim());
+    if (!selected.includes("id")) this.columns = `id,${columns}`;
+  }
 
   eq(column: string, value: unknown) {
     this.filters.push([column, `eq.${String(value)}`]);
@@ -70,6 +94,11 @@ class SitemapQuery implements PromiseLike<{ data: any[] | null; error: Error | n
 
   not(column: string, operator: string, value: unknown) {
     this.filters.push([column, `not.${operator}.${String(value)}`]);
+    return this;
+  }
+
+  gt(column: string, value: unknown) {
+    this.filters.push([column, `gt.${String(value)}`]);
     return this;
   }
 
@@ -85,10 +114,9 @@ class SitemapQuery implements PromiseLike<{ data: any[] | null; error: Error | n
       url.searchParams.set("select", this.columns);
       url.searchParams.set("offset", String(this.from));
       url.searchParams.set("limit", String(Math.max(0, this.to - this.from + 1)));
+      url.searchParams.set("order", "id.asc");
       this.filters.forEach(([column, value]) => url.searchParams.append(column, value));
-      const response = await fetch(url);
-      const payload = await response.json().catch(() => null);
-      if (!response.ok) return { data: null, error: new Error(payload?.message || `HTTP ${response.status}`) };
+      const payload = await fetchJsonWithRetry<unknown>(url, { headers: { accept: "application/json" } }, retryOptions(`${this.table} page`));
       return { data: Array.isArray(payload) ? payload : [], error: null };
     } catch (cause) {
       return { data: null, error: cause instanceof Error ? cause : new Error(String(cause)) };
@@ -105,18 +133,23 @@ class SitemapQuery implements PromiseLike<{ data: any[] | null; error: Error | n
 
 async function fetchRows(table: string, select: string, configure?: (query: any) => any): Promise<any[]> {
   if (!API_URL) return [];
-  const rows: any[] = [];
-  for (let from = 0; ; from += PAGE_SIZE) {
-    let query = new SitemapQuery(table, select);
-    if (configure) query = configure(query);
-    const { data, error } = await query.range(from, from + PAGE_SIZE - 1);
-    if (error) {
-      console.warn(`[sitemap] ${table}: ${error.message}`);
-      return rows;
+  return limitSitemapSource(async () => {
+    const rows: any[] = [];
+    let afterId: string | undefined;
+    for (;;) {
+      let query = new SitemapQuery(table, select);
+      if (configure) query = configure(query);
+      if (afterId) query = query.gt("id", afterId);
+      const { data, error } = await query.range(0, PAGE_SIZE - 1);
+      if (error) throw new Error(`${table} sitemap source failed: ${error.message}`, { cause: error });
+      const page = data || [];
+      rows.push(...page);
+      if (page.length < PAGE_SIZE) return rows;
+      const nextId = String(page.at(-1)?.id || "");
+      if (!nextId || nextId === afterId) throw new Error(`${table} sitemap pagination did not advance`);
+      afterId = nextId;
     }
-    rows.push(...(data || []));
-    if (!data || data.length < PAGE_SIZE) return rows;
-  }
+  });
 }
 
 function changed(value?: string) {
@@ -352,9 +385,7 @@ async function fetchSeedEntries(): Promise<SitemapEntry[]> {
     if (visited.has(source)) continue;
     visited.add(source);
     try {
-      const response = await fetch(source, { headers: { "User-Agent": "DekhoCampus sitemap migration/1.0" } });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const xml = await response.text();
+      const xml = await fetchTextWithRetry(source, { headers: { "User-Agent": "DekhoCampus sitemap migration/1.0" } }, retryOptions(`seed ${source}`));
       if (/<sitemapindex\b/i.test(xml)) {
         for (const match of xml.matchAll(/<loc>([\s\S]*?)<\/loc>/gi)) {
           const child = decodeXml(match[1].trim());
@@ -471,6 +502,8 @@ function writeSitemaps(entries: SitemapEntry[]) {
   const files = writeSitemaps(unique);
   console.log(`sitemap written - ${unique.length} URLs across ${files.length} file(s)`);
 })().catch((error) => {
-  console.warn("[sitemap] fatal:", error?.message || error);
-  writeSitemaps(STATIC);
+  // Never publish a partially fetched production catalog. A non-zero postbuild
+  // keeps the previously published S3 generation live and makes CI retryable.
+  console.error("[sitemap] fatal:", error?.message || error);
+  process.exitCode = 1;
 });
