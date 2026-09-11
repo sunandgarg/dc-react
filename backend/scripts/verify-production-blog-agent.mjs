@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { blogLimits, createBlogCover, DEFAULT_BLOG_COVER_TEMPLATE_KEY, handleBlogStudio, runBlogAgent } from "../src/blog-ai.mjs";
+import { verifyGeneratedDraftFaqs } from "../src/blog-smoke.mjs";
 import { prisma } from "../src/db.mjs";
 import { toStoredMediaKeys } from "../src/media-values.mjs";
 import { deleteStorageObjectKeys } from "../src/storage.mjs";
@@ -125,8 +126,7 @@ try {
     assert.ok(article, "Generated smoke-test article was not saved in AWS MySQL");
     assert.equal(article.status, "Draft");
     createdArticleSlugs = [article.slug];
-    createdFaqCount = await prisma.faqs.count({ where: { page: "articles", item_slug: article.slug, is_active: true } });
-    assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
+    createdFaqCount = await verifyGeneratedDraftFaqs(prisma.faqs, article.slug);
   }
   const articleContent = String(article.content || article.content_html || "");
   assert.match(articleContent, /<\w+/i, "Generated article has no HTML content");
@@ -172,7 +172,7 @@ try {
   console.log(JSON.stringify({
     ok: true,
     openai_blog: `${verificationMode} verified with GPT-5 nano`,
-    article_faqs: verificationMode === "agent-draft" ? `${createdFaqCount} visible and dedicated FAQ records verified` : "visible FAQ section verified",
+    article_faqs: verificationMode === "agent-draft" ? `${createdFaqCount} dedicated inactive FAQ records and visible article FAQ section verified` : "visible FAQ section verified",
     source_policy: "no source sections, citation markers, or external source links",
     cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
     scheduled_cover: "branded template with light lower canvas verified",
