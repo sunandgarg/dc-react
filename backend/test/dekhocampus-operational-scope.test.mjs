@@ -86,6 +86,9 @@ test("AWS production deploy removes every temporary SSH rule during cleanup", as
   assert.match(cleanup, /\{fromPort:80,toPort:80/);
   assert.match(cleanup, /\{fromPort:443,toPort:443/);
   assert.doesNotMatch(cleanup, /\{fromPort:22,toPort:22/);
-  assert.match(cleanup, /timeout 10 bash -c "<\/dev\/tcp\/\$SSH_IP\/22"/);
-  assert.match(cleanup, /Temporary SSH access is still reachable after cleanup/);
+  assert.match(cleanup, /ApiLegacyInstanceName/);
+  assert.match(cleanup, /Api2GbInstanceName/);
+  assert.match(cleanup, /for CLEANUP_INSTANCE_NAME in/);
+  assert.match(cleanup, /timeout 10 bash -c "<\/dev\/tcp\/\$CLEANUP_IP\/22"/);
+  assert.match(cleanup, /Temporary SSH access is still reachable on \$CLEANUP_INSTANCE_NAME after cleanup/);
 });

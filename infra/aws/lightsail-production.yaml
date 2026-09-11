@@ -32,6 +32,21 @@ Parameters:
     Type: String
     Default: micro_3_1
     AllowedPattern: '[a-z0-9_]+'
+  ApiGenerationMode:
+    Type: String
+    Default: legacy
+    AllowedValues: [legacy, dual-legacy, dual-2gb, 2gb]
+    Description: >-
+      API migration state. Use legacy for the original instance only,
+      dual-legacy after importing the 2 GB instance, dual-2gb for cutover,
+      and 2gb only after the rollback window has ended.
+  Api2GbBundleId:
+    Type: String
+    Default: ''
+    AllowedPattern: '^$|[a-z0-9_]+$'
+    Description: >-
+      Exact bundle ID of the snapshot-created 2 GB instance. Set this only
+      through the documented CloudFormation import procedure.
   SshAllowedCidr:
     Type: String
     Default: 127.0.0.1/32
@@ -51,6 +66,11 @@ Parameters:
 Conditions:
   UseCloudFront: !Equals [!Ref EnableCloudFront, 'true']
   ShouldCreateSesIdentity: !Equals [!Ref CreateSesIdentity, 'true']
+  KeepLegacyApi: !Not [!Equals [!Ref ApiGenerationMode, 2gb]]
+  ManageApi2Gb: !Not [!Equals [!Ref ApiGenerationMode, legacy]]
+  UseApi2Gb: !Or
+    - !Equals [!Ref ApiGenerationMode, dual-2gb]
+    - !Equals [!Ref ApiGenerationMode, 2gb]
   HasMediaDomain: !And
     - !Condition UseCloudFront
     - !Not [!Equals [!Ref MediaDomain, '']]
@@ -273,7 +293,10 @@ Resources:
 
   ApiInstance:
     Type: AWS::Lightsail::Instance
+    Condition: KeepLegacyApi
     DependsOn: Database
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       InstanceName: !Sub '${ProjectName}-api-lightsail'
       AvailabilityZone: ap-south-1a
@@ -341,7 +364,6 @@ Resources:
           cat >/etc/${ProjectName}.env <<ENV
           NODE_ENV=production
           NODE_OPTIONS=--max-old-space-size=640
-          RUN_BACKGROUND_WORKERS=yes
           HOST=127.0.0.1
           PORT=8787
           DB_HOST=$DB_HOST
@@ -423,11 +445,53 @@ Resources:
         - Key: Environment
           Value: production
 
+  # This logical resource is import-only during the 2 GB migration. It must
+  # first be created from a snapshot as dc-react-api-lightsail-2gb, then added
+  # to this stack with an IMPORT change set in dual-legacy mode. See the
+  # migration runbook; do not create it by changing this parameter in a normal
+  # stack update.
+  ApiInstance2Gb:
+    Type: AWS::Lightsail::Instance
+    Condition: ManageApi2Gb
+    DependsOn: Database
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      InstanceName: !Sub '${ProjectName}-api-lightsail-2gb'
+      AvailabilityZone: ap-south-1a
+      BlueprintId: ubuntu_24_04
+      BundleId: !Ref Api2GbBundleId
+      Networking:
+        Ports:
+          - AccessDirection: inbound
+            AccessFrom: anywhere
+            AccessType: Public
+            CommonName: HTTP
+            FromPort: 80
+            ToPort: 80
+            Protocol: tcp
+          - AccessDirection: inbound
+            AccessFrom: anywhere
+            AccessType: Public
+            CommonName: HTTPS
+            FromPort: 443
+            ToPort: 443
+            Protocol: tcp
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: production
+        - Key: Generation
+          Value: 2gb
+
   ApiStaticIp:
     Type: AWS::Lightsail::StaticIp
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       StaticIpName: !Sub '${ProjectName}-api-ip'
-      AttachedTo: !Ref ApiInstance
+      AttachedTo: !If [UseApi2Gb, !Ref ApiInstance2Gb, !Ref ApiInstance]
 
   CpuAlarm:
     Type: AWS::CloudWatch::Alarm
@@ -437,7 +501,10 @@ Resources:
       MetricName: CPUUtilization
       Dimensions:
         - Name: InstanceName
-          Value: !Sub '${ProjectName}-api-lightsail'
+          Value: !If
+            - UseApi2Gb
+            - !Sub '${ProjectName}-api-lightsail-2gb'
+            - !Sub '${ProjectName}-api-lightsail'
       Statistic: Average
       Period: 300
       EvaluationPeriods: 3
@@ -485,7 +552,18 @@ Outputs:
   ApiPublicIp:
     Value: !GetAtt ApiStaticIp.IpAddress
   ApiInstanceName:
+    Value: !If
+      - UseApi2Gb
+      - !Sub '${ProjectName}-api-lightsail-2gb'
+      - !Sub '${ProjectName}-api-lightsail'
+  ApiGenerationMode:
+    Value: !Ref ApiGenerationMode
+  ApiLegacyInstanceName:
+    Condition: KeepLegacyApi
     Value: !Sub '${ProjectName}-api-lightsail'
+  Api2GbInstanceName:
+    Condition: ManageApi2Gb
+    Value: !Sub '${ProjectName}-api-lightsail-2gb'
   DatabaseName:
     Value: !Sub '${ProjectName}-mysql-lightsail'
   MediaBucketName:

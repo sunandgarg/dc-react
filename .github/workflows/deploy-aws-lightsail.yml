@@ -97,6 +97,8 @@ jobs:
             exit 1
           fi
           aws cloudformation validate-template --template-body file://infra/aws/lightsail-production.yaml >/dev/null
+          API_GENERATION_MODE=legacy
+          PRESERVED_DB_BLUEPRINT_ID=''
           if aws cloudformation describe-stacks --stack-name "$STACK_NAME" >/dev/null 2>&1; then
             STACK_STATUS=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].StackStatus' --output text)
             if [ "$STACK_STATUS" = "ROLLBACK_COMPLETE" ]; then
@@ -106,15 +108,76 @@ jobs:
                 --output table || true
               aws cloudformation delete-stack --stack-name "$STACK_NAME"
               aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
+            else
+              API_GENERATION_MODE=$(aws cloudformation describe-stacks \
+                --stack-name "$STACK_NAME" \
+                --query "Stacks[0].Parameters[?ParameterKey=='ApiGenerationMode'].ParameterValue | [0]" \
+                --output text)
+              if [ -z "$API_GENERATION_MODE" ] || [ "$API_GENERATION_MODE" = "None" ]; then
+                API_GENERATION_MODE=legacy
+              fi
+              PRESERVED_DB_BLUEPRINT_ID=$(aws cloudformation describe-stacks \
+                --stack-name "$STACK_NAME" \
+                --query "Stacks[0].Parameters[?ParameterKey=='RelationalDatabaseBlueprintId'].ParameterValue | [0]" \
+                --output text)
+              if ! [[ "$PRESERVED_DB_BLUEPRINT_ID" =~ ^[a-z0-9_]+$ ]]; then
+                echo "The existing stack has no valid RelationalDatabaseBlueprintId. Refusing to discover and apply a replacement during an update."
+                exit 1
+              fi
+              case "$API_GENERATION_MODE" in
+                legacy|dual-legacy|dual-2gb|2gb) ;;
+                *)
+                  echo "Unsupported ApiGenerationMode on $STACK_NAME: $API_GENERATION_MODE"
+                  exit 1
+                  ;;
+              esac
+              if [ "$API_GENERATION_MODE" != "legacy" ]; then
+                API_2GB_BUNDLE_ID=$(aws cloudformation describe-stacks \
+                  --stack-name "$STACK_NAME" \
+                  --query "Stacks[0].Parameters[?ParameterKey=='Api2GbBundleId'].ParameterValue | [0]" \
+                  --output text)
+                if ! [[ "$API_2GB_BUNDLE_ID" =~ ^[a-z0-9_]+$ ]]; then
+                  echo "Api2GbBundleId is missing or invalid for migration mode $API_GENERATION_MODE."
+                  exit 1
+                fi
+                aws cloudformation describe-stack-resource \
+                  --stack-name "$STACK_NAME" \
+                  --logical-resource-id ApiInstance2Gb >/dev/null
+                API_2GB_INSTANCE=$(aws lightsail get-instance \
+                  --instance-name "$PROJECT_NAME-api-lightsail-2gb" \
+                  --output json)
+                if ! jq -e --arg name "$PROJECT_NAME-api-lightsail-2gb" '
+                  .instance.name == $name
+                  and .instance.location.availabilityZone == "ap-south-1a"
+                  and .instance.blueprintId == "ubuntu_24_04"
+                  and .instance.bundleId != null
+                  and .instance.hardware.cpuCount == 2
+                  and .instance.hardware.ramSizeInGb == 2
+                  and .instance.state.name == "running"
+                ' <<<"$API_2GB_INSTANCE" >/dev/null; then
+                  echo "The stack-managed 2 GB API instance is missing, stopped, or has unexpected hardware, blueprint, or Availability Zone."
+                  exit 1
+                fi
+                ACTUAL_2GB_BUNDLE_ID=$(jq -r '.instance.bundleId' <<<"$API_2GB_INSTANCE")
+                if [ "$ACTUAL_2GB_BUNDLE_ID" != "$API_2GB_BUNDLE_ID" ]; then
+                  echo "Api2GbBundleId ($API_2GB_BUNDLE_ID) does not match the imported instance ($ACTUAL_2GB_BUNDLE_ID)."
+                  exit 1
+                fi
+                echo "Verified imported 2 GB API generation: $PROJECT_NAME-api-lightsail-2gb ($ACTUAL_2GB_BUNDLE_ID)."
+              fi
             fi
           fi
           # Production credentials are intentionally never deleted by this
           # workflow. If a failed stack leaves retained secrets behind, the
           # recovery/import path must reuse them or be handled explicitly by
           # an administrator with a verified backup and recovery window.
-          DB_BLUEPRINT_ID=$(aws lightsail get-relational-database-blueprints \
-            --query "blueprints[?engine=='mysql'] | sort_by(@,&engineVersion)[-1].blueprintId" \
-            --output text)
+          if [ -n "$PRESERVED_DB_BLUEPRINT_ID" ]; then
+            DB_BLUEPRINT_ID="$PRESERVED_DB_BLUEPRINT_ID"
+          else
+            DB_BLUEPRINT_ID=$(aws lightsail get-relational-database-blueprints \
+              --query "blueprints[?engine=='mysql'] | sort_by(@,&engineVersion)[-1].blueprintId" \
+              --output text)
+          fi
           test -n "$DB_BLUEPRINT_ID"
           TARGET_INSTANCE_BUNDLE_ID=micro_3_1
           INSTANCE_BUNDLE=$(aws lightsail get-bundles --include-inactive \
@@ -130,6 +193,7 @@ jobs:
           INSTANCE_BUNDLE_ID=$(jq -r '.bundleId' <<<"$INSTANCE_BUNDLE")
           echo "Using Lightsail MySQL blueprint: $DB_BLUEPRINT_ID"
           echo "Using verified legacy Lightsail API bundle: $INSTANCE_BUNDLE_ID (Linux/Unix, 1 GB, 2 vCPU, USD 7/month)"
+          echo "Preserving API generation mode: $API_GENERATION_MODE"
           RUNNER_IP=$(curl -fsS https://checkip.amazonaws.com | tr -d '[:space:]')
           if ! [[ "$RUNNER_IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
             echo "Could not determine a valid GitHub runner IPv4 address."
@@ -150,6 +214,10 @@ jobs:
               CreateSesIdentity='${{ inputs.create_ses_identity }}' \
               InitialMediaBaseUrl='https://aws-origin.dekhocampus.com/storage/v1/object/public' \
               CorsOrigins='https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com,https://sarkari-dekhocampus.pages.dev,https://sarkari.dekhocampus.com'
+          # ApiGenerationMode and Api2GbBundleId are deliberately omitted.
+          # `aws cloudformation deploy` preserves omitted parameter values on
+          # an existing stack, so routine deployments cannot perform a
+          # migration transition or change the imported instance's bundle.
       - name: Report infrastructure failure details
         if: ${{ failure() && inputs.update_infrastructure }}
         run: |
@@ -706,21 +774,39 @@ jobs:
       - name: Close temporary SSH access
         if: ${{ always() }}
         run: |
-          if [ -z "${INSTANCE_NAME:-}" ]; then
-            echo "No instance was opened for this run."
-            exit 0
-          fi
           PORT_INFOS=$(jq -nc '[
             {fromPort:80,toPort:80,protocol:"tcp",cidrs:["0.0.0.0/0"],ipv6Cidrs:["::/0"]},
             {fromPort:443,toPort:443,protocol:"tcp",cidrs:["0.0.0.0/0"],ipv6Cidrs:["::/0"]}
           ]')
+          mapfile -t CLEANUP_INSTANCE_NAMES < <(
+            aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+              --query 'Stacks[0].Outputs' --output json 2>/dev/null \
+              | jq -r '.[]
+                | select(.OutputKey == "ApiInstanceName"
+                  or .OutputKey == "ApiLegacyInstanceName"
+                  or .OutputKey == "Api2GbInstanceName")
+                | .OutputValue' \
+              | sort -u
+          )
+          if [ "${#CLEANUP_INSTANCE_NAMES[@]}" -eq 0 ] && [ -n "${INSTANCE_NAME:-}" ]; then
+            CLEANUP_INSTANCE_NAMES=("$INSTANCE_NAME")
+          fi
+          if [ "${#CLEANUP_INSTANCE_NAMES[@]}" -eq 0 ]; then
+            echo "No stack-managed API instance needs SSH cleanup."
+            exit 0
+          fi
           # Replace the complete public-port set instead of issuing a partial
           # close that can miss a CIDR-scoped port-22 rule.
-          aws lightsail put-instance-public-ports \
-            --instance-name "$INSTANCE_NAME" \
-            --port-infos "$PORT_INFOS" >/dev/null
-          if [ -n "${SSH_IP:-}" ] && timeout 10 bash -c "</dev/tcp/$SSH_IP/22" 2>/dev/null; then
-            echo "Temporary SSH access is still reachable after cleanup."
-            exit 1
-          fi
-          echo "Temporary SSH access is closed."
+          for CLEANUP_INSTANCE_NAME in "${CLEANUP_INSTANCE_NAMES[@]}"; do
+            aws lightsail put-instance-public-ports \
+              --instance-name "$CLEANUP_INSTANCE_NAME" \
+              --port-infos "$PORT_INFOS" >/dev/null
+            CLEANUP_IP=$(aws lightsail get-instance \
+              --instance-name "$CLEANUP_INSTANCE_NAME" \
+              --query 'instance.publicIpAddress' --output text)
+            if [ -n "$CLEANUP_IP" ] && timeout 10 bash -c "</dev/tcp/$CLEANUP_IP/22" 2>/dev/null; then
+              echo "Temporary SSH access is still reachable on $CLEANUP_INSTANCE_NAME after cleanup."
+              exit 1
+            fi
+            echo "Temporary SSH access is closed on $CLEANUP_INSTANCE_NAME."
+          done

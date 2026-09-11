@@ -1,0 +1,9 @@
+[
+  {
+    "ResourceType": "AWS::Lightsail::Instance",
+    "LogicalResourceId": "ApiInstance2Gb",
+    "ResourceIdentifier": {
+      "InstanceName": "dc-react-api-lightsail-2gb"
+    }
+  }
+]
