@@ -175,6 +175,51 @@ class HttpError extends Error {
   }
 }
 
+const TRANSIENT_DATABASE_ERROR_CODES = new Set(["P1001", "P1002", "P2024"]);
+const TRANSIENT_DATABASE_RETRY_AFTER_SECONDS = 2;
+
+function transientDatabaseErrorCode(error) {
+  const visited = new Set();
+  let current = error;
+  for (let depth = 0; current && typeof current === "object" && depth < 4; depth += 1) {
+    if (visited.has(current)) break;
+    visited.add(current);
+    if (typeof current.code === "string" && TRANSIENT_DATABASE_ERROR_CODES.has(current.code)) return current.code;
+    current = current.cause;
+  }
+  return null;
+}
+
+function classifyRequestError(error) {
+  const explicitStatus = Number(error?.status);
+  if (Number.isInteger(explicitStatus) && explicitStatus >= 400 && explicitStatus <= 599) {
+    return {
+      status: explicitStatus,
+      code: error?.code || "NODE_API_ERROR",
+      message: error instanceof Error ? error.message : "Request failed",
+      retryAfter: error?.retryAfter,
+    };
+  }
+
+  if (transientDatabaseErrorCode(error)) {
+    return {
+      status: 503,
+      code: "DATABASE_TEMPORARILY_UNAVAILABLE",
+      message: "The database is temporarily unavailable. Please retry shortly.",
+      retryAfter: TRANSIENT_DATABASE_RETRY_AFTER_SECONDS,
+    };
+  }
+
+  return {
+    status: 400,
+    code: error?.code || "NODE_API_ERROR",
+    message: error instanceof Error ? error.message : "Request failed",
+    retryAfter: error?.retryAfter,
+  };
+}
+
+export const apiErrorInternals = { classifyRequestError, transientDatabaseErrorCode };
+
 const SARKARI_SITE_ORIGINS = new Set([
   "https://sarkari.dekhocampus.com",
   "https://sarkari-dekhocampus.pages.dev",
@@ -634,9 +679,11 @@ export async function handleRequest(request) {
     }
     return json(404, { error: "Route not found", requestId }, requestId, request);
   } catch (error) {
-    const status = Number(error?.status || 400);
-    if (status >= 500 || !error?.status) console.error(`[${requestId}]`, error);
-    const retryHeaders = error?.retryAfter ? { "retry-after": String(error.retryAfter) } : {};
-    return json(status, { code: error?.code || "NODE_API_ERROR", message: error instanceof Error ? error.message : "Request failed", requestId }, requestId, request, retryHeaders);
+    const responseError = classifyRequestError(error);
+    if (responseError.status >= 500 || !error?.status) console.error(`[${requestId}]`, error);
+    const retryHeaders = responseError.retryAfter
+      ? { "cache-control": "no-store", "retry-after": String(responseError.retryAfter) }
+      : {};
+    return json(responseError.status, { code: responseError.code, message: responseError.message, requestId }, requestId, request, retryHeaders);
   }
 }
