@@ -39,7 +39,8 @@ import { createFailFastTaskLimiter, fetchJsonWithRetry, fetchTextWithRetry } fro
 const fileEnv = loadEnv(process.env.NODE_ENV || "production", process.cwd(), "");
 const env = { ...fileEnv, ...process.env };
 const BASE_URL = (env.SITEMAP_BASE_URL || SITE_URL).replace(/\/+$/, "");
-const API_URL = (env.SITEMAP_API_URL === "none"
+const IS_CLOUDFLARE_PAGES_BUILD = env.CF_PAGES === "1";
+const API_URL = (env.SITEMAP_API_URL === "none" || (IS_CLOUDFLARE_PAGES_BUILD && !env.SITEMAP_API_URL)
   ? ""
   : env.SITEMAP_API_URL || env.VITE_API_URL || "").replace(/\/+$/, "");
 const SITEMAP_SEED_URL = env.SITEMAP_SEED_URL === "none"

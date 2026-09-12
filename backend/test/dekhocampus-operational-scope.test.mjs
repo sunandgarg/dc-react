@@ -139,6 +139,18 @@ test("AWS production uses an immutable static seed before the direct MySQL sitem
   assert.match(publishStep, /build_seed_sha: process\.env\.BUILD_SEED_SHA/);
 });
 
+test("Cloudflare Pages builds reuse the published sitemap instead of walking MySQL", async () => {
+  const [workflow, generator] = await Promise.all([
+    readSource("../../.github/workflows/deploy-cloudflare-pages.yml"),
+    readSource("../../scripts/generate-sitemap.ts"),
+  ]);
+
+  assert.match(workflow, /SITEMAP_API_URL: none/);
+  assert.match(workflow, /SITEMAP_SEED_URL: https:\/\/dekhocampus\.com\/sitemap\.xml/);
+  assert.match(generator, /const IS_CLOUDFLARE_PAGES_BUILD = env\.CF_PAGES === "1"/);
+  assert.match(generator, /IS_CLOUDFLARE_PAGES_BUILD && !env\.SITEMAP_API_URL/);
+});
+
 test("AWS runtime allows a low-memory API enough time to become healthy", async () => {
   const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
   const runtimeStart = workflow.indexOf("- name: Configure AWS runtime");
