@@ -12,6 +12,8 @@ interface Props {
   itemSlug: string;
   /** Optional name for template generation */
   itemName?: string;
+  /** Prevents child rows from being created before the parent exists. */
+  persisted?: boolean;
 }
 
 interface FaqRow {
@@ -28,7 +30,7 @@ const PAGE_TO_TYPE: Partial<Record<Props["page"], FaqEntityType>> = {
   colleges: "college", courses: "course", exams: "exam",
 };
 
-export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
+export function FaqInlineEditor({ page, itemSlug, itemName, persisted = true }: Props) {
   const [rows, setRows] = useState<any[]>([]);
   const [draft, setDraft] = useState<FaqRow | null>(null);
   const [loading, setLoading] = useState(false);
@@ -36,7 +38,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
   const [buffer, setBuffer] = useState<FaqRow[]>([]);
 
   const reload = useCallback(async () => {
-    if (!itemSlug) { setRows([]); return; }
+    if (!persisted || !itemSlug) { setRows([]); return; }
     setLoading(true);
     const { data, error } = await backendClient
       .from("faqs").select("*")
@@ -53,12 +55,16 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
       if (insErr) toast.error(`FAQ buffer flush failed: ${insErr.message}`);
       else { toast.success(`Saved ${buffer.length} buffered FAQ${buffer.length === 1 ? "" : "s"}`); setBuffer([]); }
     }
-  }, [buffer, itemSlug, page]);
+  }, [buffer, itemSlug, page, persisted]);
 
   useEffect(() => { void reload(); }, [reload]);
 
   const save = async () => {
     if (!draft) return;
+    if (!persisted) {
+      toast.error("Save the article before adding FAQs");
+      return;
+    }
     if (!draft.question.trim() || !draft.answer.trim()) {
       toast.error("Question and Answer are required"); return;
     }
@@ -134,14 +140,18 @@ export function FaqInlineEditor({ page, itemSlug, itemName }: Props) {
             </Button>
           )}
           {!draft && (
-            <Button type="button" size="sm" variant="outline" onClick={() => setDraft({ ...empty, display_order: rows.length })} className="rounded-lg gap-1 h-8 text-xs">
+            <Button type="button" size="sm" variant="outline" disabled={!persisted} onClick={() => setDraft({ ...empty, display_order: rows.length })} className="rounded-lg gap-1 h-8 text-xs">
               <Plus className="w-3.5 h-3.5" /> Add FAQ
             </Button>
           )}
         </div>
       </div>
 
-      {!itemSlug && (
+      {!persisted ? (
+        <p className="rounded-lg border border-border bg-muted/40 px-2.5 py-2 text-[11px] text-muted-foreground">
+          Save the article once before adding FAQs. This keeps every FAQ attached to a real article.
+        </p>
+      ) : !itemSlug && (
         <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1.5">
           Tip: you can add FAQs now - they'll be buffered and auto-saved once you save the entity with a slug.
         </p>

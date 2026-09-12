@@ -7,9 +7,9 @@ import {
   GraduationCap,
   Laptop,
   ShieldCheck,
-  Sparkles,
   TrendingUp,
 } from "lucide-react";
+import dcLogoSmall from "@/assets/dc-logo-small.webp";
 import studentGroup from "@/assets/north-indian-students-group.jpg";
 
 const goals = [
@@ -63,7 +63,7 @@ export function HeroCounsellingCard({ onStart }: HeroCounsellingCardProps) {
 
           <div className="mb-4">
             <span className="mb-1.5 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.14em] text-accent">
-              <Sparkles className="h-3.5 w-3.5" />
+              <img src={dcLogoSmall} alt="" aria-hidden="true" className="h-4 w-4 object-contain" />
               Personal guidance desk
             </span>
             <h2 className="text-[22px] font-extrabold leading-tight tracking-tight text-foreground sm:text-2xl">What would you like to plan next?</h2>

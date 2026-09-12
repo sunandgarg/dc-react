@@ -37,6 +37,7 @@ import { Link } from "react-router-dom";
 import { useDraftState } from "@/hooks/useDraftState";
 import { syncAutoSlug } from "@/lib/slugify";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
+import { normalizeArticleSlug, validateArticleSave } from "@/lib/articleEditor";
 
 const STATUSES = ["Draft", "Published"];
 const VERTICALS = ["Engineering", "Medical", "Management", "Law", "Design", "Science", "General"];
@@ -159,18 +160,17 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   };
 
   const handleSave = () => {
-    if (!editing?.slug || !editing?.title) { toast.error("Slug and Title required"); return; }
-    if (editing.status === "Published" && !canPublish) {
-      toast.error("You don't have permission to publish. Save as Draft - an editor will review it.");
-      return;
-    }
+    if (!editing) return;
+    const normalizedSlug = normalizeArticleSlug(editing.slug);
+    const validationError = validateArticleSave({ ...editing, slug: normalizedSlug }, canPublish);
+    if (validationError) { toast.error(validationError); return; }
     const rawRank = (editing as any).featured_rank ?? null;
     const desiredRank = rawRank == null ? null : Number(rawRank);
     if (desiredRank != null && (!Number.isInteger(desiredRank) || desiredRank < 1 || desiredRank > 4)) {
       toast.error("Featured slot must be empty or between #1 and #4.");
       return;
     }
-    const { featured_rank: _omit, ...payload } = editing as any;
+    const { featured_rank: _omit, ...payload } = { ...editing, slug: normalizedSlug } as any;
     if (isSarkari) {
       payload.site_scope = "sarkari";
       payload.vertical = payload.vertical || "Government Jobs";
@@ -178,17 +178,32 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
       payload.author = payload.author || "Sarkari DekhoCampus Desk";
     }
     saveArticle.mutate(payload, {
-      onSuccess: async () => {
-        let id = (editing as any).id;
-        if (!id && editing.slug) {
-          const { data: row } = await backendClient.from("articles").select("id").eq("slug", editing.slug).eq("site_scope", siteScope).maybeSingle();
-          id = row?.id;
-        }
+      onSuccess: async (result) => {
+        const id = result.pendingReview ? null : (result.article?.id || (editing as any).id);
         if (id && isAdmin) {
           const { error } = await (backendClient as any).from("articles").update({ featured_rank: desiredRank }).eq("id", id).eq("site_scope", siteScope);
           if (error) toast.error(`Featured: ${error.message}`);
         }
         setEditing(null);
+      },
+    });
+  };
+
+  const saveDraftToEnableTagging = () => {
+    if (!editing) return;
+    const normalizedSlug = normalizeArticleSlug(editing.slug);
+    const validationError = validateArticleSave({ ...editing, slug: normalizedSlug, status: "Draft" }, canPublish);
+    if (validationError) { toast.error(validationError); return; }
+
+    const { featured_rank: _omit, ...payload } = { ...editing, slug: normalizedSlug, status: "Draft", site_scope: siteScope } as any;
+    saveArticle.mutate(payload, {
+      onSuccess: (result) => {
+        if (result.pendingReview || !result.article?.id) {
+          toast.success("Draft submitted for admin review. Tagging becomes available after approval.");
+          setEditing(null);
+          return;
+        }
+        setEditing((current) => current ? { ...current, ...result.article, slug: normalizedSlug, status: "Draft" } : current);
       },
     });
   };
@@ -468,20 +483,9 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                       variant="outline"
                       className="self-start rounded-lg"
                       disabled={!editing.slug || !editing.title || saveArticle.isPending}
-                      onClick={async () => {
-                        if (!editing.slug || !editing.title) { toast.error("Add Title and Slug first"); return; }
-                        const payload = { ...editing, site_scope: siteScope, status: editing.status || (canPublish ? "Published" : "Draft") } as any;
-                        const { data, error } = await backendClient
-                          .from("articles")
-                          .upsert(payload, { onConflict: "site_scope,slug" })
-                          .select()
-                          .single();
-                        if (error) { toast.error(error.message); return; }
-                        setEditing({ ...(data as any) });
-                        toast.success(`${canPublish ? "Article published" : "Draft submitted for review"} - you can now tag entities`);
-                      }}
+                      onClick={saveDraftToEnableTagging}
                     >
-                      {saveArticle.isPending ? "Saving…" : `${canPublish ? "Publish" : "Save Draft"} to Enable Tagging`}
+                      {saveArticle.isPending ? "Saving…" : canPublish ? "Save draft to enable tagging" : "Submit draft for review"}
                     </Button>
                     <p className="text-[11px] text-muted-foreground">(Requires Title + Slug above)</p>
                   </div>
@@ -490,7 +494,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
               {/* ── FAQs ── */}
               <AdminFormSection title="FAQs (shown on article page)" icon={<HelpCircle className="w-4 h-4 text-primary" />} defaultOpen={false}>
-                <FaqInlineEditor page={isSarkari ? "sarkari_articles" : "articles"} itemSlug={editing.slug || ""} itemName={editing.title} />
+                <FaqInlineEditor page={isSarkari ? "sarkari_articles" : "articles"} itemSlug={editing.slug || ""} itemName={editing.title} persisted={Boolean(editing.id)} />
               </AdminFormSection>
 
               {/* ── SEO ── */}

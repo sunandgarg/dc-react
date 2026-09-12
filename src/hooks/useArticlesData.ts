@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
+import { normalizeArticleSlug } from "@/lib/articleEditor";
 
 function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
@@ -140,28 +141,31 @@ export function useSaveArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   return useMutation({
     mutationFn: async (article: Partial<DbArticle> & { slug: string; title: string }) => {
       let pendingReview = false;
-      // Normalize slug: lowercase, spaces & special chars -> dashes
-      const cleanSlug = (article.slug || "")
-        .toString()
-        .toLowerCase()
-        .normalize("NFKD")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
+      const cleanSlug = normalizeArticleSlug(article.slug);
       const normalized = { ...article, slug: cleanSlug || article.slug, site_scope: siteScope };
+      let savedArticle: Pick<DbArticle, "id" | "slug"> | null = null;
       if (normalized.id) {
         const { id, created_at, updated_at, ...rest } = normalized;
-        const response = await backendClient.from("articles").update(rest).eq("id", id).eq("site_scope", siteScope);
-        const { error } = response;
+        const response = await backendClient
+          .from("articles")
+          .update(rest)
+          .eq("id", id)
+          .eq("site_scope", siteScope)
+          .select("id,slug")
+          .maybeSingle();
+        const { data, error } = response;
         if (error) throw error;
         pendingReview = isPendingReview(response);
+        savedArticle = data as Pick<DbArticle, "id" | "slug"> | null;
       } else {
         const { id, created_at, updated_at, ...rest } = normalized;
-        const response = await backendClient.from("articles").insert(rest);
-        const { error } = response;
+        const response = await backendClient.from("articles").insert(rest).select("id,slug").maybeSingle();
+        const { data, error } = response;
         if (error) throw error;
         pendingReview = isPendingReview(response);
+        savedArticle = data as Pick<DbArticle, "id" | "slug"> | null;
       }
-      return { pendingReview };
+      return { pendingReview, article: savedArticle };
     },
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["db-articles", siteScope] });

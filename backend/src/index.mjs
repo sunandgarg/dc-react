@@ -17,6 +17,7 @@ import { handleEmailAdmin } from "./email.mjs";
 import { handleCatExperience } from "./cat-experience.mjs";
 import { handleIntentExport, handlePredictLeadIntent, handleSummarizeUserSession, linkIntentActivityToLead } from "./intent-intelligence.mjs";
 import { consumePublicWriteLimit } from "./public-write-rate-limit.mjs";
+import { handleAdminUsers } from "./admin-users.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -628,6 +629,11 @@ export async function handleRequest(request) {
         const identity = await resolveIdentity(request);
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
         return json(200, await handleContentReviews(request, identity.id), requestId, request, { "cache-control": "private, no-store" });
+      }
+      if (functionMatch[1] === "admin-users") {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        return json(200, await handleAdminUsers(request, identity.id), requestId, request, { "cache-control": "private, no-store" });
       }
       if (functionMatch[1] === "admin-article-cover") {
         const authorization = request.headers.get("authorization");

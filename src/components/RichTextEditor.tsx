@@ -9,7 +9,7 @@ import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
-import { TextStyle } from "@tiptap/extension-text-style";
+import { FontSize, TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Highlight } from "@tiptap/extension-highlight";
 import {
@@ -38,6 +38,30 @@ export function applyBlockHeading(editor: Editor, level: HeadingLevel) {
   return editor.chain().focus().toggleHeading({ level }).run();
 }
 
+const inlineHeadingSizes: Record<HeadingLevel, string> = {
+  1: "2rem",
+  2: "1.5rem",
+  3: "1.25rem",
+  4: "1.125rem",
+  5: "1rem",
+  6: "0.875rem",
+};
+
+export function applySelectionAwareHeading(editor: Editor, level: HeadingLevel) {
+  const { selection } = editor.state;
+  const { $from, $to, empty } = selection;
+  const isSingleTextBlock = $from.sameParent($to) && $from.parent.isTextblock;
+  const isWholeTextBlock = isSingleTextBlock
+    && $from.parentOffset === 0
+    && $to.parentOffset === $from.parent.content.size;
+
+  if (empty || !isSingleTextBlock || isWholeTextBlock) {
+    return applyBlockHeading(editor, level);
+  }
+
+  return editor.chain().focus().setFontSize(inlineHeadingSizes[level]).setBold().run();
+}
+
 /**
  * TipTap-based WYSIWYG editor. Outputs HTML. Renders bold as bold, headings as headings,
  * tables as tables in real-time. Toolbar mirrors the requested layout.
@@ -53,6 +77,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
       StarterKit.configure({ heading: { levels: [1, 2, 3, 4, 5, 6] } }),
       Underline,
       TextStyle,
+      FontSize,
       Color,
       Highlight.configure({ multicolor: true }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
@@ -151,9 +176,9 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   const HBtn = ({ level, Icon }: any) => (
     <Btn
       icon={Icon}
-      title={`Heading ${level} for the current paragraph or selected paragraphs`}
+      title={`Heading ${level}: selected text, or the current paragraph when no text is selected`}
       active={editor.isActive("heading", { level })}
-      onClick={() => applyBlockHeading(editor, level)}
+      onClick={() => applySelectionAwareHeading(editor, level)}
     />
   );
 
