@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
+import { detailEntityQueryKey, parseSlugWithId } from "@/lib/entityUrls";
 
 function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
@@ -176,13 +177,11 @@ export function useAllDbCourses() {
 }
 
 export function useDbCourse(slugOrSlugId: string | undefined) {
+  const { slug, id } = parseSlugWithId(slugOrSlugId);
   return useQuery({
-    queryKey: ["db-course", slugOrSlugId],
+    queryKey: detailEntityQueryKey("course", slugOrSlugId),
     queryFn: async () => {
       if (!slugOrSlugId) return null;
-      const m = slugOrSlugId.match(/^(.*?)-(\d+)$/);
-      const id = m ? Number(m[2]) : null;
-      const slug = m ? m[1] : slugOrSlugId;
       if (id) {
         const { data } = await backendClient.from("courses").select("*").eq("short_id", id).maybeSingle();
         if (data) return data as DbCourse;
