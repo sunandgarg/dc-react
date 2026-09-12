@@ -153,7 +153,23 @@ async function validateSiteScopeWriteRequest(table, request) {
   return request;
 }
 
-export const apiSecurityInternals = { sanitizePublicWriteRequest, readRateLimitedPublicJson, siteScopeForRequest, enforcePublicArticlePolicy, assertValidSiteScopePayload, assertPublicIntentSubjectLimit };
+export function restrictPublicReadSelection(table, requestedSelection) {
+  const safeSelection = publicReadSelections.get(table);
+  if (!safeSelection) return null;
+  const requested = String(requestedSelection || "").trim();
+  if (!requested || requested === "*") return safeSelection;
+  const safeFields = new Set(safeSelection.split(","));
+  const requestedFields = requested.split(",").map((field) => field.trim()).filter(Boolean);
+  if (!requestedFields.length || requestedFields.some((field) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(field) || !safeFields.has(field))) {
+    const error = new Error("Anonymous reads may select only allowlisted public fields");
+    error.status = 400;
+    error.code = "INVALID_PUBLIC_SELECTION";
+    throw error;
+  }
+  return [...new Set(requestedFields)].join(",");
+}
+
+export const apiSecurityInternals = { sanitizePublicWriteRequest, readRateLimitedPublicJson, siteScopeForRequest, enforcePublicArticlePolicy, restrictPublicReadSelection, assertValidSiteScopePayload, assertPublicIntentSubjectLimit };
 
 const ownedTables = new Map([
   ["profiles", "user_id"], ["user_documents", "user_id"], ["user_education_entries", "user_id"],
@@ -283,7 +299,7 @@ async function authorizeRest(table, request) {
     const identity = bearerToken(request) ? await resolveIdentity(request) : null;
     if (identity && await isAdmin(identity.id)) return { request, actorUserId: identity.id };
     const publicRequest = table === "articles" ? enforcePublicArticlePolicy(request) : request;
-    const safeSelection = publicReadSelections.get(table);
+    const safeSelection = restrictPublicReadSelection(table, new URL(publicRequest.url).searchParams.get("select"));
     if (!safeSelection) return { request: publicRequest, actorUserId: null, publicAccess: true };
     const url = new URL(publicRequest.url);
     url.searchParams.set("select", safeSelection);
