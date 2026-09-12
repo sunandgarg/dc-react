@@ -57,6 +57,7 @@ function boundedInteger(value: unknown, fallback: number, minimum: number, maxim
 const FETCH_CONCURRENCY = boundedInteger(env.SITEMAP_FETCH_CONCURRENCY, 2, 1, 2);
 const FETCH_TIMEOUT_MS = boundedInteger(env.SITEMAP_FETCH_TIMEOUT_MS, 20_000, 2_000, 60_000);
 const FETCH_ATTEMPTS = boundedInteger(env.SITEMAP_FETCH_ATTEMPTS, 4, 1, 5);
+const SEED_FILE_LIMIT = boundedInteger(env.SITEMAP_SEED_FILE_LIMIT, 500, 1, 1_000);
 const limitSitemapSource = createFailFastTaskLimiter(FETCH_CONCURRENCY);
 
 const retryOptions = (label: string) => ({
@@ -380,7 +381,7 @@ async function fetchSeedEntries(): Promise<SitemapEntry[]> {
   const pending = [SITEMAP_SEED_URL];
   const visited = new Set<string>();
   const entries: SitemapEntry[] = [];
-  while (pending.length && visited.size < 25) {
+  while (pending.length && visited.size < SEED_FILE_LIMIT) {
     const source = pending.shift()!;
     if (visited.has(source)) continue;
     visited.add(source);
@@ -408,6 +409,9 @@ async function fetchSeedEntries(): Promise<SitemapEntry[]> {
     } catch (error) {
       console.warn(`[sitemap] seed ${source}: ${error instanceof Error ? error.message : String(error)}`);
     }
+  }
+  if (pending.length) {
+    throw new Error(`published sitemap exceeds the ${SEED_FILE_LIMIT}-file safety limit`);
   }
   console.log(`[sitemap] recovered ${entries.length} canonical URL(s) from the published migration seed`);
   return entries;
