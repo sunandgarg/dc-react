@@ -17,6 +17,7 @@ import { handleEmailAdmin } from "./email.mjs";
 import { handleCatExperience } from "./cat-experience.mjs";
 import { handleIntentExport, handlePredictLeadIntent, handleSummarizeUserSession, linkIntentActivityToLead } from "./intent-intelligence.mjs";
 import { consumePublicWriteLimit } from "./public-write-rate-limit.mjs";
+import { consumeSarkariHomeFeedReadLimit, loadSarkariHomeFeed } from "./sarkari-home-feed.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -277,7 +278,10 @@ function corsHeaders(request) {
 function json(status, body, requestId, request, extraHeaders = {}) {
   const headers = { ...corsHeaders(request), ...extraHeaders, "x-request-id": requestId };
   if (body !== null && body !== undefined) headers["content-type"] = "application/json";
-  return new Response(body === null || body === undefined ? null : JSON.stringify(body), { status, headers });
+  const responseBody = body === null || body === undefined || request.method === "HEAD"
+    ? null
+    : JSON.stringify(body);
+  return new Response(responseBody, { status, headers });
 }
 
 function bearerToken(request) {
@@ -574,6 +578,68 @@ export async function handleRequest(request) {
   }
 
   try {
+    if (url.pathname === "/v1/functions/sarkari-home-feed") {
+      if (!["GET", "HEAD"].includes(request.method)) {
+        return json(405, { code: "METHOD_NOT_ALLOWED", message: "Use GET or HEAD for the Sarkari homepage feed", requestId }, requestId, request, {
+          allow: "GET, HEAD, OPTIONS",
+          "cache-control": "no-store",
+          "x-content-type-options": "nosniff",
+        });
+      }
+      try {
+        // server.mjs overwrites this internal header from the trusted socket /
+        // reverse-proxy IP, so credentials, cookies, and URL variants cannot
+        // manufacture independent origin-read buckets.
+        consumeSarkariHomeFeedReadLimit(request.headers.get("x-dc-client-ip"));
+        if (url.search || request.url.endsWith("?")) {
+          return json(400, {
+            code: "SARKARI_HOME_FEED_QUERY_NOT_ALLOWED",
+            message: "The Sarkari homepage feed does not accept query parameters.",
+            requestId,
+          }, requestId, request, {
+            "cache-control": "no-store",
+            "x-content-type-options": "nosniff",
+          });
+        }
+        return json(200, await loadSarkariHomeFeed(), requestId, request, {
+          "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+          "x-content-type-options": "nosniff",
+        });
+      } catch (error) {
+        const rateLimited = error?.code === "SARKARI_HOME_FEED_RATE_LIMIT" && error?.status === 429;
+        if (rateLimited) {
+          return json(429, {
+            code: "SARKARI_HOME_FEED_RATE_LIMIT",
+            message: "Too many Sarkari homepage feed requests. Please retry shortly.",
+            requestId,
+          }, requestId, request, {
+            "cache-control": "no-store",
+            "retry-after": String(error.retryAfter || 1),
+            "x-content-type-options": "nosniff",
+          });
+        }
+        console.error(`[${requestId}] Sarkari homepage feed failed`, error);
+        if (transientDatabaseErrorCode(error)) {
+          return json(503, {
+            code: "DATABASE_TEMPORARILY_UNAVAILABLE",
+            message: "The database is temporarily unavailable. Please retry shortly.",
+            requestId,
+          }, requestId, request, {
+            "cache-control": "no-store",
+            "retry-after": String(TRANSIENT_DATABASE_RETRY_AFTER_SECONDS),
+            "x-content-type-options": "nosniff",
+          });
+        }
+        return json(500, {
+          code: "SARKARI_HOME_FEED_FAILED",
+          message: "The Sarkari homepage feed is temporarily unavailable.",
+          requestId,
+        }, requestId, request, {
+          "cache-control": "no-store",
+          "x-content-type-options": "nosniff",
+        });
+      }
+    }
     const sitemapResponse = await readPublishedSitemap(request);
     if (sitemapResponse) return sitemapResponse;
     const authResult = await handleAuth(request);
