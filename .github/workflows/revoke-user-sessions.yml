@@ -75,13 +75,17 @@ jobs:
             --protocol ssh \
             --output json > /tmp/lightsail-access.json
           jq -r '.accessDetails.privateKey' /tmp/lightsail-access.json > /tmp/tempkey
+          jq -r '.accessDetails.certKey' /tmp/lightsail-access.json > /tmp/tempkey-cert.pub
           SSH_USER=$(jq -r '.accessDetails.username' /tmp/lightsail-access.json)
           SSH_IP=$(jq -r '.accessDetails.ipAddress' /tmp/lightsail-access.json)
           test -s /tmp/tempkey
+          test -s /tmp/tempkey-cert.pub
           test -n "$SSH_USER"
           test -n "$SSH_IP"
           chmod 600 /tmp/tempkey
+          chmod 644 /tmp/tempkey-cert.pub
           ssh-keygen -y -f /tmp/tempkey >/dev/null
+          ssh-keygen -L -f /tmp/tempkey-cert.pub >/dev/null
           for attempt in $(seq 1 12); do
             if ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
               -o ConnectTimeout=10 -i /tmp/tempkey "$SSH_USER@$SSH_IP" true; then
@@ -107,7 +111,7 @@ jobs:
       - name: Close temporary SSH access
         if: ${{ always() }}
         run: |
-          rm -f /tmp/tempkey /tmp/lightsail-access.json
+          rm -f /tmp/tempkey /tmp/tempkey-cert.pub /tmp/lightsail-access.json
           if [ -z "${INSTANCE_NAME:-}" ]; then
             echo "No instance was selected; no SSH rule needs cleanup."
             exit 0
