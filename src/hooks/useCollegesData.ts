@@ -3,6 +3,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
 import { getPrefillCookie } from "@/components/CookieConsent";
+import { detailEntityQueryKey, parseSlugWithId } from "@/lib/entityUrls";
 import {
   DELHI_NCR_CITIES,
   isDelhiNcrLocation,
@@ -378,14 +379,14 @@ function applyCollegeFallbacks(c: DbCollege | null): DbCollege | null {
 }
 
 export function useDbCollege(slugOrSlugId: string | undefined) {
+  const { slug, id } = parseSlugWithId(slugOrSlugId);
   return useQuery({
-    queryKey: ["db-college", slugOrSlugId],
+    // A slug-only route canonicalizes to slug-short_id after the first read.
+    // Key by the stable slug so that URL replacement keeps the resolved row
+    // instead of issuing a second detail request behind the page's fan-out.
+    queryKey: detailEntityQueryKey("college", slugOrSlugId),
     queryFn: async () => {
       if (!slugOrSlugId) return null;
-      // Parse trailing -<id>
-      const m = slugOrSlugId.match(/^(.*?)-(\d+)$/);
-      const id = m ? Number(m[2]) : null;
-      const slug = m ? m[1] : slugOrSlugId;
 
       // Try id first (canonical), then slug fallback.
       if (id) {

@@ -95,6 +95,26 @@ test("anonymous article policy preserves an allowlisted explicit scope for serve
   assert.equal(url.searchParams.get("is_active"), "eq.true");
 });
 
+test("anonymous read selection narrows the public allowlist without expanding it", () => {
+  assert.equal(
+    apiSecurityInternals.restrictPublicReadSelection("articles", "slug,title,site_scope,status,is_active"),
+    "slug,title,site_scope,status,is_active",
+  );
+  assert.equal(
+    apiSecurityInternals.restrictPublicReadSelection("articles", "slug,slug,title"),
+    "slug,title",
+  );
+  assert.match(apiSecurityInternals.restrictPublicReadSelection("articles", "*"), /content/);
+  assert.throws(
+    () => apiSecurityInternals.restrictPublicReadSelection("articles", "slug,created_by"),
+    (error) => error.status === 400 && error.code === "INVALID_PUBLIC_SELECTION",
+  );
+  assert.throws(
+    () => apiSecurityInternals.restrictPublicReadSelection("articles", "author:profiles(*)"),
+    (error) => error.status === 400 && error.code === "INVALID_PUBLIC_SELECTION",
+  );
+});
+
 test("admin article and lead writes reject non-canonical site scopes", () => {
   assert.doesNotThrow(() => apiSecurityInternals.assertValidSiteScopePayload("articles", { site_scope: "sarkari" }));
   assert.doesNotThrow(() => apiSecurityInternals.assertValidSiteScopePayload("leads", [{ site_scope: "dekhocampus" }]));

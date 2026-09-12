@@ -1,12 +1,19 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
-import { randomUUID } from "node:crypto";
+import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 import sharp from "sharp";
 import { blogLimits, createBlogCover, DEFAULT_BLOG_COVER_TEMPLATE_KEY, handleBlogStudio, runBlogAgent } from "../src/blog-ai.mjs";
+import {
+  assertNoRejectedDraftArtifacts,
+  isArticleQualityGateRejection,
+  PRODUCTION_BLOG_SMOKE_POLICY,
+  rejectedTopicSlugs,
+  validateArticleQualityGateRejection,
+} from "../src/blog-smoke.mjs";
 import { prisma } from "../src/db.mjs";
 import { toStoredMediaKeys } from "../src/media-values.mjs";
-import { deleteStorageObjectKeys } from "../src/storage.mjs";
+import { deleteStorageObjectKeys, storageConfig, storageObjectKey } from "../src/storage.mjs";
 
 const testSlug = `codex-blog-agent-smoke-${Date.now()}`;
 let coverUrl = "";
@@ -16,6 +23,7 @@ let createdArticleIds = [];
 let createdArticleSlugs = [];
 let createdFaqCount = 0;
 let originalSettings = null;
+let qualityGateEvidence = null;
 const coverDiagnostics = {};
 
 async function cleanupRecentOrphanArticleFaqs() {
@@ -80,6 +88,26 @@ async function waitForScheduledRun() {
   throw new Error("An existing blog-agent run did not finish within eight minutes");
 }
 
+async function listRejectedCoverKeys(slugs) {
+  const config = storageConfig();
+  const keys = [];
+  for (const slug of slugs) {
+    let continuationToken;
+    do {
+      const response = await config.client.send(new ListObjectsV2Command({
+        Bucket: config.bucket,
+        Prefix: storageObjectKey("admin-uploads", `blog-covers/${slug}-`),
+        ContinuationToken: continuationToken,
+        MaxKeys: 100,
+      }));
+      keys.push(...(response.Contents || []).map((object) => String(object.Key || "")).filter(Boolean));
+      continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
+      assert.ok(!response.IsTruncated || continuationToken, "S3 truncated the rejected-cover audit without a continuation token");
+    } while (continuationToken);
+  }
+  return keys;
+}
+
 try {
   const repairedOrphanFaqs = await cleanupRecentOrphanArticleFaqs();
   if (repairedOrphanFaqs) console.log(JSON.stringify({ repaired_orphan_article_faqs: repairedOrphanFaqs }));
@@ -90,6 +118,13 @@ try {
   assert.equal(disabledControl, null, `AI control ${disabledControl?.feature} is disabled`);
   await waitForScheduledRun();
   originalSettings = await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } });
+  assert.ok(originalSettings, "Auto Blog Agent settings disappeared before the production smoke");
+  assert.equal(Number(originalSettings.editorial_quality_target), PRODUCTION_BLOG_SMOKE_POLICY.qualityTarget, "Production article quality target changed");
+  assert.equal(originalSettings.text_model, PRODUCTION_BLOG_SMOKE_POLICY.model, "Production blog agent is configured with an unexpected model");
+  const blogAgentControl = await prisma.ai_runtime_controls.findUnique({ where: { feature: "blog-agent" } });
+  assert.ok(blogAgentControl, "Blog-agent runtime control is missing");
+  assert.equal(blogAgentControl.provider, PRODUCTION_BLOG_SMOKE_POLICY.provider, "Blog-agent runtime control has an unexpected provider");
+  assert.equal(blogAgentControl.model, PRODUCTION_BLOG_SMOKE_POLICY.model, "Blog-agent runtime control has an unexpected model");
 
   await prisma.blog_auto_agent_settings.update({
     where: { id: "default" },
@@ -104,56 +139,105 @@ try {
     },
   });
 
-  const result = await runBlogAgent({ trigger_type: "production-smoke" });
+  const priorSmokeRunIds = new Set((await prisma.blog_auto_agent_runs.findMany({
+    where: { trigger_type: "production-smoke" },
+    orderBy: { started_at: "desc" },
+    take: 20,
+    select: { id: true },
+  })).map((run) => run.id));
+  const smokeStartedAt = new Date();
+  let result;
   let article;
   let verificationMode = "agent-draft";
-  if (result.skipped && result.message === "Daily post cap reached") {
-    verificationMode = "studio-draft-daily-cap-fallback";
-    const studio = await handleBlogStudio({ json: async () => ({
-      topic: `Indian student admission planning guide ${testSlug}`,
-      word_limit: 900,
-      image: { mode: "template", template_url: originalSettings.image_template_url },
-    }) });
-    assert.match(studio.model_used, /^openai:gpt-5\.4-mini$/, "Blog Studio did not use OpenAI GPT-5.4 mini");
-    article = studio.draft;
-  } else {
-    assert.equal(result.success, true, result.message || "Blog-agent smoke run was not successful");
-    runId = String(result.run_id || "");
-    createdArticleIds = result.created_article_ids || [];
-    assert.equal(createdArticleIds.length, 1, "Blog agent did not create exactly one smoke-test draft");
-    article = await prisma.articles.findUnique({ where: { id: createdArticleIds[0] } });
-    assert.ok(article, "Generated smoke-test article was not saved in AWS MySQL");
-    assert.equal(article.status, "Draft");
-    createdArticleSlugs = [article.slug];
-    const createdFaqs = await prisma.faqs.findMany({
-      where: { page: "articles", item_slug: article.slug },
-      select: { id: true, is_active: true },
+  try {
+    result = await runBlogAgent({ trigger_type: "production-smoke" });
+  } catch (error) {
+    if (!isArticleQualityGateRejection(error)) throw error;
+    const evidence = validateArticleQualityGateRejection(error);
+    const recentSmokeRuns = await prisma.blog_auto_agent_runs.findMany({
+      where: { trigger_type: "production-smoke" },
+      orderBy: { started_at: "desc" },
+      take: 20,
+      select: { id: true, status: true, model_provider: true, selected_topics: true, created_article_ids: true, message: true },
     });
-    createdFaqCount = createdFaqs.length;
-    assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
+    const failedRun = recentSmokeRuns.find((run) => !priorSmokeRunIds.has(run.id));
+    assert.ok(failedRun, "Quality-gate rejection did not persist its production-smoke run evidence");
+    assert.match(String(failedRun.message || ""), /^Article failed the editorial quality gate:/, "Failed run did not retain the quality-gate reason");
+    runId = failedRun.id;
+    const slugs = rejectedTopicSlugs(failedRun);
+    const [articles, faqs, storageKeys, usageEvents] = await Promise.all([
+      prisma.articles.findMany({ where: { site_scope: "dekhocampus", slug: { in: slugs } }, select: { id: true, slug: true } }),
+      prisma.faqs.findMany({ where: { page: "articles", item_slug: { in: slugs } }, select: { id: true, item_slug: true } }),
+      listRejectedCoverKeys(slugs),
+      prisma.ai_usage_events.findMany({
+        where: { created_at: { gte: smokeStartedAt }, feature: "blog-agent", operation: "text-generation" },
+        select: { id: true, provider: true, model: true },
+      }),
+    ]);
+    assertNoRejectedDraftArtifacts({ articles, faqs, storageKeys });
+    assert.ok(usageEvents.length > 0, "Quality-gate rejection has no persisted text-generation usage evidence");
     assert.ok(
-      createdFaqs.every((faq) => faq.is_active === false),
-      "Draft article FAQ records must remain inactive until publication",
+      usageEvents.every((event) => event.provider === PRODUCTION_BLOG_SMOKE_POLICY.provider && event.model === PRODUCTION_BLOG_SMOKE_POLICY.model),
+      "Quality-gate production smoke used an unexpected text provider or model",
     );
+    qualityGateEvidence = {
+      ...evidence,
+      runId,
+      rejectedSlugs: slugs,
+      openAiUsageEvents: usageEvents.length,
+      artifacts: { articles: articles.length, faqs: faqs.length, storageObjects: storageKeys.length },
+    };
+    verificationMode = "quality-gate-rejection";
   }
-  const articleContent = String(article.content || article.content_html || "");
-  assert.match(articleContent, /<\w+/i, "Generated article has no HTML content");
-  assert.match(articleContent, /frequently asked|<h[2-4][^>]*>\s*faqs?/i, "Generated article has no visible FAQ section");
-  assert.doesNotMatch(articleContent, /<h[2-4][^>]*>\s*(sources?|references?|citations?)\b/i, "Generated article exposes a source section");
-  assert.doesNotMatch(articleContent, /\[(?:source|citation)\s*\d+\]/i, "Generated article exposes citation markers");
-  assert.doesNotMatch(articleContent, /href=["']https?:\/\//i, "Generated article exposes external source links");
-  generatedArticleCoverUrl = String(article.featured_image || "");
-  assert.match(generatedArticleCoverUrl, /^https:\/\//, "Scheduled agent did not save a public cover URL");
-  const generatedCoverResponse = await fetch(generatedArticleCoverUrl, { signal: AbortSignal.timeout(30_000) });
-  assert.equal(generatedCoverResponse.ok, true, `Scheduled agent cover is not publicly readable (${generatedCoverResponse.status})`);
-  const generatedCoverBytes = Buffer.from(await generatedCoverResponse.arrayBuffer());
-  const generatedMetadata = await sharp(generatedCoverBytes).metadata();
-  const generatedBottomCenter = await sharp(generatedCoverBytes)
-    .extract({ left: Math.floor(generatedMetadata.width / 2), top: Math.floor(generatedMetadata.height * 0.91), width: 1, height: 1 })
-    .removeAlpha()
-    .raw()
-    .toBuffer();
-  assert.ok([...generatedBottomCenter].every((channel) => channel > 220), "Scheduled agent cover contains the retired dark-panel composition");
+  if (!qualityGateEvidence) {
+    if (result.skipped && result.message === "Daily post cap reached") {
+      verificationMode = "studio-draft-daily-cap-fallback";
+      const studio = await handleBlogStudio({ json: async () => ({
+        topic: `Indian student admission planning guide ${testSlug}`,
+        word_limit: 900,
+        image: { mode: "template", template_url: originalSettings.image_template_url },
+      }) });
+      assert.match(studio.model_used, /^openai:gpt-5\.4-mini$/, "Blog Studio did not use OpenAI GPT-5.4 mini");
+      article = studio.draft;
+    } else {
+      assert.equal(result.success, true, result.message || "Blog-agent smoke run was not successful");
+      runId = String(result.run_id || "");
+      createdArticleIds = result.created_article_ids || [];
+      assert.equal(createdArticleIds.length, 1, "Blog agent did not create exactly one smoke-test draft");
+      article = await prisma.articles.findUnique({ where: { id: createdArticleIds[0] } });
+      assert.ok(article, "Generated smoke-test article was not saved in AWS MySQL");
+      assert.equal(article.status, "Draft");
+      createdArticleSlugs = [article.slug];
+      const createdFaqs = await prisma.faqs.findMany({
+        where: { page: "articles", item_slug: article.slug },
+        select: { id: true, is_active: true },
+      });
+      createdFaqCount = createdFaqs.length;
+      assert.ok(createdFaqCount >= 4, `Generated article stored only ${createdFaqCount} dedicated FAQs`);
+      assert.ok(
+        createdFaqs.every((faq) => faq.is_active === false),
+        "Draft article FAQ records must remain inactive until publication",
+      );
+    }
+    const articleContent = String(article.content || article.content_html || "");
+    assert.match(articleContent, /<\w+/i, "Generated article has no HTML content");
+    assert.match(articleContent, /frequently asked|<h[2-4][^>]*>\s*faqs?/i, "Generated article has no visible FAQ section");
+    assert.doesNotMatch(articleContent, /<h[2-4][^>]*>\s*(sources?|references?|citations?)\b/i, "Generated article exposes a source section");
+    assert.doesNotMatch(articleContent, /\[(?:source|citation)\s*\d+\]/i, "Generated article exposes citation markers");
+    assert.doesNotMatch(articleContent, /href=["']https?:\/\//i, "Generated article exposes external source links");
+    generatedArticleCoverUrl = String(article.featured_image || "");
+    assert.match(generatedArticleCoverUrl, /^https:\/\//, "Scheduled agent did not save a public cover URL");
+    const generatedCoverResponse = await fetch(generatedArticleCoverUrl, { signal: AbortSignal.timeout(30_000) });
+    assert.equal(generatedCoverResponse.ok, true, `Scheduled agent cover is not publicly readable (${generatedCoverResponse.status})`);
+    const generatedCoverBytes = Buffer.from(await generatedCoverResponse.arrayBuffer());
+    const generatedMetadata = await sharp(generatedCoverBytes).metadata();
+    const generatedBottomCenter = await sharp(generatedCoverBytes)
+      .extract({ left: Math.floor(generatedMetadata.width / 2), top: Math.floor(generatedMetadata.height * 0.91), width: 1, height: 1 })
+      .removeAlpha()
+      .raw()
+      .toBuffer();
+    assert.ok([...generatedBottomCenter].every((channel) => channel > 220), "Scheduled agent cover contains the retired dark-panel composition");
+  }
 
   const coverMode = "template";
   assert.equal(originalSettings.image_template_url, DEFAULT_BLOG_COVER_TEMPLATE_KEY, "Production points to an unexpected branded fallback template");
@@ -180,10 +264,17 @@ try {
     ok: true,
     openai_blog: `${verificationMode} verified with GPT-5.4 mini`,
     production_cover_mode: originalSettings.image_mode,
-    article_faqs: verificationMode === "agent-draft" ? `${createdFaqCount} dedicated FAQ records stored inactive pending review; visible FAQ section verified in draft HTML` : "visible FAQ section verified",
-    source_policy: "no source sections, citation markers, or external source links",
+    quality_gate: qualityGateEvidence,
+    article_faqs: qualityGateEvidence
+      ? "quality gate rejected the draft before article or FAQ persistence"
+      : verificationMode === "agent-draft" ? `${createdFaqCount} dedicated FAQ records stored inactive pending review; visible FAQ section verified in draft HTML` : "visible FAQ section verified",
+    source_policy: qualityGateEvidence
+      ? "quality guard rejected the unsafe draft and no publishable content persisted"
+      : "no source sections, citation markers, or external source links",
     cover: `${coverDiagnostics.sourceMode || coverMode}, rendered as WebP, uploaded to AWS S3, and fetched publicly`,
-    scheduled_cover: "branded template with light lower canvas verified",
+    scheduled_cover: qualityGateEvidence
+      ? "quality gate prevented scheduled cover creation; independent branded template cover verified"
+      : "branded template with light lower canvas verified",
     template_fallback_reason: coverDiagnostics.templateError || null,
     generated_fallback_reason: coverDiagnostics.generatedError || null,
     logo_applied: Boolean(coverDiagnostics.logoApplied),

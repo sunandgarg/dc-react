@@ -15,6 +15,10 @@ export function parseSlugWithId(param: string | undefined): { slug: string; id?:
   return { slug: param };
 }
 
+export function detailEntityQueryKey(entity: "college" | "course" | "exam", param: string | undefined) {
+  return [`db-${entity}`, parseSlugWithId(param).slug] as const;
+}
+
 export function buildCollegeHref(college: { slug?: string | null; short_id?: number | null } | null | undefined): string {
   if (!college?.slug) return "/colleges";
   return college.short_id ? `/colleges/${college.slug}-${college.short_id}` : `/colleges/${college.slug}`;
