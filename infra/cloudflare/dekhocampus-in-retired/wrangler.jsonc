@@ -1,0 +1,16 @@
+{
+  "name": "dekhocampus-in-retired-redirect",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-12",
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "dekhocampus.in/*",
+      "zone_name": "dekhocampus.in"
+    },
+    {
+      "pattern": "www.dekhocampus.in/*",
+      "zone_name": "dekhocampus.in"
+    }
+  ]
+}
