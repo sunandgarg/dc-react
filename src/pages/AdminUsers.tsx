@@ -16,7 +16,7 @@ import { isSyntheticPhoneEmail } from "@/lib/authIdentity";
 import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
 
 import { CSVTools } from "@/components/CSVTools";
-const ASSIGNABLE_ROLES: AppRole[] = ["admin", "manager", "content", "editor", "contributor"];
+const ASSIGNABLE_ROLES: AppRole[] = ["admin", "manager", "content_head", "content", "editor", "contributor"];
 
 export default function AdminUsers() {
   const [search, setSearch] = useState("");

@@ -1,5 +1,5 @@
 // Centralized RBAC capability matrix
-export type AppRole = "admin" | "manager" | "content" | "editor" | "contributor" | "lead_push" | "user";
+export type AppRole = "admin" | "manager" | "content_head" | "content" | "editor" | "contributor" | "lead_push" | "user";
 export type Module =
   | "articles" | "colleges" | "courses" | "exams" | "study_material"
   | "leads" | "users" | "integrations" | "backup" | "ads" | "banners"
@@ -39,6 +39,12 @@ export const CAPABILITIES: Matrix = {
     partners: REVIEW_AND_PUBLISH, cat_universe: REVIEW_AND_PUBLISH, content: REVIEW_AND_PUBLISH, legal: REVIEW_AND_PUBLISH, sitemap: VIEW, docs: VIEW,
     authors: REVIEW_AND_PUBLISH, scholarships: REVIEW_AND_PUBLISH, jobs: REVIEW_AND_PUBLISH,
   },
+  content_head: {
+    articles: REVIEW_AND_PUBLISH,
+    colleges: REVIEW_AND_PUBLISH,
+    courses: REVIEW_AND_PUBLISH,
+    exams: REVIEW_AND_PUBLISH,
+  },
   content: {
     articles: NO_DELETE, colleges: NO_DELETE, courses: NO_DELETE, exams: NO_DELETE,
     study_material: NO_DELETE, careers: NO_DELETE, companies: NO_DELETE,
@@ -61,7 +67,7 @@ export const CAPABILITIES: Matrix = {
 };
 
 export function highestRole(roles: AppRole[]): AppRole {
-  const order: AppRole[] = ["admin", "manager", "content", "editor", "contributor", "lead_push", "user"];
+  const order: AppRole[] = ["admin", "manager", "content_head", "content", "editor", "contributor", "lead_push", "user"];
   return order.find(r => roles.includes(r)) ?? "user";
 }
 

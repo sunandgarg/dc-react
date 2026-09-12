@@ -19,6 +19,7 @@
     "publish:cat-kit": "node scripts/publish-cat-kit.mjs",
     "repair:listed-article-covers": "node scripts/repair-listed-article-covers.mjs",
     "revoke:user-sessions": "node scripts/revoke-user-sessions.mjs",
+    "reconcile:content-head": "node scripts/reconcile-content-head-access.mjs",
     "cleanup:college-editorial-artifacts": "node scripts/cleanup-college-editorial-artifacts.mjs"
   },
   "dependencies": {

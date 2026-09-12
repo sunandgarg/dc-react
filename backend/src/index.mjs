@@ -9,7 +9,7 @@ import { integrationStatus } from "./integration-status.mjs";
 import { handleContentReviews } from "./content-review.mjs";
 import { handleAiGenerate, handleArticleCover, handleBlogAiSettings, handleBlogStudio, runBlogAgent } from "./blog-ai.mjs";
 import { handleDataCleaner } from "./data-cleaner.mjs";
-import { canContentEditorAccess } from "./editor-access.mjs";
+import { canContentEditorAccess, canContentHeadAccess } from "./editor-access.mjs";
 import { storageConfig } from "./storage.mjs";
 import { publishSitemap, readPublishedSitemap } from "./sitemap-publish.mjs";
 import { handleClarityExport } from "./clarity-export.mjs";
@@ -319,11 +319,14 @@ async function authorizeRest(table, request) {
     const action = request.method === "POST"
       ? (String(request.headers.get("prefer") || "").includes("resolution=merge-duplicates") ? "edit" : "create")
       : request.method === "PATCH" ? "edit" : request.method === "DELETE" ? "delete" : "view";
-    const contentRole = await prisma.$queryRawUnsafe(
-      "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content' LIMIT 1",
+    const editorialRoles = await prisma.$queryRawUnsafe(
+      "SELECT `role` FROM `user_roles` WHERE `user_id` = ? AND `role` IN ('content_head','content')",
       identity.id,
     );
-    if (contentRole.length && canContentEditorAccess(table, action)) {
+    if (editorialRoles.some((row) => row.role === "content_head") && canContentHeadAccess(table, action)) {
+      return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: null, stageReview: false, forceDraft: false };
+    }
+    if (editorialRoles.some((row) => row.role === "content") && canContentEditorAccess(table, action)) {
       return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: identity.id, stageReview: action !== "view", forceDraft: action !== "view" };
     }
     const permission = await prisma.$queryRawUnsafe(

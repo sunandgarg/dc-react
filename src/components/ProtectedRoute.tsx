@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
   module?: Module;
 }
 
-const RESTRICTED_CONTENT_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles"]);
+const CONTENT_HEAD_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles"]);
 
 export function ProtectedRoute({ children, requireAdmin = false, module }: ProtectedRouteProps) {
   const { user, isAdmin, roles, canAccess, isLoading } = useAuth();
@@ -28,16 +28,15 @@ export function ProtectedRoute({ children, requireAdmin = false, module }: Prote
 
   // Lead-Push-Only role: allow Lead Push routes + All Leads regardless of `requireAdmin`
   const isLeadPushUser = roles.includes("lead_push");
+  const isContentHead = roles.includes("content_head");
   const onLeadPushArea =
     location.pathname.startsWith("/admin/lead-push") || location.pathname.startsWith("/admin/leads");
-  const phone = String(user.phone || user.user_metadata?.phone || "").replace(/\D/g, "").slice(-10);
-  const isRestrictedContentEditor = phone === "7428966263";
-
   const allowed =
     isAdmin ||
     (isLeadPushUser && onLeadPushArea) ||
-    (!isRestrictedContentEditor && (module ? canAccess(module) : !requireAdmin)) ||
-    (isRestrictedContentEditor && RESTRICTED_CONTENT_PATHS.has(location.pathname) && Boolean(module && canAccess(module)));
+    (isContentHead
+      ? CONTENT_HEAD_PATHS.has(location.pathname) && Boolean(module && canAccess(module))
+      : (module ? canAccess(module) : !requireAdmin));
 
   if ((requireAdmin || module) && !allowed) {
     return (

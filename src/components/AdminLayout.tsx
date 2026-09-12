@@ -153,26 +153,25 @@ const groups: NavGroup[] = [
 ];
 
 interface AdminLayoutProps { children: ReactNode; title: string; }
-const RESTRICTED_CONTENT_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles", "/admin/sarkari/articles", "/admin/sarkari/ai-studio"]);
+const CONTENT_HEAD_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles"]);
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
   const location = useLocation();
-  const { isAdmin, canAccess, roles, user } = useAuth();
+  const { isAdmin, canAccess, roles } = useAuth();
   const [navSearch, setNavSearch] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   // Lead-Push-Only teammates see only Lead Push + All Leads (no other nav items).
   const isLeadPushOnly = !isAdmin && roles.includes("lead_push") && roles.length === 1;
+  const isContentHead = !isAdmin && roles.includes("content_head");
   const isRestrictedModuleUser = !isAdmin && !isLeadPushOnly;
-  const phone = String(user?.phone || user?.user_metadata?.phone || "").replace(/\D/g, "").slice(-10);
-  const isRestrictedContentEditor = phone === "7428966263";
   const visible = useCallback((it: NavItem) => {
     if (isLeadPushOnly) {
       return it.href === "/admin/leads" || it.href.startsWith("/admin/lead-push") || it.href === "/admin";
     }
-    if (isRestrictedContentEditor) return RESTRICTED_CONTENT_PATHS.has(it.href) && Boolean(it.module && canAccess(it.module));
+    if (isContentHead) return CONTENT_HEAD_PATHS.has(it.href) && Boolean(it.module && canAccess(it.module));
     if (isRestrictedModuleUser) return Boolean(it.module && canAccess(it.module));
     return !it.module || isAdmin || canAccess(it.module);
-  }, [isAdmin, isLeadPushOnly, isRestrictedContentEditor, isRestrictedModuleUser, canAccess]);
+  }, [isAdmin, isLeadPushOnly, isContentHead, isRestrictedModuleUser, canAccess]);
   const qc = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {

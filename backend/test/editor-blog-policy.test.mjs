@@ -1,17 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { canContentEditorAccess, isRestrictedEditorPhone } from "../src/editor-access.mjs";
+import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articleRevisionPrompt, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
-test("recognizes only the restricted content editor phone", () => {
-  assert.equal(isRestrictedEditorPhone("7428966263"), true);
-  assert.equal(isRestrictedEditorPhone("+91 74289 66263"), true);
-  assert.equal(isRestrictedEditorPhone("9818308623"), false);
-  assert.equal(isRestrictedEditorPhone("8700602524"), false);
+test("recognizes only the managed Content Head phone", () => {
+  assert.equal(isContentHeadPhone("8810323087"), true);
+  assert.equal(isContentHeadPhone("+91 88103 23087"), true);
+  assert.equal(isContentHeadPhone("7428966263"), false);
+  assert.equal(isContentHeadPhone("8700602524"), false);
 });
 
 test("rejects access tokens issued before a user's global session cutoff", () => {
@@ -44,7 +44,18 @@ test("content role covers editorial resources without destructive access", () =>
   assert.equal(canContentEditorAccess("leads", "view"), false);
 });
 
-test("restricted editor sessions and article edits preserve browser independence", async () => {
+test("Content Head can publish only the four requested modules", () => {
+  assert.deepEqual([...CONTENT_HEAD_RESOURCES].sort(), ["articles", "colleges", "courses", "exams"]);
+  assert.equal(canContentHeadAccess("articles", "create"), true);
+  assert.equal(canContentHeadAccess("colleges", "edit"), true);
+  assert.equal(canContentHeadAccess("courses", "view"), true);
+  assert.equal(canContentHeadAccess("exams", "create"), true);
+  assert.equal(canContentHeadAccess("articles", "delete"), false);
+  assert.equal(canContentHeadAccess("course_fees", "edit"), false);
+  assert.equal(canContentHeadAccess("leads", "view"), false);
+});
+
+test("Content Head sessions and article edits preserve browser independence", async () => {
   const authSource = await readFile(new URL("../src/auth.mjs", import.meta.url), "utf8");
   const editorSource = await readFile(new URL("../src/editor-access.mjs", import.meta.url), "utf8");
   const clientSource = await readFile(new URL("../../src/integrations/backend/client.ts", import.meta.url), "utf8");
@@ -54,7 +65,8 @@ test("restricted editor sessions and article edits preserve browser independence
   assert.match(authSource, /where: \{ token_hash: digest\(refreshToken\), revoked_at: null \}/);
   assert.match(clientSource, /let refreshPromise: Promise<BackendSession \| null> \| null = null/);
   assert.match(clientSource, /body: JSON\.stringify\(\{ refresh_token: session\.refresh_token \}\)/);
-  assert.match(editorSource, /resource: "articles", can_view: true, can_create: true, can_edit: true/);
+  assert.match(editorSource, /can_delete: false, can_publish: true/);
+  assert.doesNotMatch(editorSource, /7428966263/);
 });
 
 test("non-publishing editors are forced into draft state by the server", () => {

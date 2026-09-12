@@ -773,7 +773,7 @@ jobs:
           run_core_phase cleanup
           trap - EXIT
 
-      - name: Verify restricted editor review and approval workflow
+      - name: Verify Content Head direct publishing workflow
         run: |
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
             "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'

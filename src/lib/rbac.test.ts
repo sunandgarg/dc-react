@@ -18,6 +18,17 @@ describe("RBAC capability matrix", () => {
     expect(can(roles, "leads", "edit")).toBe(false);
   });
 
+  it("Content Head publishes only articles, colleges, courses, and exams", () => {
+    const roles: AppRole[] = ["content_head"];
+    expect(can(roles, "articles", "publish")).toBe(true);
+    expect(can(roles, "colleges", "create")).toBe(true);
+    expect(can(roles, "courses", "edit")).toBe(true);
+    expect(can(roles, "exams", "publish")).toBe(true);
+    expect(can(roles, "articles", "delete")).toBe(false);
+    expect(can(roles, "leads", "view")).toBe(false);
+    expect(can(roles, "scholarships", "view")).toBe(false);
+  });
+
   it("content editor can manage all editorial modules but cannot publish", () => {
     const roles: AppRole[] = ["content"];
     expect(can(roles, "colleges", "edit")).toBe(true);
@@ -54,6 +65,7 @@ describe("RBAC capability matrix", () => {
 
   it("highestRole picks correct precedence", () => {
     expect(highestRole(["user", "editor", "admin"])).toBe("admin");
+    expect(highestRole(["content", "content_head"])).toBe("content_head");
     expect(highestRole(["contributor", "editor"])).toBe("editor");
     expect(highestRole([])).toBe("user");
   });

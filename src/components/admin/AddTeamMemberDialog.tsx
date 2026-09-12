@@ -14,6 +14,7 @@ import { normalizeIndianMobile } from "@/lib/phone";
 const ROLES: { value: AppRole; label: string; desc: string }[] = [
   { value: "admin", label: "Admin", desc: "Full access to everything" },
   { value: "manager", label: "Manager", desc: "Most modules, no destructive deletes" },
+  { value: "content_head", label: "Content Head", desc: "Publish articles, colleges, courses, and exams" },
   { value: "content", label: "Content Editor", desc: "All content tools; changes require admin review" },
   { value: "editor", label: "Editor", desc: "Content modules only" },
   { value: "contributor", label: "Contributor", desc: "Add & edit own articles only" },

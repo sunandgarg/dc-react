@@ -10,6 +10,7 @@ import { AddTeamMemberDialog } from "./AddTeamMemberDialog";
 const ROLE_LABEL: Record<string, string> = {
   admin: "Admin",
   manager: "Manager",
+  content_head: "Content Head",
   content: "Content Editor",
   editor: "Editor",
   contributor: "Contributor",
