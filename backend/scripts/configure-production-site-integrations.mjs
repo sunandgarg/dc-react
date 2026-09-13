@@ -13,6 +13,7 @@ const integrations = [
 ];
 const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
+const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
 
 try {
   for (const [key, label, category, value] of integrations) {
@@ -33,6 +34,7 @@ try {
   let runtimeControlsUpdated = 0;
   let entitySchedulesUpdated = 0;
   let eeatCadenceUpdated = 0;
+  let competitorSourcesActivated = 0;
   if (!editorialPolicyMigration) {
     const updated = await prisma.blog_auto_agent_settings.updateMany({
       where: { id: "default" },
@@ -111,6 +113,20 @@ try {
       },
     });
   }
+  const competitorActivationMigration = await prisma.app_settings.findUnique({ where: { key: BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY } });
+  if (!competitorActivationMigration) {
+    const activated = await prisma.blog_research_sources.updateMany({
+      where: { source_type: "competitor", is_active: false },
+      data: { is_active: true, updated_at: new Date() },
+    });
+    competitorSourcesActivated = activated.count;
+    await prisma.app_settings.create({
+      data: {
+        key: BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY,
+        value: JSON.stringify({ activated: activated.count, applied_at: new Date().toISOString() }),
+      },
+    });
+  }
   const sesProvider = {
     display_name: "Amazon SES",
     api_key: null,
@@ -159,6 +175,7 @@ try {
     blog_daily_post_cap: 48,
     blog_interval_minutes: 60,
     blog_posts_per_run: 2,
+    competitor_sources_activated: competitorSourcesActivated,
     ses_provider_configured: true,
     ses_credential_source: "iam_runtime",
   }));

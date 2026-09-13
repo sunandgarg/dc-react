@@ -187,6 +187,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
   const pausedRun = runs.find((run) => run.status === "paused");
   const currentRun = activeRun || pausedRun;
   const activeRunId = activeRun?.id;
+  const competitorSources = sources.filter((source) => source.source_type === "competitor");
+  const allCompetitorsSelected = competitorSources.length > 0 && competitorSources.every((source) => source.is_active);
 
   useEffect(() => {
     if (!activeRunId) return;
@@ -618,7 +620,20 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       </div>}
 
       <div className="mt-4">
-        <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground"><Sparkles className="h-3.5 w-3.5" /> Research sources visible to the agent</div>
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground"><Sparkles className="h-3.5 w-3.5" /> Research sources visible to the agent</div>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={!competitorSources.length || allCompetitorsSelected}
+            onClick={() => setSources((current) => current.map((source) => source.source_type === "competitor" ? { ...source, is_active: true } : source))}
+            className="h-8 gap-2"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            {allCompetitorsSelected ? `All competitors selected (${competitorSources.length})` : `Select all competitors (${competitorSources.length})`}
+          </Button>
+        </div>
         <div className="mb-3 rounded-xl border bg-muted/30 p-3">
           <p className="mb-3 text-xs text-muted-foreground">Add official institution pages, government/regulator notices, or public signals. Research is internal only - no visible source section is published with an article.</p>
           <div className="grid gap-2 md:grid-cols-[1fr_2fr_150px_auto]">

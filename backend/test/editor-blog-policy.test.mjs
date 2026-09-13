@@ -120,6 +120,8 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(productionSetup, /interval_minutes: 60/);
   assert.match(productionSetup, /posts_per_run: 2/);
   assert.match(productionSetup, /daily_post_cap: 48/);
+  assert.match(productionSetup, /BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY/);
+  assert.match(productionSetup, /source_type: "competitor", is_active: false/);
 
   const prompt = articlePrompt(
     { title: "NEET UG counselling choice filling", primary_entity: "NEET UG" },
@@ -134,6 +136,12 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(prompt, /Authoritativeness:/);
   assert.match(prompt, /Trust:/);
   assert.match(prompt, /never pretend the author personally experienced them/);
+});
+
+test("AI Blog Studio can select every saved competitor source", async () => {
+  const panel = await readFile(new URL("../../src/components/admin/BlogAutoAgentPanel.tsx", import.meta.url), "utf8");
+  assert.match(panel, /Select all competitors/);
+  assert.match(panel, /source\.source_type === "competitor" \? \{ \.\.\.source, is_active: true \}/);
 });
 
 test("normalizes legacy Gemini models and classifies quota errors", () => {
