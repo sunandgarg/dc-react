@@ -12,6 +12,7 @@ const integrations = [
   ["facebook_pixel_id", "Meta Pixel / Dataset ID", "analytics", "28062999866677764"],
 ];
 const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
+const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 
 try {
   for (const [key, label, category, value] of integrations) {
@@ -31,6 +32,7 @@ try {
   let providerSettingsUpdated = 0;
   let runtimeControlsUpdated = 0;
   let entitySchedulesUpdated = 0;
+  let eeatCadenceUpdated = 0;
   if (!editorialPolicyMigration) {
     const updated = await prisma.blog_auto_agent_settings.updateMany({
       where: { id: "default" },
@@ -83,6 +85,32 @@ try {
       },
     });
   }
+  const eeatCadenceMigration = await prisma.app_settings.findUnique({ where: { key: BLOG_EEAT_48_MIGRATION_KEY } });
+  if (!eeatCadenceMigration) {
+    const updated = await prisma.blog_auto_agent_settings.updateMany({
+      where: { id: "default" },
+      data: {
+        interval_minutes: 60,
+        posts_per_run: 2,
+        daily_post_cap: 48,
+        content_goals: ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"],
+        required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],
+        minimum_sources: 2,
+        editorial_quality_target: 90,
+        publish_status: "Published",
+        human_review_required: false,
+        updated_at: new Date(),
+      },
+    });
+    if (updated.count !== 1) throw new Error("Auto Blog Agent default settings are missing");
+    eeatCadenceUpdated = updated.count;
+    await prisma.app_settings.create({
+      data: {
+        key: BLOG_EEAT_48_MIGRATION_KEY,
+        value: JSON.stringify({ daily_post_cap: 48, interval_minutes: 60, posts_per_run: 2, framework: "E-E-A-T", applied_at: new Date().toISOString() }),
+      },
+    });
+  }
   const sesProvider = {
     display_name: "Amazon SES",
     api_key: null,
@@ -127,6 +155,10 @@ try {
     low_cost_image_quality_updated: providerSettingsUpdated,
     openai_blog_runtime_controls_updated: runtimeControlsUpdated,
     entity_article_schedules_auto_publish_enabled: entitySchedulesUpdated,
+    blog_eeat_48_policy_migrated: eeatCadenceUpdated === 1,
+    blog_daily_post_cap: 48,
+    blog_interval_minutes: 60,
+    blog_posts_per_run: 2,
     ses_provider_configured: true,
     ses_credential_source: "iam_runtime",
   }));

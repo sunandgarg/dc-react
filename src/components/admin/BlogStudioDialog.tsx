@@ -32,7 +32,7 @@ const LENGTHS = [0, 900, 1200, 1500, 1800] as const;
 const DEFAULT_EDITORIAL_SETTINGS: EditorialSettings = {
   text_model: "gpt-5.4-mini",
   word_limit: 0,
-  content_goals: ["SEO", "AEO", "GEO", "LLMO"],
+  content_goals: ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"],
   required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],
   minimum_sources: 2,
   editorial_quality_target: 90,

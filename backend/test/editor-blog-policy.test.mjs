@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articleRevisionPrompt, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articlePrompt, articleRevisionPrompt, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -109,9 +109,31 @@ test("production AI smoke verifies draft FAQs without publishing them", async ()
 test("enforces conservative auto-blog cadence and volume limits", () => {
   assert.deepEqual(blogLimits, {
     MAX_POSTS_PER_RUN: 3,
-    MAX_DAILY_POSTS: 24,
+    MAX_DAILY_POSTS: 48,
     MIN_INTERVAL_MINUTES: 60,
   });
+});
+
+test("production cadence is 48 gated posts per day with an explicit E-E-A-T contract", async () => {
+  const productionSetup = await readFile(new URL("../scripts/configure-production-site-integrations.mjs", import.meta.url), "utf8");
+  assert.match(productionSetup, /BLOG_EEAT_48_MIGRATION_KEY/);
+  assert.match(productionSetup, /interval_minutes: 60/);
+  assert.match(productionSetup, /posts_per_run: 2/);
+  assert.match(productionSetup, /daily_post_cap: 48/);
+
+  const prompt = articlePrompt(
+    { title: "NEET UG counselling choice filling", primary_entity: "NEET UG" },
+    [{ source_type: "official", signal: "The responsible authority published the counselling schedule." }],
+    900,
+    [],
+    {},
+  );
+  assert.match(prompt, /E-E-A-T execution/);
+  assert.match(prompt, /Experience:/);
+  assert.match(prompt, /Expertise:/);
+  assert.match(prompt, /Authoritativeness:/);
+  assert.match(prompt, /Trust:/);
+  assert.match(prompt, /never pretend the author personally experienced them/);
 });
 
 test("normalizes legacy Gemini models and classifies quota errors", () => {
@@ -186,6 +208,7 @@ test("production article generation retries compact reviews and renders the vali
   assert.match(reviewSource, /maxOutputTokens: 2_500/);
   assert.match(reviewSource, /maxTruncationRetries: 2/);
   assert.match(reviewSource, /people-first trust review/);
+  assert.match(reviewSource, /all four E-E-A-T dimensions/);
   assert.match(finalizationSource, /maxTruncationRetries: 2/);
   assert.match(finalizationSource, /createBlogCover\(draft\.slug, draft\.title/);
   assert.doesNotMatch(finalizationSource, /createBlogCover\(slug, draft\.title/);
@@ -251,7 +274,8 @@ test("builds a complete targeted revision prompt from editorial feedback", () =>
   assert.match(prompt, /State where candidates should check the allotment result/);
   assert.match(prompt, /remove unsupported certainty/);
   assert.match(prompt, /Make the revision people-first/);
-  assert.match(prompt, /never invent personal experience/);
+  assert.match(prompt, /never invent personal experience/i);
+  assert.match(prompt, /all four E-E-A-T dimensions/);
 });
 
 test("normalizes editorial controls and adapts depth to student intent", () => {
@@ -266,9 +290,9 @@ test("normalizes editorial controls and adapts depth to student intent", () => {
   });
   assert.equal(normalized.interval_minutes, 60);
   assert.equal(normalized.posts_per_run, 3);
-  assert.equal(normalized.daily_post_cap, 24);
+  assert.equal(normalized.daily_post_cap, 48);
   assert.equal(normalized.word_limit, 0);
-  assert.deepEqual(normalized.content_goals, ["SEO", "AEO", "GEO", "LLMO"]);
+  assert.deepEqual(normalized.content_goals, ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"]);
   assert.deepEqual(normalized.required_sections, ["Answer first", "Key facts", "Decision guidance", "FAQs"]);
   assert.equal(normalized.minimum_sources, 2);
   assert.equal(normalized.editorial_quality_target, 98);

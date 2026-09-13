@@ -66,9 +66,9 @@ type Author = { id: string; name: string; designation?: string; photo?: string }
 const DRAFT_KEY = "dc:admin:blog-agent:draft:v1";
 const DEFAULT_SETTINGS: Settings = {
   enabled: false,
-  interval_minutes: 180,
-  posts_per_run: 1,
-  daily_post_cap: 8,
+  interval_minutes: 60,
+  posts_per_run: 2,
+  daily_post_cap: 48,
   publish_status: "Published",
   model_provider: "openai",
   text_model: "gpt-5.4-mini",
@@ -78,7 +78,7 @@ const DEFAULT_SETTINGS: Settings = {
   language: "English",
   audience: "Indian students and parents",
   tone: "Clear, practical, trustworthy",
-  content_goals: ["SEO", "AEO", "GEO", "LLMO"],
+  content_goals: ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"],
   required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],
   minimum_sources: 2,
   editorial_quality_target: 90,
@@ -223,7 +223,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
     setBusy(true);
     try {
       const nextRun = settings.enabled && !settings.next_run_at ? new Date().toISOString() : settings.next_run_at;
-      const dailyPostCap = Math.min(24, Math.max(1, Math.floor(Number(settings.daily_post_cap) || 8)));
+      const dailyPostCap = Math.min(48, Math.max(1, Math.floor(Number(settings.daily_post_cap) || 8)));
       const intervalMinutes = Math.min(1440, Math.max(60, Math.floor(Number(settings.interval_minutes) || 180)));
       const postsPerRun = Math.min(3, Math.max(1, Math.floor(Number(settings.posts_per_run) || 1)));
       const wordLimit = Number(settings.word_limit) === 0 ? 0 : Math.min(2200, Math.max(700, Math.floor(Number(settings.word_limit) || 0)));
@@ -494,8 +494,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       <div className="mt-3 grid gap-3 lg:grid-cols-3">
         <div>
           <Label className="text-xs">Daily cap</Label>
-          <Input type="number" min={1} max={24} value={settings.daily_post_cap} onChange={e => updateSetting("daily_post_cap", Math.min(24, Math.max(1, Number(e.target.value || 8))))} className="mt-1" />
-          <p className="mt-1 text-[10px] text-muted-foreground">8 per day is recommended. Quality controls enforce an absolute maximum of 24.</p>
+          <Input type="number" min={1} max={48} value={settings.daily_post_cap} onChange={e => updateSetting("daily_post_cap", Math.min(48, Math.max(1, Number(e.target.value || 8))))} className="mt-1" />
+          <p className="mt-1 text-[10px] text-muted-foreground">Quality controls enforce an absolute maximum of 48 per day.</p>
         </div>
         <div>
           <Label className="text-xs">Blog AI provider</Label>
@@ -540,7 +540,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
             <p className="mt-1 text-xs text-muted-foreground">Configure reader intent, answer structure, factual sourcing, and the editorial review threshold.</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {["SEO", "AEO", "GEO", "LLMO"].map((goal) => <Badge key={goal} variant="default">{goal}</Badge>)}
+            {["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"].map((goal) => <Badge key={goal} variant="default">{goal}</Badge>)}
           </div>
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
