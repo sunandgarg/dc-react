@@ -19,6 +19,12 @@ const COMPETITOR_PATTERN = COMPETITOR_TERMS
   .map((term) => term.replace(/\s+/g, "\\s*"))
   .join("|");
 
+const RICH_ARTICLE_HTML_PATTERN = /<(?:a|blockquote|br|div|figure|h[1-6]|hr|img|li|ol|p|pre|section|table|ul)\b[^>]*>/i;
+
+export function containsRichArticleHtml(value?: string | null) {
+  return RICH_ARTICLE_HTML_PATTERN.test(String(value || ""));
+}
+
 export function stripVisibleArticleSources(value?: string | null) {
   let output = String(value || "");
   if (!output.trim()) return "";

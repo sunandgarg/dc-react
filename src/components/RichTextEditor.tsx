@@ -38,6 +38,7 @@ interface RichTextEditorProps {
 }
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+type EditorLinkSelection = { from: number; to: number };
 
 export function applyBlockHeading(editor: Editor, level: HeadingLevel) {
   return editor.chain().focus().toggleHeading({ level }).run();
@@ -82,6 +83,33 @@ export function applySelectionAwareHeading(editor: Editor, level: HeadingLevel) 
   }
 
   return editor.chain().focus().setFontSize(inlineHeadingSizes[level]).setBold().run();
+}
+
+export function normalizeEditorLinkUrl(value: string) {
+  const href = String(value || "").trim();
+  if (!href || href === "https://") return "";
+  if (/^(?:https?:|mailto:|tel:|\/|#|\.\.?\/)/i.test(href)) return href;
+  if (/^[a-z0-9.-]+\.[a-z]{2,}(?:[/?#].*)?$/i.test(href)) return `https://${href}`;
+  return "";
+}
+
+export function applyEditorLink(editor: Editor, value: string, displayText: string, selection?: EditorLinkSelection | null) {
+  const docEnd = editor.state.doc.content.size;
+  if (selection && selection.from >= 0 && selection.to <= docEnd && selection.from <= selection.to) {
+    editor.commands.setTextSelection(selection);
+  }
+  const href = normalizeEditorLinkUrl(value);
+  if (!href) return editor.chain().focus().extendMarkRange("link").unsetLink().run();
+  if (editor.state.selection.empty) {
+    const text = displayText.trim();
+    if (!text) return false;
+    return editor.chain().focus().insertContent({
+      type: "text",
+      text,
+      marks: [{ type: "link", attrs: { href } }],
+    }).run();
+  }
+  return editor.chain().focus().extendMarkRange("link").setLink({ href }).run();
 }
 
 /**
@@ -136,7 +164,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ heading: { levels: [1, 2, 3, 4, 5, 6] } }),
+      StarterKit.configure({ heading: { levels: [1, 2, 3, 4, 5, 6] }, link: false, underline: false }),
       Underline,
       TextStyle,
       FontSize,
@@ -255,6 +283,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   const [editingImage, setEditingImage] = useState(false);
   const [, setEditorVersion] = useState(0);
   const [internalPickerOpen, setInternalPickerOpen] = useState(false);
+  const linkSelectionRef = useRef<EditorLinkSelection | null>(null);
 
   useEffect(() => {
     const refresh = () => setEditorVersion((version) => version + 1);
@@ -290,6 +319,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   const openLink = () => {
     const previous = editor.getAttributes("link").href || "";
     const { from, to, empty } = editor.state.selection;
+    linkSelectionRef.current = { from, to };
     const selectedText = empty ? "" : editor.state.doc.textBetween(from, to, " ");
     setLinkUrl(previous || "https://");
     setLinkText(selectedText);
@@ -297,13 +327,8 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   };
 
   const applyLink = () => {
-    if (!linkUrl || linkUrl === "https://") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-    } else if (linkText && editor.state.selection.empty) {
-      editor.chain().focus().insertContent(`<a href="${linkUrl}" target="_blank" rel="noopener">${linkText}</a>`).run();
-    } else {
-      editor.chain().focus().extendMarkRange("link").setLink({ href: linkUrl }).run();
-    }
+    applyEditorLink(editor, linkUrl, linkText, linkSelectionRef.current);
+    linkSelectionRef.current = null;
     setLinkDialog(false);
   };
 

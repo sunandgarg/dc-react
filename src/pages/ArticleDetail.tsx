@@ -23,7 +23,7 @@ import { DocumentViewer } from "@/components/detail/DocumentViewer";
 import { RichText } from "@/components/detail/RichText";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { lazyRetry } from "@/lib/lazyRetry";
-import { stripVisibleArticleSources } from "@/lib/articleContentSanitizer";
+import { containsRichArticleHtml, stripVisibleArticleSources } from "@/lib/articleContentSanitizer";
 
 // Heavy below-the-fold components - lazy loaded for faster initial paint
 const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(m => ({ default: m.AlsoCheckSection })), "AlsoCheckSection");
@@ -91,6 +91,7 @@ export default function ArticleDetail() {
   const [tocSheetOpen, setTocSheetOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [saved, setSaved] = useState(false);
+  const articleUsesRichHtml = containsRichArticleHtml(article?.content);
   useSEO({
     title: article ? article.title : "Article",
     description: article?.excerpt || "Read the latest education and career articles.",
@@ -154,7 +155,7 @@ export default function ArticleDetail() {
   const toc = useMemo(() => {
     if (!article?.content) return [] as { id: string; text: string; level: number }[];
     const out: { id: string; text: string; level: number }[] = [];
-    if (article.content.trim().startsWith("<")) {
+    if (articleUsesRichHtml) {
       const re = /<h([23])[^>]*>([\s\S]*?)<\/h\1>/gi;
       let m: RegExpExecArray | null;
       while ((m = re.exec(article.content))) {
@@ -170,7 +171,7 @@ export default function ArticleDetail() {
       }
     }
     return out;
-  }, [article?.content]);
+  }, [article?.content, articleUsesRichHtml]);
 
   const jumpTo = (id: string) => {
     const el = document.getElementById(id);
@@ -183,7 +184,7 @@ export default function ArticleDetail() {
   // Also split out <div class="doc-viewer" ...>...</div> blocks so they can be rendered as React.
   const contentSegments = useMemo(() => {
     const c = article?.content || "";
-    if (!c.trim().startsWith("<")) return null;
+    if (!articleUsesRichHtml) return null;
     let html = c.replace(/<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi, (_full, lvl, attrs, inner) => {
       const text = inner.replace(/<[^>]+>/g, "").trim();
       const id = slugifyHeading(text);
@@ -207,7 +208,7 @@ export default function ArticleDetail() {
     }
     if (last < html.length) segs.push({ type: "html", value: html.slice(last) });
     return segs;
-  }, [article?.content]);
+  }, [article?.content, articleUsesRichHtml]);
   const htmlContent = useMemo(() => {
     if (!contentSegments) return article?.content || "";
     return contentSegments.filter((s) => s.type === "html").map((s: any) => s.value).join("");
@@ -434,7 +435,7 @@ export default function ArticleDetail() {
 
               {/* Body - explicitly left-aligned, tightened 2026 scale */}
               <div className="space-y-5">
-                {article.content?.trim().startsWith("<") ? (
+                {articleUsesRichHtml ? (
                   contentSegments ? (
                     <>
                       {contentSegments.map((seg, i) =>

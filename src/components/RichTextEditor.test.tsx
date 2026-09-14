@@ -1,9 +1,10 @@
 import { Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
 import { FontSize, TextStyle } from "@tiptap/extension-text-style";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { applyBlockHeading, applySelectionAwareHeading, RichTextEditor } from "./RichTextEditor";
+import { applyBlockHeading, applyEditorLink, applySelectionAwareHeading, normalizeEditorLinkUrl, RichTextEditor } from "./RichTextEditor";
 import { ResizableImage, normalizeImageAlignment, normalizeImageWidth } from "./admin/ResizableImage";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 
@@ -114,5 +115,26 @@ describe("RichTextEditor images", () => {
     expect(html).toContain('data-align="right"');
     expect(html).toContain("width: 60%");
     editor.destroy();
+  });
+});
+
+describe("RichTextEditor links", () => {
+  it("restores the saved selection before applying a hyperlink", () => {
+    const editor = new Editor({ extensions: [StarterKit.configure({ link: false }), Link], content: "<p>Read the admission guide today.</p>" });
+    const start = editor.state.doc.textContent.indexOf("admission") + 1;
+    const selection = { from: start, to: start + "admission guide".length };
+
+    editor.commands.setTextSelection(selection);
+    editor.commands.setTextSelection(editor.state.doc.content.size);
+    applyEditorLink(editor, "dekhocampus.com/colleges", "", selection);
+
+    expect(editor.getHTML()).toContain('<a target="_blank" rel="noopener noreferrer nofollow" href="https://dekhocampus.com/colleges">admission guide</a>');
+    editor.destroy();
+  });
+
+  it("rejects executable protocols and accepts site-relative links", () => {
+    expect(normalizeEditorLinkUrl("javascript:alert(1)")).toBe("");
+    expect(normalizeEditorLinkUrl("/courses/mba")).toBe("/courses/mba");
+    expect(normalizeEditorLinkUrl("dekhocampus.com/news")).toBe("https://dekhocampus.com/news");
   });
 });

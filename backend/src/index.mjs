@@ -308,7 +308,12 @@ async function authorizeRest(table, request) {
 
   const identity = await resolveIdentity(request);
   if (!identity) throw new HttpError(401, "AUTH_REQUIRED", "A valid user session is required");
-  if (await isAdmin(identity.id)) return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: null, siteScope: siteScopeForRequest(request) };
+  if (await isAdmin(identity.id)) return {
+    request: await validateSiteScopeWriteRequest(table, request),
+    actorUserId: null,
+    siteScope: siteScopeForRequest(request),
+    allowManualArticleTopicDuplicate: table === "articles",
+  };
   const ownerColumn = ownedTables.get(table);
   if (request.method === "DELETE" && !ownerColumn) {
     throw new HttpError(403, "ADMIN_REQUIRED", "Only an administrator can permanently delete website data");
@@ -329,7 +334,13 @@ async function authorizeRest(table, request) {
       identity.id,
     );
     if (editorialRoles.some((row) => row.role === "content_head") && canContentHeadAccess(table, action)) {
-      return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: null, stageReview: false, forceDraft: false };
+      return {
+        request: await validateSiteScopeWriteRequest(table, request),
+        actorUserId: null,
+        stageReview: false,
+        forceDraft: false,
+        allowManualArticleTopicDuplicate: table === "articles" && action !== "view",
+      };
     }
     if (editorialRoles.some((row) => row.role === "content") && canContentEditorAccess(table, action)) {
       return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: identity.id, stageReview: action !== "view", forceDraft: action !== "view" };
@@ -346,7 +357,13 @@ async function authorizeRest(table, request) {
     );
     if (!permission.length) throw new HttpError(403, "PERMISSION_DENIED", `You do not have ${action} permission for ${table}`);
     const requiresReview = !Boolean(permission[0]?.can_publish);
-    return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: identity.id, stageReview: requiresReview, forceDraft: requiresReview };
+    return {
+      request: await validateSiteScopeWriteRequest(table, request),
+      actorUserId: identity.id,
+      stageReview: requiresReview,
+      forceDraft: requiresReview,
+      allowManualArticleTopicDuplicate: table === "articles" && action !== "view" && !requiresReview,
+    };
   }
   if (request.method === "POST") {
     const input = await request.clone().json();

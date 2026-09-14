@@ -292,6 +292,10 @@ export async function assertArticleBatchTopicsAvailable(candidates, {
   return true;
 }
 
+export function shouldEnforceArticleTopicGate(table, context = {}) {
+  return table === "articles" && context.allowManualArticleTopicDuplicate !== true;
+}
+
 export function assertArticleSiteScopeUnchanged(input, existingRows) {
   if (!Object.hasOwn(input || {}, "site_scope")) return;
   const requestedScope = input.site_scope;
@@ -694,9 +698,11 @@ async function handlePost(table, request, url, context) {
         ? await findExistingUpsertRows(table, staged, conflictColumns)
         : staged.map(() => []);
       const reviews = prepareStagedArticleUpsertReviews(rows, staged, existingByCandidate, conflictColumns);
-      await assertArticleBatchTopicsAvailable(reviews.gateCandidates, {
-        excludeIdsByCandidate: reviews.excludeIdsByCandidate,
-      });
+      if (shouldEnforceArticleTopicGate(table, context)) {
+        await assertArticleBatchTopicsAvailable(reviews.gateCandidates, {
+          excludeIdsByCandidate: reviews.excludeIdsByCandidate,
+        });
+      }
       await recordContentReviews({
         table,
         operation: "create",
@@ -729,10 +735,12 @@ async function handlePost(table, request, url, context) {
       const existingByCandidate = merge
         ? await findExistingUpsertRows(table, prepared, conflictColumns, tx, { lock: true })
         : prepared.map(() => []);
-      await assertArticleBatchTopicsAvailable(prepared, {
-        client: tx,
-        excludeIdsByCandidate: existingByCandidate.map((matches) => matches.map((row) => row.id).filter(Boolean)),
-      });
+      if (shouldEnforceArticleTopicGate(table, context)) {
+        await assertArticleBatchTopicsAvailable(prepared, {
+          client: tx,
+          excludeIdsByCandidate: existingByCandidate.map((matches) => matches.map((row) => row.id).filter(Boolean)),
+        });
+      }
       const saved = [];
       for (let index = 0; index < prepared.length; index += 1) {
         saved.push(await insertRow(table, rows[index], merge, conflictColumns, tx, prepared[index]));
@@ -764,7 +772,8 @@ async function handlePatch(table, request, url, context) {
   const where = buildWhere(table, url, params);
   if (!where) throw new Error("Refusing unfiltered update");
   const prefer = String(request.headers.get("prefer") || "");
-  const checkArticleTopic = table === "articles" && (Object.hasOwn(input, "title") || Object.hasOwn(input, "slug"));
+  const checkArticleTopic = shouldEnforceArticleTopicGate(table, context)
+    && (Object.hasOwn(input, "title") || Object.hasOwn(input, "slug"));
   const checkArticleScope = table === "articles" && Object.hasOwn(input, "site_scope");
   const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic || checkArticleScope;
   const whereParams = params.slice(columns.length);

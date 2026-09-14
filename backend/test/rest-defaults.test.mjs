@@ -16,6 +16,7 @@ import {
   omitDerivedFields,
   prepareStagedArticleUpsertReviews,
   resolveConflictColumns,
+  shouldEnforceArticleTopicGate,
   upsertUpdateColumns,
 } from "../src/rest.mjs";
 
@@ -124,6 +125,13 @@ test("article topic checks allow matching coverage in the other tenant only", as
   await assert.doesNotReject(assertArticleBatchTopicsAvailable([
     { site_scope: "sarkari", title: "SSC CGL 2026 Application Notification and Dates" },
   ], { client }));
+});
+
+test("only trusted manual article writes bypass the REST topic gate", () => {
+  assert.equal(shouldEnforceArticleTopicGate("articles"), true);
+  assert.equal(shouldEnforceArticleTopicGate("articles", { allowManualArticleTopicDuplicate: false }), true);
+  assert.equal(shouldEnforceArticleTopicGate("articles", { allowManualArticleTopicDuplicate: true }), false);
+  assert.equal(shouldEnforceArticleTopicGate("courses", { allowManualArticleTopicDuplicate: true }), false);
 });
 
 test("exact article upsert targets supply only their own ID to the strict gate", async () => {

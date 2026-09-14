@@ -48,4 +48,24 @@ describe("RichText", () => {
     expect(image.style.marginLeft).toBe("auto");
     expect(image.style.marginRight).toBe("auto");
   });
+
+  it("preserves safe hyperlinks and makes external links safe and visible", () => {
+    const { container } = render(
+      <RichText html={'<p>Read the <a href="https://example.com/guide">admission guide</a> or <a href="/colleges">browse colleges</a>.</p>'} />,
+    );
+    const links = container.querySelectorAll("a");
+
+    expect(links).toHaveLength(2);
+    expect(links[0]).toHaveAttribute("href", "https://example.com/guide");
+    expect(links[0]).toHaveAttribute("target", "_blank");
+    expect(links[0]).toHaveAttribute("rel", "noopener noreferrer");
+    expect(links[1]).toHaveAttribute("href", "/colleges");
+    expect(links[1]).not.toHaveAttribute("target");
+    expect(container.firstElementChild?.className).toContain("prose-a:underline");
+  });
+
+  it("removes unsafe hyperlink protocols", () => {
+    const { container } = render(<RichText html={'<a href="javascript:alert(1)">Unsafe link</a>'} />);
+    expect(container.querySelector("a")).not.toHaveAttribute("href");
+  });
 });

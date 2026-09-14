@@ -155,7 +155,7 @@ export function RichText({ html, className }: RichTextProps) {
     "prose-h6:text-sm prose-h6:font-bold prose-h6:mt-3 prose-h6:mb-1",
     "prose-strong:text-foreground prose-strong:font-bold",
     "prose-em:italic",
-    "prose-a:text-primary prose-a:font-medium prose-a:no-underline hover:prose-a:underline",
+    "prose-a:text-primary prose-a:font-semibold prose-a:underline prose-a:decoration-primary/45 prose-a:decoration-[1.5px] prose-a:underline-offset-[3px] hover:prose-a:decoration-primary",
     "prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-muted/40 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:not-italic prose-blockquote:text-foreground/85 prose-blockquote:rounded-r-md prose-blockquote:my-4",
     "prose-ul:my-3 prose-ol:my-3 prose-li:my-1.5 prose-li:text-foreground/90 prose-li:marker:text-primary prose-li:marker:font-bold",
     "prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:before:content-none prose-code:after:content-none",

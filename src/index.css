@@ -905,6 +905,7 @@
 
   .article-prose--news a {
     color: hsl(var(--primary));
+    text-decoration-line: underline;
     text-decoration-thickness: 1.5px;
     text-underline-offset: 0.18em;
   }
