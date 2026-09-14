@@ -1,8 +1,9 @@
 import { Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { FontSize, TextStyle } from "@tiptap/extension-text-style";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { applyBlockHeading, applySelectionAwareHeading } from "./RichTextEditor";
+import { applyBlockHeading, applySelectionAwareHeading, RichTextEditor } from "./RichTextEditor";
 import { ResizableImage, normalizeImageAlignment, normalizeImageWidth } from "./admin/ResizableImage";
 
 function createEditor() {
@@ -67,6 +68,18 @@ describe("RichTextEditor heading commands", () => {
 });
 
 describe("RichTextEditor images", () => {
+  it("renders the complete image dialog outside clipped editor containers", async () => {
+    render(<RichTextEditor value="<p>Article copy</p>" onChange={() => undefined} />);
+
+    fireEvent.click(await screen.findByTitle("Insert image"));
+
+    const dialog = screen.getByText("Image URL or upload").closest(".fixed");
+    expect(dialog?.parentElement).toBe(document.body);
+    expect(screen.getByRole("button", { name: "Upload" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Library" })).toBeInTheDocument();
+    expect(screen.getByText("Alt text")).toBeInTheDocument();
+  });
+
   it("normalizes image size and alignment values", () => {
     expect(normalizeImageWidth(5)).toBe(20);
     expect(normalizeImageWidth("64.4%")).toBe(64);

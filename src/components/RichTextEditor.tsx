@@ -18,6 +18,7 @@ import {
   ChevronDown, Palette, Highlighter, Eye, Pencil, FileText, Trash2, Pilcrow, Undo2, Redo2, Loader2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { RichText } from "@/components/detail/RichText";
 import { InternalLinkPicker } from "@/components/admin/InternalLinkPicker";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
@@ -366,6 +367,8 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
     setTableOpen(false);
   };
 
+  const portalRoot = typeof document === "undefined" ? null : document.body;
+
   return (
     <div className="sticky top-0 z-20 flex items-center gap-0.5 border-b border-border bg-background/95 px-2 py-1.5 backdrop-blur flex-wrap">
       <Btn icon={Undo2} title="Undo" onClick={() => editor.chain().focus().undo().run()} />
@@ -469,7 +472,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       )}
 
       {/* Link dialog */}
-      {linkDialog && (
+      {linkDialog && portalRoot && createPortal(
         <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4" onClick={() => setLinkDialog(false)}>
           <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md p-5 space-y-3" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between gap-2">
@@ -496,7 +499,8 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
               <button type="button" onClick={applyLink} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm">Insert</button>
             </div>
           </div>
-        </div>
+        </div>,
+        portalRoot,
       )}
 
       <InternalLinkPicker
@@ -509,7 +513,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       />
 
       {/* Image dialog */}
-      {imageDialog && (
+      {imageDialog && portalRoot && createPortal(
         <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4" onClick={() => setImageDialog(false)}>
           <div className="max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2 text-foreground font-semibold"><ImageIcon className="w-4 h-4 text-primary" /> {editingImage ? "Edit image" : "Insert image"}</div>
@@ -549,11 +553,12 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
               <button type="button" onClick={applyImage} disabled={!imgUrl} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm disabled:opacity-40">{editingImage ? "Update" : "Insert"}</button>
             </div>
           </div>
-        </div>
+        </div>,
+        portalRoot,
       )}
 
       {/* Document viewer dialog */}
-      {docDialog && (
+      {docDialog && portalRoot && createPortal(
         <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4" onClick={() => setDocDialog(false)}>
           <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg p-5 space-y-3 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2 text-foreground font-semibold"><FileText className="w-4 h-4 text-primary" /> Insert document viewer</div>
@@ -586,7 +591,8 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
               <button type="button" onClick={applyDoc} disabled={!docImages.length} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm disabled:opacity-40">Insert ({docImages.length})</button>
             </div>
           </div>
-        </div>
+        </div>,
+        portalRoot,
       )}
     </div>
   );
