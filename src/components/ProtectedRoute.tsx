@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
   module?: Module;
 }
 
-const CONTENT_HEAD_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles"]);
+const CONTENT_HEAD_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles", "/admin/media"]);
 
 export function ProtectedRoute({ children, requireAdmin = false, module }: ProtectedRouteProps) {
   const { user, isAdmin, roles, canAccess, isLoading } = useAuth();

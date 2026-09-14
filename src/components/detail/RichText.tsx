@@ -30,7 +30,7 @@ const ALLOWED_TAGS = [
 const ALLOWED_ATTR = [
   "href","target","rel","title","alt","src","srcset","sizes","loading","decoding",
   "width","height","colspan","rowspan","scope","start","reversed","type",
-  "class","style","id","name",
+  "class","style","id","name","data-width","data-align",
 ];
 
 function postProcess(html: string): string {
@@ -64,6 +64,19 @@ function postProcess(html: string): string {
   tpl.content.querySelectorAll("img").forEach((img) => {
     img.setAttribute("loading", "lazy");
     img.setAttribute("decoding", "async");
+    const rawWidth = Number.parseFloat(img.getAttribute("data-width") || "");
+    const width = Number.isFinite(rawWidth) ? Math.min(100, Math.max(20, Math.round(rawWidth))) : null;
+    const rawAlignment = img.getAttribute("data-align");
+    const alignment = rawAlignment === "left" || rawAlignment === "right" ? rawAlignment : "center";
+    const applyLayout = (element: HTMLElement) => {
+      if (width !== null) {
+        element.dataset.width = String(width);
+        element.style.width = `${width}%`;
+      }
+      element.dataset.align = alignment;
+      element.style.marginLeft = alignment === "left" ? "0" : "auto";
+      element.style.marginRight = alignment === "right" ? "0" : "auto";
+    };
     const cap = img.getAttribute("title") || "";
     if (cap && img.parentElement?.tagName.toLowerCase() !== "figure") {
       const fig = document.createElement("figure");
@@ -73,6 +86,17 @@ function postProcess(html: string): string {
       img.parentNode?.insertBefore(fig, img);
       fig.appendChild(img);
       fig.appendChild(figCap);
+      applyLayout(fig);
+      img.style.width = "100%";
+      img.style.marginLeft = "0";
+      img.style.marginRight = "0";
+    } else if (img.parentElement?.tagName.toLowerCase() === "figure") {
+      applyLayout(img.parentElement);
+      img.style.width = "100%";
+      img.style.marginLeft = "0";
+      img.style.marginRight = "0";
+    } else {
+      applyLayout(img);
     }
   });
 

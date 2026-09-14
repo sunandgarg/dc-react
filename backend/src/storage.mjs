@@ -125,12 +125,16 @@ export function hasWebsiteMediaPermission(rows = []) {
   });
 }
 
+export function hasWebsiteMediaRole(rows = []) {
+  return rows.some((row) => ["content", "content_head", "manager"].includes(String(row.role || "")));
+}
+
 async function canManageWebsiteMedia(userId) {
-  const contentRole = await prisma.$queryRawUnsafe(
-    "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content' LIMIT 1",
+  const mediaRoles = await prisma.$queryRawUnsafe(
+    "SELECT `role` FROM `user_roles` WHERE `user_id` = ? AND `role` IN ('content','content_head','manager')",
     userId,
   );
-  if (contentRole.length) return true;
+  if (hasWebsiteMediaRole(mediaRoles)) return true;
   const permissions = await prisma.$queryRawUnsafe(
     `SELECT \`resource\`,\`module\`,\`allow\`,\`can_create\`,\`can_edit\`
        FROM \`user_permissions\`
@@ -310,4 +314,4 @@ export async function handleStorage(request) {
   return s3Storage(request, route, config);
 }
 
-export const storagePolicyInternals = { checkedBody, hasWebsiteMediaPermission, ownsPath, routeDetails, PUBLIC_READ_BUCKETS };
+export const storagePolicyInternals = { checkedBody, hasWebsiteMediaPermission, hasWebsiteMediaRole, ownsPath, routeDetails, PUBLIC_READ_BUCKETS };

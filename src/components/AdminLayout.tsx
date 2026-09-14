@@ -58,6 +58,7 @@ const groups: NavGroup[] = [
       { label: "Exams", href: "/admin/exams", icon: FileText, module: "exams" },
       { label: "Clean Data", href: "/admin/clean-data", icon: DatabaseZap, module: "content" },
       { label: "Articles", href: "/admin/articles", icon: Newspaper, module: "articles" },
+      { label: "Media Library", href: "/admin/media", icon: Image, module: "media" },
       { label: "Sarkari Articles", href: "/admin/sarkari/articles", icon: Newspaper, module: "articles" },
       { label: "Sarkari Job AI Studio", href: "/admin/sarkari/ai-studio", icon: Sparkles, module: "articles" },
       { label: "Content Review", href: "/admin/content-review", icon: GitCompareArrows },
@@ -153,7 +154,7 @@ const groups: NavGroup[] = [
 ];
 
 interface AdminLayoutProps { children: ReactNode; title: string; }
-const CONTENT_HEAD_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles"]);
+const CONTENT_HEAD_PATHS = new Set(["/admin/colleges", "/admin/courses", "/admin/exams", "/admin/articles", "/admin/media"]);
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
   const location = useLocation();

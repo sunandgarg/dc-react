@@ -138,6 +138,7 @@ const AdminColleges = lazyRetry(() => import("./pages/AdminColleges"), "AdminCol
 const AdminCourses = lazyRetry(() => import("./pages/AdminCourses"), "AdminCourses");
 const AdminExams = lazyRetry(() => import("./pages/AdminExams"), "AdminExams");
 const AdminArticles = lazyRetry(() => import("./pages/AdminArticles"), "AdminArticles");
+const AdminMedia = lazyRetry(() => import("./pages/AdminMedia"), "AdminMedia");
 const AdminContentReview = lazyRetry(() => import("./pages/AdminContentReview"), "AdminContentReview");
 const AdminDataCleaner = lazyRetry(() => import("./pages/AdminDataCleaner"), "AdminDataCleaner");
 const AdminDataCleanerPreview = lazyRetry(() => import("./pages/AdminDataCleanerPreview"), "AdminDataCleanerPreview");
@@ -388,6 +389,7 @@ const App = () => (
               <Route path="/admin/url-shortener" element={<ProtectedRoute requireAdmin><AdminUrlShortener /></ProtectedRoute>} />
               <Route path="/admin/url-shortener/:tab" element={<ProtectedRoute requireAdmin><AdminUrlShortener /></ProtectedRoute>} />
               <Route path="/admin/articles" element={<ProtectedRoute module="articles"><AdminArticles /></ProtectedRoute>} />
+              <Route path="/admin/media" element={<ProtectedRoute module="media"><AdminMedia /></ProtectedRoute>} />
               <Route path="/admin/sarkari/articles" element={<ProtectedRoute module="articles"><AdminArticles siteScope="sarkari" /></ProtectedRoute>} />
               <Route path="/admin/sarkari/ai-studio" element={<ProtectedRoute module="articles"><AdminArticles siteScope="sarkari" studioMode /></ProtectedRoute>} />
               <Route path="/admin/content-review" element={<ProtectedRoute requireAdmin><AdminContentReview /></ProtectedRoute>} />

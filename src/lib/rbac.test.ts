@@ -13,6 +13,8 @@ describe("RBAC capability matrix", () => {
     const roles: AppRole[] = ["manager"];
     expect(can(roles, "articles", "edit")).toBe(true);
     expect(can(roles, "articles", "delete")).toBe(false);
+    expect(can(roles, "media", "create")).toBe(true);
+    expect(can(roles, "media", "delete")).toBe(false);
     expect(can(roles, "articles", "publish")).toBe(true);
     expect(can(roles, "leads", "view")).toBe(true);
     expect(can(roles, "leads", "edit")).toBe(false);
@@ -26,6 +28,7 @@ describe("RBAC capability matrix", () => {
     expect(can(roles, "exams", "publish")).toBe(true);
     expect(can(roles, "articles", "delete")).toBe(false);
     expect(can(roles, "leads", "view")).toBe(false);
+    expect(can(roles, "media", "edit")).toBe(true);
     expect(can(roles, "scholarships", "view")).toBe(false);
   });
 

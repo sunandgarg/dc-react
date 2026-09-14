@@ -23,4 +23,29 @@ describe("RichText", () => {
     expect(container.querySelector("h2")?.textContent).toBe("Admissions overview");
     expect(container.querySelector("h3")?.textContent).toBe("Eligibility details");
   });
+
+  it("preserves safe editor image size and alignment on public pages", () => {
+    const { container } = render(
+      <RichText html={'<img src="https://example.com/campus.webp" alt="Campus" data-width="60" data-align="right">'} />,
+    );
+    const image = container.querySelector("img") as HTMLImageElement;
+
+    expect(image.dataset.width).toBe("60");
+    expect(image.dataset.align).toBe("right");
+    expect(image.style.width).toBe("60%");
+    expect(image.style.marginLeft).toBe("auto");
+    expect(image.style.marginRight).toBe("0px");
+  });
+
+  it("clamps unsafe image layout values", () => {
+    const { container } = render(
+      <RichText html={'<img src="https://example.com/campus.webp" data-width="500" data-align="sideways">'} />,
+    );
+    const image = container.querySelector("img") as HTMLImageElement;
+
+    expect(image.dataset.width).toBe("100");
+    expect(image.dataset.align).toBe("center");
+    expect(image.style.marginLeft).toBe("auto");
+    expect(image.style.marginRight).toBe("auto");
+  });
 });

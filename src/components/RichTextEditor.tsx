@@ -2,7 +2,6 @@ import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
-import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Table } from "@tiptap/extension-table";
@@ -16,11 +15,16 @@ import {
   Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, List, ListOrdered, Quote, Link as LinkIcon,
   Image as ImageIcon, Table as TableIcon, Minus, Code2, Maximize2, RemoveFormatting, Strikethrough,
-  ChevronDown, Palette, Highlighter, Eye, Pencil, FileText, Trash2, Pilcrow, Undo2, Redo2,
+  ChevronDown, Palette, Highlighter, Eye, Pencil, FileText, Trash2, Pilcrow, Undo2, Redo2, Loader2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { RichText } from "@/components/detail/RichText";
 import { InternalLinkPicker } from "@/components/admin/InternalLinkPicker";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { ResizableImage, normalizeImageAlignment, normalizeImageWidth, type ImageAlignment } from "@/components/admin/ResizableImage";
+import { backendClient } from "@/integrations/backend/client";
+import { optimizeImageFile } from "@/lib/imageOptimizer";
+import { toast } from "sonner";
 
 interface RichTextEditorProps {
   label?: string;
@@ -47,6 +51,23 @@ const inlineHeadingSizes: Record<HeadingLevel, string> = {
   6: "0.875rem",
 };
 
+const safeInlineImageTypes = new Set(["image/avif", "image/gif", "image/jpeg", "image/png", "image/webp"]);
+
+async function uploadInlineImage(rawFile: File): Promise<string> {
+  if (!safeInlineImageTypes.has(rawFile.type)) throw new Error("Use a PNG, JPG, WebP, GIF, or AVIF image");
+  const file = rawFile.type === "image/gif" ? rawFile : await optimizeImageFile(rawFile);
+  if (file.size > 8 * 1024 * 1024) throw new Error("Images in content cannot exceed 8 MB");
+  const ext = file.name.split(".").pop() || "webp";
+  const path = `editor/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await backendClient.storage.from("admin-uploads").upload(path, file, {
+    cacheControl: "31536000",
+    upsert: false,
+    contentType: file.type,
+  });
+  if (error) throw error;
+  return backendClient.storage.from("admin-uploads").getPublicUrl(path).data.publicUrl;
+}
+
 export function applySelectionAwareHeading(editor: Editor, level: HeadingLevel) {
   const { selection } = editor.state;
   const { $from, $to, empty } = selection;
@@ -69,8 +90,48 @@ export function applySelectionAwareHeading(editor: Editor, level: HeadingLevel) 
 export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, bare = false, autoGrow = false }: RichTextEditorProps) {
   const [fullscreen, setFullscreen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [inlineUploads, setInlineUploads] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<Editor | null>(null);
   const lastEmittedHtml = useRef(value || "");
+
+  const insertImageFiles = async (files: File[], position?: number) => {
+    const accepted = files.filter((file) => safeInlineImageTypes.has(file.type));
+    if (!accepted.length) {
+      toast.error("Drop or paste a PNG, JPG, WebP, GIF, or AVIF image");
+      return;
+    }
+    setInlineUploads((count) => count + accepted.length);
+    let insertAt = position;
+    try {
+      for (const file of accepted) {
+        const src = await uploadInlineImage(file);
+        const currentEditor = editorRef.current;
+        if (!currentEditor) return;
+        const content = {
+          type: "image",
+          attrs: {
+            src,
+            alt: file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "),
+            width: 100,
+            align: "center",
+          },
+        };
+        if (typeof insertAt === "number") {
+          const positionInDocument = Math.min(Math.max(insertAt, 0), currentEditor.state.doc.content.size);
+          currentEditor.chain().focus().insertContentAt(positionInDocument, content).run();
+          insertAt = positionInDocument + 1;
+        } else {
+          currentEditor.chain().focus().insertContent(content).run();
+        }
+      }
+      toast.success(`${accepted.length} image${accepted.length === 1 ? "" : "s"} uploaded`);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Image upload failed");
+    } finally {
+      setInlineUploads((count) => Math.max(0, count - accepted.length));
+    }
+  };
 
   const editor = useEditor({
     extensions: [
@@ -81,7 +142,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
       Color,
       Highlight.configure({ multicolor: true }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
-      Image.configure({ HTMLAttributes: { class: "rounded-lg max-w-full my-2" } }),
+      ResizableImage.configure({ HTMLAttributes: { class: "rounded-lg max-w-full my-2" } }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Placeholder.configure({ placeholder: placeholder || "Start typing…" }),
       Table.configure({ resizable: true, HTMLAttributes: { class: "border-collapse w-full my-2" } }),
@@ -94,13 +155,35 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
       attributes: {
         class: "prose prose-sm max-w-none focus:outline-none px-3 py-2 min-h-[120px]",
       },
+      handlePaste: (view, event) => {
+        const files = Array.from(event.clipboardData?.files || []);
+        if (!files.some((file) => safeInlineImageTypes.has(file.type))) return false;
+        event.preventDefault();
+        void insertImageFiles(files, view.state.selection.from);
+        return true;
+      },
+      handleDrop: (view, event, _slice, moved) => {
+        if (moved) return false;
+        const files = Array.from(event.dataTransfer?.files || []);
+        if (!files.some((file) => safeInlineImageTypes.has(file.type))) return false;
+        event.preventDefault();
+        const position = view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos;
+        void insertImageFiles(files, position);
+        return true;
+      },
     },
+    onCreate: ({ editor }) => { editorRef.current = editor; },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       lastEmittedHtml.current = html;
       onChange(html);
     },
   });
+
+  useEffect(() => {
+    editorRef.current = editor;
+    return () => { if (editorRef.current === editor) editorRef.current = null; };
+  }, [editor]);
 
   // Sync a genuinely external record change without resetting the writer's
   // selection when the parent echoes the HTML emitted by this editor.
@@ -138,7 +221,15 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
               {!value?.trim() && <p className="text-xs text-muted-foreground italic">Nothing to preview yet.</p>}
             </div>
           ) : (
-            <EditorContent editor={editor} />
+            <div className="relative">
+              <EditorContent editor={editor} />
+              {inlineUploads > 0 && (
+                <div className="absolute right-3 top-3 flex items-center gap-2 rounded-md border border-border bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                  Uploading {inlineUploads} image{inlineUploads === 1 ? "" : "s"}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -158,8 +249,21 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   const [linkText, setLinkText] = useState("");
   const [imgUrl, setImgUrl] = useState("");
   const [imgAlt, setImgAlt] = useState("");
-  const [uploading, setUploading] = useState(false);
+  const [imgWidth, setImgWidth] = useState(100);
+  const [imgAlign, setImgAlign] = useState<ImageAlignment>("center");
+  const [editingImage, setEditingImage] = useState(false);
+  const [, setEditorVersion] = useState(0);
   const [internalPickerOpen, setInternalPickerOpen] = useState(false);
+
+  useEffect(() => {
+    const refresh = () => setEditorVersion((version) => version + 1);
+    editor.on("selectionUpdate", refresh);
+    editor.on("transaction", refresh);
+    return () => {
+      editor.off("selectionUpdate", refresh);
+      editor.off("transaction", refresh);
+    };
+  }, [editor]);
 
   const Btn = ({ icon: Icon, title, onClick, active }: any) => (
     <button
@@ -202,29 +306,29 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
     setLinkDialog(false);
   };
 
-  const openImage = () => { setImgUrl(""); setImgAlt(""); setImageDialog(true); };
+  const openImage = () => {
+    setImgUrl("");
+    setImgAlt("");
+    setImgWidth(100);
+    setImgAlign("center");
+    setEditingImage(false);
+    setImageDialog(true);
+  };
+  const openImageEditor = () => {
+    const attributes = editor.getAttributes("image");
+    setImgUrl(String(attributes.src || ""));
+    setImgAlt(String(attributes.alt || ""));
+    setImgWidth(normalizeImageWidth(attributes.width));
+    setImgAlign(normalizeImageAlignment(attributes.align));
+    setEditingImage(true);
+    setImageDialog(true);
+  };
   const applyImage = () => {
     if (!imgUrl) return;
-    editor.chain().focus().setImage({ src: imgUrl, alt: imgAlt }).run();
+    const attributes = { src: imgUrl, alt: imgAlt, width: normalizeImageWidth(imgWidth), align: normalizeImageAlignment(imgAlign) };
+    if (editingImage && editor.isActive("image")) editor.chain().focus().updateAttributes("image", attributes).run();
+    else editor.chain().focus().insertContent({ type: "image", attrs: attributes }).run();
     setImageDialog(false);
-  };
-
-  const handleUpload = async (rawFile: File) => {
-    if (!rawFile) return;
-    setUploading(true);
-    try {
-      const { backendClient } = await import("@/integrations/backend/client");
-      const { optimizeImageFile } = await import("@/lib/imageOptimizer");
-      const file = await optimizeImageFile(rawFile);
-      const ext = file.name.split(".").pop() || "webp";
-      const path = `editor/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const { error } = await backendClient.storage.from("admin-uploads").upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
-      if (error) throw error;
-      const { data: pub } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
-      setImgUrl(pub.publicUrl);
-    } catch (e: any) {
-      alert(e.message || "Upload failed");
-    } finally { setUploading(false); }
   };
 
   const openDoc = () => { setDocTitle(""); setDocImages([]); setDocDialog(true); };
@@ -321,6 +425,49 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       <Btn icon={previewMode ? Pencil : Eye} title={previewMode ? "Back to editor" : "Preview as it appears on the site"} active={previewMode} onClick={() => setPreviewMode(!previewMode)} />
       <Btn icon={Maximize2} title={fullscreen ? "Exit fullscreen" : "Fullscreen"} active={fullscreen} onClick={() => setFullscreen(!fullscreen)} />
 
+      {editor.isActive("image") && (
+        <div className="mt-1 flex basis-full flex-wrap items-center gap-1 border-t border-border/70 pt-1.5">
+          <span className="mr-1 text-[10px] font-bold uppercase text-muted-foreground">Image</span>
+          <div className="flex overflow-hidden rounded-md border border-border" aria-label="Image size">
+            {[35, 60, 85, 100].map((width) => (
+              <button
+                key={width}
+                type="button"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => editor.chain().focus().updateAttributes("image", { width }).run()}
+                className={`h-7 border-r border-border px-2 text-[11px] font-semibold last:border-r-0 ${normalizeImageWidth(editor.getAttributes("image").width) === width ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground hover:bg-muted"}`}
+              >
+                {width}%
+              </button>
+            ))}
+          </div>
+          <div className="ml-1 flex overflow-hidden rounded-md border border-border" aria-label="Image alignment">
+            {([
+              ["left", AlignLeft, "Align image left"],
+              ["center", AlignCenter, "Center image"],
+              ["right", AlignRight, "Align image right"],
+            ] as const).map(([alignment, Icon, title]) => (
+              <button
+                key={alignment}
+                type="button"
+                title={title}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => editor.chain().focus().updateAttributes("image", { align: alignment }).run()}
+                className={`flex h-7 w-8 items-center justify-center border-r border-border last:border-r-0 ${normalizeImageAlignment(editor.getAttributes("image").align) === alignment ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground hover:bg-muted"}`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+              </button>
+            ))}
+          </div>
+          <button type="button" title="Edit image link and alt text" onMouseDown={(event) => event.preventDefault()} onClick={openImageEditor} className="ml-1 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground">
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+          <button type="button" title="Remove image" onMouseDown={(event) => event.preventDefault()} onClick={() => editor.chain().focus().deleteSelection().run()} className="flex h-7 w-7 items-center justify-center rounded-md text-destructive hover:bg-destructive/10">
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Link dialog */}
       {linkDialog && (
         <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4" onClick={() => setLinkDialog(false)}>
@@ -361,31 +508,45 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
         }}
       />
 
-      {/* Image dialog with upload + URL */}
+      {/* Image dialog */}
       {imageDialog && (
         <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4" onClick={() => setImageDialog(false)}>
-          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md p-5 space-y-3" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-2 text-foreground font-semibold"><ImageIcon className="w-4 h-4 text-primary" /> Insert image</div>
-            <label className="block border-2 border-dashed border-border rounded-xl p-4 text-center cursor-pointer hover:border-primary/50 transition">
-              <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && handleUpload(e.target.files[0])} />
-              <ImageIcon className="w-6 h-6 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-xs text-muted-foreground">{uploading ? "Uploading…" : "Click to upload from device"}</p>
-            </label>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <div className="flex-1 h-px bg-border" /> OR <div className="flex-1 h-px bg-border" />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground">Image URL</label>
-              <input value={imgUrl} onChange={e => setImgUrl(e.target.value)} placeholder="https://…/image.jpg" className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm" />
-            </div>
+          <div className="max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2 text-foreground font-semibold"><ImageIcon className="w-4 h-4 text-primary" /> {editingImage ? "Edit image" : "Insert image"}</div>
+            <ImageUploadField value={imgUrl} onChange={setImgUrl} label="Image URL or upload" folder="editor" maxSizeMb={8} placeholder="Paste an image URL" />
             <div>
               <label className="text-xs font-medium text-muted-foreground">Alt text</label>
               <input value={imgAlt} onChange={e => setImgAlt(e.target.value)} placeholder="Description for SEO" className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm" />
             </div>
-            {imgUrl && <img src={imgUrl} alt="" className="max-h-40 rounded-lg border border-border mx-auto" />}
+            <div>
+              <div className="mb-2 flex items-center justify-between gap-3 text-xs font-medium text-muted-foreground">
+                <span>Width</span>
+                <span>{imgWidth}%</span>
+              </div>
+              <input type="range" min="20" max="100" step="1" value={imgWidth} onChange={(event) => setImgWidth(normalizeImageWidth(event.target.value))} className="w-full accent-primary" />
+              <div className="mt-2 grid grid-cols-4 overflow-hidden rounded-md border border-border">
+                {[35, 60, 85, 100].map((width) => (
+                  <button key={width} type="button" onClick={() => setImgWidth(width)} className={`h-8 border-r border-border text-xs font-semibold last:border-r-0 ${imgWidth === width ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}>{width}%</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="mb-2 block text-xs font-medium text-muted-foreground">Alignment</label>
+              <div className="grid grid-cols-3 overflow-hidden rounded-md border border-border">
+                {([
+                  ["left", AlignLeft, "Left"],
+                  ["center", AlignCenter, "Center"],
+                  ["right", AlignRight, "Right"],
+                ] as const).map(([alignment, Icon, text]) => (
+                  <button key={alignment} type="button" onClick={() => setImgAlign(alignment)} className={`flex h-9 items-center justify-center gap-1.5 border-r border-border text-xs font-semibold last:border-r-0 ${imgAlign === alignment ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}>
+                    <Icon className="h-3.5 w-3.5" /> {text}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="flex justify-end gap-2 pt-1">
               <button type="button" onClick={() => setImageDialog(false)} className="px-3 py-1.5 rounded-lg text-sm hover:bg-muted">Cancel</button>
-              <button type="button" onClick={applyImage} disabled={!imgUrl} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm disabled:opacity-40">Insert</button>
+              <button type="button" onClick={applyImage} disabled={!imgUrl} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm disabled:opacity-40">{editingImage ? "Update" : "Insert"}</button>
             </div>
           </div>
         </div>

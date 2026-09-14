@@ -23,12 +23,13 @@ export function ArrayFieldEditor({ label, values, onChange, placeholder, suggest
   const folder = imgCfg.folder || "images";
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const [libOpen, setLibOpen] = useState(false);
   const [libItems, setLibItems] = useState<{ name: string; url: string }[]>([]);
   const [libLoading, setLibLoading] = useState(false);
   const [libQuery, setLibQuery] = useState("");
 
-  const handleFiles = async (files: FileList | null) => {
+  const handleFiles = async (files: FileList | File[] | null) => {
     if (!files || !files.length) return;
     setUploading(true);
     try {
@@ -55,18 +56,21 @@ export function ArrayFieldEditor({ label, values, onChange, placeholder, suggest
   const loadLibrary = useCallback(async () => {
     setLibLoading(true);
     try {
-      const { data, error } = await backendClient.storage.from(bucket).list(folder, {
-        limit: 200, sortBy: { column: "created_at", order: "desc" },
-      });
-      if (error) throw error;
-      const items = (data || [])
-        .filter((f) => !f.name.startsWith("."))
-        .map((f) => {
-          const path = `${folder}/${f.name}`;
-          const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
-          return { name: f.name, url: pub.publicUrl };
+      const folders = [...new Set([folder, "media-library"])];
+      const responses = await Promise.all(folders.map(async (sourceFolder) => {
+        const { data, error } = await backendClient.storage.from(bucket).list(sourceFolder, {
+          limit: 200, sortBy: { column: "created_at", order: "desc" },
         });
-      setLibItems(items);
+        if (error) throw error;
+        return (data || [])
+          .filter((file) => !file.name.startsWith(".") && !file.name.includes("/"))
+          .map((file) => {
+            const path = `${sourceFolder}/${file.name}`;
+            const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
+            return { name: path, url: pub.publicUrl };
+          });
+      }));
+      setLibItems(responses.flat().filter((item, index, all) => all.findIndex((candidate) => candidate.url === item.url) === index));
     } catch (e: any) {
       toast.error(e.message || "Failed to load library");
     } finally {
@@ -110,7 +114,7 @@ export function ArrayFieldEditor({ label, values, onChange, placeholder, suggest
         </Button>
         {imageUpload && (
           <>
-            <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
+            <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
             <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={uploading} className="h-9 px-3 gap-1" title="Upload images">
               {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
             </Button>
@@ -120,6 +124,27 @@ export function ArrayFieldEditor({ label, values, onChange, placeholder, suggest
           </>
         )}
       </div>
+      {imageUpload && (
+        <button
+          type="button"
+          disabled={uploading}
+          onClick={() => fileRef.current?.click()}
+          onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
+          onDragOver={(event) => { event.preventDefault(); setDragging(true); }}
+          onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false); }}
+          onDrop={(event) => {
+            event.preventDefault();
+            setDragging(false);
+            const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith("image/"));
+            if (files.length) void handleFiles(files);
+            else toast.error("Drop PNG, JPG, WebP, GIF, or AVIF images");
+          }}
+          className={`flex min-h-16 w-full items-center justify-center gap-2 rounded-lg border border-dashed px-3 text-xs transition ${dragging ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:bg-muted/30"}`}
+        >
+          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+          Drop one or more images here
+        </button>
+      )}
       {imageUpload && libOpen && (
         <div className="border border-border rounded-xl p-2 bg-muted/20">
           <div className="flex items-center gap-2 mb-2">

@@ -6,7 +6,7 @@ export type Module =
   | "promoted_programs" | "featured" | "ai_providers" | "otp_providers"
   | "applications" | "referrals" | "careers" | "companies" | "placements"
   | "faculty" | "facilities" | "contacts" | "course_fees" | "partners" | "cat_universe"
-  | "content" | "legal" | "sitemap" | "docs" | "authors" | "scholarships" | "jobs";
+  | "content" | "media" | "legal" | "sitemap" | "docs" | "authors" | "scholarships" | "jobs";
 
 export type Action = "view" | "create" | "edit" | "edit_own" | "delete" | "publish";
 
@@ -27,7 +27,7 @@ export const CAPABILITIES: Matrix = {
       "integrations","backup","ads","banners","promoted_programs","featured",
       "ai_providers","otp_providers","applications","referrals","careers",
       "companies","placements","faculty","facilities","contacts","course_fees",
-      "partners","cat_universe","content","legal","sitemap","docs",
+      "partners","cat_universe","content","media","legal","sitemap","docs",
     ] as Module[]).map(m => [m, ALL])
   ),
   manager: {
@@ -37,6 +37,7 @@ export const CAPABILITIES: Matrix = {
     careers: REVIEW_AND_PUBLISH, companies: REVIEW_AND_PUBLISH, placements: REVIEW_AND_PUBLISH, faculty: REVIEW_AND_PUBLISH,
     facilities: REVIEW_AND_PUBLISH, contacts: REVIEW_AND_PUBLISH, course_fees: REVIEW_AND_PUBLISH,
     partners: REVIEW_AND_PUBLISH, cat_universe: REVIEW_AND_PUBLISH, content: REVIEW_AND_PUBLISH, legal: REVIEW_AND_PUBLISH, sitemap: VIEW, docs: VIEW,
+    media: NO_DELETE,
     authors: REVIEW_AND_PUBLISH, scholarships: REVIEW_AND_PUBLISH, jobs: REVIEW_AND_PUBLISH,
   },
   content_head: {
@@ -44,6 +45,7 @@ export const CAPABILITIES: Matrix = {
     colleges: REVIEW_AND_PUBLISH,
     courses: REVIEW_AND_PUBLISH,
     exams: REVIEW_AND_PUBLISH,
+    media: NO_DELETE,
   },
   content: {
     articles: NO_DELETE, colleges: NO_DELETE, courses: NO_DELETE, exams: NO_DELETE,
@@ -52,6 +54,7 @@ export const CAPABILITIES: Matrix = {
     contacts: NO_DELETE, course_fees: NO_DELETE, content: NO_DELETE,
     promoted_programs: NO_DELETE, authors: NO_DELETE, scholarships: NO_DELETE,
     jobs: NO_DELETE,
+    media: NO_DELETE,
   },
   editor: {
     articles: NO_DELETE, colleges: CREATE_ONLY, courses: VIEW, exams: VIEW,

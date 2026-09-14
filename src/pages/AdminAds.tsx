@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { decodeAdLocation, encodeAdLocation, useAllAds } from "@/hooks/useAds";
 import { backendClient } from "@/integrations/backend/client";
@@ -19,11 +19,12 @@ import {
 import { Switch } from "@/components/ui/switch";
 import {
   Plus, Pencil, Trash2, X, ExternalLink, Copy, Search,
-  Megaphone, HelpCircle, Eye, Info, Upload,
+  Megaphone, HelpCircle, Eye, Info,
 } from "lucide-react";
 import { SearchableSelect } from "@/components/SearchableSelect";
 import { SearchableMultiSelect } from "@/components/SearchableMultiSelect";
 import { AdEntitySearchSelect } from "@/components/admin/AdEntitySearchSelect";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { useStatesAndCities } from "@/hooks/useLocations";
 
 import { CSVTools } from "@/components/CSVTools";
@@ -141,8 +142,6 @@ export default function AdminAds() {
   const [filterTarget, setFilterTarget] = useDraftState<string>('admin.ads.filterTarget.v1', "all");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showGuide, setShowGuide] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const targetCities = form.target_cities || [];
   const allCities = Array.from(new Set(Object.values(locations?.citiesByState || {}).flat())).sort((a, b) => a.localeCompare(b));
 
@@ -174,37 +173,6 @@ export default function AdminAds() {
   const duplicateAd = (ad: any) => {
     openEdit({ ...ad, title: ad.title + " (Copy)", is_active: false, id: undefined });
     setEditingId(null);
-  };
-
-  // ── Image upload ──
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast({ title: "Please upload an image file", variant: "destructive" });
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: "Image must be under 5MB", variant: "destructive" });
-      return;
-    }
-
-    setUploading(true);
-    const ext = file.name.split(".").pop();
-    const fileName = `ad-${Date.now()}.${ext}`;
-
-    const { error } = await backendClient.storage.from("ad-images").upload(fileName, file);
-    if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-      setUploading(false);
-      return;
-    }
-
-    const { data: urlData } = backendClient.storage.from("ad-images").getPublicUrl(fileName);
-    setForm({ ...form, image_url: urlData.publicUrl });
-    setUploading(false);
-    toast({ title: "✅ Image uploaded!" });
   };
 
   const validate = (): boolean => {
@@ -381,25 +349,13 @@ export default function AdminAds() {
 
                 {/* Image upload */}
                 <Field label="Ad Image (optional)" hint={`Upload a banner image. Recommended size for "${selectedLook?.label}": ${selectedLook?.size}`}>
-                  <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                  <div className="flex items-center gap-3">
-                    <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="rounded-xl gap-2">
-                      <Upload className="w-4 h-4" />
-                      {uploading ? "Uploading..." : "Upload Image"}
-                    </Button>
-                    {form.image_url && (
-                      <div className="flex items-center gap-2">
-                        <img src={form.image_url} alt="Ad" className="w-20 h-12 object-cover rounded-lg border" />
-                        <button onClick={() => setForm({ ...form, image_url: "" })} className="text-destructive hover:text-destructive/80 text-xs">Remove</button>
-                      </div>
-                    )}
-                  </div>
-                  {form.image_url && (
-                    <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="Or paste an image URL" className="rounded-xl mt-2 text-xs" />
-                  )}
-                  {!form.image_url && (
-                    <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="Or paste an image URL directly" className="rounded-xl mt-2 text-xs" />
-                  )}
+                  <ImageUploadField
+                    value={form.image_url}
+                    onChange={(imageUrl) => setForm({ ...form, image_url: imageUrl })}
+                    folder="ad-images"
+                    maxSizeMb={8}
+                    placeholder="Paste an ad image URL"
+                  />
                 </Field>
               </div>
             </Section>

@@ -2,7 +2,7 @@ import { useCallback, useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { backendClient } from "@/integrations/backend/client";
-import { Upload, Link as LinkIcon, X, Images, Loader2, Sparkles, Wand2 } from "lucide-react";
+import { Check, Copy, ExternalLink, Upload, Link as LinkIcon, X, Images, Loader2, Sparkles, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { ImageHint, type ImagePresetKey } from "@/components/ImageHint";
 import { fetchRemoteImageFile, optimizeImageFile, optimizeRemoteImage } from "@/lib/imageOptimizer";
@@ -15,15 +15,30 @@ interface Props {
   preset?: ImagePresetKey;
   bucket?: string;
   folder?: string;
+  maxSizeMb?: number;
+  placeholder?: string;
+  onUploaded?: (url: string) => void;
 }
 
 /**
  * Combined upload-or-URL-or-library field. Admins can paste a URL,
  * upload a new file, or pick from previously uploaded images.
  */
-export function ImageUploadField({ value, onChange, label, preset, bucket = "admin-uploads", folder = "images" }: Props) {
+export function ImageUploadField({
+  value,
+  onChange,
+  label,
+  preset,
+  bucket = "admin-uploads",
+  folder = "images",
+  maxSizeMb = 8,
+  placeholder = "https://...",
+  onUploaded,
+}: Props) {
   const [mode, setMode] = useState<"url" | "upload" | "library">("url");
   const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { quality, setQuality } = useImageQuality();
   const fileRef = useRef<HTMLInputElement>(null);
   const [libItems, setLibItems] = useState<{ name: string; url: string }[]>([]);
@@ -33,17 +48,21 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
   const loadLibrary = useCallback(async () => {
     setLibLoading(true);
     try {
-      const { data, error } = await backendClient.storage.from(bucket).list(folder, {
-        limit: 200, sortBy: { column: "created_at", order: "desc" },
-      });
-      if (error) throw error;
-      const items = (data || [])
-        .filter((f) => !f.name.startsWith("."))
-        .map((f) => {
-          const path = `${folder}/${f.name}`;
-          const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
-          return { name: f.name, url: pub.publicUrl };
+      const folders = [...new Set([folder, "media-library"])];
+      const responses = await Promise.all(folders.map(async (sourceFolder) => {
+        const { data, error } = await backendClient.storage.from(bucket).list(sourceFolder, {
+          limit: 200, sortBy: { column: "created_at", order: "desc" },
         });
+        if (error) throw error;
+        return (data || [])
+          .filter((file) => !file.name.startsWith(".") && !file.name.includes("/"))
+          .map((file) => {
+            const path = `${sourceFolder}/${file.name}`;
+            const { data: publicData } = backendClient.storage.from(bucket).getPublicUrl(path);
+            return { name: `${sourceFolder}/${file.name}`, url: publicData.publicUrl };
+          });
+      }));
+      const items = responses.flat().filter((item, index, all) => all.findIndex((candidate) => candidate.url === item.url) === index);
       setLibItems(items);
     } catch (e: any) {
       toast.error(e.message || "Failed to load library");
@@ -59,13 +78,14 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
     setUploading(true);
     try {
       const file = quality.hd ? rawFile : await optimizeImageFile(rawFile, { maxDim: quality.maxDim });
-      if (file.size > 8 * 1024 * 1024) { toast.error("File must be under 8 MB"); setUploading(false); return; }
+      if (file.size > maxSizeMb * 1024 * 1024) { toast.error(`File must be under ${maxSizeMb} MB`); return; }
       const ext = file.name.split(".").pop() || "jpg";
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
       const { error } = await backendClient.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type });
       if (error) throw error;
       const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
       onChange(pub.publicUrl);
+      onUploaded?.(pub.publicUrl);
       toast.success(quality.hd ? "Uploaded (HD original)" : "Uploaded (WebP)");
     } catch (e: any) {
       toast.error(e.message || "Upload failed");
@@ -85,8 +105,8 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
         toast.error("This website blocks image downloads. Upload the original file instead.");
         return;
       }
-      if (file.size > 8 * 1024 * 1024) {
-        toast.error("Linked image is over 8 MB");
+      if (file.size > maxSizeMb * 1024 * 1024) {
+        toast.error(`Linked image is over ${maxSizeMb} MB`);
         return;
       }
       const ext = file.name.split(".").pop() || (quality.hd ? "jpg" : "webp");
@@ -99,6 +119,7 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
       if (error) throw error;
       const { data: pub } = backendClient.storage.from(bucket).getPublicUrl(path);
       onChange(pub.publicUrl);
+      onUploaded?.(pub.publicUrl);
       toast.success(quality.hd ? "HD original saved to your storage" : "Linked image optimized and saved");
     } catch (e: any) {
       toast.error(e.message || "Could not save linked image");
@@ -110,6 +131,14 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
   const filtered = libQuery
     ? libItems.filter((i) => i.name.toLowerCase().includes(libQuery.toLowerCase()))
     : libItems;
+
+  const copyUrl = async () => {
+    if (!value) return;
+    await navigator.clipboard.writeText(value);
+    setCopied(true);
+    toast.success("Image link copied");
+    window.setTimeout(() => setCopied(false), 1600);
+  };
 
   return (
     <div>
@@ -129,7 +158,7 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
         <div className="space-y-1.5">
           <ImageQualityControls value={quality} onChange={setQuality} />
           <div className="flex gap-2">
-            <Input value={value || ""} onChange={(e) => onChange(e.target.value)} placeholder="https://..." className="rounded-xl min-w-0" />
+            <Input value={value || ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="rounded-xl min-w-0" />
             <Button
               type="button"
               variant="outline"
@@ -150,10 +179,27 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
       {mode === "upload" && (
         <div>
           <ImageQualityControls value={quality} onChange={setQuality} className="mb-1.5" />
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
-          <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full rounded-xl gap-2">
-            <Upload className="w-4 h-4" /> {uploading ? "Uploading..." : "Click to browse / upload image"}
-          </Button>
+          <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
+            onDragOver={(event) => { event.preventDefault(); setDragging(true); }}
+            onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false); }}
+            onDrop={(event) => {
+              event.preventDefault();
+              setDragging(false);
+              const file = Array.from(event.dataTransfer.files).find((candidate) => candidate.type.startsWith("image/"));
+              if (file) void handleFile(file);
+              else toast.error("Drop a PNG, JPG, WebP, GIF, or AVIF image");
+            }}
+            disabled={uploading}
+            className={`flex min-h-28 w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-5 text-sm transition ${dragging ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/30"}`}
+          >
+            {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <Upload className="h-6 w-6" />}
+            <span className="font-semibold text-foreground">{uploading ? "Uploading..." : "Drop an image here or browse"}</span>
+            <span className="text-xs">A public AWS media link is generated after upload</span>
+          </button>
         </div>
       )}
       {mode === "library" && (
@@ -184,6 +230,12 @@ export function ImageUploadField({ value, onChange, label, preset, bucket = "adm
         <div className="mt-2 flex items-center gap-2 p-2 bg-muted/40 rounded-lg">
           <img src={value} alt="" className="w-10 h-10 rounded bg-white object-contain p-0.5" />
           <span className="text-xs text-muted-foreground truncate flex-1">{value}</span>
+          <Button type="button" size="sm" variant="ghost" onClick={copyUrl} className="h-7 w-7 p-0" title="Copy public image link">
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+          </Button>
+          <Button type="button" size="sm" variant="ghost" asChild className="h-7 w-7 p-0" title="Open image">
+            <a href={value} target="_blank" rel="noopener noreferrer"><ExternalLink className="w-3.5 h-3.5" /></a>
+          </Button>
           <Button type="button" size="sm" variant="ghost" onClick={() => onChange("")} className="h-6 w-6 p-0">
             <X className="w-3 h-3" />
           </Button>

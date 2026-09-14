@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Upload, Loader2, X, FileText, ImageIcon, ExternalLink, Wand2 } from "lucide-react";
+import { Check, Copy, Upload, Loader2, X, FileText, ImageIcon, ExternalLink } from "lucide-react";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
-import { ImageHint, type ImagePresetKey } from "@/components/ImageHint";
-import { optimizeImageFile, optimizeRemoteImage } from "@/lib/imageOptimizer";
-import { ImageQualityControls, useImageQuality } from "@/components/admin/ImageQualityControls";
+import type { ImagePresetKey } from "@/components/ImageHint";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { optimizeImageFile } from "@/lib/imageOptimizer";
 
 interface UploadOrUrlFieldProps {
   label: string;
@@ -36,23 +36,54 @@ export function UploadOrUrlField({
   maxSizeMb,
   placeholder = "Paste URL or upload",
 }: UploadOrUrlFieldProps) {
+  if (kind === "image") {
+    return (
+      <ImageUploadField
+        label={label}
+        value={value}
+        onChange={onChange}
+        folder={folder}
+        preset={preset}
+        maxSizeMb={maxSizeMb ?? 2}
+        placeholder={placeholder}
+      />
+    );
+  }
+
+  return (
+    <FileUploadOrUrlField
+      label={label}
+      value={value}
+      onChange={onChange}
+      folder={folder}
+      accept={accept}
+      maxSizeMb={maxSizeMb}
+      placeholder={placeholder}
+    />
+  );
+}
+
+function FileUploadOrUrlField({
+  label,
+  value,
+  onChange,
+  folder = "misc",
+  accept,
+  maxSizeMb,
+  placeholder,
+}: Omit<UploadOrUrlFieldProps, "kind" | "preset">) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const { quality, setQuality } = useImageQuality();
-  const acceptAttr = accept ?? (kind === "image" ? "image/*" : "application/pdf,application/msword,.doc,.docx");
-  const maxBytes = (maxSizeMb ?? (kind === "image" ? 2 : 10)) * 1024 * 1024;
+  const [dragging, setDragging] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const acceptAttr = accept ?? "application/pdf,application/msword,.doc,.docx";
+  const maxBytes = (maxSizeMb ?? 10) * 1024 * 1024;
 
-  const handleFile = async (rawFile: File) => {
+  const handleFile = async (file: File) => {
     setUploading(true);
     try {
-      // Auto-convert images to optimized WebP unless HD (keep original) is on
-      const file =
-        kind === "image" && !quality.hd
-          ? await optimizeImageFile(rawFile, { maxDim: quality.maxDim })
-          : rawFile;
       if (file.size > maxBytes) {
-        toast.error(`File too large. Max ${maxSizeMb ?? (kind === "image" ? 2 : 10)}MB`);
-        setUploading(false);
+        toast.error(`File too large. Max ${maxSizeMb ?? 10} MB`);
         return;
       }
       const ext = file.name.split(".").pop() || "bin";
@@ -66,7 +97,7 @@ export function UploadOrUrlField({
       if (error) throw error;
       const { data } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
       onChange(data.publicUrl);
-      toast.success(kind === "image" ? (quality.hd ? "Uploaded (HD original)" : "Uploaded (optimized to WebP)") : "Uploaded");
+      toast.success("File uploaded and public link generated");
     } catch (err: any) {
       toast.error(err?.message || "Upload failed");
     } finally {
@@ -75,46 +106,17 @@ export function UploadOrUrlField({
     }
   };
 
-  /**
-   * "Optimize URL" - fetches the remote image, re-encodes to WebP and
-   * re-uploads to our bucket. Best-effort: if CORS blocks fetch, we leave
-   * the original URL untouched and tell the admin.
-   */
-  const optimizeUrl = async () => {
-    if (!value || kind !== "image") return;
-    if (value.includes("/storage/v1/object/public/admin-uploads/") && value.endsWith(".webp")) {
-      toast.info("Already optimized");
-      return;
-    }
-    setUploading(true);
-    try {
-      const optimized = await optimizeRemoteImage(value);
-      if (!optimized) {
-        toast.error("Couldn't fetch this URL (likely blocked by CORS). Keeping original.");
-        return;
-      }
-      const path = `${folder}/${Date.now()}-url-optimized.webp`;
-      const { error } = await backendClient.storage.from("admin-uploads").upload(path, optimized, {
-        cacheControl: "3600",
-        contentType: "image/webp",
-      });
-      if (error) throw error;
-      const { data } = backendClient.storage.from("admin-uploads").getPublicUrl(path);
-      onChange(data.publicUrl);
-      toast.success("URL optimized to WebP");
-    } catch (err: any) {
-      toast.error(err?.message || "Optimize failed");
-    } finally {
-      setUploading(false);
-    }
+  const copyUrl = async () => {
+    if (!value) return;
+    await navigator.clipboard.writeText(value);
+    setCopied(true);
+    toast.success("File link copied");
+    window.setTimeout(() => setCopied(false), 1600);
   };
 
   return (
     <div>
       <label className="text-xs font-medium text-muted-foreground">{label}</label>
-      {kind === "image" && (
-        <ImageQualityControls value={quality} onChange={setQuality} className="mb-1 mt-0.5" />
-      )}
       <div className="flex gap-2">
         <Input
           value={value || ""}
@@ -122,20 +124,6 @@ export function UploadOrUrlField({
           placeholder={placeholder}
           className="rounded-lg h-9 text-sm flex-1"
         />
-        {kind === "image" && value && /^https?:\/\//i.test(value) && !value.includes("/storage/v1/object/public/admin-uploads/") && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={optimizeUrl}
-            disabled={uploading}
-            className="h-9 px-3 gap-1.5 shrink-0"
-            title="Fetch URL → convert to WebP → re-upload to our storage"
-          >
-            <Wand2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Optimize URL</span>
-          </Button>
-        )}
         <Button
           type="button"
           variant="outline"
@@ -159,22 +147,32 @@ export function UploadOrUrlField({
         />
       </div>
 
+      <button
+        type="button"
+        disabled={uploading}
+        onClick={() => inputRef.current?.click()}
+        onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
+        onDragOver={(event) => { event.preventDefault(); setDragging(true); }}
+        onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false); }}
+        onDrop={(event) => {
+          event.preventDefault();
+          setDragging(false);
+          const file = event.dataTransfer.files?.[0];
+          if (file) void handleFile(file);
+        }}
+        className={`mt-2 flex min-h-16 w-full items-center justify-center gap-2 rounded-lg border border-dashed px-3 text-xs transition ${dragging ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:bg-muted/30"}`}
+      >
+        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+        Drop a file here or click to browse
+      </button>
+
       {/* Preview */}
       {value && (
         <div className="mt-1.5 flex items-center gap-2 min-w-0">
-          {kind === "image" ? (
-            <img
-              src={value}
-              alt={label}
-              className="w-12 h-12 rounded-md object-cover border border-border shrink-0"
-              onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
-            />
-          ) : (
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted text-xs min-w-0 max-w-full">
-              <FileText className="w-3.5 h-3.5 text-primary shrink-0" />
-              <span className="truncate">{value.split("/").pop()}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted text-xs min-w-0 max-w-full">
+            <FileText className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="truncate">{value.split("/").pop()}</span>
+          </div>
           {/* Truncated clickable URL - fills available width, shows full link in tooltip & opens in new tab */}
           <a
             href={value}
@@ -185,6 +183,9 @@ export function UploadOrUrlField({
           >
             {value}
           </a>
+          <button type="button" onClick={copyUrl} className="text-muted-foreground hover:text-primary" title="Copy public file link">
+            {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+          </button>
           <button
             type="button"
             onClick={() => onChange("")}
@@ -195,8 +196,6 @@ export function UploadOrUrlField({
           </button>
         </div>
       )}
-
-      {kind === "image" && preset && <ImageHint preset={preset} />}
     </div>
   );
 }

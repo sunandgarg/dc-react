@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { storagePolicyInternals } from "../src/storage.mjs";
 
-const { checkedBody, hasWebsiteMediaPermission, ownsPath, routeDetails, PUBLIC_READ_BUCKETS } = storagePolicyInternals;
+const { checkedBody, hasWebsiteMediaPermission, hasWebsiteMediaRole, ownsPath, routeDetails, PUBLIC_READ_BUCKETS } = storagePolicyInternals;
 const identity = { id: "12d8b889-5ab9-4f9d-8725-b73444f418d5" };
 
 test("parses public, list, and direct storage routes", () => {
@@ -38,6 +38,13 @@ test("allows website media for editors with create or edit permission", () => {
   assert.equal(hasWebsiteMediaPermission([{ module: "articles", allow: true, can_create: false, can_edit: true }]), true);
   assert.equal(hasWebsiteMediaPermission([{ resource: "colleges", allow: false, can_create: true, can_edit: true }]), false);
   assert.equal(hasWebsiteMediaPermission([{ resource: "all_leads", allow: true, can_create: true, can_edit: true }]), false);
+});
+
+test("allows trusted editorial roles to manage website media", () => {
+  assert.equal(hasWebsiteMediaRole([{ role: "content_head" }]), true);
+  assert.equal(hasWebsiteMediaRole([{ role: "content" }]), true);
+  assert.equal(hasWebsiteMediaRole([{ role: "manager" }]), true);
+  assert.equal(hasWebsiteMediaRole([{ role: "user" }]), false);
 });
 
 test("rejects unsafe upload types", async () => {
