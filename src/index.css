@@ -913,6 +913,10 @@
     transition: color 150ms ease, text-decoration-color 150ms ease;
   }
 
+  .article-prose--news a :where(*) {
+    color: inherit !important;
+  }
+
   .article-prose--news a:hover,
   .article-prose--news a:focus-visible {
     color: hsl(var(--accent)) !important;

@@ -54,6 +54,9 @@ function postProcess(html: string): string {
   // Links open external in new tab safely
   tpl.content.querySelectorAll("a[href]").forEach((a) => {
     const href = a.getAttribute("href") || "";
+    [a, ...a.querySelectorAll<HTMLElement>("*")].forEach((element) => {
+      (element as HTMLElement).style.removeProperty("color");
+    });
     if (/^https?:\/\//i.test(href)) {
       a.setAttribute("target", "_blank");
       a.setAttribute("rel", "noopener noreferrer");

@@ -51,7 +51,7 @@ describe("RichText", () => {
 
   it("preserves safe hyperlinks and makes external links safe and visible", () => {
     const { container } = render(
-      <RichText html={'<p>Read the <a href="https://example.com/guide">admission guide</a> or <a href="/colleges">browse colleges</a>.</p>'} />,
+      <RichText html={'<p>Read the <a href="https://example.com/guide"><strong style="color: black">admission guide</strong></a> or <a href="/colleges">browse colleges</a>.</p>'} />,
     );
     const links = container.querySelectorAll("a");
 
@@ -59,6 +59,7 @@ describe("RichText", () => {
     expect(links[0]).toHaveAttribute("href", "https://example.com/guide");
     expect(links[0]).toHaveAttribute("target", "_blank");
     expect(links[0]).toHaveAttribute("rel", "noopener noreferrer");
+    expect(links[0].querySelector("strong")).not.toHaveStyle({ color: "black" });
     expect(links[1]).toHaveAttribute("href", "/colleges");
     expect(links[1]).not.toHaveAttribute("target");
     expect(container.firstElementChild?.className).toContain("prose-a:underline");
