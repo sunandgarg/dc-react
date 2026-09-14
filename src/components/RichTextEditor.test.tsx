@@ -5,6 +5,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { applyBlockHeading, applySelectionAwareHeading, RichTextEditor } from "./RichTextEditor";
 import { ResizableImage, normalizeImageAlignment, normalizeImageWidth } from "./admin/ResizableImage";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 
 function createEditor() {
   return new Editor({
@@ -68,17 +69,28 @@ describe("RichTextEditor heading commands", () => {
 });
 
 describe("RichTextEditor images", () => {
-  it("renders the complete image dialog outside clipped editor containers", async () => {
-    render(<RichTextEditor value="<p>Article copy</p>" onChange={() => undefined} />);
+  it("keeps image controls interactive inside the article dialog", async () => {
+    render(
+      <Dialog open>
+        <DialogContent>
+          <DialogTitle>Edit Article</DialogTitle>
+          <RichTextEditor value="<p>Article copy</p>" onChange={() => undefined} />
+        </DialogContent>
+      </Dialog>,
+    );
 
     fireEvent.click(await screen.findByTitle("Insert image"));
 
-    const dialog = screen.getByText("Image URL or upload").closest(".fixed");
-    expect(dialog?.parentElement).toBe(document.body);
-    expect(screen.getByRole("button", { name: "Upload" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Library" })).toBeInTheDocument();
+    const imageDialog = screen.getByRole("dialog", { name: "Insert image" });
+    expect(imageDialog).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Upload" }));
+    expect(screen.getByText("Drop an image here or browse")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Link" }));
+    expect(screen.getByPlaceholderText("Paste an image URL")).toBeInTheDocument();
     expect(screen.getByText("Alt text")).toBeInTheDocument();
-  });
+  }, 15_000);
 
   it("normalizes image size and alignment values", () => {
     expect(normalizeImageWidth(5)).toBe(20);

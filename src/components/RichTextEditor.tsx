@@ -18,11 +18,11 @@ import {
   ChevronDown, Palette, Highlighter, Eye, Pencil, FileText, Trash2, Pilcrow, Undo2, Redo2, Loader2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { RichText } from "@/components/detail/RichText";
 import { InternalLinkPicker } from "@/components/admin/InternalLinkPicker";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { ResizableImage, normalizeImageAlignment, normalizeImageWidth, type ImageAlignment } from "@/components/admin/ResizableImage";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { backendClient } from "@/integrations/backend/client";
 import { optimizeImageFile } from "@/lib/imageOptimizer";
 import { toast } from "sonner";
@@ -367,8 +367,6 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
     setTableOpen(false);
   };
 
-  const portalRoot = typeof document === "undefined" ? null : document.body;
-
   return (
     <div className="sticky top-0 z-20 flex items-center gap-0.5 border-b border-border bg-background/95 px-2 py-1.5 backdrop-blur flex-wrap">
       <Btn icon={Undo2} title="Undo" onClick={() => editor.chain().focus().undo().run()} />
@@ -472,36 +470,33 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       )}
 
       {/* Link dialog */}
-      {linkDialog && portalRoot && createPortal(
-        <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4" onClick={() => setLinkDialog(false)}>
-          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md p-5 space-y-3" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-foreground font-semibold"><LinkIcon className="w-4 h-4 text-primary" /> Insert link</div>
-              <button
-                type="button"
-                onClick={() => setInternalPickerOpen(true)}
-                className="text-xs px-2.5 py-1 rounded-full border border-primary/40 text-primary hover:bg-primary/5"
-                title="Pick a college, course, exam, career, subject, board…"
-              >🔍 Link from site</button>
-            </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground">URL</label>
-              <input autoFocus value={linkUrl} onChange={e => setLinkUrl(e.target.value)} placeholder="https://example.com or /colleges/iit-delhi" className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm" />
-            </div>
-            {editor.state.selection.empty && (
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">Display text</label>
-                <input value={linkText} onChange={e => setLinkText(e.target.value)} placeholder="Click here" className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm" />
-              </div>
-            )}
-            <div className="flex justify-end gap-2 pt-1">
-              <button type="button" onClick={() => setLinkDialog(false)} className="px-3 py-1.5 rounded-lg text-sm hover:bg-muted">Cancel</button>
-              <button type="button" onClick={applyLink} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm">Insert</button>
-            </div>
+      <Dialog open={linkDialog} onOpenChange={setLinkDialog}>
+        <DialogContent showCloseButton={false} className="w-[calc(100vw-2rem)] max-w-md gap-3 p-5">
+          <div className="flex items-center justify-between gap-2">
+            <DialogTitle className="flex items-center gap-2 text-base"><LinkIcon className="w-4 h-4 text-primary" /> Insert link</DialogTitle>
+            <button
+              type="button"
+              onClick={() => setInternalPickerOpen(true)}
+              className="text-xs px-2.5 py-1 rounded-full border border-primary/40 text-primary hover:bg-primary/5"
+              title="Pick a college, course, exam, career, subject, board…"
+            >🔍 Link from site</button>
           </div>
-        </div>,
-        portalRoot,
-      )}
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">URL</label>
+            <input autoFocus value={linkUrl} onChange={e => setLinkUrl(e.target.value)} placeholder="https://example.com or /colleges/iit-delhi" className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm" />
+          </div>
+          {editor.state.selection.empty && (
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Display text</label>
+              <input value={linkText} onChange={e => setLinkText(e.target.value)} placeholder="Click here" className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm" />
+            </div>
+          )}
+          <div className="flex justify-end gap-2 pt-1">
+            <button type="button" onClick={() => setLinkDialog(false)} className="px-3 py-1.5 rounded-lg text-sm hover:bg-muted">Cancel</button>
+            <button type="button" onClick={applyLink} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm">Insert</button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <InternalLinkPicker
         open={internalPickerOpen}
@@ -513,10 +508,9 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       />
 
       {/* Image dialog */}
-      {imageDialog && portalRoot && createPortal(
-        <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4" onClick={() => setImageDialog(false)}>
-          <div className="max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-2xl" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-2 text-foreground font-semibold"><ImageIcon className="w-4 h-4 text-primary" /> {editingImage ? "Edit image" : "Insert image"}</div>
+      <Dialog open={imageDialog} onOpenChange={setImageDialog}>
+        <DialogContent showCloseButton={false} className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-lg gap-4 overflow-y-auto p-5">
+            <DialogTitle className="flex items-center gap-2 text-base"><ImageIcon className="w-4 h-4 text-primary" /> {editingImage ? "Edit image" : "Insert image"}</DialogTitle>
             <ImageUploadField value={imgUrl} onChange={setImgUrl} label="Image URL or upload" folder="editor" maxSizeMb={8} placeholder="Paste an image URL" />
             <div>
               <label className="text-xs font-medium text-muted-foreground">Alt text</label>
@@ -552,16 +546,13 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
               <button type="button" onClick={() => setImageDialog(false)} className="px-3 py-1.5 rounded-lg text-sm hover:bg-muted">Cancel</button>
               <button type="button" onClick={applyImage} disabled={!imgUrl} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm disabled:opacity-40">{editingImage ? "Update" : "Insert"}</button>
             </div>
-          </div>
-        </div>,
-        portalRoot,
-      )}
+        </DialogContent>
+      </Dialog>
 
       {/* Document viewer dialog */}
-      {docDialog && portalRoot && createPortal(
-        <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4" onClick={() => setDocDialog(false)}>
-          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg p-5 space-y-3 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-2 text-foreground font-semibold"><FileText className="w-4 h-4 text-primary" /> Insert document viewer</div>
+      <Dialog open={docDialog} onOpenChange={setDocDialog}>
+        <DialogContent showCloseButton={false} className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-lg gap-3 overflow-y-auto p-5">
+            <DialogTitle className="flex items-center gap-2 text-base"><FileText className="w-4 h-4 text-primary" /> Insert document viewer</DialogTitle>
             <p className="text-xs text-muted-foreground">Upload pages of a PDF, question paper or notes as images. They'll appear as a paginated viewer in the article.</p>
             <div>
               <label className="text-xs font-medium text-muted-foreground">Title (optional)</label>
@@ -590,10 +581,8 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
               <button type="button" onClick={() => setDocDialog(false)} className="px-3 py-1.5 rounded-lg text-sm hover:bg-muted">Cancel</button>
               <button type="button" onClick={applyDoc} disabled={!docImages.length} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm disabled:opacity-40">Insert ({docImages.length})</button>
             </div>
-          </div>
-        </div>,
-        portalRoot,
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
