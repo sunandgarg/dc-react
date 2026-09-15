@@ -400,6 +400,7 @@ model articles {
   official_website     String?   @db.LongText
   data_verified_at     DateTime? @db.DateTime(3)
   data_source_urls     Json
+  job_posting          Json?
   data_quality_score   Int       @default(0)
   data_clean_attempts  Int       @default(0)
   data_clean_successes Int       @default(0)

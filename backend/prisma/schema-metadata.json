@@ -2413,6 +2413,14 @@
         "default": null,
         "foreignKey": null
       },
+      "job_posting": {
+        "type": "Json",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "jsonb",
+        "default": null,
+        "foreignKey": null
+      },
       "data_quality_score": {
         "type": "Int",
         "nullable": false,
