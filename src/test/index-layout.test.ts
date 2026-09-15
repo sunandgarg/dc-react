@@ -34,6 +34,13 @@ describe("Index page layout (static source assertions)", () => {
     expect(belowFoldSrc).toMatch(/NewsSection/);
   });
 
+  it("keeps the single homepage AdSense slot at the bottom", () => {
+    expect(belowFoldSrc.match(/<GoogleAd/g)).toHaveLength(1);
+    expect(belowFoldSrc).toMatch(/placement="homepage" position="bottom"/);
+    expect(belowFoldSrc).not.toMatch(/placement="homepage" position="middle"/);
+    expect(belowFoldSrc.indexOf('position="bottom"')).toBeLessThan(belowFoldSrc.indexOf("<Footer />"));
+  });
+
   it("does NOT render the removed LiveScholarshipsStrip", () => {
     expect(indexSrc).not.toMatch(/LiveScholarshipsStrip/);
     expect(belowFoldSrc).not.toMatch(/LiveScholarshipsStrip/);

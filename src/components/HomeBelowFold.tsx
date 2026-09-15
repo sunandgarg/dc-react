@@ -46,13 +46,18 @@ export default function HomeBelowFold() {
     {section(<div className="container">
       <div id="exam-strategies-heading"><ExamStrategiesSection /></div>
       <FeaturesSection />
-      <GoogleAd placement="homepage" position="middle" pageKey="homepage" className="my-4" />
     </div>, 700)}
     {section(<div className="container">
       <div id="faq-heading"><FAQSection page="homepage" title="Frequently Asked Questions" /></div>
       <div id="trending-programs-heading"><TrendingPrograms /></div>
       <div id="trusted-heading"><TrustedBySection /></div>
     </div>, 700)}
-    {section(<><Footer /><PeriodicLeadPopup /></>, 480)}
+    {section(<>
+      <div className="container">
+        <GoogleAd placement="homepage" position="bottom" pageKey="homepage" className="my-4" />
+      </div>
+      <Footer />
+      <PeriodicLeadPopup />
+    </>, 480)}
   </div>;
 }

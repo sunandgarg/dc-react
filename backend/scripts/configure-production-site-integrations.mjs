@@ -14,6 +14,7 @@ const integrations = [
 const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
+const ADSENSE_RESTRAINED_PLACEMENTS_MIGRATION_KEY = "adsense_restrained_placements_v1";
 
 try {
   for (const [key, label, category, value] of integrations) {
@@ -35,6 +36,9 @@ try {
   let entitySchedulesUpdated = 0;
   let eeatCadenceUpdated = 0;
   let competitorSourcesActivated = 0;
+  let adsenseSettingsUpdated = 0;
+  let adsenseUnitsMoved = 0;
+  let adsenseUnitsDisabled = 0;
   if (!editorialPolicyMigration) {
     const updated = await prisma.blog_auto_agent_settings.updateMany({
       where: { id: "default" },
@@ -127,6 +131,53 @@ try {
       },
     });
   }
+  const adsensePlacementMigration = await prisma.app_settings.findUnique({
+    where: { key: ADSENSE_RESTRAINED_PLACEMENTS_MIGRATION_KEY },
+  });
+  if (!adsensePlacementMigration) {
+    const settings = await prisma.adsense_settings.updateMany({
+      data: {
+        auto_ads_enabled: false,
+        ads_per_page_limit: 1,
+        lazy_load_enabled: true,
+        refresh_interval_seconds: 0,
+        updated_at: new Date(),
+      },
+    });
+    adsenseSettingsUpdated = settings.count;
+
+    const moved = await prisma.ad_units.updateMany({
+      where: { placement: "homepage", position: "middle" },
+      data: { position: "bottom", updated_at: new Date() },
+    });
+    adsenseUnitsMoved = moved.count;
+
+    const disabled = await prisma.ad_units.updateMany({
+      where: {
+        is_active: true,
+        NOT: {
+          OR: [
+            { placement: "homepage", position: "bottom" },
+            { placement: "article", position: "after-content" },
+          ],
+        },
+      },
+      data: { is_active: false, updated_at: new Date() },
+    });
+    adsenseUnitsDisabled = disabled.count;
+
+    await prisma.app_settings.create({
+      data: {
+        key: ADSENSE_RESTRAINED_PLACEMENTS_MIGRATION_KEY,
+        value: JSON.stringify({
+          auto_ads_enabled: false,
+          ads_per_page_limit: 1,
+          placements: ["homepage:bottom", "article:after-content"],
+          applied_at: new Date().toISOString(),
+        }),
+      },
+    });
+  }
   const sesProvider = {
     display_name: "Amazon SES",
     api_key: null,
@@ -176,6 +227,10 @@ try {
     blog_interval_minutes: 60,
     blog_posts_per_run: 2,
     competitor_sources_activated: competitorSourcesActivated,
+    adsense_restrained_placements_migrated: Boolean(adsensePlacementMigration) || adsenseSettingsUpdated > 0,
+    adsense_settings_updated: adsenseSettingsUpdated,
+    adsense_units_moved_to_bottom: adsenseUnitsMoved,
+    adsense_units_disabled: adsenseUnitsDisabled,
     ses_provider_configured: true,
     ses_credential_source: "iam_runtime",
   }));

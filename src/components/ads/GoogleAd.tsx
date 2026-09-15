@@ -31,8 +31,10 @@ export function GoogleAd({ placement, position, pageKey, className = "", style }
       if (firedRef.current) return;
       firedRef.current = true;
       try {
-        if (unit.ad_slot_id && (window as any).adsbygoogle) {
-          (window as any).adsbygoogle.push({});
+        if (unit.ad_slot_id) {
+          const win = window as any;
+          win.adsbygoogle = win.adsbygoogle || [];
+          win.adsbygoogle.push({});
         }
       } catch {
         /* noop */
@@ -75,6 +77,10 @@ export function GoogleAd({ placement, position, pageKey, className = "", style }
   if (!allowed || !unit) return null;
 
   const client = settings?.client_id || settings?.publisher_id || "";
+  const hasCustomCreative = Boolean((unit.ad_type === "custom" || unit.custom_html) && unit.custom_html?.trim());
+  const hasAdsenseCreative = Boolean(unit.ad_slot_id?.trim() && client.trim());
+  if (!hasCustomCreative && !hasAdsenseCreative) return null;
+
   const minH = unit.min_height || (unit.ad_type === "sticky" ? 90 : 120);
 
   const trackClick = () => {
@@ -103,9 +109,9 @@ export function GoogleAd({ placement, position, pageKey, className = "", style }
       data-ad-position={position || ""}
       style={{ minHeight: minH, display: "block", overflow: "hidden", ...style }}
     >
-      {unit.ad_type === "custom" || unit.custom_html ? (
+      {hasCustomCreative ? (
         <div dangerouslySetInnerHTML={{ __html: unit.custom_html }} />
-      ) : unit.ad_slot_id && client ? (
+      ) : hasAdsenseCreative ? (
         <ins
           className="adsbygoogle"
           style={{ display: "block" }}

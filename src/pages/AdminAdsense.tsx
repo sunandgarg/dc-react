@@ -88,7 +88,7 @@ function SetupTab() {
         <h3 className="font-semibold">Step 2 - Turn ads on or off</h3>
         {[
           ["ads_globally_enabled", "Show ads on the website"],
-          ["auto_ads_enabled", "Let Google place ads automatically (recommended)"],
+          ["auto_ads_enabled", "Let Google place ads automatically (may add extra placements)"],
           ["enabled_on_mobile", "Show on mobile"],
           ["enabled_on_desktop", "Show on desktop"],
           ["lazy_load_enabled", "Load ads only when visible (faster site)"],
@@ -153,7 +153,7 @@ function SlotsTab() {
           name: "",
           ad_type: "display",
           placement: "homepage",
-          position: "middle",
+          position: "bottom",
           ad_slot_id: "",
           ad_format: "auto",
           full_width_responsive: true,
@@ -163,7 +163,7 @@ function SlotsTab() {
           url_pattern: "",
         }}
         fields={[
-          { key: "name", label: "Name (your reference)", required: true, placeholder: "Homepage middle banner" },
+          { key: "name", label: "Name (your reference)", required: true, placeholder: "Homepage bottom banner" },
           { key: "placement", label: "Where to show", type: "combobox", options: ["homepage", "article", "search", "study", "course", "exam", "college-detail", "sidebar", "footer", "header"] },
           { key: "position", label: "Position on page", type: "combobox", options: ["top", "middle", "bottom", "before-content", "after-content"] },
           { key: "ad_slot_id", label: "AdSense Slot ID (optional)", placeholder: "1234567890" },
