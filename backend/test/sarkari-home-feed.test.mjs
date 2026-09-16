@@ -79,6 +79,11 @@ test("one fixed SQL roundtrip uses nine independently bounded indexed UNION arms
   assert.match(SARKARI_HOME_FEED_SQL, /FORCE INDEX \(`ix_articles_site_public`\)/);
   assert.match(SARKARI_HOME_FEED_SQL, /LEFT\(`slug`, 181\) AS `slug`/);
   assert.match(SARKARI_HOME_FEED_SQL, /LEFT\(`vertical`, 256\) AS `vertical`/);
+  assert.equal((SARKARI_HOME_FEED_SQL.match(/JSON_EXTRACT\(`job_posting`, '\$\.validThrough'\)/g) || []).length, 9,
+    "pinned, latest and Latest Jobs arms must each filter expired JobPosting data");
+  assert.equal((SARKARI_HOME_FEED_SQL.match(/DATE\(CONVERT_TZ\(UTC_TIMESTAMP\(\), '\+00:00', '\+05:30'\)\)/g) || []).length, 3,
+    "deadline comparisons must use the India-local calendar date");
+  assert.equal((SARKARI_HOME_FEED_SQL.match(/STR_TO_DATE\(/g) || []).length, 3);
   assert.doesNotMatch(SARKARI_HOME_FEED_SQL, /\b(?:WITH|ROW_NUMBER|LIKE|LOWER|CASE)\b/i);
   for (const category of SARKARI_HOME_CATEGORIES) {
     assert.match(SARKARI_HOME_FEED_SQL, new RegExp(`\\\`category\\\` = '${category}'`));
