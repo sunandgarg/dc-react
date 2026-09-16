@@ -1,4 +1,4 @@
-import { applyEdgeSeo, articleEdgeSeo, edgeSeoFor } from "./edge-seo.js";
+import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor } from "./edge-seo.js";
 
 const API_ORIGIN = "https://aws-origin.dekhocampus.com";
 
@@ -120,7 +120,9 @@ async function serveAsset(request, env) {
         ? articleEdgeSeo(article, url)
         : { ...metadata, indexable: false };
     }
-    response = new Response(applyEdgeSeo(await response.text(), metadata), {
+    let html = applyEdgeSeo(await response.text(), metadata);
+    if (url.pathname === "/") html = applyHomeCriticalCssDelivery(html);
+    response = new Response(html, {
       status: response.status,
       statusText: response.statusText,
       headers,

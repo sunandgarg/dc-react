@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyEdgeSeo, articleEdgeSeo, edgeSeoFor } from "../../public/edge-seo.js";
+import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor } from "../../public/edge-seo.js";
 
 describe("Cloudflare edge SEO", () => {
   it("serves self-canonical metadata for an indexable college filter", () => {
@@ -53,5 +53,19 @@ describe("Cloudflare edge SEO", () => {
     expect(output).not.toContain("alert(1)");
     expect(output).not.toContain("onerror");
     expect(output).not.toContain("javascript:");
+  });
+
+  it("lets the inline homepage shell paint while the full app stylesheet downloads", () => {
+    const stylesheet = '<link rel="stylesheet" crossorigin href="/assets/index-AbCd1234.css">';
+    const output = applyHomeCriticalCssDelivery(`<html><head>${stylesheet}</head></html>`);
+    expect(output).toContain('rel="preload" as="style"');
+    expect(output).toContain('data-dc-app-style');
+    expect(output).toContain("this.rel='stylesheet'");
+    expect(output).toContain(`<noscript>${stylesheet}</noscript>`);
+  });
+
+  it("leaves non-Vite stylesheets unchanged", () => {
+    const html = '<html><head><link rel="stylesheet" href="/brand.css"></head></html>';
+    expect(applyHomeCriticalCssDelivery(html)).toBe(html);
   });
 });
