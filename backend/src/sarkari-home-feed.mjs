@@ -37,6 +37,19 @@ const publicPredicate = `\`site_scope\` = 'sarkari'
     AND \`is_active\` = 1
     AND \`status\` = 'Published'`;
 
+// Keep application-deadline content indexable on its detail URL, but do not
+// promote it as a current opportunity after its India-local closing date.
+// Missing JobPosting data remains eligible so older/non-job content is not
+// accidentally hidden. Malformed structured job data fails closed here.
+const currentJobPredicate = `(\`job_posting\` IS NULL
+      OR JSON_TYPE(\`job_posting\`) = 'NULL'
+      OR JSON_EXTRACT(\`job_posting\`, '$.validThrough') IS NULL
+      OR JSON_UNQUOTE(JSON_EXTRACT(\`job_posting\`, '$.validThrough')) = ''
+      OR STR_TO_DATE(
+        LEFT(JSON_UNQUOTE(JSON_EXTRACT(\`job_posting\`, '$.validThrough')), 10),
+        '%Y-%m-%d'
+      ) >= DATE(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+05:30')))`;
+
 function sqlLiteral(value) {
   return `'${String(value).replaceAll("'", "''")}'`;
 }
@@ -59,18 +72,21 @@ export const SARKARI_HOME_FEED_SQL = [
   boundedSelect({
     bucket: PINNED_BUCKET,
     index: "ix_articles_site_featured_public",
-    predicate: "`featured_rank` IS NOT NULL",
+    predicate: `\`featured_rank\` IS NOT NULL AND ${currentJobPredicate}`,
     order: "`featured_rank` ASC",
   }),
   boundedSelect({
     bucket: LATEST_BUCKET,
     index: "ix_articles_site_public",
+    predicate: currentJobPredicate,
     order: "`created_at` DESC",
   }),
   ...SARKARI_HOME_CATEGORIES.map((category) => boundedSelect({
     bucket: category,
     index: "ix_articles_site_category_public",
-    predicate: `\`category\` = ${sqlLiteral(category)}`,
+    predicate: `\`category\` = ${sqlLiteral(category)}${category === "Latest Jobs"
+      ? ` AND ${currentJobPredicate}`
+      : ""}`,
     order: "`created_at` DESC",
   })),
 ].join("\nUNION ALL\n");
