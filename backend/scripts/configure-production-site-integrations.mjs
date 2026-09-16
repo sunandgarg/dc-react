@@ -15,6 +15,7 @@ const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
 const ADSENSE_RESTRAINED_PLACEMENTS_MIGRATION_KEY = "adsense_restrained_placements_v1";
+const CONTENT_COPY_PROTECTION_MIGRATION_KEY = "content_copy_protection_v1";
 
 try {
   for (const [key, label, category, value] of integrations) {
@@ -39,6 +40,7 @@ try {
   let adsenseSettingsUpdated = 0;
   let adsenseUnitsMoved = 0;
   let adsenseUnitsDisabled = 0;
+  let copyProtectionUpdated = 0;
   if (!editorialPolicyMigration) {
     const updated = await prisma.blog_auto_agent_settings.updateMany({
       where: { id: "default" },
@@ -178,6 +180,43 @@ try {
       },
     });
   }
+  const copyProtectionMigration = await prisma.app_settings.findUnique({
+    where: { key: CONTENT_COPY_PROTECTION_MIGRATION_KEY },
+  });
+  if (!copyProtectionMigration) {
+    const updated = await prisma.site_integrations.updateMany({
+      where: { key: "content_copy_protection" },
+      data: {
+        label: "Content Copy Protection",
+        category: "security",
+        value: "copy_blocked",
+        enabled: true,
+        notes: "Public content protection; admin editors and form controls remain usable",
+        updated_at: new Date(),
+      },
+    });
+    copyProtectionUpdated = updated.count;
+    if (!updated.count) {
+      await prisma.site_integrations.create({
+        data: {
+          id: randomUUID(),
+          key: "content_copy_protection",
+          label: "Content Copy Protection",
+          category: "security",
+          value: "copy_blocked",
+          enabled: true,
+          notes: "Public content protection; admin editors and form controls remain usable",
+        },
+      });
+      copyProtectionUpdated = 1;
+    }
+    await prisma.app_settings.create({
+      data: {
+        key: CONTENT_COPY_PROTECTION_MIGRATION_KEY,
+        value: JSON.stringify({ enabled: true, applied_at: new Date().toISOString() }),
+      },
+    });
+  }
   const sesProvider = {
     display_name: "Amazon SES",
     api_key: null,
@@ -231,6 +270,7 @@ try {
     adsense_settings_updated: adsenseSettingsUpdated,
     adsense_units_moved_to_bottom: adsenseUnitsMoved,
     adsense_units_disabled: adsenseUnitsDisabled,
+    content_copy_protection_enabled: Boolean(copyProtectionMigration) || copyProtectionUpdated > 0,
     ses_provider_configured: true,
     ses_credential_source: "iam_runtime",
   }));

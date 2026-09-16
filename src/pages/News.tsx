@@ -11,6 +11,7 @@ import { Link, useSearchParams, useParams, useNavigate } from "react-router-dom"
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { DynamicAdBanner } from "@/components/DynamicAdBanner";
+import { plainText } from "@/lib/plainText";
 
 const categories = [
   { label: "All News", icon: Newspaper, value: "" },
@@ -84,7 +85,9 @@ const LatestCard = memo(function LatestCard({ a, eager }: { a: Article; eager: b
             </span>
           </div>
           <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 text-sm">{a.title}</h3>
-          <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{a.description}</p>
+          {a.description && (
+            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{plainText(a.description)}</p>
+          )}
         </div>
       </div>
     </Link>
