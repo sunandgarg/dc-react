@@ -211,3 +211,11 @@ export function applyEdgeSeo(html, metadata) {
   }
   return output;
 }
+
+export function applyHomeCriticalCssDelivery(html) {
+  const stylesheetPattern = /<link\b(?=[^>]*\brel=["']stylesheet["'])(?=[^>]*\bhref=["'](\/assets\/index-[^"']+\.css)["'])[^>]*>/i;
+  return html.replace(stylesheetPattern, (stylesheet, href) => [
+    `<link rel="preload" as="style" href="${href}" crossorigin data-dc-app-style onload="this.onload=null;this.rel='stylesheet'">`,
+    `<noscript>${stylesheet}</noscript>`,
+  ].join(""));
+}
