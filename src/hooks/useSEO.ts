@@ -75,6 +75,10 @@ export function useSEO({
       link.href = canonicalUrl;
     }
 
+    // The edge response includes one crawler-visible schema block. Once the
+    // client owns the route, replace that block instead of leaving two
+    // NewsArticle objects in the hydrated document.
+    document.querySelectorAll("script[data-dc-edge-schema]").forEach((script) => script.remove());
     document.getElementById("ld-json-page")?.remove();
     if (jsonLdKey !== "null") {
       const script = document.createElement("script");
