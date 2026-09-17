@@ -101,6 +101,18 @@ test("AWS college-media deployment accepts scoped named cutovers without widenin
   assert.match(workflow, /APPLY_MANIFEST="\$WORK_DIR\/current-carousel-cutover-manifest\.jsonl"/);
 });
 
+test("live carousel cutover joins manifests by production ID within low memory", async () => {
+  const source = await readSource("../scripts/build-current-college-carousel-cutover-manifest.mjs");
+
+  assert.match(source, /mkdtemp\(join\(tmpdir\(\), "dc-college-carousel-join-"\)\)/);
+  assert.match(source, /createHash\("sha256"\)\.update\(id\)\.digest\("hex"\)/);
+  assert.match(source, /sanitizedIds\.has\(originalId\)/);
+  assert.match(source, /readFile\(stagedRowPath\(joinDirectory, originalId\), "utf8"\)/);
+  assert.match(source, /rm\(joinDirectory, \{ recursive: true, force: true \}\)/);
+  assert.doesNotMatch(source, /Manifest order mismatch/);
+  assert.doesNotMatch(source, /Promise\.all\(\[originalRows\.next\(\), sanitizedRows\.next\(\)\]\)/);
+});
+
 test("AWS production deploy removes every temporary SSH rule during cleanup", async () => {
   const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
   const cleanup = workflow.slice(workflow.indexOf("- name: Close temporary SSH access"));

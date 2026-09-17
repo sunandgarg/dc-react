@@ -1,6 +1,8 @@
+import { createHash } from "node:crypto";
 import { createReadStream, createWriteStream } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
 import { createInterface } from "node:readline";
 import { once } from "node:events";
 import { prisma } from "../src/db.mjs";
@@ -31,37 +33,60 @@ async function* readJsonLines(path) {
   for await (const line of lines) if (line.trim()) yield JSON.parse(line);
 }
 
+function stagedRowPath(directory, id) {
+  const digest = createHash("sha256").update(id).digest("hex");
+  return join(directory, `${digest}.json`);
+}
+
 await mkdir(dirname(outputPath), { recursive: true });
 await mkdir(dirname(reportPath), { recursive: true });
-const output = createWriteStream(outputPath, { encoding: "utf8" });
-const originalRows = readJsonLines(originalPath)[Symbol.asyncIterator]();
-const sanitizedRows = readJsonLines(sanitizedPath)[Symbol.asyncIterator]();
+const joinDirectory = await mkdtemp(join(tmpdir(), "dc-college-carousel-join-"));
+let output;
 const report = {
   generated_at: new Date().toISOString(),
+  source_rows: 0,
+  sanitized_rows: 0,
   rows: 0,
   changed: 0,
   already_sanitized: 0,
   empty: 0,
   dropped_unavailable_assets: 0,
+  missing_sanitized_rows: 0,
+  extra_sanitized_rows: 0,
   missing_colleges: 0,
   unmapped_colleges: 0,
-  samples: { missing: [], unmapped: [] },
+  samples: { missing_sanitized: [], extra_sanitized: [], missing: [], unmapped: [] },
 };
 
 try {
-  for (;;) {
-    const [originalResult, sanitizedResult] = await Promise.all([originalRows.next(), sanitizedRows.next()]);
-    if (originalResult.done || sanitizedResult.done) {
-      if (originalResult.done !== sanitizedResult.done) throw new Error("Original and sanitized manifests have different row counts");
-      break;
+  const sanitizedIds = new Set();
+  for await (const sanitizedRow of readJsonLines(sanitizedPath)) {
+    const sanitizedId = String(sanitizedRow?.production?.id || "").trim();
+    if (!sanitizedId) throw new Error(`Sanitized manifest row ${report.sanitized_rows + 1} has no production ID`);
+    if (sanitizedIds.has(sanitizedId)) throw new Error(`Sanitized manifest contains duplicate production ID ${sanitizedId}`);
+    sanitizedIds.add(sanitizedId);
+    report.sanitized_rows += 1;
+    await writeFile(stagedRowPath(joinDirectory, sanitizedId), JSON.stringify(sanitizedRow), "utf8");
+    if (report.sanitized_rows % 500 === 0) {
+      process.stdout.write(`\rStaged ${report.sanitized_rows} sanitized rows`);
     }
-    const originalRow = originalResult.value;
-    const sanitizedRow = sanitizedResult.value;
-    const originalId = String(originalRow?.production?.id || "");
-    const sanitizedId = String(sanitizedRow?.production?.id || "");
-    if (!originalId || originalId !== sanitizedId) {
-      throw new Error(`Manifest order mismatch at row ${report.rows + 1}: ${originalId || "missing"} != ${sanitizedId || "missing"}`);
+  }
+  process.stdout.write("\n");
+
+  output = createWriteStream(outputPath, { encoding: "utf8" });
+  const sourceIds = new Set();
+  for await (const originalRow of readJsonLines(originalPath)) {
+    report.source_rows += 1;
+    const originalId = String(originalRow?.production?.id || "").trim();
+    if (!originalId) throw new Error(`Original manifest row ${report.source_rows} has no production ID`);
+    if (sourceIds.has(originalId)) throw new Error(`Original manifest contains duplicate production ID ${originalId}`);
+    sourceIds.add(originalId);
+    if (!sanitizedIds.has(originalId)) {
+      report.missing_sanitized_rows += 1;
+      if (report.samples.missing_sanitized.length < 25) report.samples.missing_sanitized.push(originalRow.production);
+      continue;
     }
+    const sanitizedRow = JSON.parse(await readFile(stagedRowPath(joinDirectory, originalId), "utf8"));
     const current = await prisma.colleges.findUnique({
       where: { id: originalId },
       select: { id: true, slug: true, name: true, city: true, state: true, carousel_images: true },
@@ -89,15 +114,26 @@ try {
     if (!output.write(`${JSON.stringify(result.row)}\n`)) await once(output, "drain");
     if (report.rows % 500 === 0) process.stdout.write(`\rPrepared ${report.rows} current carousel rows`);
   }
+
+  for (const sanitizedId of sanitizedIds) {
+    if (sourceIds.has(sanitizedId)) continue;
+    report.extra_sanitized_rows += 1;
+    if (report.samples.extra_sanitized.length < 25) report.samples.extra_sanitized.push(sanitizedId);
+  }
   output.end();
   await once(output, "finish");
   process.stdout.write("\n");
   await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
   console.log(JSON.stringify({ ...report, output: outputPath, report: reportPath }, null, 2));
-  if (report.missing_colleges || report.unmapped_colleges) {
-    throw new Error(`Current carousel cutover is incomplete: ${report.missing_colleges} missing and ${report.unmapped_colleges} unmapped colleges`);
+  if (report.missing_sanitized_rows || report.extra_sanitized_rows || report.missing_colleges || report.unmapped_colleges) {
+    throw new Error(
+      `Current carousel cutover is incomplete: ${report.missing_sanitized_rows} missing sanitized rows, `
+      + `${report.extra_sanitized_rows} extra sanitized rows, ${report.missing_colleges} missing colleges, `
+      + `and ${report.unmapped_colleges} unmapped colleges`,
+    );
   }
 } finally {
-  if (!output.closed) output.destroy();
+  if (output && !output.closed) output.destroy();
+  await rm(joinDirectory, { recursive: true, force: true });
   await prisma.$disconnect();
 }
