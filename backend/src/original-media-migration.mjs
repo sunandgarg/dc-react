@@ -213,6 +213,126 @@ export function buildCarouselCutoverManifestRow(originalRow, sanitizedRow) {
   };
 }
 
+function canonicalMediaReference(value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  try {
+    const url = new URL(text);
+    const match = decodeURIComponent(url.pathname).match(/^\/storage\/v1\/object\/public\/(.+)$/);
+    if (match) return match[1].replace(/^\/+/, "");
+  } catch { /* stored object key */ }
+  return text.replace(/^\/+/, "");
+}
+
+export function buildCurrentCarouselCutoverManifestRow(originalRow, sanitizedRow, currentCollege) {
+  const originalId = String(originalRow?.production?.id || "").trim();
+  const sanitizedId = String(sanitizedRow?.production?.id || "").trim();
+  const currentId = String(currentCollege?.id || "").trim();
+  if (!originalId || originalId !== sanitizedId || originalId !== currentId) {
+    throw new Error("Original, sanitized, and current rows must identify the same production college");
+  }
+
+  const aliasToTarget = new Map();
+  const targetByKey = new Map();
+  const droppedAliases = new Set();
+  const addTarget = (value) => {
+    const target = String(value || "").trim();
+    const key = canonicalMediaReference(target);
+    if (key) targetByKey.set(key, target);
+  };
+  const addAliases = (target, ...aliases) => {
+    addTarget(target);
+    for (const alias of aliases) {
+      const key = canonicalMediaReference(alias);
+      if (key) aliasToTarget.set(key, String(target || "").trim());
+    }
+  };
+
+  const targetImage = String(sanitizedRow?.replacement?.image || "").trim();
+  if (targetImage) {
+    addAliases(
+      targetImage,
+      originalRow?.expected?.image,
+      originalRow?.replacement?.image,
+      sanitizedRow?.expected?.image,
+    );
+  }
+
+  const oldGallery = Array.isArray(originalRow?.expected?.gallery_images) ? originalRow.expected.gallery_images : [];
+  const originalGallery = Array.isArray(originalRow?.replacement?.gallery_images) ? originalRow.replacement.gallery_images : [];
+  const sanitizedExpectedGallery = Array.isArray(sanitizedRow?.expected?.gallery_images) ? sanitizedRow.expected.gallery_images : [];
+  const targetGallery = Array.isArray(sanitizedRow?.replacement?.gallery_images) ? sanitizedRow.replacement.gallery_images : [];
+  const droppedIndexes = new Set((Array.isArray(sanitizedRow?.failed_assets) ? sanitizedRow.failed_assets : [])
+    .filter((asset) => asset?.kind === "gallery" && Number.isInteger(Number(asset.gallery_index)))
+    .map((asset) => Number(asset.gallery_index)));
+  let targetIndex = 0;
+  const gallerySlots = Math.max(oldGallery.length, originalGallery.length, sanitizedExpectedGallery.length);
+  for (let index = 0; index < gallerySlots; index += 1) {
+    const aliases = [oldGallery[index], originalGallery[index], sanitizedExpectedGallery[index]];
+    if (droppedIndexes.has(index)) {
+      for (const alias of aliases) {
+        const key = canonicalMediaReference(alias);
+        if (key) droppedAliases.add(key);
+      }
+      continue;
+    }
+    const target = String(targetGallery[targetIndex] || "").trim();
+    if (!target) throw new Error(`Sanitized gallery mapping is incomplete at source index ${index}`);
+    addAliases(target, ...aliases);
+    targetIndex += 1;
+  }
+  if (targetIndex !== targetGallery.length) {
+    throw new Error(`Sanitized gallery mapping has ${targetGallery.length - targetIndex} unpaired targets`);
+  }
+
+  const current = Array.isArray(currentCollege?.carousel_images) ? currentCollege.carousel_images : [];
+  const replacement = [];
+  const unmapped = [];
+  let dropped = 0;
+  for (const value of current) {
+    const key = canonicalMediaReference(value);
+    const alreadySanitized = targetByKey.get(key);
+    if (alreadySanitized) {
+      replacement.push(alreadySanitized);
+      continue;
+    }
+    const target = aliasToTarget.get(key);
+    if (target) {
+      replacement.push(target);
+      continue;
+    }
+    if (droppedAliases.has(key)) {
+      dropped += 1;
+      continue;
+    }
+    unmapped.push(String(value || ""));
+  }
+  if (unmapped.length) return { row: null, unmapped, dropped };
+
+  return {
+    row: {
+      production: {
+        id: currentCollege.id,
+        slug: currentCollege.slug,
+        name: currentCollege.name,
+        city: currentCollege.city,
+        state: currentCollege.state,
+      },
+      expected: { carousel_images: current },
+      replacement: { carousel_images: replacement },
+      sanitizer: {
+        ...(sanitizedRow.sanitizer || {}),
+        source_manifest: "current-original-and-sanitized-college-media",
+        carousel_cutover: true,
+        preserved_live_carousel_shape: true,
+        dropped_unavailable_carousel_assets: dropped,
+      },
+    },
+    unmapped: [],
+    dropped,
+  };
+}
+
 export function publicMediaUrl(baseUrl, key) {
   return `${String(baseUrl).replace(/\/$/, "")}/${String(key).split("/").map(encodeURIComponent).join("/")}`;
 }

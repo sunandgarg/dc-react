@@ -95,6 +95,10 @@ test("AWS college-media deployment accepts scoped named cutovers without widenin
     /original-college-media-sanitized\/\[0-9TZ\.\-\]\+\(-\[a-z0-9-\]\+\)\?\/apply-manifest\\\.jsonl/,
   );
   assert.match(workflow, /The sanitized college-media manifest key is outside the approved private prefix/);
+  assert.match(workflow, /college_media_source_manifest_key/);
+  assert.match(workflow, /The source sanitized college-media manifest key is outside the approved private prefix/);
+  assert.match(workflow, /media:build-current-carousel-cutover/);
+  assert.match(workflow, /APPLY_MANIFEST="\$WORK_DIR\/current-carousel-cutover-manifest\.jsonl"/);
 });
 
 test("AWS production deploy removes every temporary SSH rule during cleanup", async () => {

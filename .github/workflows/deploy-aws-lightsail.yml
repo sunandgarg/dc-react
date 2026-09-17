@@ -47,6 +47,11 @@ on:
         required: false
         default: ""
         type: string
+      college_media_source_manifest_key:
+        description: Optional full sanitized manifest used to rebase a live carousel cutover
+        required: false
+        default: ""
+        type: string
       original_college_media_manifest_key:
         description: Original private S3 manifest key used to audit superseded WebP references
         required: false
@@ -616,11 +621,20 @@ jobs:
         if: ${{ inputs.college_media_manifest_key != '' }}
         env:
           SANITIZED_MANIFEST_KEY: ${{ inputs.college_media_manifest_key }}
+          SOURCE_SANITIZED_MANIFEST_KEY: ${{ inputs.college_media_source_manifest_key }}
           ORIGINAL_MANIFEST_KEY: ${{ inputs.original_college_media_manifest_key }}
           RETIRE_SUPERSEDED_WEBP: ${{ inputs.retire_superseded_college_webp }}
         run: |
           if ! [[ "$SANITIZED_MANIFEST_KEY" =~ ^migration-manifests/original-college-media-sanitized/[0-9TZ.-]+(-[a-z0-9-]+)?/apply-manifest\.jsonl$ ]]; then
             echo "The sanitized college-media manifest key is outside the approved private prefix."
+            exit 1
+          fi
+          if [ -n "$SOURCE_SANITIZED_MANIFEST_KEY" ] && ! [[ "$SOURCE_SANITIZED_MANIFEST_KEY" =~ ^migration-manifests/original-college-media-sanitized/[0-9TZ.-]+/apply-manifest\.jsonl$ ]]; then
+            echo "The source sanitized college-media manifest key is outside the approved private prefix."
+            exit 1
+          fi
+          if [ -n "$SOURCE_SANITIZED_MANIFEST_KEY" ] && ! [[ "$ORIGINAL_MANIFEST_KEY" =~ ^system-backups/original-college-media/[0-9TZ.-]+/apply-manifest\.jsonl$ ]]; then
+            echo "A live carousel rebase requires the exact original private manifest key."
             exit 1
           fi
           if [ "$RETIRE_SUPERSEDED_WEBP" = "true" ] && ! [[ "$ORIGINAL_MANIFEST_KEY" =~ ^system-backups/original-college-media/[0-9TZ.-]+/apply-manifest\.jsonl$ ]]; then
@@ -632,12 +646,13 @@ jobs:
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
             -i /tmp/tempkey "$SSH_USER@$SSH_IP" \
-            "sudo bash -s -- '$BUCKET' '$SANITIZED_MANIFEST_KEY' '$ORIGINAL_MANIFEST_KEY' '$RETIRE_SUPERSEDED_WEBP'" <<'REMOTE'
+            "sudo bash -s -- '$BUCKET' '$SANITIZED_MANIFEST_KEY' '$ORIGINAL_MANIFEST_KEY' '$RETIRE_SUPERSEDED_WEBP' '$SOURCE_SANITIZED_MANIFEST_KEY'" <<'REMOTE'
           set -euo pipefail
           BUCKET="$1"
           SANITIZED_MANIFEST_KEY="$2"
           ORIGINAL_MANIFEST_KEY="$3"
           RETIRE_SUPERSEDED_WEBP="$4"
+          SOURCE_SANITIZED_MANIFEST_KEY="$5"
           WORK_DIR=$(mktemp -d)
           trap 'rm -rf "$WORK_DIR"' EXIT
           set -a
@@ -645,14 +660,28 @@ jobs:
           set +a
           cd /opt/dc-react/app
           aws s3 cp "s3://$BUCKET/$SANITIZED_MANIFEST_KEY" "$WORK_DIR/sanitized-apply-manifest.jsonl" --only-show-errors
-          npm --prefix backend run media:apply-original -- --manifest "$WORK_DIR/sanitized-apply-manifest.jsonl"
-          npm --prefix backend run media:apply-original -- --manifest "$WORK_DIR/sanitized-apply-manifest.jsonl" --apply
+          APPLY_MANIFEST="$WORK_DIR/sanitized-apply-manifest.jsonl"
+          if [ -n "$SOURCE_SANITIZED_MANIFEST_KEY" ]; then
+            aws s3 cp "s3://$BUCKET/$ORIGINAL_MANIFEST_KEY" "$WORK_DIR/original-apply-manifest.jsonl" --only-show-errors
+            aws s3 cp "s3://$BUCKET/$SOURCE_SANITIZED_MANIFEST_KEY" "$WORK_DIR/sanitized-source-manifest.jsonl" --only-show-errors
+            npm --prefix backend run media:build-current-carousel-cutover -- \
+              --original-manifest "$WORK_DIR/original-apply-manifest.jsonl" \
+              --sanitized-manifest "$WORK_DIR/sanitized-source-manifest.jsonl" \
+              --output "$WORK_DIR/current-carousel-cutover-manifest.jsonl" \
+              --report "$WORK_DIR/current-carousel-cutover-report.json"
+            cat "$WORK_DIR/current-carousel-cutover-report.json"
+            APPLY_MANIFEST="$WORK_DIR/current-carousel-cutover-manifest.jsonl"
+          fi
+          npm --prefix backend run media:apply-original -- --manifest "$APPLY_MANIFEST"
+          npm --prefix backend run media:apply-original -- --manifest "$APPLY_MANIFEST" --apply
           npm --prefix backend run media:audit-original -- \
-            --manifest "$WORK_DIR/sanitized-apply-manifest.jsonl" \
+            --manifest "$APPLY_MANIFEST" \
             --state-dir "$WORK_DIR/post-apply-audit" \
             --require-fully-applied
           if [ "$RETIRE_SUPERSEDED_WEBP" = "true" ]; then
-            aws s3 cp "s3://$BUCKET/$ORIGINAL_MANIFEST_KEY" "$WORK_DIR/original-apply-manifest.jsonl" --only-show-errors
+            if [ ! -s "$WORK_DIR/original-apply-manifest.jsonl" ]; then
+              aws s3 cp "s3://$BUCKET/$ORIGINAL_MANIFEST_KEY" "$WORK_DIR/original-apply-manifest.jsonl" --only-show-errors
+            fi
             npm --prefix backend run media:retire-college-webp -- \
               --manifest "$WORK_DIR/original-apply-manifest.jsonl" \
               --bucket "$BUCKET"

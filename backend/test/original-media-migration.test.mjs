@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  buildCurrentCarouselCutoverManifestRow,
   buildGalleryReplacement,
   buildCarouselCutoverManifestRow,
   buildSanitizedCollegeManifestRow,
@@ -184,4 +185,78 @@ test("rejects carousel cutovers across different colleges", () => {
     { production: { id: "college-1" }, expected: { image: "old.webp" } },
     { production: { id: "college-2" }, replacement: { image: "new.jpg" } },
   ), /same production college/);
+});
+
+test("rebases a live capped carousel onto exact cropped JPEG counterparts", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const original = {
+    production,
+    expected: { image: "old-hero.webp", gallery_images: ["old-a.webp", "old-b.webp"] },
+    replacement: { image: "original-hero.jpg", gallery_images: ["original-a.jpg", "original-b.jpg"] },
+  };
+  const sanitized = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg", "original-b.jpg"] },
+    replacement: { image: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v2/college-heroes/new-hero.jpg", gallery_images: [
+      "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v2/college-gallery/new-a.jpg",
+      "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v2/college-gallery/new-b.jpg",
+    ] },
+  };
+  const result = buildCurrentCarouselCutoverManifestRow(original, sanitized, {
+    ...production,
+    carousel_images: ["old-hero.webp", "old-a.webp"],
+  });
+
+  assert.deepEqual(result.row.expected.carousel_images, ["old-hero.webp", "old-a.webp"]);
+  assert.deepEqual(result.row.replacement.carousel_images, [
+    sanitized.replacement.image,
+    sanitized.replacement.gallery_images[0],
+  ]);
+  assert.equal(result.dropped, 0);
+});
+
+test("drops only explicitly unavailable gallery slots during a live carousel rebase", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const result = buildCurrentCarouselCutoverManifestRow({
+    production,
+    expected: { image: "old-hero.webp", gallery_images: ["old-a.webp", "dead.webp", "old-c.webp"] },
+    replacement: { image: "original-hero.jpg", gallery_images: ["original-a.jpg", "dead-original.jpg", "original-c.jpg"] },
+  }, {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg", "dead-original.jpg", "original-c.jpg"] },
+    replacement: {
+      image: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v2/college-heroes/new-hero.jpg",
+      gallery_images: [
+        "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v2/college-gallery/new-a.jpg",
+        "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v2/college-gallery/new-c.jpg",
+      ],
+    },
+    failed_assets: [{ kind: "gallery", gallery_index: 1 }],
+  }, {
+    ...production,
+    carousel_images: ["old-hero.webp", "old-a.webp", "dead.webp", "old-c.webp"],
+  });
+
+  assert.equal(result.dropped, 1);
+  assert.equal(result.row.replacement.carousel_images.length, 3);
+  assert.match(result.row.replacement.carousel_images[2], /new-c\.jpg$/);
+});
+
+test("refuses to overwrite an unmapped custom carousel image", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const result = buildCurrentCarouselCutoverManifestRow({
+    production,
+    expected: { image: "old.webp" },
+    replacement: { image: "original.jpg" },
+  }, {
+    production,
+    expected: { image: "original.jpg" },
+    replacement: { image: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v2/college-heroes/new.jpg" },
+  }, {
+    ...production,
+    carousel_images: ["custom-admin-upload.jpg"],
+  });
+
+  assert.equal(result.row, null);
+  assert.deepEqual(result.unmapped, ["custom-admin-upload.jpg"]);
 });
