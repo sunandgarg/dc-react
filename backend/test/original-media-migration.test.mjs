@@ -267,6 +267,191 @@ test("matches changed manifest snapshots by immutable source URL instead of gall
   assert.deepEqual(result.unmapped, []);
 });
 
+test("maps archived CDN provenance URLs to their exact sanitized AWS assets", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const original = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    assets: {
+      hero: { public_url: "original-hero.jpg", source_url: "https://legacy.example/hero.jpg" },
+      gallery: [{ key: "original-a.jpg", source_url: "https://legacy.example/gallery-a.jpg" }],
+    },
+  };
+  const sanitized = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "new-hero.jpg", gallery_images: ["new-a.jpg"] },
+  };
+
+  const result = buildCurrentCarouselCutoverManifestRow(original, sanitized, {
+    ...production,
+    carousel_images: ["https://legacy.example/hero.jpg", "https://legacy.example/gallery-a.jpg"],
+  });
+
+  assert.deepEqual(result.row.replacement.carousel_images, ["new-hero.jpg", "new-a.jpg"]);
+  assert.deepEqual(result.unmapped, []);
+});
+
+test("preserves carousel videos and rebases exact legacy WebP aliases", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const original = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+  };
+  const sanitized = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "new-hero.jpg", gallery_images: ["new-a.jpg"] },
+  };
+  const alias = {
+    production,
+    expected: { carousel_images: ["old-hero.webp", "old-a.webp"] },
+    replacement: { carousel_images: ["new-hero.jpg", "new-a.jpg"] },
+  };
+  const result = buildCurrentCarouselCutoverManifestRow(original, sanitized, {
+    ...production,
+    carousel_images: ["old-hero.webp", "https://www.youtube.com/embed/example", "old-a.webp"],
+  }, alias);
+
+  assert.deepEqual(result.row.replacement.carousel_images, [
+    "new-hero.jpg",
+    "https://www.youtube.com/embed/example",
+    "new-a.jpg",
+  ]);
+  assert.deepEqual(result.unmapped, []);
+});
+
+test("allows restored gallery targets beyond a capped legacy carousel", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const original = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg", "original-b.jpg"] },
+    replacement: { image: "original-hero.jpg", gallery_images: ["original-a.jpg", "original-b.jpg"] },
+  };
+  const sanitized = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg", "original-b.jpg"] },
+    replacement: { image: "new-hero.jpg", gallery_images: ["new-a.jpg", "new-b.jpg"] },
+  };
+  const alias = {
+    production,
+    expected: { carousel_images: ["old-hero.webp", "old-a.webp"] },
+    replacement: { carousel_images: ["new-hero.jpg", "new-a.jpg", "new-b.jpg"] },
+  };
+
+  const result = buildCurrentCarouselCutoverManifestRow(original, sanitized, {
+    ...production,
+    carousel_images: ["old-hero.webp", "old-a.webp"],
+  }, alias);
+
+  assert.deepEqual(result.row.replacement.carousel_images, ["new-hero.jpg", "new-a.jpg"]);
+  assert.deepEqual(result.unmapped, []);
+});
+
+test("reports an active legacy alias without a corresponding target", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const original = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+  };
+  const sanitized = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "new-hero.jpg", gallery_images: ["new-a.jpg"] },
+  };
+  const alias = {
+    production,
+    expected: { carousel_images: ["old-hero.webp", "old-a.webp", "old-extra.webp"] },
+    replacement: { carousel_images: ["new-hero.jpg", "new-a.jpg"] },
+  };
+
+  const result = buildCurrentCarouselCutoverManifestRow(original, sanitized, {
+    ...production,
+    carousel_images: ["old-extra.webp"],
+  }, alias);
+
+  assert.equal(result.row, null);
+  assert.deepEqual(result.unmapped, ["old-extra.webp"]);
+});
+
+test("ignores a stale unmatched alias that is no longer active", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const original = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+  };
+  const sanitized = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "new-hero.jpg", gallery_images: ["new-a.jpg"] },
+  };
+  const alias = {
+    production,
+    expected: { carousel_images: ["old-hero.webp", "old-a.webp", "stale.webp"] },
+    replacement: { carousel_images: ["new-hero.jpg", "new-a.jpg"] },
+  };
+
+  const result = buildCurrentCarouselCutoverManifestRow(original, sanitized, {
+    ...production,
+    carousel_images: ["old-hero.webp", "old-a.webp"],
+  }, alias);
+
+  assert.deepEqual(result.row.replacement.carousel_images, ["new-hero.jpg", "new-a.jpg"]);
+  assert.deepEqual(result.unmapped, []);
+});
+
+test("uses visual-evidence aliases only for a target owned by the same college", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const original = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+  };
+  const sanitized = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-a.jpg"] },
+    replacement: { image: "new-hero.jpg", gallery_images: ["new-a.jpg"] },
+  };
+  const contentAliases = {
+    production,
+    content_aliases: [{ from: "old-visual-match.webp", to: "new-a.jpg", distance: 2.4 }],
+  };
+
+  const result = buildCurrentCarouselCutoverManifestRow(original, sanitized, {
+    ...production,
+    carousel_images: ["old-visual-match.webp"],
+  }, null, contentAliases);
+
+  assert.deepEqual(result.row.replacement.carousel_images, ["new-a.jpg"]);
+  assert.deepEqual(result.unmapped, []);
+});
+
+test("rejects a visual-evidence alias to an image outside the college manifest", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const original = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: [] },
+    replacement: { image: "original-hero.jpg", gallery_images: [] },
+  };
+  const sanitized = {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: [] },
+    replacement: { image: "new-hero.jpg", gallery_images: [] },
+  };
+
+  assert.throws(() => buildCurrentCarouselCutoverManifestRow(original, sanitized, {
+    ...production,
+    carousel_images: ["old-visual-match.webp"],
+  }, null, {
+    production,
+    content_aliases: [{ from: "old-visual-match.webp", to: "another-college.jpg" }],
+  }), /unknown source or target/);
+});
+
 test("refuses to overwrite an unmapped custom carousel image", () => {
   const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
   const result = buildCurrentCarouselCutoverManifestRow({

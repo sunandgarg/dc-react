@@ -224,13 +224,39 @@ function canonicalMediaReference(value) {
   return text.replace(/^\/+/, "");
 }
 
-export function buildCurrentCarouselCutoverManifestRow(originalRow, sanitizedRow, currentCollege) {
+function isPreservedCarouselVideo(value) {
+  try {
+    const hostname = new URL(String(value || "").replace(/&amp;/g, "&")).hostname.toLowerCase();
+    return hostname === "youtu.be"
+      || hostname === "youtube.com"
+      || hostname.endsWith(".youtube.com")
+      || hostname === "youtube-nocookie.com"
+      || hostname.endsWith(".youtube-nocookie.com")
+      || hostname === "vimeo.com"
+      || hostname.endsWith(".vimeo.com");
+  } catch {
+    return false;
+  }
+}
+
+export function buildCurrentCarouselCutoverManifestRow(
+  originalRow,
+  sanitizedRow,
+  currentCollege,
+  aliasRow = null,
+  contentAliasRow = null,
+) {
   const originalId = String(originalRow?.production?.id || "").trim();
   const sanitizedId = String(sanitizedRow?.production?.id || "").trim();
   const currentId = String(currentCollege?.id || "").trim();
   if (!originalId || originalId !== sanitizedId || originalId !== currentId) {
     throw new Error("Original, sanitized, and current rows must identify the same production college");
   }
+  const current = Array.isArray(currentCollege?.carousel_images) ? currentCollege.carousel_images : [];
+  const currentKeys = new Set(current
+    .filter((value) => !isPreservedCarouselVideo(value))
+    .map(canonicalMediaReference)
+    .filter(Boolean));
 
   const aliasToTarget = new Map();
   const targetByKey = new Map();
@@ -251,8 +277,15 @@ export function buildCurrentCarouselCutoverManifestRow(originalRow, sanitizedRow
   const targetImage = String(sanitizedRow?.replacement?.image || "").trim();
   const sanitizedExpectedImage = String(sanitizedRow?.expected?.image || "").trim();
   const originalImage = String(originalRow?.replacement?.image || "").trim();
+  const heroAsset = sanitizedRow?.assets?.hero || originalRow?.assets?.hero || null;
   if (targetImage) {
-    addAliases(targetImage, sanitizedExpectedImage);
+    const heroAssetKey = canonicalMediaReference(heroAsset?.public_url || heroAsset?.key);
+    const expectedHeroKey = canonicalMediaReference(sanitizedExpectedImage);
+    addAliases(
+      targetImage,
+      sanitizedExpectedImage,
+      heroAssetKey && heroAssetKey === expectedHeroKey ? heroAsset?.source_url : "",
+    );
     if (canonicalMediaReference(originalImage) === canonicalMediaReference(sanitizedExpectedImage)) {
       addAliases(targetImage, originalRow?.expected?.image, originalImage);
     }
@@ -267,6 +300,18 @@ export function buildCurrentCarouselCutoverManifestRow(originalRow, sanitizedRow
     .map((asset) => Number(asset.gallery_index)));
   const targetBySource = new Map();
   const droppedSources = new Set();
+  const galleryAssets = [
+    ...(Array.isArray(sanitizedRow?.assets?.gallery) ? sanitizedRow.assets.gallery : []),
+    ...(Array.isArray(originalRow?.assets?.gallery) ? originalRow.assets.gallery : []),
+  ];
+  const provenanceByOriginalKey = new Map();
+  for (const asset of galleryAssets) {
+    const assetKey = canonicalMediaReference(asset?.public_url || asset?.key);
+    const sourceUrl = String(asset?.source_url || "").trim();
+    if (assetKey && sourceUrl && !provenanceByOriginalKey.has(assetKey)) {
+      provenanceByOriginalKey.set(assetKey, sourceUrl);
+    }
+  }
   let targetIndex = 0;
   for (let index = 0; index < sanitizedExpectedGallery.length; index += 1) {
     const source = sanitizedExpectedGallery[index];
@@ -278,12 +323,55 @@ export function buildCurrentCarouselCutoverManifestRow(originalRow, sanitizedRow
     }
     const target = String(targetGallery[targetIndex] || "").trim();
     if (!target) throw new Error(`Sanitized gallery mapping is incomplete at source index ${index}`);
-    addAliases(target, source);
+    addAliases(target, source, provenanceByOriginalKey.get(sourceKey));
     if (sourceKey) targetBySource.set(sourceKey, target);
     targetIndex += 1;
   }
   if (targetIndex !== targetGallery.length) {
     throw new Error(`Sanitized gallery mapping has ${targetGallery.length - targetIndex} unpaired targets`);
+  }
+
+  if (aliasRow) {
+    const aliasId = String(aliasRow?.production?.id || "").trim();
+    if (aliasId !== currentId) throw new Error("Alias and current rows must identify the same production college");
+    const expectedAliases = Array.isArray(aliasRow?.expected?.carousel_images) ? aliasRow.expected.carousel_images : [];
+    const replacementAliases = Array.isArray(aliasRow?.replacement?.carousel_images) ? aliasRow.replacement.carousel_images : [];
+    let replacementIndex = 0;
+    for (let index = 0; index < expectedAliases.length; index += 1) {
+      const key = canonicalMediaReference(expectedAliases[index]);
+      const isActive = currentKeys.has(key);
+      const galleryIndex = index - 1;
+      if (galleryIndex >= 0 && droppedIndexes.has(galleryIndex)) {
+        if (isActive) droppedAliases.add(key);
+        continue;
+      }
+      const target = String(replacementAliases[replacementIndex] || "").trim();
+      if (!target || !targetByKey.has(canonicalMediaReference(target))) {
+        replacementIndex += 1;
+        continue;
+      }
+      addAliases(target, expectedAliases[index]);
+      replacementIndex += 1;
+    }
+    // The replacement manifest may contain newly restored gallery images that
+    // were never present in the capped live carousel. Every historical alias
+    // must have an exact target, while trailing targets remain available via
+    // the college gallery and do not need a legacy carousel counterpart.
+  }
+
+  if (contentAliasRow) {
+    const contentAliasId = String(contentAliasRow?.production?.id || "").trim();
+    if (contentAliasId !== currentId) {
+      throw new Error("Content alias and current rows must identify the same production college");
+    }
+    const contentAliases = Array.isArray(contentAliasRow.content_aliases) ? contentAliasRow.content_aliases : [];
+    for (const alias of contentAliases) {
+      const source = String(alias?.from || "").trim();
+      const targetKey = canonicalMediaReference(alias?.to);
+      const target = targetByKey.get(targetKey);
+      if (!source || !target) throw new Error(`Content alias for ${currentId} has an unknown source or target`);
+      addAliases(target, source);
+    }
   }
 
   // The source and sanitized manifests can be generated at different times.
@@ -307,11 +395,14 @@ export function buildCurrentCarouselCutoverManifestRow(originalRow, sanitizedRow
     }
   }
 
-  const current = Array.isArray(currentCollege?.carousel_images) ? currentCollege.carousel_images : [];
   const replacement = [];
   const unmapped = [];
   let dropped = 0;
   for (const value of current) {
+    if (isPreservedCarouselVideo(value)) {
+      replacement.push(String(value || ""));
+      continue;
+    }
     const key = canonicalMediaReference(value);
     const alreadySanitized = targetByKey.get(key);
     if (alreadySanitized) {

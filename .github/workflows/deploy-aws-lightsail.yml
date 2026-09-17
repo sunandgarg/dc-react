@@ -52,6 +52,16 @@ on:
         required: false
         default: ""
         type: string
+      college_media_content_alias_manifest_key:
+        description: Optional private visual-evidence alias manifest for older live carousel images
+        required: false
+        default: ""
+        type: string
+      allow_unmapped_college_media:
+        description: Apply proven college rows while retaining and reporting unresolved legacy carousels
+        required: false
+        default: false
+        type: boolean
       original_college_media_manifest_key:
         description: Original private S3 manifest key used to audit superseded WebP references
         required: false
@@ -622,8 +632,10 @@ jobs:
         env:
           SANITIZED_MANIFEST_KEY: ${{ inputs.college_media_manifest_key }}
           SOURCE_SANITIZED_MANIFEST_KEY: ${{ inputs.college_media_source_manifest_key }}
+          CONTENT_ALIAS_MANIFEST_KEY: ${{ inputs.college_media_content_alias_manifest_key }}
           ORIGINAL_MANIFEST_KEY: ${{ inputs.original_college_media_manifest_key }}
           RETIRE_SUPERSEDED_WEBP: ${{ inputs.retire_superseded_college_webp }}
+          ALLOW_UNMAPPED_COLLEGE_MEDIA: ${{ inputs.allow_unmapped_college_media }}
         run: |
           if ! [[ "$SANITIZED_MANIFEST_KEY" =~ ^migration-manifests/original-college-media-sanitized/[0-9TZ.-]+(-[a-z0-9-]+)?/apply-manifest\.jsonl$ ]]; then
             echo "The sanitized college-media manifest key is outside the approved private prefix."
@@ -637,6 +649,14 @@ jobs:
             echo "A live carousel rebase requires the exact original private manifest key."
             exit 1
           fi
+          if [ -n "$CONTENT_ALIAS_MANIFEST_KEY" ] && ! [[ "$CONTENT_ALIAS_MANIFEST_KEY" =~ ^migration-manifests/original-college-media-sanitized/[0-9TZ.-]+(-[a-z0-9-]+)?/content-alias-manifest\.jsonl$ ]]; then
+            echo "The visual-evidence alias manifest key is outside the approved private prefix."
+            exit 1
+          fi
+          if { [ -n "$CONTENT_ALIAS_MANIFEST_KEY" ] || [ "$ALLOW_UNMAPPED_COLLEGE_MEDIA" = "true" ]; } && [ -z "$SOURCE_SANITIZED_MANIFEST_KEY" ]; then
+            echo "Visual aliases and partial cutovers require the full source sanitized manifest."
+            exit 1
+          fi
           if [ "$RETIRE_SUPERSEDED_WEBP" = "true" ] && ! [[ "$ORIGINAL_MANIFEST_KEY" =~ ^system-backups/original-college-media/[0-9TZ.-]+/apply-manifest\.jsonl$ ]]; then
             echo "Retirement requires the exact original private manifest key."
             exit 1
@@ -646,13 +666,15 @@ jobs:
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
             -i /tmp/tempkey "$SSH_USER@$SSH_IP" \
-            "sudo bash -s -- '$BUCKET' '$SANITIZED_MANIFEST_KEY' '$ORIGINAL_MANIFEST_KEY' '$RETIRE_SUPERSEDED_WEBP' '$SOURCE_SANITIZED_MANIFEST_KEY'" <<'REMOTE'
+            "sudo bash -s -- '$BUCKET' '$SANITIZED_MANIFEST_KEY' '$ORIGINAL_MANIFEST_KEY' '$RETIRE_SUPERSEDED_WEBP' '$SOURCE_SANITIZED_MANIFEST_KEY' '$CONTENT_ALIAS_MANIFEST_KEY' '$ALLOW_UNMAPPED_COLLEGE_MEDIA'" <<'REMOTE'
           set -euo pipefail
           BUCKET="$1"
           SANITIZED_MANIFEST_KEY="$2"
           ORIGINAL_MANIFEST_KEY="$3"
           RETIRE_SUPERSEDED_WEBP="$4"
           SOURCE_SANITIZED_MANIFEST_KEY="$5"
+          CONTENT_ALIAS_MANIFEST_KEY="$6"
+          ALLOW_UNMAPPED_COLLEGE_MEDIA="$7"
           WORK_DIR=$(mktemp -d)
           trap 'rm -rf "$WORK_DIR"' EXIT
           set -a
@@ -664,12 +686,34 @@ jobs:
           if [ -n "$SOURCE_SANITIZED_MANIFEST_KEY" ]; then
             aws s3 cp "s3://$BUCKET/$ORIGINAL_MANIFEST_KEY" "$WORK_DIR/original-apply-manifest.jsonl" --only-show-errors
             aws s3 cp "s3://$BUCKET/$SOURCE_SANITIZED_MANIFEST_KEY" "$WORK_DIR/sanitized-source-manifest.jsonl" --only-show-errors
+            CONTENT_ALIAS_ARGS=()
+            if [ -n "$CONTENT_ALIAS_MANIFEST_KEY" ]; then
+              aws s3 cp "s3://$BUCKET/$CONTENT_ALIAS_MANIFEST_KEY" "$WORK_DIR/content-alias-manifest.jsonl" --only-show-errors
+              CONTENT_ALIAS_ARGS=(--content-alias-manifest "$WORK_DIR/content-alias-manifest.jsonl")
+            fi
+            ALLOW_UNMAPPED_ARGS=()
+            if [ "$ALLOW_UNMAPPED_COLLEGE_MEDIA" = "true" ]; then
+              ALLOW_UNMAPPED_ARGS=(--allow-unmapped --unmapped-output "$WORK_DIR/unmapped-college-carousels.jsonl")
+            fi
             npm --prefix backend run media:build-current-carousel-cutover -- \
               --original-manifest "$WORK_DIR/original-apply-manifest.jsonl" \
               --sanitized-manifest "$WORK_DIR/sanitized-source-manifest.jsonl" \
+              --alias-manifest "$WORK_DIR/sanitized-apply-manifest.jsonl" \
+              "${CONTENT_ALIAS_ARGS[@]}" \
+              "${ALLOW_UNMAPPED_ARGS[@]}" \
               --output "$WORK_DIR/current-carousel-cutover-manifest.jsonl" \
               --report "$WORK_DIR/current-carousel-cutover-report.json"
             cat "$WORK_DIR/current-carousel-cutover-report.json"
+            REPORT_PREFIX="migration-reports/original-college-media/$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+            aws s3 cp "$WORK_DIR/current-carousel-cutover-report.json" \
+              "s3://$BUCKET/$REPORT_PREFIX/current-carousel-cutover-report.json" \
+              --sse AES256 --cache-control private,no-store --only-show-errors
+            if [ -s "$WORK_DIR/unmapped-college-carousels.jsonl" ]; then
+              aws s3 cp "$WORK_DIR/unmapped-college-carousels.jsonl" \
+                "s3://$BUCKET/$REPORT_PREFIX/unmapped-college-carousels.jsonl" \
+                --sse AES256 --cache-control private,no-store --only-show-errors
+            fi
+            echo "Private cutover evidence: s3://$BUCKET/$REPORT_PREFIX/"
             APPLY_MANIFEST="$WORK_DIR/current-carousel-cutover-manifest.jsonl"
           fi
           npm --prefix backend run media:apply-original -- --manifest "$APPLY_MANIFEST"

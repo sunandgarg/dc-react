@@ -98,6 +98,11 @@ test("AWS college-media deployment accepts scoped named cutovers without widenin
   assert.match(workflow, /college_media_source_manifest_key/);
   assert.match(workflow, /The source sanitized college-media manifest key is outside the approved private prefix/);
   assert.match(workflow, /media:build-current-carousel-cutover/);
+  assert.match(workflow, /--alias-manifest "\$WORK_DIR\/sanitized-apply-manifest\.jsonl"/);
+  assert.match(workflow, /--content-alias-manifest "\$WORK_DIR\/content-alias-manifest\.jsonl"/);
+  assert.match(workflow, /--allow-unmapped --unmapped-output/);
+  assert.match(workflow, /migration-reports\/original-college-media/);
+  assert.match(workflow, /unmapped-college-carousels\.jsonl/);
   assert.match(workflow, /APPLY_MANIFEST="\$WORK_DIR\/current-carousel-cutover-manifest\.jsonl"/);
 });
 
@@ -107,7 +112,7 @@ test("live carousel cutover joins manifests by production ID within low memory",
   assert.match(source, /mkdtemp\(join\(tmpdir\(\), "dc-college-carousel-join-"\)\)/);
   assert.match(source, /createHash\("sha256"\)\.update\(id\)\.digest\("hex"\)/);
   assert.match(source, /sanitizedIds\.has\(originalId\)/);
-  assert.match(source, /readFile\(stagedRowPath\(joinDirectory, originalId\), "utf8"\)/);
+  assert.match(source, /readFile\(stagedRowPath\(joinDirectory, originalId, "sanitized"\), "utf8"\)/);
   assert.match(source, /rm\(joinDirectory, \{ recursive: true, force: true \}\)/);
   assert.doesNotMatch(source, /Manifest order mismatch/);
   assert.doesNotMatch(source, /Promise\.all\(\[originalRows\.next\(\), sanitizedRows\.next\(\)\]\)/);
