@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { toPublicMediaUrls, toStoredMediaKeys } from "../src/media-values.mjs";
+import {
+  collectStoredMediaObjectKeys,
+  toPublicMediaUrls,
+  toStoredMediaKeys,
+  toStoredMediaObjectKey,
+} from "../src/media-values.mjs";
 
 test("stores public media as provider-neutral keys", () => {
   const previous = process.env.MEDIA_BASE_URL;
@@ -50,4 +55,22 @@ test("expands known object keys only when returning API data", () => {
     if (previous === undefined) delete process.env.MEDIA_BASE_URL;
     else process.env.MEDIA_BASE_URL = previous;
   }
+});
+
+test("normalizes raw and public media references to the same S3 object key", () => {
+  const key = "legacy-public-assets/sanitized/bottom-12-v1/college-heroes/aa/example.webp";
+  const publicUrl = `https://aws-origin.dekhocampus.com/storage/v1/object/public/${key}`;
+  assert.equal(toStoredMediaObjectKey(key), key);
+  assert.equal(toStoredMediaObjectKey(publicUrl), key);
+  assert.equal(toStoredMediaObjectKey("https://university.example/image.webp"), "");
+});
+
+test("collects canonical S3 keys from nested database media values", () => {
+  const prefix = "legacy-public-assets/sanitized/bottom-12-v1/";
+  const hero = `${prefix}college-heroes/aa/hero.webp`;
+  const gallery = `${prefix}college-gallery/bb/gallery.webp`;
+  assert.deepEqual(
+    collectStoredMediaObjectKeys({ hero, gallery: [`https://aws-origin.dekhocampus.com/storage/v1/object/public/${gallery}`], external: "https://example.com/photo.jpg" }, prefix),
+    [hero, gallery],
+  );
 });

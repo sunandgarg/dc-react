@@ -7,6 +7,7 @@ import { pipeline } from "node:stream/promises";
 import { createGzip } from "node:zlib";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma, jsonSafe } from "../src/db.mjs";
+import { toStoredMediaKeys } from "../src/media-values.mjs";
 import { canonicalIdentity, canonicalSlug, stableJson } from "../src/original-media-migration.mjs";
 
 const apply = process.argv.includes("--apply");
@@ -34,8 +35,10 @@ function sameIdentity(expected, current) {
 }
 
 function fieldMatches(field, expected, current) {
-  if (field === "gallery_images") return stableJson(expected || []) === stableJson(current || []);
-  return String(expected ?? "") === String(current ?? "");
+  const normalizedExpected = toStoredMediaKeys(expected ?? (field === "gallery_images" ? [] : ""));
+  const normalizedCurrent = toStoredMediaKeys(current ?? (field === "gallery_images" ? [] : ""));
+  if (field === "gallery_images") return stableJson(normalizedExpected) === stableJson(normalizedCurrent);
+  return String(normalizedExpected) === String(normalizedCurrent);
 }
 
 function isSanitizedAwsJpeg(value) {
@@ -147,7 +150,10 @@ try {
       continue;
     }
     report.valid += 1;
-    ready.push({ id: current.id, data: Object.fromEntries(changedFields.map((field) => [field, row.replacement[field]])) });
+    ready.push({
+      id: current.id,
+      data: Object.fromEntries(changedFields.map((field) => [field, toStoredMediaKeys(row.replacement[field])])),
+    });
     rollbackRows.push(jsonSafe({
       id: current.id,
       slug: current.slug,

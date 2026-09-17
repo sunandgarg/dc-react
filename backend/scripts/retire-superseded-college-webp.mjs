@@ -10,6 +10,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { prisma } from "../src/db.mjs";
+import { collectStoredMediaObjectKeys } from "../src/media-values.mjs";
 
 const args = new Map();
 for (let index = 2; index < process.argv.length; index += 1) {
@@ -74,23 +75,6 @@ async function readJsonLines(path) {
   return rows;
 }
 
-function urls(value) {
-  if (Array.isArray(value)) return value.flatMap(urls);
-  if (value && typeof value === "object") return Object.values(value).flatMap(urls);
-  return typeof value === "string" && value.includes(prefix) ? [value.trim()] : [];
-}
-
-function objectKey(value) {
-  try {
-    const marker = "/storage/v1/object/public/";
-    const pathname = decodeURIComponent(new URL(value).pathname);
-    const offset = pathname.indexOf(marker);
-    return offset >= 0 ? pathname.slice(offset + marker.length) : "";
-  } catch {
-    return "";
-  }
-}
-
 async function collectLiveReferences() {
   const active = new Map();
   for (const [table, fields] of TABLES) {
@@ -113,10 +97,10 @@ async function collectLiveReferences() {
       }
       for (const row of page) {
         for (const field of fields) {
-          for (const url of urls(row[field])) {
-            const refs = active.get(url) || [];
+          for (const key of collectStoredMediaObjectKeys(row[field], prefix)) {
+            const refs = active.get(key) || [];
             if (refs.length < 25) refs.push({ table, id: String(row.id), field });
-            active.set(url, refs);
+            active.set(key, refs);
           }
         }
       }
@@ -146,20 +130,17 @@ const workDir = await mkdtemp(join(tmpdir(), "dc-retire-webp-"));
 const reportPath = join(workDir, "retire-report.json");
 try {
   const manifest = await readJsonLines(manifestPath);
-  const candidates = new Map();
+  const candidates = new Set();
   for (const row of manifest) {
     for (const value of [row?.expected?.image, ...(Array.isArray(row?.expected?.gallery_images) ? row.expected.gallery_images : [])]) {
-      for (const url of urls(value)) {
-        const key = objectKey(url);
-        if (key.startsWith(prefix)) candidates.set(url, key);
-      }
+      for (const key of collectStoredMediaObjectKeys(value, prefix)) candidates.add(key);
     }
   }
-  const candidateKeys = new Set(candidates.values());
+  const candidateKeys = candidates;
 
   const { active, error: scanError } = await collectLiveReferences();
-  const retained = [...candidates].filter(([url]) => active.has(url));
-  const deletable = [...candidates].filter(([url]) => !active.has(url));
+  const retained = [...candidates].filter((key) => active.has(key));
+  const deletable = [...candidates].filter((key) => !active.has(key));
   const client = new S3Client({ region });
   const versions = [];
   let versionKeyMarker;
@@ -191,7 +172,7 @@ try {
     live_referenced_objects: retained.length,
     deletable_objects: deletable.length,
     database_scan_error: scanError || null,
-    retained: retained.map(([url, key]) => ({ url, key, references: active.get(url) })),
+    retained: retained.map((key) => ({ key, references: active.get(key) })),
     deleted: [],
     candidate_versions: versions,
   };
@@ -206,9 +187,9 @@ try {
       const batch = deletable.slice(offset, offset + 1000);
       await client.send(new DeleteObjectsCommand({
         Bucket: bucket,
-        Delete: { Quiet: true, Objects: batch.map(([, Key]) => ({ Key })) },
+        Delete: { Quiet: true, Objects: batch.map((Key) => ({ Key })) },
       }));
-      report.deleted.push(...batch.map(([url, key]) => ({ url, key })));
+      report.deleted.push(...batch.map((key) => ({ key })));
       process.stdout.write(`Retired ${report.deleted.length}/${deletable.length}\n`);
     }
     report.completed_at = new Date().toISOString();

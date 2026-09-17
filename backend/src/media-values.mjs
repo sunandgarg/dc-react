@@ -38,6 +38,22 @@ export function toStoredMediaKeys(value) {
   });
 }
 
+export function toStoredMediaObjectKey(value) {
+  const normalized = toStoredMediaKeys(value);
+  if (typeof normalized !== "string") return "";
+  const key = normalized.trim().replace(/^\/+/, "");
+  return key && !key.includes("://") ? key : "";
+}
+
+export function collectStoredMediaObjectKeys(value, prefix = "") {
+  if (Array.isArray(value)) return value.flatMap((item) => collectStoredMediaObjectKeys(item, prefix));
+  if (value && typeof value === "object") {
+    return Object.values(value).flatMap((item) => collectStoredMediaObjectKeys(item, prefix));
+  }
+  const key = toStoredMediaObjectKey(value);
+  return key && (!prefix || key.startsWith(prefix)) ? [key] : [];
+}
+
 export function toPublicMediaUrls(value) {
   const base = mediaBaseUrl();
   if (!base) return value;
