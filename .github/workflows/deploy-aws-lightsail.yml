@@ -619,7 +619,7 @@ jobs:
           ORIGINAL_MANIFEST_KEY: ${{ inputs.original_college_media_manifest_key }}
           RETIRE_SUPERSEDED_WEBP: ${{ inputs.retire_superseded_college_webp }}
         run: |
-          if ! [[ "$SANITIZED_MANIFEST_KEY" =~ ^migration-manifests/original-college-media-sanitized/[0-9TZ.-]+/apply-manifest\.jsonl$ ]]; then
+          if ! [[ "$SANITIZED_MANIFEST_KEY" =~ ^migration-manifests/original-college-media-sanitized/[0-9TZ.-]+(-[a-z0-9-]+)?/apply-manifest\.jsonl$ ]]; then
             echo "The sanitized college-media manifest key is outside the approved private prefix."
             exit 1
           fi

@@ -87,6 +87,16 @@ test("AWS production deploy installs the immutable revision verified by its work
   assert.doesNotMatch(workflow, /rm -f[\s\S]*apply-original-college-media-manifest/);
 });
 
+test("AWS college-media deployment accepts scoped named cutovers without widening the S3 prefix", async () => {
+  const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
+
+  assert.match(
+    workflow,
+    /original-college-media-sanitized\/\[0-9TZ\.\-\]\+\(-\[a-z0-9-\]\+\)\?\/apply-manifest\\\.jsonl/,
+  );
+  assert.match(workflow, /The sanitized college-media manifest key is outside the approved private prefix/);
+});
+
 test("AWS production deploy removes every temporary SSH rule during cleanup", async () => {
   const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
   const cleanup = workflow.slice(workflow.indexOf("- name: Close temporary SSH access"));
