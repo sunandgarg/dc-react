@@ -502,6 +502,20 @@ jobs:
           git fetch --no-tags origin "$DEPLOY_SHA"
           git reset --hard "$DEPLOY_SHA"
           test "$(git rev-parse HEAD)" = "$DEPLOY_SHA"
+          # Remove only the retired one-time original-media migration helpers.
+          # They are untracked, so an immutable git reset cannot clean them.
+          rm -f \
+            backend/scripts/apply-original-college-media-manifest.mjs \
+            backend/scripts/verify-original-college-media-migration.mjs \
+            backend/src/original-media-migration.mjs \
+            /tmp/apply-manifest.jsonl \
+            /tmp/apply-original-college-media-manifest.mjs \
+            /tmp/inspect-original-media-conflicts.mjs \
+            /tmp/original-media-migration.mjs \
+            /tmp/run-with-pm2-env.mjs \
+            /tmp/storage.mjs.before-head-fix \
+            /tmp/storage.mjs.head-fix \
+            /tmp/verify-original-college-media-migration.mjs
           npm --prefix backend ci
           npm --prefix backend run prisma:generate
           set -a
