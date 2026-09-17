@@ -249,13 +249,13 @@ export function buildCurrentCarouselCutoverManifestRow(originalRow, sanitizedRow
   };
 
   const targetImage = String(sanitizedRow?.replacement?.image || "").trim();
+  const sanitizedExpectedImage = String(sanitizedRow?.expected?.image || "").trim();
+  const originalImage = String(originalRow?.replacement?.image || "").trim();
   if (targetImage) {
-    addAliases(
-      targetImage,
-      originalRow?.expected?.image,
-      originalRow?.replacement?.image,
-      sanitizedRow?.expected?.image,
-    );
+    addAliases(targetImage, sanitizedExpectedImage);
+    if (canonicalMediaReference(originalImage) === canonicalMediaReference(sanitizedExpectedImage)) {
+      addAliases(targetImage, originalRow?.expected?.image, originalImage);
+    }
   }
 
   const oldGallery = Array.isArray(originalRow?.expected?.gallery_images) ? originalRow.expected.gallery_images : [];
@@ -265,24 +265,46 @@ export function buildCurrentCarouselCutoverManifestRow(originalRow, sanitizedRow
   const droppedIndexes = new Set((Array.isArray(sanitizedRow?.failed_assets) ? sanitizedRow.failed_assets : [])
     .filter((asset) => asset?.kind === "gallery" && Number.isInteger(Number(asset.gallery_index)))
     .map((asset) => Number(asset.gallery_index)));
+  const targetBySource = new Map();
+  const droppedSources = new Set();
   let targetIndex = 0;
-  const gallerySlots = Math.max(oldGallery.length, originalGallery.length, sanitizedExpectedGallery.length);
-  for (let index = 0; index < gallerySlots; index += 1) {
-    const aliases = [oldGallery[index], originalGallery[index], sanitizedExpectedGallery[index]];
+  for (let index = 0; index < sanitizedExpectedGallery.length; index += 1) {
+    const source = sanitizedExpectedGallery[index];
+    const sourceKey = canonicalMediaReference(source);
     if (droppedIndexes.has(index)) {
-      for (const alias of aliases) {
-        const key = canonicalMediaReference(alias);
-        if (key) droppedAliases.add(key);
-      }
+      if (sourceKey) droppedSources.add(sourceKey);
+      if (sourceKey) droppedAliases.add(sourceKey);
       continue;
     }
     const target = String(targetGallery[targetIndex] || "").trim();
     if (!target) throw new Error(`Sanitized gallery mapping is incomplete at source index ${index}`);
-    addAliases(target, ...aliases);
+    addAliases(target, source);
+    if (sourceKey) targetBySource.set(sourceKey, target);
     targetIndex += 1;
   }
   if (targetIndex !== targetGallery.length) {
     throw new Error(`Sanitized gallery mapping has ${targetGallery.length - targetIndex} unpaired targets`);
+  }
+
+  // The source and sanitized manifests can be generated at different times.
+  // Pair their immutable original S3 keys instead of assuming equal array
+  // length or order, then retain the old live URL as an alias for CAS cutover.
+  const originalSlots = Math.max(oldGallery.length, originalGallery.length);
+  for (let index = 0; index < originalSlots; index += 1) {
+    const oldAlias = oldGallery[index];
+    const originalSource = originalGallery[index];
+    const sourceKey = canonicalMediaReference(originalSource);
+    const target = targetBySource.get(sourceKey);
+    if (target) {
+      addAliases(target, oldAlias, originalSource);
+      continue;
+    }
+    if (droppedSources.has(sourceKey)) {
+      for (const alias of [oldAlias, originalSource]) {
+        const key = canonicalMediaReference(alias);
+        if (key) droppedAliases.add(key);
+      }
+    }
   }
 
   const current = Array.isArray(currentCollege?.carousel_images) ? currentCollege.carousel_images : [];

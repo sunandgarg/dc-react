@@ -242,6 +242,31 @@ test("drops only explicitly unavailable gallery slots during a live carousel reb
   assert.match(result.row.replacement.carousel_images[2], /new-c\.jpg$/);
 });
 
+test("matches changed manifest snapshots by immutable source URL instead of gallery position", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const result = buildCurrentCarouselCutoverManifestRow({
+    production,
+    expected: { image: "old-hero.webp", gallery_images: ["old-a.webp", "old-b.webp", "old-obsolete.webp"] },
+    replacement: {
+      image: "original-hero.jpg",
+      gallery_images: ["original-a.jpg", "original-b.jpg", "original-obsolete.jpg"],
+    },
+  }, {
+    production,
+    expected: { image: "original-hero.jpg", gallery_images: ["original-b.jpg", "original-a.jpg"] },
+    replacement: {
+      image: "new-hero.jpg",
+      gallery_images: ["new-b.jpg", "new-a.jpg"],
+    },
+  }, {
+    ...production,
+    carousel_images: ["old-hero.webp", "old-b.webp", "old-a.webp"],
+  });
+
+  assert.deepEqual(result.row.replacement.carousel_images, ["new-hero.jpg", "new-b.jpg", "new-a.jpg"]);
+  assert.deepEqual(result.unmapped, []);
+});
+
 test("refuses to overwrite an unmapped custom carousel image", () => {
   const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
   const result = buildCurrentCarouselCutoverManifestRow({
