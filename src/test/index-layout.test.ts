@@ -11,6 +11,7 @@ describe("Index page layout (static source assertions)", () => {
   const cleanerSrc = readFileSync(resolve(process.cwd(), "src/pages/AdminDataCleaner.tsx"), "utf8");
   const navbarSrc = readFileSync(resolve(process.cwd(), "src/components/Navbar.tsx"), "utf8");
   const trustSrc = readFileSync(resolve(process.cwd(), "src/components/TrustedBySection.tsx"), "utf8");
+  const adminPartnersSrc = readFileSync(resolve(process.cwd(), "src/pages/AdminPartners.tsx"), "utf8");
   const collegeCardSrc = readFileSync(resolve(process.cwd(), "src/components/CollegeCard.tsx"), "utf8");
   const allCollegesSrc = readFileSync(resolve(process.cwd(), "src/pages/AllColleges.tsx"), "utf8");
   const directoryHookSrc = readFileSync(resolve(process.cwd(), "src/hooks/useCollegeDirectory.ts"), "utf8");
@@ -82,6 +83,14 @@ describe("Index page layout (static source assertions)", () => {
 
   it("does not publish unsupported trust-stat counters", () => {
     expect(trustSrc).not.toMatch(/1M\+|5,000\+|50K\+|Students Guided|Verified Colleges|Success Rate|Placements Assisted|Trusted by Millions|value:\s*"95%"/);
+  });
+
+  it("lets admins select homepage partners from the college directory and shows their linked short names", () => {
+    expect(adminPartnersSrc).toMatch(/useAdminCollegeList/);
+    expect(adminPartnersSrc).toMatch(/college\.short_name\?\.trim\(\) \|\| college\.name/);
+    expect(adminPartnersSrc).toMatch(/college\.logo\?\.trim\(\) \|\| college\.image\?\.trim\(\)/);
+    expect(trustSrc).toMatch(/buildCollegeHref\(\{ slug: partner\.college_slug \}\)/);
+    expect(trustSrc).toMatch(/partner\.name/);
   });
 
   it("does not render a floating logo overlay on college cards", () => {

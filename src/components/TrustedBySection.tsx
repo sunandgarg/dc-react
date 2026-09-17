@@ -7,6 +7,8 @@ import { AILeadForm } from "@/components/AILeadForm";
 import { AIChatFullScreen } from "@/components/AIChatFullScreen";
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
 import { useCallback } from "react";
+import { Link } from "react-router-dom";
+import { buildCollegeHref } from "@/lib/entityUrls";
 
 const googleReviews = [
   { name: "Ravi Shankar", rating: 5, date: "2 weeks ago", text: "DekhoCampus made my college search so much easier! The AI counselor gave me perfect recommendations based on my JEE score. Got into NIT Warangal.", avatar: "RS", verified: true },
@@ -75,7 +77,12 @@ export function TrustedBySection() {
               <div className="absolute right-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-l from-muted/30 to-transparent z-10 pointer-events-none" />
               <div className="dc-mobile-static-marquee flex animate-marquee [@media(hover:hover)]:hover:[animation-play-state:paused]">
                 {[...displayPartners, ...displayPartners].map((partner, i) => (
-                  <div key={`${partner.id}-${i}`} className="flex-shrink-0 mx-2 md:mx-3 px-4 md:px-5 py-2.5 md:py-3 bg-card rounded-xl border border-border flex items-center gap-2 md:gap-3 min-w-[140px] md:min-w-[180px]">
+                  <Link
+                    key={`${partner.id}-${i}`}
+                    to={buildCollegeHref({ slug: partner.college_slug })}
+                    aria-label={`View ${partner.name}`}
+                    className="flex-shrink-0 mx-2 md:mx-3 px-4 md:px-5 py-2.5 md:py-3 bg-card rounded-xl border border-border flex items-center gap-2 md:gap-3 min-w-[140px] md:min-w-[180px] hover:border-primary/50 hover:shadow-sm transition"
+                  >
                     {partner.logo_url ? (
                       <img src={partner.logo_url} alt={partner.name} className="w-8 h-8 md:w-10 md:h-10 rounded-lg object-contain" />
                     ) : (
@@ -84,7 +91,7 @@ export function TrustedBySection() {
                       </div>
                     )}
                     <span className="text-xs md:text-sm font-medium text-foreground whitespace-nowrap">{partner.name}</span>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

@@ -57,7 +57,12 @@ export function useUpsertTrustedPartner() {
         if (error) throw error;
       }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["trusted-partners"] }),
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["trusted-partners"] }),
+        qc.invalidateQueries({ queryKey: ["trusted-partners-all"] }),
+      ]);
+    },
   });
 }
 
@@ -68,6 +73,11 @@ export function useDeleteTrustedPartner() {
       const { error } = await backendClient.from("trusted_partners" as any).delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["trusted-partners"] }),
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["trusted-partners"] }),
+        qc.invalidateQueries({ queryKey: ["trusted-partners-all"] }),
+      ]);
+    },
   });
 }
