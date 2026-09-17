@@ -52,6 +52,12 @@ describe("Index page layout (static source assertions)", () => {
     expect(footerSrc).not.toMatch(/GlobalDiscoveryBar/);
   });
 
+  it("keeps the legacy rotating hero promise and adds a site-wide Ask Diya footer hand-off", () => {
+    expect(heroSrc).toMatch(/College[\s\S]*Course[\s\S]*Career[\s\S]*Exam[\s\S]*Future/);
+    expect(heroSrc).toMatch(/2200/);
+    expect(footerSrc).toMatch(/AskDiyaBand/);
+  });
+
   it("does not render the six college, course, exam, application, review, and news cards", () => {
     expect(heroSrc).not.toMatch(/useHeroCategories|quickCategories/);
     expect(footerSrc).not.toMatch(/GlobalDiscoveryBar/);

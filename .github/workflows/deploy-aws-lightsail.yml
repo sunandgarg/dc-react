@@ -42,6 +42,21 @@ on:
         required: false
         default: false
         type: boolean
+      college_media_manifest_key:
+        description: Optional private S3 key for an exact-match sanitized college-media manifest
+        required: false
+        default: ""
+        type: string
+      original_college_media_manifest_key:
+        description: Original private S3 manifest key used to audit superseded WebP references
+        required: false
+        default: ""
+        type: string
+      retire_superseded_college_webp:
+        description: Retire zero-reference v1 WebP objects after the exact college-media update
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -502,20 +517,6 @@ jobs:
           git fetch --no-tags origin "$DEPLOY_SHA"
           git reset --hard "$DEPLOY_SHA"
           test "$(git rev-parse HEAD)" = "$DEPLOY_SHA"
-          # Remove only the retired one-time original-media migration helpers.
-          # They are untracked, so an immutable git reset cannot clean them.
-          rm -f \
-            backend/scripts/apply-original-college-media-manifest.mjs \
-            backend/scripts/verify-original-college-media-migration.mjs \
-            backend/src/original-media-migration.mjs \
-            /tmp/apply-manifest.jsonl \
-            /tmp/apply-original-college-media-manifest.mjs \
-            /tmp/inspect-original-media-conflicts.mjs \
-            /tmp/original-media-migration.mjs \
-            /tmp/run-with-pm2-env.mjs \
-            /tmp/storage.mjs.before-head-fix \
-            /tmp/storage.mjs.head-fix \
-            /tmp/verify-original-college-media-migration.mjs
           npm --prefix backend ci
           npm --prefix backend run prisma:generate
           set -a
@@ -609,6 +610,57 @@ jobs:
           set +a
           cd /opt/dc-react/app
           npm --prefix backend run cleanup:college-editorial-artifacts -- --apply
+          REMOTE
+
+      - name: Apply sanitized college media and retire zero-reference WebP objects
+        if: ${{ inputs.college_media_manifest_key != '' }}
+        env:
+          SANITIZED_MANIFEST_KEY: ${{ inputs.college_media_manifest_key }}
+          ORIGINAL_MANIFEST_KEY: ${{ inputs.original_college_media_manifest_key }}
+          RETIRE_SUPERSEDED_WEBP: ${{ inputs.retire_superseded_college_webp }}
+        run: |
+          if ! [[ "$SANITIZED_MANIFEST_KEY" =~ ^migration-manifests/original-college-media-sanitized/[0-9TZ.-]+/apply-manifest\.jsonl$ ]]; then
+            echo "The sanitized college-media manifest key is outside the approved private prefix."
+            exit 1
+          fi
+          if [ "$RETIRE_SUPERSEDED_WEBP" = "true" ] && ! [[ "$ORIGINAL_MANIFEST_KEY" =~ ^system-backups/original-college-media/[0-9TZ.-]+/apply-manifest\.jsonl$ ]]; then
+            echo "Retirement requires the exact original private manifest key."
+            exit 1
+          fi
+          BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
+          test -n "$BUCKET"
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
+            -i /tmp/tempkey "$SSH_USER@$SSH_IP" \
+            "sudo bash -s -- '$BUCKET' '$SANITIZED_MANIFEST_KEY' '$ORIGINAL_MANIFEST_KEY' '$RETIRE_SUPERSEDED_WEBP'" <<'REMOTE'
+          set -euo pipefail
+          BUCKET="$1"
+          SANITIZED_MANIFEST_KEY="$2"
+          ORIGINAL_MANIFEST_KEY="$3"
+          RETIRE_SUPERSEDED_WEBP="$4"
+          WORK_DIR=$(mktemp -d)
+          trap 'rm -rf "$WORK_DIR"' EXIT
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app
+          aws s3 cp "s3://$BUCKET/$SANITIZED_MANIFEST_KEY" "$WORK_DIR/sanitized-apply-manifest.jsonl" --only-show-errors
+          npm --prefix backend run media:apply-original -- --manifest "$WORK_DIR/sanitized-apply-manifest.jsonl"
+          npm --prefix backend run media:apply-original -- --manifest "$WORK_DIR/sanitized-apply-manifest.jsonl" --apply
+          npm --prefix backend run media:audit-original -- \
+            --manifest "$WORK_DIR/sanitized-apply-manifest.jsonl" \
+            --state-dir "$WORK_DIR/post-apply-audit" \
+            --require-fully-applied
+          if [ "$RETIRE_SUPERSEDED_WEBP" = "true" ]; then
+            aws s3 cp "s3://$BUCKET/$ORIGINAL_MANIFEST_KEY" "$WORK_DIR/original-apply-manifest.jsonl" --only-show-errors
+            npm --prefix backend run media:retire-college-webp -- \
+              --manifest "$WORK_DIR/original-apply-manifest.jsonl" \
+              --bucket "$BUCKET"
+            npm --prefix backend run media:retire-college-webp -- \
+              --manifest "$WORK_DIR/original-apply-manifest.jsonl" \
+              --bucket "$BUCKET" \
+              --apply
+          fi
           REMOTE
 
       - name: Repair listed production article covers

@@ -41,7 +41,16 @@ function GlobalDiya() {
   const { pathname } = useLocation();
   const isNews = pathname === "/news" || pathname.startsWith("/news/") || pathname === "/articles" || pathname.startsWith("/articles/");
   const isUpgradeYourself = pathname === "/premium-programs" || pathname.startsWith("/premium-programs/");
-  if (pathname.startsWith("/admin") || pathname.startsWith("/auth") || isNews || isUpgradeYourself) return null;
+  const hidden = pathname.startsWith("/admin") || pathname.startsWith("/auth") || isNews || isUpgradeYourself;
+
+  useEffect(() => {
+    if (hidden || window.sessionStorage.getItem("dc:open-diya-after-navigation") !== "footer") return;
+    window.sessionStorage.removeItem("dc:open-diya-after-navigation");
+    const timer = window.setTimeout(() => window.dispatchEvent(new CustomEvent("dc:open-diya")), 0);
+    return () => window.clearTimeout(timer);
+  }, [hidden, pathname]);
+
+  if (hidden) return null;
   return <FloatingBot />;
 }
 

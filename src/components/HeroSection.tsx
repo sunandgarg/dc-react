@@ -24,6 +24,13 @@ import { searchDirectory } from "@/lib/directorySearch";
 import { SearchResultIcon } from "@/components/SearchResultIcon";
 
 const YEAR = new Date().getFullYear();
+const rotatingWords = [
+  { label: "College", className: "text-gradient" },
+  { label: "Course", className: "text-gradient-accent" },
+  { label: "Career", className: "text-gradient" },
+  { label: "Exam", className: "text-gradient-accent" },
+  { label: "Future", className: "text-gradient" },
+] as const;
 const suggestedPrompts = [
   "Best colleges for B.Tech CSE?",
   `How to crack JEE Main ${YEAR}?`,
@@ -58,6 +65,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [dbResults, setDbResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [rotatingWordIndex, setRotatingWordIndex] = useState(0);
   const requestId = useRef(0);
   const navigate = useNavigate();
 
@@ -70,6 +78,14 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
     return (heroSettings?.is_active && heroSettings.image_urls?.filter(Boolean)) || [];
   }, [heroSettings]);
   const rotationMs = (heroSettings?.rotation_seconds ?? 11) * 1000;
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => {
+      setRotatingWordIndex((index) => (index + 1) % rotatingWords.length);
+    }, 2200);
+    return () => window.clearInterval(id);
+  }, []);
 
   // 2026 UX: ambient campus carousel - admin-configurable rotation, respects reduced-motion
   useEffect(() => {
@@ -137,7 +153,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
   // Keep the menu open for a valid query even when the directory has no
   // matching record. That empty state is the hand-off to Ask Diya.
   const showDropdown = isFocused && searchQuery.trim().length >= 2;
-  const rotatingWord = { label: "Path", className: "text-primary" } as const;
+  const rotatingWord = rotatingWords[rotatingWordIndex];
   return (
     <section
       className={`relative isolate overflow-visible bg-[linear-gradient(118deg,#fff7f1_0%,#f8fbff_48%,#eef5ff_100%)] ${showDropdown ? "z-[500]" : "z-0"}`}

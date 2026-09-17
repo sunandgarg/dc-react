@@ -84,6 +84,7 @@ test("AWS production deploy installs the immutable revision verified by its work
   assert.match(workflow, /git reset --hard "\$DEPLOY_SHA"/);
   assert.match(workflow, /test "\$\(git rev-parse HEAD\)" = "\$DEPLOY_SHA"/);
   assert.doesNotMatch(workflow, /git reset --hard origin\/main/);
+  assert.doesNotMatch(workflow, /rm -f[\s\S]*apply-original-college-media-manifest/);
 });
 
 test("AWS production deploy removes every temporary SSH rule during cleanup", async () => {
