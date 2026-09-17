@@ -68,11 +68,17 @@ const TABLES = [
   ["trusted_partners", ["logo_url"]],
 ];
 
-async function readJsonLines(path) {
-  const rows = [];
+async function collectManifestCandidateKeys(path) {
+  const candidates = new Set();
   const lines = createInterface({ input: createReadStream(path, { encoding: "utf8" }), crlfDelay: Infinity });
-  for await (const line of lines) if (line.trim()) rows.push(JSON.parse(line));
-  return rows;
+  for await (const line of lines) {
+    if (!line.trim()) continue;
+    const row = JSON.parse(line);
+    for (const value of [row?.expected?.image, ...(Array.isArray(row?.expected?.gallery_images) ? row.expected.gallery_images : [])]) {
+      for (const key of collectStoredMediaObjectKeys(value, prefix)) candidates.add(key);
+    }
+  }
+  return candidates;
 }
 
 async function collectLiveReferences() {
@@ -126,22 +132,7 @@ async function uploadPrivate(client, path, key) {
   }));
 }
 
-const workDir = await mkdtemp(join(tmpdir(), "dc-retire-webp-"));
-const reportPath = join(workDir, "retire-report.json");
-try {
-  const manifest = await readJsonLines(manifestPath);
-  const candidates = new Set();
-  for (const row of manifest) {
-    for (const value of [row?.expected?.image, ...(Array.isArray(row?.expected?.gallery_images) ? row.expected.gallery_images : [])]) {
-      for (const key of collectStoredMediaObjectKeys(value, prefix)) candidates.add(key);
-    }
-  }
-  const candidateKeys = candidates;
-
-  const { active, error: scanError } = await collectLiveReferences();
-  const retained = [...candidates].filter((key) => active.has(key));
-  const deletable = [...candidates].filter((key) => !active.has(key));
-  const client = new S3Client({ region });
+async function listCandidateVersions(client, candidateKeys) {
   const versions = [];
   let versionKeyMarker;
   let versionIdMarker;
@@ -153,15 +144,39 @@ try {
       VersionIdMarker: versionIdMarker,
       MaxKeys: 1000,
     }));
-    for (const item of page.Versions || []) {
-      if (item.Key && candidateKeys.has(item.Key)) {
-        versions.push({ key: item.Key, version_id: item.VersionId, is_latest: item.IsLatest, size: item.Size });
+    for (const [items, deleteMarker] of [[page.Versions || [], false], [page.DeleteMarkers || [], true]]) {
+      for (const item of items) {
+        if (item.Key && item.VersionId && candidateKeys.has(item.Key)) {
+          versions.push({
+            key: item.Key,
+            version_id: item.VersionId,
+            is_latest: Boolean(item.IsLatest),
+            delete_marker: deleteMarker,
+            size: deleteMarker ? 0 : Number(item.Size || 0),
+          });
+        }
       }
     }
     versionKeyMarker = page.NextKeyMarker;
     versionIdMarker = page.NextVersionIdMarker;
     if (!page.IsTruncated) break;
   } while (true);
+  return versions;
+}
+
+const workDir = await mkdtemp(join(tmpdir(), "dc-retire-webp-"));
+const reportPath = join(workDir, "retire-report.json");
+try {
+  const candidates = await collectManifestCandidateKeys(manifestPath);
+  const candidateKeys = candidates;
+
+  const { active, error: scanError } = await collectLiveReferences();
+  const retained = [...candidates].filter((key) => active.has(key));
+  const deletable = [...candidates].filter((key) => !active.has(key));
+  const client = new S3Client({ region });
+  const versions = await listCandidateVersions(client, candidateKeys);
+  const deletableKeys = new Set(deletable);
+  const versionsToDelete = versions.filter((item) => deletableKeys.has(item.key));
 
   const report = {
     mode: apply ? "apply" : "dry-run",
@@ -173,7 +188,8 @@ try {
     deletable_objects: deletable.length,
     database_scan_error: scanError || null,
     retained: retained.map((key) => ({ key, references: active.get(key) })),
-    deleted: [],
+    versions_to_delete: versionsToDelete.length,
+    deleted_versions: [],
     candidate_versions: versions,
   };
   await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
@@ -183,15 +199,23 @@ try {
     const timestamp = new Date().toISOString().replaceAll(":", "-");
     const auditKey = `system-backups/retired-college-webp/${timestamp}/retire-report.json`;
     await uploadPrivate(client, reportPath, auditKey);
-    for (let offset = 0; offset < deletable.length; offset += 1000) {
-      const batch = deletable.slice(offset, offset + 1000);
-      await client.send(new DeleteObjectsCommand({
+    for (let offset = 0; offset < versionsToDelete.length; offset += 1000) {
+      const batch = versionsToDelete.slice(offset, offset + 1000);
+      const response = await client.send(new DeleteObjectsCommand({
         Bucket: bucket,
-        Delete: { Quiet: true, Objects: batch.map((Key) => ({ Key })) },
+        Delete: {
+          Quiet: true,
+          Objects: batch.map((item) => ({ Key: item.key, VersionId: item.version_id })),
+        },
       }));
-      report.deleted.push(...batch.map((key) => ({ key })));
-      process.stdout.write(`Retired ${report.deleted.length}/${deletable.length}\n`);
+      if (response.Errors?.length) {
+        throw new Error(`S3 refused ${response.Errors.length} version deletions; refusing to report successful retirement`);
+      }
+      report.deleted_versions.push(...batch);
+      process.stdout.write(`Retired ${report.deleted_versions.length}/${versionsToDelete.length} object versions\n`);
     }
+    const remaining = await listCandidateVersions(client, deletableKeys);
+    if (remaining.length) throw new Error(`${remaining.length} superseded WebP object versions remain after retirement`);
     report.completed_at = new Date().toISOString();
     report.audit_manifest = `s3://${bucket}/${auditKey}`;
     await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
@@ -202,7 +226,8 @@ try {
     candidate_objects: report.candidate_objects,
     live_referenced_objects: report.live_referenced_objects,
     deletable_objects: report.deletable_objects,
-    deleted_objects: report.deleted.length,
+    deleted_objects: new Set(report.deleted_versions.map((item) => item.key)).size,
+    deleted_versions: report.deleted_versions.length,
     database_scan_error: report.database_scan_error,
     audit_manifest: report.audit_manifest || null,
   }, null, 2));

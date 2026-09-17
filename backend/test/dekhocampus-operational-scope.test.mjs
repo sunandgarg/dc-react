@@ -161,3 +161,17 @@ test("AWS runtime allows a low-memory API enough time to become healthy", async 
   assert.match(runtimeStep, /for attempt in \$\(seq 1 90\)/);
   assert.match(runtimeStep, /pm2 logs dc-react-api --lines 120 --nostream/);
 });
+
+test("college WebP retirement removes only unreferenced versions from versioned S3", async () => {
+  const [template, retire] = await Promise.all([
+    readSource("../../infra/aws/lightsail-production.yaml"),
+    readSource("../scripts/retire-superseded-college-webp.mjs"),
+  ]);
+
+  assert.match(template, /s3:ListBucketVersions/);
+  assert.match(template, /s3:DeleteObjectVersion/);
+  assert.match(retire, /collectStoredMediaObjectKeys\(row\[field\], prefix\)/);
+  assert.match(retire, /VersionId: item\.version_id/);
+  assert.match(retire, /const remaining = await listCandidateVersions\(client, deletableKeys\)/);
+  assert.match(retire, /if \(remaining\.length\) throw new Error/);
+});
