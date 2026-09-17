@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { storagePolicyInternals } from "../src/storage.mjs";
 
-const { checkedBody, hasWebsiteMediaPermission, hasWebsiteMediaRole, ownsPath, routeDetails, PUBLIC_READ_BUCKETS } = storagePolicyInternals;
+const { checkedBody, hasWebsiteMediaPermission, hasWebsiteMediaRole, objectReadCommand, ownsPath, routeDetails, PUBLIC_READ_BUCKETS } = storagePolicyInternals;
 const identity = { id: "12d8b889-5ab9-4f9d-8725-b73444f418d5" };
 
 test("parses public, list, and direct storage routes", () => {
@@ -23,6 +23,16 @@ test("parses public, list, and direct storage routes", () => {
 test("keeps identity documents out of the public bucket allowlist", () => {
   assert.equal(PUBLIC_READ_BUCKETS.has("admin-uploads"), true);
   assert.equal(PUBLIC_READ_BUCKETS.has("user-documents"), false);
+});
+
+test("uses metadata-only S3 reads for HEAD requests", () => {
+  const head = objectReadCommand("HEAD", "media-bucket", "admin-uploads/college.jpg", "bytes=0-99");
+  assert.equal(head.constructor.name, "HeadObjectCommand");
+  assert.deepEqual(head.input, { Bucket: "media-bucket", Key: "admin-uploads/college.jpg" });
+
+  const get = objectReadCommand("GET", "media-bucket", "admin-uploads/college.jpg", "bytes=0-99");
+  assert.equal(get.constructor.name, "GetObjectCommand");
+  assert.deepEqual(get.input, { Bucket: "media-bucket", Key: "admin-uploads/college.jpg", Range: "bytes=0-99" });
 });
 
 test("scopes normal user uploads to their document and avatar folders", () => {

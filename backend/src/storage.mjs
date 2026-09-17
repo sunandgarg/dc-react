@@ -237,6 +237,11 @@ function jsonResponse(status, body) {
   return new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 }
 
+function objectReadCommand(method, bucket, key, range) {
+  if (method === "HEAD") return new HeadObjectCommand({ Bucket: bucket, Key: key });
+  return new GetObjectCommand({ Bucket: bucket, Key: key, Range: range || undefined });
+}
+
 async function s3Storage(request, route, config) {
   const key = route.objectPath ? storageObjectKey(route.bucket, route.objectPath) : "";
   if (["POST", "PUT"].includes(request.method) && route.modifier === null && route.objectPath) {
@@ -281,7 +286,7 @@ async function s3Storage(request, route, config) {
     return jsonResponse(200, { signedUrl, signedURL: signedUrl });
   }
   if (["GET", "HEAD"].includes(request.method) && key) {
-    const result = await config.client.send(new GetObjectCommand({ Bucket: config.bucket, Key: key, Range: request.headers.get("range") || undefined }));
+    const result = await config.client.send(objectReadCommand(request.method, config.bucket, key, request.headers.get("range")));
     const headers = new Headers({
       "content-type": result.ContentType || "application/octet-stream",
       "cache-control": result.CacheControl || "private,max-age=60",
@@ -314,4 +319,4 @@ export async function handleStorage(request) {
   return s3Storage(request, route, config);
 }
 
-export const storagePolicyInternals = { checkedBody, hasWebsiteMediaPermission, hasWebsiteMediaRole, ownsPath, routeDetails, PUBLIC_READ_BUCKETS };
+export const storagePolicyInternals = { checkedBody, hasWebsiteMediaPermission, hasWebsiteMediaRole, objectReadCommand, ownsPath, routeDetails, PUBLIC_READ_BUCKETS };
