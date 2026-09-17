@@ -8,7 +8,12 @@ import { createGzip } from "node:zlib";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma, jsonSafe } from "../src/db.mjs";
 import { toStoredMediaKeys } from "../src/media-values.mjs";
-import { canonicalIdentity, canonicalSlug, stableJson } from "../src/original-media-migration.mjs";
+import {
+  canonicalIdentity,
+  canonicalSlug,
+  isPreservedCarouselVideo,
+  stableJson,
+} from "../src/original-media-migration.mjs";
 
 const apply = process.argv.includes("--apply");
 const manifestFlag = process.argv.indexOf("--manifest");
@@ -90,7 +95,9 @@ function validateManifest(rows) {
       if (!isSanitizedAwsJpeg(galleryUrl)) throw new Error(`${label} has an invalid replacement gallery URL`);
     }
     for (const carouselUrl of row.replacement.carousel_images || []) {
-      if (!isSanitizedAwsJpeg(carouselUrl)) throw new Error(`${label} has an invalid replacement carousel URL`);
+      if (!isSanitizedAwsJpeg(carouselUrl) && !isPreservedCarouselVideo(carouselUrl)) {
+        throw new Error(`${label} has an invalid replacement carousel URL`);
+      }
     }
   }
 }

@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { basename, join, resolve } from "node:path";
 import { createInterface } from "node:readline";
 import { setTimeout as delay } from "node:timers/promises";
-import { stableJson } from "../src/original-media-migration.mjs";
+import { isPreservedCarouselVideo, stableJson } from "../src/original-media-migration.mjs";
 
 const args = new Map();
 for (let index = 2; index < process.argv.length; index += 1) {
@@ -121,6 +121,7 @@ const summary = {
   active_original_objects: 0,
   active_bottom_12_v1_webp_objects: 0,
   active_bottom_12_v2_jpeg_objects: 0,
+  active_preserved_video_urls: 0,
   active_direct_external_urls: 0,
   active_direct_collegedunia_urls: 0,
   target_direct_external_urls: 0,
@@ -137,6 +138,10 @@ for (const college of live) {
   const migratedFieldUrls = row ? targetMediaUrls(college, row) : [];
   for (const url of urls) {
     activeUrls.add(url);
+    if (isPreservedCarouselVideo(url)) {
+      summary.active_preserved_video_urls += 1;
+      continue;
+    }
     const liveHost = sourceHost(url);
     if (liveHost && liveHost !== "aws-origin.dekhocampus.com") summary.active_direct_external_urls += 1;
     if (liveHost.endsWith("collegedunia.com")) summary.active_direct_collegedunia_urls += 1;
@@ -147,6 +152,7 @@ for (const college of live) {
     if (sourceHost(source).endsWith("collegedunia.com")) activeThirdPartyUrls.add(url);
   }
   for (const url of migratedFieldUrls) {
+    if (isPreservedCarouselVideo(url)) continue;
     const liveHost = sourceHost(url);
     if (liveHost && liveHost !== "aws-origin.dekhocampus.com") summary.target_direct_external_urls += 1;
     if (liveHost.endsWith("collegedunia.com")) summary.target_direct_collegedunia_urls += 1;

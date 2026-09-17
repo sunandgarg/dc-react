@@ -10,6 +10,7 @@ import {
   canonicalIdentity,
   detectRasterImage,
   findStrictProductionMatch,
+  isPreservedCarouselVideo,
   originalMediaKey,
   publicMediaUrl,
   sanitizedOriginalMediaKey,
@@ -27,6 +28,16 @@ test("strict media mapping requires matching identity, not a legacy numeric id",
 test("normalizes HTML and punctuation while preserving strict identity semantics", () => {
   assert.equal(canonicalIdentity("St. Xavier&apos;s College &amp; Institute"), "st xavier s college institute");
   assert.equal(canonicalIdentity("Teacher&#039;s College"), canonicalIdentity("Teacher's College"));
+});
+
+test("allows only known video hosts as preserved carousel media", () => {
+  assert.equal(isPreservedCarouselVideo("https://www.youtube.com/embed/example"), true);
+  assert.equal(isPreservedCarouselVideo("https://youtu.be/example"), true);
+  assert.equal(isPreservedCarouselVideo("https://www.youtube-nocookie.com/embed/example"), true);
+  assert.equal(isPreservedCarouselVideo("https://player.vimeo.com/video/123"), true);
+  assert.equal(isPreservedCarouselVideo("https://youtube.com.evil.example/video"), false);
+  assert.equal(isPreservedCarouselVideo("https://example.com/video.mp4"), false);
+  assert.equal(isPreservedCarouselVideo("not-a-url"), false);
 });
 
 test("detects safe raster bytes and creates immutable content-addressed keys", () => {

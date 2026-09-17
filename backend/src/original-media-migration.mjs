@@ -224,7 +224,7 @@ function canonicalMediaReference(value) {
   return text.replace(/^\/+/, "");
 }
 
-function isPreservedCarouselVideo(value) {
+export function isPreservedCarouselVideo(value) {
   try {
     const hostname = new URL(String(value || "").replace(/&amp;/g, "&")).hostname.toLowerCase();
     return hostname === "youtu.be"
