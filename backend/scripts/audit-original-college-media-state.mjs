@@ -36,7 +36,7 @@ async function fetchColleges() {
   const pageSize = 1000;
   for (let offset = 0; ; offset += pageSize) {
     const query = new URLSearchParams({
-      select: "id,slug,name,city,state,image,logo,gallery_images,updated_at",
+      select: "id,slug,name,city,state,image,logo,carousel_images,gallery_images,updated_at",
       limit: String(pageSize),
       offset: String(offset),
       order: "id.asc",
@@ -68,12 +68,16 @@ async function fetchColleges() {
 }
 
 function sameValue(field, left, right) {
-  if (field === "gallery_images") return stableJson(left || []) === stableJson(right || []);
+  if (field === "gallery_images" || field === "carousel_images") return stableJson(left || []) === stableJson(right || []);
   return String(left || "") === String(right || "");
 }
 
 function mediaUrls(row) {
-  return [String(row.image || "").trim(), ...(Array.isArray(row.gallery_images) ? row.gallery_images.map(String) : [])].filter(Boolean);
+  return [
+    String(row.image || "").trim(),
+    ...(Array.isArray(row.carousel_images) ? row.carousel_images.map(String) : []),
+    ...(Array.isArray(row.gallery_images) ? row.gallery_images.map(String) : []),
+  ].filter(Boolean);
 }
 
 function targetMediaUrls(row, manifestRow) {
@@ -81,6 +85,9 @@ function targetMediaUrls(row, manifestRow) {
   if (Object.hasOwn(manifestRow?.replacement || {}, "image")) urls.push(String(row.image || "").trim());
   if (Object.hasOwn(manifestRow?.replacement || {}, "gallery_images") && Array.isArray(row.gallery_images)) {
     urls.push(...row.gallery_images.map(String));
+  }
+  if (Object.hasOwn(manifestRow?.replacement || {}, "carousel_images") && Array.isArray(row.carousel_images)) {
+    urls.push(...row.carousel_images.map(String));
   }
   return urls.filter(Boolean);
 }
@@ -179,12 +186,13 @@ const report = {
     reason: row.reason,
     image: row.image,
     gallery_count: Array.isArray(row.gallery_images) ? row.gallery_images.length : 0,
+    carousel_count: Array.isArray(row.carousel_images) ? row.carousel_images.length : 0,
   })),
 };
 const reportPath = join(stateDir, "current-media-audit.json");
 const csvPath = join(stateDir, "colleges-not-fully-updated.csv");
 await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
-const columns = ["id", "slug", "name", "city", "state", "reason", "image", "gallery_count"];
+const columns = ["id", "slug", "name", "city", "state", "reason", "image", "gallery_count", "carousel_count"];
 const csv = [columns.join(","), ...report.unresolved_colleges.map((row) => columns.map((column) => csvCell(row[column])).join(","))].join("\n");
 await writeFile(csvPath, `${csv}\n`, "utf8");
 console.log(JSON.stringify({ ...summary, report: reportPath, unresolved_csv: csvPath }, null, 2));

@@ -35,9 +35,10 @@ function sameIdentity(expected, current) {
 }
 
 function fieldMatches(field, expected, current) {
-  const normalizedExpected = toStoredMediaKeys(expected ?? (field === "gallery_images" ? [] : ""));
-  const normalizedCurrent = toStoredMediaKeys(current ?? (field === "gallery_images" ? [] : ""));
-  if (field === "gallery_images") return stableJson(normalizedExpected) === stableJson(normalizedCurrent);
+  const isArrayField = field === "gallery_images" || field === "carousel_images";
+  const normalizedExpected = toStoredMediaKeys(expected ?? (isArrayField ? [] : ""));
+  const normalizedCurrent = toStoredMediaKeys(current ?? (isArrayField ? [] : ""));
+  if (isArrayField) return stableJson(normalizedExpected) === stableJson(normalizedCurrent);
   return String(normalizedExpected) === String(normalizedCurrent);
 }
 
@@ -70,11 +71,13 @@ function validateManifest(rows) {
     slugs.add(slug);
 
     const fields = Object.keys(row.replacement || {}).sort();
-    if (!fields.length || fields.some((field) => !["gallery_images", "image"].includes(field))) {
-      throw new Error(`${label} must replace image, gallery_images, or both`);
+    if (!fields.length || fields.some((field) => !["carousel_images", "gallery_images", "image"].includes(field))) {
+      throw new Error(`${label} must replace image, gallery_images, carousel_images, or a combination`);
     }
-    if (fields.includes("gallery_images") && (!Array.isArray(row.expected?.gallery_images) || !Array.isArray(row.replacement.gallery_images))) {
-      throw new Error(`${label} has an invalid gallery_images contract`);
+    for (const field of ["gallery_images", "carousel_images"]) {
+      if (fields.includes(field) && (!Array.isArray(row.expected?.[field]) || !Array.isArray(row.replacement[field]))) {
+        throw new Error(`${label} has an invalid ${field} contract`);
+      }
     }
     if (fields.includes("image")) {
       const image = String(row.replacement.image || "").trim();
@@ -85,6 +88,9 @@ function validateManifest(rows) {
     }
     for (const galleryUrl of row.replacement.gallery_images || []) {
       if (!isSanitizedAwsJpeg(galleryUrl)) throw new Error(`${label} has an invalid replacement gallery URL`);
+    }
+    for (const carouselUrl of row.replacement.carousel_images || []) {
+      if (!isSanitizedAwsJpeg(carouselUrl)) throw new Error(`${label} has an invalid replacement carousel URL`);
     }
   }
 }
@@ -129,7 +135,7 @@ try {
   for (const row of rows) {
     const current = await prisma.colleges.findUnique({
       where: { id: row.production.id },
-      select: { id: true, slug: true, name: true, city: true, state: true, image: true, gallery_images: true, updated_at: true },
+      select: { id: true, slug: true, name: true, city: true, state: true, image: true, carousel_images: true, gallery_images: true, updated_at: true },
     });
     if (!current) {
       report.missing += 1;

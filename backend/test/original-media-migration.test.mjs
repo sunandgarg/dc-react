@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   buildGalleryReplacement,
+  buildCarouselCutoverManifestRow,
   buildSanitizedCollegeManifestRow,
   buildProductionIndexes,
   bottomCropPlan,
@@ -160,4 +161,27 @@ test("never substitutes or omits an unavailable hero", () => {
   assert.equal(result.row, null);
   assert.deepEqual(result.unresolved, [{ field: "image", url: "dead-hero" }]);
   assert.deepEqual(result.droppedGallery, []);
+});
+
+test("builds an exact carousel cutover from old WebPs to cropped JPEGs", () => {
+  const production = { id: "college-1", slug: "example", name: "Example", city: "Delhi", state: "Delhi" };
+  const row = buildCarouselCutoverManifestRow({
+    production,
+    expected: { image: "old-hero.webp", gallery_images: ["old-a.webp", "old-b.webp"] },
+  }, {
+    production,
+    replacement: { image: "new-hero.jpg", gallery_images: ["new-a.jpg"] },
+    sanitizer: { dropped_unavailable_gallery_assets: 1 },
+  });
+
+  assert.deepEqual(row.expected.carousel_images, ["old-hero.webp", "old-a.webp", "old-b.webp"]);
+  assert.deepEqual(row.replacement.carousel_images, ["new-hero.jpg", "new-a.jpg"]);
+  assert.equal(row.sanitizer.carousel_cutover, true);
+});
+
+test("rejects carousel cutovers across different colleges", () => {
+  assert.throws(() => buildCarouselCutoverManifestRow(
+    { production: { id: "college-1" }, expected: { image: "old.webp" } },
+    { production: { id: "college-2" }, replacement: { image: "new.jpg" } },
+  ), /same production college/);
 });

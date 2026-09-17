@@ -173,6 +173,46 @@ export function buildSanitizedCollegeManifestRow(
   };
 }
 
+export function buildCarouselCutoverManifestRow(originalRow, sanitizedRow) {
+  const originalId = String(originalRow?.production?.id || "").trim();
+  const sanitizedId = String(sanitizedRow?.production?.id || "").trim();
+  if (!originalId || originalId !== sanitizedId) {
+    throw new Error("Original and sanitized rows must identify the same production college");
+  }
+
+  const expected = [];
+  if (Object.hasOwn(originalRow?.expected || {}, "image")) {
+    const image = String(originalRow.expected.image || "").trim();
+    if (image) expected.push(image);
+  }
+  if (Object.hasOwn(originalRow?.expected || {}, "gallery_images")) {
+    if (!Array.isArray(originalRow.expected.gallery_images)) throw new Error("Original gallery_images must be an array");
+    expected.push(...originalRow.expected.gallery_images.map((value) => String(value || "").trim()).filter(Boolean));
+  }
+
+  const replacement = [];
+  if (Object.hasOwn(sanitizedRow?.replacement || {}, "image")) {
+    const image = String(sanitizedRow.replacement.image || "").trim();
+    if (image) replacement.push(image);
+  }
+  if (Object.hasOwn(sanitizedRow?.replacement || {}, "gallery_images")) {
+    if (!Array.isArray(sanitizedRow.replacement.gallery_images)) throw new Error("Sanitized gallery_images must be an array");
+    replacement.push(...sanitizedRow.replacement.gallery_images.map((value) => String(value || "").trim()).filter(Boolean));
+  }
+
+  if (!expected.length || !replacement.length) return null;
+  return {
+    production: { ...(sanitizedRow.production || originalRow.production) },
+    expected: { carousel_images: expected },
+    replacement: { carousel_images: replacement },
+    sanitizer: {
+      ...(sanitizedRow.sanitizer || {}),
+      source_manifest: "original-and-sanitized-college-media",
+      carousel_cutover: true,
+    },
+  };
+}
+
 export function publicMediaUrl(baseUrl, key) {
   return `${String(baseUrl).replace(/\/$/, "")}/${String(key).split("/").map(encodeURIComponent).join("/")}`;
 }
