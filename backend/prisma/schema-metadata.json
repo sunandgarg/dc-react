@@ -2298,6 +2298,14 @@
         "default": "",
         "foreignKey": null
       },
+      "source_logo": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "text",
+        "default": null,
+        "foreignKey": null
+      },
       "views": {
         "type": "Int",
         "nullable": false,

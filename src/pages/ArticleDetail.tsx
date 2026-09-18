@@ -27,6 +27,7 @@ import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { lazyRetry } from "@/lib/lazyRetry";
 import { containsRichArticleHtml, stripVisibleArticleSources } from "@/lib/articleContentSanitizer";
 import { buildExamHref } from "@/lib/entityUrls";
+import { InstitutionLogo } from "@/components/InstitutionLogo";
 
 // Heavy below-the-fold components - lazy loaded for faster initial paint
 const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(m => ({ default: m.AlsoCheckSection })), "AlsoCheckSection");
@@ -127,9 +128,10 @@ export default function ArticleDetail() {
         views: (dbArticle as any).views ?? 0,
         tags: dbArticle.tags || [],
         author_id: (dbArticle as any).author_id as string | undefined,
+        sourceLogo: (dbArticle as any).source_logo || "",
       };
     }
-    return staticArticle ? { ...staticArticle, content: stripVisibleArticleSources(staticArticle.content), views: 0, author_id: undefined as string | undefined } : null;
+    return staticArticle ? { ...staticArticle, content: stripVisibleArticleSources(staticArticle.content), views: 0, author_id: undefined as string | undefined, sourceLogo: "" } : null;
   }, [dbArticle, staticArticle]);
 
   const navigate = useNavigate();
@@ -465,12 +467,22 @@ export default function ArticleDetail() {
                 </div>
               </figure>
 
-              <Link
-                to={`/news?category=${encodeURIComponent(article.category)}`}
-                className="inline-flex items-center rounded-full border border-primary/15 bg-primary/5 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.18em] text-primary"
-              >
-                {article.category}
-              </Link>
+              <div className="flex items-center justify-between gap-4">
+                <Link
+                  to={`/news?category=${encodeURIComponent(article.category)}`}
+                  className="inline-flex items-center rounded-full border border-primary/15 bg-primary/5 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.18em] text-primary"
+                >
+                  {article.category}
+                </Link>
+                {article.sourceLogo && (
+                  <InstitutionLogo
+                    src={article.sourceLogo}
+                    alt={`${article.title} source`}
+                    className="h-10 w-24 rounded-lg border border-border bg-card sm:h-12 sm:w-28"
+                    imageClassName="p-1.5"
+                  />
+                )}
+              </div>
 
               <h1 className="mt-4 max-w-5xl text-[22px] sm:text-[32px] lg:text-[38px] xl:text-[42px] font-extrabold text-foreground leading-[1.1] break-words text-balance">
                 {article.title}
@@ -612,20 +624,13 @@ export default function ArticleDetail() {
             <aside className="hidden space-y-5 lg:col-span-4 lg:block">
               <ArticleSidebarAd slug={cleanSlug} />
 
-              <section className="rounded-lg border border-orange-200 bg-orange-50 p-5 shadow-sm">
-                <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-primary">Get expert support</p>
-                <h3 className="mt-2 text-xl font-extrabold leading-tight text-foreground">Need help after reading this update?</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">Speak to a DekhoCampus counsellor for personalised next steps on colleges, exams, counselling and admissions.</p>
-                <div className="mt-4">
-                  <LeadCaptureForm
-                    variant="sidebar"
-                    title="Get free counselling"
-                    subtitle="Fast expert callback for your next step"
-                    source={`article_sidebar_${article.slug}`}
-                    interestedCollegeSlug={article.tags.find((tag) => tag.includes("college-"))}
-                  />
-                </div>
-              </section>
+              <LeadCaptureForm
+                variant="article-sidebar"
+                title="Get education updates"
+                subtitle="Admission, counselling and exam alerts by SMS and email."
+                source={`article_sidebar_${article.slug}`}
+                interestedCollegeSlug={article.tags.find((tag) => tag.includes("college-"))}
+              />
 
               <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
                 <div className="mb-4 flex items-center justify-between">

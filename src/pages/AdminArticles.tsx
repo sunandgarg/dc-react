@@ -63,7 +63,7 @@ function useArticleCategories(enabled = true) {
 
 const emptyArticle: Partial<DbArticle> = {
   slug: "", title: "", description: "", content: "", vertical: "", category: "", author: "",
-  featured_image: "", views: 0, tags: [], meta_title: "", meta_description: "", meta_keywords: "",
+  featured_image: "", source_logo: "", views: 0, tags: [], meta_title: "", meta_description: "", meta_keywords: "",
   is_active: true, status: "Draft",
 };
 
@@ -443,6 +443,13 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                   <ImageUploadField label="Featured image" value={editing.featured_image || ""} onChange={(v) => update("featured_image", v)} preset="article" folder="article-images" />
                   <ArticleCoverGenerator title={editing.title || ""} slug={editing.slug} siteScope={siteScope} onGenerated={(url) => update("featured_image", url)} />
                 </div>
+                <ImageUploadField
+                  label="Source, institution or exam logo (optional)"
+                  value={editing.source_logo || ""}
+                  onChange={(value) => update("source_logo", value)}
+                  preset="partnerLogo"
+                  folder="article-source-logos"
+                />
               </AdminFormSection>
 
               {/* ── Content ── */}

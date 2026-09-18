@@ -12,11 +12,35 @@ import {
   findDuplicateArticleTopic,
   handleArticleCover,
   handleBlogStudio,
+  indiaDayWindow,
+  loadArticleCoverage,
   normalizeArticleTitle,
   normalizeArticleSiteScope,
   normalizeTopicSuggestions,
   STRICT_ARTICLE_DUPLICATE_THRESHOLD,
 } from "../src/blog-ai.mjs";
+
+test("same-day duplicate coverage uses the India calendar boundary", () => {
+  const { start, end } = indiaDayWindow(new Date("2026-09-18T20:00:00.000Z"));
+  assert.equal(start.toISOString(), "2026-09-18T18:30:00.000Z");
+  assert.equal(end.toISOString(), "2026-09-19T18:30:00.000Z");
+});
+
+test("article coverage applies a bounded created-at window to the final query", async () => {
+  const start = new Date("2026-09-18T18:30:00.000Z");
+  const end = new Date("2026-09-19T18:30:00.000Z");
+  let captured;
+  await loadArticleCoverage("dekhocampus", {
+    articles: {
+      findMany: async (args) => {
+        captured = args;
+        return [];
+      },
+    },
+  }, { start, end });
+  assert.deepEqual(captured.where.created_at, { gte: start, lt: end });
+  assert.equal(captured.where.site_scope, "dekhocampus");
+});
 
 test("Sarkari studio uses a dedicated government-job editorial profile", () => {
   assert.equal(normalizeArticleSiteScope("sarkari"), "sarkari");

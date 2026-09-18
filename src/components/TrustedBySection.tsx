@@ -9,6 +9,7 @@ import { useSiteIntegration } from "@/hooks/useSiteIntegration";
 import { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { buildCollegeHref } from "@/lib/entityUrls";
+import { InstitutionLogo } from "@/components/InstitutionLogo";
 
 const googleReviews = [
   { name: "Ravi Shankar", rating: 5, date: "2 weeks ago", text: "DekhoCampus made my college search so much easier! The AI counselor gave me perfect recommendations based on my JEE score. Got into NIT Warangal.", avatar: "RS", verified: true },
@@ -83,13 +84,12 @@ export function TrustedBySection() {
                     aria-label={`View ${partner.name}`}
                     className="flex-shrink-0 mx-2 md:mx-3 px-4 md:px-5 py-2.5 md:py-3 bg-card rounded-xl border border-border flex items-center gap-2 md:gap-3 min-w-[140px] md:min-w-[180px] hover:border-primary/50 hover:shadow-sm transition"
                   >
-                    {partner.logo_url ? (
-                      <img src={partner.logo_url} alt={partner.name} className="w-8 h-8 md:w-10 md:h-10 rounded-lg object-contain" />
-                    ) : (
-                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <GraduationCap className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                      </div>
-                    )}
+                    <InstitutionLogo
+                      src={partner.logo_url}
+                      alt={`${partner.name} logo`}
+                      className="h-8 w-8 rounded-lg bg-primary/10 md:h-10 md:w-10"
+                      imageClassName="p-0.5"
+                    />
                     <span className="text-xs md:text-sm font-medium text-foreground whitespace-nowrap">{partner.name}</span>
                   </Link>
                 ))}

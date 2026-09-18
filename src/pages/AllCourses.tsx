@@ -43,6 +43,7 @@ export default function AllCourses() {
     }
     return {};
   }, [location.pathname]);
+  const isSeoLandingPath = /^\/courses\/top-[^/]+$/.test(location.pathname) && !location.search;
 
   const [selectedStreams, setSelectedStreams] = useState<string[]>(() => {
     return readMultiParam(searchParams, "stream", seoSlugFilters.stream ? [seoSlugFilters.stream] : []);
@@ -106,7 +107,15 @@ export default function AllCourses() {
     searchFields: ["name", "full_name", "category", "mode", "level"],
   });
 
+  const seoLandingMatches = isSeoLandingPath
+    && sameStringList(selectedStreams, seoSlugFilters.stream ? [seoSlugFilters.stream] : [])
+    && sameStringList(selectedCourseGroups, seoSlugFilters.group ? [normalizeCourseGroup(seoSlugFilters.group)] : [])
+    && sameStringList(selectedModes, seoSlugFilters.mode ? [seoSlugFilters.mode] : [])
+    && selectedSpecializations.length === 0
+    && selectedDurations.length === 0;
+
   useEffect(() => {
+    if (seoLandingMatches) return;
     const params = new URLSearchParams();
     writeMultiParam(params, "stream", selectedStreams);
     writeMultiParam(params, "group", selectedCourseGroups);
@@ -115,7 +124,7 @@ export default function AllCourses() {
     writeMultiParam(params, "duration", selectedDurations);
     const newPath = params.toString() ? `/courses?${params.toString()}` : "/courses";
     if (`${location.pathname}${location.search}` !== newPath) navigate(newPath, { replace: true });
-  }, [selectedStreams, selectedCourseGroups, selectedSpecializations, selectedModes, selectedDurations, navigate, location.pathname, location.search]);
+  }, [selectedStreams, selectedCourseGroups, selectedSpecializations, selectedModes, selectedDurations, seoLandingMatches, navigate, location.pathname, location.search]);
 
   const activeFilters = uniqueValues([...selectedStreams, ...selectedCourseGroups, ...selectedSpecializations, ...selectedModes, ...selectedDurations]);
 
@@ -128,7 +137,7 @@ export default function AllCourses() {
     duration: selectedDurations[0],
   }), [selectedStreams, selectedCourseGroups, selectedModes, selectedDurations]);
 
-  useSEO({ title: heading, description: `Browse ${heading.toLowerCase()} - eligibility, duration, fees, top colleges and career options.`, canonical: `/courses${searchParams.toString() ? `?${searchParams.toString()}` : ""}` });
+  useSEO({ title: heading, description: `Browse ${heading.toLowerCase()} - eligibility, duration, fees, top colleges and career options.`, canonical: seoLandingMatches ? location.pathname : `/courses${searchParams.toString() ? `?${searchParams.toString()}` : ""}` });
 
   const clearAll = () => {
     setSelectedStreams([]); setSelectedCourseGroups([]);

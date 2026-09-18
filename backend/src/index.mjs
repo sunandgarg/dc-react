@@ -164,7 +164,7 @@ const ownedTables = new Map([
 ]);
 
 const publicReadSelections = new Map([
-  ["articles", "id,site_scope,status,title,slug,description,content,vertical,category,author,author_id,featured_image,views,tags,meta_title,meta_description,meta_keywords,is_active,featured_rank,official_website,data_verified_at,job_posting,created_at,updated_at"],
+  ["articles", "id,site_scope,status,title,slug,description,content,vertical,category,author,author_id,featured_image,source_logo,views,tags,meta_title,meta_description,meta_keywords,is_active,featured_rank,official_website,data_verified_at,job_posting,created_at,updated_at"],
   ["site_integrations", "key,value,enabled"],
   ["adsense_settings", "id,publisher_id,client_id,account_id,verification_meta,auto_ads_enabled,ads_globally_enabled,enabled_on_mobile,enabled_on_desktop,enabled_for_guests,enabled_for_logged_in,disabled_roles,disabled_pages,ads_per_page_limit,lazy_load_enabled,refresh_interval_seconds,head_scripts,body_scripts,footer_scripts,custom_css,custom_js,created_at,updated_at"],
 ]);
@@ -409,7 +409,26 @@ async function bootstrapPayload() {
        AND latest.\`latest_updated_at\` = featured.\`updated_at\`
       WHERE featured.\`is_active\` = 1
       ORDER BY featured.\`display_order\` ASC`),
-    rows("trusted_partners", "WHERE `is_active` = 1 ORDER BY `display_order` ASC"),
+    prisma.$queryRawUnsafe(`
+      SELECT partner.\`id\`,
+             partner.\`college_slug\`,
+             partner.\`name\`,
+             COALESCE(
+               NULLIF(TRIM(partner.\`logo_url\`), ''),
+               NULLIF(TRIM(college.\`logo\`), ''),
+               NULLIF(TRIM(college.\`image\`), ''),
+               ''
+             ) AS \`logo_url\`,
+             partner.\`display_order\`,
+             partner.\`is_active\`,
+             partner.\`created_at\`,
+             partner.\`updated_at\`
+        FROM \`trusted_partners\` AS partner
+        LEFT JOIN \`colleges\` AS college
+          ON college.\`slug\` = partner.\`college_slug\`
+       WHERE partner.\`is_active\` = 1
+       ORDER BY partner.\`display_order\` ASC
+    `),
     rows("lead_form_settings", "LIMIT 1"),
     rows("feature_toggles"),
     rows("ads", "WHERE `is_active` = 1"),

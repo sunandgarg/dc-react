@@ -8,6 +8,7 @@ import { useAdminCollegeList, type AdminCollegeListItem } from "@/hooks/useColle
 import { Plus, Trash2, Save, GraduationCap, Search, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { UploadOrUrlField } from "@/components/UploadOrUrlField";
+import { InstitutionLogo } from "@/components/InstitutionLogo";
 
 import { CSVTools } from "@/components/CSVTools";
 import { useDraftState } from "@/hooks/useDraftState";
@@ -55,9 +56,7 @@ function CollegePartnerPicker({ onSelect }: { onSelect: (college: AdminCollegeLi
               onClick={() => { onSelect(college); setSearch(""); }}
               className="flex w-full items-center gap-3 border-b border-border/60 px-3 py-2.5 text-left last:border-0 hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-card">
-                {logo ? <img src={logo} alt="" className="h-full w-full object-contain p-1" loading="lazy" /> : <GraduationCap className="h-4 w-4 text-muted-foreground" />}
-              </span>
+              <InstitutionLogo src={logo} alt={`${college.name} logo`} className="h-10 w-10 rounded-lg border bg-card" imageClassName="p-1" />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-semibold text-foreground">{displayName}</span>
                 <span className="block truncate text-xs text-muted-foreground">
@@ -150,7 +149,7 @@ export default function AdminPartners() {
           </div>
           {(editing.logo_url || editing.college_slug) && (
             <div className="flex items-center gap-3 p-3 bg-muted/40 rounded-xl">
-              {editing.logo_url ? <img src={editing.logo_url} alt="Preview" className="w-12 h-12 rounded-lg object-contain" /> : <GraduationCap className="h-8 w-8 text-primary" />}
+              <InstitutionLogo src={editing.logo_url} alt={`${editing.name || "Partner"} logo preview`} className="h-12 w-12 rounded-lg border bg-card" imageClassName="p-1" />
               <div className="min-w-0">
                 <span className="block truncate text-sm font-semibold text-foreground">{editing.name || "Partner short name"}</span>
                 <span className="block truncate text-xs text-muted-foreground">/colleges/{editing.college_slug || "college-slug"}</span>
@@ -179,13 +178,7 @@ export default function AdminPartners() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {(partners ?? []).map(p => (
             <div key={p.id} className="bg-card rounded-2xl border border-border p-4 flex items-center gap-3">
-              {p.logo_url ? (
-                <img src={p.logo_url} alt={p.name} className="w-12 h-12 rounded-lg object-contain flex-shrink-0" />
-              ) : (
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <GraduationCap className="w-6 h-6 text-primary" />
-                </div>
-              )}
+              <InstitutionLogo src={p.logo_url} alt={`${p.name} logo`} className="h-12 w-12 rounded-lg border bg-card" imageClassName="p-1" />
               <div className="flex-1 min-w-0">
                 <h4 className="font-semibold text-foreground text-sm truncate">{p.name}</h4>
                 <p className="text-xs text-muted-foreground">{p.is_active ? "Active" : "Inactive"} • Order: {p.display_order}</p>

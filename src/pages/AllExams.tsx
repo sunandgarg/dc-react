@@ -42,6 +42,7 @@ export default function AllExams() {
     }
     return {};
   }, [location.pathname]);
+  const isSeoLandingPath = /^\/exams\/top-[^/]+$/.test(location.pathname) && !location.search;
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
     return readMultiParam(searchParams, "category");
@@ -97,7 +98,14 @@ export default function AllExams() {
     searchFields: ["name", "short_name", "full_name", "slug", "category", "exam_type", "level"],
   });
 
+  const seoLandingMatches = isSeoLandingPath
+    && selectedCategories.length === 0
+    && sameStringList(selectedStreams, seoSlugFilters.stream ? [seoSlugFilters.stream] : [])
+    && selectedCourseGroups.length === 0
+    && sameStringList(selectedLevels, seoSlugFilters.level ? [seoSlugFilters.level] : []);
+
   useEffect(() => {
+    if (seoLandingMatches) return;
     const params = new URLSearchParams();
     writeMultiParam(params, "category", selectedCategories);
     writeMultiParam(params, "stream", selectedStreams);
@@ -105,7 +113,7 @@ export default function AllExams() {
     writeMultiParam(params, "level", selectedLevels);
     const newPath = params.toString() ? `/exams?${params.toString()}` : "/exams";
     if (`${location.pathname}${location.search}` !== newPath) navigate(newPath, { replace: true });
-  }, [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels, navigate, location.pathname, location.search]);
+  }, [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels, seoLandingMatches, navigate, location.pathname, location.search]);
 
   const activeFilters = uniqueValues([...selectedCategories, ...selectedStreams, ...selectedCourseGroups, ...selectedLevels]);
 
@@ -120,7 +128,7 @@ export default function AllExams() {
     level: selectedLevels[0],
   }), [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels]);
 
-  useSEO({ title: heading, description: `${heading} - dates, eligibility, syllabus, application steps and previous year papers.`, canonical: `/exams${searchParams.toString() ? `?${searchParams.toString()}` : ""}` });
+  useSEO({ title: heading, description: `${heading} - dates, eligibility, syllabus, application steps and previous year papers.`, canonical: seoLandingMatches ? location.pathname : `/exams${searchParams.toString() ? `?${searchParams.toString()}` : ""}` });
 
   const clearAll = () => {
     setSelectedCategories([]); setSelectedStreams([]);

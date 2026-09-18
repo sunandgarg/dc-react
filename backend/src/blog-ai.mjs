@@ -543,7 +543,15 @@ const ARTICLE_COVERAGE_SELECT = {
   description: true,
   meta_keywords: true,
   tags: true,
+  created_at: true,
 };
+
+export function indiaDayWindow(reference = new Date()) {
+  const indiaOffsetMs = 330 * 60_000;
+  const shifted = new Date(reference.getTime() + indiaOffsetMs);
+  const startMs = Date.UTC(shifted.getUTCFullYear(), shifted.getUTCMonth(), shifted.getUTCDate()) - indiaOffsetMs;
+  return { start: new Date(startMs), end: new Date(startMs + 86_400_000) };
+}
 
 export function normalizeArticleSiteScope(value) {
   if (value === undefined || value === null || value === "") return "dekhocampus";
@@ -570,9 +578,15 @@ export function articleSiteProfile(siteScope) {
     };
 }
 
-export async function loadArticleCoverage(siteScope = "dekhocampus", client = prisma) {
+export async function loadArticleCoverage(siteScope = "dekhocampus", client = prisma, coverageWindow = null) {
+  const createdAt = coverageWindow?.start || coverageWindow?.end
+    ? {
+      ...(coverageWindow.start ? { gte: coverageWindow.start } : {}),
+      ...(coverageWindow.end ? { lt: coverageWindow.end } : {}),
+    }
+    : undefined;
   return client.articles.findMany({
-    where: { site_scope: normalizeArticleSiteScope(siteScope) },
+    where: { site_scope: normalizeArticleSiteScope(siteScope), ...(createdAt ? { created_at: createdAt } : {}) },
     orderBy: { created_at: "desc" },
     select: ARTICLE_COVERAGE_SELECT,
   });
@@ -583,6 +597,7 @@ export async function assertArticleTopicsAvailable(candidates, {
   excludeIds = [],
   threshold = STRICT_ARTICLE_DUPLICATE_THRESHOLD,
   siteScope,
+  coverageWindow = null,
 } = {}) {
   const excluded = new Set(excludeIds.filter(Boolean).map(String));
   const candidatesByScope = new Map();
@@ -593,7 +608,7 @@ export async function assertArticleTopicsAvailable(candidates, {
     candidatesByScope.set(candidateScope, scopedCandidates);
   }
   for (const [candidateScope, scopedCandidates] of candidatesByScope) {
-    const coverage = (await loadArticleCoverage(candidateScope, client)).filter((article) => !excluded.has(String(article.id)));
+    const coverage = (await loadArticleCoverage(candidateScope, client, coverageWindow)).filter((article) => !excluded.has(String(article.id)));
     for (const candidate of scopedCandidates) {
       const conflict = findDuplicateArticleTopic(candidate, coverage, threshold);
       if (conflict) throw duplicateArticleError(conflict, candidateScope);
@@ -1309,12 +1324,27 @@ async function researchSignals(limit = MAX_RESEARCH_SOURCES, siteScope = "dekhoc
       { name: "Google News Government Exam Updates India", url: "https://news.google.com/rss/search?q=government+exam+result+admit+card+answer+key+India&hl=en-IN&gl=IN&ceid=IN:en", source_type: "public_signal" },
     ]
     : [
+      { name: "Sarvgyan Education Articles", url: "https://www.sarvgyan.com/category/articles", source_type: "competitor_gap" },
+      { name: "Shiksha Education News", url: "https://www.shiksha.com/news", source_type: "competitor_gap" },
       { name: "Google News Education India", url: "https://news.google.com/rss/search?q=education+college+admission+exam+India&hl=en-IN&gl=IN&ceid=IN:en", source_type: "public_signal" },
       { name: "Google Trends India", url: "https://trends.google.com/trending/rss?geo=IN", source_type: "public_signal" },
     ];
   const candidates = normalizedScope === "sarkari" ? [...defaults, ...configured] : [...configured, ...defaults];
   const sources = candidates
     .filter((source, index, values) => values.findIndex((candidate) => candidate.url === source.url) === index)
+    .map((source, index) => ({ source, index }))
+    .sort((left, right) => {
+      const rank = (candidate) => {
+        const text = `${candidate.name || ""} ${candidate.url || ""}`.toLowerCase();
+        if (text.includes("sarvgyan")) return 0;
+        if (text.includes("shiksha")) return 1;
+        if (/(?:\.gov\.in|\.nic\.in|official|authority|commission|council|nta|ugc|aicte)/.test(text)) return 2;
+        if (/google news|google trends/.test(text)) return 4;
+        return 3;
+      };
+      return rank(left.source) - rank(right.source) || left.index - right.index;
+    })
+    .map(({ source }) => source)
     .slice(0, requestedLimit);
   const profile = articleSiteProfile(normalizedScope);
   const settled = await Promise.allSettled(sources.map(async (source) => {
@@ -1346,6 +1376,8 @@ export function articlePrompt(topic, signals, wordLimit = 0, correctionIssues = 
       search_intent: String(topic?.search_intent || ""),
       primary_entity: String(topic?.primary_entity || ""),
       unique_value: String(topic?.unique_value || ""),
+      impact_reason: String(topic?.impact_reason || ""),
+      time_signal: String(topic?.time_signal || ""),
       category: String(topic?.category || profile.defaultCategory),
       tags: Array.isArray(topic?.tags) ? topic.tags : [],
     };
@@ -1732,6 +1764,7 @@ function normalizeStudioDraft(value = {}, defaultCategory = "Education") {
     category: stripHtml(value.category || defaultCategory).trim().slice(0, 160) || defaultCategory,
     vertical: stripHtml(value.vertical || "General").trim().slice(0, 160) || "General",
     featured_image: String(toStoredMediaKeys(value.featured_image || "")).trim(),
+    source_logo: String(toStoredMediaKeys(value.source_logo || "")).trim(),
     faqs: normalizeGeneratedFaqs(value.faqs),
   };
 }
@@ -1810,6 +1843,7 @@ async function publishBlogStudioDraft(body, userId) {
       category: draft.category,
       author: siteScope === "sarkari" ? "Sarkari DekhoCampus Desk" : "DekhoCampus Editorial",
       featured_image: draft.featured_image,
+      source_logo: draft.source_logo || null,
       views: 0,
       tags: draft.tags,
       meta_title: draft.meta_title,
@@ -1891,7 +1925,7 @@ export async function handleBlogStudio(request, userId = null) {
     throw Object.assign(new Error(`${profile.brand} already covers this topic: ${duplicate.title}`), { status: 409, code: "DUPLICATE_ARTICLE" });
   }
   return {
-    draft: generated.draft,
+    draft: { ...generated.draft, source_logo: contextLogo?.url || "" },
     model_used: `${generated.textProvider}:${generated.model}`,
     image_model_used: coverDiagnostics.sourceMode === "generated" ? "openai" : coverDiagnostics.sourceMode || "none",
     cover_diagnostics: coverDiagnostics,
@@ -1951,7 +1985,27 @@ export async function handleAiGenerate(request) {
   return { items, model_used: `${generated.provider}:${model}`, counts: { inserts: items.filter((item) => item._action === "insert").length, upserts: items.filter((item) => item._action === "upsert").length }, duplicate_titles_skipped: [] };
 }
 
-async function saveGeneratedArticle(topic, settings, signals, entityContext = null, existingCoverage = null) {
+async function uniqueAutoArticleSlug(tx, siteScope, requestedSlug, reference = new Date()) {
+  const base = slugify(requestedSlug) || `article-${reference.getTime()}`;
+  const first = await tx.articles.findFirst({ where: { site_scope: siteScope, slug: base }, select: { id: true } });
+  if (!first) return base;
+  const dateStamp = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(reference);
+  let suffix = 1;
+  while (suffix < 100) {
+    const candidate = `${base}-${dateStamp}${suffix === 1 ? "" : `-${suffix}`}`;
+    const existing = await tx.articles.findFirst({ where: { site_scope: siteScope, slug: candidate }, select: { id: true } });
+    if (!existing) return candidate;
+    suffix += 1;
+  }
+  throw new Error("Could not allocate a unique article slug");
+}
+
+async function saveGeneratedArticle(topic, settings, signals, entityContext = null, existingCoverage = null, coverageWindow = null) {
   const editorial = normalizeBlogAgentSettings(settings);
   const siteScope = "dekhocampus";
   const topicTitle = String(topic?.title || topic).trim();
@@ -2004,10 +2058,11 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
   let article;
   try {
     article = await withArticleWriteLock(async (tx) => {
-      await assertArticleTopicsAvailable([draft], { client: tx, siteScope });
+      await assertArticleTopicsAvailable([draft], { client: tx, siteScope, coverageWindow });
+      const articleSlug = await uniqueAutoArticleSlug(tx, siteScope, draft.slug);
       const created = await tx.articles.create({ data: {
         id: randomUUID(), site_scope: siteScope, status,
-        title: String(draft.title || topic), slug: draft.slug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: selectedAuthor?.name || "DekhoCampus Editorial", author_id: selectedAuthor?.id || null, featured_image: draft.featured_image || "", views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(topic?.trend_based === true ? ["google-trends-daily"] : []), ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: status === "Published", data_source_urls: generated.research_sources, data_verified_at: new Date(), data_quality_score: generated.quality.score, data_clean_state: "not_checked",
+        title: String(draft.title || topic), slug: articleSlug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: selectedAuthor?.name || "DekhoCampus Editorial", author_id: selectedAuthor?.id || null, featured_image: draft.featured_image || "", source_logo: contextLogo?.url || null, views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(topic?.trend_based === true ? ["google-trends-daily"] : []), ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: status === "Published", data_source_urls: generated.research_sources, data_verified_at: new Date(), data_quality_score: generated.quality.score, data_clean_state: "not_checked",
       } });
       if (draft.faqs.length) {
         await tx.faqs.createMany({ data: draft.faqs.map((faq, index) => ({ id: randomUUID(), page: "articles", item_slug: created.slug, question: faq.question, answer: faq.answer, display_order: (index + 1) * 10, is_active: status === "Published" })) });
@@ -2033,6 +2088,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     description: article.description,
     meta_keywords: article.meta_keywords,
     tags: article.tags,
+    created_at: article.created_at,
   });
   return article.id;
 }
@@ -2119,13 +2175,13 @@ export async function runBlogAgent(body = {}) {
   if (!entityContext && triggerType === "schedule" && settings.next_run_at && settings.next_run_at > new Date()) return { skipped: true, message: "Next run time has not arrived yet", next_run_at: settings.next_run_at };
   const interval = settings.interval_minutes;
   const dailyCap = settings.daily_post_cap;
-  const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0);
-  const todayCount = await prisma.$queryRawUnsafe("SELECT COUNT(*) AS total FROM `articles` WHERE `site_scope` = 'dekhocampus' AND `created_at` >= ? AND JSON_CONTAINS(`tags`, JSON_QUOTE('auto-blog-agent'))", dayStart);
+  const dayWindow = indiaDayWindow();
+  const todayCount = await prisma.$queryRawUnsafe("SELECT COUNT(*) AS total FROM `articles` WHERE `site_scope` = 'dekhocampus' AND `created_at` >= ? AND `created_at` < ? AND JSON_CONTAINS(`tags`, JSON_QUOTE('auto-blog-agent'))", dayWindow.start, dayWindow.end);
   const remaining = Math.max(0, dailyCap - Number(todayCount[0]?.total || 0));
   if (!remaining) return { skipped: true, message: "Daily post cap reached", count: dailyCap };
   const postCount = Math.min(MAX_POSTS_PER_RUN, remaining, entityContext?.postCount || Math.max(1, Number(settings.posts_per_run || 1)));
   const todayTrendCount = !entityContext && settings.google_trends_daily_enabled
-    ? await prisma.$queryRawUnsafe("SELECT COUNT(*) AS total FROM `articles` WHERE `site_scope` = 'dekhocampus' AND `created_at` >= ? AND JSON_CONTAINS(`tags`, JSON_QUOTE('google-trends-daily'))", dayStart)
+    ? await prisma.$queryRawUnsafe("SELECT COUNT(*) AS total FROM `articles` WHERE `site_scope` = 'dekhocampus' AND `created_at` >= ? AND `created_at` < ? AND JSON_CONTAINS(`tags`, JSON_QUOTE('google-trends-daily'))", dayWindow.start, dayWindow.end)
     : [{ total: 0 }];
   const trendPostsDue = !entityContext && settings.google_trends_daily_enabled
     ? Math.min(postCount, Math.max(0, settings.google_trends_daily_posts - Number(todayTrendCount[0]?.total || 0)))
@@ -2139,7 +2195,8 @@ export async function runBlogAgent(body = {}) {
   try {
     const signals = await researchSignals(Math.max(4, settings.minimum_sources), "dekhocampus");
     await assertRunActive(run.id, executionToken);
-    const recent = await loadArticleCoverage("dekhocampus");
+    const allCoverage = await loadArticleCoverage("dekhocampus");
+    const todayCoverage = await loadArticleCoverage("dekhocampus", prisma, dayWindow);
     const entityInstruction = entityContext
       ? `Generate only for this ${entityContext.schedule.entity_type}: ${JSON.stringify({ name: entityContext.schedule.entity_name, slug: entityContext.schedule.entity_slug, facts: entityContext.entity, topic_focus: entityContext.schedule.topic_focus })}. Prefer a timely verified update; otherwise create an evergreen student guide. Every topic must be specifically useful for this entity.`
       : "Cover the strongest Indian education opportunities across admissions, exams, counselling, scholarships, careers and college decisions.";
@@ -2147,23 +2204,23 @@ export async function runBlogAgent(body = {}) {
     const trendInstruction = trendPostsDue && hasTrendSignal
       ? `Prioritize ${trendPostsDue} proposal(s) supported by the Google Trends signal and mark only those proposals trend_based=true. A trend alone is not enough: it still needs a precise student intent, reliable evidence and material novelty. Never label an unsupported topic as trend based.`
       : "Set trend_based=false for every proposal.";
-    // The local semantic gate still compares against all loaded articles. The
-    // model only needs a representative recent sample to avoid costly retries.
-    const promptCoverage = [...new Set(recent.map(compactArticleCoverage).filter(Boolean))]
+    // Historical coverage guides the angle. Same-day coverage is the hard gate,
+    // so a later verified update can exist without allowing headline churn today.
+    const promptCoverage = [...new Set(allCoverage.map(compactArticleCoverage).filter(Boolean))]
       .slice(0, MAX_TOPIC_PROMPT_FINGERPRINTS);
     const topics = [];
-    const comparedCoverage = [...recent];
+    const comparedCoverage = [...todayCoverage];
     const rejected = [];
     for (let round = 1; round <= 3 && topics.length < postCount; round += 1) {
       const rejectedInstruction = rejected.length
         ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
         : "";
       const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
-      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} ${trendInstruction} Existing DekhoCampus subject + intent fingerprints to avoid: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Use competitor material only to identify coverage gaps; never copy, cite, link, name, or credit it. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic. Each proposal needs one primary entity, one precise search intent, and a non-empty unique value that is materially absent from existing coverage. Each title must be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation, and substantially different from every avoided fingerprint. Never truncate a title for cover artwork.`, "blog-agent", {
+      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} ${trendInstruction} Follow this discovery order: inspect Sarvgyan coverage gaps first, then Shiksha coverage gaps, then compare the full DekhoCampus fingerprint list. Existing DekhoCampus subject + intent fingerprints: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Competitors are discovery inputs only: never copy, cite, link, name, credit, paraphrase closely or preserve their structure. Verify dates, eligibility, fees, results and deadlines against official or primary evidence in the signals. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic on the same India calendar day. A subject covered on an earlier day is eligible only when a new dated development or materially different student decision exists. Each proposal needs one primary entity, one precise search intent, a non-empty unique value, a concrete impact reason and a dated or evergreen evidence signal. Each title must be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation. Never truncate a title for cover artwork.`, "blog-agent", {
         model: settings.text_model,
-        reasoningEffort: "low",
-        thinkingLevel: "minimal",
-        maxOutputTokens: 1200,
+        reasoningEffort: "medium",
+        thinkingLevel: "low",
+        maxOutputTokens: 1600,
         siteScope: "dekhocampus",
         responseSchema: {
           type: "OBJECT",
@@ -2178,11 +2235,13 @@ export async function runBlogAgent(body = {}) {
                   search_intent: { type: "STRING" },
                   primary_entity: { type: "STRING" },
                   unique_value: { type: "STRING" },
+                  impact_reason: { type: "STRING" },
+                  time_signal: { type: "STRING" },
                   category: { type: "STRING" },
                   tags: { type: "ARRAY", items: { type: "STRING" } },
                   trend_based: { type: "BOOLEAN" },
                 },
-                required: ["title", "angle", "search_intent", "primary_entity", "unique_value", "trend_based"],
+                required: ["title", "angle", "search_intent", "primary_entity", "unique_value", "impact_reason", "time_signal", "trend_based"],
               },
             },
           },
@@ -2215,7 +2274,7 @@ export async function runBlogAgent(body = {}) {
     const ids = [];
     for (const topic of topics) {
       await assertRunActive(run.id, executionToken);
-      const id = await saveGeneratedArticle(topic, settings, signals, entityContext, recent);
+      const id = await saveGeneratedArticle(topic, settings, signals, entityContext, todayCoverage, dayWindow);
       await assertRunActive(run.id, executionToken);
       if (id) ids.push(id);
     }

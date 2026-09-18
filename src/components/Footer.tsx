@@ -126,31 +126,6 @@ export function Footer() {
     <QuickLinksBar />
     <AskDiyaBand />
     <footer className="bg-foreground text-background" role="contentinfo">
-      <section className="border-y border-border bg-slate-50 text-foreground" aria-labelledby="popular-education-links">
-        <div className="container py-9 md:py-11">
-          <div className="mb-6 max-w-2xl">
-            <h2 id="popular-education-links" className="text-xl font-extrabold md:text-2xl">Popular education searches</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Explore colleges, courses, exams and student resources by the paths students search most.</p>
-          </div>
-          <div className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-3 lg:grid-cols-6">
-            {popularFooterGroups.map((group) => (
-              <nav key={group.title} aria-label={group.title}>
-                <h3 className="mb-3 text-sm font-extrabold text-slate-950">{group.title}</h3>
-                <ul className="space-y-2.5">
-                  {group.links.map(([label, href]) => (
-                    <li key={href}>
-                      <Link to={href} className="text-sm leading-5 text-slate-600 transition-colors hover:text-primary">
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Built by IIT Delhi Alumni strip - shown on every page */}
       <div className="bg-background text-foreground border-b border-border/40">
         <div className="container py-3.5 md:py-4 flex flex-col items-center text-center gap-0.5">
@@ -267,6 +242,31 @@ export function Footer() {
           </nav>
         </div>
       </div>
+
+      <section className="border-t border-background/10" aria-labelledby="popular-education-links">
+        <div className="container py-8 md:py-10">
+          <div className="mb-6 max-w-2xl">
+            <h2 id="popular-education-links" className="text-xl font-extrabold text-background md:text-2xl">Explore education by interest</h2>
+            <p className="mt-1 text-sm leading-6 text-background/65">Direct paths to popular colleges, courses, entrance exams and student resources.</p>
+          </div>
+          <div className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-3 lg:grid-cols-6">
+            {popularFooterGroups.map((group) => (
+              <nav key={group.title} aria-label={group.title}>
+                <h3 className="mb-3 text-sm font-extrabold text-background">{group.title}</h3>
+                <ul className="space-y-2.5">
+                  {group.links.map(([label, href]) => (
+                    <li key={href}>
+                      <Link to={href} className="text-sm leading-5 text-background/65 transition-colors hover:text-accent">
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Bottom Bar */}
       <div className="border-t border-background/10">

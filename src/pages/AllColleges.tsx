@@ -88,6 +88,7 @@ export default function AllColleges() {
     }
     return {};
   }, [location.pathname]);
+  const isSeoLandingPath = /^\/colleges\/top-[^/]+$/.test(location.pathname) && !location.search;
 
   const [selectedStreams, setSelectedStreams] = useState<string[]>(() => {
     return readMultiParam(searchParams, "stream", seoSlugFilters.stream ? [seoSlugFilters.stream] : []);
@@ -165,9 +166,22 @@ export default function AllColleges() {
     [directoryPages],
   );
 
+  const seoLandingMatches = isSeoLandingPath
+    && sameStringList(selectedStreams, seoSlugFilters.stream ? [seoSlugFilters.stream] : [])
+    && sameStringList(selectedCourseGroups, seoSlugFilters.group ? [normalizeCollegeCourseGroup(seoSlugFilters.group)] : [])
+    && selectedState === (seoSlugFilters.state || "")
+    && selectedCity === (seoSlugFilters.city || "")
+    && sameStringList(selectedTypes, seoSlugFilters.type ? [seoSlugFilters.type] : [])
+    && selectedApprovals.length === 0
+    && selectedNaac.length === 0
+    && selectedFeeRanges.length === 0
+    && selectedExams.length === 0
+    && !showPartnerOnly;
+
   // Keep every filter in the URL. This is intentionally lossless: converting
   // arbitrary values to a limited SEO slug used to clear unsupported filters.
   useEffect(() => {
+    if (seoLandingMatches) return;
     const params = new URLSearchParams();
     writeMultiParam(params, "stream", selectedStreams);
     writeMultiParam(params, "group", selectedCourseGroups);
@@ -181,7 +195,7 @@ export default function AllColleges() {
     if (selectedCity) params.set("city", selectedCity);
     const newPath = params.toString() ? `/colleges?${params.toString()}` : "/colleges";
     if (`${location.pathname}${location.search}` !== newPath) navigate(newPath, { replace: true });
-  }, [selectedStreams, selectedCourseGroups, selectedState, selectedCity, selectedTypes, selectedApprovals, selectedNaac, selectedFeeRanges, selectedExams, showPartnerOnly, navigate, location.pathname, location.search]);
+  }, [selectedStreams, selectedCourseGroups, selectedState, selectedCity, selectedTypes, selectedApprovals, selectedNaac, selectedFeeRanges, selectedExams, showPartnerOnly, seoLandingMatches, navigate, location.pathname, location.search]);
 
   const activeFilters = uniqueValues([
     ...(showPartnerOnly ? ["Partner colleges"] : []),
@@ -228,7 +242,7 @@ export default function AllColleges() {
     approval: selectedApprovals[0],
   }), [selectedStreams, selectedCourseGroups, selectedState, selectedCity, selectedTypes, selectedExams, selectedApprovals]);
 
-  useSEO({ title: heading, description: `Explore ${heading.toLowerCase()} - compare fees, placements, NAAC ratings and admissions.`, canonical: `/colleges${searchParams.toString() ? `?${searchParams.toString()}` : ""}` });
+  useSEO({ title: heading, description: `Explore ${heading.toLowerCase()} - compare fees, placements, NAAC ratings and admissions.`, canonical: seoLandingMatches ? location.pathname : `/colleges${searchParams.toString() ? `?${searchParams.toString()}` : ""}` });
 
   const clearAll = () => {
     setSelectedStreams([]); setSelectedState(""); setSelectedCity("");

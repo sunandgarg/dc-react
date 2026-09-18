@@ -23,7 +23,7 @@ import { saveLeadPhase } from "@/lib/twoStepLead";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface LeadCaptureFormProps {
-  variant?: "inline" | "card" | "banner" | "sidebar";
+  variant?: "inline" | "card" | "banner" | "sidebar" | "article-sidebar";
   title?: string;
   subtitle?: string;
   source?: string;
@@ -88,7 +88,7 @@ export function LeadCaptureForm({
     if (s.includes("loan")) return "loan";
     if (s.includes("landing")) return "landing";
     if (s.includes("trending")) return "trending_program";
-    if (variant === "sidebar" || s.includes("sidebar")) return "sidebar";
+    if (variant === "sidebar" || variant === "article-sidebar" || s.includes("sidebar")) return "sidebar";
     return "sidebar";
   })();
   const otp = useInlineOtp(formData.phone, formKey);
@@ -263,6 +263,7 @@ export function LeadCaptureForm({
           ${variant === "card" ? "bg-card rounded-2xl border border-border p-5 shadow-soft" : ""}
           ${variant === "banner" ? "bg-primary rounded-2xl p-5 text-primary-foreground" : ""}
           ${variant === "sidebar" ? "bg-card rounded-2xl border border-border p-4" : ""}
+          ${variant === "article-sidebar" ? "bg-card rounded-lg border border-border p-4" : ""}
           ${variant === "inline" ? "bg-muted/50 rounded-xl p-4" : ""}
         `}
       >
@@ -433,6 +434,36 @@ export function LeadCaptureForm({
         </form>
         {otpPortal}
       </motion.div>
+    );
+  }
+
+  if (variant === "article-sidebar") {
+    return (
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="overflow-hidden rounded-lg border border-border bg-card shadow-sm"
+        aria-label={title}
+      >
+        <div className="h-1 bg-orange-500" />
+        <div className="p-4">
+          <div className="mb-4 flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-orange-200 bg-orange-50">
+              <img src={dcLogo} alt="DekhoCampus" className="h-7 w-7 object-contain" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">Free updates</p>
+              <h3 className="mt-0.5 text-base font-extrabold leading-5 text-foreground">{title}</h3>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">{subtitle}</p>
+            </div>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-2">
+            {renderTwoStepFields({ compact: true })}
+          </form>
+        </div>
+        {otpPortal}
+      </motion.section>
     );
   }
 

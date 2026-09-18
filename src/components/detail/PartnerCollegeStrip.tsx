@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { buildCollegeHref } from "@/lib/entityUrls";
 import { usePartnerColleges, type DbCollege } from "@/hooks/useCollegesData";
+import { InstitutionLogo } from "@/components/InstitutionLogo";
 
 interface PartnerCollegeStripProps {
   title?: string;
@@ -79,19 +80,13 @@ export function PartnerCollegeStrip({
             to={buildCollegeHref(college)}
             className="group flex min-w-0 items-center gap-3 rounded-xl border border-transparent bg-muted p-2.5 transition-colors hover:border-primary/30 hover:bg-primary/5"
           >
-            {(college.logo || college.image) ? (
-              <img
-                src={college.logo || college.image}
-                alt={`${college.name} logo`}
-                className="h-11 w-11 flex-none rounded-lg border border-border bg-card object-contain p-1"
-                loading="lazy"
-                decoding="async"
-              />
-            ) : (
-              <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg border border-border bg-card text-primary">
-                <Building2 className="h-5 w-5" />
-              </div>
-            )}
+            <InstitutionLogo
+              src={college.logo || college.image}
+              alt={`${college.name} logo`}
+              className="h-11 w-11 rounded-lg border border-border bg-card"
+              imageClassName="p-1"
+              fallback={<Building2 className="h-5 w-5 text-primary" />}
+            />
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-semibold text-foreground group-hover:text-primary">{college.short_name || college.name}</div>
               <div className="mt-0.5 flex items-center gap-1 truncate text-[11px] text-muted-foreground">

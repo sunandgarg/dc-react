@@ -19,6 +19,7 @@ export type DbArticle = {
   category: string;
   author: string;
   featured_image: string;
+  source_logo?: string | null;
   views: number;
   tags: string[];
   meta_title: string;
@@ -37,7 +38,7 @@ export function useDbArticles(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
     queryFn: async () => {
       const { data, error } = await backendClient
         .from("articles")
-        .select("id,status,title,slug,description,vertical,category,author,featured_image,views,tags,is_active,featured_rank,created_at,updated_at,site_scope")
+        .select("id,status,title,slug,description,vertical,category,author,featured_image,source_logo,views,tags,is_active,featured_rank,created_at,updated_at,site_scope")
         .eq("site_scope", siteScope)
         .eq("is_active", true)
         .eq("status", "Published")

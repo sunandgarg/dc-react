@@ -386,6 +386,7 @@ model articles {
   category             String    @db.LongText
   author               String    @db.LongText
   featured_image       String    @db.LongText
+  source_logo          String?   @db.LongText
   views                Int       @default(0)
   tags                 Json
   meta_title           String    @db.LongText

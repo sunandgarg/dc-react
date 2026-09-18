@@ -6,6 +6,7 @@ import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { useTrustedPartners, type TrustedPartner } from "@/hooks/useTrustedPartners";
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
 import { toast } from "sonner";
+import { InstitutionLogo } from "@/components/InstitutionLogo";
 
 const onlineFeatures = [
   { icon: Monitor, label: "Live Classes", desc: "Interactive sessions" },
@@ -138,11 +139,15 @@ export function OnlineEducationSection() {
                     <div className="overflow-hidden relative" style={{ maskImage: "linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)" }}>
                       <div className="dc-mobile-static-marquee flex gap-6 items-center animate-[marquee_25s_linear_infinite] whitespace-nowrap py-1">
                         {[...onlineLogos, ...onlineLogos].map((p, i) => (
-                          p.logo_url ? (
-                            <img key={`${p.id}-${i}`} src={p.logo_url} alt={p.name} className="h-7 md:h-8 w-auto object-contain opacity-80 hover:opacity-100 transition flex-shrink-0" loading="lazy" />
-                          ) : (
-                            <span key={`${p.id}-${i}`} className="text-xs font-semibold text-muted-foreground flex-shrink-0">{p.name}</span>
-                          )
+                          <span key={`${p.id}-${i}`} className="inline-flex shrink-0 items-center gap-2">
+                            <InstitutionLogo
+                              src={p.logo_url}
+                              alt={`${p.name} logo`}
+                              className="h-8 w-14 rounded-md bg-white/90 ring-1 ring-border/60"
+                              imageClassName="p-1 opacity-90"
+                            />
+                            <span className="text-xs font-semibold text-muted-foreground">{p.name}</span>
+                          </span>
                         ))}
                       </div>
                     </div>

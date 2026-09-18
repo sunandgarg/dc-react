@@ -333,6 +333,7 @@ async function ensureSiteIsolationSchema(report) {
     ["leads", "consent_text", "LONGTEXT NULL"],
     ["leads", "consent_at", "DATETIME(3) NULL"],
     ["articles", "job_posting", "JSON NULL"],
+    ["articles", "source_logo", "LONGTEXT NULL"],
   ];
   for (const [table, column, definition] of columns) {
     if (await columnInfo(table, column)) continue;

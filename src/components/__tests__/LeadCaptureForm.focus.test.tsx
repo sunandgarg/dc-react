@@ -5,6 +5,7 @@ import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 vi.mock("framer-motion", () => ({
   motion: {
     div: ({ children, initial: _initial, animate: _animate, exit: _exit, whileInView: _whileInView, viewport: _viewport, ...props }: any) => <div {...props}>{children}</div>,
+    section: ({ children, initial: _initial, animate: _animate, exit: _exit, whileInView: _whileInView, viewport: _viewport, ...props }: any) => <section {...props}>{children}</section>,
   },
 }));
 vi.mock("@/components/IITAlumniBadge", () => ({ IITAlumniBadge: () => null }));
@@ -31,7 +32,7 @@ vi.mock("@/lib/twoStepLead", () => ({ saveLeadPhase: vi.fn() }));
 
 afterEach(cleanup);
 
-describe.each(["card", "banner", "sidebar", "inline"] as const)("LeadCaptureForm %s variant", (variant) => {
+describe.each(["card", "banner", "sidebar", "inline", "article-sidebar"] as const)("LeadCaptureForm %s variant", (variant) => {
   it("keeps identity-field focus while typing complete values", async () => {
     render(<LeadCaptureForm variant={variant} source={`focus-${variant}`} />);
 
