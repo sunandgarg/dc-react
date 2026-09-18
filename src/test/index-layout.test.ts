@@ -17,6 +17,9 @@ describe("Index page layout (static source assertions)", () => {
   const directoryHookSrc = readFileSync(resolve(process.cwd(), "src/hooks/useCollegeDirectory.ts"), "utf8");
   const examCalendarSrc = readFileSync(resolve(process.cwd(), "src/pages/ExamCalendar.tsx"), "utf8");
   const announcementSrc = readFileSync(resolve(process.cwd(), "src/components/AnnouncementBar.tsx"), "utf8");
+  const adminAdsSrc = readFileSync(resolve(process.cwd(), "src/pages/AdminAds.tsx"), "utf8");
+  const bootstrapSrc = readFileSync(resolve(process.cwd(), "src/lib/bootstrap.ts"), "utf8");
+  const backendIndexSrc = readFileSync(resolve(process.cwd(), "backend/src/index.mjs"), "utf8");
   const globalAdsSrc = readFileSync(resolve(process.cwd(), "src/components/GlobalInternalAds.tsx"), "utf8");
   const adsenseLoaderSrc = readFileSync(resolve(process.cwd(), "src/components/ads/AdsenseLoader.tsx"), "utf8");
   const articleDetailSrc = readFileSync(resolve(process.cwd(), "src/pages/ArticleDetail.tsx"), "utf8");
@@ -76,6 +79,17 @@ describe("Index page layout (static source assertions)", () => {
     expect(announcementSrc).toMatch(/h-11 min-h-11/);
     expect(navbarSrc).toMatch(/sticky top-0 z-\[70\]/);
     expect(announcementSrc).not.toMatch(/DISMISSED_KEY|Close announcements|bg-blue-600|bg-orange-500/);
+  });
+
+  it("shows only Ad Manager announcements and refreshes managed content promptly", () => {
+    expect(announcementSrc).not.toMatch(/DEFAULT_ANNOUNCEMENT|default-admissions-announcement/);
+    expect(announcementSrc).toMatch(/const ads = configuredAds/);
+    expect(announcementSrc).toMatch(/isLoading \|\| ads\.length === 0/);
+    expect(bootstrapSrc).toMatch(/BOOTSTRAP_TTL = 30_000/);
+    expect(bootstrapSrc).toMatch(/cache: "no-cache"/);
+    expect(backendIndexSrc).toMatch(/bootstrap[\s\S]*?max-age=30, stale-while-revalidate=60/);
+    expect(adminAdsSrc).toMatch(/border-neutral-800 bg-black/);
+    expect(adminAdsSrc).not.toMatch(/absolute inset-x-0 top-0 flex h-1/);
   });
 
   it("reserves one sitewide Google ad slot between public navigation and search", () => {

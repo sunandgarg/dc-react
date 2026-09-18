@@ -4,7 +4,8 @@
 import { QueryClient } from "@tanstack/react-query";
 import { functionUrl } from "@/lib/backendMode";
 
-const BOOTSTRAP_TTL = 5 * 60_000; // match the Cloudflare edge cache
+const BOOTSTRAP_TTL = 30_000; // match the short edge cache for admin-managed homepage content
+const BOOTSTRAP_CACHE_VERSION = "announcements-v2";
 
 export interface BootstrapPayload {
   hero_banners?: unknown[];
@@ -19,6 +20,7 @@ export interface BootstrapPayload {
 
 let payloadPromise: Promise<BootstrapPayload | null> | null = null;
 let fetchedAt = 0;
+let requestRevision = 0;
 
 /** Start (or reuse) the bootstrap fetch. Resolves with the payload. */
 export function ensureBootstrap(): Promise<BootstrapPayload | null> {
@@ -26,7 +28,10 @@ export function ensureBootstrap(): Promise<BootstrapPayload | null> {
   fetchedAt = Date.now();
   payloadPromise = (async () => {
     try {
-      const res = await fetch(functionUrl("bootstrap"));
+      const endpoint = new URL(functionUrl("bootstrap"));
+      endpoint.searchParams.set("v", BOOTSTRAP_CACHE_VERSION);
+      endpoint.searchParams.set("revision", String(requestRevision));
+      const res = await fetch(endpoint.toString(), { cache: "no-cache" });
       if (!res.ok) return null;
       return (await res.json()) as BootstrapPayload;
     } catch {
@@ -40,6 +45,7 @@ export function ensureBootstrap(): Promise<BootstrapPayload | null> {
 export function resetBootstrap() {
   payloadPromise = null;
   fetchedAt = 0;
+  requestRevision += 1;
 }
 
 /** Seed every cache key the existing hooks expect from a single payload. */

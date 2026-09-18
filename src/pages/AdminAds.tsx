@@ -174,7 +174,7 @@ export default function AdminAds() {
       ...emptyForm,
       cta_text: "Apply Now",
       variant: "announcement",
-      bg_gradient: "from-amber-500 to-orange-500",
+      bg_gradient: "from-slate-700 to-slate-900",
       position: "announcement-bar",
       priority: 50,
     });
@@ -716,15 +716,10 @@ function AdPreview({ form }: { form: AdForm }) {
 
   if (variant === "announcement") {
     return (
-      <div className="relative flex min-h-14 items-center justify-center gap-3 overflow-hidden border border-orange-200 bg-orange-50 px-4 py-2 text-center">
-        <div className="absolute inset-x-0 top-0 flex h-1" aria-hidden="true">
-          <span className="flex-1 bg-orange-500" />
-          <span className="w-1/4 bg-blue-600" />
-          <span className="w-1/5 bg-red-500" />
-        </div>
+      <div className="relative flex min-h-14 items-center justify-center gap-3 overflow-hidden border border-neutral-800 bg-black px-4 py-2 text-center">
         <div className="min-w-0">
-          <p className="truncate text-sm font-extrabold text-slate-950">{t}</p>
-          {subtitle && <p className="truncate text-xs text-slate-600">{subtitle}</p>}
+          <p className="truncate text-sm font-extrabold text-white">{t}</p>
+          {subtitle && <p className="truncate text-xs text-white/65">{subtitle}</p>}
         </div>
         <span className="shrink-0 bg-red-600 px-4 py-1.5 text-xs font-extrabold text-white">{cta_text || "Apply Now"}</span>
       </div>

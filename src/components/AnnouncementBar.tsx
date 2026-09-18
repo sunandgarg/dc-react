@@ -3,27 +3,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getInternalAdContext } from "@/components/GlobalInternalAds";
-import { type Ad, useMatchingAds } from "@/hooks/useAds";
+import { useMatchingAds } from "@/hooks/useAds";
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
-
-const DEFAULT_ANNOUNCEMENT: Ad = {
-  id: "default-admissions-announcement",
-  title: "Admissions are open: compare colleges, courses and upcoming exams",
-  subtitle: "Shortlist verified options and plan your next application.",
-  cta_text: "Explore Now",
-  link_url: "/colleges",
-  image_url: null,
-  variant: "announcement",
-  bg_gradient: "from-amber-500 to-orange-500",
-  target_type: "universal",
-  target_page: null,
-  target_item_slug: null,
-  target_city: null,
-  target_state: null,
-  position: "announcement-bar",
-  priority: 0,
-  is_active: true,
-};
 
 export function AnnouncementBar() {
   const { pathname, search } = useLocation();
@@ -39,7 +20,7 @@ export function AnnouncementBar() {
   });
   const { data: rotationValue = "10" } = useSiteIntegration("announcement_rotation_seconds");
   const rotationSeconds = Math.min(60, Math.max(5, Number(rotationValue) || 10));
-  const ads = configuredAds.length ? configuredAds : [DEFAULT_ANNOUNCEMENT];
+  const ads = configuredAds;
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -56,7 +37,7 @@ export function AnnouncementBar() {
     return () => window.clearInterval(timer);
   }, [ads.length, paused, rotationSeconds]);
 
-  if (!context.isPublic || isLoading) return null;
+  if (!context.isPublic || isLoading || ads.length === 0) return null;
   const activeAd = ads[activeIndex] || ads[0];
   const external = /^https?:\/\//i.test(activeAd.link_url) && !activeAd.link_url.includes("dekhocampus.com");
   const internalHref = activeAd.link_url.replace(/^https?:\/\/(?:www\.)?dekhocampus\.com/i, "") || "/";
