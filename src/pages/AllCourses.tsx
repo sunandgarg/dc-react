@@ -1,4 +1,4 @@
-import { useState, useMemo, Fragment, useEffect } from "react";
+import { useState, useMemo, Fragment, useEffect, useRef } from "react";
 import { Search, ChevronDown, ChevronUp, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +32,8 @@ export default function AllCourses() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const pendingListingUrlRef = useRef<string | null>(null);
+  const skipNextListingSyncRef = useRef(false);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -57,6 +59,13 @@ export default function AllCourses() {
 
   // Hydrate from URL whenever it changes
   useEffect(() => {
+    const currentUrl = `${location.pathname}${location.search}`;
+    if (pendingListingUrlRef.current) {
+      if (pendingListingUrlRef.current !== currentUrl) return;
+      pendingListingUrlRef.current = null;
+    } else {
+      skipNextListingSyncRef.current = true;
+    }
     const streams = readMultiParam(searchParams, "stream", seoSlugFilters.stream ? [seoSlugFilters.stream] : []);
     const groups = readMultiParam(searchParams, "group", seoSlugFilters.group ? [normalizeCourseGroup(seoSlugFilters.group)] : []).map(normalizeCourseGroup);
     const modes = readMultiParam(searchParams, "mode", seoSlugFilters.mode ? [seoSlugFilters.mode] : []);
@@ -115,6 +124,10 @@ export default function AllCourses() {
     && selectedDurations.length === 0;
 
   useEffect(() => {
+    if (skipNextListingSyncRef.current) {
+      skipNextListingSyncRef.current = false;
+      return;
+    }
     if (seoLandingMatches) return;
     const params = new URLSearchParams();
     writeMultiParam(params, "stream", selectedStreams);
@@ -123,7 +136,13 @@ export default function AllCourses() {
     writeMultiParam(params, "mode", selectedModes);
     writeMultiParam(params, "duration", selectedDurations);
     const newPath = params.toString() ? `/courses?${params.toString()}` : "/courses";
-    if (`${location.pathname}${location.search}` !== newPath) navigate(newPath, { replace: true });
+    const currentUrl = `${location.pathname}${location.search}`;
+    if (currentUrl !== newPath) {
+      pendingListingUrlRef.current = newPath;
+      navigate(newPath, { replace: true });
+    } else if (pendingListingUrlRef.current === newPath) {
+      pendingListingUrlRef.current = null;
+    }
   }, [selectedStreams, selectedCourseGroups, selectedSpecializations, selectedModes, selectedDurations, seoLandingMatches, navigate, location.pathname, location.search]);
 
   const activeFilters = uniqueValues([...selectedStreams, ...selectedCourseGroups, ...selectedSpecializations, ...selectedModes, ...selectedDurations]);

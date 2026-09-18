@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -76,6 +76,8 @@ export default function AllColleges() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const pendingListingUrlRef = useRef<string | null>(null);
+  const skipNextListingSyncRef = useRef(false);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -110,6 +112,13 @@ export default function AllColleges() {
   // Hydrate filters from URL/SEO slug whenever the URL changes
   // (so "MSc in Mumbai" → "BSc in Bangalore" navigation reapplies filters)
   useEffect(() => {
+    const currentUrl = `${location.pathname}${location.search}`;
+    if (pendingListingUrlRef.current) {
+      if (pendingListingUrlRef.current !== currentUrl) return;
+      pendingListingUrlRef.current = null;
+    } else {
+      skipNextListingSyncRef.current = true;
+    }
     const stream = readMultiParam(searchParams, "stream", seoSlugFilters.stream ? [seoSlugFilters.stream] : []);
     const group = readMultiParam(searchParams, "group", seoSlugFilters.group ? [normalizeCollegeCourseGroup(seoSlugFilters.group)] : []).map(normalizeCollegeCourseGroup);
     const st = searchParams.get("state") || seoSlugFilters.state || "";
@@ -181,6 +190,10 @@ export default function AllColleges() {
   // Keep every filter in the URL. This is intentionally lossless: converting
   // arbitrary values to a limited SEO slug used to clear unsupported filters.
   useEffect(() => {
+    if (skipNextListingSyncRef.current) {
+      skipNextListingSyncRef.current = false;
+      return;
+    }
     if (seoLandingMatches) return;
     const params = new URLSearchParams();
     writeMultiParam(params, "stream", selectedStreams);
@@ -194,7 +207,13 @@ export default function AllColleges() {
     if (selectedState) params.set("state", selectedState);
     if (selectedCity) params.set("city", selectedCity);
     const newPath = params.toString() ? `/colleges?${params.toString()}` : "/colleges";
-    if (`${location.pathname}${location.search}` !== newPath) navigate(newPath, { replace: true });
+    const currentUrl = `${location.pathname}${location.search}`;
+    if (currentUrl !== newPath) {
+      pendingListingUrlRef.current = newPath;
+      navigate(newPath, { replace: true });
+    } else if (pendingListingUrlRef.current === newPath) {
+      pendingListingUrlRef.current = null;
+    }
   }, [selectedStreams, selectedCourseGroups, selectedState, selectedCity, selectedTypes, selectedApprovals, selectedNaac, selectedFeeRanges, selectedExams, showPartnerOnly, seoLandingMatches, navigate, location.pathname, location.search]);
 
   const activeFilters = uniqueValues([
@@ -248,11 +267,17 @@ export default function AllColleges() {
     setSelectedStreams([]); setSelectedState(""); setSelectedCity("");
     setSelectedTypes([]); setSelectedApprovals([]); setSelectedNaac([]);
     setSelectedCourseGroups([]); setSelectedFeeRanges([]); setSelectedExams([]);
-    if (showPartnerOnly) navigate("/colleges", { replace: true });
+    if (showPartnerOnly) {
+      pendingListingUrlRef.current = "/colleges";
+      navigate("/colleges", { replace: true });
+    }
   };
 
   const removeFilter = (f: string) => {
-    if (f === "Partner colleges") navigate("/colleges", { replace: true });
+    if (f === "Partner colleges") {
+      pendingListingUrlRef.current = "/colleges";
+      navigate("/colleges", { replace: true });
+    }
     setSelectedStreams(prev => prev.filter(x => x !== f));
     setSelectedTypes(prev => prev.filter(x => x !== f));
     setSelectedApprovals(prev => prev.filter(x => x !== f));

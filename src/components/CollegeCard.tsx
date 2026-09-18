@@ -30,7 +30,7 @@ function CollegeCardComponent({ college, index }: CollegeCardProps) {
               className="w-full h-full object-cover object-center"
               loading="lazy"
               decoding="async"
-              fetchPriority={index < 6 ? "high" : "low"}
+              {...{ fetchpriority: index < 6 ? "high" : "low" }}
             />
             <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
               <Badge className="bg-foreground/80 text-background border-0 text-xs">

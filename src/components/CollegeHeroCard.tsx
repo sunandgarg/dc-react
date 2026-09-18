@@ -131,7 +131,7 @@ export function CollegeHeroCard({ college }: Props) {
             category="college"
             title={`${college.name} - Campus Tour`}
             label="Campus Tour"
-            className={`${secondaryActionClass} !border-border !bg-background !text-foreground hover:!border-primary/40 hover:!bg-primary/5 [&_span]:!bg-primary`}
+            className="h-10 rounded-xl px-4 text-xs font-semibold"
           />
           <CompareToggleButton
             college={{

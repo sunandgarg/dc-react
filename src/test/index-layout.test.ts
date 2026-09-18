@@ -26,6 +26,7 @@ describe("Index page layout (static source assertions)", () => {
   const sitemapGeneratorSrc = readFileSync(resolve(process.cwd(), "scripts/generate-sitemap.ts"), "utf8");
   const documentSrc = readFileSync(resolve(process.cwd(), "index.html"), "utf8");
   const allExamsSrc = readFileSync(resolve(process.cwd(), "src/pages/AllExams.tsx"), "utf8");
+  const allCoursesSrc = readFileSync(resolve(process.cwd(), "src/pages/AllCourses.tsx"), "utf8");
   const seoSlugsSrc = readFileSync(resolve(process.cwd(), "src/lib/seoSlugs.ts"), "utf8");
 
   it("does NOT import or render the LoanReferStrip below scholarships", () => {
@@ -79,6 +80,16 @@ describe("Index page layout (static source assertions)", () => {
     expect(announcementSrc).toMatch(/h-11 min-h-11/);
     expect(navbarSrc).toMatch(/sticky top-0 z-\[70\]/);
     expect(announcementSrc).not.toMatch(/DISMISSED_KEY|Close announcements|bg-blue-600|bg-orange-500/);
+  });
+
+  it("rotates announcements without side arrows or an invented CTA label", () => {
+    expect(announcementSrc).not.toMatch(/ChevronLeft|ChevronRight|Previous announcement|Next announcement/);
+    expect(announcementSrc).not.toMatch(/cta_text \|\| "Apply Now"/);
+    expect(announcementSrc).toMatch(/ctaText = activeAd\.cta_text\?\.trim\(\)/);
+    expect(announcementSrc).toMatch(/ctaText \|\| <ArrowRight/);
+    expect(announcementSrc).toMatch(/AnimatedWords/);
+    expect(announcementSrc).toMatch(/staggerChildren/);
+    expect(announcementSrc).toMatch(/useReducedMotion/);
   });
 
   it("shows only Ad Manager announcements and refreshes managed content promptly", () => {
@@ -143,6 +154,15 @@ describe("Index page layout (static source assertions)", () => {
   it("lets footer exam links prefill the live exam search", () => {
     expect(allExamsSrc).toMatch(/searchParams\.get\("search"\)/);
     expect(allExamsSrc).toMatch(/params\.set\("search", debouncedSearch\)/);
+  });
+
+  it("keeps rapid listing-filter changes ahead of stale URL hydration", () => {
+    for (const source of [allCollegesSrc, allCoursesSrc, allExamsSrc]) {
+      expect(source).toMatch(/pendingListingUrlRef/);
+      expect(source).toMatch(/pendingListingUrlRef\.current !== currentUrl/);
+      expect(source).toMatch(/skipNextListingSyncRef/);
+      expect(source).toMatch(/navigate\(newPath, \{ replace: true \}\)/);
+    }
   });
 
   it("does not render the six college, course, exam, application, review, and news cards", () => {

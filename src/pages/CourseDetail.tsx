@@ -74,6 +74,9 @@ const COURSE_SECTIONS: ScrollSection[] = [
   { id: "faq", label: "Q&A" },
 ];
 
+const HERO_BADGE_CLASS = "max-w-full truncate border border-primary/20 bg-primary/10 text-primary hover:bg-primary/10 text-[10px] md:text-xs";
+const HERO_SECONDARY_ACTION_CLASS = "h-10 rounded-xl border-border bg-background px-4 text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-primary/5";
+
 /**
  * SafeScrollNav - purely observes which section is in view using IntersectionObserver.
  * NEVER calls scrollTo / scrollIntoView / window.scroll.
@@ -275,9 +278,9 @@ export default function CourseDetail() {
           </div>
           <div className="p-4 md:p-6">
             <div className="flex flex-wrap items-center gap-1.5 mb-2">
-              <Badge className="max-w-full truncate bg-primary/90 text-primary-foreground text-[10px] md:text-xs">{category}</Badge>
-              <Badge className="max-w-full truncate bg-accent/90 text-accent-foreground text-[10px] md:text-xs">{level}</Badge>
-              <Badge variant="secondary" className="text-[10px] md:text-xs">
+              <Badge variant="outline" className={HERO_BADGE_CLASS}>{category}</Badge>
+              <Badge variant="outline" className={HERO_BADGE_CLASS}>{level}</Badge>
+              <Badge variant="outline" className={HERO_BADGE_CLASS}>
                 {duration}
               </Badge>
             </div>
@@ -292,7 +295,7 @@ export default function CourseDetail() {
                 category="course"
                 title={`${courseName} Overview`}
                 label={`Watch ${compactEntityLabel(courseName)}`}
-                className="h-9 rounded-full px-4 text-xs"
+                className="h-10 rounded-xl px-4 text-xs font-semibold"
               />
             </div>
             <p className="text-sm text-muted-foreground line-clamp-3">
@@ -302,14 +305,14 @@ export default function CourseDetail() {
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <Button
                 onClick={() => { try { trackEvent("cta_click", { page: "course", cta: "Find Best Colleges", course_slug: course.slug }); } catch {}; setLeadOpen("apply"); }}
-                className="h-10 px-4 rounded-xl !bg-[#e85d3a] hover:!bg-[#d14b2d] !text-white font-bold shadow-lg shadow-orange-200/60 gap-1.5 text-xs"
+                className="h-10 rounded-xl bg-primary px-4 text-xs font-bold text-primary-foreground hover:bg-primary/90"
               >
                 <ArrowRight className="w-3.5 h-3.5" /> Find Best Colleges
               </Button>
               <Button
                 variant="outline"
                 onClick={() => { try { trackEvent("cta_click", { page: "course", cta: "Talk to Counselor", course_slug: course.slug }); } catch {}; setLeadOpen("talk"); }}
-                className="h-10 px-4 rounded-xl border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-bold text-xs"
+                className={HERO_SECONDARY_ACTION_CLASS}
               >
                 Talk to Counselor
               </Button>
@@ -320,13 +323,13 @@ export default function CourseDetail() {
                   rel="noopener noreferrer"
                   onClick={() => { try { trackEvent("cta_click", { page: "course", cta: "Download Syllabus", course_slug: course.slug }); } catch {} }}
                 >
-                  <Button variant="outline" className="h-10 px-4 rounded-xl text-xs gap-1.5"><Download className="w-3.5 h-3.5" /> Syllabus PDF</Button>
+                  <Button variant="outline" className={HERO_SECONDARY_ACTION_CLASS}><Download className="w-3.5 h-3.5" /> Syllabus PDF</Button>
                 </a>
               ) : (
                 <Button
                   variant="outline"
                   onClick={() => { try { trackEvent("cta_click", { page: "course", cta: "Download Syllabus", course_slug: course.slug }); } catch {}; setLeadOpen("syllabus"); }}
-                  className="h-10 px-4 rounded-xl text-xs gap-1.5"
+                  className={HERO_SECONDARY_ACTION_CLASS}
                 >
                   <Download className="w-3.5 h-3.5" /> Syllabus PDF
                 </Button>
@@ -630,7 +633,7 @@ export default function CourseDetail() {
                 <p className="text-sm text-muted-foreground">No entrance exams linked yet. <Link to="/exams" className="text-primary underline">Browse all exams →</Link></p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {course.top_exams.map((exam) => {
+                  {Array.from(new Set(course.top_exams)).map((exam) => {
                     const display = displayText(exam, "Exam");
                     const slug = display.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
                     return (

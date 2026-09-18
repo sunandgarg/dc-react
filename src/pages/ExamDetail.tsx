@@ -55,6 +55,9 @@ const EXAM_SECTIONS: ScrollSection[] = [
   { id: "faq", label: "Q&A" },
 ];
 
+const HERO_BADGE_CLASS = "border border-primary/20 bg-primary/10 text-primary hover:bg-primary/10 text-xs";
+const HERO_SECONDARY_ACTION_CLASS = "h-10 rounded-xl border-border bg-background px-4 text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-primary/5";
+
 const HTML_FRAGMENT_RE = /<[a-z][\s\S]*>|&(?:amp;)?(?:lt|#0*60|#x0*3c);/i;
 
 export default function ExamDetail() {
@@ -216,7 +219,7 @@ export default function ExamDetail() {
         {/* Hero Card */}
         <div className="bg-card rounded-2xl border border-border overflow-hidden mb-0">
           <div className="relative">
-            <img src={exam.image} alt={exam.name} width="1600" height="560" loading="eager" decoding="async" fetchPriority="high" className="w-full h-48 md:h-56 object-cover object-center" />
+            <img src={exam.image} alt={exam.name} width="1600" height="560" loading="eager" decoding="async" {...{ fetchpriority: "high" }} className="w-full h-48 md:h-56 object-cover object-center" />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
             {(exam as any).logo && (
               <div className="absolute left-4 -bottom-6 md:left-6 md:-bottom-8 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-card border border-border shadow-md p-1.5 flex items-center justify-center overflow-hidden">
@@ -226,31 +229,31 @@ export default function ExamDetail() {
           </div>
           <div className={`p-4 md:p-6 ${(exam as any).logo ? "pt-10 md:pt-12" : ""}`}>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <Badge className="bg-primary/90 text-primary-foreground text-xs">{exam.category}</Badge>
-              <Badge className="bg-accent/90 text-accent-foreground text-xs">{exam.level}</Badge>
-              <Badge className={`text-xs ${exam.status === "Applications Open" ? "bg-success/90 text-success-foreground" : "bg-muted text-muted-foreground"}`}>{exam.status}</Badge>
+              <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.category}</Badge>
+              <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.level}</Badge>
+              <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.status}</Badge>
             </div>
             <h1 data-h className="text-xl md:text-2xl font-bold text-foreground mb-1">{exam.name} {new Date().getFullYear()}</h1>
             <p className="text-sm text-muted-foreground mb-2">{exam.full_name}</p>
 
             <div className="mb-3"><AuthorByline authorId={(exam as any).author_id} /></div>
             <div className="flex items-center gap-2 flex-wrap">
-              <Button size="sm" className="rounded-xl text-xs gap-1 !bg-[#e85d3a] hover:!bg-[#d14b2d] !text-white font-bold shadow-lg shadow-orange-200/60 h-10 px-4" onClick={openApplyGate}>
+              <Button size="sm" className="h-10 rounded-xl bg-primary px-4 text-xs font-bold text-primary-foreground hover:bg-primary/90" onClick={openApplyGate}>
                 <ExternalLink className="w-3.5 h-3.5" />Apply Now
               </Button>
               <Button
-                size="sm" variant="outline" className="rounded-xl text-xs gap-1 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 h-10 px-4 font-bold"
+                size="sm" variant="outline" className={HERO_SECONDARY_ACTION_CLASS}
                 onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Sample Papers", exam_slug: exam.slug }); } catch {}; openGate(exam.sample_paper_url || "#", `${exam.name}-sample-paper.pdf`, `exam_sample_${exam.slug}`); }}
               >
                 <Download className="w-3.5 h-3.5" />Sample Papers
               </Button>
               {exam.website && exam.website !== "#" && (
                 <a href={exam.website} target="_blank" rel="noopener noreferrer" onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Official Website", exam_slug: exam.slug }); } catch {} }}>
-                  <Button size="sm" variant="outline" className="rounded-xl text-xs gap-1 h-10"><Globe className="w-3.5 h-3.5" />Official Website</Button>
+                  <Button size="sm" variant="outline" className={HERO_SECONDARY_ACTION_CLASS}><Globe className="w-3.5 h-3.5" />Official Website</Button>
                 </a>
               )}
-              <YouTubeVideoButton url={(exam as any).youtube_video_url} category="exam" title={`${exam.name} Guide`} label={`Watch ${compactExamName}`} className="h-10 max-w-full rounded-xl px-3 text-xs" />
-              <YouTubeVideoButton url={(exam as any).how_to_apply_video_url} fallbackKey="how_to_apply_exam" category="exam" title={`How to Apply ${exam.name}`} label={`Apply for ${compactExamName}`} className="h-10 max-w-full rounded-xl px-3 text-xs" />
+              <YouTubeVideoButton url={(exam as any).youtube_video_url} category="exam" title={`${exam.name} Guide`} label={`Watch ${compactExamName}`} className="h-10 max-w-full rounded-xl px-3 text-xs font-semibold" />
+              <YouTubeVideoButton url={(exam as any).how_to_apply_video_url} fallbackKey="how_to_apply_exam" category="exam" title={`How to Apply ${exam.name}`} label={`Apply for ${compactExamName}`} className="h-10 max-w-full rounded-xl px-3 text-xs font-semibold" />
             </div>
           </div>
         </div>

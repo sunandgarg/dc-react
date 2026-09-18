@@ -1,4 +1,4 @@
-import { useState, useMemo, Fragment, useEffect } from "react";
+import { useState, useMemo, Fragment, useEffect, useRef } from "react";
 import { Search, ChevronDown, ChevronUp, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +31,8 @@ export default function AllExams() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const pendingListingUrlRef = useRef<string | null>(null);
+  const skipNextListingSyncRef = useRef(false);
   const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const [debouncedSearch, setDebouncedSearch] = useState(() => searchParams.get("search") || "");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -54,6 +56,13 @@ export default function AllExams() {
   const [selectedLevels, setSelectedLevels] = useState<string[]>(() => readMultiParam(searchParams, "level", seoSlugFilters.level ? [seoSlugFilters.level] : []));
 
   useEffect(() => {
+    const currentUrl = `${location.pathname}${location.search}`;
+    if (pendingListingUrlRef.current) {
+      if (pendingListingUrlRef.current !== currentUrl) return;
+      pendingListingUrlRef.current = null;
+    } else {
+      skipNextListingSyncRef.current = true;
+    }
     const querySearch = searchParams.get("search") || "";
     const categories = readMultiParam(searchParams, "category");
     const streams = readMultiParam(searchParams, "stream", seoSlugFilters.stream ? [seoSlugFilters.stream] : []);
@@ -108,6 +117,10 @@ export default function AllExams() {
     && sameStringList(selectedLevels, seoSlugFilters.level ? [seoSlugFilters.level] : []);
 
   useEffect(() => {
+    if (skipNextListingSyncRef.current) {
+      skipNextListingSyncRef.current = false;
+      return;
+    }
     if (seoLandingMatches) return;
     const params = new URLSearchParams();
     writeMultiParam(params, "category", selectedCategories);
@@ -116,7 +129,13 @@ export default function AllExams() {
     writeMultiParam(params, "level", selectedLevels);
     if (debouncedSearch) params.set("search", debouncedSearch);
     const newPath = params.toString() ? `/exams?${params.toString()}` : "/exams";
-    if (`${location.pathname}${location.search}` !== newPath) navigate(newPath, { replace: true });
+    const currentUrl = `${location.pathname}${location.search}`;
+    if (currentUrl !== newPath) {
+      pendingListingUrlRef.current = newPath;
+      navigate(newPath, { replace: true });
+    } else if (pendingListingUrlRef.current === newPath) {
+      pendingListingUrlRef.current = null;
+    }
   }, [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels, debouncedSearch, seoLandingMatches, navigate, location.pathname, location.search]);
 
   const activeFilters = uniqueValues([...selectedCategories, ...selectedStreams, ...selectedCourseGroups, ...selectedLevels]);
