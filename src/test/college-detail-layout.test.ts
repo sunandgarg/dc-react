@@ -20,6 +20,12 @@ describe("college detail summary layout", () => {
     expect(stats).toMatch(/label: "Type"/);
     expect(stats).not.toMatch(/label: "Course Fees"|label: "Student Rating"/);
     expect(detail.match(/<CollegeTrustBento college=\{college\} \/>/g)).toHaveLength(1);
+    expect(detail).not.toMatch(/CollegeQuickFacts/);
     expect(detail).not.toMatch(/\{ icon: Star, label: "Rating"/);
+  });
+
+  it("shows a university-specific institution type when the stored type is generic", () => {
+    expect(stats).toMatch(/displayInstitutionType/);
+    expect(stats).toMatch(/`\$\{type\} University`/);
   });
 });

@@ -23,7 +23,6 @@ import { CollegeAffiliationCard } from "@/components/detail/CollegeAffiliationCa
 import { CollegeTrustBento } from "@/components/detail/CollegeTrustBento";
 import { CollegeAIInsight } from "@/components/detail/CollegeAIInsight";
 import { CollegeDecisionRail } from "@/components/detail/CollegeDecisionRail";
-import { CollegeQuickFacts } from "@/components/detail/CollegeQuickFacts";
 import { AuthorByline } from "@/components/AuthorByline";
 import { MobileBottomBar } from "@/components/MobileBottomBar";
 import { useDbCollege, useCollegesByState, useSimilarColleges } from "@/hooks/useCollegesData";
@@ -248,7 +247,6 @@ export default function CollegeDetail() {
 
         {/* Cinematic hero - 2026 redesign */}
         <CollegeHeroCard college={college} onCounselling={() => setCounsellingOpen(true)} />
-        <CollegeQuickFacts college={college} />
         <div className="mt-3"><CollegeAffiliationCard college={college} /></div>
         <div className="mt-2"><AuthorByline authorId={(college as any).author_id} /></div>
 
