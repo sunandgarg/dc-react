@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { MegaMenu } from "@/components/MegaMenu";
 import { GlobalSearchBar } from "@/components/GlobalSearchBar";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 
 const mobileNav = [
   { label: "Colleges", href: "/colleges" },
@@ -76,6 +77,7 @@ export function Navbar() {
   return (
     <>
     <header className="sticky top-0 z-50 w-full">
+      <AnnouncementBar />
       <nav className="border-b border-border bg-white/[0.98]">
         <div className="container flex items-center justify-between h-14 md:h-16 lg:h-18">
           <Link to="/" className="flex items-center" aria-label="DekhoCampus Home">

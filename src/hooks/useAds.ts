@@ -25,7 +25,7 @@ export interface Ad {
   end_date?: string | null;
 }
 
-interface AdSelectionOptions {
+export interface AdSelectionOptions {
   page?: string;
   itemSlug?: string;
   state?: string;
@@ -73,9 +73,9 @@ function normalizeState(value?: string | null) {
   return clean;
 }
 
-/** Deterministic selection used by every ad slot and covered by unit tests. */
-export function selectBestAd(allAds: Ad[], options: AdSelectionOptions = {}): Ad | null {
-  if (!allAds.length) return null;
+/** Returns every ad at the most-specific matching targeting level. */
+export function selectMatchingAds(allAds: Ad[], options: AdSelectionOptions = {}): Ad[] {
+  if (!allAds.length) return [];
   const now = Date.now();
   const { page, itemSlug, variant, position } = options;
   const state = normalizeState(options.state);
@@ -85,42 +85,56 @@ export function selectBestAd(allAds: Ad[], options: AdSelectionOptions = {}): Ad
     .filter((ad) => !ad.start_date || new Date(ad.start_date).getTime() <= now)
     .filter((ad) => !ad.end_date || new Date(ad.end_date).getTime() >= now)
     .filter((ad) => !position || ad.position === position)
+    .filter((ad) => !variant || ad.variant === variant)
     .sort((left, right) => (right.priority || 0) - (left.priority || 0));
-
-  const pick = (matches: Ad[]) => {
-    if (variant) return matches.find((ad) => ad.variant === variant) || null;
-    return matches[0] || null;
-  };
   const adLocation = (ad: Ad) => decodeAdLocation(ad.target_state || ad.target_city);
   const adState = (ad: Ad) => normalizeState(adLocation(ad).state);
   const adHasCity = (ad: Ad) => city && adLocation(ad).cities.some((candidate) => candidate.trim().toLowerCase() === city);
   const noGeo = (ad: Ad) => !adState(ad) && adLocation(ad).cities.length === 0;
 
   if (itemSlug) {
-    const match = pick(available.filter((ad) => ad.target_type === "item" && ad.target_item_slug === itemSlug && (!page || !ad.target_page || ad.target_page === page)));
-    if (match) return match;
+    const matches = available.filter((ad) => ad.target_type === "item" && ad.target_item_slug === itemSlug && (!page || !ad.target_page || ad.target_page === page));
+    if (matches.length) return matches;
   }
   if (page && state) {
-    const cityMatch = pick(available.filter((ad) => ad.target_type === "page" && ad.target_page === page && adHasCity(ad)));
-    if (cityMatch) return cityMatch;
-    const match = pick(available.filter((ad) => ad.target_type === "page" && ad.target_page === page && adState(ad) === state));
-    if (match) return match;
+    const cityMatches = available.filter((ad) => ad.target_type === "page" && ad.target_page === page && adHasCity(ad));
+    if (cityMatches.length) return cityMatches;
+    const matches = available.filter((ad) => ad.target_type === "page" && ad.target_page === page && adState(ad) === state);
+    if (matches.length) return matches;
   }
   if (page) {
-    const cityMatch = pick(available.filter((ad) => ad.target_type === "page" && ad.target_page === page && adHasCity(ad)));
-    if (cityMatch) return cityMatch;
-    const match = pick(available.filter((ad) => ad.target_type === "page" && ad.target_page === page && noGeo(ad)));
-    if (match) return match;
+    const cityMatches = available.filter((ad) => ad.target_type === "page" && ad.target_page === page && adHasCity(ad));
+    if (cityMatches.length) return cityMatches;
+    const matches = available.filter((ad) => ad.target_type === "page" && ad.target_page === page && noGeo(ad));
+    if (matches.length) return matches;
   }
   if (city) {
-    const match = pick(available.filter((ad) => ["state", "city"].includes(ad.target_type) && adHasCity(ad)));
-    if (match) return match;
+    const matches = available.filter((ad) => ["state", "city"].includes(ad.target_type) && adHasCity(ad));
+    if (matches.length) return matches;
   }
   if (state) {
-    const match = pick(available.filter((ad) => ["state", "city"].includes(ad.target_type) && adState(ad) === state));
-    if (match) return match;
+    const matches = available.filter((ad) => ["state", "city"].includes(ad.target_type) && adState(ad) === state);
+    if (matches.length) return matches;
   }
-  return pick(available.filter((ad) => ad.target_type === "universal"));
+  return available.filter((ad) => ad.target_type === "universal");
+}
+
+/** Deterministic selection used by every ad slot and covered by unit tests. */
+export function selectBestAd(allAds: Ad[], options: AdSelectionOptions = {}): Ad | null {
+  return selectMatchingAds(allAds, options)[0] || null;
+}
+
+async function fetchActiveAds() {
+  const boot = await ensureBootstrap();
+  if (boot?.ads) return boot.ads as Ad[];
+  const { data, error } = await backendClient
+    .from("ads")
+    .select("*")
+    .eq("is_active", true)
+    .order("priority", { ascending: false });
+
+  if (error) throw error;
+  return (data ?? []) as Ad[];
 }
 
 /**
@@ -143,18 +157,7 @@ export function useAds(options?: {
     // Single shared cache key so every <DynamicAdBanner> reuses the same fetch.
     // Filtering happens in `select` (client-side) - no extra network calls per slot.
     queryKey: ["ads", "all-active"],
-    queryFn: async () => {
-      const boot = await ensureBootstrap();
-      if (boot?.ads) return boot.ads as Ad[];
-      const { data, error } = await backendClient
-        .from("ads")
-        .select("*")
-        .eq("is_active", true)
-        .order("priority", { ascending: false });
-
-      if (error) throw error;
-      return (data ?? []) as Ad[];
-    },
+    queryFn: fetchActiveAds,
     select: (allAds) => {
       if (!allAds.length) return null;
 
@@ -164,6 +167,24 @@ export function useAds(options?: {
       return selectBestAd(allAds, { ...options, state: rememberedState, city: rememberedCity });
     },
     staleTime: 5 * 60_000, // 5 min - ads change rarely
+    gcTime: 30 * 60_000,
+  });
+}
+
+/** Returns the full carousel set at the best matching targeting level. */
+export function useMatchingAds(options?: AdSelectionOptions) {
+  return useQuery({
+    queryKey: ["ads", "all-active"],
+    queryFn: fetchActiveAds,
+    select: (allAds) => {
+      const prefill = getPrefillCookie();
+      return selectMatchingAds(allAds, {
+        ...options,
+        state: options?.state || prefill.state || "",
+        city: options?.city || prefill.city || "",
+      });
+    },
+    staleTime: 5 * 60_000,
     gcTime: 30 * 60_000,
   });
 }

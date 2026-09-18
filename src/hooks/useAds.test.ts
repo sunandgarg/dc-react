@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { encodeAdLocation, type Ad, selectBestAd } from "./useAds";
+import { encodeAdLocation, type Ad, selectBestAd, selectMatchingAds } from "./useAds";
 
 function ad(overrides: Partial<Ad>): Ad {
   return {
@@ -56,5 +56,16 @@ describe("internal ad selection", () => {
     const expired = ad({ id: "expired", end_date: "2000-01-01T00:00:00.000Z" });
     const valid = ad({ id: "valid" });
     expect(selectBestAd([wrongPosition, expired, valid], { position: "top" })?.id).toBe("valid");
+  });
+
+  it("returns every campaign at the best matching level for a carousel", () => {
+    const universal = ad({ id: "universal", variant: "announcement", position: "announcement-bar", priority: 100 });
+    const first = ad({ id: "first", target_type: "page", target_page: "articles", variant: "announcement", position: "announcement-bar", priority: 20 });
+    const second = ad({ id: "second", target_type: "page", target_page: "articles", variant: "announcement", position: "announcement-bar", priority: 10 });
+    expect(selectMatchingAds([universal, second, first], {
+      page: "articles",
+      variant: "announcement",
+      position: "announcement-bar",
+    }).map((item) => item.id)).toEqual(["first", "second"]);
   });
 });

@@ -99,6 +99,28 @@ export function useDbExams() {
   });
 }
 
+export type ImportantExamSummary = Pick<DbExam, "id" | "slug" | "short_id" | "name" | "short_name" | "level" | "category">;
+
+/** Small priority-ordered feed used by editorial sidebars. */
+export function useImportantExams(limit = 6) {
+  const safeLimit = Math.min(12, Math.max(3, Math.floor(limit)));
+  return useQuery({
+    queryKey: ["important-exams", safeLimit],
+    queryFn: async () => {
+      const { data, error } = await backendClient
+        .from("exams")
+        .select("id,slug,short_id,name,short_name,level,category")
+        .eq("is_active", true)
+        .order("priority", { ascending: true, nullsFirst: false })
+        .order("updated_at", { ascending: false, nullsFirst: false })
+        .limit(safeLimit);
+      if (error) throw error;
+      return (data ?? []) as ImportantExamSummary[];
+    },
+    staleTime: 10 * 60_000,
+  });
+}
+
 export function useHomepageCategoryExams(category: string) {
   return useQuery({
     queryKey: ["homepage-category-exams", category],

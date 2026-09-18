@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { decodeAdLocation, encodeAdLocation, useAllAds } from "@/hooks/useAds";
 import { backendClient } from "@/integrations/backend/client";
@@ -19,7 +19,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import {
   Plus, Pencil, Trash2, X, ExternalLink, Copy, Search,
-  Megaphone, HelpCircle, Eye, Info,
+  Megaphone, HelpCircle, Eye, Info, Timer, Radio,
 } from "lucide-react";
 import { SearchableSelect } from "@/components/SearchableSelect";
 import { SearchableMultiSelect } from "@/components/SearchableMultiSelect";
@@ -30,6 +30,7 @@ import { useStatesAndCities } from "@/hooks/useLocations";
 import { CSVTools } from "@/components/CSVTools";
 import { useDraftState } from "@/hooks/useDraftState";
 import { resetBootstrap } from "@/lib/bootstrap";
+import { useSiteIntegration } from "@/hooks/useSiteIntegration";
 // ─── Friendly labels ───────────────────────────────────────────────────
 
 const AUDIENCE_OPTIONS = [
@@ -56,6 +57,7 @@ const PAGE_OPTIONS = [
 const ITEM_PAGE_OPTIONS = PAGE_OPTIONS.filter((page) => ["colleges", "courses", "exams", "articles"].includes(page.value));
 
 const LOOK_OPTIONS = [
+  { value: "announcement", emoji: "AD", label: "Announcement Bar", help: "A compact rotating offer above the main navigation", size: "Text-led responsive strip" },
   { value: "horizontal", emoji: "▬", label: "Wide Banner", help: "A horizontal banner shown in the main content area", size: "728 × 90 px or 970 × 250 px" },
   { value: "vertical", emoji: "▮", label: "Tall Sidebar Ad", help: "A vertical ad shown in the sidebar", size: "300 × 600 px or 160 × 600 px" },
   { value: "square", emoji: "⬜", label: "Square Box", help: "A compact square ad, great for sidebars", size: "300 × 250 px or 336 × 280 px" },
@@ -63,8 +65,10 @@ const LOOK_OPTIONS = [
 ] as const;
 
 const PLACEMENT_OPTIONS = [
+  { value: "announcement-bar", label: "Above Main Navigation" },
   { value: "leaderboard", label: "Top of Page (strip)" },
   { value: "mid-page", label: "Middle of Page" },
+  { value: "sidebar-top", label: "Article Sidebar (above lead form)" },
   { value: "sidebar", label: "Sidebar" },
   { value: "top", label: "Top of Content" },
   { value: "bottom", label: "Bottom of Content" },
@@ -106,14 +110,24 @@ interface AdForm {
   position: string;
   priority: number;
   is_active: boolean;
+  start_date: string;
+  end_date: string;
 }
 
 const emptyForm: AdForm = {
   title: "", subtitle: "", cta_text: "Learn More", link_url: "", image_url: "",
   variant: "horizontal", bg_gradient: "from-violet-600 to-purple-600",
   target_type: "universal", target_page: "", target_item_slug: "", target_state: "", target_cities: [],
-  position: "mid-page", priority: 10, is_active: true,
+  position: "mid-page", priority: 10, is_active: true, start_date: "", end_date: "",
 };
+
+function toDateTimeInput(value?: string | null) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return local.toISOString().slice(0, 16);
+}
 
 // ─── Inline hint component ────────────────────────────────────────────
 
@@ -131,6 +145,7 @@ function Hint({ children }: { children: React.ReactNode }) {
 export default function AdminAds() {
   const { data: ads, isLoading } = useAllAds();
   const { data: locations } = useStatesAndCities();
+  const { data: rotationValue = "10" } = useSiteIntegration("announcement_rotation_seconds");
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -142,12 +157,31 @@ export default function AdminAds() {
   const [filterTarget, setFilterTarget] = useDraftState<string>('admin.ads.filterTarget.v1', "all");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showGuide, setShowGuide] = useState(false);
+  const [rotationSeconds, setRotationSeconds] = useState(10);
+  const [savingRotation, setSavingRotation] = useState(false);
   const targetCities = form.target_cities || [];
   const allCities = Array.from(new Set(Object.values(locations?.citiesByState || {}).flat())).sort((a, b) => a.localeCompare(b));
+
+  useEffect(() => {
+    setRotationSeconds(Math.min(60, Math.max(5, Number(rotationValue) || 10)));
+  }, [rotationValue]);
 
   // ── Actions ──
 
   const openCreate = () => { setForm(emptyForm); setEditingId(null); setErrors({}); setShowForm(true); };
+  const openAnnouncement = () => {
+    setForm({
+      ...emptyForm,
+      cta_text: "Apply Now",
+      variant: "announcement",
+      bg_gradient: "from-amber-500 to-orange-500",
+      position: "announcement-bar",
+      priority: 50,
+    });
+    setEditingId(null);
+    setErrors({});
+    setShowForm(true);
+  };
 
   const displayState = (value?: string | null) => {
     const clean = value?.trim() || "";
@@ -166,6 +200,7 @@ export default function AdminAds() {
       target_type: ad.target_type === "city" ? "state" : ad.target_type, target_page: ad.target_page || "",
       target_item_slug: ad.target_item_slug || "", target_state: displayState(location.state), target_cities: location.cities,
       position: ad.position, priority: ad.priority, is_active: ad.is_active,
+      start_date: toDateTimeInput(ad.start_date), end_date: toDateTimeInput(ad.end_date),
     });
     setEditingId(ad.id); setErrors({}); setShowForm(true);
   };
@@ -179,14 +214,16 @@ export default function AdminAds() {
     const e: Record<string, string> = {};
     if (!form.title.trim()) e.title = "Please enter a title for your ad";
     if (!form.link_url.trim()) e.link_url = "Please enter the URL people go to when they click the ad";
-    else if (!/^https?:\/\/.+/.test(form.link_url.trim()) && form.link_url.trim() !== "#")
-      e.link_url = "URL must start with https:// (e.g. https://example.com)";
+    else if (!/^(https?:\/\/|\/|#).+/.test(form.link_url.trim()) && form.link_url.trim() !== "#")
+      e.link_url = "Use a website URL or an internal path such as /colleges";
     if ((form.target_type === "page" || form.target_type === "item") && !form.target_page)
       e.target_page = "Please choose which page this ad should appear on";
     if (form.target_type === "item" && !form.target_item_slug.trim())
       e.target_item_slug = "Please choose the specific item this ad is for";
     if (form.target_type === "state" && !form.target_state.trim() && !targetCities.length)
       e.target_state = "Please choose a state or at least one city";
+    if (form.start_date && form.end_date && new Date(form.end_date).getTime() <= new Date(form.start_date).getTime())
+      e.end_date = "End time must be after the start time";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -212,6 +249,8 @@ export default function AdminAds() {
       position: form.position,
       priority: form.priority,
       is_active: form.is_active,
+      start_date: form.start_date ? new Date(form.start_date).toISOString() : null,
+      end_date: form.end_date ? new Date(form.end_date).toISOString() : null,
     };
     try {
       if (editingId) {
@@ -230,6 +269,28 @@ export default function AdminAds() {
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally { setSaving(false); }
+  };
+
+  const saveRotation = async () => {
+    const seconds = Math.min(60, Math.max(5, Math.round(rotationSeconds || 10)));
+    setSavingRotation(true);
+    const { error } = await (backendClient as any).from("site_integrations").upsert({
+      key: "announcement_rotation_seconds",
+      label: "Announcement rotation interval",
+      category: "website",
+      value: String(seconds),
+      enabled: true,
+      notes: "Seconds between automatic announcement-bar changes",
+    }, { onConflict: "key" });
+    setSavingRotation(false);
+    if (error) {
+      toast({ title: "Could not save announcement timing", description: error.message, variant: "destructive" });
+      return;
+    }
+    setRotationSeconds(seconds);
+    resetBootstrap();
+    await queryClient.invalidateQueries({ queryKey: ["site-integrations", "all"] });
+    toast({ title: `Announcements will change every ${seconds} seconds` });
   };
 
   const handleDelete = async (id: string) => {
@@ -276,6 +337,37 @@ export default function AdminAds() {
 
   return (
     <AdminLayout title="Ad Manager">
+      <section className="mb-5 flex flex-col gap-4 rounded-lg border border-orange-200 bg-orange-50 p-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <div className="flex items-center gap-2 text-sm font-extrabold text-orange-800">
+            <Radio className="h-4 w-4" /> Announcement carousel
+          </div>
+          <p className="mt-1 text-sm text-slate-600">Create scheduled offers above the main navigation and control how quickly they rotate.</p>
+        </div>
+        <div className="flex flex-wrap items-end gap-2">
+          <div>
+            <Label htmlFor="announcement-rotation" className="text-xs">Change every</Label>
+            <div className="mt-1 flex items-center gap-2">
+              <Input
+                id="announcement-rotation"
+                type="number"
+                min={5}
+                max={60}
+                value={rotationSeconds}
+                onChange={(event) => setRotationSeconds(Number(event.target.value))}
+                className="h-9 w-20 rounded-lg bg-white"
+              />
+              <span className="text-xs text-muted-foreground">seconds</span>
+            </div>
+          </div>
+          <Button variant="outline" onClick={() => void saveRotation()} disabled={savingRotation} className="h-9 gap-2 rounded-lg bg-white">
+            <Timer className="h-4 w-4" /> {savingRotation ? "Saving" : "Save timing"}
+          </Button>
+          <Button onClick={openAnnouncement} className="h-9 gap-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+            <Plus className="h-4 w-4" /> New announcement
+          </Button>
+        </div>
+      </section>
       <div className="mb-4">
         <CSVTools table="ads" filename="ads.csv" columns="*" upsertKey="id" />
       </div>
@@ -437,7 +529,11 @@ export default function AdminAds() {
                     {LOOK_OPTIONS.map((opt) => (
                       <button
                         key={opt.value}
-                        onClick={() => setForm({ ...form, variant: opt.value })}
+                        onClick={() => setForm({
+                          ...form,
+                          variant: opt.value,
+                          position: opt.value === "announcement" ? "announcement-bar" : form.position === "announcement-bar" ? "mid-page" : form.position,
+                        })}
                         className={`p-3 rounded-xl border-2 text-center transition-all ${form.variant === opt.value ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground/30"}`}
                       >
                         <span className="text-2xl block mb-1">{opt.emoji}</span>
@@ -485,6 +581,15 @@ export default function AdminAds() {
                       <p className="text-xs text-muted-foreground">{form.is_active ? "People can see this ad" : "Ad is hidden"}</p>
                     </div>
                   </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <Field label="Start date and time (optional)" hint="Leave empty to make it eligible immediately.">
+                    <Input type="datetime-local" value={form.start_date || ""} onChange={(event) => setForm({ ...form, start_date: event.target.value })} className="rounded-xl" />
+                  </Field>
+                  <Field label="End date and time (optional)" error={errors.end_date} hint="Leave empty to keep it active until you pause it.">
+                    <Input type="datetime-local" value={form.end_date || ""} onChange={(event) => { setForm({ ...form, end_date: event.target.value }); setErrors({ ...errors, end_date: "" }); }} className={errors.end_date ? "rounded-xl border-destructive" : "rounded-xl"} />
+                  </Field>
                 </div>
               </div>
             </Section>
@@ -552,6 +657,7 @@ export default function AdminAds() {
                     })()}
                     <span className="text-muted-foreground">• {PLACEMENT_OPTIONS.find(p => p.value === ad.position)?.label}</span>
                     <span className="text-muted-foreground">• Priority {ad.priority}</span>
+                    {(ad.start_date || ad.end_date) && <span className="text-muted-foreground">• Scheduled</span>}
                   </div>
                 </div>
 
@@ -607,6 +713,23 @@ function AdPreview({ form }: { form: AdForm }) {
     ? { backgroundImage: `url(${image_url})`, backgroundSize: "cover", backgroundPosition: "center" }
     : {};
   const overlayClass = image_url ? "bg-black/40" : "";
+
+  if (variant === "announcement") {
+    return (
+      <div className="relative flex min-h-14 items-center justify-center gap-3 overflow-hidden border border-orange-200 bg-orange-50 px-4 py-2 text-center">
+        <div className="absolute inset-x-0 top-0 flex h-1" aria-hidden="true">
+          <span className="flex-1 bg-orange-500" />
+          <span className="w-1/4 bg-blue-600" />
+          <span className="w-1/5 bg-red-500" />
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-extrabold text-slate-950">{t}</p>
+          {subtitle && <p className="truncate text-xs text-slate-600">{subtitle}</p>}
+        </div>
+        <span className="shrink-0 bg-red-600 px-4 py-1.5 text-xs font-extrabold text-white">{cta_text || "Apply Now"}</span>
+      </div>
+    );
+  }
 
   if (variant === "leaderboard") {
     return (

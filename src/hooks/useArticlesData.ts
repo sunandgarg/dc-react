@@ -49,6 +49,32 @@ export function useDbArticles(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   });
 }
 
+export type ArticleSidebarSummary = Pick<
+  DbArticle,
+  "id" | "title" | "slug" | "description" | "category" | "tags" | "created_at"
+>;
+
+/** Compact recent feed for article-side navigation without loading article bodies. */
+export function useArticleSidebarArticles(limit = 36, siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
+  const safeLimit = Math.min(60, Math.max(10, Math.floor(limit)));
+  return useQuery({
+    queryKey: ["article-sidebar-feed", siteScope, safeLimit],
+    queryFn: async () => {
+      const { data, error } = await backendClient
+        .from("articles")
+        .select("id,title,slug,description,category,tags,created_at")
+        .eq("site_scope", siteScope)
+        .eq("is_active", true)
+        .eq("status", "Published")
+        .order("created_at", { ascending: false })
+        .limit(safeLimit);
+      if (error) throw error;
+      return (data ?? []) as ArticleSidebarSummary[];
+    },
+    staleTime: 5 * 60_000,
+  });
+}
+
 const normalizeArticleSearch = (value: string | undefined) =>
   (value || "")
     .toString()

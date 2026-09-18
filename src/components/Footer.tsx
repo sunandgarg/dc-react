@@ -50,6 +50,75 @@ const socialLinks = [
   { icon: Youtube, href: "#", label: "YouTube" },
 ];
 
+const popularFooterGroups = [
+  {
+    title: "Engineering Colleges",
+    links: [
+      ["Top Engineering Colleges", "/colleges/top-engineering-colleges-in-india"],
+      ["Top B.Tech Colleges", "/colleges/top-btech-colleges-in-india"],
+      ["Engineering Colleges in Delhi NCR", "/colleges/top-engineering-colleges-in-delhi-ncr"],
+      ["Engineering Colleges in Bangalore", "/colleges/top-engineering-colleges-in-bangalore"],
+      ["Engineering Colleges in Pune", "/colleges/top-engineering-colleges-in-pune"],
+      ["Engineering Colleges in Hyderabad", "/colleges/top-engineering-colleges-in-hyderabad"],
+    ],
+  },
+  {
+    title: "Management Colleges",
+    links: [
+      ["Top Management Colleges", "/colleges/top-management-colleges-in-india"],
+      ["Top MBA Colleges", "/colleges/top-mba-colleges-in-india"],
+      ["Top BBA Colleges", "/colleges/top-bba-colleges-in-india"],
+      ["MBA Colleges in Delhi NCR", "/colleges/top-mba-colleges-in-delhi-ncr"],
+      ["MBA Colleges in Mumbai", "/colleges/top-mba-colleges-in-mumbai"],
+      ["MBA Colleges in Bangalore", "/colleges/top-mba-colleges-in-bangalore"],
+    ],
+  },
+  {
+    title: "Medical and Law",
+    links: [
+      ["Top Medical Colleges", "/colleges/top-medical-colleges-in-india"],
+      ["Top MBBS Colleges", "/colleges/top-mbbs-colleges-in-india"],
+      ["Medical Colleges in Karnataka", "/colleges/top-medical-colleges-in-karnataka"],
+      ["Top Law Colleges", "/colleges/top-law-colleges-in-india"],
+      ["Top LLB Colleges", "/colleges/top-llb-colleges-in-india"],
+      ["Top Pharmacy Colleges", "/colleges/top-pharmacy-colleges-in-india"],
+    ],
+  },
+  {
+    title: "Popular Courses",
+    links: [
+      ["B.Tech Courses", "/courses/top-btech-courses-in-india"],
+      ["MBA Courses", "/courses/top-mba-courses-in-india"],
+      ["BCA Courses", "/courses/top-bca-courses-in-india"],
+      ["MCA Courses", "/courses/top-mca-courses-in-india"],
+      ["Online Courses", "/courses/top-online-courses-in-india"],
+      ["Distance Learning Courses", "/courses/top-distance-courses-in-india"],
+    ],
+  },
+  {
+    title: "Important Exams",
+    links: [
+      ["Engineering Entrance Exams", "/exams/top-engineering-entrance-exams-in-india"],
+      ["Medical Entrance Exams", "/exams/top-medical-entrance-exams-in-india"],
+      ["Management Entrance Exams", "/exams/top-management-entrance-exams-in-india"],
+      ["Law Entrance Exams", "/exams/top-law-entrance-exams-in-india"],
+      ["National Entrance Exams", "/exams/top-national-entrance-exams-in-india"],
+      ["State Entrance Exams", "/exams/top-state-entrance-exams-in-india"],
+    ],
+  },
+  {
+    title: "Student Resources",
+    links: [
+      ["College Predictor", "/college-predictor"],
+      ["Exam Calendar", "/exam-calendar-2026"],
+      ["Scholarships", "/scholarships"],
+      ["Education News", "/news"],
+      ["Study Material", "/study-material"],
+      ["Career Guides", "/careers"],
+    ],
+  },
+] as const;
+
 export function Footer() {
   return (
     <>
@@ -57,6 +126,31 @@ export function Footer() {
     <QuickLinksBar />
     <AskDiyaBand />
     <footer className="bg-foreground text-background" role="contentinfo">
+      <section className="border-y border-border bg-slate-50 text-foreground" aria-labelledby="popular-education-links">
+        <div className="container py-9 md:py-11">
+          <div className="mb-6 max-w-2xl">
+            <h2 id="popular-education-links" className="text-xl font-extrabold md:text-2xl">Popular education searches</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Explore colleges, courses, exams and student resources by the paths students search most.</p>
+          </div>
+          <div className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-3 lg:grid-cols-6">
+            {popularFooterGroups.map((group) => (
+              <nav key={group.title} aria-label={group.title}>
+                <h3 className="mb-3 text-sm font-extrabold text-slate-950">{group.title}</h3>
+                <ul className="space-y-2.5">
+                  {group.links.map(([label, href]) => (
+                    <li key={href}>
+                      <Link to={href} className="text-sm leading-5 text-slate-600 transition-colors hover:text-primary">
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Built by IIT Delhi Alumni strip - shown on every page */}
       <div className="bg-background text-foreground border-b border-border/40">
         <div className="container py-3.5 md:py-4 flex flex-col items-center text-center gap-0.5">

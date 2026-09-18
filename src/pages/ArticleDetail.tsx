@@ -1,6 +1,6 @@
 import { useParams, Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, Tag, ArrowUp, Share2, Bookmark, ChevronDown, Eye, Clock, Link2, Play, Pause, List, Send } from "lucide-react";
+import { Calendar, Tag, ArrowUp, Share2, Bookmark, ChevronDown, Eye, Clock, Link2, Play, Pause, List, Send, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -12,7 +12,9 @@ import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DeferUntilVisible } from "@/components/DeferUntilVisible";
 import { articles as staticArticles } from "@/data/articles";
-import { useDbArticle } from "@/hooks/useArticlesData";
+import { useArticleSidebarArticles, useDbArticle } from "@/hooks/useArticlesData";
+import { useImportantExams } from "@/hooks/useExamsData";
+import { useAds } from "@/hooks/useAds";
 import { AuthorByline } from "@/components/AuthorByline";
 import { useAuth } from "@/hooks/useAuth";
 import ReactMarkdown from "react-markdown";
@@ -24,6 +26,7 @@ import { RichText } from "@/components/detail/RichText";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { lazyRetry } from "@/lib/lazyRetry";
 import { containsRichArticleHtml, stripVisibleArticleSources } from "@/lib/articleContentSanitizer";
+import { buildExamHref } from "@/lib/entityUrls";
 
 // Heavy below-the-fold components - lazy loaded for faster initial paint
 const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(m => ({ default: m.AlsoCheckSection })), "AlsoCheckSection");
@@ -52,6 +55,50 @@ function normalizeSlug(s: string) {
   return s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+function ArticleSidebarAd({ slug }: { slug: string }) {
+  const { data: managedAd, isLoading } = useAds({ page: "articles", itemSlug: slug, position: "sidebar-top" });
+  if (isLoading) return <div className="min-h-[250px] animate-pulse rounded-lg bg-muted" aria-hidden="true" />;
+  if (managedAd) return <DynamicAdBanner position="sidebar-top" page="articles" itemSlug={slug} />;
+  return (
+    <section className="min-h-[250px] overflow-hidden rounded-lg border border-border bg-card p-2" aria-label="Advertisement">
+      <p className="pb-1 text-center text-[10px] font-medium uppercase text-muted-foreground">Advertisement</p>
+      <GoogleAd placement="article" position="top" pageKey="article" className="min-h-[220px]" />
+    </section>
+  );
+}
+
+function SidebarLinkModule({
+  title,
+  items,
+  moreHref,
+  moreLabel,
+}: {
+  title: string;
+  items: Array<{ href: string; title: string; meta?: string }>;
+  moreHref: string;
+  moreLabel: string;
+}) {
+  if (!items.length) return null;
+  return (
+    <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
+      <h3 className="border-l-4 border-orange-500 pl-3 text-base font-extrabold text-foreground">{title}</h3>
+      <ul className="mt-3 divide-y divide-border">
+        {items.map((item) => (
+          <li key={`${item.href}-${item.title}`}>
+            <Link to={item.href} className="group block py-3 first:pt-1">
+              <span className="line-clamp-2 text-sm font-semibold leading-5 text-foreground transition-colors group-hover:text-primary">{item.title}</span>
+              {item.meta && <span className="mt-1 block text-[11px] text-muted-foreground">{item.meta}</span>}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <Link to={moreHref} className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline">
+        {moreLabel} <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
+    </section>
+  );
+}
+
 export default function ArticleDetail() {
   const { slug: rawSlug } = useParams<{ slug: string }>();
   const decoded = decodeURIComponent(rawSlug || "");
@@ -59,6 +106,8 @@ export default function ArticleDetail() {
   const needsRedirect = !!(rawSlug && cleanSlug && cleanSlug !== rawSlug && cleanSlug !== decoded);
 
   const { data: dbArticle, isLoading: dbLoading } = useDbArticle(cleanSlug || rawSlug);
+  const { data: sidebarArticles = [] } = useArticleSidebarArticles(60);
+  const { data: importantExams = [] } = useImportantExams(6);
   const staticArticle = staticArticles.find((a) => a.slug === (cleanSlug || rawSlug));
   const article = useMemo(() => {
     if (dbArticle) {
@@ -151,6 +200,52 @@ export default function ArticleDetail() {
       .slice(0, 4)
       .map((x) => x.a);
   }, [article]);
+
+  const latestSidebarArticles = useMemo(() => {
+    const liveItems = sidebarArticles
+      .filter((item) => normalizeSlug(item.slug) !== cleanSlug)
+      .slice(0, 5)
+      .map((item) => ({
+        href: `/news/${normalizeSlug(item.slug)}`,
+        title: item.title,
+        meta: `${item.category || "Education"} · ${new Date(item.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`,
+      }));
+    if (liveItems.length) return liveItems;
+    return staticArticles
+      .filter((item) => normalizeSlug(item.slug) !== cleanSlug)
+      .slice(0, 5)
+      .map((item) => ({ href: `/news/${item.slug}`, title: item.title, meta: item.category }));
+  }, [cleanSlug, sidebarArticles]);
+
+  const admissionAlerts = useMemo(() => {
+    const terms = /admission|application|counselling|counseling|seat allotment|registration|merit list/i;
+    const items = sidebarArticles
+      .filter((item) => normalizeSlug(item.slug) !== cleanSlug)
+      .filter((item) => {
+        const haystack = [item.title, item.category, ...(item.tags || [])].join(" ");
+        return haystack.includes("2027") && terms.test(haystack);
+      })
+      .slice(0, 5)
+      .map((item) => ({ href: `/news/${normalizeSlug(item.slug)}`, title: item.title, meta: item.category || "Admissions" }));
+    return items.length ? items : [{
+      href: "/news?category=Admissions",
+      title: "Latest 2027 admissions, counselling and application updates",
+      meta: "Admissions 2027",
+    }];
+  }, [cleanSlug, sidebarArticles]);
+
+  const importantExamLinks = useMemo(() => {
+    const items = importantExams.map((exam) => ({
+      href: buildExamHref(exam),
+      title: exam.short_name || exam.name,
+      meta: [exam.level, exam.category].filter(Boolean).join(" · "),
+    }));
+    return items.length ? items : [
+      { href: "/exams/top-engineering-entrance-exams-in-india", title: "Engineering entrance exams", meta: "JEE, GATE and more" },
+      { href: "/exams/top-medical-entrance-exams-in-india", title: "Medical entrance exams", meta: "NEET and more" },
+      { href: "/exams/top-management-entrance-exams-in-india", title: "Management entrance exams", meta: "CAT, XAT and more" },
+    ];
+  }, [importantExams]);
 
   const toc = useMemo(() => {
     if (!article?.content) return [] as { id: string; text: string; level: number }[];
@@ -364,7 +459,6 @@ export default function ArticleDetail() {
                     width="1600"
                     height="870"
                     className="h-full w-full object-cover object-center"
-                    fetchPriority="high"
                     loading="eager"
                     decoding="async"
                   />
@@ -515,45 +609,43 @@ export default function ArticleDetail() {
               </div>
             </article>
 
-            <aside className="lg:col-span-4 space-y-8">
-              <div className="lg:sticky lg:top-20">
-                <div className="hidden lg:block rounded-[24px] border border-border bg-gradient-to-br from-white via-slate-50 to-orange-50 p-5 shadow-sm">
-                  <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-primary">Get expert support</p>
-                  <h3 className="mt-2 text-xl font-extrabold leading-tight text-foreground">Need help after reading this update?</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">Speak to a DekhoCampus counsellor for personalised next steps on colleges, exams, counselling and admissions.</p>
-                  <div className="mt-4 rounded-2xl border border-white/70 bg-white/90 p-3 shadow-sm">
-                    <LeadCaptureForm
-                      variant="sidebar"
-                      title="Get free counselling"
-                      subtitle="Fast expert callback for your next step"
-                      source={`article_sidebar_${article.slug}`}
-                      interestedCollegeSlug={article.tags.find((tag) => tag.includes("college-"))}
-                    />
-                  </div>
-                </div>
-              </div>
+            <aside className="hidden space-y-5 lg:col-span-4 lg:block">
+              <ArticleSidebarAd slug={cleanSlug} />
 
-              <div className="hidden lg:block space-y-5 pt-[58vh]">
-                <div className="rounded-[24px] border border-border bg-card p-5 shadow-sm">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Stay on this topic</p>
-                      <h3 className="mt-1 text-lg font-bold text-foreground">Share or save this article</h3>
-                    </div>
-                    <Share2 className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button variant="outline" className="justify-start rounded-xl" onClick={copyLink}><Link2 className="mr-2 h-4 w-4" /> Copy link</Button>
-                    <Button variant="outline" className="justify-start rounded-xl" onClick={handleSave}><Bookmark className={`mr-2 h-4 w-4 ${saved ? "fill-current" : ""}`} /> {saved ? "Saved" : "Save"}</Button>
-                    <Button variant="outline" className="justify-start rounded-xl" onClick={() => shareTo("whatsapp")}><Send className="mr-2 h-4 w-4" /> WhatsApp</Button>
-                    <Button variant="outline" className="justify-start rounded-xl" onClick={() => shareTo("linkedin")}><Share2 className="mr-2 h-4 w-4" /> LinkedIn</Button>
-                  </div>
+              <section className="rounded-lg border border-orange-200 bg-orange-50 p-5 shadow-sm">
+                <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-primary">Get expert support</p>
+                <h3 className="mt-2 text-xl font-extrabold leading-tight text-foreground">Need help after reading this update?</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">Speak to a DekhoCampus counsellor for personalised next steps on colleges, exams, counselling and admissions.</p>
+                <div className="mt-4">
+                  <LeadCaptureForm
+                    variant="sidebar"
+                    title="Get free counselling"
+                    subtitle="Fast expert callback for your next step"
+                    source={`article_sidebar_${article.slug}`}
+                    interestedCollegeSlug={article.tags.find((tag) => tag.includes("college-"))}
+                  />
                 </div>
+              </section>
 
-                <DeferUntilVisible minHeight={300}>
-                  <DynamicAdBanner variant="vertical" position="sidebar" page="articles" itemSlug={cleanSlug} />
-                </DeferUntilVisible>
-              </div>
+              <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Stay on this topic</p>
+                    <h3 className="mt-1 text-base font-bold text-foreground">Share or save this article</h3>
+                  </div>
+                  <Share2 className="h-4 w-4 text-primary" />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button variant="outline" className="justify-start rounded-lg" onClick={copyLink}><Link2 className="mr-2 h-4 w-4" /> Copy link</Button>
+                  <Button variant="outline" className="justify-start rounded-lg" onClick={handleSave}><Bookmark className={`mr-2 h-4 w-4 ${saved ? "fill-current" : ""}`} /> {saved ? "Saved" : "Save"}</Button>
+                  <Button variant="outline" className="justify-start rounded-lg" onClick={() => shareTo("whatsapp")}><Send className="mr-2 h-4 w-4" /> WhatsApp</Button>
+                  <Button variant="outline" className="justify-start rounded-lg" onClick={() => shareTo("linkedin")}><Share2 className="mr-2 h-4 w-4" /> LinkedIn</Button>
+                </div>
+              </section>
+
+              <SidebarLinkModule title="Latest Articles" items={latestSidebarArticles} moreHref="/news" moreLabel="View all articles" />
+              <SidebarLinkModule title="Admission Alerts 2027" items={admissionAlerts} moreHref="/news?category=Admissions" moreLabel="View admission updates" />
+              <SidebarLinkModule title="Important Exams" items={importantExamLinks} moreHref="/exams" moreLabel="Explore all exams" />
             </aside>
           </div>
 
