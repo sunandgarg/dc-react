@@ -71,7 +71,7 @@ export function ExamDecisionRail({ exam, onDownloadSample }: Props) {
           <Button
             onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Talk to Mentor", exam_slug: exam.slug, entity_name: exam.name }); } catch {}; setDestination(null); setOpen(true); }}
             variant="outline"
-            className="w-full h-auto border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-bold py-4 rounded-2xl"
+            className="w-full h-auto border-2 border-[#e85d3a] text-[#e85d3a] hover:bg-orange-50 font-bold py-4 rounded-2xl"
           >
             Talk to Mentor
           </Button>
@@ -94,7 +94,7 @@ export function ExamDecisionRail({ exam, onDownloadSample }: Props) {
           </div>
 
           {exam.applicants && (
-            <div className="flex items-center gap-2 text-blue-600 text-xs font-bold">
+            <div className="flex items-center gap-2 text-[#e85d3a] text-xs font-bold">
               <Star className="w-4 h-4 fill-current" />
               {exam.applicants} apply every year
             </div>

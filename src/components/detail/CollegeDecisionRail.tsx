@@ -93,7 +93,7 @@ export function CollegeDecisionRail({ college }: Props) {
             collegeSlug={college.slug}
             collegeName={college.name}
             variant="outline"
-            className="w-full !h-auto !border-2 !border-blue-500 !text-blue-600 hover:!bg-blue-50 font-bold !py-4 !rounded-2xl"
+            className="w-full !h-auto !border-2 !border-[#e85d3a] !text-[#e85d3a] hover:!bg-orange-50 font-bold !py-4 !rounded-2xl"
             label="Talk to Counselor"
           />
 
@@ -129,7 +129,7 @@ export function CollegeDecisionRail({ college }: Props) {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-blue-600 text-xs font-bold">
+          <div className="flex items-center gap-2 text-[#e85d3a] text-xs font-bold">
             <Star className="w-4 h-4 fill-current" />
             College Rating: {displayRating(college.rating)} / 5.0
           </div>
@@ -179,8 +179,8 @@ export function CollegeDecisionRail({ college }: Props) {
                 }}
               >
                 <span className="relative flex items-center justify-center">
-                  <span className="absolute inset-0 rounded-full bg-[#e85d3a]/40 animate-ping" />
-                  <span className="relative w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#e85d3a] flex items-center justify-center shadow-2xl shadow-orange-900/50 group-hover:scale-110 transition-transform">
+                  <span className="absolute inset-0 rounded-full bg-red-600/35 animate-ping" />
+                  <span className="relative w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-600 flex items-center justify-center shadow-2xl shadow-red-950/40 group-hover:scale-110 transition-transform">
                     <Play className="w-7 h-7 md:w-8 md:h-8 text-white fill-white ml-1" />
                   </span>
                 </span>

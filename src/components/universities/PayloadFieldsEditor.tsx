@@ -493,7 +493,7 @@ export function generateSampleCSVFromPayloadFields(
     name: "John Doe",
     email: "john.doe@example.com",
     mobile: "9876543210",
-    state: "Delhi",
+    state: "Delhi NCR",
     city: "New Delhi",
     course: "B.Tech",
     specialization: "Computer Science",

@@ -47,7 +47,7 @@ export function CourseDecisionRail({ course }: Props) {
           <Button
             onClick={() => { try { trackEvent("cta_click", { page: "course", cta: "Talk to Counselor", course_slug: course.slug, entity_name: course.name }); } catch {}; setOpen(true); }}
             variant="outline"
-            className="w-full h-auto border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-bold py-4 rounded-2xl"
+            className="w-full h-auto border-2 border-[#e85d3a] text-[#e85d3a] hover:bg-orange-50 font-bold py-4 rounded-2xl"
           >
             Talk to Counselor
           </Button>
@@ -81,7 +81,7 @@ export function CourseDecisionRail({ course }: Props) {
           </div>
 
           {course.avg_salary && (
-            <div className="flex items-center gap-2 text-blue-600 text-xs font-bold">
+            <div className="flex items-center gap-2 text-[#e85d3a] text-xs font-bold">
               <Star className="w-4 h-4 fill-current" />
               Avg starting package: {course.avg_salary}
             </div>

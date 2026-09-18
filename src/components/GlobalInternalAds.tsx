@@ -1,4 +1,5 @@
 import { DynamicAdBanner } from "@/components/DynamicAdBanner";
+import { GoogleAd } from "@/components/ads/GoogleAd";
 import { useLocation } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
@@ -89,7 +90,13 @@ export function GlobalInternalAds({ area }: { area: "top" | "bottom" }) {
     return createPortal(
       <section aria-label="Sponsored content">
         <DynamicAdBanner position="leaderboard" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />
-        <div className="container py-2 empty:hidden">
+        <div className="container space-y-2 py-2 empty:hidden">
+          <GoogleAd
+            placement="header"
+            position="top"
+            pageKey={context.page || "sitewide"}
+            className="mx-auto min-h-[90px] max-w-5xl"
+          />
           <DynamicAdBanner position="top" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />
         </div>
       </section>,

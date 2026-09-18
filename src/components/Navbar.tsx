@@ -190,14 +190,6 @@ export function Navbar() {
           </div>
         </div>
 
-        {!pathname.startsWith("/admin") && !pathname.startsWith("/auth") && (
-          <div className="border-t border-border/70 bg-white px-3 py-2">
-            <div className="container px-0">
-              <GlobalSearchBar variant="header" />
-            </div>
-          </div>
-        )}
-
         {isMobileMenuOpen && (
             <div className="lg:hidden border-t border-border">
               <div className="container py-4 space-y-1 bg-card max-h-[80vh] overflow-y-auto">
@@ -259,6 +251,13 @@ export function Navbar() {
       </nav>
     </header>
     <div id="global-internal-ad-top-anchor" />
+    {!pathname.startsWith("/admin") && !pathname.startsWith("/auth") && (
+      <div className="border-b border-border/70 bg-white px-3 py-2">
+        <div className="container px-0">
+          <GlobalSearchBar variant="header" />
+        </div>
+      </div>
+    )}
     </>
   );
 }

@@ -451,7 +451,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       </div>
       <h3 className="text-lg font-semibold">No routing rules yet</h3>
       <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
-        Create a rule like "B.Tech in Delhi → push to College A, B, C" and incoming leads will route automatically.
+        Create a rule like "B.Tech in Delhi NCR → push to College A, B, C" and incoming leads will route automatically.
       </p>
       <Button onClick={onCreate} className="mt-5 bg-orange-500 hover:bg-orange-600 text-white">
         <Plus className="w-4 h-4 mr-1.5" /> Create your first rule
@@ -728,7 +728,7 @@ function RuleEditor({ rule, unis, onClose }: { rule: Rule; unis: Uni[]; onClose:
           </div>
           <Card className="p-3 bg-muted/20">
             <div className="text-sm font-semibold mb-1">How this rule works</div>
-            <div className="text-xs text-muted-foreground">Example: choose B.Tech + Delhi + Google Ads, then select University A and B. Matching leads will automatically push to both universities.</div>
+            <div className="text-xs text-muted-foreground">Example: choose B.Tech + Delhi NCR + Google Ads, then select University A and B. Matching leads will automatically push to both universities.</div>
           </Card>
           <div className="grid grid-cols-3 gap-3">
             <div>
@@ -1165,7 +1165,7 @@ function PrefillEditor({ rule, unis, onSaved }: { rule: Rule; unis: Uni[]; onSav
 
 
 function LiveTester({ rules, unis, recentLeads, selectedLead }: { rules: Rule[]; unis: Uni[]; recentLeads: any[]; selectedLead?: any | null }) {
-  const [lead, setLead] = useState<any>({ name: "Test Lead", email: "test@dekho.com", phone: "9876543210", city: "Delhi", state: "Delhi", source: "chatbot", interested_course_slug: "btech", cta: "", source_category: "college", program_mode: "regular" });
+  const [lead, setLead] = useState<any>({ name: "Test Lead", email: "test@dekho.com", phone: "9876543210", city: "Delhi NCR", state: "Delhi NCR", source: "chatbot", interested_course_slug: "btech", cta: "", source_category: "college", program_mode: "regular" });
   const [result, setResult] = useState<any>(null);
   const [busy, setBusy] = useState(false);
 

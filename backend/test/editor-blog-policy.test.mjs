@@ -122,6 +122,10 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(productionSetup, /daily_post_cap: 48/);
   assert.match(productionSetup, /BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY/);
   assert.match(productionSetup, /source_type: "competitor", is_active: false/);
+  assert.match(productionSetup, /ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY/);
+  assert.match(productionSetup, /placement: "header", position: "top"/);
+  assert.match(productionSetup, /placement: "article", position: "top"/);
+  assert.doesNotMatch(productionSetup, /adsenseUnitsDisabled/);
 
   const prompt = articlePrompt(
     { title: "NEET UG counselling choice filling", primary_entity: "NEET UG" },

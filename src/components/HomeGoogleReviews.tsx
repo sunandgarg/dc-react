@@ -51,7 +51,7 @@ export function HomeGoogleReviews() {
   }, []);
 
   return (
-    <section id="google-reviews" className="py-10 scroll-mt-20">
+    <section id="google-reviews" className="py-10 scroll-mt-20 touch-pan-y" style={{ touchAction: "pan-y" }}>
       <div className="container">
         <div className="bg-card rounded-3xl border border-border p-6 md:p-8">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
@@ -77,10 +77,10 @@ export function HomeGoogleReviews() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-stretch">
             {reviews.slice(0, 4).map((r, i) => (
-              <div key={i} className="p-4 rounded-2xl bg-muted/40 border border-border/50 flex flex-col h-[200px] sm:h-[200px] lg:h-[200px] overflow-hidden">
+              <div key={i} className="pointer-events-none select-none touch-pan-y p-4 rounded-2xl bg-muted/40 border border-border/50 flex flex-col h-[200px] sm:h-[200px] lg:h-[200px] overflow-hidden">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0 overflow-hidden">
-                    {r.avatar_url ? <img src={r.avatar_url} alt={r.author_name} className="w-9 h-9 rounded-full object-cover" loading="lazy" /> : r.author_name.charAt(0)}
+                    {r.avatar_url ? <img src={r.avatar_url} alt={r.author_name} className="w-9 h-9 rounded-full object-cover" loading="lazy" draggable={false} /> : r.author_name.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground truncate">{r.author_name}</p>

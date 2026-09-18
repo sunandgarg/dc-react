@@ -31,8 +31,8 @@ export default function AllExams() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [search, setSearch] = useState(() => searchParams.get("search") || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(() => searchParams.get("search") || "");
   const [filterOpen, setFilterOpen] = useState(false);
 
   const seoSlugFilters = useMemo(() => {
@@ -54,6 +54,7 @@ export default function AllExams() {
   const [selectedLevels, setSelectedLevels] = useState<string[]>(() => readMultiParam(searchParams, "level", seoSlugFilters.level ? [seoSlugFilters.level] : []));
 
   useEffect(() => {
+    const querySearch = searchParams.get("search") || "";
     const categories = readMultiParam(searchParams, "category");
     const streams = readMultiParam(searchParams, "stream", seoSlugFilters.stream ? [seoSlugFilters.stream] : []);
     const groups = readMultiParam(searchParams, "group").map(normalizeCollegeCourseGroup);
@@ -62,6 +63,7 @@ export default function AllExams() {
     setSelectedStreams((prev) => (sameStringList(prev, streams) ? prev : streams));
     setSelectedCourseGroups((prev) => (sameStringList(prev, groups) ? prev : groups));
     setSelectedLevels((prev) => (sameStringList(prev, levels) ? prev : levels));
+    setSearch((prev) => (prev === querySearch ? prev : querySearch));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, location.search]);
 
@@ -99,6 +101,7 @@ export default function AllExams() {
   });
 
   const seoLandingMatches = isSeoLandingPath
+    && !debouncedSearch
     && selectedCategories.length === 0
     && sameStringList(selectedStreams, seoSlugFilters.stream ? [seoSlugFilters.stream] : [])
     && selectedCourseGroups.length === 0
@@ -111,9 +114,10 @@ export default function AllExams() {
     writeMultiParam(params, "stream", selectedStreams);
     writeMultiParam(params, "group", selectedCourseGroups);
     writeMultiParam(params, "level", selectedLevels);
+    if (debouncedSearch) params.set("search", debouncedSearch);
     const newPath = params.toString() ? `/exams?${params.toString()}` : "/exams";
     if (`${location.pathname}${location.search}` !== newPath) navigate(newPath, { replace: true });
-  }, [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels, seoLandingMatches, navigate, location.pathname, location.search]);
+  }, [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels, debouncedSearch, seoLandingMatches, navigate, location.pathname, location.search]);
 
   const activeFilters = uniqueValues([...selectedCategories, ...selectedStreams, ...selectedCourseGroups, ...selectedLevels]);
 
@@ -133,6 +137,7 @@ export default function AllExams() {
   const clearAll = () => {
     setSelectedCategories([]); setSelectedStreams([]);
     setSelectedCourseGroups([]); setSelectedLevels([]);
+    setSearch("");
   };
 
   const removeFilter = (f: string) => {

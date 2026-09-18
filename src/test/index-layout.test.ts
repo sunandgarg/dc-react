@@ -16,6 +16,10 @@ describe("Index page layout (static source assertions)", () => {
   const allCollegesSrc = readFileSync(resolve(process.cwd(), "src/pages/AllColleges.tsx"), "utf8");
   const directoryHookSrc = readFileSync(resolve(process.cwd(), "src/hooks/useCollegeDirectory.ts"), "utf8");
   const examCalendarSrc = readFileSync(resolve(process.cwd(), "src/pages/ExamCalendar.tsx"), "utf8");
+  const announcementSrc = readFileSync(resolve(process.cwd(), "src/components/AnnouncementBar.tsx"), "utf8");
+  const globalAdsSrc = readFileSync(resolve(process.cwd(), "src/components/GlobalInternalAds.tsx"), "utf8");
+  const allExamsSrc = readFileSync(resolve(process.cwd(), "src/pages/AllExams.tsx"), "utf8");
+  const seoSlugsSrc = readFileSync(resolve(process.cwd(), "src/lib/seoSlugs.ts"), "utf8");
 
   it("does NOT import or render the LoanReferStrip below scholarships", () => {
     expect(indexSrc).not.toMatch(/LoanReferStrip/);
@@ -53,10 +57,37 @@ describe("Index page layout (static source assertions)", () => {
     expect(footerSrc).not.toMatch(/GlobalDiscoveryBar/);
   });
 
-  it("keeps the legacy rotating hero promise and adds a site-wide Ask Diya footer hand-off", () => {
+  it("keeps the legacy rotating hero promise and uses a compact education-link footer", () => {
     expect(heroSrc).toMatch(/College[\s\S]*Course[\s\S]*Career[\s\S]*Exam[\s\S]*Future/);
     expect(heroSrc).toMatch(/2200/);
-    expect(footerSrc).toMatch(/AskDiyaBand/);
+    expect(footerSrc).not.toMatch(/AskDiyaBand|LeadCaptureForm/);
+    expect(footerSrc).toMatch(/Engineering College Rankings/);
+    expect(footerSrc).toMatch(/MBA College Rankings/);
+    expect(footerSrc).toMatch(/Important Entrance Exams/);
+  });
+
+  it("uses a persistent black announcement bar without dismiss or multicolour controls", () => {
+    expect(announcementSrc).toMatch(/bg-black/);
+    expect(announcementSrc).toMatch(/text-white/);
+    expect(announcementSrc).not.toMatch(/DISMISSED_KEY|Close announcements|bg-blue-600|bg-orange-500/);
+  });
+
+  it("reserves one sitewide Google ad slot between public navigation and search", () => {
+    expect(navbarSrc).toMatch(/global-internal-ad-top-anchor[\s\S]*GlobalSearchBar/);
+    expect(globalAdsSrc).toMatch(/<GoogleAd/);
+    expect(globalAdsSrc).toMatch(/placement="header"/);
+    expect(globalAdsSrc).toMatch(/position="top"/);
+  });
+
+  it("removes the loaded-college counter and canonicalizes Delhi filters to Delhi NCR", () => {
+    expect(allCollegesSrc).not.toMatch(/loaded colleges/i);
+    expect(seoSlugsSrc).toMatch(/Colleges in Delhi NCR/);
+    expect(seoSlugsSrc).not.toMatch(/\{ state: "Delhi" \}/);
+  });
+
+  it("lets footer exam links prefill the live exam search", () => {
+    expect(allExamsSrc).toMatch(/searchParams\.get\("search"\)/);
+    expect(allExamsSrc).toMatch(/params\.set\("search", debouncedSearch\)/);
   });
 
   it("does not render the six college, course, exam, application, review, and news cards", () => {

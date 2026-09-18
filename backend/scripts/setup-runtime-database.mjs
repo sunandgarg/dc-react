@@ -28,3 +28,4 @@ if (!existingSchema.length) {
   run(process.execPath, ["./node_modules/prisma/build/index.js", "db", "push"]);
 }
 run(process.execPath, ["scripts/apply-mysql-parity.mjs"]);
+run(process.execPath, ["scripts/normalize-delhi-ncr.mjs"]);

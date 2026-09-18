@@ -1,13 +1,10 @@
-import { motion } from "framer-motion";
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin, Star } from "lucide-react";
-import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { Link } from "react-router-dom";
 import { GoogleGLogo } from "@/components/GoogleGLogo";
 import logo from "@/assets/dekhocampus-footer-logo.png";
 import dcLogo from "@/assets/dc-logo-small.webp";
 import { QuickLinksBar } from "@/components/QuickLinksBar";
 import { GlobalInternalAds } from "@/components/GlobalInternalAds";
-import { AskDiyaBand } from "@/components/AskDiyaBand";
 
 const footerLinks = {
   explore: [
@@ -52,69 +49,54 @@ const socialLinks = [
 
 const popularFooterGroups = [
   {
-    title: "Engineering Colleges",
+    title: "Engineering College Rankings",
     links: [
-      ["Top Engineering Colleges", "/colleges/top-engineering-colleges-in-india"],
-      ["Top B.Tech Colleges", "/colleges/top-btech-colleges-in-india"],
-      ["Engineering Colleges in Delhi NCR", "/colleges/top-engineering-colleges-in-delhi-ncr"],
-      ["Engineering Colleges in Bangalore", "/colleges/top-engineering-colleges-in-bangalore"],
-      ["Engineering Colleges in Pune", "/colleges/top-engineering-colleges-in-pune"],
-      ["Engineering Colleges in Hyderabad", "/colleges/top-engineering-colleges-in-hyderabad"],
+      ["Top Engineering Colleges in India 2026", "/colleges/top-engineering-colleges-in-india"],
+      ["Top Engineering Colleges in Delhi NCR 2026", "/colleges/top-engineering-colleges-in-delhi-ncr"],
+      ["Top Engineering Colleges in Uttar Pradesh 2026", "/colleges/top-engineering-colleges-in-uttar-pradesh"],
+      ["Top Engineering Colleges in Punjab 2026", "/colleges/top-engineering-colleges-in-punjab"],
+      ["Top Engineering Colleges in Haryana 2026", "/colleges/top-engineering-colleges-in-haryana"],
+      ["Top Engineering Colleges in Rajasthan 2026", "/colleges/top-engineering-colleges-in-rajasthan"],
+      ["Top Engineering Colleges in Bihar 2026", "/colleges/top-engineering-colleges-in-bihar"],
+      ["Top Engineering Colleges in Gujarat 2026", "/colleges/top-engineering-colleges-in-gujarat"],
+      ["Top Engineering Colleges in Maharashtra 2026", "/colleges/top-engineering-colleges-in-maharashtra"],
+      ["Top Engineering Colleges in Telangana 2026", "/colleges/top-engineering-colleges-in-telangana"],
+      ["Top Engineering Colleges in Andhra Pradesh 2026", "/colleges/top-engineering-colleges-in-andhra-pradesh"],
+      ["Top Engineering Colleges in Karnataka 2026", "/colleges/top-engineering-colleges-in-karnataka"],
     ],
   },
   {
-    title: "Management Colleges",
+    title: "MBA College Rankings",
     links: [
-      ["Top Management Colleges", "/colleges/top-management-colleges-in-india"],
-      ["Top MBA Colleges", "/colleges/top-mba-colleges-in-india"],
-      ["Top BBA Colleges", "/colleges/top-bba-colleges-in-india"],
-      ["MBA Colleges in Delhi NCR", "/colleges/top-mba-colleges-in-delhi-ncr"],
-      ["MBA Colleges in Mumbai", "/colleges/top-mba-colleges-in-mumbai"],
-      ["MBA Colleges in Bangalore", "/colleges/top-mba-colleges-in-bangalore"],
+      ["Top MBA Colleges in India 2026", "/colleges/top-mba-colleges-in-india"],
+      ["Top MBA Colleges in Delhi NCR 2026", "/colleges/top-mba-colleges-in-delhi-ncr"],
+      ["Top MBA Colleges in Uttar Pradesh 2026", "/colleges/top-mba-colleges-in-uttar-pradesh"],
+      ["Top MBA Colleges in Punjab 2026", "/colleges/top-mba-colleges-in-punjab"],
+      ["Top MBA Colleges in Haryana 2026", "/colleges/top-mba-colleges-in-haryana"],
+      ["Top MBA Colleges in Rajasthan 2026", "/colleges/top-mba-colleges-in-rajasthan"],
+      ["Top MBA Colleges in Assam 2026", "/colleges/top-mba-colleges-in-assam"],
+      ["Top MBA Colleges in Madhya Pradesh 2026", "/colleges/top-mba-colleges-in-madhya-pradesh"],
+      ["Top MBA Colleges in Maharashtra 2026", "/colleges/top-mba-colleges-in-maharashtra"],
+      ["Top MBA Colleges in Telangana 2026", "/colleges/top-mba-colleges-in-telangana"],
+      ["Top MBA Colleges in Odisha 2026", "/colleges/top-mba-colleges-in-odisha"],
+      ["Top MBA Colleges in Tamil Nadu 2026", "/colleges/top-mba-colleges-in-tamil-nadu"],
     ],
   },
   {
-    title: "Medical and Law",
+    title: "Important Entrance Exams",
     links: [
-      ["Top Medical Colleges", "/colleges/top-medical-colleges-in-india"],
-      ["Top MBBS Colleges", "/colleges/top-mbbs-colleges-in-india"],
-      ["Medical Colleges in Karnataka", "/colleges/top-medical-colleges-in-karnataka"],
-      ["Top Law Colleges", "/colleges/top-law-colleges-in-india"],
-      ["Top LLB Colleges", "/colleges/top-llb-colleges-in-india"],
-      ["Top Pharmacy Colleges", "/colleges/top-pharmacy-colleges-in-india"],
-    ],
-  },
-  {
-    title: "Popular Courses",
-    links: [
-      ["B.Tech Courses", "/courses/top-btech-courses-in-india"],
-      ["MBA Courses", "/courses/top-mba-courses-in-india"],
-      ["BCA Courses", "/courses/top-bca-courses-in-india"],
-      ["MCA Courses", "/courses/top-mca-courses-in-india"],
-      ["Online Courses", "/courses/top-online-courses-in-india"],
-      ["Distance Learning Courses", "/courses/top-distance-courses-in-india"],
-    ],
-  },
-  {
-    title: "Important Exams",
-    links: [
-      ["Engineering Entrance Exams", "/exams/top-engineering-entrance-exams-in-india"],
-      ["Medical Entrance Exams", "/exams/top-medical-entrance-exams-in-india"],
-      ["Management Entrance Exams", "/exams/top-management-entrance-exams-in-india"],
-      ["Law Entrance Exams", "/exams/top-law-entrance-exams-in-india"],
-      ["National Entrance Exams", "/exams/top-national-entrance-exams-in-india"],
-      ["State Entrance Exams", "/exams/top-state-entrance-exams-in-india"],
-    ],
-  },
-  {
-    title: "Student Resources",
-    links: [
-      ["College Predictor", "/college-predictor"],
-      ["Exam Calendar", "/exam-calendar-2026"],
-      ["Scholarships", "/scholarships"],
-      ["Education News", "/news"],
-      ["Study Material", "/study-material"],
-      ["Career Guides", "/careers"],
+      ["JEE Main 2027", "/exams?search=JEE%20Main"],
+      ["NEET 2027", "/exams?search=NEET"],
+      ["XAT 2027", "/exams?search=XAT"],
+      ["CLAT 2027", "/exams?search=CLAT"],
+      ["CAT 2026-27", "/exams?search=CAT"],
+      ["AEEE 2026", "/exams?search=AEEE"],
+      ["VITEEE 2026", "/exams?search=VITEEE"],
+      ["UGC NET 2026", "/exams?search=UGC%20NET"],
+      ["NDA 2027", "/exams?search=NDA"],
+      ["JEECUP 2027", "/exams?search=JEECUP"],
+      ["AP EAPCET 2027", "/exams?search=AP%20EAPCET"],
+      ["TG EAPCET 2027", "/exams?search=TG%20EAPCET"],
     ],
   },
 ] as const;
@@ -124,7 +106,6 @@ export function Footer() {
     <>
     <GlobalInternalAds area="bottom" />
     <QuickLinksBar />
-    <AskDiyaBand />
     <footer className="bg-foreground text-background" role="contentinfo">
       {/* Built by IIT Delhi Alumni strip - shown on every page */}
       <div className="bg-background text-foreground border-b border-border/40">
@@ -136,25 +117,6 @@ export function Footer() {
           <p className="text-[11px] md:text-xs text-muted-foreground max-w-md leading-snug">
             We went through the same journey - now we've built the system to simplify yours.
           </p>
-        </div>
-      </div>
-
-      {/* Lead Capture Section */}
-      <div className="border-b border-background/10">
-        <div className="container py-8 md:py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto"
-          >
-            <LeadCaptureForm
-              variant="banner"
-              title="🎓 Get Personalized College Recommendations"
-              subtitle="Talk to our expert counselors - completely free"
-              source="footer_banner"
-            />
-          </motion.div>
         </div>
       </div>
 
@@ -249,14 +211,14 @@ export function Footer() {
             <h2 id="popular-education-links" className="text-xl font-extrabold text-background md:text-2xl">Explore education by interest</h2>
             <p className="mt-1 text-sm leading-6 text-background/65">Direct paths to popular colleges, courses, entrance exams and student resources.</p>
           </div>
-          <div className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-3 lg:grid-cols-6">
+          <div className="grid gap-x-10 gap-y-8 md:grid-cols-3">
             {popularFooterGroups.map((group) => (
               <nav key={group.title} aria-label={group.title}>
                 <h3 className="mb-3 text-sm font-extrabold text-background">{group.title}</h3>
-                <ul className="space-y-2.5">
+                <ul className="space-y-2.5 md:space-y-3">
                   {group.links.map(([label, href]) => (
                     <li key={href}>
-                      <Link to={href} className="text-sm leading-5 text-background/65 transition-colors hover:text-accent">
+                      <Link to={href} className="text-sm leading-5 text-background/70 transition-colors hover:text-accent">
                         {label}
                       </Link>
                     </li>

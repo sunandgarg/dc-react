@@ -362,7 +362,7 @@ export function EditUniversityModal({ isOpen, university, onClose, onSave }: Edi
     name: "Abhishek",
     email: "abcd@gmail.com",
     mobile: "9876543210",
-    state: "Delhi",
+    state: "Delhi NCR",
     city: "South Delhi",
     course: "Under Graduate",
     specialization: "Law",

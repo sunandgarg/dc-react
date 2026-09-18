@@ -1,5 +1,5 @@
 import { Fragment, useState, useMemo, useEffect, useRef, memo } from "react";
-import { Search, Clock, TrendingUp, GraduationCap, Briefcase, Building2, FileText, Award, Globe, BookOpen, Users, Newspaper, X, Tag as TagIcon } from "lucide-react";
+import { Search, Clock, TrendingUp, GraduationCap, Briefcase, Building2, FileText, Award, Globe, BookOpen, Users, Newspaper, X, Tag as TagIcon, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
@@ -11,7 +11,10 @@ import { Link, useSearchParams, useParams, useNavigate } from "react-router-dom"
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { DynamicAdBanner } from "@/components/DynamicAdBanner";
+import { GoogleAd } from "@/components/ads/GoogleAd";
 import { plainText } from "@/lib/plainText";
+import { useImportantExams } from "@/hooks/useExamsData";
+import { buildExamHref } from "@/lib/entityUrls";
 
 const categories = [
   { label: "All News", icon: Newspaper, value: "" },
@@ -112,6 +115,38 @@ const SidebarItem = memo(function SidebarItem({ a }: { a: Article }) {
   );
 });
 
+function NewsLinkModule({
+  title,
+  items,
+  moreHref,
+  moreLabel,
+}: {
+  title: string;
+  items: Array<{ href: string; title: string; meta?: string }>;
+  moreHref: string;
+  moreLabel: string;
+}) {
+  if (!items.length) return null;
+  return (
+    <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
+      <h2 className="border-l-4 border-orange-500 pl-3 text-base font-extrabold text-foreground">{title}</h2>
+      <ul className="mt-3 divide-y divide-border">
+        {items.map((item) => (
+          <li key={`${item.href}-${item.title}`}>
+            <Link to={item.href} className="group block py-3 first:pt-1">
+              <span className="line-clamp-2 text-sm font-semibold leading-5 text-foreground transition-colors group-hover:text-primary">{item.title}</span>
+              {item.meta && <span className="mt-1 block text-[11px] text-muted-foreground">{item.meta}</span>}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <Link to={moreHref} className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline">
+        {moreLabel} <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
+    </section>
+  );
+}
+
 function GridSkeleton() {
   return (
     <>
@@ -162,10 +197,20 @@ export default function News() {
   }, [queryTag, tagFromPath, navigate, searchParams]);
 
   const tagParam = (tagFromPath || queryTag || "").toLowerCase().trim();
-  const [activeCategory, setActiveCategory] = useState("");
+  const [activeCategory, setActiveCategory] = useState(() => searchParams.get("category") || "");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounced(searchQuery.trim(), 350);
   const [page, setPage] = useState(0);
+  const { data: importantExamData } = useImportantExams(8);
+  const importantExams = useMemo(
+    () => Array.isArray(importantExamData) ? importantExamData : [],
+    [importantExamData],
+  );
+
+  useEffect(() => {
+    const nextCategory = searchParams.get("category") || "";
+    setActiveCategory((current) => current === nextCategory ? current : nextCategory);
+  }, [searchParams]);
 
   useEffect(() => { setPage(0); }, [tagParam, activeCategory, debouncedSearch]);
 
@@ -232,7 +277,7 @@ export default function News() {
     },
   });
 
-  const latest = latestData?.rows || [];
+  const latest = useMemo(() => latestData?.rows || [], [latestData?.rows]);
   const hasMore = latestData?.hasMore || false;
 
   // Hero + sidebar ONLY appear on the unfiltered home view. When any filter
@@ -241,7 +286,55 @@ export default function News() {
   const showPinnedHero = !hasFilters && pinned.length > 0 && page === 0;
   const featured = showPinnedHero ? pinned[0] : undefined;
   const sidebar = showPinnedHero ? pinned.slice(1, 5) : [];
-  const gridArticles = showPinnedHero ? latest : latest;
+  const gridArticles = latest;
+
+  const latestSidebarArticles = useMemo(() => {
+    const seen = new Set<string>();
+    return [...pinned, ...latest]
+      .filter((item) => {
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      })
+      .slice(0, 5)
+      .map((item) => ({
+        href: `/news/${item.slug}`,
+        title: item.title,
+        meta: `${item.category || "Education"} · ${dateFmtShort.format(new Date(item.created_at))}`,
+      }));
+  }, [latest, pinned]);
+
+  const admissionAlerts = useMemo(() => {
+    const terms = /admission|application|counselling|counseling|seat allotment|registration|merit list/i;
+    const seen = new Set<string>();
+    const items = [...pinned, ...latest]
+      .filter((item) => {
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        const haystack = [item.title, item.category, ...(item.tags || [])].join(" ");
+        return haystack.includes("2027") && terms.test(haystack);
+      })
+      .slice(0, 5)
+      .map((item) => ({ href: `/news/${item.slug}`, title: item.title, meta: item.category || "Admissions" }));
+    return items.length ? items : [{
+      href: "/news?category=Admissions",
+      title: "Latest 2027 admissions, counselling and application updates",
+      meta: "Admissions 2027",
+    }];
+  }, [latest, pinned]);
+
+  const importantExamLinks = useMemo(() => {
+    const items = importantExams.map((exam) => ({
+      href: buildExamHref(exam),
+      title: exam.short_name || exam.name,
+      meta: [exam.level, exam.category].filter(Boolean).join(" · "),
+    }));
+    return items.length ? items : [
+      { href: "/exams/top-engineering-entrance-exams-in-india", title: "Engineering entrance exams", meta: "JEE, GATE and more" },
+      { href: "/exams/top-medical-entrance-exams-in-india", title: "Medical entrance exams", meta: "NEET and more" },
+      { href: "/exams/top-management-entrance-exams-in-india", title: "Management entrance exams", meta: "CAT, XAT and more" },
+    ];
+  }, [importantExams]);
 
   const pageTitle = tagParam
     ? `${tagParam.replace(/-/g, " ")} News & Updates | DekhoCampus`
@@ -347,36 +440,48 @@ export default function News() {
             )}
 
             {gridArticles.length > 0 && (
-              <section>
-                <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">Latest Posts</h2>
-                <div className={`grid sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity ${isFetching ? "opacity-60" : "opacity-100"}`}>
-                  {gridArticles.map((a, i) => (
-                    <Fragment key={a.id}>
-                      <LatestCard a={a} eager={i < 3} />
-                      {i === Math.min(5, Math.floor(gridArticles.length / 2)) && (
-                        <div className="sm:col-span-2 lg:col-span-3 my-2 space-y-4">
-                          <DynamicAdBanner position="mid-page" page="articles" />
-                          <LeadCaptureForm
-                            variant="banner"
-                            title="📞 Confused about colleges or courses?"
-                            subtitle="Talk to a free expert counsellor - personalised guidance in under 24 hours."
-                            source="news_mid_grid"
-                          />
-                        </div>
-                      )}
-                    </Fragment>
-                  ))}
-                </div>
-                <div className="flex items-center justify-center gap-3 mt-8">
-                  {page > 0 && (
-                    <button onClick={() => { setPage(p => Math.max(0, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-4 py-2 rounded-xl border border-border text-sm font-semibold hover:bg-muted">← Previous</button>
-                  )}
-                  <span className="text-xs text-muted-foreground">Page {page + 1}</span>
-                  {hasMore && (
-                    <button onClick={() => { setPage(p => p + 1); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90">Next →</button>
-                  )}
-                </div>
-              </section>
+              <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_19rem]">
+                <section className="min-w-0">
+                  <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">Latest Posts</h2>
+                  <div className={`grid sm:grid-cols-2 xl:grid-cols-3 gap-6 transition-opacity ${isFetching ? "opacity-60" : "opacity-100"}`}>
+                    {gridArticles.map((a, i) => (
+                      <Fragment key={a.id}>
+                        <LatestCard a={a} eager={i < 3} />
+                        {i === Math.min(5, Math.floor(gridArticles.length / 2)) && (
+                          <div className="sm:col-span-2 xl:col-span-3 my-2 space-y-4">
+                            <DynamicAdBanner position="mid-page" page="articles" />
+                            <LeadCaptureForm
+                              variant="banner"
+                              title="Confused about colleges or courses?"
+                              subtitle="Talk to a free expert counsellor - personalised guidance in under 24 hours."
+                              source="news_mid_grid"
+                            />
+                          </div>
+                        )}
+                      </Fragment>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-center gap-3 mt-8">
+                    {page > 0 && (
+                      <button onClick={() => { setPage(p => Math.max(0, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-4 py-2 rounded-xl border border-border text-sm font-semibold hover:bg-muted">← Previous</button>
+                    )}
+                    <span className="text-xs text-muted-foreground">Page {page + 1}</span>
+                    {hasMore && (
+                      <button onClick={() => { setPage(p => p + 1); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90">Next →</button>
+                    )}
+                  </div>
+                </section>
+
+                <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+                  <section className="min-h-[250px] overflow-hidden rounded-lg border border-border bg-card p-2" aria-label="Advertisement">
+                    <p className="pb-1 text-center text-[10px] font-medium uppercase text-muted-foreground">Advertisement</p>
+                    <GoogleAd placement="article" position="top" pageKey="news" className="min-h-[220px]" />
+                  </section>
+                  <NewsLinkModule title="Latest Articles" items={latestSidebarArticles} moreHref="/news" moreLabel="View all articles" />
+                  <NewsLinkModule title="Admission Alerts 2027" items={admissionAlerts} moreHref="/news?category=Admissions" moreLabel="View admission updates" />
+                  <NewsLinkModule title="Important Exams" items={importantExamLinks} moreHref="/exams" moreLabel="Explore all exams" />
+                </aside>
+              </div>
             )}
           </>
         )}

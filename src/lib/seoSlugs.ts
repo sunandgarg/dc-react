@@ -111,7 +111,7 @@ export const collegeSeoRoutes = [
   { label: "Commerce Colleges", params: { stream: "Commerce" } },
   { label: "Design Colleges", params: { stream: "Design" } },
   // By city
-  { label: "Colleges in Delhi", params: { state: "Delhi" } },
+  { label: "Colleges in Delhi NCR", params: { state: "Delhi NCR" } },
   { label: "Colleges in Mumbai", params: { city: "Mumbai", state: "Maharashtra" } },
   { label: "Colleges in Bangalore", params: { city: "Bangalore", state: "Karnataka" } },
   { label: "Colleges in Chennai", params: { city: "Chennai", state: "Tamil Nadu" } },
@@ -127,7 +127,7 @@ export const collegeSeoRoutes = [
   { label: "B.Sc Colleges", params: { group: "B.Sc" } },
   { label: "LLB Colleges", params: { group: "LLB" } },
   // Combined
-  { label: "Engineering Colleges in Delhi", params: { stream: "Engineering", state: "Delhi" } },
+  { label: "Engineering Colleges in Delhi NCR", params: { stream: "Engineering", state: "Delhi NCR" } },
   { label: "Medical Colleges in Karnataka", params: { stream: "Medical", state: "Karnataka" } },
   { label: "MBA Colleges in Mumbai", params: { group: "MBA", city: "Mumbai", state: "Maharashtra" } },
 ];

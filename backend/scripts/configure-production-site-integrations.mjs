@@ -14,7 +14,7 @@ const integrations = [
 const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
-const ADSENSE_RESTRAINED_PLACEMENTS_MIGRATION_KEY = "adsense_restrained_placements_v1";
+const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v1";
 const CONTENT_COPY_PROTECTION_MIGRATION_KEY = "content_copy_protection_v1";
 
 try {
@@ -37,9 +37,7 @@ try {
   let entitySchedulesUpdated = 0;
   let eeatCadenceUpdated = 0;
   let competitorSourcesActivated = 0;
-  let adsenseSettingsUpdated = 0;
-  let adsenseUnitsMoved = 0;
-  let adsenseUnitsDisabled = 0;
+  let adsenseUnitsSeeded = 0;
   let copyProtectionUpdated = 0;
   if (!editorialPolicyMigration) {
     const updated = await prisma.blog_auto_agent_settings.updateMany({
@@ -134,47 +132,55 @@ try {
     });
   }
   const adsensePlacementMigration = await prisma.app_settings.findUnique({
-    where: { key: ADSENSE_RESTRAINED_PLACEMENTS_MIGRATION_KEY },
+    where: { key: ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY },
   });
   if (!adsensePlacementMigration) {
-    const settings = await prisma.adsense_settings.updateMany({
-      data: {
-        auto_ads_enabled: false,
-        ads_per_page_limit: 1,
-        lazy_load_enabled: true,
-        refresh_interval_seconds: 0,
-        updated_at: new Date(),
-      },
+    const sourceUnits = await prisma.ad_units.findMany({
+      where: { ad_slot_id: { not: null } },
+      orderBy: [{ is_active: "desc" }, { priority: "desc" }, { updated_at: "desc" }],
     });
-    adsenseSettingsUpdated = settings.count;
-
-    const moved = await prisma.ad_units.updateMany({
-      where: { placement: "homepage", position: "middle" },
-      data: { position: "bottom", updated_at: new Date() },
-    });
-    adsenseUnitsMoved = moved.count;
-
-    const disabled = await prisma.ad_units.updateMany({
-      where: {
-        is_active: true,
-        NOT: {
-          OR: [
-            { placement: "homepage", position: "bottom" },
-            { placement: "article", position: "after-content" },
-          ],
-        },
-      },
-      data: { is_active: false, updated_at: new Date() },
-    });
-    adsenseUnitsDisabled = disabled.count;
+    const sourceUnit = sourceUnits.find((unit) => unit.ad_slot_id?.trim());
+    if (sourceUnit) {
+      const requestedPlacements = [
+        { name: "DekhoCampus Sitewide Header", placement: "header", position: "top", minHeight: 90, priority: 100 },
+        { name: "DekhoCampus Article Rail", placement: "article", position: "top", minHeight: 220, priority: 90 },
+      ];
+      for (const target of requestedPlacements) {
+        const existing = await prisma.ad_units.findFirst({
+          where: { placement: target.placement, position: target.position },
+          orderBy: [{ priority: "desc" }, { updated_at: "desc" }],
+        });
+        const data = {
+          name: target.name,
+          ad_type: sourceUnit.ad_type || "display",
+          placement: target.placement,
+          position: target.position,
+          ad_slot_id: sourceUnit.ad_slot_id,
+          ad_format: sourceUnit.ad_format || "auto",
+          full_width_responsive: true,
+          priority: target.priority,
+          is_active: true,
+          target_devices: ["mobile", "desktop", "tablet"],
+          target_roles: [],
+          target_countries: [],
+          target_categories: [],
+          url_pattern: null,
+          min_width: null,
+          min_height: target.minHeight,
+          updated_at: new Date(),
+        };
+        if (existing) await prisma.ad_units.update({ where: { id: existing.id }, data });
+        else await prisma.ad_units.create({ data });
+        adsenseUnitsSeeded += 1;
+      }
+    }
 
     await prisma.app_settings.create({
       data: {
-        key: ADSENSE_RESTRAINED_PLACEMENTS_MIGRATION_KEY,
+        key: ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY,
         value: JSON.stringify({
-          auto_ads_enabled: false,
-          ads_per_page_limit: 1,
-          placements: ["homepage:bottom", "article:after-content"],
+          placements: ["header:top", "article:top"],
+          seeded_from_existing_unit: Boolean(sourceUnit),
           applied_at: new Date().toISOString(),
         }),
       },
@@ -266,10 +272,8 @@ try {
     blog_interval_minutes: 60,
     blog_posts_per_run: 2,
     competitor_sources_activated: competitorSourcesActivated,
-    adsense_restrained_placements_migrated: Boolean(adsensePlacementMigration) || adsenseSettingsUpdated > 0,
-    adsense_settings_updated: adsenseSettingsUpdated,
-    adsense_units_moved_to_bottom: adsenseUnitsMoved,
-    adsense_units_disabled: adsenseUnitsDisabled,
+    adsense_requested_placements_migrated: Boolean(adsensePlacementMigration) || adsenseUnitsSeeded > 0,
+    adsense_units_seeded: adsenseUnitsSeeded,
     content_copy_protection_enabled: Boolean(copyProtectionMigration) || copyProtectionUpdated > 0,
     ses_provider_configured: true,
     ses_credential_source: "iam_runtime",
