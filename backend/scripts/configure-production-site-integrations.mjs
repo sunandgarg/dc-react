@@ -14,7 +14,7 @@ const integrations = [
 const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
-const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v1";
+const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v2";
 const CONTENT_COPY_PROTECTION_MIGRATION_KEY = "content_copy_protection_v1";
 
 try {
@@ -142,7 +142,7 @@ try {
     const sourceUnit = sourceUnits.find((unit) => unit.ad_slot_id?.trim());
     if (sourceUnit) {
       const requestedPlacements = [
-        { name: "DekhoCampus Sitewide Header", placement: "header", position: "top", minHeight: 90, priority: 100 },
+        { name: "DekhoCampus Sitewide Header", placement: "header", position: "top", minHeight: 90, priority: 100, adFormat: "horizontal" },
         { name: "DekhoCampus Article Rail", placement: "article", position: "top", minHeight: 220, priority: 90 },
       ];
       for (const target of requestedPlacements) {
@@ -156,7 +156,7 @@ try {
           placement: target.placement,
           position: target.position,
           ad_slot_id: sourceUnit.ad_slot_id,
-          ad_format: sourceUnit.ad_format || "auto",
+          ad_format: target.adFormat || sourceUnit.ad_format || "auto",
           full_width_responsive: true,
           priority: target.priority,
           is_active: true,
