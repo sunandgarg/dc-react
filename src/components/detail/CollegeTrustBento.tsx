@@ -1,35 +1,35 @@
-import { Award, TrendingUp, Wallet, Star } from "lucide-react";
-import { displayRating, STUDENT_RATING_FALLBACK } from "@/lib/ratings";
+import { Building2, GraduationCap, Star, TrendingUp } from "lucide-react";
+import { displayRating } from "@/lib/ratings";
 
 interface Props {
   college: any;
 }
 
 /**
- * 2026 redesign - at-a-glance trust signals. Four scannable cells answer:
- * "Is this college credible? How much? How well do graduates do?"
+ * The single at-a-glance stats row used near the top of every college page.
  */
 export function CollegeTrustBento({ college }: Props) {
+  const courseCount = Number(college.courses_count || 0);
   const items = [
     {
-      icon: Award,
-      label: college.nirf_rank ? "NIRF Rank" : "Rating",
-      value: college.nirf_rank ? `#${college.nirf_rank}` : `${displayRating(college.rating)}/5`,
+      icon: Star,
+      label: "Rating",
+      value: `${displayRating(college.rating)}/5`,
+    },
+    {
+      icon: GraduationCap,
+      label: "Courses",
+      value: courseCount > 0 ? `${courseCount}+` : "Not published",
     },
     {
       icon: TrendingUp,
       label: "Avg Package",
-      value: college.placement || "-",
+      value: college.placement || "Not published",
     },
     {
-      icon: Wallet,
-      label: "Course Fees",
-      value: college.fees || "-",
-    },
-    {
-      icon: Star,
-      label: "Student Rating",
-      value: `${displayRating((college as any).student_rating, STUDENT_RATING_FALLBACK)}/5`,
+      icon: Building2,
+      label: "Type",
+      value: college.type || "Not published",
     },
   ];
 
@@ -38,17 +38,13 @@ export function CollegeTrustBento({ college }: Props) {
       {items.map((it) => (
         <div
           key={it.label}
-          className="bg-slate-100 p-4 md:p-5 rounded-2xl md:rounded-3xl transition hover:bg-slate-200/70"
+          className="flex min-h-32 flex-col items-center justify-center rounded-2xl border border-border bg-card p-4 text-center transition-colors hover:border-primary/30 hover:bg-primary/[0.02] md:min-h-36 md:p-5"
         >
-          <div className="flex items-center gap-2 mb-1.5">
-            <it.icon className="w-3.5 h-3.5 text-slate-500" />
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              {it.label}
-            </p>
-          </div>
-          <p className="text-xl md:text-2xl font-bold text-blue-600 leading-tight">
+          <it.icon className="mb-2 h-6 w-6 text-primary" aria-hidden="true" />
+          <p className="text-base font-bold leading-snug text-foreground md:text-xl">
             {it.value}
           </p>
+          <p className="mt-1 text-sm text-muted-foreground">{it.label}</p>
         </div>
       ))}
     </div>

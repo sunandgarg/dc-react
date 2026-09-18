@@ -4,7 +4,7 @@ import { Fragment, useEffect, useMemo } from "react";
 import { buildCollegeHref, parseSlugWithId } from "@/lib/entityUrls";
 import { useSEO } from "@/hooks/useSEO";
 import { motion } from "framer-motion";
-import { Star, MapPin, Calendar, GraduationCap, TrendingUp, Building, CheckCircle, Briefcase, BookOpen, Image as ImageIcon, Users, Award, Scale, Newspaper, HelpCircle, DollarSign, ExternalLink, Download, Phone, Shield, Globe, Landmark, Search, ChevronDown } from "lucide-react";
+import { MapPin, Calendar, GraduationCap, Building, CheckCircle, Briefcase, BookOpen, Image as ImageIcon, Users, Award, Scale, Newspaper, HelpCircle, DollarSign, ExternalLink, Download, Phone, Shield, Globe, Landmark, Search, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -48,7 +48,7 @@ import { RichText } from "@/components/detail/RichText";
 import { PageSummary } from "@/components/detail/PageSummary";
 import { absoluteSiteUrl } from "@/lib/constant";
 import { formatFeePeriod, formatFeeRange, formatIndianFee, groupCollegeFees, groupCollegeFeesByLevel, inferCourseSpecialization } from "@/lib/courseFeeGroups";
-import { displayRating, STUDENT_RATING_FALLBACK } from "@/lib/ratings";
+import { STUDENT_RATING_FALLBACK } from "@/lib/ratings";
 
 const COLLEGE_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "College Info" },
@@ -293,22 +293,6 @@ export default function CollegeDetail() {
           <div className="lg:col-span-2 space-y-6">
             {/* Quick Summary (admin-written page summary) */}
             <PageSummary html={(college as any).page_summary} entityName={college.short_name || college.name} kind="college" />
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { icon: Star, label: "Rating", value: `${displayRating(college.rating)}/5`, color: "text-golden" },
-                { icon: GraduationCap, label: "Courses", value: `${college.courses_count}+`, color: "text-primary" },
-                { icon: TrendingUp, label: "Avg Package", value: college.placement, color: "text-success" },
-                { icon: Building, label: "Type", value: college.type, color: "text-accent" },
-              ].map((stat) => (
-                <div key={stat.label} className="bg-card rounded-xl border border-border p-3 text-center">
-                  <stat.icon className={`w-5 h-5 mx-auto mb-1 ${stat.color}`} />
-                  <p className="text-sm font-bold text-foreground">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-
             {/* Approval logos strip - merges library bodies (selected via codes) + per-college custom logos */}
             {(() => {
               const codes: string[] = (college as any).approvals || [];

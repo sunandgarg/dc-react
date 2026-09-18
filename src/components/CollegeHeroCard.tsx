@@ -1,4 +1,4 @@
-import { MapPin, Calendar, Shield, ExternalLink, Globe } from "lucide-react";
+import { MapPin, Calendar, Shield, Globe } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,8 @@ export function CollegeHeroCard({ college }: Props) {
       return normalized && !normalized.includes("legacy") && !normalized.includes("csv") && !normalized.includes("import");
     })
     .slice(0, 3);
+  const heroBadgeClass = "border border-primary/20 bg-primary/10 text-primary hover:bg-primary/10 text-xs";
+  const secondaryActionClass = "h-10 rounded-xl border-border bg-background text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-primary/5";
 
   return (
     <motion.div
@@ -58,14 +60,14 @@ export function CollegeHeroCard({ college }: Props) {
         <div className="flex items-center gap-2 mb-2 flex-wrap">
           {tags.length > 0
             ? tags.map((t) => (
-                <Badge key={t} className="bg-primary/90 text-primary-foreground text-xs">{t}</Badge>
+                <Badge key={t} variant="outline" className={heroBadgeClass}>{t}</Badge>
               ))
             : college.category && (
-                <Badge className="bg-primary/90 text-primary-foreground text-xs">{college.category}</Badge>
+                <Badge variant="outline" className={heroBadgeClass}>{college.category}</Badge>
               )}
-          {college.type && <Badge className="bg-accent/90 text-accent-foreground text-xs">{college.type}</Badge>}
+          {college.type && <Badge variant="outline" className={heroBadgeClass}>{college.type}</Badge>}
           {college.naac_grade && (
-            <Badge className="bg-success/90 text-success-foreground text-xs">NAAC {college.naac_grade}</Badge>
+            <Badge variant="outline" className={heroBadgeClass}>NAAC {college.naac_grade}</Badge>
           )}
         </div>
 
@@ -90,7 +92,7 @@ export function CollegeHeroCard({ college }: Props) {
             collegeName={college.name}
             applyMode={(college as any).apply_cta_mode}
             applyUrl={(college as any).apply_url}
-            className="rounded-xl text-xs gap-1 !bg-[#e85d3a] hover:!bg-[#d14b2d] !text-white font-bold shadow-lg shadow-orange-200/60 h-10 px-4"
+            className="h-10 rounded-xl bg-primary px-4 text-xs font-bold text-primary-foreground hover:bg-primary/90"
             label="Apply Now"
           />
           {college.brochure_url && college.brochure_url !== "#" ? (
@@ -98,7 +100,7 @@ export function CollegeHeroCard({ college }: Props) {
               collegeSlug={college.slug}
               collegeName={college.name}
               variant="outline"
-              className="rounded-xl text-xs gap-1 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 h-10 px-4 font-bold"
+              className={`${secondaryActionClass} px-4`}
               label="Brochure"
               applyMode="lead_then_link"
               applyUrl={college.brochure_url}
@@ -108,7 +110,7 @@ export function CollegeHeroCard({ college }: Props) {
               collegeSlug={college.slug}
               collegeName={college.name}
               variant="outline"
-              className="rounded-xl text-xs gap-1 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 h-10 px-4 font-bold"
+              className={`${secondaryActionClass} px-4`}
               label="Brochure"
             />
           )}
@@ -119,7 +121,7 @@ export function CollegeHeroCard({ college }: Props) {
               rel="noopener noreferrer"
               onClick={() => { try { trackEvent("cta_click", { page: "college", cta: "Official Website", college_slug: college.slug }); } catch {} }}
             >
-              <Button size="sm" variant="outline" className="rounded-xl text-xs gap-1 h-10">
+              <Button size="sm" variant="outline" className={secondaryActionClass}>
                 <Globe className="w-3.5 h-3.5" />Official Website
               </Button>
             </a>
@@ -129,7 +131,7 @@ export function CollegeHeroCard({ college }: Props) {
             category="college"
             title={`${college.name} - Campus Tour`}
             label="Campus Tour"
-            className="h-10 rounded-xl text-xs"
+            className={`${secondaryActionClass} !border-border !bg-background !text-foreground hover:!border-primary/40 hover:!bg-primary/5 [&_span]:!bg-primary`}
           />
           <CompareToggleButton
             college={{
