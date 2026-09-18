@@ -76,7 +76,7 @@ export function Navbar() {
 
   return (
     <>
-    <header className="sticky top-0 z-50 w-full">
+    <header className="sticky top-0 z-[70] isolate w-full">
       <AnnouncementBar />
       <nav className="border-b border-border bg-white/[0.98]">
         <div className="container flex items-center justify-between h-14 md:h-16 lg:h-18">

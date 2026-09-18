@@ -46,7 +46,7 @@ function escapeXml(value: string) {
 
 function sitemapXml(origin: string, urls: AdminSitemapUrl[]) {
   const today = new Date().toISOString().split("T")[0];
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url>\n    <loc>${escapeXml(`${origin}${u.loc}`)}</loc>\n    <lastmod>${u.lastmod || today}</lastmod>\n    <changefreq>${u.cf}</changefreq>\n    <priority>${u.pri.toFixed(2).replace(/0$/, "")}</priority>\n  </url>`).join("\n")}\n</urlset>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url>\n    <loc>${escapeXml(`${origin}${u.loc}`)}</loc>\n    <lastmod>${u.lastmod || today}</lastmod>\n  </url>`).join("\n")}\n</urlset>`;
 }
 
 function sitemapIndexXml(origin: string, totalUrls: number) {

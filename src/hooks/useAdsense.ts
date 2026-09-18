@@ -130,12 +130,12 @@ export function pickAdUnit(
   const path = typeof window !== "undefined" ? window.location.pathname : "";
   const candidates = units.filter((u) => {
     if (u.placement !== placement) return false;
-    if (position && u.position !== position) return false;
     if (u.start_date && new Date(u.start_date).getTime() > now) return false;
     if (u.end_date && new Date(u.end_date).getTime() < now) return false;
     if (u.target_devices?.length && !u.target_devices.includes(device)) return false;
     if (u.url_pattern && !path.includes(u.url_pattern)) return false;
     return true;
   });
-  return candidates[0] ?? null;
+  if (!position) return candidates[0] ?? null;
+  return candidates.find((unit) => unit.position === position) ?? candidates[0] ?? null;
 }

@@ -8,6 +8,10 @@ interface GoogleAdProps {
   pageKey?: string;
   className?: string;
   style?: React.CSSProperties;
+  format?: "auto" | "horizontal" | "rectangle" | "vertical";
+  fullWidthResponsive?: boolean;
+  reservedHeight?: number;
+  eager?: boolean;
 }
 
 /**
@@ -15,7 +19,17 @@ interface GoogleAdProps {
  * renders Google AdSense, custom HTML, or nothing. Layout-safe with min-height
  * to prevent CLS, lazy-loaded via IntersectionObserver when enabled.
  */
-export function GoogleAd({ placement, position, pageKey, className = "", style }: GoogleAdProps) {
+export function GoogleAd({
+  placement,
+  position,
+  pageKey,
+  className = "",
+  style,
+  format,
+  fullWidthResponsive,
+  reservedHeight,
+  eager = false,
+}: GoogleAdProps) {
   const allowed = useAdsAllowed(pageKey);
   const { data: settings } = useAdsenseSettings();
   const { data: units } = useAdUnits();
@@ -56,7 +70,7 @@ export function GoogleAd({ placement, position, pageKey, className = "", style }
       }
     };
 
-    if (settings?.lazy_load_enabled) {
+    if (settings?.lazy_load_enabled && !eager) {
       const io = new IntersectionObserver(
         (entries) => {
           entries.forEach((e) => {
@@ -72,7 +86,7 @@ export function GoogleAd({ placement, position, pageKey, className = "", style }
       return () => io.disconnect();
     }
     fire();
-  }, [allowed, unit, settings?.lazy_load_enabled]);
+  }, [allowed, eager, unit, settings?.lazy_load_enabled]);
 
   if (!allowed || !unit) return null;
 
@@ -81,7 +95,9 @@ export function GoogleAd({ placement, position, pageKey, className = "", style }
   const hasAdsenseCreative = Boolean(unit.ad_slot_id?.trim() && client.trim());
   if (!hasCustomCreative && !hasAdsenseCreative) return null;
 
-  const minH = unit.min_height || (unit.ad_type === "sticky" ? 90 : 120);
+  const minH = reservedHeight ?? unit.min_height ?? (unit.ad_type === "sticky" ? 90 : 120);
+  const adFormat = format || unit.ad_format || "auto";
+  const isFullWidthResponsive = fullWidthResponsive ?? unit.full_width_responsive;
 
   const trackClick = () => {
     try {
@@ -114,11 +130,11 @@ export function GoogleAd({ placement, position, pageKey, className = "", style }
       ) : hasAdsenseCreative ? (
         <ins
           className="adsbygoogle"
-          style={{ display: "block" }}
+          style={{ display: "block", width: "100%", height: "100%" }}
           data-ad-client={client}
           data-ad-slot={unit.ad_slot_id}
-          data-ad-format={unit.ad_format || "auto"}
-          data-full-width-responsive={unit.full_width_responsive ? "true" : "false"}
+          data-ad-format={adFormat}
+          data-full-width-responsive={isFullWidthResponsive ? "true" : "false"}
         />
       ) : null}
     </div>

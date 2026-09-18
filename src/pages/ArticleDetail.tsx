@@ -1,5 +1,5 @@
 import { useParams, Link, Navigate, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Calendar, Tag, ArrowUp, Share2, Bookmark, ChevronDown, Eye, Clock, Link2, Play, Pause, List, Send, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,6 @@ import { DeferUntilVisible } from "@/components/DeferUntilVisible";
 import { articles as staticArticles } from "@/data/articles";
 import { useArticleSidebarArticles, useDbArticle } from "@/hooks/useArticlesData";
 import { useImportantExams } from "@/hooks/useExamsData";
-import { useAds } from "@/hooks/useAds";
 import { AuthorByline } from "@/components/AuthorByline";
 import { useAuth } from "@/hooks/useAuth";
 import ReactMarkdown from "react-markdown";
@@ -31,7 +30,6 @@ import { InstitutionLogo } from "@/components/InstitutionLogo";
 
 // Heavy below-the-fold components - lazy loaded for faster initial paint
 const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(m => ({ default: m.AlsoCheckSection })), "AlsoCheckSection");
-const DynamicAdBanner = lazyRetry(() => import("@/components/DynamicAdBanner").then(m => ({ default: m.DynamicAdBanner })), "DynamicAdBanner");
 const GoogleAd = lazyRetry(() => import("@/components/ads/GoogleAd").then(m => ({ default: m.GoogleAd })), "GoogleAd");
 const FAQSection = lazyRetry(() => import("@/components/FAQSection").then(m => ({ default: m.FAQSection })), "FAQSection");
 const ArticleLinkedResources = lazyRetry(() => import("@/components/detail/ArticleLinkedResources").then(m => ({ default: m.ArticleLinkedResources })), "ArticleLinkedResources");
@@ -56,15 +54,66 @@ function normalizeSlug(s: string) {
   return s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-function ArticleSidebarAd({ slug }: { slug: string }) {
-  const { data: managedAd, isLoading } = useAds({ page: "articles", itemSlug: slug, position: "sidebar-top" });
-  if (isLoading) return <div className="min-h-[250px] animate-pulse rounded-lg bg-muted" aria-hidden="true" />;
-  if (managedAd) return <DynamicAdBanner position="sidebar-top" page="articles" itemSlug={slug} />;
+function splitAtEditorialBoundary(content: string, richHtml: boolean) {
+  if (!content.trim()) return [content, ""] as const;
+  const candidates: number[] = [];
+  const pattern = richHtml ? /<h[23]\b[^>]*>|<\/p>/gi : /\n(?=#{2,3}\s)|\n\s*\n/g;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(content))) candidates.push(richHtml && match[0].toLowerCase() === "</p>" ? pattern.lastIndex : match.index);
+  const useful = candidates.filter((index) => index > content.length * 0.28 && index < content.length * 0.72);
+  const splitIndex = useful.sort((a, b) => Math.abs(a - content.length / 2) - Math.abs(b - content.length / 2))[0];
+  if (!splitIndex) return [content, ""] as const;
+  return [content.slice(0, splitIndex), content.slice(splitIndex)] as const;
+}
+
+function ArticleLeaderboardAd({ position, eager = false }: { position: "top" | "middle"; eager?: boolean }) {
   return (
-    <section className="min-h-[250px] overflow-hidden rounded-lg border border-border bg-card p-2" aria-label="Advertisement">
-      <p className="pb-1 text-center text-[10px] font-medium uppercase text-muted-foreground">Advertisement</p>
-      <GoogleAd placement="article" position="top" pageKey="article" className="min-h-[220px]" />
+    <section className="my-3 overflow-hidden sm:my-4" aria-label="Advertisement">
+      <p className="mb-1 text-center text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Advertisement</p>
+      <GoogleAd
+        placement="article"
+        position={position}
+        pageKey="article"
+        format="horizontal"
+        fullWidthResponsive={false}
+        reservedHeight={50}
+        eager={eager}
+        className="mx-auto h-[50px] w-full max-w-[320px] sm:h-[90px] sm:max-w-[728px]"
+      />
     </section>
+  );
+}
+
+function ArticleSidebarAd({ slug }: { slug: string }) {
+  return (
+    <section className="min-h-[280px] overflow-hidden rounded-lg border border-border bg-card p-2" aria-label="Advertisement" data-article={slug}>
+      <p className="pb-1 text-center text-[10px] font-medium uppercase text-muted-foreground">Advertisement</p>
+      <GoogleAd
+        placement="article"
+        position="sidebar"
+        pageKey="article"
+        format="rectangle"
+        fullWidthResponsive={false}
+        reservedHeight={250}
+        className="mx-auto h-[250px] w-full max-w-[336px]"
+      />
+    </section>
+  );
+}
+
+function ArticleMarkdown({ content }: { content: string }) {
+  if (!content.trim()) return null;
+  return (
+    <div className="article-prose article-prose--news max-w-none">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          h2: ({ children, ...props }) => <h2 id={slugifyHeading(String(children))} {...props}>{children}</h2>,
+          h3: ({ children, ...props }) => <h3 id={slugifyHeading(String(children))} {...props}>{children}</h3>,
+          table: ({ children, ...props }) => <div className="table-wrap"><table {...props}>{children}</table></div>,
+        }}
+      >{content}</ReactMarkdown>
+    </div>
   );
 }
 
@@ -143,29 +192,58 @@ export default function ArticleDetail() {
   const [isListening, setIsListening] = useState(false);
   const [saved, setSaved] = useState(false);
   const articleUsesRichHtml = containsRichArticleHtml(article?.content);
+  const articleCanonical = article ? absoluteSiteUrl(`/news/${article.slug}`) : undefined;
+  const organizationId = `${absoluteSiteUrl("/")}#organization`;
   useSEO({
     title: article ? article.title : "Article",
     description: article?.excerpt || "Read the latest education and career articles.",
     canonical: article ? `/news/${article.slug}` : undefined,
     ogImage: article?.image,
     ogType: "article",
-    jsonLd: article ? {
+    jsonLd: article && articleCanonical ? {
       "@context": "https://schema.org",
-      "@type": "NewsArticle",
-      headline: article.title,
-      description: article.excerpt || undefined,
-      image: article.image ? [absoluteCanonical(article.image)] : undefined,
-      datePublished: dbArticle?.created_at || undefined,
-      dateModified: dbArticle?.updated_at || dbArticle?.created_at || undefined,
-      author: { "@type": "Person", name: article.author || "DekhoCampus" },
-      publisher: {
-        "@type": "Organization",
-        name: "DekhoCampus",
-        logo: { "@type": "ImageObject", url: absoluteSiteUrl("/logo.png") },
-      },
-      mainEntityOfPage: absoluteSiteUrl(`/news/${article.slug}`),
-      articleSection: article.category || undefined,
-      keywords: article.tags?.length ? article.tags.join(", ") : undefined,
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": organizationId,
+          name: "DekhoCampus",
+          url: absoluteSiteUrl("/"),
+          logo: { "@type": "ImageObject", url: absoluteSiteUrl("/logo.png") },
+        },
+        {
+          "@type": "WebPage",
+          "@id": `${articleCanonical}#webpage`,
+          url: articleCanonical,
+          name: article.title,
+          description: article.excerpt || undefined,
+          breadcrumb: { "@id": `${articleCanonical}#breadcrumb` },
+          datePublished: dbArticle?.created_at || undefined,
+          dateModified: dbArticle?.updated_at || dbArticle?.created_at || undefined,
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${articleCanonical}#breadcrumb`,
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: absoluteSiteUrl("/") },
+            { "@type": "ListItem", position: 2, name: "News", item: absoluteSiteUrl("/news") },
+            { "@type": "ListItem", position: 3, name: article.title, item: articleCanonical },
+          ],
+        },
+        {
+          "@type": "NewsArticle",
+          "@id": `${articleCanonical}#article`,
+          headline: article.title,
+          description: article.excerpt || undefined,
+          image: article.image ? [absoluteCanonical(article.image)] : undefined,
+          datePublished: dbArticle?.created_at || undefined,
+          dateModified: dbArticle?.updated_at || dbArticle?.created_at || undefined,
+          author: { "@type": article.author?.toLowerCase().includes("dekhocampus") ? "Organization" : "Person", name: article.author || "DekhoCampus" },
+          publisher: { "@id": organizationId },
+          mainEntityOfPage: { "@id": `${articleCanonical}#webpage` },
+          articleSection: article.category || undefined,
+          keywords: article.tags?.length ? article.tags.join(", ") : undefined,
+        },
+      ],
     } : undefined,
   });
 
@@ -306,6 +384,16 @@ export default function ArticleDetail() {
     if (last < html.length) segs.push({ type: "html", value: html.slice(last) });
     return segs;
   }, [article?.content, articleUsesRichHtml]);
+  const displayContentSegments = useMemo(() => {
+    if (!contentSegments?.length) return contentSegments;
+    if (contentSegments.length !== 1 || contentSegments[0].type !== "html") return contentSegments;
+    const [before, after] = splitAtEditorialBoundary(contentSegments[0].value, true);
+    return after ? [{ type: "html" as const, value: before }, { type: "html" as const, value: after }] : contentSegments;
+  }, [contentSegments]);
+  const markdownContentParts = useMemo(
+    () => splitAtEditorialBoundary(articleUsesRichHtml ? "" : article?.content || "", false),
+    [article?.content, articleUsesRichHtml],
+  );
   const htmlContent = useMemo(() => {
     if (!contentSegments) return article?.content || "";
     return contentSegments.filter((s) => s.type === "html").map((s: any) => s.value).join("");
@@ -423,7 +511,7 @@ export default function ArticleDetail() {
   return (
     <div className="min-h-screen bg-background">
       {/* Reading progress bar */}
-      <div className="fixed top-0 left-0 right-0 h-1 z-[60] bg-transparent">
+      <div className="fixed top-0 left-0 right-0 h-1 z-[80] bg-transparent">
         <div className="h-full bg-primary transition-[width] duration-150" style={{ width: `${progress}%` }} />
       </div>
 
@@ -448,6 +536,9 @@ export default function ArticleDetail() {
       </div>
 
       <main className="pb-28 sm:pb-16">
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6">
+          <ArticleLeaderboardAd position="top" eager />
+        </div>
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 mt-4 sm:mt-6 relative">
           <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
             <article className="lg:col-span-8 min-w-0">
@@ -463,6 +554,8 @@ export default function ArticleDetail() {
                     className="h-full w-full object-cover object-center"
                     loading="eager"
                     decoding="async"
+                    fetchPriority="high"
+                    sizes="(min-width: 1024px) 66vw, 100vw"
                   />
                 </div>
               </figure>
@@ -523,6 +616,11 @@ export default function ArticleDetail() {
                 </button>
               </div>
 
+              <div className="-mt-3 mb-6 flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border pb-4 text-[11px] text-muted-foreground sm:text-xs">
+                <span>Reviewed under the <Link to="/legal/editorial-policy" className="font-semibold text-primary hover:underline">DekhoCampus Editorial Policy</Link></span>
+                <span>Updated {dbArticle?.updated_at ? new Date(dbArticle.updated_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : article.publishedAt}</span>
+              </div>
+
               <div className="mb-6">
                 <button
                   type="button"
@@ -542,30 +640,33 @@ export default function ArticleDetail() {
               {/* Body - explicitly left-aligned, tightened 2026 scale */}
               <div className="space-y-5">
                 {articleUsesRichHtml ? (
-                  contentSegments ? (
+                  displayContentSegments ? (
                     <>
-                      {contentSegments.map((seg, i) =>
-                        seg.type === "html" ? (
-                          <RichText key={i} html={seg.value} className="article-prose article-prose--news max-w-none" />
-                        ) : (
-                          <DocumentViewer key={i} title={seg.title} images={seg.images} />
-                        )
-                      )}
+                      {displayContentSegments.map((seg, i) => (
+                        <Fragment key={`${seg.type}-${i}`}>
+                          {seg.type === "html" ? (
+                            <RichText html={seg.value} className="article-prose article-prose--news max-w-none" />
+                          ) : (
+                            <DocumentViewer title={seg.title} images={seg.images} />
+                          )}
+                          {i === Math.max(0, Math.ceil(displayContentSegments.length / 2) - 1) && (
+                            <ArticleLeaderboardAd position="middle" />
+                          )}
+                        </Fragment>
+                      ))}
                     </>
                   ) : (
-                    <RichText html={htmlContent} className="article-prose article-prose--news max-w-none" />
+                    <>
+                      <RichText html={htmlContent} className="article-prose article-prose--news max-w-none" />
+                      <ArticleLeaderboardAd position="middle" />
+                    </>
                   )
                 ) : (
-                  <div className="article-prose article-prose--news max-w-none">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        h2: ({ children, ...props }) => <h2 id={slugifyHeading(String(children))} {...props}>{children}</h2>,
-                        h3: ({ children, ...props }) => <h3 id={slugifyHeading(String(children))} {...props}>{children}</h3>,
-                        table: ({ children, ...props }) => <div className="table-wrap"><table {...props}>{children}</table></div>,
-                      }}
-                    >{article.content}</ReactMarkdown>
-                  </div>
+                  <>
+                    <ArticleMarkdown content={markdownContentParts[0]} />
+                    <ArticleLeaderboardAd position="middle" />
+                    <ArticleMarkdown content={markdownContentParts[1]} />
+                  </>
                 )}
               </div>
 
@@ -578,13 +679,6 @@ export default function ArticleDetail() {
               {article.tags.length > 0 && (
                 <ArticleTagCloud tags={article.tags} />
               )}
-
-              <DeferUntilVisible minHeight={120}>
-                <div className="mt-8">
-                  <DynamicAdBanner variant="horizontal" position="mid-page" page="articles" itemSlug={cleanSlug} />
-                </div>
-              </DeferUntilVisible>
-
 
               {/* Banner lead form before recommendations */}
               <div className="mt-8">
@@ -624,14 +718,6 @@ export default function ArticleDetail() {
             <aside className="hidden space-y-5 lg:col-span-4 lg:block">
               <ArticleSidebarAd slug={cleanSlug} />
 
-              <LeadCaptureForm
-                variant="article-sidebar"
-                title="Get education updates"
-                subtitle="Admission, counselling and exam alerts by SMS and email."
-                source={`article_sidebar_${article.slug}`}
-                interestedCollegeSlug={article.tags.find((tag) => tag.includes("college-"))}
-              />
-
               <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
@@ -651,6 +737,16 @@ export default function ArticleDetail() {
               <SidebarLinkModule title="Latest Articles" items={latestSidebarArticles} moreHref="/news" moreLabel="View all articles" />
               <SidebarLinkModule title="Admission Alerts 2027" items={admissionAlerts} moreHref="/news?category=Admissions" moreLabel="View admission updates" />
               <SidebarLinkModule title="Important Exams" items={importantExamLinks} moreHref="/exams" moreLabel="Explore all exams" />
+
+              <div className="sticky top-[7.5rem]">
+                <LeadCaptureForm
+                  variant="article-sidebar"
+                  title="Get education updates"
+                  subtitle="Admission, counselling and exam alerts by SMS and email."
+                  source={`article_sidebar_${article.slug}`}
+                  interestedCollegeSlug={article.tags.find((tag) => tag.includes("college-"))}
+                />
+              </div>
             </aside>
           </div>
 
@@ -774,8 +870,7 @@ export default function ArticleDetail() {
 
 
 
-      <DeferUntilVisible minHeight={200}>
-        <div className="container max-w-4xl"><GoogleAd placement="article" position="after-content" pageKey="article" className="my-6" /></div>
+      <DeferUntilVisible minHeight={120}>
         <AlsoCheckSection />
       </DeferUntilVisible>
       <Footer />

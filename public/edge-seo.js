@@ -69,19 +69,19 @@ function listingMetadata(url, pathname) {
   if (pathname === "/colleges") {
     const subject = queryValue(url, "group") || queryValue(url, "stream") || queryValue(url, "type") || queryValue(url, "approval") || "Top";
     const place = queryValue(url, "city") || queryValue(url, "state") || "India";
-    const title = `${subject} Colleges in ${place} 2026 - Fees, Admissions & Rankings | DekhoCampus`;
-    return { title, description: `Explore ${subject.toLowerCase()} colleges in ${place}. Compare fees, courses, placements, rankings and 2026 admission details.` };
+    const title = `${subject} Colleges in ${place} 2027 - Fees, Admissions & Rankings | DekhoCampus`;
+    return { title, description: `Explore ${subject.toLowerCase()} colleges in ${place}. Compare fees, courses, placements, rankings and 2027 admission details.` };
   }
   if (pathname === "/courses") {
     const subject = queryValue(url, "group") || queryValue(url, "specialization") || queryValue(url, "stream") || "Top Courses";
     const mode = queryValue(url, "mode");
-    const title = `${subject}${mode ? ` ${mode}` : ""} 2026 - Eligibility, Fees & Colleges | DekhoCampus`;
+    const title = `${subject}${mode ? ` ${mode}` : ""} 2027 - Eligibility, Fees & Colleges | DekhoCampus`;
     return { title, description: `Explore ${subject} courses${mode ? ` in ${mode} mode` : ""}. Compare eligibility, duration, fees, specializations and top colleges.` };
   }
   const subject = queryValue(url, "group") || queryValue(url, "stream") || queryValue(url, "category") || "Entrance Exams";
   const level = queryValue(url, "level");
-  const title = `${subject}${level ? ` ${level}` : ""} Exams 2026 - Dates, Eligibility & Syllabus | DekhoCampus`;
-  return { title, description: `Explore ${subject} exams${level ? ` for ${level} level` : ""}, including 2026 dates, eligibility, applications, syllabus and preparation resources.` };
+  const title = `${subject}${level ? ` ${level}` : ""} Exams 2027 - Dates, Eligibility & Syllabus | DekhoCampus`;
+  return { title, description: `Explore ${subject} exams${level ? ` for ${level} level` : ""}, including 2027 dates, eligibility, applications, syllabus and preparation resources.` };
 }
 
 function detailMetadata(pathname) {
@@ -150,10 +150,26 @@ function articlePlainText(value) {
     .trim();
 }
 
+function articlePrerenderBlocks(value) {
+  const safe = String(value || "").replace(/<(script|style|iframe|object|embed|form)\b[\s\S]*?<\/\1>/gi, " ");
+  const blocks = [];
+  const pattern = /<(h2|h3|p|li)\b[^>]*>([\s\S]*?)<\/\1>/gi;
+  let match;
+  while ((match = pattern.exec(safe)) && blocks.length < 80) {
+    const text = articlePlainText(match[2]);
+    if (!text) continue;
+    const tag = match[1].toLowerCase() === "li" ? "p" : match[1].toLowerCase();
+    blocks.push(`<${tag}>${escapeHtml(text)}</${tag}>`);
+  }
+  if (blocks.length) return blocks.join("");
+  const fallback = articlePlainText(safe);
+  return fallback ? `<p>${escapeHtml(fallback)}</p>` : "";
+}
+
 export function articleEdgeSeo(article, url) {
   const canonical = `${SITE_URL}${cleanPath(url.pathname)}`;
   const title = String(article.meta_title || article.title || "Education News").trim();
-  const description = String(article.meta_description || article.description || "").trim();
+  const description = articlePlainText(article.meta_description || article.description || "");
   const image = String(article.featured_image || "").trim();
   const publishedAt = article.published_at || article.created_at;
   const modifiedAt = article.updated_at || publishedAt;
@@ -165,17 +181,48 @@ export function articleEdgeSeo(article, url) {
     title: title.includes("DekhoCampus") ? title : `${title} | DekhoCampus`,
     structuredData: {
       "@context": "https://schema.org",
-      "@type": "NewsArticle",
-      headline: String(article.title || title),
-      description,
-      ...(image ? { image: [image] } : {}),
-      ...(publishedAt ? { datePublished: publishedAt } : {}),
-      ...(modifiedAt ? { dateModified: modifiedAt } : {}),
-      author: { "@type": "Organization", name: article.author || "DekhoCampus Editorial", url: `${SITE_URL}/about-us` },
-      publisher: { "@type": "Organization", name: "DekhoCampus", url: SITE_URL },
-      mainEntityOfPage: canonical,
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": `${SITE_URL}/#organization`,
+          name: "DekhoCampus",
+          url: SITE_URL,
+          logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
+        },
+        {
+          "@type": "WebPage",
+          "@id": `${canonical}#webpage`,
+          url: canonical,
+          name: String(article.title || title),
+          description,
+          breadcrumb: { "@id": `${canonical}#breadcrumb` },
+          ...(publishedAt ? { datePublished: publishedAt } : {}),
+          ...(modifiedAt ? { dateModified: modifiedAt } : {}),
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${canonical}#breadcrumb`,
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: "News", item: `${SITE_URL}/news` },
+            { "@type": "ListItem", position: 3, name: String(article.title || title), item: canonical },
+          ],
+        },
+        {
+          "@type": "NewsArticle",
+          "@id": `${canonical}#article`,
+          headline: String(article.title || title),
+          description,
+          ...(image ? { image: [image] } : {}),
+          ...(publishedAt ? { datePublished: publishedAt } : {}),
+          ...(modifiedAt ? { dateModified: modifiedAt } : {}),
+          author: { "@type": "Organization", name: article.author || "DekhoCampus Editorial", url: `${SITE_URL}/about-us` },
+          publisher: { "@id": `${SITE_URL}/#organization` },
+          mainEntityOfPage: { "@id": `${canonical}#webpage` },
+        },
+      ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827"><h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}<p>${escapeHtml(articlePlainText(article.content))}</p></article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827"><h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(article.content)}</article>`,
   };
 }
 

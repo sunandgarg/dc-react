@@ -123,8 +123,11 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(productionSetup, /BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY/);
   assert.match(productionSetup, /source_type: "competitor", is_active: false/);
   assert.match(productionSetup, /ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY/);
-  assert.match(productionSetup, /placement: "header", position: "top", minHeight: 90, priority: 100, adFormat: "horizontal"/);
-  assert.match(productionSetup, /placement: "article", position: "top"/);
+  assert.match(productionSetup, /placement: "header", position: "top", minHeight: 50, priority: 100, adFormat: "horizontal"/);
+  assert.match(productionSetup, /placement: "article", position: "top", minHeight: 50/);
+  assert.match(productionSetup, /placement: "article", position: "middle", minHeight: 50/);
+  assert.match(productionSetup, /placement: "article", position: "sidebar", minHeight: 250/);
+  assert.match(productionSetup, /auto_ads_enabled: false/);
   assert.doesNotMatch(productionSetup, /adsenseUnitsDisabled/);
 
   const prompt = articlePrompt(

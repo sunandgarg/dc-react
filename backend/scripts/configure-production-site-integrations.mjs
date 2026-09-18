@@ -14,7 +14,7 @@ const integrations = [
 const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
-const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v2";
+const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v3";
 const CONTENT_COPY_PROTECTION_MIGRATION_KEY = "content_copy_protection_v1";
 
 try {
@@ -38,6 +38,7 @@ try {
   let eeatCadenceUpdated = 0;
   let competitorSourcesActivated = 0;
   let adsenseUnitsSeeded = 0;
+  let autoAdsDisabled = 0;
   let copyProtectionUpdated = 0;
   if (!editorialPolicyMigration) {
     const updated = await prisma.blog_auto_agent_settings.updateMany({
@@ -135,6 +136,11 @@ try {
     where: { key: ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY },
   });
   if (!adsensePlacementMigration) {
+    const disabled = await prisma.adsense_settings.updateMany({
+      where: { auto_ads_enabled: true },
+      data: { auto_ads_enabled: false, updated_at: new Date() },
+    });
+    autoAdsDisabled = disabled.count;
     const sourceUnits = await prisma.ad_units.findMany({
       where: { ad_slot_id: { not: null } },
       orderBy: [{ is_active: "desc" }, { priority: "desc" }, { updated_at: "desc" }],
@@ -142,8 +148,10 @@ try {
     const sourceUnit = sourceUnits.find((unit) => unit.ad_slot_id?.trim());
     if (sourceUnit) {
       const requestedPlacements = [
-        { name: "DekhoCampus Sitewide Header", placement: "header", position: "top", minHeight: 90, priority: 100, adFormat: "horizontal" },
-        { name: "DekhoCampus Article Rail", placement: "article", position: "top", minHeight: 220, priority: 90 },
+        { name: "DekhoCampus Sitewide Header", placement: "header", position: "top", minHeight: 50, priority: 100, adFormat: "horizontal" },
+        { name: "DekhoCampus Article Leaderboard", placement: "article", position: "top", minHeight: 50, priority: 95, adFormat: "horizontal" },
+        { name: "DekhoCampus Article Midpoint", placement: "article", position: "middle", minHeight: 50, priority: 90, adFormat: "horizontal" },
+        { name: "DekhoCampus Article Sidebar", placement: "article", position: "sidebar", minHeight: 250, priority: 85, adFormat: "rectangle" },
       ];
       for (const target of requestedPlacements) {
         const existing = await prisma.ad_units.findFirst({
@@ -152,12 +160,12 @@ try {
         });
         const data = {
           name: target.name,
-          ad_type: sourceUnit.ad_type || "display",
+          ad_type: "display",
           placement: target.placement,
           position: target.position,
           ad_slot_id: sourceUnit.ad_slot_id,
           ad_format: target.adFormat || sourceUnit.ad_format || "auto",
-          full_width_responsive: true,
+          full_width_responsive: false,
           priority: target.priority,
           is_active: true,
           target_devices: ["mobile", "desktop", "tablet"],
@@ -179,7 +187,7 @@ try {
       data: {
         key: ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY,
         value: JSON.stringify({
-          placements: ["header:top", "article:top"],
+          placements: ["header:top", "article:top", "article:middle", "article:sidebar"],
           seeded_from_existing_unit: Boolean(sourceUnit),
           applied_at: new Date().toISOString(),
         }),
@@ -274,6 +282,7 @@ try {
     competitor_sources_activated: competitorSourcesActivated,
     adsense_requested_placements_migrated: Boolean(adsensePlacementMigration) || adsenseUnitsSeeded > 0,
     adsense_units_seeded: adsenseUnitsSeeded,
+    adsense_auto_ads_disabled: autoAdsDisabled,
     content_copy_protection_enabled: Boolean(copyProtectionMigration) || copyProtectionUpdated > 0,
     ses_provider_configured: true,
     ses_credential_source: "iam_runtime",

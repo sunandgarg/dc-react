@@ -18,6 +18,10 @@ describe("Index page layout (static source assertions)", () => {
   const examCalendarSrc = readFileSync(resolve(process.cwd(), "src/pages/ExamCalendar.tsx"), "utf8");
   const announcementSrc = readFileSync(resolve(process.cwd(), "src/components/AnnouncementBar.tsx"), "utf8");
   const globalAdsSrc = readFileSync(resolve(process.cwd(), "src/components/GlobalInternalAds.tsx"), "utf8");
+  const adsenseLoaderSrc = readFileSync(resolve(process.cwd(), "src/components/ads/AdsenseLoader.tsx"), "utf8");
+  const articleDetailSrc = readFileSync(resolve(process.cwd(), "src/pages/ArticleDetail.tsx"), "utf8");
+  const sitemapGeneratorSrc = readFileSync(resolve(process.cwd(), "scripts/generate-sitemap.ts"), "utf8");
+  const documentSrc = readFileSync(resolve(process.cwd(), "index.html"), "utf8");
   const allExamsSrc = readFileSync(resolve(process.cwd(), "src/pages/AllExams.tsx"), "utf8");
   const seoSlugsSrc = readFileSync(resolve(process.cwd(), "src/lib/seoSlugs.ts"), "utf8");
 
@@ -69,6 +73,8 @@ describe("Index page layout (static source assertions)", () => {
   it("uses a persistent black announcement bar without dismiss or multicolour controls", () => {
     expect(announcementSrc).toMatch(/bg-black/);
     expect(announcementSrc).toMatch(/text-white/);
+    expect(announcementSrc).toMatch(/h-11 min-h-11/);
+    expect(navbarSrc).toMatch(/sticky top-0 z-\[70\]/);
     expect(announcementSrc).not.toMatch(/DISMISSED_KEY|Close announcements|bg-blue-600|bg-orange-500/);
   });
 
@@ -77,6 +83,41 @@ describe("Index page layout (static source assertions)", () => {
     expect(globalAdsSrc).toMatch(/<GoogleAd/);
     expect(globalAdsSrc).toMatch(/placement="header"/);
     expect(globalAdsSrc).toMatch(/position="top"/);
+    expect(globalAdsSrc).toMatch(/format="horizontal"/);
+    expect(globalAdsSrc).toMatch(/fullWidthResponsive=\{false\}/);
+    expect(globalAdsSrc).toMatch(/max-w-\[320px\][\s\S]*sm:max-w-\[728px\]/);
+  });
+
+  it("uses managed rectangular article ads and moves the sticky lead below Important Exams", () => {
+    expect(articleDetailSrc).toMatch(/function ArticleLeaderboardAd[\s\S]*format="horizontal"/);
+    expect(articleDetailSrc).toMatch(/<ArticleLeaderboardAd position="top" eager/);
+    expect(articleDetailSrc).toMatch(/<ArticleLeaderboardAd position="middle"/);
+    expect(articleDetailSrc).toMatch(/position="sidebar"[\s\S]*format="rectangle"/);
+    expect(articleDetailSrc).toMatch(/max-w-\[320px\][\s\S]*sm:max-w-\[728px\]/);
+    expect(articleDetailSrc.indexOf('title="Important Exams"')).toBeLessThan(
+      articleDetailSrc.indexOf('className="sticky top-[7.5rem]"'),
+    );
+    expect(adsenseLoaderSrc).toMatch(/!pathname\.startsWith\("\/news\/"\)/);
+  });
+
+  it("keeps SEO fallback HTML singly headed and free of deprecated sitemap hints", () => {
+    expect(documentSrc).toMatch(/"@type": "WebPage"/);
+    expect(documentSrc).not.toMatch(/<noscript>[\s\S]*?<h1>/);
+    const xmlBuilder = sitemapGeneratorSrc.slice(
+      sitemapGeneratorSrc.indexOf("function xmlFor"),
+      sitemapGeneratorSrc.indexOf("function sitemapIndexXml"),
+    );
+    expect(xmlBuilder).not.toMatch(/<changefreq>|<priority>/);
+  });
+
+  it("publishes 2027 ranking and exam labels in the footer", () => {
+    const popularLinks = footerSrc.slice(
+      footerSrc.indexOf("const popularFooterGroups"),
+      footerSrc.indexOf("export function Footer"),
+    );
+    expect(popularLinks).toMatch(/Top Engineering Colleges in India 2027/);
+    expect(popularLinks).toMatch(/CAT 2027/);
+    expect(popularLinks).not.toMatch(/2026/);
   });
 
   it("removes the loaded-college counter and canonicalizes Delhi filters to Delhi NCR", () => {

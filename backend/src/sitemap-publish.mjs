@@ -173,8 +173,6 @@ function sitemapXml(entries) {
       "  <url>",
       `    <loc>${escapeXml(`${PUBLISH_TARGET}${entry.path}`)}</loc>`,
       entry.lastmod ? `    <lastmod>${entry.lastmod}</lastmod>` : null,
-      `    <changefreq>${entry.changefreq || "weekly"}</changefreq>`,
-      `    <priority>${entry.priority || "0.6"}</priority>`,
       ...(entry.images || []).map((location) => `    <image:image><image:loc>${escapeXml(location)}</image:loc></image:image>`),
       "  </url>",
     ].filter(Boolean).join("\n")),

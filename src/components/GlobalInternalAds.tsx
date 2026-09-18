@@ -90,12 +90,16 @@ export function GlobalInternalAds({ area }: { area: "top" | "bottom" }) {
     return createPortal(
       <section aria-label="Sponsored content">
         <DynamicAdBanner position="leaderboard" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />
-        <div className="container space-y-2 py-2 empty:hidden">
+        <div className="container space-y-1 py-1.5 empty:hidden">
           <GoogleAd
             placement="header"
             position="top"
             pageKey={context.page || "sitewide"}
-            className="mx-auto min-h-[90px] max-w-5xl"
+            format="horizontal"
+            fullWidthResponsive={false}
+            reservedHeight={50}
+            eager
+            className="mx-auto h-[50px] w-full max-w-[320px] sm:h-[90px] sm:max-w-[728px]"
           />
           <DynamicAdBanner position="top" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />
         </div>

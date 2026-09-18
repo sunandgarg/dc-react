@@ -6,7 +6,7 @@ describe("Cloudflare edge SEO", () => {
     const seo = edgeSeoFor("https://dekhocampus.com/colleges?stream=Management&state=Delhi+NCR");
     expect(seo.indexable).toBe(true);
     expect(seo.canonical).toBe("https://dekhocampus.com/colleges?stream=Management&state=Delhi+NCR");
-    expect(seo.title).toContain("Management Colleges in Delhi NCR 2026");
+    expect(seo.title).toContain("Management Colleges in Delhi NCR 2027");
   });
 
   it("marks arbitrary search and private URLs noindex", () => {
@@ -47,7 +47,11 @@ describe("Cloudflare edge SEO", () => {
       created_at: "2026-09-07T00:00:00.000Z",
     }, url);
     const output = applyEdgeSeo('<html><head><title>Home</title></head><body><div id="root"><div id="dc-first-paint-shell"></div></div></body></html>', metadata);
+    expect(output).toContain('"@type":"Organization"');
+    expect(output).toContain('"@type":"WebPage"');
+    expect(output).toContain('"@type":"BreadcrumbList"');
     expect(output).toContain('"@type":"NewsArticle"');
+    expect(output).toContain("<h2>What changed</h2>");
     expect(output).toContain("What changed");
     expect(output).toContain("Useful details.");
     expect(output).not.toContain("alert(1)");

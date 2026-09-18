@@ -424,8 +424,6 @@ function xmlFor(entries: SitemapEntry[]) {
     "  <url>",
     `    <loc>${escapeXml(`${BASE_URL}${entry.path}`)}</loc>`,
     entry.lastmod ? `    <lastmod>${entry.lastmod}</lastmod>` : null,
-    entry.changefreq ? `    <changefreq>${entry.changefreq}</changefreq>` : null,
-    entry.priority ? `    <priority>${entry.priority}</priority>` : null,
     ...(entry.images || []).map((location) => `    <image:image><image:loc>${escapeXml(location)}</image:loc></image:image>`),
     "  </url>",
   ].filter(Boolean).join("\n"));

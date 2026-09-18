@@ -66,14 +66,14 @@ export function AnnouncementBar() {
   };
   return (
     <section
-      className="relative min-h-12 border-b border-neutral-800 bg-black text-white"
+      className="relative z-[72] h-11 min-h-11 border-b border-neutral-800 bg-black text-white"
       aria-label="Featured announcements"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <div className="container flex min-h-12 items-center gap-2 py-2 px-3 sm:gap-3">
+      <div className="container flex h-11 min-h-11 items-center gap-2 px-3 py-1 sm:gap-3">
         {ads.length > 1 && (
           <button
             type="button"
