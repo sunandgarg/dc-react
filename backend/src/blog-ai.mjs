@@ -17,7 +17,9 @@ const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
 const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
-const MAX_OPENAI_OUTPUT_TOKENS = 12_000;
+// GPT-5.4 Mini supports substantially larger outputs, but keep a conservative
+// application ceiling so long-form structured drafts cannot run unbounded.
+const MAX_OPENAI_OUTPUT_TOKENS = 48_000;
 const MAX_RESEARCH_SOURCES = 6;
 const MAX_RESEARCH_SIGNAL_CHARACTERS = 1_500;
 const MAX_TOPIC_PROMPT_FINGERPRINTS = 160;
@@ -933,6 +935,11 @@ export function nextOpenAiOutputBudget(current) {
   return Math.min(MAX_OPENAI_OUTPUT_TOKENS, Math.max(tokens + 1_000, Math.ceil(tokens * 1.5)));
 }
 
+export function resolveOpenAiArticleOutputBudget(targetWords) {
+  const words = Math.max(700, Math.min(2_200, Math.trunc(Number(targetWords) || 1_200)));
+  return Math.min(MAX_OPENAI_OUTPUT_TOKENS, Math.max(12_000, (words * 8) + 4_000));
+}
+
 export function parseOpenAiJsonPayload(payload) {
   const choice = payload?.choices?.[0];
   const refusal = choice?.message?.refusal;
@@ -1031,13 +1038,16 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
     const recoverable = ["OPENAI_RESPONSE_TRUNCATED", "OPENAI_EMPTY_RESPONSE", "OPENAI_INVALID_JSON"].includes(error?.code);
     const currentBudget = Math.max(256, Math.trunc(Number(options.maxOutputTokens || 0)));
     const truncationRetries = Math.max(0, Math.trunc(Number(options.truncationRetries || 0)));
-    const maxTruncationRetries = Math.min(3, Math.max(1, Math.trunc(Number(options.maxTruncationRetries || 1))));
+    const maxTruncationRetries = Math.min(3, Math.max(1, Math.trunc(Number(options.maxTruncationRetries || 2))));
     if (recoverable && truncationRetries < maxTruncationRetries && currentBudget < MAX_OPENAI_OUTPUT_TOKENS) {
       return openAiJson(prompt, feature, {
         ...options,
         maxOutputTokens: nextOpenAiOutputBudget(currentBudget),
         truncationRetries: truncationRetries + 1,
       });
+    }
+    if (error?.code === "OPENAI_RESPONSE_TRUNCATED") {
+      error.message = `OpenAI stopped before the structured response was complete after ${truncationRetries + 1} attempt(s), using an output budget of ${currentBudget} tokens`;
     }
     throw error;
   }
@@ -1098,7 +1108,8 @@ async function filterSemanticallyNovelTopics(candidates, existing, model, featur
     model,
     reasoningEffort: "low",
     thinkingLevel: "low",
-    maxOutputTokens: 1_600,
+    maxOutputTokens: 3_000,
+    maxTruncationRetries: 2,
     responseSchema: TOPIC_NOVELTY_SCHEMA,
     siteScope: normalizedScope,
   });
@@ -1661,7 +1672,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
     throw Object.assign(new Error(`Only ${independentEvidence.length} independent research source(s) were available; ${editorial.minimum_sources} are required by the editorial settings`), { status: 422, code: "INSUFFICIENT_EDITORIAL_SOURCES" });
   }
   const targetWords = resolveArticleWordTarget(topic, wordLimit);
-  const maxOutputTokens = Math.min(MAX_OPENAI_OUTPUT_TOKENS, Math.max(5_000, Math.trunc(targetWords * 6)));
+  const maxOutputTokens = resolveOpenAiArticleOutputBudget(targetWords);
   const fallbackTitle = typeof topic === "string" ? topic : topic?.title || topic?.headline || topic?.topic || "";
   let draft;
   let model = requestedModel || editorial.text_model;
@@ -1677,7 +1688,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
       maxOutputTokens,
       reasoningEffort: "low",
       thinkingLevel: "low",
-      maxTruncationRetries: 2,
+      maxTruncationRetries: 3,
       responseSchema: ARTICLE_RESPONSE_SCHEMA,
       siteScope: normalizedScope,
     });
@@ -2216,11 +2227,12 @@ export async function runBlogAgent(body = {}) {
         ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
         : "";
       const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
-      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} ${trendInstruction} Follow this discovery order: inspect Sarvgyan coverage gaps first, then Shiksha coverage gaps, then compare the full DekhoCampus fingerprint list. Existing DekhoCampus subject + intent fingerprints: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Competitors are discovery inputs only: never copy, cite, link, name, credit, paraphrase closely or preserve their structure. Verify dates, eligibility, fees, results and deadlines against official or primary evidence in the signals. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic on the same India calendar day. A subject covered on an earlier day is eligible only when a new dated development or materially different student decision exists. Each proposal needs one primary entity, one precise search intent, a non-empty unique value, a concrete impact reason and a dated or evergreen evidence signal. Each title must be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation. Never truncate a title for cover artwork.`, "blog-agent", {
+      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} ${trendInstruction} Follow this discovery order: inspect Sarvgyan coverage gaps first, then Shiksha coverage gaps, then compare the full DekhoCampus fingerprint list. Existing DekhoCampus subject + intent fingerprints: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Competitors are discovery inputs only: never copy, cite, link, name, credit, paraphrase closely or preserve their structure. Verify dates, eligibility, fees, results and deadlines against official or primary evidence in the signals. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic on the same India calendar day. A subject covered on an earlier day is eligible only when a new dated development or materially different student decision exists. Each proposal needs one primary entity, one precise search intent, a non-empty unique value, a concrete impact reason and a dated or evergreen evidence signal. Each title must be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation. Keep every non-title field concise, no more than 35 words, and return no more than six tags. Never truncate a title for cover artwork.`, "blog-agent", {
         model: settings.text_model,
-        reasoningEffort: "medium",
+        reasoningEffort: "none",
         thinkingLevel: "low",
-        maxOutputTokens: 1600,
+        maxOutputTokens: 4_000,
+        maxTruncationRetries: 3,
         siteScope: "dekhocampus",
         responseSchema: {
           type: "OBJECT",

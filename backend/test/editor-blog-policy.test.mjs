@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articlePrompt, articleRevisionPrompt, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articlePrompt, articleRevisionPrompt, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -206,12 +206,18 @@ test("converts provider-neutral schemas into strict OpenAI structured output", (
   });
 });
 
-test("detects incomplete OpenAI responses and bounds one recovery budget", () => {
+test("detects incomplete OpenAI responses and expands recovery budgets safely", () => {
   assert.throws(() => parseOpenAiJsonPayload({ choices: [{ finish_reason: "length", message: { content: '{"title":"unfinished' } }] }), (error) => error.code === "OPENAI_RESPONSE_TRUNCATED");
   assert.throws(() => parseOpenAiJsonPayload({ choices: [{ finish_reason: "stop", message: { content: "" } }] }), (error) => error.code === "OPENAI_EMPTY_RESPONSE");
   assert.equal(nextOpenAiOutputBudget(5_000), 7_500);
-  assert.equal(nextOpenAiOutputBudget(9_000), 12_000);
-  assert.equal(nextOpenAiOutputBudget(12_000), 12_000);
+  assert.equal(nextOpenAiOutputBudget(9_000), 13_500);
+  assert.equal(nextOpenAiOutputBudget(12_000), 18_000);
+  assert.equal(nextOpenAiOutputBudget(32_000), 48_000);
+  assert.equal(nextOpenAiOutputBudget(48_000), 48_000);
+  assert.equal(resolveOpenAiArticleOutputBudget(900), 12_000);
+  assert.equal(resolveOpenAiArticleOutputBudget(1_200), 13_600);
+  assert.equal(resolveOpenAiArticleOutputBudget(1_500), 16_000);
+  assert.equal(resolveOpenAiArticleOutputBudget(2_200), 21_600);
 });
 
 test("production article generation retries compact reviews and renders the validated draft slug", async () => {
@@ -224,9 +230,19 @@ test("production article generation retries compact reviews and renders the vali
   assert.match(reviewSource, /maxTruncationRetries: 2/);
   assert.match(reviewSource, /people-first trust review/);
   assert.match(reviewSource, /all four E-E-A-T dimensions/);
-  assert.match(finalizationSource, /maxTruncationRetries: 2/);
+  assert.match(finalizationSource, /maxTruncationRetries: 3/);
   assert.match(finalizationSource, /createBlogCover\(draft\.slug, draft\.title/);
   assert.doesNotMatch(finalizationSource, /createBlogCover\(slug, draft\.title/);
+});
+
+test("auto blog discovery uses a compact response with enough structured-output headroom", async () => {
+  const source = await readFile(new URL("../src/blog-ai.mjs", import.meta.url), "utf8");
+  const discoverySource = source.slice(source.indexOf("for (let round = 1"), source.indexOf("if (!topics.length)"));
+
+  assert.match(discoverySource, /reasoningEffort: "none"/);
+  assert.match(discoverySource, /maxOutputTokens: 4_000/);
+  assert.match(discoverySource, /maxTruncationRetries: 3/);
+  assert.match(discoverySource, /no more than 35 words/);
 });
 
 test("normalizes wrapped article payloads and always explains reviewer rejection", () => {
