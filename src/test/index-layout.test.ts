@@ -27,6 +27,7 @@ describe("Index page layout (static source assertions)", () => {
   const documentSrc = readFileSync(resolve(process.cwd(), "index.html"), "utf8");
   const allExamsSrc = readFileSync(resolve(process.cwd(), "src/pages/AllExams.tsx"), "utf8");
   const allCoursesSrc = readFileSync(resolve(process.cwd(), "src/pages/AllCourses.tsx"), "utf8");
+  const mobileFilterSheetSrc = readFileSync(resolve(process.cwd(), "src/components/MobileFilterSheet.tsx"), "utf8");
   const seoSlugsSrc = readFileSync(resolve(process.cwd(), "src/lib/seoSlugs.ts"), "utf8");
   const productionConfigSrc = readFileSync(resolve(process.cwd(), "backend/scripts/configure-production-site-integrations.mjs"), "utf8");
 
@@ -151,10 +152,27 @@ describe("Index page layout (static source assertions)", () => {
     expect(popularLinks).not.toMatch(/2026/);
   });
 
-  it("removes the loaded-college counter and canonicalizes Delhi filters to Delhi NCR", () => {
+  it("removes result totals from college, course, and exam filters", () => {
     expect(allCollegesSrc).not.toMatch(/loaded colleges/i);
+    expect(allCollegesSrc).not.toMatch(/resultCount/);
+    expect(allCoursesSrc).not.toMatch(/Showing[\s\S]*?courses/);
+    expect(allExamsSrc).not.toMatch(/Showing[\s\S]*?exams/);
+    expect(mobileFilterSheetSrc).not.toMatch(/resultCount|Show \$\{.*\} results/);
+    expect(mobileFilterSheetSrc).toMatch(/Apply Filters/);
+  });
+
+  it("canonicalizes Delhi filters to Delhi NCR", () => {
     expect(seoSlugsSrc).toMatch(/Colleges in Delhi NCR/);
     expect(seoSlugsSrc).not.toMatch(/\{ state: "Delhi" \}/);
+  });
+
+  it("uses a global 2.2-second announcement default with the full admin range", () => {
+    expect(announcementSrc).toMatch(/normalizeAnnouncementRotation\(rotationValue\)/);
+    expect(adminAdsSrc).toMatch(/max=\{MAX_ANNOUNCEMENT_ROTATION_SECONDS\}/);
+    expect(adminAdsSrc).toMatch(/step=\{0\.1\}/);
+    expect(adminAdsSrc).toMatch(/seconds \(0\.1-1000\)/);
+    expect(productionConfigSrc).toMatch(/ANNOUNCEMENT_ROTATION_2_2_MIGRATION_KEY/);
+    expect(productionConfigSrc).toMatch(/announcement_rotation_seconds: 2\.2/);
   });
 
   it("lets footer exam links prefill the live exam search", () => {

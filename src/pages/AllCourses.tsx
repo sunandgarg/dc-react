@@ -246,7 +246,6 @@ export default function AllCourses() {
           </aside>
 
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-muted-foreground mb-3">Showing <span className="font-semibold text-foreground">{filtered.length}</span> courses</p>
             <div className="grid min-h-[640px] content-start sm:grid-cols-2 xl:grid-cols-3 gap-3 content-visibility-auto">
               {isLoading ? (
                 Array.from({ length: 6 }).map((_, i) => <CourseCardSkeleton key={i} />)

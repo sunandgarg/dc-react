@@ -1,6 +1,6 @@
-export const DEFAULT_ANNOUNCEMENT_ROTATION_SECONDS = 3.5;
-export const MIN_ANNOUNCEMENT_ROTATION_SECONDS = 3.5;
-export const MAX_ANNOUNCEMENT_ROTATION_SECONDS = 60;
+export const DEFAULT_ANNOUNCEMENT_ROTATION_SECONDS = 2.2;
+export const MIN_ANNOUNCEMENT_ROTATION_SECONDS = 0.1;
+export const MAX_ANNOUNCEMENT_ROTATION_SECONDS = 1000;
 
 export function normalizeAnnouncementRotation(value: unknown): number {
   const parsed = Number(value);

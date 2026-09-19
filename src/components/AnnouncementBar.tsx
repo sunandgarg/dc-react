@@ -23,8 +23,11 @@ export function AnnouncementBar() {
     position: "announcement-bar",
     variant: "announcement",
   });
-  const { data: rotationValue = "3.5" } = useSiteIntegration("announcement_rotation_seconds");
+  const { data: rotationValue } = useSiteIntegration("announcement_rotation_seconds");
   const rotationSeconds = normalizeAnnouncementRotation(rotationValue);
+  const transitionDuration = reduceMotion
+    ? Math.min(0.08, rotationSeconds * 0.4)
+    : Math.min(0.32, Math.max(0.04, rotationSeconds * 0.15));
   const ads = configuredAds;
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -90,7 +93,7 @@ export function AnnouncementBar() {
               initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * 28 }}
               animate={{ opacity: 1, x: 0 }}
               exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -18 }}
-              transition={{ duration: reduceMotion ? 0.12 : 0.32, ease: "easeOut" }}
+              transition={{ duration: transitionDuration, ease: "easeOut" }}
               drag={ads.length > 1 ? "x" : false}
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.18}
@@ -106,7 +109,7 @@ export function AnnouncementBar() {
               className="flex min-w-0 touch-pan-y select-none items-center justify-center gap-2 cursor-grab sm:gap-3"
             >
               <div className="min-w-0">
-                <AnimatedWords text={activeAd.title} reduceMotion={Boolean(reduceMotion)} />
+                <AnimatedWords text={activeAd.title} reduceMotion={Boolean(reduceMotion) || rotationSeconds < 1} />
                 {activeAd.subtitle && (
                   <p className="hidden truncate text-xs text-white/65 md:block">{activeAd.subtitle}</p>
                 )}

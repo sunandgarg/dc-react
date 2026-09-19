@@ -6,15 +6,17 @@ import {
 } from "@/lib/announcementRotation";
 
 describe("announcement rotation", () => {
-  it("defaults to 3.5 seconds and preserves supported decimals", () => {
+  it("defaults to 2.2 seconds and preserves supported decimals", () => {
     expect(normalizeAnnouncementRotation(undefined)).toBe(DEFAULT_ANNOUNCEMENT_ROTATION_SECONDS);
-    expect(normalizeAnnouncementRotation("3.5")).toBe(3.5);
+    expect(normalizeAnnouncementRotation("2.2")).toBe(2.2);
     expect(normalizeAnnouncementRotation(8.26)).toBe(8.3);
   });
 
   it("keeps admin values within the supported range", () => {
-    expect(normalizeAnnouncementRotation(1)).toBe(3.5);
-    expect(normalizeAnnouncementRotation(90)).toBe(60);
+    expect(normalizeAnnouncementRotation(0.01)).toBe(0.1);
+    expect(normalizeAnnouncementRotation(0.1)).toBe(0.1);
+    expect(normalizeAnnouncementRotation(1000)).toBe(1000);
+    expect(normalizeAnnouncementRotation(1001)).toBe(1000);
   });
 
   it("moves in either direction and wraps around", () => {

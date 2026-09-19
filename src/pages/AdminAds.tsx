@@ -33,6 +33,7 @@ import { resetBootstrap } from "@/lib/bootstrap";
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
 import {
   DEFAULT_ANNOUNCEMENT_ROTATION_SECONDS,
+  MAX_ANNOUNCEMENT_ROTATION_SECONDS,
   MIN_ANNOUNCEMENT_ROTATION_SECONDS,
   normalizeAnnouncementRotation,
 } from "@/lib/announcementRotation";
@@ -357,13 +358,13 @@ export default function AdminAds() {
                 id="announcement-rotation"
                 type="number"
                 min={MIN_ANNOUNCEMENT_ROTATION_SECONDS}
-                max={60}
-                step={0.5}
+                max={MAX_ANNOUNCEMENT_ROTATION_SECONDS}
+                step={0.1}
                 value={rotationSeconds}
                 onChange={(event) => setRotationSeconds(Number(event.target.value))}
-                className="h-9 w-20 rounded-lg bg-white"
+                className="h-9 w-24 rounded-lg bg-white"
               />
-              <span className="text-xs text-muted-foreground">seconds</span>
+              <span className="text-xs text-muted-foreground">seconds (0.1-1000)</span>
             </div>
           </div>
           <Button variant="outline" onClick={() => void saveRotation()} disabled={savingRotation} className="h-9 gap-2 rounded-lg bg-white">

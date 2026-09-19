@@ -397,7 +397,7 @@ export default function AllColleges() {
       <Footer />
 
       <MobileBottomFilter activeCount={activeFilters.length} onOpen={() => setFilterOpen(true)} />
-        <MobileFilterSheet filters={filterConfigs} activeCount={activeFilters.length} onClearAll={clearAll} open={filterOpen} onOpenChange={setFilterOpen} resultCount={filtered.length} />
+        <MobileFilterSheet filters={filterConfigs} activeCount={activeFilters.length} onClearAll={clearAll} open={filterOpen} onOpenChange={setFilterOpen} />
     </div>
   );
 }

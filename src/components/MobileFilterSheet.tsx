@@ -9,10 +9,9 @@ interface MobileFilterSheetProps {
   onClearAll: () => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  resultCount?: number;
 }
 
-export function MobileFilterSheet({ filters, activeCount, onClearAll, open, onOpenChange, resultCount }: MobileFilterSheetProps) {
+export function MobileFilterSheet({ filters, activeCount, onClearAll, open, onOpenChange }: MobileFilterSheetProps) {
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1024px)");
     const closeOnDesktop = () => {
@@ -52,7 +51,7 @@ export function MobileFilterSheet({ filters, activeCount, onClearAll, open, onOp
         </div>
         <div className="p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] border-t border-border flex-shrink-0 bg-background">
           <Button className="w-full rounded-xl h-11" onClick={() => onOpenChange(false)}>
-            {typeof resultCount === "number" ? `Show ${resultCount} results` : "Apply Filters"}
+            Apply Filters
           </Button>
         </div>
       </SheetContent>
