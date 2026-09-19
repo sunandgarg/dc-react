@@ -17,6 +17,7 @@ const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v
 const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v3";
 const CONTENT_COPY_PROTECTION_MIGRATION_KEY = "content_copy_protection_v1";
 const ANNOUNCEMENT_CAROUSEL_SEED_MIGRATION_KEY = "announcement_carousel_seed_v1";
+const ANNOUNCEMENT_GENERIC_CTA_CLEANUP_MIGRATION_KEY = "announcement_generic_cta_cleanup_v1";
 
 try {
   for (const [key, label, category, value] of integrations) {
@@ -44,6 +45,7 @@ try {
   let announcementsSeeded = 0;
   let announcementsUpdated = 0;
   let announcementRotationUpdated = 0;
+  let announcementGenericCtasCleared = 0;
   if (!editorialPolicyMigration) {
     const updated = await prisma.blog_auto_agent_settings.updateMany({
       where: { id: "default" },
@@ -282,7 +284,7 @@ try {
       });
       const sharedData = {
         subtitle: banner.subtitle || null,
-        cta_text: banner.cta_text || "Apply Now",
+        cta_text: "",
         link_url: banner.link_url,
         image_url: null,
         variant: "announcement",
@@ -319,6 +321,35 @@ try {
           seeded: announcementsSeeded,
           updated: announcementsUpdated,
           source: "active_hero_banners",
+          applied_at: new Date().toISOString(),
+        }),
+      },
+    });
+  }
+  const announcementGenericCtaCleanupMigration = await prisma.app_settings.findUnique({
+    where: { key: ANNOUNCEMENT_GENERIC_CTA_CLEANUP_MIGRATION_KEY },
+  });
+  if (!announcementGenericCtaCleanupMigration) {
+    const announcementAds = await prisma.ads.findMany({
+      where: { variant: "announcement", position: "announcement-bar" },
+      select: { id: true, cta_text: true },
+    });
+    const genericCtaIds = announcementAds
+      .filter(({ cta_text }) => ["apply now", "learn more"].includes(cta_text.trim().toLowerCase()))
+      .map(({ id }) => id);
+    if (genericCtaIds.length) {
+      const cleared = await prisma.ads.updateMany({
+        where: { id: { in: genericCtaIds } },
+        data: { cta_text: "", updated_at: new Date() },
+      });
+      announcementGenericCtasCleared = cleared.count;
+    }
+    await prisma.app_settings.create({
+      data: {
+        key: ANNOUNCEMENT_GENERIC_CTA_CLEANUP_MIGRATION_KEY,
+        value: JSON.stringify({
+          cleared: announcementGenericCtasCleared,
+          preserved_custom_ctas: announcementAds.length - genericCtaIds.length,
           applied_at: new Date().toISOString(),
         }),
       },
@@ -382,6 +413,7 @@ try {
     announcements_seeded: announcementsSeeded,
     announcements_updated: announcementsUpdated,
     announcement_rotation_updated: announcementRotationUpdated,
+    announcement_generic_ctas_cleared: announcementGenericCtasCleared,
     ses_provider_configured: true,
     ses_credential_source: "iam_runtime",
   }));

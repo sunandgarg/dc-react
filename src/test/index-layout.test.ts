@@ -28,6 +28,7 @@ describe("Index page layout (static source assertions)", () => {
   const allExamsSrc = readFileSync(resolve(process.cwd(), "src/pages/AllExams.tsx"), "utf8");
   const allCoursesSrc = readFileSync(resolve(process.cwd(), "src/pages/AllCourses.tsx"), "utf8");
   const seoSlugsSrc = readFileSync(resolve(process.cwd(), "src/lib/seoSlugs.ts"), "utf8");
+  const productionConfigSrc = readFileSync(resolve(process.cwd(), "backend/scripts/configure-production-site-integrations.mjs"), "utf8");
 
   it("does NOT import or render the LoanReferStrip below scholarships", () => {
     expect(indexSrc).not.toMatch(/LoanReferStrip/);
@@ -90,6 +91,11 @@ describe("Index page layout (static source assertions)", () => {
     expect(announcementSrc).toMatch(/AnimatedWords/);
     expect(announcementSrc).toMatch(/staggerChildren/);
     expect(announcementSrc).toMatch(/useReducedMotion/);
+    expect(adminAdsSrc).toMatch(/const openAnnouncement[\s\S]*?cta_text: ""/);
+    expect(adminAdsSrc).toMatch(/form\.variant === "announcement" \? form\.cta_text\.trim\(\) : form\.cta_text\.trim\(\) \|\| "Learn More"/);
+    expect(adminAdsSrc).toMatch(/announcementCta \?[\s\S]*?<ArrowRight/);
+    expect(productionConfigSrc).toMatch(/ANNOUNCEMENT_GENERIC_CTA_CLEANUP_MIGRATION_KEY/);
+    expect(productionConfigSrc).toMatch(/\["apply now", "learn more"\]/);
   });
 
   it("shows only Ad Manager announcements and refreshes managed content promptly", () => {

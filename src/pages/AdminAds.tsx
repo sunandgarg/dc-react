@@ -19,7 +19,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import {
   Plus, Pencil, Trash2, X, ExternalLink, Copy, Search,
-  Megaphone, HelpCircle, Eye, Info, Timer, Radio,
+  Megaphone, HelpCircle, Eye, Info, Timer, Radio, ArrowRight,
 } from "lucide-react";
 import { SearchableSelect } from "@/components/SearchableSelect";
 import { SearchableMultiSelect } from "@/components/SearchableMultiSelect";
@@ -172,7 +172,7 @@ export default function AdminAds() {
   const openAnnouncement = () => {
     setForm({
       ...emptyForm,
-      cta_text: "Apply Now",
+      cta_text: "",
       variant: "announcement",
       bg_gradient: "from-slate-700 to-slate-900",
       position: "announcement-bar",
@@ -234,7 +234,7 @@ export default function AdminAds() {
     const payload = {
       title: form.title.trim(),
       subtitle: form.subtitle.trim() || null,
-      cta_text: form.cta_text.trim() || "Learn More",
+      cta_text: form.variant === "announcement" ? form.cta_text.trim() : form.cta_text.trim() || "Learn More",
       link_url: form.link_url.trim(),
       image_url: form.image_url.trim() || null,
       variant: form.variant,
@@ -431,8 +431,16 @@ export default function AdminAds() {
                   <Textarea value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} placeholder="e.g. Limited time offer - apply before March 31" className="rounded-xl min-h-[60px]" />
                 </Field>
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <Field label="Button Text" hint='What the clickable button says, e.g. "Apply Now"'>
-                    <Input value={form.cta_text} onChange={(e) => setForm({ ...form, cta_text: e.target.value })} placeholder="Learn More" className="rounded-xl" />
+                  <Field
+                    label={form.variant === "announcement" ? "Button Text (optional)" : "Button Text"}
+                    hint={form.variant === "announcement" ? "Leave blank to show only the red arrow." : 'What the clickable button says, e.g. "Learn More"'}
+                  >
+                    <Input
+                      value={form.cta_text}
+                      onChange={(e) => setForm({ ...form, cta_text: e.target.value })}
+                      placeholder={form.variant === "announcement" ? "Optional, e.g. Apply Now" : "Learn More"}
+                      className="rounded-xl"
+                    />
                   </Field>
                   <Field label="Link URL" error={errors.link_url} hint="Where people go when they click the ad">
                     <Input value={form.link_url} onChange={(e) => { setForm({ ...form, link_url: e.target.value }); setErrors({ ...errors, link_url: "" }); }} placeholder="https://example.com" className={`rounded-xl ${errors.link_url ? "border-destructive" : ""}`} />
@@ -715,13 +723,20 @@ function AdPreview({ form }: { form: AdForm }) {
   const overlayClass = image_url ? "bg-black/40" : "";
 
   if (variant === "announcement") {
+    const announcementCta = cta_text.trim();
     return (
       <div className="relative flex min-h-14 items-center justify-center gap-3 overflow-hidden border border-neutral-800 bg-black px-4 py-2 text-center">
         <div className="min-w-0">
           <p className="truncate text-sm font-extrabold text-white">{t}</p>
           {subtitle && <p className="truncate text-xs text-white/65">{subtitle}</p>}
         </div>
-        <span className="shrink-0 bg-red-600 px-4 py-1.5 text-xs font-extrabold text-white">{cta_text || "Apply Now"}</span>
+        {announcementCta ? (
+          <span className="shrink-0 bg-red-600 px-4 py-1.5 text-xs font-extrabold text-white">{announcementCta}</span>
+        ) : (
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center text-red-500">
+            <ArrowRight className="h-5 w-5" aria-hidden="true" />
+          </span>
+        )}
       </div>
     );
   }

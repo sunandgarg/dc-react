@@ -5,7 +5,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { functionUrl } from "@/lib/backendMode";
 
 const BOOTSTRAP_TTL = 30_000; // match the short edge cache for admin-managed homepage content
-const BOOTSTRAP_CACHE_VERSION = "announcements-v2";
+const BOOTSTRAP_CACHE_VERSION = "announcements-v3";
 
 export interface BootstrapPayload {
   hero_banners?: unknown[];
