@@ -1,4 +1,4 @@
-import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor } from "./edge-seo.js";
+import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor, entityEdgeSeo } from "./edge-seo.js";
 
 const API_ORIGIN = "https://aws-origin.dekhocampus.com";
 
@@ -19,6 +19,12 @@ const CACHEABLE_PUBLIC_TABLES = new Set([
 ]);
 
 const PUBLIC_STORAGE_PATH = /^\/storage\/v1\/object\/public\/(?:admin-uploads|ad-images|legacy-public-assets|study-material)(?:\/|$)/;
+
+const ENTITY_SELECTS = {
+  colleges: "name,slug,short_id,description,page_summary,meta_title,meta_description,image,logo,city,state,updated_at",
+  courses: "name,full_name,slug,short_id,description,page_summary,meta_title,meta_description,image,category,updated_at",
+  exams: "name,full_name,slug,short_id,description,page_summary,meta_title,meta_description,image,logo,category,updated_at",
+};
 
 function isApiRequest(pathname) {
   return pathname === "/health"
@@ -89,6 +95,31 @@ async function proxyToApiWithCache(request, context) {
   return cacheable;
 }
 
+async function fetchPublicEntity(entityType, publicSlug) {
+  const fetchRows = async (filter) => {
+    const query = new URLSearchParams({
+      select: ENTITY_SELECTS[entityType],
+      is_active: "eq.true",
+      ...filter,
+      limit: "1",
+    });
+    const response = await fetch(`${API_ORIGIN}/v1/rest/${entityType}?${query}`, {
+      headers: { accept: "application/json" },
+      cf: { cacheEverything: true, cacheTtl: 300 },
+    });
+    const payload = response.ok ? await response.json().catch(() => []) : [];
+    return Array.isArray(payload) ? payload : payload?.data || [];
+  };
+
+  const shortId = publicSlug.match(/-(\d+)$/)?.[1];
+  if (shortId) {
+    const [candidate] = await fetchRows({ short_id: `eq.${shortId}` });
+    if (candidate && `${candidate.slug}-${candidate.short_id}` === publicSlug) return candidate;
+  }
+  const [legacyCandidate] = await fetchRows({ slug: `eq.${publicSlug}` });
+  return legacyCandidate;
+}
+
 async function serveAsset(request, env) {
   const url = new URL(request.url);
   let response = await env.ASSETS.fetch(request);
@@ -119,6 +150,15 @@ async function serveAsset(request, env) {
       metadata = article
         ? articleEdgeSeo(article, url)
         : { ...metadata, indexable: false };
+    }
+    const entityMatch = metadata.indexable
+      ? url.pathname.match(/^\/(colleges|courses|exams)\/([^/]+)(?:\/[^/]+)?\/?$/)
+      : null;
+    if (entityMatch) {
+      const [, entityType, publicSlug] = entityMatch;
+      const decodedSlug = decodeURIComponent(publicSlug);
+      const entity = await fetchPublicEntity(entityType, decodedSlug);
+      if (entity) metadata = entityEdgeSeo(entity, url, entityType);
     }
     let html = applyEdgeSeo(await response.text(), metadata);
     if (url.pathname === "/") html = applyHomeCriticalCssDelivery(html);

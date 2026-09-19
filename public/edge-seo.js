@@ -166,17 +166,143 @@ function articlePrerenderBlocks(value) {
   return fallback ? `<p>${escapeHtml(fallback)}</p>` : "";
 }
 
+function absoluteMediaUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  try {
+    const url = new URL(raw, SITE_URL);
+    if (url.pathname.startsWith("/storage/v1/object/public/")) {
+      return `${SITE_URL}${url.pathname}${url.search}`;
+    }
+    return url.href;
+  } catch {
+    return "";
+  }
+}
+
+const ENTITY_SEO = {
+  colleges: {
+    label: "College",
+    schemaType: "CollegeOrUniversity",
+    imageAlt: (name) => `${name} campus`,
+    fallbackTitle: (name) => `${name} 2027: Courses, Fees, Admissions & Placements`,
+  },
+  courses: {
+    label: "Course",
+    schemaType: "Course",
+    imageAlt: (name) => `${name} course guide`,
+    fallbackTitle: (name) => `${name} 2027: Eligibility, Fees, Syllabus & Colleges`,
+  },
+  exams: {
+    label: "Exam",
+    schemaType: "LearningResource",
+    imageAlt: (name) => `${name} exam guide`,
+    fallbackTitle: (name) => `${name} 2027: Dates, Eligibility, Syllabus & Updates`,
+  },
+};
+
+export function entityEdgeSeo(entity, url, entityType) {
+  const config = ENTITY_SEO[entityType];
+  if (!config) return edgeSeoFor(url);
+  const canonical = `${SITE_URL}${cleanPath(url.pathname)}`;
+  const segments = cleanPath(url.pathname).split("/").filter(Boolean);
+  const tab = segments.length > 2 ? titleCase(segments.at(-1)) : "";
+  const name = String(entity.name || entity.full_name || titleCase(segments[1])).trim();
+  const rawTitle = articlePlainText(entity.meta_title) || config.fallbackTitle(name);
+  const titleWithTab = tab ? `${name} ${tab}` : rawTitle;
+  const title = titleWithTab.includes("DekhoCampus") ? titleWithTab : `${titleWithTab} | DekhoCampus`;
+  const description = articlePlainText(entity.page_summary || entity.meta_description || entity.description)
+    || `Explore verified ${config.label.toLowerCase()} information for ${name} on DekhoCampus.`;
+  const image = absoluteMediaUrl(entity.image || entity.logo);
+  const imageAlt = config.imageAlt(name);
+  const modifiedAt = entity.updated_at;
+  const imageObject = image ? {
+    "@type": "ImageObject",
+    "@id": `${canonical}#primaryimage`,
+    url: image,
+    contentUrl: image,
+    caption: imageAlt,
+  } : null;
+  const entitySchema = {
+    "@type": config.schemaType,
+    "@id": `${canonical}#entity`,
+    name,
+    url: canonical,
+    description,
+    ...(image ? { image: { "@id": `${canonical}#primaryimage` } } : {}),
+    ...(entityType === "colleges" && (entity.city || entity.state) ? {
+      address: {
+        "@type": "PostalAddress",
+        ...(entity.city ? { addressLocality: String(entity.city) } : {}),
+        ...(entity.state ? { addressRegion: String(entity.state) } : {}),
+        addressCountry: "IN",
+      },
+    } : {}),
+    ...(entityType === "courses" ? {
+      provider: { "@id": `${SITE_URL}/#organization` },
+    } : {}),
+  };
+  const breadcrumbItems = [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: `${config.label}s`, item: `${SITE_URL}/${entityType}` },
+    { "@type": "ListItem", position: 3, name, item: `${SITE_URL}/${entityType}/${segments[1]}` },
+  ];
+  if (tab) breadcrumbItems.push({ "@type": "ListItem", position: 4, name: tab, item: canonical });
+
+  return {
+    canonical,
+    description,
+    image,
+    imageAlt,
+    indexable: true,
+    title,
+    structuredData: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": `${SITE_URL}/#organization`,
+          name: "DekhoCampus",
+          url: SITE_URL,
+          logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
+        },
+        ...(imageObject ? [imageObject] : []),
+        entitySchema,
+        {
+          "@type": "WebPage",
+          "@id": `${canonical}#webpage`,
+          url: canonical,
+          name,
+          description,
+          mainEntity: { "@id": `${canonical}#entity` },
+          breadcrumb: { "@id": `${canonical}#breadcrumb` },
+          ...(image ? { primaryImageOfPage: { "@id": `${canonical}#primaryimage` } } : {}),
+          ...(modifiedAt ? { dateModified: modifiedAt } : {}),
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${canonical}#breadcrumb`,
+          itemListElement: breadcrumbItems,
+        },
+      ],
+    },
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:1180px;margin:24px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.6;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p></article>`,
+  };
+}
+
 export function articleEdgeSeo(article, url) {
   const canonical = `${SITE_URL}${cleanPath(url.pathname)}`;
   const title = String(article.meta_title || article.title || "Education News").trim();
   const description = articlePlainText(article.meta_description || article.description || "");
-  const image = String(article.featured_image || "").trim();
+  const image = absoluteMediaUrl(article.featured_image);
+  const imageAlt = String(article.title || title);
   const publishedAt = article.published_at || article.created_at;
   const modifiedAt = article.updated_at || publishedAt;
   return {
     canonical,
     description,
     image,
+    imageAlt,
     indexable: true,
     title: title.includes("DekhoCampus") ? title : `${title} | DekhoCampus`,
     structuredData: {
@@ -196,7 +322,7 @@ export function articleEdgeSeo(article, url) {
           name: String(article.title || title),
           description,
           breadcrumb: { "@id": `${canonical}#breadcrumb` },
-          ...(image ? { primaryImageOfPage: { "@type": "ImageObject", url: image, contentUrl: image, caption: String(article.title || title) } } : {}),
+          ...(image ? { primaryImageOfPage: { "@type": "ImageObject", url: image, contentUrl: image, caption: imageAlt } } : {}),
           ...(publishedAt ? { datePublished: publishedAt } : {}),
           ...(modifiedAt ? { dateModified: modifiedAt } : {}),
         },
@@ -223,7 +349,7 @@ export function articleEdgeSeo(article, url) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(article.title || title)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" decoding="async">` : ""}<h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(article.content)}</article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(article.content)}</article>`,
   };
 }
 
@@ -247,8 +373,11 @@ export function applyEdgeSeo(html, metadata) {
   output = replaceOrInsert(output, /<meta\s+name=["']twitter:url["'][^>]*>/i, `<meta name="twitter:url" content="${canonical}">`);
   if (metadata.image) {
     const image = escapeHtml(metadata.image);
+    const imageAlt = escapeHtml(metadata.imageAlt || metadata.title);
     output = replaceOrInsert(output, /<meta\s+property=["']og:image["'][^>]*>/i, `<meta property="og:image" content="${image}">`);
+    output = replaceOrInsert(output, /<meta\s+property=["']og:image:alt["'][^>]*>/i, `<meta property="og:image:alt" content="${imageAlt}">`);
     output = replaceOrInsert(output, /<meta\s+name=["']twitter:image["'][^>]*>/i, `<meta name="twitter:image" content="${image}">`);
+    output = replaceOrInsert(output, /<meta\s+name=["']twitter:image:alt["'][^>]*>/i, `<meta name="twitter:image:alt" content="${imageAlt}">`);
   }
   if (metadata.structuredData) {
     const json = JSON.stringify(metadata.structuredData).replace(/</g, "\\u003c");

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor } from "../../public/edge-seo.js";
+import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor, entityEdgeSeo } from "../../public/edge-seo.js";
 
 describe("Cloudflare edge SEO", () => {
   it("serves self-canonical metadata for an indexable college filter", () => {
@@ -61,6 +61,25 @@ describe("Cloudflare edge SEO", () => {
     expect(output).not.toContain("alert(1)");
     expect(output).not.toContain("onerror");
     expect(output).not.toContain("javascript:");
+  });
+
+  it("prerenders canonical college images and entity schema for crawlers", () => {
+    const metadata = entityEdgeSeo({
+      name: "Lovely Professional University",
+      page_summary: "Compare LPU courses, fees, admissions and placements for 2027.",
+      image: "https://aws-origin.dekhocampus.com/storage/v1/object/public/college-images/lpu.jpg",
+      city: "Jalandhar",
+      state: "Punjab",
+      updated_at: "2026-09-18T00:00:00.000Z",
+    }, new URL("https://dekhocampus.com/colleges/lovely-professional-university-lpu-10042"), "colleges");
+    const output = applyEdgeSeo('<html><head><title>Home</title></head><body><div id="root"></div></body></html>', metadata);
+    expect(output).toContain('content="https://dekhocampus.com/storage/v1/object/public/college-images/lpu.jpg"');
+    expect(output).toContain('alt="Lovely Professional University campus"');
+    expect(output).toContain('loading="eager" fetchpriority="high"');
+    expect(output).toContain('"@type":"CollegeOrUniversity"');
+    expect(output).toContain('"@type":"ImageObject"');
+    expect(output).toContain('"primaryImageOfPage"');
+    expect(output).toContain('"addressLocality":"Jalandhar"');
   });
 
   it("lets the inline homepage shell paint while the full app stylesheet downloads", () => {
