@@ -1,0 +1,38 @@
+name: Inspect AWS production database
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: ap-south-1
+  DATABASE_NAME: dc-react-mysql-lightsail
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 10
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Report managed database state
+        run: |
+          set -euo pipefail
+          aws sts get-caller-identity \
+            --query '{account:Account,role:Arn}' \
+            --output json
+          aws lightsail get-relational-database \
+            --relational-database-name "$DATABASE_NAME" \
+            --query 'relationalDatabase.{name:name,state:state,engine:engine,engineVersion:engineVersion,availabilityZone:location.availabilityZone,publiclyAccessible:publiclyAccessible,pendingMaintenanceActions:pendingMaintenanceActions}' \
+            --output json
+          aws lightsail get-operations \
+            --resource-name "$DATABASE_NAME" \
+            --query 'operations[0:20].{createdAt:createdAt,operationType:operationType,status:status,isTerminal:isTerminal,errorCode:errorCode,errorDetails:errorDetails}' \
+            --output json
