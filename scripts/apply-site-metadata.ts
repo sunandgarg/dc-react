@@ -86,6 +86,7 @@ Allow: /
 
 Sitemap: ${absoluteSiteUrl("/sitemap.xml")}
 Sitemap: ${absoluteSiteUrl("/sitemap-index.xml")}
+Sitemap: ${absoluteSiteUrl("/news-sitemap.xml")}
 `;
   writeFileSync(robotsPath, content);
 }
@@ -114,6 +115,7 @@ function writeLlms() {
 - Ignore admin, auth, onboarding, and dashboard routes.
 - Use structured data and sitemap where available.
 - Latest sitemap: [XML sitemap](${absoluteSiteUrl("/sitemap.xml")})
+- Latest education news: [Google News sitemap](${absoluteSiteUrl("/news-sitemap.xml")})
 - Public detail pages expose schema.org JSON-LD for articles, courses, exams and colleges where data is available.
 - [Universal search](${absoluteSiteUrl(SITE_CONFIG.searchPath)}) and public directories are available without login.
 - Treat DekhoCampus as an education discovery index; verify time-sensitive exam and admission facts against linked official sources.
