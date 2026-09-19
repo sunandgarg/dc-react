@@ -40,7 +40,7 @@ on:
       create_ses_identity:
         description: Create and manage the dekhocampus.com SES identity in this stack
         required: false
-        default: true
+        default: false
         type: boolean
       cleanup_college_editorial_artifacts:
         description: Back up and remove internal editorial process copy from public college content
@@ -530,12 +530,6 @@ jobs:
           BUCKET=$(jq -r '.[] | select(.OutputKey=="MediaBucketName") | .OutputValue' /tmp/stack-outputs.json)
           test -n "$MEDIA_BASE_URL"
           test -n "$BUCKET"
-          if aws sesv2 get-email-identity --email-identity dekhocampus.com >/dev/null 2>&1; then
-            SES_ENABLED=true
-          else
-            SES_ENABLED=false
-          fi
-          echo "DekhoCampus SES identity available: $SES_ENABLED"
           INSTANCE_RAM_GB=$(aws lightsail get-instance --instance-name "$INSTANCE_NAME" --query 'instance.hardware.ramSizeInGb' --output text)
           case "$INSTANCE_RAM_GB" in
             1|1.0)
@@ -555,14 +549,13 @@ jobs:
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=120 \
             -i /tmp/tempkey "$SSH_USER@$SSH_IP" \
-            "sudo bash -s -- '$MEDIA_BASE_URL' '$BUCKET' '$SES_ENABLED' '$NODE_HEAP_MB' '$PM2_MEMORY_LIMIT' '${{ github.sha }}'" <<'REMOTE'
+            "sudo bash -s -- '$MEDIA_BASE_URL' '$BUCKET' '$NODE_HEAP_MB' '$PM2_MEMORY_LIMIT' '${{ github.sha }}'" <<'REMOTE'
           set -euo pipefail
           MEDIA_BASE_URL="$1"
           BUCKET="$2"
-          SES_ENABLED="$3"
-          NODE_HEAP_MB="$4"
-          PM2_MEMORY_LIMIT="$5"
-          DEPLOY_SHA="$6"
+          NODE_HEAP_MB="$3"
+          PM2_MEMORY_LIMIT="$4"
+          DEPLOY_SHA="$5"
           if ! [[ "$DEPLOY_SHA" =~ ^[0-9a-f]{40}$ ]]; then
             echo "Invalid immutable deployment SHA: $DEPLOY_SHA"
             exit 1
@@ -575,6 +568,12 @@ jobs:
           APP_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
           test -n "$APP_ACCESS_KEY_ID"
           test -n "$APP_SECRET_ACCESS_KEY"
+          if aws sesv2 get-email-identity --email-identity dekhocampus.com >/dev/null 2>&1; then
+            SES_ENABLED=true
+          else
+            SES_ENABLED=false
+          fi
+          echo "DekhoCampus SES identity available to the application user: $SES_ENABLED"
           ENV_FILE=$(mktemp)
           cat >"$ENV_FILE" <<ENV
           NODE_ENV=production

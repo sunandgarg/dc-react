@@ -78,7 +78,7 @@ test("AWS production deploy installs the immutable revision verified by its work
   const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
 
   assert.match(workflow, /'\$\{\{ github\.sha \}\}'/);
-  assert.match(workflow, /DEPLOY_SHA="\$6"/);
+  assert.match(workflow, /DEPLOY_SHA="\$5"/);
   assert.match(workflow, /\[\[ "\$DEPLOY_SHA" =~ \^\[0-9a-f\]\{40\}\$ \]\]/);
   assert.match(workflow, /git fetch --no-tags origin "\$DEPLOY_SHA"/);
   assert.match(workflow, /git reset --hard "\$DEPLOY_SHA"/);
@@ -216,11 +216,13 @@ test("AWS runtime enables SES only after the DekhoCampus domain identity exists"
   const sitemapStart = workflow.indexOf("- name: Generate static sitemap seed and site metadata");
   const runtimeStep = workflow.slice(runtimeStart, sitemapStart);
 
-  assert.match(workflow, /create_ses_identity:[\s\S]*?default: true/);
+  assert.match(workflow, /create_ses_identity:[\s\S]*?default: false/);
+  assert.match(runtimeStep, /APP_ACCESS_KEY_ID=\$\(aws configure get aws_access_key_id\)/);
   assert.match(runtimeStep, /aws sesv2 get-email-identity --email-identity dekhocampus\.com/);
   assert.match(runtimeStep, /SES_ENABLED=true[\s\S]*?else[\s\S]*?SES_ENABLED=false/);
-  assert.match(runtimeStep, /'\$SES_ENABLED' '\$NODE_HEAP_MB'/);
-  assert.doesNotMatch(runtimeStep, /'\$\{\{ inputs\.create_ses_identity \}\}' '\$NODE_HEAP_MB'/);
+  assert.match(runtimeStep, /DekhoCampus SES identity available to the application user/);
+  assert.doesNotMatch(runtimeStep, /sudo bash -s --[^\n]*\$SES_ENABLED/);
+  assert.doesNotMatch(runtimeStep, /inputs\.create_ses_identity[^\n]*NODE_HEAP_MB/);
 });
 
 test("college WebP retirement removes only unreferenced versions from versioned S3", async () => {
