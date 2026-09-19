@@ -5,6 +5,7 @@ import sharp from "sharp";
 import { prisma, schemaMetadata } from "./db.mjs";
 import { uploadStorageObject } from "./storage.mjs";
 import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
+import { queueIndexNowUrls } from "./indexnow.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
 const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5.5";
@@ -2106,6 +2107,9 @@ async function publishBlogStudioDraft(body, userId) {
     }
     return created;
   }, siteScope);
+  if (siteScope === "dekhocampus" && requestedStatus === "Published") {
+    queueIndexNowUrls([`https://dekhocampus.com/news/${article.slug}`]);
+  }
   return { success: true, article: { id: article.id, slug: article.slug, status: article.status, site_scope: siteScope }, quality, semantic_review: semantic.model, settings_id: settingsId };
 }
 
@@ -2317,6 +2321,9 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     throw error;
   }
   if (!article) return null;
+  if (siteScope === "dekhocampus" && status === "Published") {
+    queueIndexNowUrls([`https://dekhocampus.com/news/${article.slug}`]);
+  }
   if (existingCoverage) existingCoverage.unshift({
     id: article.id,
     slug: article.slug,

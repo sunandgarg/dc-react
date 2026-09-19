@@ -57,3 +57,4 @@ Allow: /
 
 Sitemap: https://dekhocampus.com/sitemap.xml
 Sitemap: https://dekhocampus.com/sitemap-index.xml
+Sitemap: https://dekhocampus.com/news-sitemap.xml

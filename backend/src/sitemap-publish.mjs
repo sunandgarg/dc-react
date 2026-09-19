@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { DeleteObjectsCommand, GetObjectCommand, ListObjectsV2Command, PutObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "./db.mjs";
 import { storageConfig } from "./storage.mjs";
+import { queueIndexNowUrls } from "./indexnow.mjs";
 
 const PUBLISH_TARGET = "https://dekhocampus.com";
 const SITEMAP_PREFIX = "system-sitemaps";
@@ -11,6 +12,8 @@ const MIN_FILTER_RESULTS = 3;
 const GENERATION_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 const DB_QUERY_CONCURRENCY = 2;
 const OBJECT_IO_CONCURRENCY = 4;
+const NEWS_WINDOW_MS = 2 * 24 * 60 * 60 * 1000;
+const NEWS_SITEMAP_LIMIT = 1_000;
 const COLLEGE_FEE_RANGES = [
   "Less than 1 Lakh", "1 - 2 Lakh", "2 - 3 Lakh", "3 - 5 Lakh", "5 - 7 Lakh",
   "7 - 10 Lakh", "15 - 20 Lakh", "20 - 25 Lakh", "Above 25 Lakh",
@@ -247,10 +250,45 @@ function sitemapXml(entries) {
   ].join("\n");
 }
 
+function newsSitemapEntries(articles, now = Date.now()) {
+  const cutoff = now - NEWS_WINDOW_MS;
+  return articles
+    .flatMap((article) => {
+      const publishedAt = new Date(article.created_at || article.updated_at || 0);
+      const title = String(article.title || "").trim();
+      if (!article.slug || !title || Number.isNaN(publishedAt.getTime()) || publishedAt.getTime() < cutoff) return [];
+      return [{ path: `/news/${article.slug}`, title, publicationDate: publishedAt.toISOString() }];
+    })
+    .sort((left, right) => right.publicationDate.localeCompare(left.publicationDate))
+    .slice(0, NEWS_SITEMAP_LIMIT);
+}
+
+function newsSitemapXml(entries) {
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">',
+    ...entries.map((entry) => [
+      "  <url>",
+      `    <loc>${escapeXml(`${PUBLISH_TARGET}${entry.path}`)}</loc>`,
+      "    <news:news>",
+      "      <news:publication>",
+      "        <news:name>DekhoCampus</news:name>",
+      "        <news:language>en</news:language>",
+      "      </news:publication>",
+      `      <news:publication_date>${escapeXml(entry.publicationDate)}</news:publication_date>`,
+      `      <news:title>${escapeXml(entry.title)}</news:title>`,
+      "    </news:news>",
+      "  </url>",
+    ].join("\n")),
+    "</urlset>",
+  ].join("\n");
+}
+
 function sitemapIndex(generation, count) {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    `  <sitemap><loc>${PUBLISH_TARGET}/news-sitemap.xml</loc></sitemap>`,
     ...Array.from({ length: count }, (_, index) => `  <sitemap><loc>${PUBLISH_TARGET}/sitemap-files/${generation}/sitemap-${index + 1}.xml</loc></sitemap>`),
     "</sitemapindex>",
   ].join("\n");
@@ -327,7 +365,7 @@ function objectRepository() {
 }
 
 function publicKey(pathname) {
-  if (/^\/sitemap(?:-index|-\d+)?\.xml$/.test(pathname)) return `${SITEMAP_PREFIX}/public/${pathname.slice(1)}`;
+  if (/^\/(?:news-sitemap|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname)) return `${SITEMAP_PREFIX}/public/${pathname.slice(1)}`;
   const generationMatch = pathname.match(/^\/sitemap-files\/([a-f0-9-]{36})\/(sitemap-\d+\.xml)$/);
   return generationMatch ? `${SITEMAP_PREFIX}/generations/${generationMatch[1]}/${generationMatch[2]}` : null;
 }
@@ -378,7 +416,7 @@ async function currentSeedEntries(repository, buildSeedSha) {
     const loaded = await boundedMap(locations, OBJECT_IO_CONCURRENCY, async (location) => {
       const pathname = new URL(location, PUBLISH_TARGET).pathname;
       const filename = pathname.split("/").at(-1);
-      if (requestedSeed && !/^sitemap-\d+\.xml$/.test(filename || "")) {
+      if (requestedSeed && !/^(?:news-sitemap|sitemap-\d+)\.xml$/.test(filename || "")) {
         throw publishError(503, "SITEMAP_SEED_INCOMPLETE", "The immutable build seed references an invalid child sitemap");
       }
       const key = requestedSeed ? `${seedPrefix}/${filename}` : keyForPublicPath(pathname);
@@ -592,12 +630,12 @@ function filterEntries(colleges, courses, exams, courseFees) {
     .sort((left, right) => left.path.localeCompare(right.path));
 }
 
-async function dynamicEntries(prismaClient) {
+async function dynamicEntries(prismaClient, now = Date.now()) {
   const queryLoaders = [
     () => rows(prismaClient, "colleges", ["slug", "short_id", "updated_at", "name", "state", "city", "type", "category", "fees", "tags", "approvals", "naac_grade", "image", "logo", "carousel_images", "gallery_images"]),
     () => rows(prismaClient, "courses", ["slug", "short_id", "updated_at", "name", "full_name", "category", "mode", "duration", "specializations", "image"]),
     () => rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "categories", "image", "logo"]),
-    () => rows(prismaClient, "articles", ["slug", "updated_at", "tags", "featured_image", "content"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
+    () => rows(prismaClient, "articles", ["slug", "title", "created_at", "updated_at", "tags", "featured_image", "content"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
     () => rows(prismaClient, "career_profiles", ["slug", "updated_at", "image"]),
     () => rows(prismaClient, "scholarships", ["slug", "updated_at", "image"]),
     () => rows(prismaClient, "landing_pages", ["slug", "updated_at", "logo_url", "og_image"]),
@@ -666,6 +704,7 @@ async function dynamicEntries(prismaClient) {
   ];
   return {
     entries,
+    newsEntries: newsSitemapEntries(articles, now),
     sourceCounts: {
       colleges: colleges.length,
       courses: courses.length,
@@ -685,27 +724,33 @@ export async function publishSitemap(request, options = {}) {
   const repository = options.repository || objectRepository();
   publishing = true;
   try {
-    const [seed, dynamicResult] = await Promise.all([currentSeedEntries(repository, body.build_seed_sha), dynamicEntries(prismaClient)]);
+    const now = options.now || Date.now();
+    const [seed, dynamicResult] = await Promise.all([currentSeedEntries(repository, body.build_seed_sha), dynamicEntries(prismaClient, now)]);
     const counts = dynamicResult.sourceCounts;
     if (Object.values(counts).some((count) => count === 0)) throw publishError(409, "SITEMAP_SOURCE_INCOMPLETE", "Publishing stopped because one or more core public catalogs are empty");
     const entries = mergeEntries(seed, dynamicResult.entries);
+    const newsEntries = dynamicResult.newsEntries;
     const imageCount = entries.reduce((total, entry) => total + (entry.images?.length || 0), 0);
     const filterUrlCount = entries.filter((entry) => /^\/(colleges|courses|exams)\?/.test(entry.path)).length;
     const generation = randomUUID();
     const chunks = [];
     for (let index = 0; index < entries.length; index += CHUNK_SIZE) chunks.push(entries.slice(index, index + CHUNK_SIZE));
     await boundedMap(chunks, OBJECT_IO_CONCURRENCY, (chunk, index) => repository.put(`${SITEMAP_PREFIX}/generations/${generation}/sitemap-${index + 1}.xml`, sitemapXml(chunk)));
+    await repository.put(`${SITEMAP_PREFIX}/public/news-sitemap.xml`, newsSitemapXml(newsEntries));
     const indexXml = sitemapIndex(generation, chunks.length);
-    const manifest = JSON.stringify({ generation, url_count: entries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() });
+    const manifest = JSON.stringify({ generation, url_count: entries.length, news_url_count: newsEntries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() });
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap-index.xml`, indexXml);
     await repository.put(`${SITEMAP_PREFIX}/public/manifest.json`, manifest, "application/json; charset=utf-8");
     // The canonical root is the single-object publication pointer. Keep it
     // unchanged unless all immutable chunks and publication metadata exist.
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap.xml`, indexXml);
+    if (options.submitIndexNow !== false && !options.repository) {
+      queueIndexNowUrls(newsEntries.map((entry) => `${PUBLISH_TARGET}${entry.path}`));
+    }
     let removedObjects = 0;
     if (typeof repository.list === "function" && typeof repository.delete === "function") {
       const currentPrefix = `${SITEMAP_PREFIX}/generations/${generation}/`;
-      const retentionCutoff = (options.now || Date.now()) - GENERATION_RETENTION_MS;
+      const retentionCutoff = now - GENERATION_RETENTION_MS;
       const staleKeys = (await repository.list(`${SITEMAP_PREFIX}/generations/`))
         .map((item) => typeof item === "string" ? { key: item } : item)
         .filter((item) => !item.key.startsWith(currentPrefix) && item.lastModified && new Date(item.lastModified).getTime() < retentionCutoff)
@@ -713,7 +758,7 @@ export async function publishSitemap(request, options = {}) {
       await repository.delete(staleKeys);
       removedObjects = staleKeys.length;
     }
-    return { success: true, status: "published", target: PUBLISH_TARGET, generation, url_count: entries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, removed_objects: removedObjects, source_counts: counts, sitemap_url: `${PUBLISH_TARGET}/sitemap.xml`, requested_at: new Date().toISOString() };
+    return { success: true, status: "published", target: PUBLISH_TARGET, generation, url_count: entries.length, news_url_count: newsEntries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, removed_objects: removedObjects, source_counts: counts, sitemap_url: `${PUBLISH_TARGET}/sitemap.xml`, news_sitemap_url: `${PUBLISH_TARGET}/news-sitemap.xml`, requested_at: new Date().toISOString() };
   } finally {
     publishing = false;
   }

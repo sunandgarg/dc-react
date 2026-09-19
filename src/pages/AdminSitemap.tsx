@@ -51,7 +51,7 @@ function sitemapXml(origin: string, urls: AdminSitemapUrl[]) {
 
 function sitemapIndexXml(origin: string, totalUrls: number) {
   const files = Math.max(1, Math.ceil(totalUrls / SITEMAP_CHUNK_SIZE));
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${Array.from({ length: files }, (_, index) => `  <sitemap><loc>${escapeXml(`${origin}/sitemap-${index + 1}.xml`)}</loc></sitemap>`).join("\n")}\n</sitemapindex>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap><loc>${escapeXml(`${origin}/news-sitemap.xml`)}</loc></sitemap>\n${Array.from({ length: files }, (_, index) => `  <sitemap><loc>${escapeXml(`${origin}/sitemap-${index + 1}.xml`)}</loc></sitemap>`).join("\n")}\n</sitemapindex>`;
 }
 
 async function fetchAllRows(table: string, select: string, configure?: (query: any) => any, optional = false) {
@@ -143,7 +143,7 @@ export default function AdminSitemap() {
         fetchAllRows("colleges", "slug,short_id,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
         fetchAllRows("courses", "slug,short_id,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
         fetchAllRows("exams", "slug,short_id,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-        fetchAllRows("articles", "slug,updated_at,tags", (q) => q.eq("is_active", true).not("slug", "is", null)),
+        fetchAllRows("articles", "slug,title,created_at,updated_at,tags", (q) => q.eq("site_scope", "dekhocampus").eq("status", "Published").eq("is_active", true).not("slug", "is", null)),
         fetchAllRows("career_profiles", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
         fetchAllRows("scholarships", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
         fetchAllRows("promoted_programs", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
@@ -203,6 +203,10 @@ export default function AdminSitemap() {
 
       const seen = new Set<string>();
       const unique = urls.filter((u) => u.loc && !seen.has(u.loc) && (seen.add(u.loc), true));
+      const recentNews = articles.filter((article: any) => {
+        const publishedAt = new Date(article.created_at || article.updated_at || 0).getTime();
+        return article.slug && article.title && Number.isFinite(publishedAt) && publishedAt >= Date.now() - (2 * 24 * 60 * 60 * 1000);
+      }).length;
       const sitemapCount = Math.ceil(unique.length / SITEMAP_CHUNK_SIZE);
       setXml(unique.length > SITEMAP_CHUNK_SIZE ? sitemapIndexXml(cleanOrigin, unique.length) : sitemapXml(cleanOrigin, unique));
       setCounts({
@@ -215,6 +219,7 @@ export default function AdminSitemap() {
         exams: exams.length,
         exam_subpages: exams.length * (EXAM_DETAIL_TABS.length + STRATEGY_SLUGS.length),
         articles: articles.length,
+        google_news_urls: Math.min(1_000, recentNews),
         scholarships: scholarships.length,
         study_material: studySubjects.length + studyChapters.length,
         college_study: collegePrograms.length + collegeUniversities.length + collegeSemesters.length + collegeSubjects.length,
@@ -230,7 +235,7 @@ export default function AdminSitemap() {
       });
       if (error) throw error;
       const published = data as any;
-      setSummary((current) => `${current} Published ${Number(published?.url_count || unique.length).toLocaleString()} URLs in ${Number(published?.chunk_count || sitemapCount).toLocaleString()} AWS-backed chunk file(s). The sitemap index is now live at dekhocampus.com/sitemap.xml.`);
+      setSummary((current) => `${current} Published ${Number(published?.url_count || unique.length).toLocaleString()} URLs in ${Number(published?.chunk_count || sitemapCount).toLocaleString()} AWS-backed chunk file(s), plus ${Number(published?.news_url_count || recentNews).toLocaleString()} recent Google News URL(s).`);
       toast.success(`Sitemap deployment queued for ${unique.length.toLocaleString()} URLs`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to build sitemap");
@@ -290,7 +295,7 @@ export default function AdminSitemap() {
             </div>
             <Textarea value={xml} readOnly className="font-mono text-xs min-h-[400px]" />
             <p className="text-xs text-muted-foreground">
-              Publishing builds from live MySQL data, writes immutable sitemap chunks to private AWS S3, and atomically replaces <code>/sitemap.xml</code>. Submit that one URL in Search Console; Google will follow the current chunk files automatically.
+              Publishing builds from live MySQL data, writes immutable sitemap chunks to private AWS S3, and atomically replaces <code>/sitemap.xml</code>. Google News receives a separate rolling two-day feed at <code>/news-sitemap.xml</code>. Submit the sitemap index once in Search Console; Google will follow its current child files automatically.
             </p>
           </>
         )}

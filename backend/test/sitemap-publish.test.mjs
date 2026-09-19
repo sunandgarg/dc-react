@@ -20,7 +20,7 @@ function populatedDb(coreCount = 1) {
       if (table === "courses") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, name: `MBA Business Analytics ${number}`, full_name: "Master of Business Administration", category: "Management", mode: "Full Time", duration: "2 Years", specializations: ["Business Analytics"] }));
       if (table === "exams") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, category: "Management", exam_type: "Entrance", level: "PG", categories: ["MBA/PGDM"] }));
       if (table === "course_fees") return [1, 2, 3].map((number) => ({ college_slug: number === 1 ? "colleges-sample" : `colleges-sample-${number}`, course_slug: number === 1 ? "courses-sample" : `courses-sample-${number}`, course_group: "MBA / PGDM", specialization: "Business Analytics" }));
-      if (table === "articles") return [{ ...base, tags: ["Admissions", "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material"], featured_image: "https://cdn.dekhocampus.com/news/sample.webp", content: '<p>Campus guide</p><img src="https://cdn.dekhocampus.com/news/inline-campus.jpg" alt="Sample campus">' }];
+      if (table === "articles") return [{ ...base, title: "Articles sample", created_at: new Date("2026-08-27T10:00:00Z"), tags: ["Admissions", "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material"], featured_image: "https://cdn.dekhocampus.com/news/sample.webp", content: '<p>Campus guide</p><img src="https://cdn.dekhocampus.com/news/inline-campus.jpg" alt="Sample campus">' }];
       if (table === "study_subjects") return [{ ...base, id: "subject-1", class_num: 12, board_slug: "cbse" }];
       if (table === "study_chapters") return [{ ...base, subject_id: "subject-1" }];
       if (table === "college_universities") return [{ ...base, program_slug: "btech" }];
@@ -150,6 +150,7 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.ok(result.url_count > 20);
   assert.equal(result.sitemap_url, "https://dekhocampus.com/sitemap.xml");
   const index = repository.objects.get("system-sitemaps/public/sitemap.xml").body;
+  assert.match(index, /https:\/\/dekhocampus\.com\/news-sitemap\.xml/);
   assert.match(index, new RegExp(`/sitemap-files/${result.generation}/sitemap-1\\.xml`));
   const chunk = repository.objects.get(`system-sitemaps/generations/${result.generation}/sitemap-1.xml`)?.body || "";
   assert.match(chunk, /\/colleges\/colleges-sample-101<\/loc>/);
@@ -180,6 +181,11 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.match(chunk, /\/colleges\/top-engineering-colleges-in-india/);
   assert.match(chunk, /\/courses\/top-online-courses-in-india/);
   assert.match(chunk, /\/exams\/top-national-entrance-exams-in-india/);
+  const newsSitemap = repository.objects.get("system-sitemaps/public/news-sitemap.xml")?.body || "";
+  assert.match(newsSitemap, /xmlns:news="http:\/\/www\.google\.com\/schemas\/sitemap-news\/0\.9"/);
+  assert.match(newsSitemap, /<news:name>DekhoCampus<\/news:name>/);
+  assert.match(newsSitemap, /<news:title>Articles sample<\/news:title>/);
+  assert.equal(result.news_url_count, 1);
   assert.equal(result.removed_objects, 1);
   assert.ok(result.image_count > 0);
   assert.ok(result.filter_url_count > 0);
@@ -194,6 +200,14 @@ test("published sitemap files are served with XML cache headers", async () => {
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type"), /xml/);
   assert.match(await response.text(), /<urlset>/);
+});
+
+test("published Google News sitemap is served from the public sitemap store", async () => {
+  const repository = memoryRepository();
+  repository.objects.set("system-sitemaps/public/news-sitemap.xml", { body: '<?xml version="1.0"?><urlset xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"></urlset>' });
+  const response = await readPublishedSitemap(new Request("https://dekhocampus.com/news-sitemap.xml"), { repository });
+  assert.equal(response.status, 200);
+  assert.match(await response.text(), /sitemap-news/);
 });
 
 test("missing submitted generation chunks fall back to the current matching chunk", async () => {

@@ -19,6 +19,7 @@ import { handleIntentExport, handlePredictLeadIntent, handleSummarizeUserSession
 import { consumePublicWriteLimit } from "./public-write-rate-limit.mjs";
 import { handleAdminUsers } from "./admin-users.mjs";
 import { consumeSarkariHomeFeedReadLimit, loadSarkariHomeFeed } from "./sarkari-home-feed.mjs";
+import { queueIndexNowUrls } from "./indexnow.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -57,6 +58,20 @@ const PUBLIC_WRITE_MAX_BYTES = 256 * 1024;
 const PUBLIC_WRITE_MAX_ROWS = 100;
 const PUBLIC_INTENT_MAX_DISTINCT_SUBJECTS = 10;
 const SAVE_LEAD_MAX_BYTES = 64 * 1024;
+
+async function queuePublishedArticleWrite(request, result) {
+  if (!request || !["POST", "PUT", "PATCH"].includes(request.method) || result.status < 200 || result.status >= 300) return;
+  const input = await request.json().catch(() => null);
+  const inputRows = (Array.isArray(input) ? input : [input]).filter((row) => row && typeof row === "object");
+  const resultRows = (Array.isArray(result.body) ? result.body : [result.body]).filter((row) => row && typeof row === "object");
+  const urls = inputRows.flatMap((row, index) => {
+    const merged = { ...row, ...(resultRows[index] || resultRows[0] || {}) };
+    const published = String(merged.status || "").toLowerCase() === "published" && merged.is_active !== false;
+    const dekhocampus = !merged.site_scope || merged.site_scope === "dekhocampus";
+    return published && dekhocampus && merged.slug ? [`https://dekhocampus.com/news/${merged.slug}`] : [];
+  });
+  queueIndexNowUrls(urls);
+}
 
 function assertPublicIntentSubjectLimit(table, rows) {
   if (table !== "intent_events") return;
@@ -686,7 +701,9 @@ export async function handleRequest(request) {
     if (restMatch) {
       const table = restMatch[1];
       const authorization = await authorizeRest(table, request);
+      const articleWriteRequest = table === "articles" ? authorization.request.clone() : null;
       const result = await handleRest(table, authorization.request, authorization);
+      await queuePublishedArticleWrite(articleWriteRequest, result);
       const publicArticleCache = authorization.publicAccess && table === "articles" && result.status < 400
         ? { "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600" }
         : {};

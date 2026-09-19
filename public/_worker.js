@@ -28,7 +28,7 @@ const ENTITY_SELECTS = {
 
 function isApiRequest(pathname) {
   return pathname === "/health"
-    || /^\/sitemap(?:-index|-\d+)?\.xml$/.test(pathname)
+    || /^\/(?:news-sitemap|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname)
     || pathname.startsWith("/sitemap-files/")
     || API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
@@ -69,7 +69,7 @@ function edgeCacheTtl(request, pathname) {
   if (pathname === "/v1/functions/bootstrap") return 5 * 60;
   const restTable = pathname.match(/^\/v1\/rest\/([A-Za-z0-9_]+)$/)?.[1];
   if (restTable && CACHEABLE_PUBLIC_TABLES.has(restTable)) return 5 * 60;
-  if (/^\/sitemap(?:-index|-\d+)?\.xml$/.test(pathname) || pathname.startsWith("/sitemap-files/")) return 300;
+  if (/^\/(?:news-sitemap|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname) || pathname.startsWith("/sitemap-files/")) return 300;
   return 0;
 }
 

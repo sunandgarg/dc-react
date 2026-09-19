@@ -59,6 +59,8 @@ const FETCH_CONCURRENCY = boundedInteger(env.SITEMAP_FETCH_CONCURRENCY, 2, 1, 2)
 const FETCH_TIMEOUT_MS = boundedInteger(env.SITEMAP_FETCH_TIMEOUT_MS, 20_000, 2_000, 60_000);
 const FETCH_ATTEMPTS = boundedInteger(env.SITEMAP_FETCH_ATTEMPTS, 4, 1, 5);
 const SEED_FILE_LIMIT = boundedInteger(env.SITEMAP_SEED_FILE_LIMIT, 500, 1, 1_000);
+const NEWS_WINDOW_MS = 2 * 24 * 60 * 60 * 1000;
+const NEWS_SITEMAP_LIMIT = 1_000;
 const limitSitemapSource = createFailFastTaskLimiter(FETCH_CONCURRENCY);
 
 const retryOptions = (label: string) => ({
@@ -434,12 +436,42 @@ function sitemapIndex(files: string[]) {
   return [
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+    `  <sitemap><loc>${escapeXml(`${BASE_URL}/news-sitemap.xml`)}</loc></sitemap>`,
     ...files.map((file) => `  <sitemap><loc>${escapeXml(`${BASE_URL}/${file}`)}</loc></sitemap>`),
     `</sitemapindex>`,
   ].join("\n");
 }
 
-function writeSitemaps(entries: SitemapEntry[]) {
+function newsSitemapXml(articles: any[]) {
+  const cutoff = Date.now() - NEWS_WINDOW_MS;
+  const entries = articles.flatMap((article) => {
+    const publishedAt = new Date(article.created_at || article.updated_at || 0);
+    const title = String(article.title || "").trim();
+    if (!article.slug || !title || Number.isNaN(publishedAt.getTime()) || publishedAt.getTime() < cutoff) return [];
+    return [{ slug: article.slug, title, publicationDate: publishedAt.toISOString() }];
+  }).sort((left, right) => right.publicationDate.localeCompare(left.publicationDate)).slice(0, NEWS_SITEMAP_LIMIT);
+  const xml = [
+    `<?xml version="1.0" encoding="UTF-8"?>`,
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">`,
+    ...entries.map((entry) => [
+      "  <url>",
+      `    <loc>${escapeXml(`${BASE_URL}/news/${entry.slug}`)}</loc>`,
+      "    <news:news>",
+      "      <news:publication>",
+      "        <news:name>DekhoCampus</news:name>",
+      "        <news:language>en</news:language>",
+      "      </news:publication>",
+      `      <news:publication_date>${escapeXml(entry.publicationDate)}</news:publication_date>`,
+      `      <news:title>${escapeXml(entry.title)}</news:title>`,
+      "    </news:news>",
+      "  </url>",
+    ].join("\n")),
+    `</urlset>`,
+  ].join("\n");
+  return { xml, count: entries.length };
+}
+
+function writeSitemaps(entries: SitemapEntry[], articles: any[]) {
   const files: string[] = [];
   for (let index = 0; index < entries.length; index += SITEMAP_CHUNK_SIZE) {
     const file = `sitemap-${files.length + 1}.xml`;
@@ -447,9 +479,11 @@ function writeSitemaps(entries: SitemapEntry[]) {
     files.push(file);
   }
   const index = sitemapIndex(files);
+  const news = newsSitemapXml(articles);
   writeFileSync(resolve("dist/sitemap.xml"), index);
   writeFileSync(resolve("dist/sitemap-index.xml"), index);
-  return files;
+  writeFileSync(resolve("dist/news-sitemap.xml"), news.xml);
+  return { files, newsCount: news.count };
 }
 
 (async () => {
@@ -459,7 +493,7 @@ function writeSitemaps(entries: SitemapEntry[]) {
     fetchRows("exams", "slug,short_id,updated_at,image,logo", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("career_profiles", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("scholarships", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("articles", "slug,updated_at,tags,featured_image", (q) => q.eq("site_scope", "dekhocampus").eq("is_active", true).eq("status", "Published").not("slug", "is", null)),
+    fetchRows("articles", "slug,title,created_at,updated_at,tags,featured_image", (q) => q.eq("site_scope", "dekhocampus").eq("is_active", true).eq("status", "Published").not("slug", "is", null)),
     fetchRows("landing_pages", "slug,updated_at,logo_url,og_image", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("cat_universe_modules", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("promoted_programs", "slug,updated_at,image_url,hero_image,certificate_image,degree_image,institute_logo", (q) => q.eq("is_active", true).not("slug", "is", null)),
@@ -502,8 +536,8 @@ function writeSitemaps(entries: SitemapEntry[]) {
 
   const seen = new Set<string>();
   const unique = all.filter((entry) => entry.path && !seen.has(entry.path) && (seen.add(entry.path), true));
-  const files = writeSitemaps(unique);
-  console.log(`sitemap written - ${unique.length} URLs across ${files.length} file(s)`);
+  const written = writeSitemaps(unique, articles);
+  console.log(`sitemap written - ${unique.length} URLs across ${written.files.length} file(s); ${written.newsCount} recent news URL(s)`);
 })().catch((error) => {
   // Never publish a partially fetched production catalog. A non-zero postbuild
   // keeps the previously published S3 generation live and makes CI retryable.
