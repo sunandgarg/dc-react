@@ -38,6 +38,9 @@ describe("Index page layout (static source assertions)", () => {
 
   it("defers below-fold homepage content through HomeBelowFold", () => {
     expect(indexSrc).toMatch(/HomeBelowFold/);
+    expect(indexSrc).toMatch(/OptionalSectionBoundary name="home-below-fold"/);
+    expect(indexSrc.indexOf("<HeroSection")).toBeLessThan(indexSrc.indexOf("<OptionalSectionBoundary"));
+    expect(belowFoldSrc).toMatch(/OptionalSectionBoundary name=\{name\}/);
   });
 
   it("keeps Study Material out of the homepage body because it now lives in the header mega-menu", () => {

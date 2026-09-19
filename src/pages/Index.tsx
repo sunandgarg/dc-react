@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { ProfileCompletionBanner } from "@/components/ProfileCompletionBanner";
 import { HeroSection } from "@/components/HeroSection";
 import { DeferredRender } from "@/components/DeferredRender";
+import { OptionalSectionBoundary } from "@/components/OptionalSectionBoundary";
 import { lazyRetry } from "@/lib/lazyRetry";
 
 const HomeBelowFold = lazyRetry(() => import("@/components/HomeBelowFold"), "HomeBelowFold");
@@ -35,9 +36,11 @@ export default function Index() {
     <ProfileCompletionBanner />
     <main id="main-content">
       <div id="hero"><HeroSection onOpenChat={handleOpenChat} /></div>
-      <DeferredRender minHeight={900} rootMargin="0px">
-        <Suspense fallback={<div className="min-h-[900px]" aria-hidden="true" />}><HomeBelowFold /></Suspense>
-      </DeferredRender>
+      <OptionalSectionBoundary name="home-below-fold" minHeight={900}>
+        <DeferredRender minHeight={900} rootMargin="0px">
+          <Suspense fallback={<div className="min-h-[900px]" aria-hidden="true" />}><HomeBelowFold /></Suspense>
+        </DeferredRender>
+      </OptionalSectionBoundary>
     </main>
     {isLeadFormOpen && <Suspense fallback={null}><AILeadForm isOpen onClose={() => { setIsLeadFormOpen(false); setPendingChatMessage(undefined); }} onSubmit={handleLeadSubmit} /></Suspense>}
     {isChatOpen && <Suspense fallback={null}><AIChatFullScreen isOpen onClose={() => { setIsChatOpen(false); setInitialChatMessage(undefined); }} initialMessage={initialChatMessage} leadData={leadInfo} onRequestLeadForm={() => setIsLeadFormOpen(true)} /></Suspense>}
