@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo, useEffect, useRef, memo } from "react";
+import { Fragment, useState, useMemo, useEffect, useRef, useCallback, memo } from "react";
 import { Search, Clock, TrendingUp, GraduationCap, Briefcase, Building2, FileText, Award, Globe, BookOpen, Users, Newspaper, X, Tag as TagIcon, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,8 @@ import { GoogleAd } from "@/components/ads/GoogleAd";
 import { plainText } from "@/lib/plainText";
 import { useImportantExams } from "@/hooks/useExamsData";
 import { buildExamHref } from "@/lib/entityUrls";
+import { NumberedPagination } from "@/components/NumberedPagination";
+import { normalizePage } from "@/lib/pagination";
 
 const categories = [
   { label: "All News", icon: Newspaper, value: "" },
@@ -182,7 +184,7 @@ function GridSkeleton() {
 }
 
 export default function News() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { tag: tagFromPath } = useParams<{ tag?: string }>();
   const navigate = useNavigate();
   const queryTag = (searchParams.get("tag") || "").toLowerCase().trim();
@@ -200,7 +202,7 @@ export default function News() {
   const [activeCategory, setActiveCategory] = useState(() => searchParams.get("category") || "");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounced(searchQuery.trim(), 350);
-  const [page, setPage] = useState(0);
+  const page = normalizePage(searchParams.get("page"));
   const { data: importantExamData } = useImportantExams(8);
   const importantExams = useMemo(
     () => Array.isArray(importantExamData) ? importantExamData : [],
@@ -212,7 +214,39 @@ export default function News() {
     setActiveCategory((current) => current === nextCategory ? current : nextCategory);
   }, [searchParams]);
 
-  useEffect(() => { setPage(0); }, [tagParam, activeCategory, debouncedSearch]);
+  const newsPageHref = useCallback((targetPage: number) => {
+    const next = new URLSearchParams(searchParams);
+    if (targetPage <= 1) next.delete("page");
+    else next.set("page", String(targetPage));
+    const query = next.toString();
+    const path = tagParam ? `/news/tag/${tagParam}` : "/news";
+    return `${path}${query ? `?${query}` : ""}`;
+  }, [searchParams, tagParam]);
+
+  const setNewsPage = useCallback((targetPage: number, replace = false) => {
+    const next = new URLSearchParams(searchParams);
+    if (targetPage <= 1) next.delete("page");
+    else next.set("page", String(targetPage));
+    setSearchParams(next, { replace });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [searchParams, setSearchParams]);
+
+  const changeCategory = (value: string) => {
+    setActiveCategory(value);
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set("category", value);
+    else next.delete("category");
+    next.delete("page");
+    setSearchParams(next);
+  };
+
+  const changeSearch = (value: string) => {
+    setSearchQuery(value);
+    if (page === 1) return;
+    const next = new URLSearchParams(searchParams);
+    next.delete("page");
+    setSearchParams(next, { replace: true });
+  };
 
   const clearTag = () => navigate("/news", { replace: true });
 
@@ -242,7 +276,7 @@ export default function News() {
   const pinnedIds = useMemo(() => pinned.map(p => p.id), [pinned]);
   const hasFilters = !!(tagParam || activeCategory || debouncedSearch);
 
-  // Latest list - paginated. Skip exact count (slow on big tables); use +1 lookahead instead.
+  // Latest list uses an exact count so numbered pages remain stable and linkable.
   const { data: latestData, isLoading, isFetching } = useQuery({
     queryKey: ["news-latest", { tagParam, activeCategory, debouncedSearch, page, excl: hasFilters ? [] : pinnedIds }],
     placeholderData: keepPreviousData,
@@ -250,7 +284,7 @@ export default function News() {
     queryFn: async () => {
       let q = backendClient
         .from("articles")
-        .select(ARTICLE_COLS)
+        .select(ARTICLE_COLS, { count: "exact" })
         .eq("site_scope", "dekhocampus")
         .eq("status", "Published")
         .eq("is_active", true)
@@ -265,25 +299,27 @@ export default function News() {
         q = q.not("id", "in", `(${pinnedIds.join(",")})`);
       }
 
-      const from = page * PAGE_SIZE;
-      const to = from + PAGE_SIZE; // fetch one extra to know if there's a next page
-      q = q.range(from, to);
+      const from = (page - 1) * PAGE_SIZE;
+      q = q.range(from, from + PAGE_SIZE - 1);
 
-      const { data, error } = await q;
+      const { data, error, count } = await q;
       if (error) throw error;
-      const rows = (data || []) as Article[];
-      const hasMore = rows.length > PAGE_SIZE;
-      return { rows: hasMore ? rows.slice(0, PAGE_SIZE) : rows, hasMore };
+      return { rows: (data || []) as Article[], total: count ?? 0 };
     },
   });
 
   const latest = useMemo(() => latestData?.rows || [], [latestData?.rows]);
-  const hasMore = latestData?.hasMore || false;
+  const totalArticles = latestData?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalArticles / PAGE_SIZE));
+
+  useEffect(() => {
+    if (latestData && page > totalPages) setNewsPage(totalPages, true);
+  }, [latestData, page, setNewsPage, totalPages]);
 
   // Hero + sidebar ONLY appear on the unfiltered home view. When any filter
   // (category, tag, or search) is active, show a plain card grid like a
   // category archive page.
-  const showPinnedHero = !hasFilters && pinned.length > 0 && page === 0;
+  const showPinnedHero = !hasFilters && pinned.length > 0 && page === 1;
   const featured = showPinnedHero ? pinned[0] : undefined;
   const sidebar = showPinnedHero ? pinned.slice(1, 5) : [];
   const gridArticles = latest;
@@ -339,6 +375,7 @@ export default function News() {
   const pageTitle = tagParam
     ? `${tagParam.replace(/-/g, " ")} News & Updates | DekhoCampus`
     : "Education News - Admissions, Exams & Career Updates | DekhoCampus";
+  const canonicalPath = newsPageHref(page);
 
   const showSkeleton = isLoading && latest.length === 0;
   const empty = !isLoading && latest.length === 0 && pinned.length === 0;
@@ -346,9 +383,9 @@ export default function News() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title={pageTitle}
+        title={page > 1 ? `${pageTitle} - Page ${page}` : pageTitle}
         description={tagParam ? `Latest articles tagged ${tagParam} - admissions, tips, results, and updates.` : "Daily updates on admissions, entrance exams, results, scholarships and career opportunities."}
-        canonical={tagParam ? `/news/tag/${tagParam}` : "/news"}
+        canonical={canonicalPath}
       />
       {/* Preload the LCP image so the hero paints fast */}
       {featured?.featured_image && (
@@ -379,7 +416,7 @@ export default function News() {
 
         <div className="flex gap-3 overflow-x-auto pb-4 mb-6 scrollbar-hide">
           {categories.map((cat) => (
-            <button key={cat.label} onClick={() => setActiveCategory(cat.value)}
+            <button key={cat.label} onClick={() => changeCategory(cat.value)}
               className={`flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl border min-w-[90px] transition-all text-center ${
                 activeCategory === cat.value ? "bg-primary/10 border-primary/30 text-primary" : "bg-card border-border hover:bg-muted text-muted-foreground"
               }`}>
@@ -391,7 +428,7 @@ export default function News() {
 
         <div className="relative mb-8 max-w-2xl mx-auto">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search news..." className="pl-10 rounded-xl h-11" />
+          <Input value={searchQuery} onChange={(e) => changeSearch(e.target.value)} placeholder="Search news..." className="pl-10 rounded-xl h-11" />
         </div>
 
         {showSkeleton ? (
@@ -461,15 +498,16 @@ export default function News() {
                       </Fragment>
                     ))}
                   </div>
-                  <div className="flex items-center justify-center gap-3 mt-8">
-                    {page > 0 && (
-                      <button onClick={() => { setPage(p => Math.max(0, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-4 py-2 rounded-xl border border-border text-sm font-semibold hover:bg-muted">← Previous</button>
-                    )}
-                    <span className="text-xs text-muted-foreground">Page {page + 1}</span>
-                    {hasMore && (
-                      <button onClick={() => { setPage(p => p + 1); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90">Next →</button>
-                    )}
-                  </div>
+                  {totalPages > 1 && (
+                    <NumberedPagination
+                      page={page}
+                      totalPages={totalPages}
+                      disabled={isFetching}
+                      hrefForPage={newsPageHref}
+                      onPageChange={setNewsPage}
+                      className="mt-8"
+                    />
+                  )}
                 </section>
 
                 <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">

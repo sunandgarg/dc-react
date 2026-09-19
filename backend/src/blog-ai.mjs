@@ -37,6 +37,7 @@ export const DEFAULT_BLOG_COVER_TEMPLATE_KEY = "admin-uploads/blog-templates/dek
 const BLOG_COVER_FONT_FILE = fileURLToPath(new URL("../assets/Inter.ttf", import.meta.url));
 const BLOG_COVER_LOGO_FILE = new URL("../assets/dekhocampus-blog-logo.png", import.meta.url);
 const BLOG_COVER_REFERENCE_FILE = new URL("../assets/dekhocampus-blog-cover-reference-v2.png", import.meta.url);
+const immutableCoverSourceCache = new Map();
 
 export const BLOG_COVER_TEMPLATE_COUNT = 24;
 export const BLOG_COVER_TITLE_MAX_CHARACTERS = 88;
@@ -191,6 +192,11 @@ export function resolveBlogMediaSource(value) {
 
 async function downloadCoverSource(value, label) {
   const sourceUrl = resolveBlogMediaSource(value);
+  const cacheable = sourceUrl.includes("/admin-uploads/blog-templates/");
+  if (cacheable && immutableCoverSourceCache.has(sourceUrl)) {
+    return Buffer.from(await immutableCoverSourceCache.get(sourceUrl));
+  }
+  const download = (async () => {
   let parsed;
   try { parsed = new URL(sourceUrl); } catch { throw new Error(`${label} is not a valid media URL`); }
   if (parsed.protocol !== "https:") throw new Error(`${label} must use HTTPS`);
@@ -207,6 +213,14 @@ async function downloadCoverSource(value, label) {
   const bytes = Buffer.from(await response.arrayBuffer());
   if (!bytes.length || bytes.length > MAX_COVER_SOURCE_BYTES) throw new Error(`${label} exceeds 20 MB or is empty`);
   return bytes;
+  })();
+  if (cacheable) immutableCoverSourceCache.set(sourceUrl, download);
+  try {
+    return Buffer.from(await download);
+  } catch (error) {
+    if (cacheable) immutableCoverSourceCache.delete(sourceUrl);
+    throw error;
+  }
 }
 
 function escapeCoverText(value) {

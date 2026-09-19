@@ -38,6 +38,7 @@ import { useDraftState } from "@/hooks/useDraftState";
 import { syncAutoSlug } from "@/lib/slugify";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 import { normalizeArticleSlug, validateArticleSave } from "@/lib/articleEditor";
+import { NumberedPagination } from "@/components/NumberedPagination";
 
 const STATUSES = ["Draft", "Published"];
 const VERTICALS = ["Engineering", "Medical", "Management", "Law", "Design", "Science", "General"];
@@ -77,6 +78,14 @@ const normalizeAdminArticleSearch = (value: unknown) =>
     .trim()
     .toLowerCase();
 
+const clampArticlePageSize = (value: unknown) => Math.min(500, Math.max(1, Math.floor(Number(value) || 20)));
+const ARTICLE_PAGE_SIZE_PRESETS = [10, 20, 50, 100, 200];
+
+const storedArticlePageSize = (siteScope: SiteScope) => {
+  if (typeof window === "undefined") return 20;
+  return clampArticlePageSize(window.localStorage.getItem(`admin.articles.page-size.${siteScope}`));
+};
+
 interface AdminArticlesProps {
   siteScope?: SiteScope;
   studioMode?: boolean;
@@ -87,8 +96,9 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [customPageSize, setCustomPageSize] = useState(200);
+  const [pageSize, setPageSize] = useState(() => storedArticlePageSize(siteScope));
+  const [customPageSize, setCustomPageSize] = useState(() => String(storedArticlePageSize(siteScope)));
+  const [customPageSizeMode, setCustomPageSizeMode] = useState(() => !ARTICLE_PAGE_SIZE_PRESETS.includes(storedArticlePageSize(siteScope)));
   const { data: articlePage, isLoading, refetch: refetchArticles } = useAdminArticles(deferredSearch, page, pageSize, siteScope);
   const { data: articleCategories = [] } = useArticleCategories(!isSarkari);
   const CATEGORIES = isSarkari ? SARKARI_CATEGORIES : articleCategories;
@@ -108,10 +118,19 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   }, [articlePage]);
   const totalArticles = articlePage?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalArticles / pageSize));
-  const standardPageSizes = [10, 20, 30, 40, 50, 100];
+  const standardPageSizes = ARTICLE_PAGE_SIZE_PRESETS;
 
   useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [normalizedSearch, pageSize, siteScope]);
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [page, totalPages]);
+  useEffect(() => {
+    window.localStorage.setItem(`admin.articles.page-size.${siteScope}`, String(pageSize));
+  }, [pageSize, siteScope]);
+
+  const applyCustomPageSize = () => {
+    const next = clampArticlePageSize(customPageSize);
+    setCustomPageSize(String(next));
+    setPageSize(next);
+  };
 
   const { can, isAdmin } = useAuth();
   const canPublish = isAdmin || can("articles", "publish");
@@ -352,31 +371,43 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           <label className="text-xs font-medium text-muted-foreground" htmlFor="article-page-size">Rows</label>
           <select
             id="article-page-size"
-            value={standardPageSizes.includes(pageSize) ? String(pageSize) : "custom"}
+            value={customPageSizeMode ? "custom" : String(pageSize)}
             onChange={(event) => {
-              if (event.target.value === "custom") setPageSize(Math.min(500, Math.max(1, customPageSize)));
-              else setPageSize(Number(event.target.value));
+              if (event.target.value === "custom") setCustomPageSizeMode(true);
+              else {
+                const next = Number(event.target.value);
+                setCustomPageSizeMode(false);
+                setPageSize(next);
+                setCustomPageSize(String(next));
+              }
             }}
             className="h-9 rounded-md border bg-background px-2 text-sm"
           >
             {standardPageSizes.map((size) => <option key={size} value={size}>{size}</option>)}
             <option value="custom">Custom</option>
           </select>
-          {!standardPageSizes.includes(pageSize) && <Input
+          {customPageSizeMode && <Input
             aria-label="Custom rows per page"
             type="number"
             min={1}
             max={500}
             value={customPageSize}
-            onChange={(event) => setCustomPageSize(Number(event.target.value || 1))}
-            onBlur={() => setPageSize(Math.min(500, Math.max(1, customPageSize)))}
+            onChange={(event) => setCustomPageSize(event.target.value)}
+            onKeyDown={(event) => { if (event.key === "Enter") applyCustomPageSize(); }}
             className="h-9 w-24"
           />}
-          <Button size="sm" variant="outline" disabled={page <= 1 || isLoading} onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous</Button>
-          <span className="min-w-20 text-center text-xs font-medium">Page {page} of {totalPages}</span>
-          <Button size="sm" variant="outline" disabled={page >= totalPages || isLoading} onClick={() => setPage((value) => Math.min(totalPages, value + 1))}>Next</Button>
+          {customPageSizeMode && (
+            <Button size="sm" variant="outline" onClick={applyCustomPageSize}>Apply</Button>
+          )}
         </div>
       </div>
+      <NumberedPagination
+        page={page}
+        totalPages={totalPages}
+        disabled={isLoading}
+        onPageChange={setPage}
+        className="mt-3"
+      />
 
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent className="flex h-[94dvh] max-h-[94dvh] w-[min(96vw,1200px)] max-w-[1200px] flex-col gap-0 overflow-hidden p-0">

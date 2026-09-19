@@ -32,6 +32,11 @@ on:
         required: false
         default: ""
         type: string
+      backfill_missing_article_covers:
+        description: Generate branded WebP covers for published articles with missing or retired CMS images
+        required: false
+        default: false
+        type: boolean
       update_infrastructure:
         description: Apply the CloudFormation infrastructure template before deploying the application
         required: false
@@ -842,6 +847,21 @@ jobs:
           set +a
           cd /opt/dc-react/app
           npm --prefix backend run repair:listed-article-covers
+          REMOTE
+
+      - name: Backfill missing and retired production article covers
+        if: ${{ inputs.backfill_missing_article_covers }}
+        run: |
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=240 \
+            -i /tmp/tempkey "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
+          set -euo pipefail
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app
+          npm --prefix backend run backfill:article-covers
+          npm --prefix backend run backfill:article-covers -- --apply --concurrency 2 --assert-clean
           REMOTE
 
       - name: Upload immutable build sitemap seed to private S3
