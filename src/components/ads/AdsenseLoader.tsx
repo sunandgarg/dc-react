@@ -19,14 +19,14 @@ export function AdsenseLoader() {
   useEffect(() => {
     if (!isHomepage) return;
     const removeHomepageAds = () => {
-      document.querySelectorAll("#global-internal-ad-top-anchor .google-ad-slot, .google-auto-placed, .adsbygoogle-noablate, ins.adsbygoogle, iframe[src*='googleads.g.doubleclick.net'], iframe[id^='aswift_']")
+      document.querySelectorAll("#global-internal-ad-top-anchor, .google-auto-placed, .adsbygoogle-noablate, ins.adsbygoogle, iframe[src*='googleads.g.doubleclick.net'], iframe[id^='aswift_'], script[src*='pagead2.googlesyndication.com/pagead/js']")
         .forEach((element) => element.remove());
       document.getElementById("adsbygoogle-lib")?.remove();
       document.getElementById("adsbygoogle-autoads")?.remove();
     };
     removeHomepageAds();
     const observer = new MutationObserver(removeHomepageAds);
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
     return () => observer.disconnect();
   }, [isHomepage]);
 

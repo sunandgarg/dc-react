@@ -56,6 +56,8 @@ describe("Index page layout (static source assertions)", () => {
     expect(belowFoldSrc).not.toMatch(/GoogleAd|placement="homepage"/);
     expect(adsenseLoaderSrc).toMatch(/isHomepage \|\| !settings/);
     expect(adsenseLoaderSrc).toMatch(/google-auto-placed/);
+    expect(adsenseLoaderSrc).toContain("script[src*='pagead2.googlesyndication.com/pagead/js']");
+    expect(adsenseLoaderSrc).toMatch(/observer\.observe\(document\.documentElement/);
     expect(navbarSrc).toMatch(/pathname !== "\/" && <div id="global-internal-ad-top-anchor"/);
     expect(globalAdsSrc).toMatch(/if \(pathname === "\/"\) return null/);
     expect(readFileSync(resolve(process.cwd(), "src/components/ads/GoogleAd.tsx"), "utf8")).toMatch(/pathname === "\/" \|\| !allowed/);
