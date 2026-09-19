@@ -35,7 +35,7 @@ import { ExamAIInsight } from "@/components/detail/ExamAIInsight";
 import { ExamDecisionRail } from "@/components/detail/ExamDecisionRail";
 import { trackEvent } from "@/lib/analytics";
 import { compactEntityLabel } from "@/lib/compactEntityLabel";
-import { absoluteSiteUrl } from "@/lib/constant";
+import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 
 const EXAM_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "Overview" },
@@ -113,7 +113,7 @@ export default function ExamDetail() {
       name: exam.full_name || exam.name,
       description: (exam as any).page_summary || exam.description || undefined,
       url: absoluteSiteUrl(`${buildExamHref(exam as any)}${strategy ? `/${strategy.slug}` : detailTab ? `/${detailTab.id}` : ""}`),
-      primaryImageOfPage: exam.image ? { "@type": "ImageObject", url: exam.image } : undefined,
+      primaryImageOfPage: exam.image ? { "@type": "ImageObject", url: absoluteCanonical(exam.image), contentUrl: absoluteCanonical(exam.image), caption: `${exam.name} exam` } : undefined,
       about: {
         "@type": "Thing",
         name: exam.full_name || exam.name,
@@ -219,7 +219,7 @@ export default function ExamDetail() {
         {/* Hero Card */}
         <div className="bg-card rounded-2xl border border-border overflow-hidden mb-0">
           <div className="relative">
-            <img src={exam.image} alt={exam.name} width="1600" height="560" loading="eager" decoding="async" {...{ fetchpriority: "high" }} className="w-full h-48 md:h-56 object-cover object-center" />
+            <img src={exam.image} alt={`${exam.name} exam`} width="1600" height="560" loading="eager" decoding="async" {...{ fetchpriority: "high" }} className="w-full h-48 md:h-56 object-cover object-center" />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
             {(exam as any).logo && (
               <div className="absolute left-4 -bottom-6 md:left-6 md:-bottom-8 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-card border border-border shadow-md p-1.5 flex items-center justify-center overflow-hidden">

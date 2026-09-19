@@ -32,7 +32,7 @@ export function CourseCard({ course, index }: CourseCardProps) {
       <Link to={buildCourseHref(course)} className="block h-full">
         <article className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
           <div className="relative">
-            <img src={course.image} alt={course.name} className="w-full h-40 object-cover flex-shrink-0" loading="lazy" />
+            <img src={course.image} alt={`${course.name} course`} width="640" height="360" className="w-full h-40 object-cover flex-shrink-0" loading="lazy" decoding="async" />
             <div className="absolute top-2 left-2"><PriorityBadge priority={(course as any).priority} /></div>
           </div>
           <div className="p-4 flex-1 flex flex-col">

@@ -1,10 +1,14 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getInternalAdContext } from "@/components/GlobalInternalAds";
 import { useMatchingAds } from "@/hooks/useAds";
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
+import {
+  circularAnnouncementIndex,
+  normalizeAnnouncementRotation,
+} from "@/lib/announcementRotation";
 
 export function AnnouncementBar() {
   const reduceMotion = useReducedMotion();
@@ -19,11 +23,21 @@ export function AnnouncementBar() {
     position: "announcement-bar",
     variant: "announcement",
   });
-  const { data: rotationValue = "10" } = useSiteIntegration("announcement_rotation_seconds");
-  const rotationSeconds = Math.min(60, Math.max(5, Number(rotationValue) || 10));
+  const { data: rotationValue = "3.5" } = useSiteIntegration("announcement_rotation_seconds");
+  const rotationSeconds = normalizeAnnouncementRotation(rotationValue);
   const ads = configuredAds;
   const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
+  const [timerRevision, setTimerRevision] = useState(0);
+  const draggedRef = useRef(false);
+
+  const move = useCallback((delta: number) => {
+    if (ads.length < 2) return;
+    setDirection(delta >= 0 ? 1 : -1);
+    setActiveIndex((index) => circularAnnouncementIndex(index, delta, ads.length));
+    setTimerRevision((revision) => revision + 1);
+  }, [ads.length]);
 
   useEffect(() => {
     setActiveIndex((index) => Math.min(index, Math.max(ads.length - 1, 0)));
@@ -32,11 +46,14 @@ export function AnnouncementBar() {
   useEffect(() => {
     if (paused || ads.length < 2) return;
     const timer = window.setInterval(
-      () => setActiveIndex((index) => (index + 1) % ads.length),
+      () => {
+        setDirection(1);
+        setActiveIndex((index) => circularAnnouncementIndex(index, 1, ads.length));
+      },
       rotationSeconds * 1000,
     );
     return () => window.clearInterval(timer);
-  }, [ads.length, paused, rotationSeconds]);
+  }, [ads.length, paused, rotationSeconds, timerRevision]);
 
   if (!context.isPublic || isLoading || ads.length === 0) return null;
   const activeAd = ads[activeIndex] || ads[0];
@@ -57,15 +74,36 @@ export function AnnouncementBar() {
       onBlurCapture={() => setPaused(false)}
     >
       <div className="container flex h-11 min-h-11 items-center px-3 py-1">
-        <div className="min-w-0 flex-1 overflow-hidden text-center" aria-live="polite">
+        <div
+          className="min-w-0 flex-1 overflow-hidden text-center"
+          aria-live="polite"
+          aria-roledescription="carousel"
+          onClickCapture={(event) => {
+            if (!draggedRef.current) return;
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+        >
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={activeAd.id}
-              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 28 }}
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * 28 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -18 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -18 }}
               transition={{ duration: reduceMotion ? 0.12 : 0.32, ease: "easeOut" }}
-              className="flex min-w-0 items-center justify-center gap-2 sm:gap-3"
+              drag={ads.length > 1 ? "x" : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.18}
+              dragMomentum={false}
+              onDragStart={() => { draggedRef.current = true; }}
+              onDragEnd={(_, info) => {
+                if (Math.abs(info.offset.x) >= 44 || Math.abs(info.velocity.x) >= 450) {
+                  move(info.offset.x < 0 ? 1 : -1);
+                }
+                window.setTimeout(() => { draggedRef.current = false; }, 150);
+              }}
+              whileDrag={{ cursor: "grabbing" }}
+              className="flex min-w-0 touch-pan-y select-none items-center justify-center gap-2 cursor-grab sm:gap-3"
             >
               <div className="min-w-0">
                 <AnimatedWords text={activeAd.title} reduceMotion={Boolean(reduceMotion)} />

@@ -117,7 +117,9 @@ export function TopRankedColleges() {
                     <div className="relative h-36 overflow-hidden flex-shrink-0">
                       <img
                         src={college.image}
-                        alt={college.name}
+                        alt={`${college.name} campus`}
+                        width="560"
+                        height="288"
                         className="w-full h-full object-cover"
                         loading="lazy"
                       />

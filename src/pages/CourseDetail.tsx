@@ -53,7 +53,7 @@ import { trackEvent } from "@/lib/analytics";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowRight } from "lucide-react";
 import { compactEntityLabel } from "@/lib/compactEntityLabel";
-import { absoluteSiteUrl } from "@/lib/constant";
+import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { compactDisplayText, displayText, stripMarkup } from "@/lib/displayText";
 
 type ScrollSection = { id: string; label: string };
@@ -202,7 +202,8 @@ export default function CourseDetail() {
       alternateName: seoCourseName,
       description: seoDescription || undefined,
       url: absoluteSiteUrl(`${buildCourseHref(course as any)}${detailTab ? `/${detailTab.id}` : ""}`),
-      image: course.image || undefined,
+      image: course.image ? { "@type": "ImageObject", url: absoluteCanonical(course.image), contentUrl: absoluteCanonical(course.image), caption: `${seoCourseName} course` } : undefined,
+      primaryImageOfPage: course.image ? { "@type": "ImageObject", url: absoluteCanonical(course.image), contentUrl: absoluteCanonical(course.image), caption: `${seoCourseName} course` } : undefined,
       timeRequired: displayText(course.duration) || undefined,
       educationalLevel: displayText(course.level) || undefined,
       teaches: seoSubjects.length ? seoSubjects.join(", ") : undefined,
@@ -271,7 +272,12 @@ export default function CourseDetail() {
           <div className="relative">
             <img
               src={course.image}
-              alt={courseName}
+              alt={`${courseName} course`}
+              width="1600"
+              height="560"
+              loading="eager"
+              decoding="async"
+              {...{ fetchpriority: "high" }}
               className="w-full h-40 sm:h-48 md:h-56 object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />

@@ -217,6 +217,12 @@ export default function ArticleDetail() {
           name: article.title,
           description: article.excerpt || undefined,
           breadcrumb: { "@id": `${articleCanonical}#breadcrumb` },
+          primaryImageOfPage: article.image ? {
+            "@type": "ImageObject",
+            url: absoluteCanonical(article.image),
+            contentUrl: absoluteCanonical(article.image),
+            caption: article.title,
+          } : undefined,
           datePublished: dbArticle?.created_at || undefined,
           dateModified: dbArticle?.updated_at || dbArticle?.created_at || undefined,
         },

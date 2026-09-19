@@ -11,6 +11,50 @@ const MIN_FILTER_RESULTS = 3;
 const GENERATION_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 const DB_QUERY_CONCURRENCY = 2;
 const OBJECT_IO_CONCURRENCY = 4;
+const COLLEGE_FEE_RANGES = [
+  "Less than 1 Lakh", "1 - 2 Lakh", "2 - 3 Lakh", "3 - 5 Lakh", "5 - 7 Lakh",
+  "7 - 10 Lakh", "15 - 20 Lakh", "20 - 25 Lakh", "Above 25 Lakh",
+];
+const COLLEGE_EXAMS = [
+  "JEE Main", "GATE", "CAT", "NEET", "CMAT", "XAT", "CUET", "MHT CET", "KCET", "CLAT",
+  "NATA", "COMEDK UGET", "WBJEE", "JEE Advanced", "BITSAT", "VITEEE", "SRMJEEE", "MAH MBA CET",
+  "AP EAMCET", "OJEE", "IPU CET", "NIFT", "NID DAT", "SNAP",
+];
+const COLLEGE_APPROVALS = ["AICTE", "UGC", "NAAC", "MCI", "BCI", "AACSB", "EQUIS"];
+const COLLEGE_NAAC_GRADES = ["A++", "A+", "A", "B++", "B+", "B"];
+const COURSE_GROUPS = [
+  "B.E. / B.Tech", "B.Sc.", "Ph.D.", "M.Sc.", "MBA/PGDM", "B.A.", "M.E./M.Tech", "UG Diploma",
+  "PG Diploma", "M.A.", "Certificate", "M.Tech", "BBA", "B.Com", "B.Tech", "MBA", "MD", "M.Phil",
+  "After 10th Diploma", "B.Ed", "B.Sc(Hons.)", "M.Com", "Diploma", "LL.M.", "M.Pharma", "B.A. (Hons)",
+  "MS", "B.Des", "BFA", "BCA", "PGDM", "B.Pharma", "LL.B.", "MCA", "Other",
+];
+const COURSE_GROUPS_BY_CATEGORY = new Map(Object.entries({
+  Engineering: ["B.E. / B.Tech", "B.Tech", "M.E./M.Tech", "M.Tech"],
+  Science: ["B.Sc.", "M.Sc."],
+  Management: ["MBA/PGDM", "MBA", "PGDM", "BBA"],
+  Commerce: ["B.Com"],
+  Law: ["LL.B."],
+  Research: ["Ph.D."],
+  "Computer Applications": ["BCA", "MCA"],
+  "IT and Software": ["BCA", "MCA"],
+}));
+const COURSE_SPECIALIZATIONS = [
+  "Computer Science", "Mechanical Engineering", "Civil Engineering", "Electrical Engineering",
+  "Electronics & Communication Engineering", "Chemical Engineering", "Information Technology", "Biotechnology",
+  "Finance", "Marketing", "Human Resources", "Operations", "General Management", "International Business",
+  "Business Analytics", "Data Science", "Artificial Intelligence", "Psychology", "Economics", "Political Science",
+  "Sociology", "History", "English", "Mathematics", "Physics", "Chemistry", "Biology", "Fashion Design",
+  "Interior Design", "Hotel / Hospitality Management", "Journalism", "Photography", "Pharmacy",
+  "Nursing & Midwifery", "Public Health & Management",
+];
+const EXAM_GROUPS = ["B.E. / B.Tech", "MBA/PGDM", "LL.B.", "M.E./M.Tech", "PGPM", "MBA", "MBBS", "MD", "A.M.E."];
+const EXAM_GROUPS_BY_CATEGORY = new Map(Object.entries({
+  Engineering: ["B.E. / B.Tech", "M.E./M.Tech"],
+  Management: ["MBA/PGDM", "PGPM", "MBA"],
+  Law: ["LL.B."],
+  Medical: ["MBBS", "MD"],
+  Aviation: ["A.M.E."],
+}));
 const COLLEGE_TABS = ["overview", "highlights", "courses", "admissions", "placements", "cutoff", "rankings", "reviews", "infrastructure", "gallery", "scholarships", "hostel", "compare", "faculty", "recruiters", "contact", "news", "faq"];
 const COURSE_TABS = ["overview", "highlights", "eligibility", "syllabus", "fees", "admission", "career", "placements", "specializations", "top-exams", "top-colleges", "cutoff", "faq"];
 const EXAM_TABS = ["overview", "highlights", "dates", "application", "eligibility", "syllabus", "pattern", "preparation", "admit-card", "answer-key", "results", "counselling", "cutoff", "colleges", "faq"];
@@ -140,6 +184,26 @@ function jsonValues(value) {
   return [trimmed];
 }
 
+function facetValues(value) {
+  if (value == null || value === "") return [];
+  if (Array.isArray(value)) return value.flatMap(facetValues);
+  if (typeof value === "object") return Object.values(value).flatMap(facetValues);
+  const trimmed = String(value).trim();
+  if (!trimmed) return [];
+  if (/^[\[{]/.test(trimmed)) {
+    try { return facetValues(JSON.parse(trimmed)); } catch { /* use the raw value */ }
+  }
+  return [trimmed];
+}
+
+function embeddedImageValues(value) {
+  if (typeof value !== "string" || !value.trim()) return [];
+  return [
+    ...[...value.matchAll(/<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*>/gi)].map((match) => match[1]),
+    ...[...value.matchAll(/!\[[^\]]*\]\(([^\s)]+)(?:\s+["'][^"']*["'])?\)/g)].map((match) => match[1]),
+  ];
+}
+
 function canonicalImageLocation(value) {
   try {
     const url = new URL(value, PUBLISH_TARGET);
@@ -156,7 +220,10 @@ function canonicalImageLocation(value) {
 
 function imageLocations(row, fields) {
   const seen = new Set();
-  return fields.flatMap((field) => jsonValues(row?.[field])).flatMap((value) => {
+  return fields.flatMap((field) => [
+    ...jsonValues(row?.[field]),
+    ...embeddedImageValues(row?.[field]),
+  ]).flatMap((value) => {
     const location = canonicalImageLocation(value);
     if (!location || seen.has(location)) return [];
     seen.add(location);
@@ -366,6 +433,61 @@ function filteredPath(base, values) {
   return `${base}?${query}`;
 }
 
+function facetKey(value) {
+  return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+function exactFacetKey(value) {
+  return String(value || "").trim().toLowerCase().replace(/[\s./_-]+/g, "");
+}
+
+function allowedFacetValues(value, allowed) {
+  const canonical = new Map(allowed.map((item) => [exactFacetKey(item), item]));
+  return [...new Set(facetValues(value).map((item) => canonical.get(exactFacetKey(item))).filter(Boolean))];
+}
+
+function feeBoundsInLakhs(value) {
+  const text = String(value ?? "");
+  const fallbackUnit = /crore|\bcr\b/i.test(text) ? "crore" : /lakh|lac/i.test(text) ? "lakh" : "";
+  const amounts = [...text.matchAll(/(\d[\d,]*(?:\.\d+)?)\s*(crore|cr|lakh|lakhs|lac|lacs)?/gi)]
+    .map((match) => {
+      const amount = Number(match[1].replace(/,/g, ""));
+      const unit = (match[2] || fallbackUnit).toLowerCase();
+      if (!Number.isFinite(amount)) return Number.NaN;
+      if (unit === "crore" || unit === "cr") return amount * 100;
+      if (unit.startsWith("la")) return amount;
+      return amount >= 1_000 ? amount / 100_000 : amount;
+    })
+    .filter(Number.isFinite);
+  return amounts.length ? { min: Math.min(...amounts), max: Math.max(...amounts) } : null;
+}
+
+function matchingFeeRanges(value) {
+  const bounds = feeBoundsInLakhs(value);
+  if (!bounds) return [];
+  return COLLEGE_FEE_RANGES.filter((range) => {
+    if (range === "Less than 1 Lakh") return bounds.min < 1;
+    if (range === "Above 25 Lakh") return bounds.max > 25;
+    const [low, high] = range.match(/[0-9]+/g)?.map(Number) ?? [];
+    return Number.isFinite(low) && Number.isFinite(high) && bounds.max >= low && bounds.min <= high;
+  });
+}
+
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function matchingNamedFacets(values, allowed) {
+  const candidates = facetValues(values);
+  return allowed.filter((value) => {
+    const needle = facetKey(value);
+    const tokens = String(value).toLowerCase().match(/[a-z0-9]+/g) || [];
+    if (needle.length < 3 || tokens.length === 0) return false;
+    const phrase = new RegExp(`(?:^|[^a-z0-9])${tokens.map(escapeRegex).join("[^a-z0-9]*")}(?:$|[^a-z0-9])`, "i");
+    return candidates.some((candidate) => facetKey(candidate) === needle || phrase.test(String(candidate)));
+  });
+}
+
 function filterEntries(colleges, courses, exams, courseFees) {
   const buckets = new Map();
   const add = (path, identity, updatedAt, priority = "0.58") => {
@@ -377,13 +499,28 @@ function filterEntries(colleges, courses, exams, courseFees) {
     buckets.set(path, bucket);
   };
   const groupsByCollege = new Map();
+  const groupsByCourse = new Map();
+  const specializationsByCourse = new Map();
   for (const row of courseFees) {
-    const group = String(row.course_group || "").trim();
+    const group = allowedFacetValues(row.course_group, COURSE_GROUPS)[0] || "";
     const collegeSlug = String(row.college_slug || "").trim();
-    if (!group || !collegeSlug) continue;
-    const groups = groupsByCollege.get(collegeSlug) || new Set();
-    groups.add(group);
-    groupsByCollege.set(collegeSlug, groups);
+    const courseSlug = String(row.course_slug || "").trim();
+    const specialization = String(row.specialization || "").trim();
+    if (group && collegeSlug) {
+      const groups = groupsByCollege.get(collegeSlug) || new Set();
+      groups.add(group);
+      groupsByCollege.set(collegeSlug, groups);
+    }
+    if (group && courseSlug) {
+      const groups = groupsByCourse.get(courseSlug) || new Set();
+      groups.add(group);
+      groupsByCourse.set(courseSlug, groups);
+    }
+    if (specialization && courseSlug) {
+      const specializations = specializationsByCourse.get(courseSlug) || new Set();
+      specializations.add(specialization);
+      specializationsByCourse.set(courseSlug, specializations);
+    }
   }
   for (const row of colleges) {
     const state = String(row.state || "").trim();
@@ -395,6 +532,11 @@ function filterEntries(colleges, courses, exams, courseFees) {
     if (city) add(filteredPath("/colleges", { ...(state ? { state } : {}), city }), id, row.updated_at);
     if (stream) add(filteredPath("/colleges", { stream }), id, row.updated_at);
     if (type) add(filteredPath("/colleges", { type }), id, row.updated_at);
+    for (const approval of allowedFacetValues(row.approvals, COLLEGE_APPROVALS)) add(filteredPath("/colleges", { approval }), id, row.updated_at);
+    const naac = allowedFacetValues(row.naac_grade, COLLEGE_NAAC_GRADES)[0] || "";
+    if (naac) add(filteredPath("/colleges", { naac }), id, row.updated_at);
+    for (const fee of matchingFeeRanges(row.fees)) add(filteredPath("/colleges", { fee }), id, row.updated_at);
+    for (const exam of matchingNamedFacets([row.name, row.category, ...facetValues(row.tags)], COLLEGE_EXAMS)) add(filteredPath("/colleges", { exam }), id, row.updated_at);
     if (stream && state) add(filteredPath("/colleges", { stream, state }), id, row.updated_at, "0.62");
     if (stream && city) add(filteredPath("/colleges", { stream, ...(state ? { state } : {}), city }), id, row.updated_at, "0.64");
     if (type && state) add(filteredPath("/colleges", { type, state }), id, row.updated_at, "0.6");
@@ -414,6 +556,20 @@ function filterEntries(colleges, courses, exams, courseFees) {
     if (mode) add(filteredPath("/courses", { mode }), row.slug, row.updated_at);
     if (duration) add(filteredPath("/courses", { duration }), row.slug, row.updated_at);
     if (stream && mode) add(filteredPath("/courses", { stream, mode }), row.slug, row.updated_at, "0.6");
+    const groups = new Set([
+      ...(groupsByCourse.get(row.slug) || []),
+      ...(COURSE_GROUPS_BY_CATEGORY.get(stream) || []),
+      ...matchingNamedFacets([row.name, row.full_name], COURSE_GROUPS),
+    ]);
+    for (const group of groups) {
+      add(filteredPath("/courses", { group }), row.slug, row.updated_at, "0.6");
+      if (mode) add(filteredPath("/courses", { group, mode }), row.slug, row.updated_at, "0.59");
+    }
+    const specializations = new Set([
+      ...allowedFacetValues(row.specializations, COURSE_SPECIALIZATIONS),
+      ...allowedFacetValues([...(specializationsByCourse.get(row.slug) || [])], COURSE_SPECIALIZATIONS),
+    ]);
+    for (const specialization of specializations) add(filteredPath("/courses", { specialization }), row.slug, row.updated_at);
   }
   for (const row of exams) {
     const stream = String(row.category || "").trim();
@@ -424,6 +580,11 @@ function filterEntries(colleges, courses, exams, courseFees) {
     if (level) add(filteredPath("/exams", { level }), row.slug, row.updated_at);
     if (stream && level) add(filteredPath("/exams", { stream, level }), row.slug, row.updated_at, "0.6");
     if (category && stream) add(filteredPath("/exams", { category, stream }), row.slug, row.updated_at, "0.6");
+    const groups = new Set([
+      ...allowedFacetValues(row.categories, EXAM_GROUPS),
+      ...(EXAM_GROUPS_BY_CATEGORY.get(stream) || []),
+    ]);
+    for (const group of groups) add(filteredPath("/exams", { group }), row.slug, row.updated_at, "0.59");
   }
   return [...buckets.entries()]
     .filter(([, bucket]) => bucket.identities.size >= MIN_FILTER_RESULTS)
@@ -433,10 +594,10 @@ function filterEntries(colleges, courses, exams, courseFees) {
 
 async function dynamicEntries(prismaClient) {
   const queryLoaders = [
-    () => rows(prismaClient, "colleges", ["slug", "short_id", "updated_at", "state", "city", "type", "category", "image", "logo", "carousel_images", "gallery_images"]),
-    () => rows(prismaClient, "courses", ["slug", "short_id", "updated_at", "category", "mode", "duration", "image"]),
-    () => rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "image", "logo"]),
-    () => rows(prismaClient, "articles", ["slug", "updated_at", "tags", "featured_image"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
+    () => rows(prismaClient, "colleges", ["slug", "short_id", "updated_at", "name", "state", "city", "type", "category", "fees", "tags", "approvals", "naac_grade", "image", "logo", "carousel_images", "gallery_images"]),
+    () => rows(prismaClient, "courses", ["slug", "short_id", "updated_at", "name", "full_name", "category", "mode", "duration", "specializations", "image"]),
+    () => rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "categories", "image", "logo"]),
+    () => rows(prismaClient, "articles", ["slug", "updated_at", "tags", "featured_image", "content"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
     () => rows(prismaClient, "career_profiles", ["slug", "updated_at", "image"]),
     () => rows(prismaClient, "scholarships", ["slug", "updated_at", "image"]),
     () => rows(prismaClient, "landing_pages", ["slug", "updated_at", "logo_url", "og_image"]),
@@ -451,7 +612,7 @@ async function dynamicEntries(prismaClient) {
     () => rows(prismaClient, "college_universities", ["slug", "program_slug", "updated_at"]),
     () => rows(prismaClient, "college_semesters", ["semester_num", "program_slug", "university_slug", "updated_at"], false),
     () => rows(prismaClient, "college_subjects", ["slug", "semester_num", "program_slug", "university_slug", "updated_at"]),
-    () => prismaClient.$queryRawUnsafe("SELECT `college_slug`,`course_group` FROM `course_fees` WHERE `course_group` IS NOT NULL AND TRIM(`course_group`) <> ''"),
+    () => prismaClient.$queryRawUnsafe("SELECT `college_slug`,`course_slug`,`course_group`,`specialization` FROM `course_fees` WHERE (`course_group` IS NOT NULL AND TRIM(`course_group`) <> '') OR (`specialization` IS NOT NULL AND TRIM(`specialization`) <> '')"),
   ];
   const [colleges, courses, exams, articles, careers, scholarships, landing, catModules, programs, jobs, authors, legal, subjects, chapters, collegePrograms, universities, semesters, collegeSubjects, courseFees] = await boundedMap(
     queryLoaders,
@@ -481,7 +642,7 @@ async function dynamicEntries(prismaClient) {
         priority: "0.64",
       })),
     ]),
-    ...simpleEntities("/news", articles, "0.7", ["featured_image"]),
+    ...simpleEntities("/news", articles, "0.7", ["featured_image", "content"]),
     ...[...tags].map((tag) => ({ path: `/news/tag/${encodeURIComponent(tag)}`, changefreq: "daily", priority: "0.62" })),
     ...simpleEntities("/careers", careers, "0.72", ["image"]),
     ...simpleEntities("/scholarships", scholarships, "0.72", ["image"]),

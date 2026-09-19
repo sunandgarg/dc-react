@@ -45,7 +45,7 @@ import { useQuery } from "@tanstack/react-query";
 import { RichSection } from "@/components/detail/RichSection";
 import { RichText } from "@/components/detail/RichText";
 import { PageSummary } from "@/components/detail/PageSummary";
-import { absoluteSiteUrl } from "@/lib/constant";
+import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { formatFeePeriod, formatFeeRange, formatIndianFee, groupCollegeFees, groupCollegeFeesByLevel, inferCourseSpecialization } from "@/lib/courseFeeGroups";
 import { STUDENT_RATING_FALLBACK } from "@/lib/ratings";
 
@@ -183,8 +183,8 @@ export default function CollegeDetail() {
       alternateName: college.short_name || undefined,
       description: (college as any).page_summary || college.description || undefined,
       url: absoluteSiteUrl(`${buildCollegeHref(college as any)}${detailTab ? `/${detailTab.id}` : ""}`),
-      image: college.image || undefined,
-      logo: college.logo || undefined,
+      image: college.image ? { "@type": "ImageObject", url: absoluteCanonical(college.image), contentUrl: absoluteCanonical(college.image), caption: `${college.name} campus` } : undefined,
+      logo: college.logo ? { "@type": "ImageObject", url: absoluteCanonical(college.logo), contentUrl: absoluteCanonical(college.logo), caption: `${college.name} logo` } : undefined,
       foundingDate: college.established ? String(college.established) : undefined,
       address: {
         "@type": "PostalAddress",

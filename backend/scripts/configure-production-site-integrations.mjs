@@ -17,6 +17,7 @@ const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v
 const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v3";
 const CONTENT_COPY_PROTECTION_MIGRATION_KEY = "content_copy_protection_v1";
 const ANNOUNCEMENT_CAROUSEL_SEED_MIGRATION_KEY = "announcement_carousel_seed_v1";
+const ANNOUNCEMENT_ROTATION_3_5_MIGRATION_KEY = "announcement_rotation_3_5_v1";
 const ANNOUNCEMENT_GENERIC_CTA_CLEANUP_MIGRATION_KEY = "announcement_generic_cta_cleanup_v1";
 
 try {
@@ -246,7 +247,7 @@ try {
       data: {
         label: "Announcement rotation interval",
         category: "website",
-        value: "10",
+        value: "3.5",
         enabled: true,
         notes: "Seconds between automatic announcement-bar changes",
         updated_at: new Date(),
@@ -260,7 +261,7 @@ try {
           key: "announcement_rotation_seconds",
           label: "Announcement rotation interval",
           category: "website",
-          value: "10",
+          value: "3.5",
           enabled: true,
           notes: "Seconds between automatic announcement-bar changes",
         },
@@ -317,12 +318,49 @@ try {
       data: {
         key: ANNOUNCEMENT_CAROUSEL_SEED_MIGRATION_KEY,
         value: JSON.stringify({
-          rotation_seconds: 10,
+          rotation_seconds: 3.5,
           seeded: announcementsSeeded,
           updated: announcementsUpdated,
           source: "active_hero_banners",
           applied_at: new Date().toISOString(),
         }),
+      },
+    });
+  }
+  const announcementRotationMigration = await prisma.app_settings.findUnique({
+    where: { key: ANNOUNCEMENT_ROTATION_3_5_MIGRATION_KEY },
+  });
+  if (!announcementRotationMigration) {
+    const rotation = await prisma.site_integrations.updateMany({
+      where: { key: "announcement_rotation_seconds" },
+      data: {
+        label: "Announcement rotation interval",
+        category: "website",
+        value: "3.5",
+        enabled: true,
+        notes: "Seconds between automatic announcement-bar changes",
+        updated_at: new Date(),
+      },
+    });
+    announcementRotationUpdated = Math.max(announcementRotationUpdated, rotation.count);
+    if (!rotation.count) {
+      await prisma.site_integrations.create({
+        data: {
+          id: randomUUID(),
+          key: "announcement_rotation_seconds",
+          label: "Announcement rotation interval",
+          category: "website",
+          value: "3.5",
+          enabled: true,
+          notes: "Seconds between automatic announcement-bar changes",
+        },
+      });
+      announcementRotationUpdated = 1;
+    }
+    await prisma.app_settings.create({
+      data: {
+        key: ANNOUNCEMENT_ROTATION_3_5_MIGRATION_KEY,
+        value: JSON.stringify({ rotation_seconds: 3.5, applied_at: new Date().toISOString() }),
       },
     });
   }
@@ -409,7 +447,7 @@ try {
     adsense_auto_ads_disabled: autoAdsDisabled,
     content_copy_protection_enabled: Boolean(copyProtectionMigration) || copyProtectionUpdated > 0,
     announcement_carousel_migrated: Boolean(announcementCarouselMigration) || announcementsSeeded + announcementsUpdated > 0,
-    announcement_rotation_seconds: 10,
+    announcement_rotation_seconds: 3.5,
     announcements_seeded: announcementsSeeded,
     announcements_updated: announcementsUpdated,
     announcement_rotation_updated: announcementRotationUpdated,

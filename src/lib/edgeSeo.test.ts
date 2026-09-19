@@ -42,6 +42,7 @@ describe("Cloudflare edge SEO", () => {
     const metadata = articleEdgeSeo({
       title: "NEET Update 2026",
       description: "The latest verified update.",
+      featured_image: "https://cdn.dekhocampus.com/news/neet-update-2026.webp",
       content: '<h2>What changed</h2><p>Useful details.</p><script>alert(1)</script><img src=x onerror="alert(2)"><svg><a href="javascript:alert(3)">bad</a></svg>',
       author: "DekhoCampus Editorial",
       created_at: "2026-09-07T00:00:00.000Z",
@@ -51,6 +52,9 @@ describe("Cloudflare edge SEO", () => {
     expect(output).toContain('"@type":"WebPage"');
     expect(output).toContain('"@type":"BreadcrumbList"');
     expect(output).toContain('"@type":"NewsArticle"');
+    expect(output).toContain('"primaryImageOfPage"');
+    expect(output).toContain('<img src="https://cdn.dekhocampus.com/news/neet-update-2026.webp"');
+    expect(output).toContain('alt="NEET Update 2026"');
     expect(output).toContain("<h2>What changed</h2>");
     expect(output).toContain("What changed");
     expect(output).toContain("Useful details.");

@@ -16,9 +16,11 @@ function populatedDb(coreCount = 1) {
       const table = sql.match(/FROM `([^`]+)`/)?.[1];
       if (coreCount === 0 && ["colleges", "courses", "exams", "articles"].includes(table)) return [];
       const base = { slug: `${table}-sample`, short_id: 101, updated_at: new Date("2026-08-27T00:00:00Z"), image: "https://cdn.dekhocampus.com/catalog/sample.webp" };
-      if (table === "colleges") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, state: "Delhi NCR", city: "New Delhi", type: "Private", category: "Management", logo: "https://old-origin.example/storage/v1/object/public/admin-uploads/logos/sample.webp", carousel_images: [{ url: "https://www.youtube.com/embed/not-an-image", caption: "Campus tour" }], gallery_images: [] }));
-      if (table === "course_fees") return [1, 2, 3].map((number) => ({ college_slug: number === 1 ? "colleges-sample" : `colleges-sample-${number}`, course_group: "MBA" }));
-      if (table === "articles") return [{ ...base, tags: ["Admissions", "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material"], featured_image: "https://cdn.dekhocampus.com/news/sample.webp" }];
+      if (table === "colleges") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, name: `CAT Management College ${number}`, state: "Delhi NCR", city: "New Delhi", type: "Private", category: "Management", fees: "₹50,000 - ₹2,50,000 / year", tags: ["CAT"], approvals: ["UGC"], naac_grade: "A++", logo: "https://old-origin.example/storage/v1/object/public/admin-uploads/logos/sample.webp", carousel_images: [{ url: "https://www.youtube.com/embed/not-an-image", caption: "Campus tour" }], gallery_images: [] }));
+      if (table === "courses") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, name: `MBA Business Analytics ${number}`, full_name: "Master of Business Administration", category: "Management", mode: "Full Time", duration: "2 Years", specializations: ["Business Analytics"] }));
+      if (table === "exams") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, category: "Management", exam_type: "Entrance", level: "PG", categories: ["MBA/PGDM"] }));
+      if (table === "course_fees") return [1, 2, 3].map((number) => ({ college_slug: number === 1 ? "colleges-sample" : `colleges-sample-${number}`, course_slug: number === 1 ? "courses-sample" : `courses-sample-${number}`, course_group: "MBA / PGDM", specialization: "Business Analytics" }));
+      if (table === "articles") return [{ ...base, tags: ["Admissions", "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material"], featured_image: "https://cdn.dekhocampus.com/news/sample.webp", content: '<p>Campus guide</p><img src="https://cdn.dekhocampus.com/news/inline-campus.jpg" alt="Sample campus">' }];
       if (table === "study_subjects") return [{ ...base, id: "subject-1", class_num: 12, board_slug: "cbse" }];
       if (table === "study_chapters") return [{ ...base, subject_id: "subject-1" }];
       if (table === "college_universities") return [{ ...base, program_slug: "btech" }];
@@ -85,7 +87,7 @@ test("sitemap publishing leaves one Prisma connection free", async () => {
   const result = await publishSitemap(request(), { prismaClient: database.client, repository: memoryRepository() });
   assert.equal(result.status, "published");
   assert.equal(database.peak(), 2);
-  assert.deepEqual(result.source_counts, { colleges: 3, courses: 1, exams: 1, articles: 1 });
+  assert.deepEqual(result.source_counts, { colleges: 3, courses: 3, exams: 3, articles: 1 });
 });
 
 test("workflow publishing reads its immutable build seed instead of the large live generation", async () => {
@@ -155,11 +157,20 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.match(chunk, /\/exams\/exams-sample-101<\/loc>/);
   assert.match(chunk, /xmlns:image="http:\/\/www\.google\.com\/schemas\/sitemap-image\/1\.1"/);
   assert.match(chunk, /<image:loc>https:\/\/cdn\.dekhocampus\.com\/news\/sample\.webp<\/image:loc>/);
+  assert.match(chunk, /<image:loc>https:\/\/cdn\.dekhocampus\.com\/news\/inline-campus\.jpg<\/image:loc>/);
   assert.match(chunk, /<image:loc>https:\/\/dekhocampus\.com\/storage\/v1\/object\/public\/admin-uploads\/logos\/sample\.webp<\/image:loc>/);
   assert.doesNotMatch(chunk, /<(?:changefreq|priority)>/);
   assert.doesNotMatch(chunk, /youtube\.com|Campus tour/);
   assert.doesNotMatch(chunk, /news\/tag\/https|aws-origin\.dekhocampus\.com/);
-  assert.match(chunk, /\/colleges\?group=MBA&amp;state=Delhi\+NCR<\/loc>/);
+  assert.match(chunk, /\/colleges\?group=MBA%2FPGDM&amp;state=Delhi\+NCR<\/loc>/);
+  assert.match(chunk, /\/colleges\?approval=UGC<\/loc>/);
+  assert.match(chunk, /\/colleges\?naac=A%2B%2B<\/loc>/);
+  assert.match(chunk, /\/colleges\?fee=Less\+than\+1\+Lakh<\/loc>/);
+  assert.match(chunk, /\/colleges\?exam=CAT<\/loc>/);
+  assert.match(chunk, /\/courses\?group=MBA%2FPGDM<\/loc>/);
+  assert.match(chunk, /\/courses\?specialization=Business\+Analytics<\/loc>/);
+  assert.match(chunk, /\/courses\?group=MBA%2FPGDM&amp;mode=Full\+Time<\/loc>/);
+  assert.match(chunk, /\/exams\?group=MBA%2FPGDM<\/loc>/);
   assert.doesNotMatch(chunk, /group=Unverified|state=Nowhere/);
   assert.match(chunk, /\/colleges\/colleges-sample-101\/overview/);
   assert.match(chunk, /\/colleges\/colleges-sample-101\/courses/);

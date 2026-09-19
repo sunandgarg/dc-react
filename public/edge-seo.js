@@ -196,6 +196,7 @@ export function articleEdgeSeo(article, url) {
           name: String(article.title || title),
           description,
           breadcrumb: { "@id": `${canonical}#breadcrumb` },
+          ...(image ? { primaryImageOfPage: { "@type": "ImageObject", url: image, contentUrl: image, caption: String(article.title || title) } } : {}),
           ...(publishedAt ? { datePublished: publishedAt } : {}),
           ...(modifiedAt ? { dateModified: modifiedAt } : {}),
         },
@@ -222,7 +223,7 @@ export function articleEdgeSeo(article, url) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827"><h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(article.content)}</article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(article.title || title)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" decoding="async">` : ""}<h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(article.content)}</article>`,
   };
 }
 

@@ -26,7 +26,9 @@ function CollegeCardComponent({ college, index }: CollegeCardProps) {
           <Link to={buildCollegeHref(college)} className="block w-full h-full group">
             <img
               src={college.image}
-              alt={college.name}
+              alt={`${college.name} campus`}
+              width="640"
+              height="384"
               className="w-full h-full object-cover object-center"
               loading="lazy"
               decoding="async"

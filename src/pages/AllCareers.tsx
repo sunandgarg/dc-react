@@ -54,7 +54,7 @@ export default function AllCareers() {
                 <Link key={c.id} to={`/careers/${c.slug}`}>
                   <Card className="p-5 h-full hover:shadow-lg hover:-translate-y-0.5 transition-all">
                     <div className="flex items-start gap-3 mb-3">
-                      {c.image ? (<img src={c.image} alt="" loading="lazy" width={56} height={56} className="w-14 h-14 rounded-xl bg-card object-cover shrink-0" />) : (<ProfessionalAvatar variant="career" seed={c.slug || c.name} className="w-14 h-14 rounded-xl overflow-hidden shrink-0" />)}
+                      {c.image ? (<img src={c.image} alt={`${c.name} career`} loading="lazy" decoding="async" width={56} height={56} className="w-14 h-14 rounded-xl bg-card object-cover shrink-0" />) : (<ProfessionalAvatar variant="career" seed={c.slug || c.name} className="w-14 h-14 rounded-xl overflow-hidden shrink-0" />)}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-lg leading-tight">{c.name}</h3>
                         <p className="text-xs text-primary mt-0.5">{c.domain}</p>

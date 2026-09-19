@@ -93,7 +93,7 @@ export function FeaturedColleges() {
                 className="group bg-card rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-lg transition-all h-full flex flex-col"
               >
                 <div className="relative h-40 overflow-hidden flex-shrink-0">
-                  <img src={college.image} alt={college.name} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={college.image} alt={`${college.name} campus`} width="640" height="360" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                     <h3 className="text-base font-bold text-white line-clamp-1">{college.short_name || college.name}</h3>
                   </div>

@@ -40,9 +40,13 @@ export function CollegeHeroCard({ college }: Props) {
         {hasImage ? (
           <img
             src={college.image}
-            alt={college.name}
+            alt={`${college.name} campus`}
+            width="1600"
+            height="560"
             className="w-full h-48 md:h-56 object-cover object-center"
             loading="eager"
+            decoding="async"
+            {...{ fetchpriority: "high" }}
           />
         ) : (
           <div className="w-full h-48 md:h-56 bg-gradient-to-br from-slate-300 to-slate-500" />

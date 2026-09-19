@@ -31,6 +31,11 @@ import { CSVTools } from "@/components/CSVTools";
 import { useDraftState } from "@/hooks/useDraftState";
 import { resetBootstrap } from "@/lib/bootstrap";
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
+import {
+  DEFAULT_ANNOUNCEMENT_ROTATION_SECONDS,
+  MIN_ANNOUNCEMENT_ROTATION_SECONDS,
+  normalizeAnnouncementRotation,
+} from "@/lib/announcementRotation";
 // ─── Friendly labels ───────────────────────────────────────────────────
 
 const AUDIENCE_OPTIONS = [
@@ -145,7 +150,7 @@ function Hint({ children }: { children: React.ReactNode }) {
 export default function AdminAds() {
   const { data: ads, isLoading } = useAllAds();
   const { data: locations } = useStatesAndCities();
-  const { data: rotationValue = "10" } = useSiteIntegration("announcement_rotation_seconds");
+  const { data: rotationValue = String(DEFAULT_ANNOUNCEMENT_ROTATION_SECONDS) } = useSiteIntegration("announcement_rotation_seconds");
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -157,13 +162,13 @@ export default function AdminAds() {
   const [filterTarget, setFilterTarget] = useDraftState<string>('admin.ads.filterTarget.v1', "all");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showGuide, setShowGuide] = useState(false);
-  const [rotationSeconds, setRotationSeconds] = useState(10);
+  const [rotationSeconds, setRotationSeconds] = useState(DEFAULT_ANNOUNCEMENT_ROTATION_SECONDS);
   const [savingRotation, setSavingRotation] = useState(false);
   const targetCities = form.target_cities || [];
   const allCities = Array.from(new Set(Object.values(locations?.citiesByState || {}).flat())).sort((a, b) => a.localeCompare(b));
 
   useEffect(() => {
-    setRotationSeconds(Math.min(60, Math.max(5, Number(rotationValue) || 10)));
+    setRotationSeconds(normalizeAnnouncementRotation(rotationValue));
   }, [rotationValue]);
 
   // ── Actions ──
@@ -272,7 +277,7 @@ export default function AdminAds() {
   };
 
   const saveRotation = async () => {
-    const seconds = Math.min(60, Math.max(5, Math.round(rotationSeconds || 10)));
+    const seconds = normalizeAnnouncementRotation(rotationSeconds);
     setSavingRotation(true);
     const { error } = await (backendClient as any).from("site_integrations").upsert({
       key: "announcement_rotation_seconds",
@@ -351,8 +356,9 @@ export default function AdminAds() {
               <Input
                 id="announcement-rotation"
                 type="number"
-                min={5}
+                min={MIN_ANNOUNCEMENT_ROTATION_SECONDS}
                 max={60}
+                step={0.5}
                 value={rotationSeconds}
                 onChange={(event) => setRotationSeconds(Number(event.target.value))}
                 className="h-9 w-20 rounded-lg bg-white"
