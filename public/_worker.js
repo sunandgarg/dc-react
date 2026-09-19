@@ -21,14 +21,14 @@ const CACHEABLE_PUBLIC_TABLES = new Set([
 const PUBLIC_STORAGE_PATH = /^\/storage\/v1\/object\/public\/(?:admin-uploads|ad-images|legacy-public-assets|study-material)(?:\/|$)/;
 
 const ENTITY_SELECTS = {
-  colleges: "name,slug,short_id,description,page_summary,meta_title,meta_description,image,logo,city,state,updated_at",
-  courses: "name,full_name,slug,short_id,description,page_summary,meta_title,meta_description,image,category,updated_at",
-  exams: "name,full_name,slug,short_id,description,page_summary,meta_title,meta_description,image,logo,category,updated_at",
+  colleges: "name,slug,short_id,description,page_summary,meta_title,meta_description,image,logo,city,state,youtube_video_url,updated_at",
+  courses: "name,full_name,slug,short_id,description,page_summary,meta_title,meta_description,image,category,youtube_video_url,updated_at",
+  exams: "name,full_name,slug,short_id,description,page_summary,meta_title,meta_description,image,logo,category,youtube_video_url,updated_at",
 };
 
 function isApiRequest(pathname) {
   return pathname === "/health"
-    || /^\/(?:news-sitemap|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname)
+    || /^\/(?:news-(?:sitemap|feed)|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname)
     || pathname.startsWith("/sitemap-files/")
     || API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
@@ -69,7 +69,7 @@ function edgeCacheTtl(request, pathname) {
   if (pathname === "/v1/functions/bootstrap") return 5 * 60;
   const restTable = pathname.match(/^\/v1\/rest\/([A-Za-z0-9_]+)$/)?.[1];
   if (restTable && CACHEABLE_PUBLIC_TABLES.has(restTable)) return 5 * 60;
-  if (/^\/(?:news-sitemap|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname) || pathname.startsWith("/sitemap-files/")) return 300;
+  if (/^\/(?:news-(?:sitemap|feed)|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname) || pathname.startsWith("/sitemap-files/")) return 300;
   return 0;
 }
 
@@ -149,7 +149,7 @@ async function serveAsset(request, env) {
       const article = Array.isArray(payload) ? payload[0] : payload?.data?.[0];
       metadata = article
         ? articleEdgeSeo(article, url)
-        : { ...metadata, indexable: false };
+        : { ...metadata, indexable: false, notFound: true };
     }
     const entityMatch = metadata.indexable
       ? url.pathname.match(/^\/(colleges|courses|exams)\/([^/]+)(?:\/[^/]+)?\/?$/)
@@ -159,12 +159,13 @@ async function serveAsset(request, env) {
       const decodedSlug = decodeURIComponent(publicSlug);
       const entity = await fetchPublicEntity(entityType, decodedSlug);
       if (entity) metadata = entityEdgeSeo(entity, url, entityType);
+      else metadata = { ...metadata, indexable: false, notFound: true };
     }
     let html = applyEdgeSeo(await response.text(), metadata);
     if (url.pathname === "/") html = applyHomeCriticalCssDelivery(html);
     response = new Response(html, {
-      status: response.status,
-      statusText: response.statusText,
+      status: metadata.notFound ? 404 : response.status,
+      statusText: metadata.notFound ? "Not Found" : response.statusText,
       headers,
     });
   }

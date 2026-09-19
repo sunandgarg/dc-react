@@ -52,11 +52,10 @@ describe("Index page layout (static source assertions)", () => {
     expect(belowFoldSrc).toMatch(/NewsSection/);
   });
 
-  it("keeps the single homepage AdSense slot at the bottom", () => {
-    expect(belowFoldSrc.match(/<GoogleAd/g)).toHaveLength(1);
-    expect(belowFoldSrc).toMatch(/placement="homepage" position="bottom"/);
-    expect(belowFoldSrc).not.toMatch(/placement="homepage" position="middle"/);
-    expect(belowFoldSrc.indexOf('position="bottom"')).toBeLessThan(belowFoldSrc.indexOf("<Footer />"));
+  it("keeps the homepage completely free of Google ad slots", () => {
+    expect(belowFoldSrc).not.toMatch(/GoogleAd|placement="homepage"/);
+    expect(adsenseLoaderSrc).toMatch(/isHomepage \|\| !settings/);
+    expect(adsenseLoaderSrc).toMatch(/google-auto-placed/);
   });
 
   it("does NOT render the removed LiveScholarshipsStrip", () => {
@@ -123,7 +122,7 @@ describe("Index page layout (static source assertions)", () => {
     expect(globalAdsSrc).toMatch(/format="horizontal"/);
     expect(globalAdsSrc).toMatch(/fullWidthResponsive=\{false\}/);
     expect(globalAdsSrc).toMatch(/max-w-\[320px\][\s\S]*sm:max-w-\[728px\]/);
-    expect(adsenseLoaderSrc).toMatch(/pathname !== "\/"/);
+    expect(adsenseLoaderSrc).toMatch(/const isHomepage = pathname === "\/"/);
   });
 
   it("uses managed rectangular article ads and moves the sticky lead below Important Exams", () => {

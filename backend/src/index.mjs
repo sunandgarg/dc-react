@@ -60,15 +60,14 @@ const PUBLIC_INTENT_MAX_DISTINCT_SUBJECTS = 10;
 const SAVE_LEAD_MAX_BYTES = 64 * 1024;
 
 async function queuePublishedArticleWrite(request, result) {
-  if (!request || !["POST", "PUT", "PATCH"].includes(request.method) || result.status < 200 || result.status >= 300) return;
+  if (!request || !["POST", "PUT", "PATCH", "DELETE"].includes(request.method) || result.status < 200 || result.status >= 300) return;
   const input = await request.json().catch(() => null);
   const inputRows = (Array.isArray(input) ? input : [input]).filter((row) => row && typeof row === "object");
   const resultRows = (Array.isArray(result.body) ? result.body : [result.body]).filter((row) => row && typeof row === "object");
   const urls = inputRows.flatMap((row, index) => {
     const merged = { ...row, ...(resultRows[index] || resultRows[0] || {}) };
-    const published = String(merged.status || "").toLowerCase() === "published" && merged.is_active !== false;
     const dekhocampus = !merged.site_scope || merged.site_scope === "dekhocampus";
-    return published && dekhocampus && merged.slug ? [`https://dekhocampus.com/news/${merged.slug}`] : [];
+    return dekhocampus && merged.slug ? [`https://dekhocampus.com/news/${merged.slug}`] : [];
   });
   queueIndexNowUrls(urls);
 }

@@ -284,6 +284,46 @@ function newsSitemapXml(entries) {
   ].join("\n");
 }
 
+function stripMarkup(value) {
+  return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function newsFeedXml(articles) {
+  const items = articles
+    .filter((article) => article.slug && String(article.title || "").trim())
+    .sort((left, right) => new Date(right.created_at || right.updated_at || 0).getTime() - new Date(left.created_at || left.updated_at || 0).getTime())
+    .slice(0, 100);
+  const lastBuildDate = items[0]?.updated_at || items[0]?.created_at || new Date().toISOString();
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">',
+    "  <channel>",
+    "    <title>DekhoCampus Education News</title>",
+    `    <link>${PUBLISH_TARGET}/news</link>`,
+    "    <description>Latest Indian education, admission, counselling, exam and career updates from DekhoCampus.</description>",
+    "    <language>en-IN</language>",
+    `    <lastBuildDate>${escapeXml(new Date(lastBuildDate).toUTCString())}</lastBuildDate>`,
+    ...items.map((article) => {
+      const url = `${PUBLISH_TARGET}/news/${article.slug}`;
+      const date = new Date(article.created_at || article.updated_at || 0);
+      const summary = stripMarkup(article.content).slice(0, 320);
+      const image = canonicalImageLocation(article.featured_image);
+      return [
+        "    <item>",
+        `      <title>${escapeXml(article.title)}</title>`,
+        `      <link>${escapeXml(url)}</link>`,
+        `      <guid isPermaLink="true">${escapeXml(url)}</guid>`,
+        !Number.isNaN(date.getTime()) ? `      <pubDate>${escapeXml(date.toUTCString())}</pubDate>` : null,
+        summary ? `      <description>${escapeXml(summary)}</description>` : null,
+        image ? `      <media:content url="${escapeXml(image)}" medium="image" />` : null,
+        "    </item>",
+      ].filter(Boolean).join("\n");
+    }),
+    "  </channel>",
+    "</rss>",
+  ].join("\n");
+}
+
 function sitemapIndex(generation, count) {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
@@ -365,7 +405,7 @@ function objectRepository() {
 }
 
 function publicKey(pathname) {
-  if (/^\/(?:news-sitemap|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname)) return `${SITEMAP_PREFIX}/public/${pathname.slice(1)}`;
+  if (/^\/(?:news-(?:sitemap|feed)|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname)) return `${SITEMAP_PREFIX}/public/${pathname.slice(1)}`;
   const generationMatch = pathname.match(/^\/sitemap-files\/([a-f0-9-]{36})\/(sitemap-\d+\.xml)$/);
   return generationMatch ? `${SITEMAP_PREFIX}/generations/${generationMatch[1]}/${generationMatch[2]}` : null;
 }
@@ -705,6 +745,7 @@ async function dynamicEntries(prismaClient, now = Date.now()) {
   return {
     entries,
     newsEntries: newsSitemapEntries(articles, now),
+    articles,
     sourceCounts: {
       colleges: colleges.length,
       courses: courses.length,
@@ -737,6 +778,7 @@ export async function publishSitemap(request, options = {}) {
     for (let index = 0; index < entries.length; index += CHUNK_SIZE) chunks.push(entries.slice(index, index + CHUNK_SIZE));
     await boundedMap(chunks, OBJECT_IO_CONCURRENCY, (chunk, index) => repository.put(`${SITEMAP_PREFIX}/generations/${generation}/sitemap-${index + 1}.xml`, sitemapXml(chunk)));
     await repository.put(`${SITEMAP_PREFIX}/public/news-sitemap.xml`, newsSitemapXml(newsEntries));
+    await repository.put(`${SITEMAP_PREFIX}/public/news-feed.xml`, newsFeedXml(dynamicResult.articles || []), "application/rss+xml; charset=utf-8");
     const indexXml = sitemapIndex(generation, chunks.length);
     const manifest = JSON.stringify({ generation, url_count: entries.length, news_url_count: newsEntries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() });
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap-index.xml`, indexXml);
@@ -758,7 +800,7 @@ export async function publishSitemap(request, options = {}) {
       await repository.delete(staleKeys);
       removedObjects = staleKeys.length;
     }
-    return { success: true, status: "published", target: PUBLISH_TARGET, generation, url_count: entries.length, news_url_count: newsEntries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, removed_objects: removedObjects, source_counts: counts, sitemap_url: `${PUBLISH_TARGET}/sitemap.xml`, news_sitemap_url: `${PUBLISH_TARGET}/news-sitemap.xml`, requested_at: new Date().toISOString() };
+    return { success: true, status: "published", target: PUBLISH_TARGET, generation, url_count: entries.length, news_url_count: newsEntries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, removed_objects: removedObjects, source_counts: counts, sitemap_url: `${PUBLISH_TARGET}/sitemap.xml`, news_sitemap_url: `${PUBLISH_TARGET}/news-sitemap.xml`, news_feed_url: `${PUBLISH_TARGET}/news-feed.xml`, requested_at: new Date().toISOString() };
   } finally {
     publishing = false;
   }

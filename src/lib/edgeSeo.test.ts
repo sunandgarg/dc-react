@@ -14,6 +14,9 @@ describe("Cloudflare edge SEO", () => {
     expect(edgeSeoFor("https://dekhocampus.com/auth/callback").indexable).toBe(false);
     expect(edgeSeoFor("https://dekhocampus.com/admin/colleges").indexable).toBe(false);
     expect(edgeSeoFor("https://dekhocampus.com/not-a-real-page").indexable).toBe(false);
+    expect(edgeSeoFor("https://dekhocampus.com/not-a-real-page").notFound).toBe(true);
+    expect(edgeSeoFor("https://dekhocampus.com/admin/colleges").notFound).toBe(false);
+    expect(edgeSeoFor("https://dekhocampus.com/colleges?q=lpu").notFound).toBe(false);
   });
 
   it("does not treat public author pages as auth routes", () => {
@@ -71,6 +74,7 @@ describe("Cloudflare edge SEO", () => {
       city: "Jalandhar",
       state: "Punjab",
       updated_at: "2026-09-18T00:00:00.000Z",
+      youtube_video_url: "https://www.youtube.com/watch?v=abcdefghijk",
     }, new URL("https://dekhocampus.com/colleges/lovely-professional-university-lpu-10042"), "colleges");
     const output = applyEdgeSeo('<html><head><title>Home</title></head><body><div id="root"></div></body></html>', metadata);
     expect(output).toContain('content="https://dekhocampus.com/storage/v1/object/public/college-images/lpu.jpg"');
@@ -80,6 +84,8 @@ describe("Cloudflare edge SEO", () => {
     expect(output).toContain('"@type":"ImageObject"');
     expect(output).toContain('"primaryImageOfPage"');
     expect(output).toContain('"addressLocality":"Jalandhar"');
+    expect(output).toContain('"@type":"VideoObject"');
+    expect(output).toContain('"embedUrl":"https://www.youtube.com/embed/abcdefghijk"');
   });
 
   it("lets the inline homepage shell paint while the full app stylesheet downloads", () => {

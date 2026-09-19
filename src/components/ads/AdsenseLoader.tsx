@@ -13,10 +13,23 @@ export function AdsenseLoader() {
   const { data: scripts } = useAdScripts();
 
   const isAdmin = pathname.startsWith("/admin");
-  const allowAutoAds = settings?.auto_ads_enabled && pathname !== "/" && !pathname.startsWith("/news/");
+  const isHomepage = pathname === "/";
+  const allowAutoAds = settings?.auto_ads_enabled && !pathname.startsWith("/news/");
 
   useEffect(() => {
-    if (isAdmin || !settings || !settings.ads_globally_enabled) return;
+    if (!isHomepage) return;
+    const removeHomepageAds = () => {
+      document.querySelectorAll(".google-auto-placed, .adsbygoogle-noablate, ins.adsbygoogle")
+        .forEach((element) => element.remove());
+    };
+    removeHomepageAds();
+    const observer = new MutationObserver(removeHomepageAds);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [isHomepage]);
+
+  useEffect(() => {
+    if (isAdmin || isHomepage || !settings || !settings.ads_globally_enabled) return;
 
     // Load during the first idle window, with a short fallback so reserved
     // ad slots fill promptly without competing with the LCP image.
@@ -120,7 +133,7 @@ export function AdsenseLoader() {
       else window.clearTimeout(handle);
       created.forEach((el) => el.parentNode?.removeChild(el));
     };
-  }, [allowAutoAds, isAdmin, settings, scripts]);
+  }, [allowAutoAds, isAdmin, isHomepage, settings, scripts]);
 
   return null;
 }

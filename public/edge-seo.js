@@ -116,7 +116,8 @@ export function edgeSeoFor(input) {
   const url = input instanceof URL ? input : new URL(input);
   const pathname = cleanPath(url.pathname);
   const privatePath = PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
-  const indexable = !privatePath && isPublicPath(pathname) && isIndexableQuery(url, pathname);
+  const publicPath = isPublicPath(pathname);
+  const indexable = !privatePath && publicPath && isIndexableQuery(url, pathname);
   const canonicalPath = indexable && url.search ? `${pathname}${url.search}` : pathname;
   const canonical = `${SITE_URL}${canonicalPath === "/" ? "" : canonicalPath}`;
 
@@ -130,7 +131,7 @@ export function edgeSeoFor(input) {
   }
 
   const metadata = STATIC_METADATA.get(pathname) || (LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname));
-  return { ...metadata, canonical, indexable };
+  return { ...metadata, canonical, indexable, notFound: !privatePath && !publicPath };
 }
 
 function escapeHtml(value) {
@@ -180,6 +181,22 @@ function absoluteMediaUrl(value) {
   }
 }
 
+function youtubeEmbedUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  try {
+    const url = new URL(raw);
+    let videoId = "";
+    if (url.hostname === "youtu.be") videoId = url.pathname.split("/").filter(Boolean)[0] || "";
+    if (/(^|\.)youtube\.com$/i.test(url.hostname)) {
+      videoId = url.searchParams.get("v") || url.pathname.match(/^\/(?:embed|shorts)\/([^/?#]+)/)?.[1] || "";
+    }
+    return /^[A-Za-z0-9_-]{6,20}$/.test(videoId) ? `https://www.youtube.com/embed/${videoId}` : "";
+  } catch {
+    return "";
+  }
+}
+
 const ENTITY_SEO = {
   colleges: {
     label: "College",
@@ -216,6 +233,7 @@ export function entityEdgeSeo(entity, url, entityType) {
   const image = absoluteMediaUrl(entity.image || entity.logo);
   const imageAlt = config.imageAlt(name);
   const modifiedAt = entity.updated_at;
+  const videoEmbedUrl = youtubeEmbedUrl(entity.youtube_video_url);
   const imageObject = image ? {
     "@type": "ImageObject",
     "@id": `${canonical}#primaryimage`,
@@ -267,6 +285,15 @@ export function entityEdgeSeo(entity, url, entityType) {
           logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
         },
         ...(imageObject ? [imageObject] : []),
+        ...(videoEmbedUrl && image && modifiedAt ? [{
+          "@type": "VideoObject",
+          "@id": `${canonical}#video`,
+          name: `${name} video guide`,
+          description,
+          thumbnailUrl: [image],
+          uploadDate: modifiedAt,
+          embedUrl: videoEmbedUrl,
+        }] : []),
         entitySchema,
         {
           "@type": "WebPage",

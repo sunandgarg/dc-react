@@ -186,6 +186,11 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.match(newsSitemap, /<news:name>DekhoCampus<\/news:name>/);
   assert.match(newsSitemap, /<news:title>Articles sample<\/news:title>/);
   assert.equal(result.news_url_count, 1);
+  assert.equal(result.news_feed_url, "https://dekhocampus.com/news-feed.xml");
+  const newsFeed = repository.objects.get("system-sitemaps/public/news-feed.xml")?.body || "";
+  assert.match(newsFeed, /<rss version="2\.0"/);
+  assert.match(newsFeed, /<title>Articles sample<\/title>/);
+  assert.match(newsFeed, /<media:content url="https:\/\/cdn\.dekhocampus\.com\/news\/sample\.webp"/);
   assert.equal(result.removed_objects, 1);
   assert.ok(result.image_count > 0);
   assert.ok(result.filter_url_count > 0);
@@ -208,6 +213,15 @@ test("published Google News sitemap is served from the public sitemap store", as
   const response = await readPublishedSitemap(new Request("https://dekhocampus.com/news-sitemap.xml"), { repository });
   assert.equal(response.status, 200);
   assert.match(await response.text(), /sitemap-news/);
+});
+
+test("published RSS news feed is served from the public sitemap store", async () => {
+  const repository = memoryRepository();
+  repository.objects.set("system-sitemaps/public/news-feed.xml", { body: '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>', contentType: "application/rss+xml; charset=utf-8" });
+  const response = await readPublishedSitemap(new Request("https://dekhocampus.com/news-feed.xml"), { repository });
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type"), /rss\+xml/);
+  assert.match(await response.text(), /<rss/);
 });
 
 test("missing submitted generation chunks fall back to the current matching chunk", async () => {

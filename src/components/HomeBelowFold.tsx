@@ -17,7 +17,6 @@ const ToolsSection = lazyRetry(() => import("@/components/ToolsSection").then(mo
 const NewsSection = lazyRetry(() => import("@/components/NewsSection").then(module => ({ default: module.NewsSection })), "NewsSection");
 const ExamStrategiesSection = lazyRetry(() => import("@/components/ExamStrategiesSection").then(module => ({ default: module.ExamStrategiesSection })), "ExamStrategiesSection");
 const FeaturesSection = lazyRetry(() => import("@/components/FeaturesSection").then(module => ({ default: module.FeaturesSection })), "FeaturesSection");
-const GoogleAd = lazyRetry(() => import("@/components/ads/GoogleAd").then(module => ({ default: module.GoogleAd })), "GoogleAd");
 const FAQSection = lazyRetry(() => import("@/components/FAQSection").then(module => ({ default: module.FAQSection })), "FAQSection");
 const TrustedBySection = lazyRetry(() => import("@/components/TrustedBySection").then(module => ({ default: module.TrustedBySection })), "TrustedBySection");
 const Footer = lazyRetry(() => import("@/components/Footer").then(module => ({ default: module.Footer })), "Footer");
@@ -56,9 +55,6 @@ export default function HomeBelowFold() {
       <div id="trusted-heading"><TrustedBySection /></div>
     </div>, 700)}
     {section("footer", <>
-      <div className="container">
-        <GoogleAd placement="homepage" position="bottom" pageKey="homepage" className="my-4" />
-      </div>
       <Footer />
       <PeriodicLeadPopup />
     </>, 480)}

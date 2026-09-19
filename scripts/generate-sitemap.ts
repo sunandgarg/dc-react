@@ -471,6 +471,43 @@ function newsSitemapXml(articles: any[]) {
   return { xml, count: entries.length };
 }
 
+function newsFeedXml(articles: any[]) {
+  const items = articles
+    .filter((article) => article.slug && String(article.title || "").trim())
+    .sort((left, right) => new Date(right.created_at || right.updated_at || 0).getTime() - new Date(left.created_at || left.updated_at || 0).getTime())
+    .slice(0, 100);
+  const lastBuildDate = items[0]?.updated_at || items[0]?.created_at || new Date().toISOString();
+  const plainText = (value: unknown) => String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return [
+    `<?xml version="1.0" encoding="UTF-8"?>`,
+    `<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">`,
+    `  <channel>`,
+    `    <title>DekhoCampus Education News</title>`,
+    `    <link>${BASE_URL}/news</link>`,
+    `    <description>Latest Indian education, admission, counselling, exam and career updates from DekhoCampus.</description>`,
+    `    <language>en-IN</language>`,
+    `    <lastBuildDate>${escapeXml(new Date(lastBuildDate).toUTCString())}</lastBuildDate>`,
+    ...items.map((article) => {
+      const url = `${BASE_URL}/news/${article.slug}`;
+      const date = new Date(article.created_at || article.updated_at || 0);
+      const summary = plainText(article.content).slice(0, 320);
+      const image = imageLocations(article, ["featured_image"])[0];
+      return [
+        `    <item>`,
+        `      <title>${escapeXml(article.title)}</title>`,
+        `      <link>${escapeXml(url)}</link>`,
+        `      <guid isPermaLink="true">${escapeXml(url)}</guid>`,
+        !Number.isNaN(date.getTime()) ? `      <pubDate>${escapeXml(date.toUTCString())}</pubDate>` : null,
+        summary ? `      <description>${escapeXml(summary)}</description>` : null,
+        image ? `      <media:content url="${escapeXml(image)}" medium="image" />` : null,
+        `    </item>`,
+      ].filter(Boolean).join("\n");
+    }),
+    `  </channel>`,
+    `</rss>`,
+  ].join("\n");
+}
+
 function writeSitemaps(entries: SitemapEntry[], articles: any[]) {
   const files: string[] = [];
   for (let index = 0; index < entries.length; index += SITEMAP_CHUNK_SIZE) {
@@ -483,6 +520,7 @@ function writeSitemaps(entries: SitemapEntry[], articles: any[]) {
   writeFileSync(resolve("dist/sitemap.xml"), index);
   writeFileSync(resolve("dist/sitemap-index.xml"), index);
   writeFileSync(resolve("dist/news-sitemap.xml"), news.xml);
+  writeFileSync(resolve("dist/news-feed.xml"), newsFeedXml(articles));
   return { files, newsCount: news.count };
 }
 
