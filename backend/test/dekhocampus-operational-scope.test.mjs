@@ -210,7 +210,7 @@ test("AWS runtime allows a low-memory API enough time to become healthy", async 
   assert.match(runtimeStep, /pm2 logs dc-react-api --lines 120 --nostream/);
 });
 
-test("AWS runtime enables SES only after the DekhoCampus domain identity exists", async () => {
+test("AWS runtime enables SES only after the DekhoCampus domain identity is verified", async () => {
   const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
   const runtimeStart = workflow.indexOf("- name: Configure AWS runtime");
   const sitemapStart = workflow.indexOf("- name: Generate static sitemap seed and site metadata");
@@ -218,9 +218,11 @@ test("AWS runtime enables SES only after the DekhoCampus domain identity exists"
 
   assert.match(workflow, /create_ses_identity:[\s\S]*?default: false/);
   assert.match(runtimeStep, /APP_ACCESS_KEY_ID=\$\(aws configure get aws_access_key_id\)/);
-  assert.match(runtimeStep, /aws sesv2 get-email-identity --email-identity dekhocampus\.com/);
+  assert.match(runtimeStep, /aws sesv2 get-email-identity[\s\S]*?--email-identity dekhocampus\.com/);
+  assert.match(runtimeStep, /--query 'VerifiedForSendingStatus'/);
+  assert.match(runtimeStep, /if \[ "\$SES_VERIFIED" = "True" \]; then/);
   assert.match(runtimeStep, /SES_ENABLED=true[\s\S]*?else[\s\S]*?SES_ENABLED=false/);
-  assert.match(runtimeStep, /DekhoCampus SES identity available to the application user/);
+  assert.match(runtimeStep, /DekhoCampus SES identity verified for the application user/);
   assert.doesNotMatch(runtimeStep, /sudo bash -s --[^\n]*\$SES_ENABLED/);
   assert.doesNotMatch(runtimeStep, /inputs\.create_ses_identity[^\n]*NODE_HEAP_MB/);
 });

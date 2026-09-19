@@ -568,12 +568,16 @@ jobs:
           APP_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
           test -n "$APP_ACCESS_KEY_ID"
           test -n "$APP_SECRET_ACCESS_KEY"
-          if aws sesv2 get-email-identity --email-identity dekhocampus.com >/dev/null 2>&1; then
+          SES_VERIFIED=$(aws sesv2 get-email-identity \
+            --email-identity dekhocampus.com \
+            --query 'VerifiedForSendingStatus' \
+            --output text 2>/dev/null || true)
+          if [ "$SES_VERIFIED" = "True" ]; then
             SES_ENABLED=true
           else
             SES_ENABLED=false
           fi
-          echo "DekhoCampus SES identity available to the application user: $SES_ENABLED"
+          echo "DekhoCampus SES identity verified for the application user: $SES_ENABLED"
           ENV_FILE=$(mktemp)
           cat >"$ENV_FILE" <<ENV
           NODE_ENV=production
