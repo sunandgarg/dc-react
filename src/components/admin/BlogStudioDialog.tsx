@@ -30,7 +30,7 @@ type EditorialSettings = {
 type Quality = { score?: number; issues?: string[]; model_review?: { score?: number; summary?: string } };
 const LENGTHS = [0, 900, 1200, 1500, 1800] as const;
 const DEFAULT_EDITORIAL_SETTINGS: EditorialSettings = {
-  text_model: "gpt-5.4-mini",
+  text_model: "gpt-5.5",
   word_limit: 0,
   content_goals: ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"],
   required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],

@@ -210,6 +210,19 @@ test("AWS runtime allows a low-memory API enough time to become healthy", async 
   assert.match(runtimeStep, /pm2 logs dc-react-api --lines 120 --nostream/);
 });
 
+test("AWS runtime enables SES only after the DekhoCampus domain identity exists", async () => {
+  const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
+  const runtimeStart = workflow.indexOf("- name: Configure AWS runtime");
+  const sitemapStart = workflow.indexOf("- name: Generate static sitemap seed and site metadata");
+  const runtimeStep = workflow.slice(runtimeStart, sitemapStart);
+
+  assert.match(workflow, /create_ses_identity:[\s\S]*?default: true/);
+  assert.match(runtimeStep, /aws sesv2 get-email-identity --email-identity dekhocampus\.com/);
+  assert.match(runtimeStep, /SES_ENABLED=true[\s\S]*?else[\s\S]*?SES_ENABLED=false/);
+  assert.match(runtimeStep, /'\$SES_ENABLED' '\$NODE_HEAP_MB'/);
+  assert.doesNotMatch(runtimeStep, /'\$\{\{ inputs\.create_ses_identity \}\}' '\$NODE_HEAP_MB'/);
+});
+
 test("college WebP retirement removes only unreferenced versions from versioned S3", async () => {
   const [template, retire] = await Promise.all([
     readSource("../../infra/aws/lightsail-production.yaml"),

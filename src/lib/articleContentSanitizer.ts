@@ -13,6 +13,7 @@ const COMPETITOR_TERMS = [
   "kollege apply",
   "getmyuni",
   "pagalguy",
+  "sarvgyan",
 ];
 
 const COMPETITOR_PATTERN = COMPETITOR_TERMS
@@ -50,6 +51,19 @@ export function stripVisibleArticleSources(value?: string | null) {
     .replace(new RegExp(`<p[^>]*>(?:(?!<\\/p>)[\\s\\S])*(?:${competitor})(?:(?!<\\/p>)[\\s\\S])*<\\/p>\\s*`, "gi"), "")
     .replace(new RegExp(`<li[^>]*>(?:(?!<\\/li>)[\\s\\S])*(?:${competitor})(?:(?!<\\/li>)[\\s\\S])*<\\/li>\\s*`, "gi"), "")
     .replace(new RegExp(`(?:^|\\n)\\s*(?:[-*]\\s*)?(?:\\*\\*)?[^\\n]*(?:${competitor})[^\\n]*(?:\\*\\*)?\\s*(?=\\n|$)`, "gim"), "");
+
+  // Keep verified first-party navigation, but never expose third-party links or
+  // attribution language in public article copy.
+  output = output
+    .replace(/href=(["'])https?:\/\/(?:www\.)?dekhocampus\.com(\/[^"']*)\1/gi, 'href="$2"')
+    .replace(/<a\b[^>]*href=["']https?:\/\/[^"']+["'][^>]*>([\s\S]*?)<\/a>/gi, "$1")
+    .replace(/\bhttps?:\/\/[^\s<]+|\bwww\.[^\s<]+/gi, "")
+    .replace(/\s*\[(?:source|citation|reference)?\s*\d+\]/gi, "")
+    .replace(/\s*\((?:source|citation|reference)\s*:[^)]+\)/gi, "")
+    .replace(/\baccording to\b\s*/gi, "")
+    .replace(/\bas reported by\b\s*/gi, "")
+    .replace(/\bsources? (?:say|says|suggest|suggests|indicate|indicates)\b[:,]?\s*/gi, "")
+    .replace(/[\u2013\u2014]/g, "-");
 
   return output.trim();
 }

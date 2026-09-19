@@ -114,7 +114,7 @@ try {
       word_limit: 900,
       image: { mode: "template", template_url: originalSettings.image_template_url },
     }) });
-    assert.match(studio.model_used, /^openai:gpt-5\.4-mini$/, "Blog Studio did not use OpenAI GPT-5.4 mini");
+    assert.match(studio.model_used, /^openai:gpt-5\.5$/, "Blog Studio did not use OpenAI GPT-5.5");
     article = studio.draft;
   } else {
     assert.equal(result.success, true, result.message || "Blog-agent smoke run was not successful");
@@ -178,7 +178,7 @@ try {
 
   console.log(JSON.stringify({
     ok: true,
-    openai_blog: `${verificationMode} verified with GPT-5.4 mini`,
+    openai_blog: `${verificationMode} verified with GPT-5.5`,
     production_cover_mode: originalSettings.image_mode,
     article_faqs: verificationMode === "agent-draft" ? `${createdFaqCount} dedicated FAQ records stored inactive pending review; visible FAQ section verified in draft HTML` : "visible FAQ section verified",
     source_policy: "no source sections, citation markers, or external source links",

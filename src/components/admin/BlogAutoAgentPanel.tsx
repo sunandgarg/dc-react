@@ -71,7 +71,7 @@ const DEFAULT_SETTINGS: Settings = {
   daily_post_cap: 48,
   publish_status: "Published",
   model_provider: "openai",
-  text_model: "gpt-5.4-mini",
+  text_model: "gpt-5.5",
   word_limit: 0,
   author_mode: "none",
   author_ids: [],
@@ -502,7 +502,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         <div>
           <Label className="text-xs">Blog AI provider</Label>
           <div className="mt-1"><Button type="button" size="sm" variant="default" disabled>{settings.text_model.startsWith("gemini-") ? "Google Gemini" : "OpenAI"}</Button></div>
-          <p className="mt-1 text-[10px] text-muted-foreground">GPT-5.4 mini is recommended for research synthesis and editorial consistency.</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">GPT-5.5 is recommended when editorial quality matters more than generation cost.</p>
           {supportsAdvancedSettings && (
             <select
               aria-label="Blog text model"
@@ -510,7 +510,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("text_model", event.target.value)}
               className="mt-2 h-9 w-full rounded-md border bg-background px-2 text-xs"
             >
-              <option value="gpt-5.4-mini">OpenAI GPT-5.4 mini - recommended</option>
+              <option value="gpt-5.5">OpenAI GPT-5.5 - best editorial quality</option>
+              <option value="gpt-5.4-mini">OpenAI GPT-5.4 mini - balanced</option>
               <option value="gpt-5-nano">OpenAI GPT-5 nano - economy</option>
               <option value="gemini-3.6-flash">Gemini 3.6 Flash - alternative</option>
             </select>

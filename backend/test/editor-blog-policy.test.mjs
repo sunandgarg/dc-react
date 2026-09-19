@@ -117,6 +117,8 @@ test("enforces conservative auto-blog cadence and volume limits", () => {
 test("production cadence is 48 gated posts per day with an explicit E-E-A-T contract", async () => {
   const productionSetup = await readFile(new URL("../scripts/configure-production-site-integrations.mjs", import.meta.url), "utf8");
   assert.match(productionSetup, /BLOG_EEAT_48_MIGRATION_KEY/);
+  assert.match(productionSetup, /BLOG_GPT_5_5_EDITORIAL_MIGRATION_KEY/);
+  assert.match(productionSetup, /text_model: "gpt-5\.5"/);
   assert.match(productionSetup, /interval_minutes: 60/);
   assert.match(productionSetup, /posts_per_run: 2/);
   assert.match(productionSetup, /daily_post_cap: 48/);
@@ -143,6 +145,10 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(prompt, /Authoritativeness:/);
   assert.match(prompt, /Trust:/);
   assert.match(prompt, /never pretend the author personally experienced them/);
+  assert.match(prompt, /natural Indian English/i);
+  assert.match(prompt, /Do not put an H1 inside content_html/);
+  assert.match(prompt, /Privately score natural sentence variation/);
+  assert.match(prompt, /Never expose a source name, competitor name/);
 });
 
 test("AI Blog Studio can select every saved competitor source", async () => {
@@ -165,7 +171,7 @@ test("normalizes legacy Gemini models and classifies quota errors", () => {
 });
 
 test("selects the quality-first OpenAI blog model and parses structured output", () => {
-  assert.equal(normalizeBlogTextModel(""), "gpt-5.4-mini");
+  assert.equal(normalizeBlogTextModel(""), "gpt-5.5");
   assert.equal(normalizeBlogTextModel("gpt-5-nano"), "gpt-5-nano");
   assert.equal(blogTextProvider("gpt-5-nano"), "openai");
   assert.equal(blogTextProvider("gemini-3.6-flash"), "gemini");
@@ -335,6 +341,9 @@ test("normalizes editorial controls and adapts depth to student intent", () => {
 test("removes visible source references from publishable article HTML", () => {
   const cleaned = stripPublishedSourceReferences('<p>Apply after checking the deadline [Source 1].</p><p>Read the <a href="https://example.com/report">official notice</a>.</p><h2>References</h2><p>https://example.com</p>');
   assert.equal(cleaned, "<p>Apply after checking the deadline.</p><p>Read the official notice.</p>");
+
+  const guarded = stripPublishedSourceReferences('<p>According to the authority, candidates should act now.</p><p>Shiksha reported another date.</p><p>Read <a href="https://dekhocampus.com/exams/cat">our CAT page</a> and <a href="https://example.com">another site</a>.</p>');
+  assert.equal(guarded, '<p>the authority, candidates should act now.</p><p>Read <a href="/exams/cat">our CAT page</a> and another site.</p>');
 });
 
 test("detects truncated Gemini JSON and bounds the recovery budget", () => {

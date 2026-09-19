@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type State = { text_model: string; text_provider?: "openai" | "gemini"; image_model: string; image_quality: "low" | "medium" | "high"; gemini_key_set: boolean; openai_key_set: boolean };
-const DEFAULT_TEXT_MODEL = "gpt-5.4-mini";
+const DEFAULT_TEXT_MODEL = "gpt-5.5";
 const LEGACY_TEXT_MODELS = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
 const normalizeTextModel = (value?: string) => {
   const model = String(value || "").trim();
@@ -20,7 +20,8 @@ const normalizeTextModel = (value?: string) => {
 const defaults: State = { text_model: DEFAULT_TEXT_MODEL, image_model: "gpt-image-1", image_quality: "low", gemini_key_set: false, openai_key_set: false };
 
 const TEXT_MODELS = [
-  { value: "gpt-5.4-mini", label: "OpenAI GPT-5.4 mini - recommended" },
+  { value: "gpt-5.5", label: "OpenAI GPT-5.5 - best editorial quality" },
+  { value: "gpt-5.4-mini", label: "OpenAI GPT-5.4 mini - balanced" },
   { value: "gpt-5-nano", label: "OpenAI GPT-5 nano - economy" },
   { value: "gemini-3.6-flash", label: "Gemini 3.6 Flash - alternative" },
 ] as const;
@@ -49,7 +50,7 @@ export function BlogAISettingsCard() {
   };
 
   return <div className="mb-6 rounded-2xl border border-orange-200 bg-orange-50/40 p-5 dark:border-orange-900 dark:bg-orange-950/10">
-    <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="flex items-center gap-2 font-semibold"><Newspaper className="h-5 w-5 text-orange-500" /> Blog AI providers</h2><p className="mt-1 text-sm text-muted-foreground">GPT-5.4 mini is the quality-first default for topic review, research synthesis and article drafting. GPT Image remains optional because saved-template covers need no image-generation call. Keys are write-only and are never returned to the browser.</p></div><div className="flex gap-2"><Badge variant={settings.gemini_key_set ? "default" : "destructive"}>Gemini {settings.gemini_key_set ? "ready" : "missing"}</Badge><Badge variant={settings.openai_key_set ? "default" : "destructive"}>OpenAI {settings.openai_key_set ? "ready" : "missing"}</Badge></div></div>
+    <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="flex items-center gap-2 font-semibold"><Newspaper className="h-5 w-5 text-orange-500" /> Blog AI providers</h2><p className="mt-1 text-sm text-muted-foreground">GPT-5.5 is the quality-first default for topic review, research synthesis and publication-ready article drafting. GPT Image remains optional because saved-template covers need no image-generation call. Keys are write-only and are never returned to the browser.</p></div><div className="flex gap-2"><Badge variant={settings.gemini_key_set ? "default" : "destructive"}>Gemini {settings.gemini_key_set ? "ready" : "missing"}</Badge><Badge variant={settings.openai_key_set ? "default" : "destructive"}>OpenAI {settings.openai_key_set ? "ready" : "missing"}</Badge></div></div>
     <div className="mt-4 grid gap-4 md:grid-cols-2">
       <div className="space-y-3">
         <Label className="flex items-center gap-2"><Newspaper className="h-4 w-4" /> Google Gemini API key</Label>
