@@ -7,6 +7,11 @@ on:
         description: Email address for AWS budget alerts
         required: true
         type: string
+      recover_database:
+        description: Start or reboot the managed database only when production health proves it is unavailable
+        required: false
+        default: false
+        type: boolean
       run_ai_smoke:
         description: Run one reversible live Gemini and OpenAI cover test
         required: false
@@ -116,6 +121,74 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Recover unavailable managed database
+        if: ${{ inputs.recover_database }}
+        env:
+          DATABASE_NAME: dc-react-mysql-lightsail
+        run: |
+          set -euo pipefail
+
+          database_state() {
+            aws lightsail get-relational-database \
+              --relational-database-name "$DATABASE_NAME" \
+              --query 'relationalDatabase.state' \
+              --output text
+          }
+
+          production_health() {
+            curl --silent --show-error --max-time 15 \
+              https://aws-origin.dekhocampus.com/health || true
+          }
+
+          STATE=$(database_state)
+          HEALTH=$(production_health)
+          echo "Managed database state before recovery: $STATE"
+
+          case "$STATE" in
+            stopped)
+              echo "Starting the stopped managed database."
+              aws lightsail start-relational-database \
+                --relational-database-name "$DATABASE_NAME" >/dev/null
+              ;;
+            available)
+              if jq -e '.ok == true and .database == "mysql"' <<<"$HEALTH" >/dev/null 2>&1; then
+                echo "Production database connectivity is already healthy."
+                exit 0
+              fi
+              if ! jq -e '.database == "unavailable"' <<<"$HEALTH" >/dev/null 2>&1; then
+                echo "The public health response does not prove a database outage; refusing an automatic reboot."
+                echo "$HEALTH"
+                exit 1
+              fi
+              echo "Lightsail reports available, but production cannot connect. Rebooting the managed database once."
+              aws lightsail reboot-relational-database \
+                --relational-database-name "$DATABASE_NAME" >/dev/null
+              ;;
+            creating|modifying|rebooting|starting|stopping|upgrading|resetting-master-credentials|backing-up|maintenance)
+              echo "The managed database is already transitioning; waiting for it to become healthy."
+              ;;
+            *)
+              echo "Managed database is in an unsafe recovery state: $STATE"
+              exit 1
+              ;;
+          esac
+
+          for attempt in $(seq 1 120); do
+            STATE=$(database_state)
+            HEALTH=$(production_health)
+            if [ "$STATE" = "available" ] \
+              && jq -e '.ok == true and .database == "mysql" and .storage == "s3"' <<<"$HEALTH" >/dev/null 2>&1; then
+              echo "Managed database and production API recovered successfully."
+              exit 0
+            fi
+            if [ "$attempt" -eq 120 ]; then
+              echo "Managed database did not recover within 30 minutes. Final state: $STATE"
+              echo "$HEALTH"
+              exit 1
+            fi
+            sleep 15
+          done
 
       - name: Validate and deploy infrastructure
         if: ${{ inputs.update_infrastructure }}

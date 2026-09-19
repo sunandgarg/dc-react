@@ -87,6 +87,21 @@ test("AWS production deploy installs the immutable revision verified by its work
   assert.doesNotMatch(workflow, /rm -f[\s\S]*apply-original-college-media-manifest/);
 });
 
+test("AWS database recovery is opt-in and requires proven production unavailability", async () => {
+  const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
+  const recoveryStart = workflow.indexOf("- name: Recover unavailable managed database");
+  const infrastructureStart = workflow.indexOf("- name: Validate and deploy infrastructure");
+  assert.ok(recoveryStart >= 0 && infrastructureStart > recoveryStart);
+  const recoveryStep = workflow.slice(recoveryStart, infrastructureStart);
+
+  assert.match(workflow, /recover_database:[\s\S]*?default: false/);
+  assert.match(recoveryStep, /if: \$\{\{ inputs\.recover_database \}\}/);
+  assert.match(recoveryStep, /\.database == "unavailable"/);
+  assert.match(recoveryStep, /refusing an automatic reboot/);
+  assert.match(recoveryStep, /reboot-relational-database/);
+  assert.match(recoveryStep, /\.ok == true and \.database == "mysql" and \.storage == "s3"/);
+});
+
 test("AWS college-media deployment accepts scoped named cutovers without widening the S3 prefix", async () => {
   const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
 
