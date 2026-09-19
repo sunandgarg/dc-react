@@ -174,17 +174,22 @@ jobs:
               ;;
           esac
 
+          # Give the Lightsail control plane time to expose the transition
+          # before accepting an "available" state from the next poll.
+          sleep 30
           for attempt in $(seq 1 120); do
             STATE=$(database_state)
-            HEALTH=$(production_health)
-            if [ "$STATE" = "available" ] \
-              && jq -e '.ok == true and .database == "mysql" and .storage == "s3"' <<<"$HEALTH" >/dev/null 2>&1; then
-              echo "Managed database and production API recovered successfully."
+            if [ "$STATE" = "available" ]; then
+              HEALTH=$(production_health)
+              if jq -e '.ok == true and .database == "mysql" and .storage == "s3"' <<<"$HEALTH" >/dev/null 2>&1; then
+                echo "Managed database and production API recovered successfully."
+              else
+                echo "Managed database is available. Continuing so the fresh application runtime can reconnect."
+              fi
               exit 0
             fi
             if [ "$attempt" -eq 120 ]; then
               echo "Managed database did not recover within 30 minutes. Final state: $STATE"
-              echo "$HEALTH"
               exit 1
             fi
             sleep 15

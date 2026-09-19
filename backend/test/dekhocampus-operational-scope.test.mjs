@@ -99,7 +99,9 @@ test("AWS database recovery is opt-in and requires proven production unavailabil
   assert.match(recoveryStep, /\.database == "unavailable"/);
   assert.match(recoveryStep, /refusing an automatic reboot/);
   assert.match(recoveryStep, /reboot-relational-database/);
-  assert.match(recoveryStep, /\.ok == true and \.database == "mysql" and \.storage == "s3"/);
+  assert.match(recoveryStep, /if \[ "\$STATE" = "available" \]; then/);
+  assert.match(recoveryStep, /fresh application runtime can reconnect/);
+  assert.match(workflow, /\.ok == true and \.database == "mysql" and \.storage == "s3"/);
 });
 
 test("AWS college-media deployment accepts scoped named cutovers without widening the S3 prefix", async () => {
