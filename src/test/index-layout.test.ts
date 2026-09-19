@@ -56,6 +56,13 @@ describe("Index page layout (static source assertions)", () => {
     expect(belowFoldSrc).not.toMatch(/GoogleAd|placement="homepage"/);
     expect(adsenseLoaderSrc).toMatch(/isHomepage \|\| !settings/);
     expect(adsenseLoaderSrc).toMatch(/google-auto-placed/);
+    expect(navbarSrc).toMatch(/pathname !== "\/" && <div id="global-internal-ad-top-anchor"/);
+    expect(globalAdsSrc).toMatch(/if \(pathname === "\/"\) return null/);
+    expect(readFileSync(resolve(process.cwd(), "src/components/ads/GoogleAd.tsx"), "utf8")).toMatch(/pathname === "\/" \|\| !allowed/);
+  });
+
+  it("does not expose source-verification or last-reviewed UI on article pages", () => {
+    expect(articleDetailSrc).not.toMatch(/Reviewed under the|How often is this article updated\?|Updated \{dbArticle/);
   });
 
   it("does NOT render the removed LiveScholarshipsStrip", () => {
@@ -212,8 +219,7 @@ describe("Index page layout (static source assertions)", () => {
 
   it("shows the shared fuzzy search at the top of every public page including the homepage", () => {
     expect(navbarSrc).toMatch(/<GlobalSearchBar variant="header"/);
-    expect(navbarSrc).not.toMatch(/pathname !== "\/"/);
-    expect(navbarSrc).toMatch(/!pathname\.startsWith\("\/admin"\)/);
+    expect(navbarSrc).toMatch(/!pathname\.startsWith\("\/admin"\)[\s\S]*?<GlobalSearchBar variant="header"/);
   });
 
   it("does not publish unsupported trust-stat counters", () => {

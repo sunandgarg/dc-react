@@ -82,6 +82,10 @@ export function GlobalInternalAds({ area }: { area: "top" | "bottom" }) {
 
   useEffect(() => {
     if (area !== "top") return;
+    if (pathname === "/") {
+      setTopAnchor(null);
+      return;
+    }
     setTopAnchor(document.getElementById("global-internal-ad-top-anchor"));
   }, [area, pathname]);
 
@@ -90,6 +94,7 @@ export function GlobalInternalAds({ area }: { area: "top" | "bottom" }) {
   const selectedCity = new URLSearchParams(search).get("city") || undefined;
 
   if (area === "top") {
+    if (pathname === "/") return null;
     if (!topAnchor) return null;
     return createPortal(
       <section aria-label="Sponsored content">

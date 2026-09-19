@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { useAdsenseSettings, useAdUnits, useAdsAllowed, pickAdUnit } from "@/hooks/useAdsense";
 import { backendClient } from "@/integrations/backend/client";
 
@@ -30,6 +31,7 @@ export function GoogleAd({
   reservedHeight,
   eager = false,
 }: GoogleAdProps) {
+  const { pathname } = useLocation();
   const allowed = useAdsAllowed(pageKey);
   const { data: settings } = useAdsenseSettings();
   const { data: units } = useAdUnits();
@@ -88,7 +90,7 @@ export function GoogleAd({
     fire();
   }, [allowed, eager, unit, settings?.lazy_load_enabled]);
 
-  if (!allowed || !unit) return null;
+  if (pathname === "/" || !allowed || !unit) return null;
 
   const client = settings?.client_id || settings?.publisher_id || "";
   const hasCustomCreative = Boolean((unit.ad_type === "custom" || unit.custom_html) && unit.custom_html?.trim());

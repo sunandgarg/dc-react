@@ -250,7 +250,7 @@ export function Navbar() {
         )}
       </nav>
     </header>
-    <div id="global-internal-ad-top-anchor" />
+    {pathname !== "/" && <div id="global-internal-ad-top-anchor" />}
     {!pathname.startsWith("/admin") && !pathname.startsWith("/auth") && (
       <div className="border-b border-border/70 bg-white px-3 py-2">
         <div className="container px-0">

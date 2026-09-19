@@ -19,8 +19,10 @@ export function AdsenseLoader() {
   useEffect(() => {
     if (!isHomepage) return;
     const removeHomepageAds = () => {
-      document.querySelectorAll(".google-auto-placed, .adsbygoogle-noablate, ins.adsbygoogle")
+      document.querySelectorAll("#global-internal-ad-top-anchor .google-ad-slot, .google-auto-placed, .adsbygoogle-noablate, ins.adsbygoogle, iframe[src*='googleads.g.doubleclick.net'], iframe[id^='aswift_']")
         .forEach((element) => element.remove());
+      document.getElementById("adsbygoogle-lib")?.remove();
+      document.getElementById("adsbygoogle-autoads")?.remove();
     };
     removeHomepageAds();
     const observer = new MutationObserver(removeHomepageAds);

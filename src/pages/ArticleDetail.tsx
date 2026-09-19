@@ -622,11 +622,6 @@ export default function ArticleDetail() {
                 </button>
               </div>
 
-              <div className="-mt-3 mb-6 flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border pb-4 text-[11px] text-muted-foreground sm:text-xs">
-                <span>Reviewed under the <Link to="/legal/editorial-policy" className="font-semibold text-primary hover:underline">DekhoCampus Editorial Policy</Link></span>
-                <span>Updated {dbArticle?.updated_at ? new Date(dbArticle.updated_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : article.publishedAt}</span>
-              </div>
-
               <div className="mb-6">
                 <button
                   type="button"
@@ -765,7 +760,6 @@ export default function ArticleDetail() {
                 fallback={[
                   { question: `What is this article "${article.title}" about?`, answer: article.excerpt || `Read this guide on DekhoCampus to understand ${article.title} in detail with the latest updates, eligibility, dates and expert tips.` },
                   { question: `Who should read this article?`, answer: `Students, parents and aspirants planning their next academic step in ${article.category || "education"} will find this article useful.` },
-                  { question: `How often is this article updated?`, answer: `Our editorial team reviews and updates articles regularly to reflect the latest official notifications, dates and policy changes.` },
                   { question: `How can I get personalised guidance?`, answer: `Click any "Get Free Counselling" button on this page. A DekhoCampus expert will reach out within 24 hours.` },
                 ]}
               />
