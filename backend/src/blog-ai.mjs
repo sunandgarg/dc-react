@@ -39,8 +39,10 @@ const BLOG_COVER_LOGO_FILE = new URL("../assets/dekhocampus-blog-logo.png", impo
 const BLOG_COVER_REFERENCE_FILE = new URL("../assets/dekhocampus-blog-cover-reference-v2.png", import.meta.url);
 const immutableCoverSourceCache = new Map();
 
-export const BLOG_COVER_TEMPLATE_COUNT = 24;
+export const BLOG_COVER_TEMPLATE_COUNT = 50;
 export const BLOG_COVER_TITLE_MAX_CHARACTERS = 88;
+export const BLOG_COVER_ROTATION_VERSION = "round-robin-v1";
+export const BLOG_COVER_ROTATION_PREFIX = `admin-uploads/blog-templates/${BLOG_COVER_ROTATION_VERSION}`;
 const BLOG_COVER_THEMES = [
   ["#f97316", "#16a34a", "#fff7ed"], ["#ea580c", "#2563eb", "#fff7ed"],
   ["#fb923c", "#0f766e", "#fffbeb"], ["#f59e0b", "#15803d", "#fffbeb"],
@@ -109,7 +111,7 @@ export function normalizeBlogAgentSettings(value = {}) {
     minimum_sources: Math.min(MAX_RESEARCH_SOURCES, Math.max(2, Math.trunc(Number(value.minimum_sources) || 2))),
     editorial_quality_target: Math.min(98, Math.max(75, Math.trunc(Number(value.editorial_quality_target) || 90))),
     human_review_required: Boolean(value.human_review_required),
-    image_mode: ["generated", "template", "none"].includes(value.image_mode) ? value.image_mode : "template",
+    image_mode: ["rotation", "generated", "template", "none"].includes(value.image_mode) ? value.image_mode : "rotation",
     image_provider: "openai",
     image_model: DEFAULT_OPENAI_IMAGE_MODEL,
     image_template_url: String(value.image_template_url || DEFAULT_BLOG_COVER_TEMPLATE_KEY).trim(),
@@ -158,7 +160,7 @@ const stripPublishedPlainText = (value) => stripPublishedAttributionPhrases(Stri
 const stripCompetitorCredits = stripPublishedSourceReferences;
 
 export function normalizeBlogCoverOptions(options = {}) {
-  const mode = ["generated", "template", "none"].includes(options.imageMode) ? options.imageMode : "none";
+  const mode = ["rotation", "generated", "template", "none"].includes(options.imageMode) ? options.imageMode : "none";
   const aspectRatio = COVER_DIMENSIONS[options.aspectRatio] ? options.aspectRatio : "16:9";
   const resolution = ["web", "2k", "4k"].includes(String(options.resolution).toLowerCase())
     ? String(options.resolution).toLowerCase()
@@ -179,6 +181,23 @@ export function normalizeBlogCoverOptions(options = {}) {
     contextLogoName: String(options.contextLogoName || "").trim().slice(0, 160),
     logoPosition: "top-center",
   };
+}
+
+export function nextBlogCoverRotationIndex(lastIndex) {
+  const normalized = Math.max(0, Math.trunc(Number(lastIndex) || 0));
+  return (normalized % BLOG_COVER_TEMPLATE_COUNT) + 1;
+}
+
+export function blogCoverRotationObjectPath(index) {
+  const normalized = Math.trunc(Number(index));
+  if (normalized < 1 || normalized > BLOG_COVER_TEMPLATE_COUNT) {
+    throw new RangeError(`Blog cover template index must be between 1 and ${BLOG_COVER_TEMPLATE_COUNT}`);
+  }
+  return `blog-templates/${BLOG_COVER_ROTATION_VERSION}/cover-${String(normalized).padStart(2, "0")}.webp`;
+}
+
+export function blogCoverRotationTemplateKey(index) {
+  return `admin-uploads/${blogCoverRotationObjectPath(index)}`;
 }
 
 export function resolveBlogMediaSource(value) {
@@ -221,6 +240,10 @@ async function downloadCoverSource(value, label) {
     if (cacheable) immutableCoverSourceCache.delete(sourceUrl);
     throw error;
   }
+}
+
+export async function downloadBlogCoverSource(value, label = "Blog cover source") {
+  return downloadCoverSource(value, label);
 }
 
 function escapeCoverText(value) {
@@ -334,11 +357,16 @@ export function selectBlogCoverTemplate(value) {
 }
 
 function localEditorialBackground(prompt, options) {
-  const themeIndex = stableCoverThemeIndex(prompt);
-  const [primary, secondary, paper] = BLOG_COVER_THEMES[themeIndex];
+  const requestedTemplate = Math.trunc(Number(options.templateIndex));
+  const themeIndex = requestedTemplate >= 1 && requestedTemplate <= BLOG_COVER_TEMPLATE_COUNT
+    ? requestedTemplate - 1
+    : stableCoverThemeIndex(prompt);
+  const [primary, secondary, paper] = BLOG_COVER_THEMES[themeIndex % BLOG_COVER_THEMES.length];
   const width = options.width || 1600;
   const height = options.height || 900;
-  const variant = themeIndex % 6;
+  const themeCycle = Math.floor(themeIndex / BLOG_COVER_THEMES.length);
+  const variant = (themeIndex + (themeCycle * 3)) % 6;
+  const gridSize = 24 + (themeCycle * 4);
   const accents = [
     `<path d="M0 ${height * 0.78} C${width * 0.2} ${height * 0.57},${width * 0.35} ${height * 1.02},${width * 0.58} ${height * 0.78} S${width * 0.86} ${height * 0.55},${width} ${height * 0.72} V${height} H0Z" fill="${secondary}" opacity=".84"/>`,
     `<path d="M0 0 H${width * 0.38} L${width * 0.15} ${height} H0Z" fill="${primary}" opacity=".78"/><path d="M${width} 0 H${width * 0.72} L${width * 0.9} ${height} H${width}Z" fill="${secondary}" opacity=".76"/>`,
@@ -348,7 +376,7 @@ function localEditorialBackground(prompt, options) {
     `<path d="M0 0 L${width * 0.28} 0 L${width * 0.08} ${height} H0Z" fill="${secondary}" opacity=".76"/><path d="M${width} 0 L${width * 0.76} 0 L${width * 0.94} ${height} H${width}Z" fill="${primary}" opacity=".8"/>`,
   ][variant];
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-    <defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${paper}"/><stop offset="1" stop-color="#ffffff"/></linearGradient><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#ffffff" stroke-opacity=".32" stroke-width="1"/></pattern></defs>
+    <defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${paper}"/><stop offset="1" stop-color="#ffffff"/></linearGradient><pattern id="grid" width="${gridSize}" height="${gridSize}" patternUnits="userSpaceOnUse"><path d="M${gridSize} 0H0V${gridSize}" fill="none" stroke="#ffffff" stroke-opacity=".32" stroke-width="1"/></pattern></defs>
     <rect width="100%" height="100%" fill="url(#paper)"/>${accents}<rect width="100%" height="100%" fill="url(#grid)"/>
     <g fill="none" stroke="#ffffff" stroke-opacity=".24" stroke-width="10"><path d="M${width * 0.04} ${height * 0.2} L${width * 0.18} ${height * 0.07} L${width * 0.32} ${height * 0.2}"/><path d="M${width * 0.76} ${height * 0.82} q${width * 0.09} -${height * 0.18} ${width * 0.18} 0"/></g>
   </svg>`);
@@ -383,6 +411,17 @@ export function editorialFrameOverlay(options) {
   </svg>`);
 }
 
+export async function createReusableBlogCoverTemplate(sourceBytes, options = {}) {
+  const width = Math.max(320, Math.trunc(Number(options.width) || 1600));
+  const height = Math.max(180, Math.trunc(Number(options.height) || 900));
+  return sharp(sourceBytes, { limitInputPixels: 50_000_000 })
+    .rotate()
+    .resize(width, height, { fit: "cover", position: "attention" })
+    .composite([{ input: editorialFrameOverlay({ width, height }), left: 0, top: 0 }])
+    .webp({ quality: 84, effort: 5 })
+    .toBuffer();
+}
+
 export async function renderBlogCover(sourceBytes, options, titleHook, sourceMode = "generated", diagnostics = null) {
   const base = sharp(sourceBytes, { limitInputPixels: 50_000_000 })
     .rotate()
@@ -399,7 +438,7 @@ export async function renderBlogCover(sourceBytes, options, titleHook, sourceMod
   if (diagnostics) {
     diagnostics.sourceMode ||= sourceMode;
     diagnostics.layout = "locked-editorial-v2";
-    diagnostics.templateVariant = selectBlogCoverTemplate(titleHook);
+    diagnostics.templateVariant ||= diagnostics.templateIndex || selectBlogCoverTemplate(titleHook);
     diagnostics.logoPreservedFromTemplate = false;
     diagnostics.logoApplied = true;
     diagnostics.logoKind = "brand-only";
@@ -695,6 +734,61 @@ export async function withArticleWriteLock(operation, siteScopes = ARTICLE_WRITE
     await acquireArticleWriteLocks(tx, scopes);
     return operation(tx);
   }, { maxWait: 25_000, timeout: 60_000 });
+}
+
+export function blogCoverRotationStateKey(siteScope = "dekhocampus") {
+  return `blog-cover-rotation:${BLOG_COVER_ROTATION_VERSION}:${normalizeArticleSiteScope(siteScope)}`;
+}
+
+export async function reserveNextBlogCoverTemplate(siteScope = "dekhocampus") {
+  const normalizedScope = normalizeArticleSiteScope(siteScope);
+  const stateKey = blogCoverRotationStateKey(normalizedScope);
+  return withArticleWriteLock(async (tx) => {
+    const current = await tx.app_settings.findUnique({ where: { key: stateKey } });
+    let previous = {};
+    try { previous = JSON.parse(current?.value || "{}"); } catch { previous = {}; }
+    const templateIndex = nextBlogCoverRotationIndex(previous.last_index);
+    const allocations = Math.max(0, Math.trunc(Number(previous.allocations) || 0)) + 1;
+    const templateKey = blogCoverRotationTemplateKey(templateIndex);
+    const state = {
+      version: BLOG_COVER_ROTATION_VERSION,
+      last_index: templateIndex,
+      allocations,
+      template_key: templateKey,
+      updated_at: new Date().toISOString(),
+    };
+    await tx.app_settings.upsert({
+      where: { key: stateKey },
+      update: { value: JSON.stringify(state), updated_at: new Date() },
+      create: { key: stateKey, value: JSON.stringify(state) },
+    });
+    await tx.ai_usage_events.create({ data: {
+      id: randomUUID(),
+      provider: "local",
+      model: BLOG_COVER_ROTATION_VERSION,
+      feature: "blog-cover",
+      operation: "template-reservation",
+      input_tokens: BigInt(0),
+      output_tokens: BigInt(0),
+      total_tokens: BigInt(0),
+      image_count: 0,
+      estimated_cost_usd: 0,
+      metadata: {
+        site_scope: normalizedScope,
+        template_index: templateIndex,
+        template_key: templateKey,
+        rotation_size: BLOG_COVER_TEMPLATE_COUNT,
+        image_generation_api_calls: 0,
+      },
+    } });
+    return {
+      siteScope: normalizedScope,
+      templateIndex,
+      templateKey,
+      objectPath: blogCoverRotationObjectPath(templateIndex),
+      allocations,
+    };
+  }, normalizedScope);
 }
 
 const contextLogoFields = {
@@ -1312,7 +1406,26 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
   let sourceMode = "generated";
   let generatedConfig = null;
   let generatedUsage = null;
-  if (options.mode === "template") {
+  if (options.mode === "rotation") {
+    const reserved = await reserveNextBlogCoverTemplate(rawOptions.siteScope);
+    const rotationOptions = { ...options, templateIndex: reserved.templateIndex };
+    try {
+      sourceBytes = await downloadCoverSource(reserved.templateKey, `Round-robin cover ${reserved.templateIndex}`);
+      sourceMode = "round-robin-template";
+    } catch (templateError) {
+      sourceBytes = await createLocalEditorialCover(prompt, rotationOptions);
+      sourceMode = "round-robin-fallback";
+      if (diagnostics) diagnostics.templateError = String(templateError?.message || templateError).slice(0, 200);
+    }
+    if (diagnostics) {
+      diagnostics.sourceMode = sourceMode;
+      diagnostics.templateIndex = reserved.templateIndex;
+      diagnostics.templateKey = reserved.templateKey;
+      diagnostics.rotationSize = BLOG_COVER_TEMPLATE_COUNT;
+      diagnostics.imageGenerationApiCalls = 0;
+      diagnostics.estimatedImageGenerationCostUsd = 0;
+    }
+  } else if (options.mode === "template") {
     if (options.templateUrl) try {
       sourceBytes = await downloadCoverSource(options.templateUrl, "Cover template");
       sourceMode = "template";
@@ -2020,13 +2133,10 @@ export async function handleArticleCover(request) {
   const title = stripHtml(body.title).trim();
   if (!title) throw Object.assign(new Error("Article title is required to generate a cover"), { status: 400, code: "ARTICLE_TITLE_REQUIRED" });
   const settingsId = siteScope === "sarkari" ? "sarkari" : "default";
-  const scopedSettings = await prisma.blog_auto_agent_settings.findUnique({ where: { id: settingsId } }).catch(() => null);
-  const settings = scopedSettings || (settingsId === "default" ? null : await prisma.blog_auto_agent_settings.findUnique({ where: { id: "default" } }).catch(() => null));
   const diagnostics = {};
   const contextLogo = await resolveContextualBlogLogo(title);
   const featuredImage = await createBlogCover(slugify(body.slug || title) || `article-${Date.now()}`, title, {
-    imageMode: "template",
-    templateUrl: settings?.image_template_url || DEFAULT_BLOG_COVER_TEMPLATE_KEY,
+    imageMode: "rotation",
     includeLogo: false,
     contextLogoUrl: contextLogo?.url,
     contextLogoName: contextLogo?.name,

@@ -29,7 +29,8 @@ export function ArticleCoverGenerator({ title, slug, onGenerated, siteScope = DE
         throw error || new Error("The cover service did not return an image");
       }
       onGenerated(data.featured_image);
-      toast.success("Branded cover generated");
+      const templateIndex = Number(data?.cover_diagnostics?.templateIndex || 0);
+      toast.success(templateIndex ? `Branded cover generated with design ${templateIndex} of 50` : "Branded cover generated");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not generate the article cover";
       toast.error(message || "Could not generate the article cover");
@@ -41,7 +42,7 @@ export function ArticleCoverGenerator({ title, slug, onGenerated, siteScope = DE
   return (
     <Button type="button" variant="outline" size="sm" onClick={generate} disabled={busy} className="mt-2 gap-2">
       {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-      Generate branded cover
+      Use next branded design
     </Button>
   );
 }

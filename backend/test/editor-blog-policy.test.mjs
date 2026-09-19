@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articlePrompt, articleRevisionPrompt, blogLimits, blogTextProvider, createLocalEditorialCover, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articlePrompt, articleRevisionPrompt, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -333,6 +333,7 @@ test("normalizes editorial controls and adapts depth to student intent", () => {
   assert.deepEqual(normalized.required_sections, ["Answer first", "Key facts", "Decision guidance", "FAQs"]);
   assert.equal(normalized.minimum_sources, 2);
   assert.equal(normalized.editorial_quality_target, 98);
+  assert.equal(normalized.image_mode, "rotation");
   assert.equal(resolveArticleWordTarget({ title: "NEET result and scorecard release" }, 0), 900);
   assert.equal(resolveArticleWordTarget({ title: "JEE counselling and choice filling strategy" }, 0), 1500);
   assert.equal(resolveArticleWordTarget({ title: "BTech admission eligibility" }, 0), 1200);
@@ -461,12 +462,32 @@ test("scales long titles down after applying the readable heading budget", () =>
   assert.ok(long.lines.join(" ").length <= BLOG_COVER_TITLE_MAX_CHARACTERS);
 });
 
-test("ships 24 stable zero-credit editorial background templates", () => {
-  assert.equal(BLOG_COVER_TEMPLATE_COUNT, 24);
+test("ships 50 stable zero-credit editorial background templates", () => {
+  assert.equal(BLOG_COVER_TEMPLATE_COUNT, 50);
   const first = selectBlogCoverTemplate("NEET counselling choices");
   assert.equal(selectBlogCoverTemplate("NEET counselling choices"), first);
   assert.ok(first >= 1 && first <= BLOG_COVER_TEMPLATE_COUNT);
   assert.ok(new Set(Array.from({ length: 100 }, (_, index) => selectBlogCoverTemplate(`topic-${index}`))).size >= 20);
+});
+
+test("allocates strict round-robin cover keys and wraps after design 50", () => {
+  assert.equal(nextBlogCoverRotationIndex(0), 1);
+  assert.equal(nextBlogCoverRotationIndex(49), 50);
+  assert.equal(nextBlogCoverRotationIndex(50), 1);
+  assert.equal(blogCoverRotationObjectPath(7), "blog-templates/round-robin-v1/cover-07.webp");
+  assert.equal(blogCoverRotationTemplateKey(50), "admin-uploads/blog-templates/round-robin-v1/cover-50.webp");
+  assert.throws(() => blogCoverRotationTemplateKey(51), RangeError);
+});
+
+test("sanitizes a previous cover into a reusable blank editorial master", async () => {
+  const source = await readFile(new URL("../assets/dekhocampus-blog-cover-template-v1.png", import.meta.url));
+  const bytes = await createReusableBlogCoverTemplate(source, { width: 1600, height: 900 });
+  const metadata = await sharp(bytes).metadata();
+  const center = await sharp(bytes).extract({ left: 790, top: 440, width: 20, height: 20 }).removeAlpha().raw().toBuffer();
+  assert.equal(metadata.format, "webp");
+  assert.equal(metadata.width, 1600);
+  assert.equal(metadata.height, 900);
+  assert.ok(Math.min(...center) > 225);
 });
 
 test("rasterizes template headings with the bundled production font", async () => {

@@ -70,7 +70,7 @@ try {
         minimum_sources: 2,
         editorial_quality_target: 90,
         human_review_required: false,
-        image_mode: "template",
+        image_mode: "rotation",
         image_template_url: DEFAULT_BLOG_COVER_TEMPLATE_KEY,
         include_logo: false,
         image_aspect_ratio: "16:9",

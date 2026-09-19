@@ -55,7 +55,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
   const [draft, setDraft] = useState<Draft | null>(null);
   const [busy, setBusy] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [imageMode, setImageMode] = useState<"generated" | "template" | "none">("template");
+  const [imageMode, setImageMode] = useState<"rotation" | "generated" | "template" | "none">("rotation");
   const [templateUrl, setTemplateUrl] = useState("");
   const [includeLogo, setIncludeLogo] = useState(false);
   const [logoUrl, setLogoUrl] = useState("");
@@ -81,7 +81,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
         data = fallback.data;
       }
       if (!data) return;
-      setImageMode(data.image_mode || "template");
+      setImageMode(data.image_mode || "rotation");
       setTemplateUrl(data.image_template_url || "");
       setIncludeLogo(Boolean(data.include_logo));
       setLogoUrl(data.logo_url || "");
@@ -175,12 +175,12 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
       <DialogHeader><DialogTitle className="flex items-center gap-2"><BookOpenCheck className="w-5 h-5 text-primary" /> {siteScope === "sarkari" ? "Sarkari Job Editorial Studio" : "Editorial Blog Studio"}</DialogTitle></DialogHeader>
       <div className="space-y-4">
         <div><Label>Topic</Label><Input value={topic} onChange={event => setTopic(event.target.value)} placeholder={siteScope === "sarkari" ? "e.g. SSC CGL notification, eligibility, dates and application process" : "e.g. JEE Main counselling dates and choice filling guide"} /></div>
-        <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {editorial.text_model}. It checks novelty within the {siteScopeLabel(siteScope)} library, synthesises evidence, drafts the article and performs a second quality review. OpenAI image generation runs only when you choose a new image.</div>
+        <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {editorial.text_model}. It checks novelty within the {siteScopeLabel(siteScope)} library, synthesises evidence, drafts the article and performs a second quality review. The 50-design rotation renders covers locally with no image-generation API charge.</div>
         <div><Label>Optimised word limit</Label><div className="mt-2 flex flex-wrap gap-2">{LENGTHS.map(length => <Button key={length} variant={wordLimit === length ? "default" : "outline"} onClick={() => setWordLimit(length)}>{length === 0 ? "Adaptive" : `${length} words`}</Button>)}</div><p className="mt-2 text-xs text-muted-foreground">Adaptive is recommended: concise updates stay short, while detailed guides receive more depth.</p></div>
         <div className="rounded-xl border p-3">
           <Label>Cover workflow</Label>
           <div className="mt-2 flex flex-wrap gap-2">
-            {([["generated", "New OpenAI image"], ["template", "Use template"], ["none", "No image"]] as const).map(([mode, label]) => <Button key={mode} size="sm" variant={imageMode === mode ? "default" : "outline"} onClick={() => setImageMode(mode)}>{label}</Button>)}
+            {([["rotation", "Next of 50 designs"], ["generated", "New OpenAI image"], ["template", "One custom template"], ["none", "No image"]] as const).map(([mode, label]) => <Button key={mode} size="sm" variant={imageMode === mode ? "default" : "outline"} onClick={() => setImageMode(mode)}>{label}</Button>)}
           </div>
           {imageMode === "template" && <div className="mt-3"><ImageUploadField label="Optional custom background" value={templateUrl} onChange={setTemplateUrl} folder="blog-templates" /></div>}
           {imageMode === "generated" && <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -188,7 +188,8 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
             <label className="flex items-center justify-between rounded-lg border p-3"><span className="text-sm">Place uploaded logo</span><Switch checked={includeLogo} onCheckedChange={setIncludeLogo} /></label>
             {includeLogo && <ImageUploadField label="High-resolution logo" value={logoUrl} onChange={setLogoUrl} folder="blog-brand" />}
           </div>}
-          {imageMode === "template" && <p className="mt-2 text-xs text-muted-foreground">One of 24 built-in editorial backgrounds is selected automatically. The locked logo, panel and typography use no OpenAI image credits.</p>}
+          {imageMode === "rotation" && <p className="mt-2 text-xs text-muted-foreground">Recommended. Uses each of 50 approved DekhoCampus designs once in order, then starts again. The current title and logo are rendered locally, so every cover costs $0 in image-generation API fees.</p>}
+          {imageMode === "template" && <p className="mt-2 text-xs text-muted-foreground">Uses only the custom background above. The locked logo, panel and typography are still rendered locally.</p>}
           {imageMode === "generated" && <p className="mt-2 text-xs text-muted-foreground">OpenAI receives the supplied DekhoCampus cover as a style reference and changes only the illustrated background. Branding and typography are rendered locally and stay fixed.</p>}
         </div>
         <p className="text-xs text-muted-foreground">Research sources are private editorial inputs, never published citations. Every result is checked against all existing article intents, reviewed for factual usefulness, and rechecked when you publish.</p>

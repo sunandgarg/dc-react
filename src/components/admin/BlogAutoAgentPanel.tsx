@@ -30,7 +30,7 @@ type Settings = {
   minimum_sources: number;
   editorial_quality_target: number;
   human_review_required: boolean;
-  image_mode: "generated" | "template" | "none";
+  image_mode: "rotation" | "generated" | "template" | "none";
   image_provider: "openai" | "gemini" | "xai";
   image_model: string;
   image_template_url: string;
@@ -83,7 +83,7 @@ const DEFAULT_SETTINGS: Settings = {
   minimum_sources: 2,
   editorial_quality_target: 90,
   human_review_required: false,
-  image_mode: "template",
+  image_mode: "rotation",
   image_provider: "openai",
   image_model: "gpt-image-1",
   image_template_url: "",
@@ -578,10 +578,10 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       {supportsAdvancedSettings && <div className="mt-4 rounded-2xl border p-4">
         <div>
           <Label className="text-sm font-semibold">Cover image workflow</Label>
-          <p className="mt-1 text-xs text-muted-foreground">Generate a new background, use your saved design, or skip the cover. Saved templates keep their existing logo and frame.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Use the zero-cost 50-design rotation, request a paid OpenAI background, keep one custom template, or skip the cover.</p>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          {([["generated", "Generate new"], ["template", "Use saved template"], ["none", "No image"]] as const).map(([mode, label]) => (
+          {([["rotation", "50-design rotation"], ["generated", "Generate new"], ["template", "One custom template"], ["none", "No image"]] as const).map(([mode, label]) => (
             <Button key={mode} type="button" size="sm" variant={settings.image_mode === mode ? "default" : "outline"} onClick={() => updateSetting("image_mode", mode)}>{label}</Button>
           ))}
         </div>
@@ -616,7 +616,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               </>
             )}
           </div>}
-          {settings.image_mode === "template" && <div className="rounded-xl border p-3 text-sm text-muted-foreground">The template's existing logo and orange frame stay intact. Only the fitted article heading is added to the white center.</div>}
+          {settings.image_mode === "rotation" && <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm"><div className="flex items-center gap-2 font-medium"><RotateCcw className="h-4 w-4 text-primary" /> 50 approved designs, strict round robin</div><p className="mt-1 text-xs text-muted-foreground">Every job reserves the next design safely, renders the current title and DekhoCampus logo locally, and wraps from design 50 to 1. OpenAI image calls: 0.</p></div>}
+          {settings.image_mode === "template" && <div className="rounded-xl border p-3 text-sm text-muted-foreground">The custom background is reused while the current title, white panel and DekhoCampus logo are rendered locally.</div>}
         </div>
       </div>}
 

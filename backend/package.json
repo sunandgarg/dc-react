@@ -20,6 +20,7 @@
     "publish:cat-kit": "node scripts/publish-cat-kit.mjs",
     "repair:listed-article-covers": "node scripts/repair-listed-article-covers.mjs",
     "backfill:article-covers": "node scripts/backfill-missing-article-covers.mjs",
+    "bootstrap:blog-cover-rotation": "node scripts/bootstrap-blog-cover-rotation.mjs",
     "revoke:user-sessions": "node scripts/revoke-user-sessions.mjs",
     "reconcile:content-head": "node scripts/reconcile-content-head-access.mjs",
     "cleanup:college-editorial-artifacts": "node scripts/cleanup-college-editorial-artifacts.mjs",
