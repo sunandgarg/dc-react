@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
@@ -94,6 +94,7 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
 
   return useQuery({
     queryKey: ["db-articles-admin", siteScope, normalizedSearch, safePage, safePageSize],
+    placeholderData: keepPreviousData,
     queryFn: async () => {
       let query = backendClient
         .from("articles")
