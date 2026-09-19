@@ -13,7 +13,7 @@ export function AdsenseLoader() {
   const { data: scripts } = useAdScripts();
 
   const isAdmin = pathname.startsWith("/admin");
-  const allowAutoAds = settings?.auto_ads_enabled && !pathname.startsWith("/news/");
+  const allowAutoAds = settings?.auto_ads_enabled && pathname !== "/" && !pathname.startsWith("/news/");
 
   useEffect(() => {
     if (isAdmin || !settings || !settings.ads_globally_enabled) return;

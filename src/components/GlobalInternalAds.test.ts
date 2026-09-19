@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getInternalAdContext } from "./GlobalInternalAds";
+import { getInternalAdContext, shouldShowTopGoogleAd } from "./GlobalInternalAds";
 
 describe("global internal ad route targeting", () => {
   it("maps news listings and detail pages to the articles audience", () => {
@@ -16,6 +16,12 @@ describe("global internal ad route targeting", () => {
   it("does not render ads inside protected operational routes", () => {
     expect(getInternalAdContext("/admin/ads").isPublic).toBe(false);
     expect(getInternalAdContext("/dashboard").isPublic).toBe(false);
+  });
+
+  it("removes the top Google slot from the homepage only", () => {
+    expect(shouldShowTopGoogleAd("/")).toBe(false);
+    expect(shouldShowTopGoogleAd("/news")).toBe(true);
+    expect(shouldShowTopGoogleAd("/colleges")).toBe(true);
   });
 
   it("maps premium, careers and study sections to their admin targeting groups", () => {

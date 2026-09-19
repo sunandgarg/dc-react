@@ -10,6 +10,10 @@ export interface InternalAdContext {
   isPublic: boolean;
 }
 
+export function shouldShowTopGoogleAd(pathname: string) {
+  return pathname !== "/";
+}
+
 const NON_ITEM_COLLEGE_PREFIX = "top-";
 
 /** Maps every public route to the targeting vocabulary used by Admin > Internal Ads. */
@@ -91,16 +95,18 @@ export function GlobalInternalAds({ area }: { area: "top" | "bottom" }) {
       <section aria-label="Sponsored content">
         <DynamicAdBanner position="leaderboard" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />
         <div className="container space-y-1 py-1.5 empty:hidden">
-          <GoogleAd
-            placement="header"
-            position="top"
-            pageKey={context.page || "sitewide"}
-            format="horizontal"
-            fullWidthResponsive={false}
-            reservedHeight={50}
-            eager
-            className="mx-auto h-[50px] w-full max-w-[320px] sm:h-[90px] sm:max-w-[728px]"
-          />
+          {shouldShowTopGoogleAd(pathname) && (
+            <GoogleAd
+              placement="header"
+              position="top"
+              pageKey={context.page || "sitewide"}
+              format="horizontal"
+              fullWidthResponsive={false}
+              reservedHeight={50}
+              eager
+              className="mx-auto h-[50px] w-full max-w-[320px] sm:h-[90px] sm:max-w-[728px]"
+            />
+          )}
           <DynamicAdBanner position="top" page={context.page} itemSlug={context.itemSlug} state={selectedState} city={selectedCity} />
         </div>
       </section>,

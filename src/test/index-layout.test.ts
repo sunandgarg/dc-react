@@ -110,14 +110,17 @@ describe("Index page layout (static source assertions)", () => {
     expect(adminAdsSrc).not.toMatch(/absolute inset-x-0 top-0 flex h-1/);
   });
 
-  it("reserves one sitewide Google ad slot between public navigation and search", () => {
+  it("reserves the top Google slot on public pages except the homepage", () => {
     expect(navbarSrc).toMatch(/global-internal-ad-top-anchor[\s\S]*GlobalSearchBar/);
+    expect(globalAdsSrc).toMatch(/shouldShowTopGoogleAd\(pathname\)/);
+    expect(globalAdsSrc).toMatch(/return pathname !== "\/"/);
     expect(globalAdsSrc).toMatch(/<GoogleAd/);
     expect(globalAdsSrc).toMatch(/placement="header"/);
     expect(globalAdsSrc).toMatch(/position="top"/);
     expect(globalAdsSrc).toMatch(/format="horizontal"/);
     expect(globalAdsSrc).toMatch(/fullWidthResponsive=\{false\}/);
     expect(globalAdsSrc).toMatch(/max-w-\[320px\][\s\S]*sm:max-w-\[728px\]/);
+    expect(adsenseLoaderSrc).toMatch(/pathname !== "\/"/);
   });
 
   it("uses managed rectangular article ads and moves the sticky lead below Important Exams", () => {
