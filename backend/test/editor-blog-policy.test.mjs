@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articlePrompt, articleRevisionPrompt, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articlePrompt, articleRevisionPrompt, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -406,11 +406,25 @@ test("renders a local branded cover without an external image provider", async (
   assert.equal(bytes.subarray(1, 4).toString(), "PNG");
 });
 
-test("keeps the education-news label centered inside its badge", () => {
+test("keeps reusable frame masters free of font-dependent SVG text", () => {
   const svg = editorialFrameOverlay({ width: 1600, height: 900 }).toString();
   assert.match(svg, /<rect x="648" y="315" width="304" height="47"/);
-  assert.match(svg, /<text x="800" y="339" text-anchor="middle" dominant-baseline="middle"/);
-  assert.match(svg, /font-size="22"[^>]*letter-spacing="1\.5"[^>]*>EDUCATION NEWS<\/text>/);
+  assert.doesNotMatch(svg, /<text/);
+});
+
+test("rasterizes frame labels with the bundled production font", async () => {
+  const overlays = await editorialFrameTextRasterOverlays({ width: 1600, height: 900 });
+  assert.equal(overlays.length, 2);
+  assert.ok(overlays[0].left > 600 && overlays[0].left < 800);
+  assert.ok(overlays[0].top > 300 && overlays[0].top < 360);
+  assert.ok(overlays[1].left > 200 && overlays[1].left < 700);
+  assert.ok(overlays[1].top > 680 && overlays[1].top < 750);
+  for (const overlay of overlays) {
+    const metadata = await sharp(overlay.input).metadata();
+    const stats = await sharp(overlay.input).stats();
+    assert.equal(metadata.format, "png");
+    assert.ok(stats.channels[3].max > 0, "Expected frame text to contain visible alpha pixels");
+  }
 });
 
 test("keeps full short headings and ellipsizes only oversized cover text", () => {
@@ -474,8 +488,8 @@ test("allocates strict round-robin cover keys and wraps after design 50", () => 
   assert.equal(nextBlogCoverRotationIndex(0), 1);
   assert.equal(nextBlogCoverRotationIndex(49), 50);
   assert.equal(nextBlogCoverRotationIndex(50), 1);
-  assert.equal(blogCoverRotationObjectPath(7), "blog-templates/round-robin-v1/cover-07.webp");
-  assert.equal(blogCoverRotationTemplateKey(50), "admin-uploads/blog-templates/round-robin-v1/cover-50.webp");
+  assert.equal(blogCoverRotationObjectPath(7), "blog-templates/round-robin-v2/cover-07.webp");
+  assert.equal(blogCoverRotationTemplateKey(50), "admin-uploads/blog-templates/round-robin-v2/cover-50.webp");
   assert.throws(() => blogCoverRotationTemplateKey(51), RangeError);
 });
 

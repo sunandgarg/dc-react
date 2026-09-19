@@ -41,7 +41,7 @@ const immutableCoverSourceCache = new Map();
 
 export const BLOG_COVER_TEMPLATE_COUNT = 50;
 export const BLOG_COVER_TITLE_MAX_CHARACTERS = 88;
-export const BLOG_COVER_ROTATION_VERSION = "round-robin-v1";
+export const BLOG_COVER_ROTATION_VERSION = "round-robin-v2";
 export const BLOG_COVER_ROTATION_PREFIX = `admin-uploads/blog-templates/${BLOG_COVER_ROTATION_VERSION}`;
 const BLOG_COVER_THEMES = [
   ["#f97316", "#16a34a", "#fff7ed"], ["#ea580c", "#2563eb", "#fff7ed"],
@@ -397,18 +397,66 @@ export function editorialFrameOverlay(options) {
   const categoryHeight = Math.round(height * 0.052);
   const categoryWidth = Math.round(width * 0.19);
   const categoryX = Math.round((width - categoryWidth) / 2);
-  const categoryCenterY = categoryY + Math.round(categoryHeight / 2);
-  const categoryFontSize = Math.round(width * 0.014);
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
     <defs><filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#0f172a" flood-opacity=".16"/></filter></defs>
     <rect x="${Math.round(width * 0.27)}" y="0" width="${Math.round(width * 0.46)}" height="${Math.round(height * 0.2)}" fill="#ffffff"/>
     <rect x="${x}" y="${y}" width="${panelWidth}" height="${panelHeight}" rx="${radius}" fill="#ffffff" filter="url(#shadow)"/>
     <rect x="${x + 25}" y="${y + 25}" width="${panelWidth - 50}" height="${panelHeight - 50}" rx="${Math.max(18, radius - 8)}" fill="none" stroke="#e2e8f0" stroke-width="2"/>
     <rect x="${categoryX}" y="${categoryY}" width="${categoryWidth}" height="${categoryHeight}" rx="${Math.round(categoryHeight / 2)}" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
-    <text x="${Math.round(width * 0.5)}" y="${categoryCenterY}" text-anchor="middle" dominant-baseline="middle" font-family="Inter,Arial,sans-serif" font-size="${categoryFontSize}" font-weight="700" letter-spacing="1.5" fill="#f97316">EDUCATION NEWS</text>
     <rect x="${Math.round(width * 0.335)}" y="${Math.round(height * 0.71)}" width="${Math.round(width * 0.33)}" height="${Math.max(5, Math.round(height * 0.008))}" rx="4" fill="#fb923c"/>
-    <text x="${Math.round(width * 0.5)}" y="${Math.round(height * 0.805)}" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="${Math.round(width * 0.017)}" font-weight="600" fill="#475569">DekhoCampus editorial brief for students, parents and aspirants</text>
   </svg>`);
+}
+
+async function coloredTextRaster(text, { fontSize, fontWeight = "SemiBold", width, color }) {
+  const mask = await sharp({
+    text: {
+      text,
+      font: `Inter ${fontWeight} ${fontSize}`,
+      fontfile: BLOG_COVER_FONT_FILE,
+      width,
+      align: "centre",
+      rgba: true,
+      dpi: 72,
+    },
+  }).png().toBuffer({ resolveWithObject: true });
+  const input = await sharp({
+    create: {
+      width: mask.info.width,
+      height: mask.info.height,
+      channels: 4,
+      background: color,
+    },
+  }).composite([{ input: mask.data, blend: "dest-in" }]).png().toBuffer();
+  return { input, width: mask.info.width, height: mask.info.height };
+}
+
+export async function editorialFrameTextRasterOverlays(options) {
+  const { width, height } = options;
+  const category = await coloredTextRaster("EDUCATION NEWS", {
+    fontSize: Math.round(width * 0.014),
+    fontWeight: "Bold",
+    width: Math.round(width * 0.17),
+    color: "#f97316",
+  });
+  const footer = await coloredTextRaster("DekhoCampus editorial brief for students, parents and aspirants", {
+    fontSize: Math.round(width * 0.017),
+    width: Math.round(width * 0.68),
+    color: "#475569",
+  });
+  const categoryCenterY = Math.round(height * 0.376);
+  const footerCenterY = Math.round(height * 0.795);
+  return [
+    {
+      input: category.input,
+      left: Math.round((width - category.width) / 2),
+      top: Math.round(categoryCenterY - category.height / 2),
+    },
+    {
+      input: footer.input,
+      left: Math.round((width - footer.width) / 2),
+      top: Math.round(footerCenterY - footer.height / 2),
+    },
+  ];
 }
 
 export async function createReusableBlogCoverTemplate(sourceBytes, options = {}) {
@@ -430,9 +478,11 @@ export async function renderBlogCover(sourceBytes, options, titleHook, sourceMod
     .resize({ width: Math.round(options.width * 0.19), fit: "inside", withoutEnlargement: false })
     .png().toBuffer({ resolveWithObject: true });
   const title = await templateCoverTitleRasterOverlay(titleHook, options);
+  const frameText = await editorialFrameTextRasterOverlays(options);
   const composites = [
     { input: editorialFrameOverlay(options), left: 0, top: 0 },
     { input: brandLogo.data, left: Math.round((options.width - brandLogo.info.width) / 2), top: Math.round(options.height * 0.16) },
+    ...frameText,
     title,
   ];
   if (diagnostics) {
