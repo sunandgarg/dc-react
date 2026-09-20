@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, Download, Star, ShieldCheck, Calendar, Clock, GraduationCap, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IITAlumniBadge } from "@/components/IITAlumniBadge";
+import { isIitIimProgram } from "@/lib/premiumProgram";
 
 interface Props {
   program: any;
@@ -21,6 +22,13 @@ interface Props {
  */
 export function PremiumDecisionRail({ program, discountedPrice, emi, formatPrice, onApply, onBrochure, onCounsel }: Props) {
   const [countdown, setCountdown] = useState("");
+  const isInstituteProgram = isIitIimProgram(program);
+  const instituteIdentity = [program?.college_name, program?.title, program?.slug, program?.tag]
+    .filter((value): value is string => typeof value === "string")
+    .join(" ");
+  const isIitProgram = /(?:^|[^a-z0-9])iit(?=$|[^a-z0-9])/i.test(instituteIdentity);
+  const originalPrice = Number(program?.original_price) || 0;
+  const hasPrice = discountedPrice > 0 || originalPrice > 0;
 
   useEffect(() => {
     // Use cohort_close_at if present, else default to 3 days out.
@@ -60,38 +68,67 @@ export function PremiumDecisionRail({ program, discountedPrice, emi, formatPrice
         <div className="text-center mb-5">
           <p className="text-slate-500 text-xs">Program Fee</p>
           <div className="flex items-baseline justify-center gap-2 flex-wrap mt-1">
-            <span className="text-3xl font-extrabold text-slate-900">{formatPrice(discountedPrice)}</span>
-            <span className="text-sm line-through text-slate-400">{formatPrice(program.original_price)}</span>
+            <span className="text-3xl font-extrabold text-slate-900">{hasPrice ? formatPrice(discountedPrice || originalPrice) : "Fee on request"}</span>
+            {discountedPrice > 0 && originalPrice > discountedPrice && (
+              <span className="text-sm line-through text-slate-400">{formatPrice(originalPrice)}</span>
+            )}
           </div>
-          <p className="text-xs text-blue-600 font-bold mt-1">EMI from {formatPrice(emi)}/mo · 0% interest</p>
+          {emi > 0 && <p className="text-xs text-blue-600 font-bold mt-1">EMI from {formatPrice(emi)}/mo · 0% interest</p>}
         </div>
 
-        <div className="flex justify-center mb-4"><IITAlumniBadge showTagline={false} /></div>
+        {isIitProgram && <div className="flex justify-center mb-4"><IITAlumniBadge showTagline={false} /></div>}
 
-        <div className="space-y-3">
-          <Button
-            onClick={onApply}
-            className="w-full h-auto bg-[#e85d3a] hover:bg-[#d14b2d] text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-200 hover:scale-[1.02] transition-transform text-sm md:text-base"
-          >
-            <ArrowRight className="w-4 h-4 mr-2" /> Apply for Admission
-          </Button>
+        {isInstituteProgram ? (
+          <div className="space-y-2.5" data-testid="institute-decision-ctas">
+            <Button
+              onClick={onApply}
+              className="h-11 w-full rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white shadow-md shadow-red-200 transition hover:-translate-y-0.5 hover:bg-[#d9151c]"
+            >
+              Apply Now
+            </Button>
+            <div className="grid grid-cols-2 gap-2.5">
+              <Button
+                onClick={onBrochure}
+                variant="outline"
+                className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm"
+              >
+                <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
+              </Button>
+              <Button
+                onClick={onCounsel}
+                variant="outline"
+                className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm"
+              >
+                Talk to Counsellor
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <Button
+              onClick={onApply}
+              className="w-full h-auto bg-[#e85d3a] hover:bg-[#d14b2d] text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-200 hover:scale-[1.02] transition-transform text-sm md:text-base"
+            >
+              <ArrowRight className="w-4 h-4 mr-2" /> Apply for Admission
+            </Button>
 
-          <Button
-            onClick={onCounsel}
-            variant="outline"
-            className="w-full h-auto border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700 font-bold py-4 rounded-2xl"
-          >
-            Talk to Counsellor
-          </Button>
+            <Button
+              onClick={onCounsel}
+              variant="outline"
+              className="w-full h-auto border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700 font-bold py-4 rounded-2xl"
+            >
+              Talk to Counsellor
+            </Button>
 
-          <Button
-            onClick={onBrochure}
-            variant="ghost"
-            className="w-full bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-semibold py-2 text-sm"
-          >
-            <Download className="w-4 h-4 mr-2" /> Download Brochure
-          </Button>
-        </div>
+            <Button
+              onClick={onBrochure}
+              variant="ghost"
+              className="w-full bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-semibold py-2 text-sm"
+            >
+              <Download className="w-4 h-4 mr-2" /> Download Brochure
+            </Button>
+          </div>
+        )}
 
         {/* Social proof */}
         <div className="mt-6 pt-5 border-t border-slate-100 space-y-3">

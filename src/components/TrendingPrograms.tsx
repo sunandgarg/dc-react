@@ -9,6 +9,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { DekhoLogoInline } from "@/components/DekhoLogoInline";
 import { getProgramCategoryIcon, resolveProgramCategoryEmoji } from "@/lib/programCategoryImages";
+import { isIitIimProgram, resolvePremiumProgramMedia } from "@/lib/premiumProgram";
 
 function formatPrice(price: number) {
   if (price >= 100000) return `₹${Number((price / 100000).toFixed(2))}L`;
@@ -218,16 +219,45 @@ export function ProgramCard({ prog, onLead }: { prog: any; onLead: () => void })
   const emi = Number(prog.emi_starts_at) > 0 ? Number(prog.emi_starts_at) : 0;
   const href = prog.slug ? `/premium-programs/${prog.slug}` : null;
   const fallbackIcon = getProgramCategoryIcon(prog.category_slug);
-  const instituteLogo = prog.institute_logo || "";
+  const { heroImage: visualImage, instituteLogo } = resolvePremiumProgramMedia(prog);
+  const isInstituteProgram = isIitIimProgram(prog);
   return (
     <article className="group bg-card rounded-2xl border border-border overflow-hidden flex flex-col hover:shadow-xl hover:border-primary/40 transition-all">
-      <div className="relative h-40 w-full bg-white border-b border-border/70 overflow-hidden">
+      <div className={`relative w-full border-b border-border/70 overflow-hidden ${isInstituteProgram ? "h-44 bg-slate-900" : "h-40 bg-white"}`}>
         {href ? (
-          <Link to={href} aria-label={prog.title} className="absolute inset-0 z-10" />
+          <Link to={href} aria-label={`View ${prog.title}`} className="absolute inset-0 z-10" />
         ) : (
-          <button type="button" aria-label={prog.title} onClick={onLead} className="absolute inset-0 z-10" />
+          <button type="button" aria-label={`View ${prog.title}`} onClick={onLead} className="absolute inset-0 z-10" />
         )}
-        {instituteLogo ? (
+        {isInstituteProgram && visualImage ? (
+          <>
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-700 via-slate-900 to-black text-white/50">
+              <GraduationCap className="h-12 w-12" aria-hidden="true" />
+            </div>
+            <img
+              src={visualImage}
+              alt={`${prog.title} at ${prog.college_name || "the institute"}`}
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+              onError={(event) => { event.currentTarget.style.display = "none"; }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/25" aria-hidden="true" />
+            {instituteLogo ? (
+              <div className="absolute bottom-3 left-3 z-20 flex h-12 max-w-[72%] items-center rounded-xl border border-white/60 bg-white/95 px-3 py-2 shadow-lg backdrop-blur-sm pointer-events-none">
+                <img
+                  src={instituteLogo}
+                  alt={`${prog.college_name || prog.title} logo`}
+                  loading="lazy"
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+            ) : (
+              <p className="absolute bottom-3 left-3 z-20 max-w-[75%] rounded-lg bg-black/55 px-2.5 py-1.5 text-xs font-bold text-white backdrop-blur-sm pointer-events-none">
+                {prog.college_name}
+              </p>
+            )}
+          </>
+        ) : instituteLogo ? (
           <div className="w-full h-full flex items-center justify-center px-10 py-7">
             <img src={instituteLogo} alt={`${prog.college_name || prog.title} logo`} loading="lazy" className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-300" />
           </div>
@@ -248,13 +278,15 @@ export function ProgramCard({ prog, onLead }: { prog: any; onLead: () => void })
           </div>
         )}
         <div className="absolute top-2 left-2 flex items-center gap-1.5 z-20 pointer-events-none">
-          <span className="px-2.5 py-1 rounded-md bg-primary text-primary-foreground text-[11px] font-extrabold tracking-wide uppercase shadow-sm">
+          <span className={`px-2.5 py-1 rounded-md text-[11px] font-extrabold tracking-wide uppercase shadow-sm ${isInstituteProgram ? "bg-white/95 text-slate-900 backdrop-blur-sm" : "bg-primary text-primary-foreground"}`}>
             {prog.tag || "IIT"}
           </span>
         </div>
-        <div className="absolute top-2 right-2 z-20 pointer-events-none">
-          <Badge variant={prog.badge_variant as any} className="text-[10px] font-bold px-2">{prog.badge}</Badge>
-        </div>
+        {prog.badge && (
+          <div className="absolute top-2 right-2 z-20 pointer-events-none">
+            <Badge variant={prog.badge_variant as any} className={`text-[10px] font-bold px-2 ${isInstituteProgram ? "border-white/70 bg-black/55 text-white backdrop-blur-sm" : ""}`}>{prog.badge}</Badge>
+          </div>
+        )}
       </div>
       <div className="p-4 flex flex-col flex-1">
         <p className="text-[11px] text-muted-foreground font-semibold mb-0.5 truncate flex items-center gap-1">
