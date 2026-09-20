@@ -4,6 +4,10 @@ import { describe, expect, it, vi } from "vitest";
 import { ProgramCard } from "@/components/TrendingPrograms";
 import { PremiumDecisionRail } from "@/components/detail/PremiumDecisionRail";
 
+vi.mock("@/hooks/useSiteIntegration", () => ({
+  useSiteIntegration: () => ({ data: "" }),
+}));
+
 const instituteProgram = {
   title: "Executive Programme in Product Leadership",
   college_name: "IIM Kozhikode",
@@ -17,6 +21,7 @@ const instituteProgram = {
   duration: "7 Months",
   program_type: "Certificate",
   tag: "IIM",
+  youtube_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 };
 
 describe("premium IIT/IIM programme presentation", () => {
@@ -103,13 +108,14 @@ describe("premium IIT/IIM programme presentation", () => {
     const actions = screen.getByTestId("premium-decision-ctas");
     expect(within(actions).getAllByRole("button").map((button) => button.textContent?.trim())).toEqual([
       "Apply Now",
+      "Watch programme video",
       "Brochure",
       "Talk to Counsellor",
     ]);
     expect(within(actions).queryByText(/Overview/i)).not.toBeInTheDocument();
   });
 
-  it("uses the same compact red-first decision pattern for global programmes", () => {
+  it("uses the same compact blue-first decision pattern for global programmes", () => {
     render(
       <PremiumDecisionRail
         program={{
@@ -131,6 +137,7 @@ describe("premium IIT/IIM programme presentation", () => {
     const actions = screen.getByTestId("premium-decision-ctas");
     expect(within(actions).getAllByRole("button").map((button) => button.textContent?.trim())).toEqual([
       "Apply Now",
+      "Watch programme video",
       "Brochure",
       "Talk to Counsellor",
     ]);

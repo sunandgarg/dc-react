@@ -9,6 +9,8 @@ interface Props {
   title?: string;
   label?: string;
   className?: string;
+  /** Keep the visible control compact while preserving an accessible label. */
+  iconOnly?: boolean;
   /** Category-specific fallback (uses youtube_fallback_<category> integration). */
   category?: "college" | "course" | "exam" | "career";
   /** Override the integration key used for the fallback (e.g. "how_to_apply_exam"). */
@@ -28,7 +30,7 @@ function getYouTubeId(url?: string): string | null {
  * 3. Category-specific fallback (youtube_fallback_college/course/exam/career)
  * 4. Global default (youtube_default_url)
  */
-export function YouTubeVideoButton({ url, title = "Watch Video", label = "Watch Video", className, category, fallbackKey }: Props) {
+export function YouTubeVideoButton({ url, title = "Watch Video", label = "Watch Video", className, iconOnly = false, category, fallbackKey }: Props) {
   const [open, setOpen] = useState(false);
   const { data: globalDefault } = useSiteIntegration("youtube_default_url");
   const { data: categoryFallback } = useSiteIntegration(category ? `youtube_fallback_${category}` : "youtube_default_url");
@@ -54,20 +56,20 @@ export function YouTubeVideoButton({ url, title = "Watch Video", label = "Watch 
       <span className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center">
         <Play className="w-3 h-3 fill-white text-white ml-0.5" />
       </span>
-      {label}
+      {iconOnly ? <span className="sr-only">{label}</span> : label}
     </>
   );
 
   if (!videoId) {
     if (!effectiveUrl) return null;
     return (
-      <Button onClick={() => window.open(effectiveUrl, "_blank", "noopener,noreferrer")} variant="outline" className={btnCls}>{inner}</Button>
+      <Button aria-label={iconOnly ? label : undefined} onClick={() => window.open(effectiveUrl, "_blank", "noopener,noreferrer")} variant="outline" className={btnCls}>{inner}</Button>
     );
   }
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} variant="outline" className={btnCls}>{inner}</Button>
+      <Button aria-label={iconOnly ? label : undefined} onClick={() => setOpen(true)} variant="outline" className={btnCls}>{inner}</Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden bg-black border-0">
           <DialogTitle className="sr-only">{title}</DialogTitle>

@@ -11,6 +11,7 @@ import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { Download, GraduationCap, Calendar, Clock, CheckCircle2, Award, Linkedin, ChevronDown, Globe, MapPin, CircleDot, Star, Users, TrendingUp, Briefcase, Building2, ChevronLeft, ChevronRight, ScrollText, Zap, ShieldCheck, Flame, BadgeCheck, Layers, Phone } from "lucide-react";
 import { ProfessionalAvatar } from "@/components/ProfessionalAvatar";
+import { YouTubeVideoButton } from "@/components/YouTubeVideoButton";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { ScrollSpy } from "@/components/ScrollSpy";
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
@@ -250,9 +251,19 @@ export default function PremiumProgramDetail() {
 
               {/* CTAs */}
               <div className="mt-3 space-y-2" data-testid="premium-program-ctas">
-                <Button size="lg" className="h-10 w-full rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white shadow-md shadow-red-200 transition hover:-translate-y-0.5 hover:bg-[#d9151c]" onClick={() => openLead("apply")}>
-                  Apply Now
-                </Button>
+                <div className="flex gap-2">
+                  <Button size="lg" className="h-10 min-w-0 flex-1 rounded-xl border-0 bg-primary font-extrabold text-primary-foreground shadow-md shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90" onClick={() => openLead("apply")}>
+                    Apply Now
+                  </Button>
+                  <YouTubeVideoButton
+                    url={program.youtube_url || program.hero_video_url}
+                    category="course"
+                    title={`${program.title} - Programme Video`}
+                    label="Watch programme video"
+                    iconOnly
+                    className="h-10 w-10 shrink-0 rounded-xl p-0"
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   <Button size="lg" variant="outline" className="h-10 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm" onClick={() => openLead("brochure")}>
                     <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
@@ -624,9 +635,19 @@ export default function PremiumProgramDetail() {
       {/* MOBILE STICKY BOTTOM CTA */}
       <div className="dc-bottom-nav-aware-tight fixed inset-x-0 z-40 border-t border-border bg-background/95 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-2xl backdrop-blur lg:hidden">
         <div className="mx-auto grid max-w-md grid-cols-2 gap-1.5">
-          <Button className="col-span-2 h-10 rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white hover:bg-[#d9151c]" onClick={() => openLead("apply")}>
-            Apply Now
-          </Button>
+          <div className="col-span-2 flex gap-1.5">
+            <Button className="h-10 min-w-0 flex-1 rounded-xl border-0 bg-primary font-extrabold text-primary-foreground hover:bg-primary/90" onClick={() => openLead("apply")}>
+              Apply Now
+            </Button>
+            <YouTubeVideoButton
+              url={program.youtube_url || program.hero_video_url}
+              category="course"
+              title={`${program.title} - Programme Video`}
+              label="Watch programme video"
+              iconOnly
+              className="h-10 w-10 shrink-0 rounded-xl p-0"
+            />
+          </div>
           <Button variant="outline" className="h-10 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800" onClick={() => openLead("brochure")}>
             <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
           </Button>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Download, Star, ShieldCheck, Calendar, Clock, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IITAlumniBadge } from "@/components/IITAlumniBadge";
+import { YouTubeVideoButton } from "@/components/YouTubeVideoButton";
 
 interface Props {
   program: any;
@@ -77,12 +78,22 @@ export function PremiumDecisionRail({ program, discountedPrice, emi, formatPrice
         {isIitProgram && <div className="flex justify-center mb-4"><IITAlumniBadge showTagline={false} /></div>}
 
         <div className="space-y-2" data-testid="premium-decision-ctas">
-          <Button
-            onClick={onApply}
-            className="h-10 w-full rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white shadow-md shadow-red-200 transition hover:-translate-y-0.5 hover:bg-[#d9151c]"
-          >
-            Apply Now
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={onApply}
+              className="h-10 min-w-0 flex-1 rounded-xl border-0 bg-primary font-extrabold text-primary-foreground shadow-md shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+            >
+              Apply Now
+            </Button>
+            <YouTubeVideoButton
+              url={program.youtube_url || program.hero_video_url}
+              category="course"
+              title={`${program.title} - Programme Video`}
+              label="Watch programme video"
+              iconOnly
+              className="h-10 w-10 shrink-0 rounded-xl p-0"
+            />
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <Button
               onClick={onBrochure}
