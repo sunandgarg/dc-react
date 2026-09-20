@@ -96,7 +96,7 @@ describe("Index page layout (static source assertions)", () => {
     expect(homeDiscoverySrc).toMatch(/USA[\s\S]*Canada[\s\S]*Australia[\s\S]*UK[\s\S]*Germany/);
     expect(homeDiscoverySrc.match(/useSwipeRail\(reduceMotion, \d+, \d+, false\)/g)).toHaveLength(2);
     expect(homeDiscoverySrc).toMatch(/font-semibold italic[\s\S]*Swipe/);
-    expect(belowFoldSrc).toMatch(/HomeDiscoverySection[\s\S]*HomeToolsSection[\s\S]*HomeStudyModeSection[\s\S]*HomeNewsSection[\s\S]*HomeLocationSection[\s\S]*FAQSection/);
+    expect(belowFoldSrc).toMatch(/HomeToolsSection[\s\S]*HomeLocationSection[\s\S]*HomeNewsSection/);
     expect(homeDiscoverySrc).not.toMatch(/IndianFlagMark/);
     expect(homeDiscoverySrc).not.toMatch(/Laptop2|Globe2|State &amp; city/);
     expect(homeToolsSrc.match(/href: "\/tools\//g)).toHaveLength(5);

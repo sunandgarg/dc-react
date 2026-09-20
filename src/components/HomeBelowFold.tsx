@@ -6,7 +6,6 @@ import { lazyRetry } from "@/lib/lazyRetry";
 
 const CategorySection = lazyRetry(() => import("@/components/CategorySection").then((module) => ({ default: module.CategorySection })), "CategorySection");
 const HomeDiscoverySection = lazyRetry(() => import("@/components/HomeDiscoverySection").then((module) => ({ default: module.HomeDiscoverySection })), "HomeDiscoverySection");
-const HomeStudyModeSection = lazyRetry(() => import("@/components/HomeDiscoverySection").then((module) => ({ default: module.HomeStudyModeSection })), "HomeStudyModeSection");
 const HomeLocationSection = lazyRetry(() => import("@/components/HomeDiscoverySection").then((module) => ({ default: module.HomeLocationSection })), "HomeLocationSection");
 const HomeToolsSection = lazyRetry(() => import("@/components/HomeToolsSection").then((module) => ({ default: module.HomeToolsSection })), "HomeToolsSection");
 const HomeNewsSection = lazyRetry(() => import("@/components/HomeNewsSection").then((module) => ({ default: module.HomeNewsSection })), "HomeNewsSection");
@@ -29,9 +28,8 @@ export default function HomeBelowFold() {
       {section("categories", <CategorySection />, 520)}
       {section("discovery", <HomeDiscoverySection />, 190)}
       {section("tools", <HomeToolsSection />, 330)}
-      {section("study-modes", <HomeStudyModeSection />, 190)}
-      {section("news", <HomeNewsSection />, 330)}
       {section("locations", <HomeLocationSection />, 100)}
+      {section("news", <HomeNewsSection />, 330)}
       {section("faqs", <FAQSection page="homepage" title="Questions students ask first" limit={5} compact />, 360)}
       {section("trust", <HomeTrustBar />, 100)}
       {section("footer", <Footer />, 480)}
