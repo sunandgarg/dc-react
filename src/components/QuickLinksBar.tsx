@@ -7,37 +7,38 @@ import {
 
 type QL =
   | { icon: any; label: string; href: string; external?: boolean }
-  | { icon: any; label: string; sectionId: string };
+  | { icon: any; label: string; sectionId: string; fallbackHref: string };
 
 const links: QL[] = [
   // Priority order requested
-  { icon: Laptop, label: "Online Degrees", sectionId: "online-education-heading" },
-  { icon: Sparkles, label: "Earn IIT/IIM/Dr. Tag", sectionId: "trending-programs-heading" },
-  { icon: Globe, label: "Study Abroad", sectionId: "online-education-heading" },
+  { icon: Laptop, label: "Online Degrees", sectionId: "online-education-heading", fallbackHref: "/courses" },
+  { icon: Sparkles, label: "Earn IIT/IIM/Dr. Tag", sectionId: "trending-programs-heading", fallbackHref: "/premium-programs" },
+  { icon: Globe, label: "Study Abroad", sectionId: "online-education-heading", fallbackHref: "/courses" },
   // Then the rest
   { icon: GraduationCap, label: "Top Colleges", href: "/colleges" },
   { icon: BookOpen, label: "Courses", href: "/courses" },
   { icon: FileText, label: "Exams", href: "/exams" },
   { icon: Star, label: "Live Scholarships", href: "/scholarships" },
-  { icon: Layers, label: "Explore by Category", sectionId: "explore-heading" },
-  { icon: Star, label: "Featured Colleges", sectionId: "top-colleges-heading" },
-  { icon: ImageIcon, label: "Recommended", sectionId: "recommended-colleges-heading" },
-  { icon: Compass, label: "Explore More", sectionId: "explore-cta-heading" },
-  { icon: MapPin, label: "By City", sectionId: "city-search-heading" },
-  { icon: Briefcase, label: "Career Scope", sectionId: "career-scope-heading" },
-  { icon: Calculator, label: "Tools", sectionId: "tools-heading" },
-  { icon: Newspaper, label: "News", sectionId: "news-heading" },
-  { icon: BookOpen, label: "Study Material", sectionId: "study-material-heading" },
-  { icon: ShieldCheck, label: "Why Us", sectionId: "features-heading" },
-  { icon: HelpCircle, label: "FAQs", sectionId: "faq-heading" },
-  { icon: Building2, label: "Trusted Partners", sectionId: "trusted-heading" },
+  { icon: Layers, label: "Explore by Category", sectionId: "explore-heading", fallbackHref: "/colleges" },
+  { icon: Star, label: "Featured Colleges", sectionId: "top-colleges-heading", fallbackHref: "/colleges" },
+  { icon: ImageIcon, label: "Recommended", sectionId: "recommended-colleges-heading", fallbackHref: "/colleges" },
+  { icon: Compass, label: "Explore More", sectionId: "explore-cta-heading", fallbackHref: "/colleges" },
+  { icon: MapPin, label: "By City", sectionId: "city-search-heading", fallbackHref: "/colleges" },
+  { icon: Briefcase, label: "Career Scope", sectionId: "career-scope-heading", fallbackHref: "/careers" },
+  { icon: Calculator, label: "Tools", sectionId: "tools-heading", fallbackHref: "/tools" },
+  { icon: Newspaper, label: "News", sectionId: "news-heading", fallbackHref: "/news" },
+  { icon: BookOpen, label: "Study Material", sectionId: "study-material-heading", fallbackHref: "/study-material" },
+  { icon: ShieldCheck, label: "Why Us", sectionId: "features-heading", fallbackHref: "/about-us" },
+  { icon: HelpCircle, label: "FAQs", sectionId: "faq-heading", fallbackHref: "/about-us" },
+  { icon: Building2, label: "Trusted Partners", sectionId: "trusted-heading", fallbackHref: "/colleges" },
 ];
 
 function scrollToId(id: string) {
   const el = document.getElementById(id);
-  if (!el) return;
+  if (!el) return false;
   const top = el.getBoundingClientRect().top + window.scrollY - 80;
   window.scrollTo({ top, behavior: "smooth" });
+  return true;
 }
 
 const cls = "flex items-center gap-2 rounded-full border border-border/60 bg-card px-3.5 py-2 text-xs font-semibold whitespace-nowrap shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:text-primary hover:shadow-md md:px-4 md:py-2.5 md:text-sm";
@@ -50,11 +51,13 @@ function Item({ link }: { link: QL }) {
   if ("sectionId" in link) {
     const onClick = () => {
       if (location.pathname === "/") {
-        scrollToId(link.sectionId);
+        if (!scrollToId(link.sectionId)) navigate(link.fallbackHref);
       } else {
         // Navigate home then scroll once the section mounts
         navigate(`/#${link.sectionId}`);
-        setTimeout(() => scrollToId(link.sectionId), 400);
+        setTimeout(() => {
+          if (!scrollToId(link.sectionId)) navigate(link.fallbackHref);
+        }, 400);
       }
     };
     return <button type="button" onClick={onClick} className={cls}>{inner}</button>;

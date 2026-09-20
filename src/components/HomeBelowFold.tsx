@@ -1,62 +1,38 @@
-import { TopRankedColleges } from "@/components/TopRankedColleges";
-import { QuickLinksBar } from "@/components/QuickLinksBar";
-import { DeferredRender } from "@/components/DeferredRender";
 import { Suspense, type ReactNode } from "react";
-import { lazyRetry } from "@/lib/lazyRetry";
+import { TopRankedColleges } from "@/components/TopRankedColleges";
+import { DeferredRender } from "@/components/DeferredRender";
 import { OptionalSectionBoundary } from "@/components/OptionalSectionBoundary";
+import { lazyRetry } from "@/lib/lazyRetry";
 
-const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(module => ({ default: module.AlsoCheckSection })), "AlsoCheckSection");
-const HeroBannerCarousel = lazyRetry(() => import("@/components/HeroBannerCarousel").then(module => ({ default: module.HeroBannerCarousel })), "HeroBannerCarousel");
-const CategorySection = lazyRetry(() => import("@/components/CategorySection").then(module => ({ default: module.CategorySection })), "CategorySection");
-const TrendingPrograms = lazyRetry(() => import("@/components/TrendingPrograms").then(module => ({ default: module.TrendingPrograms })), "TrendingPrograms");
-const ExploreCTACards = lazyRetry(() => import("@/components/ExploreCTACards").then(module => ({ default: module.ExploreCTACards })), "ExploreCTACards");
-const CitySearch = lazyRetry(() => import("@/components/CitySearch").then(module => ({ default: module.CitySearch })), "CitySearch");
-const OnlineEducationSection = lazyRetry(() => import("@/components/OnlineEducationSection").then(module => ({ default: module.OnlineEducationSection })), "OnlineEducationSection");
-const CareerScopeSection = lazyRetry(() => import("@/components/CareerScopeSection").then(module => ({ default: module.CareerScopeSection })), "CareerScopeSection");
-const ToolsSection = lazyRetry(() => import("@/components/ToolsSection").then(module => ({ default: module.ToolsSection })), "ToolsSection");
-const NewsSection = lazyRetry(() => import("@/components/NewsSection").then(module => ({ default: module.NewsSection })), "NewsSection");
-const ExamStrategiesSection = lazyRetry(() => import("@/components/ExamStrategiesSection").then(module => ({ default: module.ExamStrategiesSection })), "ExamStrategiesSection");
-const FeaturesSection = lazyRetry(() => import("@/components/FeaturesSection").then(module => ({ default: module.FeaturesSection })), "FeaturesSection");
-const FAQSection = lazyRetry(() => import("@/components/FAQSection").then(module => ({ default: module.FAQSection })), "FAQSection");
-const TrustedBySection = lazyRetry(() => import("@/components/TrustedBySection").then(module => ({ default: module.TrustedBySection })), "TrustedBySection");
-const Footer = lazyRetry(() => import("@/components/Footer").then(module => ({ default: module.Footer })), "Footer");
-const PeriodicLeadPopup = lazyRetry(() => import("@/components/PeriodicLeadPopup").then(module => ({ default: module.PeriodicLeadPopup })), "PeriodicLeadPopup");
+const CategorySection = lazyRetry(() => import("@/components/CategorySection").then((module) => ({ default: module.CategorySection })), "CategorySection");
+const HomeDiscoverySection = lazyRetry(() => import("@/components/HomeDiscoverySection").then((module) => ({ default: module.HomeDiscoverySection })), "HomeDiscoverySection");
+const HomeLocationSection = lazyRetry(() => import("@/components/HomeDiscoverySection").then((module) => ({ default: module.HomeLocationSection })), "HomeLocationSection");
+const HomeToolsSection = lazyRetry(() => import("@/components/HomeToolsSection").then((module) => ({ default: module.HomeToolsSection })), "HomeToolsSection");
+const HomeNewsSection = lazyRetry(() => import("@/components/HomeNewsSection").then((module) => ({ default: module.HomeNewsSection })), "HomeNewsSection");
+const FAQSection = lazyRetry(() => import("@/components/FAQSection").then((module) => ({ default: module.FAQSection })), "FAQSection");
+const HomeTrustBar = lazyRetry(() => import("@/components/HomeTrustBar").then((module) => ({ default: module.HomeTrustBar })), "HomeTrustBar");
+const Footer = lazyRetry(() => import("@/components/Footer").then((module) => ({ default: module.Footer })), "Footer");
 
 const section = (name: string, content: ReactNode, minHeight: number) => (
   <OptionalSectionBoundary name={name} minHeight={minHeight}>
-    <DeferredRender minHeight={minHeight}><Suspense fallback={<div style={{ minHeight }} aria-hidden="true" />}>{content}</Suspense></DeferredRender>
+    <DeferredRender minHeight={minHeight}>
+      <Suspense fallback={<div style={{ minHeight }} aria-hidden="true" />}>{content}</Suspense>
+    </DeferredRender>
   </OptionalSectionBoundary>
 );
 
 export default function HomeBelowFold() {
-  return <div className="dc-home-below-fold">
-    <QuickLinksBar compact />
-    <div className="container"><TopRankedColleges /></div>
-    {section("also-check", <div className="container"><AlsoCheckSection variant="strip" /></div>, 220)}
-    {section("hero-banners", <div className="container"><HeroBannerCarousel /></div>, 420)}
-    {section("categories", <div className="container"><CategorySection /></div>, 520)}
-    {section("explore", <div className="container">
-      <div id="explore-cta-heading"><ExploreCTACards /></div>
-      <div id="city-search-heading"><CitySearch /></div>
-    </div>, 720)}
-    {section("online-education", <div id="online-education-heading"><OnlineEducationSection /></div>, 620)}
-    {section("career-tools", <div className="container">
-      <div id="career-scope-heading"><CareerScopeSection /></div>
-      <div id="tools-heading"><ToolsSection /></div>
-    </div>, 650)}
-    {section("news", <div className="container"><div id="news-heading"><NewsSection /></div></div>, 720)}
-    {section("exam-features", <div className="container">
-      <div id="exam-strategies-heading"><ExamStrategiesSection /></div>
-      <FeaturesSection />
-    </div>, 700)}
-    {section("faq-programs-trust", <div className="container">
-      <div id="faq-heading"><FAQSection page="homepage" title="Frequently Asked Questions" /></div>
-      <div id="trending-programs-heading"><TrendingPrograms /></div>
-      <div id="trusted-heading"><TrustedBySection /></div>
-    </div>, 700)}
-    {section("footer", <>
-      <Footer />
-      <PeriodicLeadPopup />
-    </>, 480)}
-  </div>;
+  return (
+    <div className="dc-home-below-fold">
+      <div className="container"><TopRankedColleges /></div>
+      {section("categories", <CategorySection />, 520)}
+      {section("discovery", <HomeDiscoverySection />, 190)}
+      {section("tools", <HomeToolsSection />, 330)}
+      {section("locations", <HomeLocationSection />, 100)}
+      {section("news", <HomeNewsSection />, 330)}
+      {section("faqs", <FAQSection page="homepage" title="Questions students ask first" limit={5} compact />, 360)}
+      {section("trust", <HomeTrustBar />, 100)}
+      {section("footer", <Footer />, 480)}
+    </div>
+  );
 }

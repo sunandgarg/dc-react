@@ -1,159 +1,65 @@
-import { buildCollegeHref } from "@/lib/entityUrls";
+import { ArrowRight, GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Star, MapPin, ArrowRight, GraduationCap, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useFeaturedCollegeCards } from "@/hooks/useCollegesData";
 import { useFeaturedColleges } from "@/hooks/useFeaturedColleges";
-import { useCarouselNav, CarouselControls } from "@/components/CarouselControls";
-import { useEffect, useRef, useState } from "react";
-import { displayRating } from "@/lib/ratings";
+import { buildCollegeHref } from "@/lib/entityUrls";
+
+const getDisplayName = (name: string) =>
+  name
+    .replace(/\s+Admission\s+-\s+\[[^\]]+\].*$/i, "")
+    .replace(/\s+-\s+\[[^\]]+\].*$/i, "")
+    .trim();
 
 export function TopRankedColleges() {
   const { data: featuredSlugs } = useFeaturedColleges();
-  const { data: featuredColleges, isLoading: featuredLoading } = useFeaturedCollegeCards(featuredSlugs ?? []);
-  const { ref: scrollRef, pages, active, canLeft, canRight, recompute, scrollByDir, goToPage } = useCarouselNav();
-  const [paused, setPaused] = useState(false);
-  const pausedRef = useRef(paused);
-  pausedRef.current = paused;
+  const { data: featuredColleges, isLoading } = useFeaturedCollegeCards(featuredSlugs ?? []);
+  const colleges = featuredColleges?.slice(0, 6) ?? [];
 
-  const colleges = featuredColleges?.slice(0, 8) ?? [];
-  const isLoading = Boolean(featuredSlugs?.length && featuredLoading);
-
-  // Autoplay: advance every 9s, wrap to start at the end. Pauses on hover/focus.
-  useEffect(() => {
-    if (!colleges.length) return;
-    const id = window.setInterval(() => {
-      if (pausedRef.current) return;
-      const el = scrollRef.current;
-      if (!el) return;
-      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
-      if (atEnd) {
-        el.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        scrollByDir("right");
-      }
-    }, 9000);
-    return () => window.clearInterval(id);
-  }, [colleges.length, scrollByDir, scrollRef]);
-
-  if (!isLoading && !colleges.length) return null;
+  if (!isLoading && colleges.length === 0) return null;
 
   return (
-    <section className="py-8 md:py-12 bg-background" aria-labelledby="top-colleges-heading">
-      <div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8"
-        >
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-medium mb-3">
-              <GraduationCap className="w-4 h-4" />
-              Featured Institutions
-            </div>
-            <h2 id="top-colleges-heading" className="text-headline font-bold text-foreground">
-              <span className="text-gradient-accent">Featured</span> Colleges
-            </h2>
-            <p className="text-muted-foreground mt-1">Handpicked top institutions from across India</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" aria-label="Previous" className="rounded-full w-9 h-9 hidden md:inline-flex" onClick={() => scrollByDir("left")} disabled={!canLeft}>
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            <Button variant="outline" size="icon" aria-label="Next" className="rounded-full w-9 h-9 hidden md:inline-flex" onClick={() => scrollByDir("right")} disabled={!canRight}>
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-            <Link to="/colleges">
-              <Button variant="outline" className="rounded-xl border-accent/20 hover:bg-accent/5">
-                View All <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        </motion.div>
-
-        <div
-          ref={scrollRef}
-          onScroll={recompute}
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onTouchStart={() => setPaused(true)}
-          onTouchEnd={() => setPaused(false)}
-          onFocusCapture={() => setPaused(true)}
-          onBlurCapture={() => setPaused(false)}
-          role="region"
-          aria-roledescription="carousel"
-          aria-label="Featured colleges"
-          tabIndex={0}
-          className="flex gap-4 overflow-x-auto overflow-y-clip scrollbar-hide snap-x snap-proximity pb-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
-        >
-          {isLoading
-            ? Array.from({ length: 6 }).map((_, i) => (
-                <div key={`sk-${i}`} className="snap-start flex-shrink-0 w-[260px] sm:w-[280px]">
-                  <div className="bg-card rounded-2xl border border-border overflow-hidden h-[260px] flex flex-col">
-                    <div className="h-36 bg-muted animate-pulse" />
-                    <div className="p-3 space-y-2 flex-1">
-                      <div className="h-4 bg-muted rounded animate-pulse w-3/4" />
-                      <div className="h-3 bg-muted rounded animate-pulse w-1/2" />
-                      <div className="h-3 bg-muted rounded animate-pulse w-2/5" />
-                    </div>
-                  </div>
-                </div>
-              ))
-            : colleges.map((college: any, idx: number) => (
-                <div
-                  key={college.slug}
-                  className="snap-start flex-shrink-0 w-[260px] sm:w-[280px]"
-                  role="group"
-                  aria-roledescription="slide"
-                  aria-label={`${idx + 1} of ${colleges.length}: ${college.name}`}
-                >
-                  <Link
-                    to={buildCollegeHref(college)}
-                    className="group block bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-all h-[260px] flex flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  >
-                    <div className="relative h-36 overflow-hidden flex-shrink-0">
-                      <img
-                        src={college.image}
-                        alt={`${college.name} campus`}
-                        width="560"
-                        height="288"
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                      <Badge className="absolute top-2 left-2 bg-foreground/70 text-background border-0 text-[10px]">
-                        {college.type}
-                      </Badge>
-                    </div>
-                    <div className="p-3 space-y-2 flex-1 min-h-0">
-                      <h3 className="font-bold text-foreground text-sm line-clamp-1">{college.short_name || college.name}</h3>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <MapPin className="w-3 h-3" />
-                        <span className="line-clamp-1">{college.city || college.location?.split(",")[0]}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} className={`w-3 h-3 ${i < Math.floor(displayRating(college.rating)) ? "fill-accent text-accent" : "text-muted-foreground/30"}`} />
-                        ))}
-                        <span className="text-xs text-muted-foreground ml-1">{displayRating(college.rating)}</span>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              ))}
+    <section className="bg-background py-7 md:py-9" aria-labelledby="top-colleges-heading">
+      <div className="mb-4 flex items-end justify-between gap-4">
+        <div>
+          <p className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-[0.14em] text-accent"><GraduationCap className="h-4 w-4" aria-hidden="true" />Featured</p>
+          <h2 id="top-colleges-heading" className="mt-1 text-2xl font-black tracking-tight text-foreground md:text-3xl">Top colleges</h2>
         </div>
-        <CarouselControls
-          pages={pages}
-          active={active}
-          canLeft={canLeft}
-          canRight={canRight}
-          onPrev={() => scrollByDir("left")}
-          onNext={() => scrollByDir("right")}
-          onDot={goToPage}
-          label="featured colleges"
-        />
+        <Link to="/colleges" className="flex min-h-10 items-center gap-1 rounded-xl px-3 text-sm font-bold text-primary hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+          View all <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </Link>
+      </div>
+
+      <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:px-0" aria-label="Featured colleges">
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, index) => <div key={index} className="h-[164px] w-[250px] shrink-0 animate-pulse rounded-2xl bg-muted sm:h-[180px] sm:w-[288px]" aria-hidden="true" />)
+          : colleges.map((college: any) => {
+            const shortName = college.short_name || college.name;
+            const displayName = getDisplayName(college.name || "");
+            const showFullName = displayName && displayName.toLowerCase() !== shortName.trim().toLowerCase();
+            return (
+              <Link
+                key={college.slug}
+                to={buildCollegeHref(college)}
+                className="group relative h-[164px] w-[250px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-muted shadow-sm transition hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:h-[180px] sm:w-[288px]"
+              >
+                {college.image ? (
+                  <img src={college.image} alt="" width="540" height="340" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" />
+                ) : (
+                  <span className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary to-blue-950" aria-hidden="true" />
+                )}
+                <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" aria-hidden="true" />
+                <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
+                  <span className="min-w-0">
+                    <h3 className="truncate text-base font-extrabold text-white drop-shadow-sm">{shortName}</h3>
+                    {showFullName && <span className="mt-0.5 line-clamp-2 text-[10px] font-medium leading-3.5 text-white/85 drop-shadow-sm sm:text-[11px]">{displayName}</span>}
+                  </span>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/95 text-foreground shadow-sm transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </span>
+              </Link>
+            );
+          })}
       </div>
     </section>
   );

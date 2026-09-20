@@ -42,6 +42,19 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    // Keep local previews same-origin. Production currently allows only the
+    // deployed frontend origin, so direct browser calls from localhost fail
+    // CORS even for public read-only data.
+    proxy: {
+      "/v1": { target: "https://aws-origin.dekhocampus.com", changeOrigin: true },
+      "/auth": { target: "https://aws-origin.dekhocampus.com", changeOrigin: true },
+      "/storage": { target: "https://aws-origin.dekhocampus.com", changeOrigin: true },
+    },
+  },
+  preview: {
+    // Review builds are static-only and may be shared through an ephemeral
+    // Cloudflare hostname. This does not relax the development server.
+    allowedHosts: [".trycloudflare.com"],
   },
   plugins: [
     react(),

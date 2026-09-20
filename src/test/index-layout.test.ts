@@ -5,6 +5,12 @@ import { resolve } from "path";
 describe("Index page layout (static source assertions)", () => {
   const indexSrc = readFileSync(resolve(process.cwd(), "src/pages/Index.tsx"), "utf8");
   const belowFoldSrc = readFileSync(resolve(process.cwd(), "src/components/HomeBelowFold.tsx"), "utf8");
+  const homeToolsSrc = readFileSync(resolve(process.cwd(), "src/components/HomeToolsSection.tsx"), "utf8");
+  const homeDiscoverySrc = readFileSync(resolve(process.cwd(), "src/components/HomeDiscoverySection.tsx"), "utf8");
+  const homeNewsSrc = readFileSync(resolve(process.cwd(), "src/components/HomeNewsSection.tsx"), "utf8");
+  const homeTrustSrc = readFileSync(resolve(process.cwd(), "src/components/HomeTrustBar.tsx"), "utf8");
+  const topRankedSrc = readFileSync(resolve(process.cwd(), "src/components/TopRankedColleges.tsx"), "utf8");
+  const faqSrc = readFileSync(resolve(process.cwd(), "src/components/FAQSection.tsx"), "utf8");
   const heroSrc = readFileSync(resolve(process.cwd(), "src/components/HeroSection.tsx"), "utf8");
   const footerSrc = readFileSync(resolve(process.cwd(), "src/components/Footer.tsx"), "utf8");
   const leadFormSrc = readFileSync(resolve(process.cwd(), "src/components/LeadCaptureForm.tsx"), "utf8");
@@ -30,6 +36,7 @@ describe("Index page layout (static source assertions)", () => {
   const mobileFilterSheetSrc = readFileSync(resolve(process.cwd(), "src/components/MobileFilterSheet.tsx"), "utf8");
   const seoSlugsSrc = readFileSync(resolve(process.cwd(), "src/lib/seoSlugs.ts"), "utf8");
   const productionConfigSrc = readFileSync(resolve(process.cwd(), "backend/scripts/configure-production-site-integrations.mjs"), "utf8");
+  const lockTargetPromoSrc = readFileSync(resolve(process.cwd(), "src/components/LockTargetFloatingPromo.tsx"), "utf8");
 
   it("does NOT import or render the LoanReferStrip below scholarships", () => {
     expect(indexSrc).not.toMatch(/LoanReferStrip/);
@@ -48,8 +55,70 @@ describe("Index page layout (static source assertions)", () => {
     expect(belowFoldSrc).not.toMatch(/CollegeStudyStrip/);
   });
 
-  it("renders the NewsSection", () => {
-    expect(belowFoldSrc).toMatch(/NewsSection/);
+  it("keeps the homepage focused on a compact data-led discovery path", () => {
+    expect(belowFoldSrc).toMatch(/TopRankedColleges/);
+    expect(belowFoldSrc).toMatch(/CategorySection/);
+    expect(belowFoldSrc).toMatch(/HomeDiscoverySection/);
+    expect(belowFoldSrc).toMatch(/HomeToolsSection/);
+    expect(belowFoldSrc).toMatch(/HomeNewsSection/);
+    expect(belowFoldSrc).toMatch(/FAQSection page="homepage"[\s\S]*limit=\{5\}[\s\S]*compact/);
+    expect(belowFoldSrc).toMatch(/HomeTrustBar/);
+    expect(belowFoldSrc).not.toMatch(/FeaturesSection|ExamStrategiesSection|PeriodicLeadPopup|LeadCaptureForm/);
+  });
+
+  it("adds lightweight discovery, animated tools, live exam news, and compact FAQs", () => {
+    expect(homeDiscoverySrc).toMatch(/IIT, IIM, Global Degrees/);
+    expect(homeDiscoverySrc).toMatch(/Online degree/);
+    expect(homeDiscoverySrc).toMatch(/Study abroad/);
+    expect(homeDiscoverySrc).toMatch(/from\("promoted_programs"\)/);
+    expect(homeDiscoverySrc).toMatch(/from\("popular_places"\)/);
+    expect(homeDiscoverySrc).toMatch(/https:\/\/online\.dekhocampus\.com/);
+    expect(homeDiscoverySrc).toMatch(/https:\/\/abroad\.dekhocampus\.com/);
+    expect(homeDiscoverySrc).toMatch(/grid grid-cols-2/);
+    expect(homeDiscoverySrc).toMatch(/GLA Online[\s\S]*Amity Online[\s\S]*Manipal Online[\s\S]*Shoolini Online[\s\S]*SRM Online[\s\S]*VIT Online/);
+    expect(homeDiscoverySrc).toMatch(/CU Online[\s\S]*LPU Online[\s\S]*JAIN Online[\s\S]*DPU Online[\s\S]*SMU Online[\s\S]*Uttaranchal Online/);
+    expect(homeDiscoverySrc).toMatch(/France[\s\S]*Norway[\s\S]*Ireland[\s\S]*Mexico[\s\S]*Russia[\s\S]*Kazakhstan[\s\S]*Georgia/);
+    expect(homeDiscoverySrc.match(/https:\/\/aws-origin\.dekhocampus\.com\/storage\/v1\/object\/public\//g)).toHaveLength(12);
+    expect(homeDiscoverySrc).not.toMatch(/university-logos\/v1/);
+    expect(homeDiscoverySrc).toMatch(/VIT Online[\s\S]*fallback=/);
+    expect(homeDiscoverySrc).toMatch(/bg-\[#fff9e8\]/);
+    expect(homeDiscoverySrc).toMatch(/USA[\s\S]*Canada[\s\S]*Australia[\s\S]*UK[\s\S]*Europe[\s\S]*Singapore/);
+    expect(homeDiscoverySrc).toMatch(/useSwipeRail/);
+    expect(homeDiscoverySrc).toMatch(/scrollBy/);
+    expect(homeDiscoverySrc).toMatch(/IndianMapMark/);
+    expect(homeDiscoverySrc).toMatch(/india-tricolour-map-256\.png/);
+    expect(homeDiscoverySrc).toMatch(/from\("program_categories"\)/);
+    expect(homeDiscoverySrc).toMatch(/FALLBACK_PROGRAM_CATEGORIES/);
+    expect(homeDiscoverySrc).toMatch(/FALLBACK_INSTITUTE_PROGRAMS/);
+    expect(homeDiscoverySrc).toMatch(/premium-programs\?cat=/);
+    expect(homeDiscoverySrc).toMatch(/Global degree/);
+    expect(homeDiscoverySrc).toMatch(/ONLINE_UNIVERSITY_ORDER[\s\S]*GLA Online[\s\S]*Amity Online[\s\S]*VIT Online[\s\S]*SRM Online[\s\S]*CU Online[\s\S]*Manipal Online/);
+    expect(homeDiscoverySrc).toMatch(/USA[\s\S]*Canada[\s\S]*Australia[\s\S]*UK[\s\S]*Germany/);
+    expect(homeDiscoverySrc.match(/useSwipeRail\(reduceMotion, \d+, \d+, false\)/g)).toHaveLength(2);
+    expect(homeDiscoverySrc).toMatch(/font-semibold italic[\s\S]*Swipe/);
+    expect(belowFoldSrc).toMatch(/HomeToolsSection[\s\S]*HomeLocationSection[\s\S]*HomeNewsSection/);
+    expect(homeDiscoverySrc).not.toMatch(/IndianFlagMark/);
+    expect(homeDiscoverySrc).not.toMatch(/Laptop2|Globe2|State &amp; city/);
+    expect(homeToolsSrc.match(/href: "\/tools\//g)).toHaveLength(5);
+    expect(homeToolsSrc).toMatch(/href: "\/lock-target"/);
+    expect(homeToolsSrc).toMatch(/useReducedMotion/);
+    expect(homeToolsSrc).toMatch(/grid-flow-col/);
+    expect(homeToolsSrc).toMatch(/carousel\.scrollBy/);
+    expect(homeToolsSrc).toMatch(/Compare colleges[\s\S]*Predict my rank[\s\S]*Check eligibility/);
+    expect(homeToolsSrc).not.toMatch(/LeadCaptureForm|CompareCollegesTool|RankPredictorTool/);
+    expect(homeNewsSrc).toMatch(/useArticleSidebarArticles\(60\)/);
+    expect(homeNewsSrc).toMatch(/JEE[\s\S]*CAT[\s\S]*CLAT[\s\S]*CUET/);
+    expect(homeNewsSrc).toMatch(/NEWS_LIMIT = 5/);
+    expect(homeNewsSrc).toMatch(/Exam and admission updates/);
+    expect(homeNewsSrc).not.toMatch(/Live news|animate-ping/);
+    expect(homeNewsSrc).not.toMatch(/grid-cols|featured_image|formatDate/);
+    expect(homeNewsSrc).not.toMatch(/LeadCaptureForm|DynamicAdBanner/);
+    expect(homeTrustSrc).toMatch(/GoogleGLogo/);
+    expect(homeTrustSrc).toMatch(/Students rate us 4\.9 on Google/);
+    expect(homeTrustSrc).toMatch(/Working with leading institutions/);
+    expect(topRankedSrc).toMatch(/displayName[\s\S]*showFullName[\s\S]*\{displayName\}/);
+    expect(faqSrc).toMatch(/compact\?: boolean/);
+    expect(lockTargetPromoSrc).toMatch(/pathname === "\/"/);
   });
 
   it("keeps the homepage completely free of Google ad slots", () => {
@@ -72,15 +141,18 @@ describe("Index page layout (static source assertions)", () => {
     expect(belowFoldSrc).not.toMatch(/LiveScholarshipsStrip/);
   });
 
-  it("renders the complete quick links near the homepage top and above the global footer", () => {
-    expect(belowFoldSrc).toMatch(/QuickLinksBar compact/);
+  it("keeps the complete quick links in the global footer without duplicating them on the homepage", () => {
+    expect(belowFoldSrc).not.toMatch(/QuickLinksBar/);
     expect(footerSrc).toMatch(/QuickLinksBar/);
     expect(footerSrc).not.toMatch(/GlobalDiscoveryBar/);
   });
 
-  it("keeps the legacy rotating hero promise and uses a compact education-link footer", () => {
+  it("keeps the original rotating hero and the complete global footer", () => {
     expect(heroSrc).toMatch(/College[\s\S]*Course[\s\S]*Career[\s\S]*Exam[\s\S]*Future/);
     expect(heroSrc).toMatch(/2200/);
+    expect(heroSrc).toMatch(/HeroCounsellingCard/);
+    expect(belowFoldSrc).toMatch(/<Footer \/>/);
+    expect(belowFoldSrc).not.toMatch(/<Footer compact/);
     expect(footerSrc).not.toMatch(/AskDiyaBand|LeadCaptureForm/);
     expect(footerSrc).toMatch(/Engineering College Rankings/);
     expect(footerSrc).toMatch(/MBA College Rankings/);

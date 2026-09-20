@@ -25,6 +25,7 @@ describe("homepage Explore by Category selection", () => {
     expect(categorySection).not.toMatch(/useDbColleges/);
     expect(categorySection).not.toMatch(/useDbCourses/);
     expect(categorySection).not.toMatch(/useDbExams/);
+    expect(categorySection.match(/\.slice\(0, 5\)/g)).toHaveLength(3);
   });
 
   it.each([

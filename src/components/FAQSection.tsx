@@ -18,9 +18,10 @@ interface FAQSectionProps {
   limit?: number;
   /** Fallback FAQs to render if no DB rows exist for this item. */
   fallback?: DefaultFaq[];
+  compact?: boolean;
 }
 
-export function FAQSection({ page = "homepage", itemSlug, title = "Frequently Asked Questions", limit = 10, fallback }: FAQSectionProps) {
+export function FAQSection({ page = "homepage", itemSlug, title = "Frequently Asked Questions", limit = 10, fallback, compact = false }: FAQSectionProps) {
   const { data: dbFaqs } = useQuery({
     queryKey: ["faqs", page, itemSlug],
     queryFn: async () => {
@@ -70,28 +71,28 @@ export function FAQSection({ page = "homepage", itemSlug, title = "Frequently As
   if (!faqs.length) return null;
 
   return (
-    <section className="py-12 md:py-16">
+    <section className={compact ? "py-9 md:py-12" : "py-12 md:py-16"}>
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-8"
+          className={compact ? "text-center mb-5" : "text-center mb-8"}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-3">
             <HelpCircle className="w-4 h-4" />
             FAQs
           </div>
-          <h2 className="text-headline font-bold text-foreground">{title}</h2>
+          <h2 className={compact ? "text-2xl font-black tracking-tight text-foreground md:text-3xl" : "text-headline font-bold text-foreground"}>{title}</h2>
         </motion.div>
 
         <div className="max-w-3xl mx-auto">
-          <Accordion type="single" collapsible className="space-y-3">
+          <Accordion type="single" collapsible className={compact ? "space-y-2" : "space-y-3"}>
             {faqs.map((faq) => (
               <AccordionItem
                 key={faq.id}
                 value={faq.id}
-                className="bg-card rounded-2xl border border-border px-5 data-[state=open]:shadow-md transition-shadow"
+                className={`bg-card border border-border data-[state=open]:shadow-md transition-shadow ${compact ? "rounded-xl px-4" : "rounded-2xl px-5"}`}
               >
                 <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:no-underline py-4">
                   {faq.question}
