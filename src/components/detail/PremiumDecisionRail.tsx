@@ -1,9 +1,8 @@
 import { StudentAvatars } from "@/components/StudentAvatars";
 import { useEffect, useState } from "react";
-import { ArrowRight, Download, Star, ShieldCheck, Calendar, Clock, GraduationCap, Flame } from "lucide-react";
+import { Download, Star, ShieldCheck, Calendar, Clock, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IITAlumniBadge } from "@/components/IITAlumniBadge";
-import { isIitIimProgram } from "@/lib/premiumProgram";
 
 interface Props {
   program: any;
@@ -17,12 +16,11 @@ interface Props {
 
 /**
  * 2026 redesign - sticky decision rail for premium programs.
- * One confident next step: Apply (primary) → Counsel (secondary) → Brochure (tertiary).
+ * One confident next step: Apply (primary), followed by brochure and counsellor support.
  * Live countdown + social-proof interest count keep urgency contextual, not noisy.
  */
 export function PremiumDecisionRail({ program, discountedPrice, emi, formatPrice, onApply, onBrochure, onCounsel }: Props) {
   const [countdown, setCountdown] = useState("");
-  const isInstituteProgram = isIitIimProgram(program);
   const instituteIdentity = [program?.college_name, program?.title, program?.slug, program?.tag]
     .filter((value): value is string => typeof value === "string")
     .join(" ");
@@ -56,19 +54,19 @@ export function PremiumDecisionRail({ program, discountedPrice, emi, formatPrice
 
   return (
     <div className="space-y-4">
-      <div className="bg-white rounded-3xl p-6 md:p-7 shadow-xl shadow-slate-200/60 border border-slate-100">
-        <div className="text-center mb-5">
-          <p className="text-slate-500 text-xs md:text-sm mb-2">Cohort status</p>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-orange-50 text-[#e85d3a] rounded-full text-xs font-bold">
+      <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-xl shadow-slate-200/60 md:p-6">
+        <div className="mb-3 text-center">
+          <p className="mb-1.5 text-xs text-slate-500">Cohort status</p>
+          <div className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-3 py-1 text-[11px] font-bold text-[#e85d3a]">
             <span className="w-2 h-2 bg-[#e85d3a] rounded-full animate-pulse" />
             Closing in {countdown || "soon"}
           </div>
         </div>
 
-        <div className="text-center mb-5">
+        <div className="mb-4 text-center">
           <p className="text-slate-500 text-xs">Program Fee</p>
           <div className="flex items-baseline justify-center gap-2 flex-wrap mt-1">
-            <span className="text-3xl font-extrabold text-slate-900">{hasPrice ? formatPrice(discountedPrice || originalPrice) : "Fee on request"}</span>
+            <span className="text-2xl font-extrabold text-slate-900">{hasPrice ? formatPrice(discountedPrice || originalPrice) : "Fee on request"}</span>
             {discountedPrice > 0 && originalPrice > discountedPrice && (
               <span className="text-sm line-through text-slate-400">{formatPrice(originalPrice)}</span>
             )}
@@ -78,60 +76,33 @@ export function PremiumDecisionRail({ program, discountedPrice, emi, formatPrice
 
         {isIitProgram && <div className="flex justify-center mb-4"><IITAlumniBadge showTagline={false} /></div>}
 
-        {isInstituteProgram ? (
-          <div className="space-y-2.5" data-testid="institute-decision-ctas">
+        <div className="space-y-2" data-testid="premium-decision-ctas">
+          <Button
+            onClick={onApply}
+            className="h-10 w-full rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white shadow-md shadow-red-200 transition hover:-translate-y-0.5 hover:bg-[#d9151c]"
+          >
+            Apply Now
+          </Button>
+          <div className="grid grid-cols-2 gap-2">
             <Button
-              onClick={onApply}
-              className="h-11 w-full rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white shadow-md shadow-red-200 transition hover:-translate-y-0.5 hover:bg-[#d9151c]"
+              onClick={onBrochure}
+              variant="outline"
+              className="h-10 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm"
             >
-              Apply Now
+              <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
             </Button>
-            <div className="grid grid-cols-2 gap-2.5">
-              <Button
-                onClick={onBrochure}
-                variant="outline"
-                className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm"
-              >
-                <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
-              </Button>
-              <Button
-                onClick={onCounsel}
-                variant="outline"
-                className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm"
-              >
-                Talk to Counsellor
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <Button
-              onClick={onApply}
-              className="w-full h-auto bg-[#e85d3a] hover:bg-[#d14b2d] text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-200 hover:scale-[1.02] transition-transform text-sm md:text-base"
-            >
-              <ArrowRight className="w-4 h-4 mr-2" /> Apply for Admission
-            </Button>
-
             <Button
               onClick={onCounsel}
               variant="outline"
-              className="w-full h-auto border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700 font-bold py-4 rounded-2xl"
+              className="h-10 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm"
             >
               Talk to Counsellor
             </Button>
-
-            <Button
-              onClick={onBrochure}
-              variant="ghost"
-              className="w-full bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-semibold py-2 text-sm"
-            >
-              <Download className="w-4 h-4 mr-2" /> Download Brochure
-            </Button>
           </div>
-        )}
+        </div>
 
         {/* Social proof */}
-        <div className="mt-6 pt-5 border-t border-slate-100 space-y-3">
+        <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
           <div className="flex items-center gap-3">
             <StudentAvatars extraCount={Math.max(1, Math.floor(interestedToday / 100))} />
             <p className="text-xs text-slate-500 font-medium leading-tight">
@@ -148,7 +119,7 @@ export function PremiumDecisionRail({ program, discountedPrice, emi, formatPrice
         </div>
 
         {/* Practicalities */}
-        <div className="mt-5 pt-4 border-t border-slate-100 space-y-1.5 text-xs text-slate-500">
+        <div className="mt-4 space-y-1.5 border-t border-slate-100 pt-3 text-xs text-slate-500">
           {program.batch_start_date && (
             <p className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Starts {program.batch_start_date}</p>
           )}

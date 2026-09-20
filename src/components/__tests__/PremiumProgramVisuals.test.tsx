@@ -100,7 +100,35 @@ describe("premium IIT/IIM programme presentation", () => {
       />,
     );
 
-    const actions = screen.getByTestId("institute-decision-ctas");
+    const actions = screen.getByTestId("premium-decision-ctas");
+    expect(within(actions).getAllByRole("button").map((button) => button.textContent?.trim())).toEqual([
+      "Apply Now",
+      "Brochure",
+      "Talk to Counsellor",
+    ]);
+    expect(within(actions).queryByText(/Overview/i)).not.toBeInTheDocument();
+  });
+
+  it("uses the same compact red-first decision pattern for global programmes", () => {
+    render(
+      <PremiumDecisionRail
+        program={{
+          ...instituteProgram,
+          title: "Doctor of Business Administration",
+          college_name: "Golden Gate University",
+          slug: "doctor-of-business-administration-golden-gate-university",
+          tag: "Dr.",
+        }}
+        discountedPrice={1400000}
+        emi={0}
+        formatPrice={(value) => `₹${value}`}
+        onApply={vi.fn()}
+        onBrochure={vi.fn()}
+        onCounsel={vi.fn()}
+      />,
+    );
+
+    const actions = screen.getByTestId("premium-decision-ctas");
     expect(within(actions).getAllByRole("button").map((button) => button.textContent?.trim())).toEqual([
       "Apply Now",
       "Brochure",

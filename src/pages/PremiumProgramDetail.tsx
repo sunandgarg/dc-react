@@ -9,9 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
-import { Download, GraduationCap, Calendar, Clock, CheckCircle2, Award, Linkedin, ChevronDown, Globe, MapPin, CircleDot, Star, Users, TrendingUp, Briefcase, Building2, ChevronLeft, ChevronRight, ScrollText, Zap, ShieldCheck, Flame, BadgeCheck, Rocket, Layers, Phone } from "lucide-react";
+import { Download, GraduationCap, Calendar, Clock, CheckCircle2, Award, Linkedin, ChevronDown, Globe, MapPin, CircleDot, Star, Users, TrendingUp, Briefcase, Building2, ChevronLeft, ChevronRight, ScrollText, Zap, ShieldCheck, Flame, BadgeCheck, Layers, Phone } from "lucide-react";
 import { ProfessionalAvatar } from "@/components/ProfessionalAvatar";
-import { YouTubeVideoButton } from "@/components/YouTubeVideoButton";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { ScrollSpy } from "@/components/ScrollSpy";
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
@@ -231,9 +230,9 @@ export default function PremiumProgramDetail() {
               </div>
 
               {/* PRICE - anchor + savings + countdown (psychology: anchoring, loss aversion, urgency) */}
-              <div className="mt-4 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border-2 border-primary/30 p-4 shadow-sm">
+              <div className="mt-3 rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-3.5 shadow-sm sm:p-4">
                 <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-3xl md:text-4xl font-extrabold text-primary tracking-tight">
+                  <span className="text-2xl font-extrabold tracking-tight text-primary sm:text-3xl md:text-4xl">
                     {hasPrice ? formatPrice(discountedPrice) : "Fee on request"}
                   </span>
                   {hasDiscount && <span className="text-base line-through text-muted-foreground">{formatPrice(originalPrice)}</span>}
@@ -250,49 +249,27 @@ export default function PremiumProgramDetail() {
               </div>
 
               {/* CTAs */}
-              {isInstituteProgram ? (
-                <div className="mt-5 space-y-2.5" data-testid="institute-program-ctas">
-                  <Button size="lg" className="h-11 w-full rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white shadow-md shadow-red-200 transition hover:-translate-y-0.5 hover:bg-[#d9151c]" onClick={() => openLead("apply")}>
-                    Apply Now
+              <div className="mt-3 space-y-2" data-testid="premium-program-ctas">
+                <Button size="lg" className="h-10 w-full rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white shadow-md shadow-red-200 transition hover:-translate-y-0.5 hover:bg-[#d9151c]" onClick={() => openLead("apply")}>
+                  Apply Now
+                </Button>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button size="lg" variant="outline" className="h-10 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm" onClick={() => openLead("brochure")}>
+                    <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
                   </Button>
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <Button size="lg" variant="outline" className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm" onClick={() => openLead("brochure")}>
-                      <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
-                    </Button>
-                    <Button size="lg" variant="outline" className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm" onClick={() => openLead("counsel")}>
-                      Talk to Counsellor
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-5 flex flex-wrap gap-2">
-                  <Button size="lg" className="relative rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground border-0 shadow-md shadow-primary/30 transition-transform hover:-translate-y-0.5 active:translate-y-0 overflow-hidden group" onClick={() => openLead("apply")}>
-                    <span className="absolute inset-0 rounded-xl ring-2 ring-primary/40 animate-ping opacity-60 pointer-events-none" />
-                    <Rocket className="w-4 h-4 mr-1 relative z-10 group-hover:translate-x-0.5 transition-transform" /> <span className="relative z-10">Apply Now</span>
-                  </Button>
-                  <Button size="lg" variant="outline" className="rounded-xl border-primary/40 text-primary hover:bg-primary/5 hover:text-primary transition-transform hover:-translate-y-0.5 group" onClick={() => openLead("brochure")}>
-                    <Download className="w-4 h-4 mr-2 group-hover:translate-y-0.5 transition-transform" /> Brochure
-                  </Button>
-                  <Button size="lg" variant="outline" className="rounded-xl transition-transform hover:-translate-y-0.5" onClick={() => openLead("counsel")}>
+                  <Button size="lg" variant="outline" className="h-10 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800 hover:bg-slate-50 sm:px-2 sm:text-sm" onClick={() => openLead("counsel")}>
                     Talk to Counsellor
                   </Button>
-                  <YouTubeVideoButton
-                    url={program.youtube_url || program.hero_video_url}
-                    category="course"
-                    title={`${program.title} - Program Overview`}
-                    label="Overview"
-                    className="h-11 rounded-xl px-4"
-                  />
                 </div>
-              )}
+              </div>
 
               {/* Risk reversal nudge (loss-aversion reduction) */}
-              <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-success bg-success/10 border border-success/25 rounded-lg px-2.5 py-1.5">
+              <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg border border-success/25 bg-success/10 px-2.5 py-1.5 text-[11px] font-semibold text-success">
                 <ShieldCheck className="w-3.5 h-3.5" /> 100% Money-back guarantee · No risk, just growth
               </div>
 
               {/* Trust microcopy */}
-              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-muted-foreground">
+              <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
                 <span className="inline-flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-success" /> 7-day refund</span>
                 <span className="inline-flex items-center gap-1"><BadgeCheck className="w-3.5 h-3.5 text-primary" /> UGC / AICTE recognised</span>
                 <span className="inline-flex items-center gap-1"><CircleDot className="w-3.5 h-3.5 text-primary" /> Dedicated career coach</span>
@@ -645,32 +622,19 @@ export default function PremiumProgramDetail() {
       </main>
 
       {/* MOBILE STICKY BOTTOM CTA */}
-      {isInstituteProgram ? (
-        <div className="dc-bottom-nav-aware-tight fixed inset-x-0 z-40 border-t border-border bg-background/95 p-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] shadow-2xl backdrop-blur lg:hidden">
-          <div className="mx-auto grid max-w-md grid-cols-2 gap-2">
-            <Button className="col-span-2 h-11 rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white hover:bg-[#d9151c]" onClick={() => openLead("apply")}>
-              Apply Now
-            </Button>
-            <Button variant="outline" className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800" onClick={() => openLead("brochure")}>
-              <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
-            </Button>
-            <Button variant="outline" className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800" onClick={() => openLead("counsel")}>
-              Talk to Counsellor
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <div className="dc-bottom-nav-aware-tight fixed inset-x-0 z-40 flex items-center gap-2 border-t border-border bg-background/95 p-3 shadow-2xl backdrop-blur lg:hidden">
-          <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground">Starts at</p>
-            <p className="text-base font-extrabold text-primary leading-tight">{formatPrice(emi)}/mo</p>
-          </div>
-          <Button variant="outline" className="rounded-xl" onClick={() => openLead("brochure")}>
-            <Download className="w-4 h-4" />
+      <div className="dc-bottom-nav-aware-tight fixed inset-x-0 z-40 border-t border-border bg-background/95 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-2xl backdrop-blur lg:hidden">
+        <div className="mx-auto grid max-w-md grid-cols-2 gap-1.5">
+          <Button className="col-span-2 h-10 rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white hover:bg-[#d9151c]" onClick={() => openLead("apply")}>
+            Apply Now
           </Button>
-          <Button className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground border-0 flex-1" onClick={() => openLead("apply")}>Apply Now</Button>
+          <Button variant="outline" className="h-10 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800" onClick={() => openLead("brochure")}>
+            <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
+          </Button>
+          <Button variant="outline" className="h-10 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800" onClick={() => openLead("counsel")}>
+            Talk to Counsellor
+          </Button>
         </div>
-      )}
+      </div>
 
       <AlsoCheckSection />
       <Footer />
