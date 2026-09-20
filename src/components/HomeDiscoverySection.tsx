@@ -395,7 +395,18 @@ export function HomeDiscoverySection() {
           </div>
         </motion.div>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 md:mt-10 md:gap-6">
+      </div>
+    </section>
+  );
+}
+
+export function HomeStudyModeSection() {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <section className="border-b border-border/60 bg-muted/20 py-8 md:py-10" aria-label="Flexible ways to study">
+      <div className="container">
+        <div className="grid grid-cols-2 gap-3 md:gap-6">
           <OnlineDegreeCard reduceMotion={Boolean(reduceMotion)} />
           <AbroadCard reduceMotion={Boolean(reduceMotion)} />
         </div>
