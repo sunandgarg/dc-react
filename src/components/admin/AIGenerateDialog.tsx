@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles, Loader2, CheckCircle2, PlusCircle, RefreshCw, ShieldCheck, Cpu, Search, ImageIcon, Link2 } from "lucide-react";
+import { CircleDot, Loader2, CheckCircle2, PlusCircle, RefreshCw, ShieldCheck, Cpu, Search, ImageIcon, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
 import { slugify } from "@/lib/slugify";
@@ -234,7 +234,7 @@ export function AIGenerateDialog({ entityType, table, upsertKey = "slug", onDone
         className="gap-2 border-primary/40 text-primary hover:bg-primary/10 rounded-xl"
         onClick={() => setOpen(true)}
       >
-        <Sparkles className="w-4 h-4" />
+        <CircleDot className="w-4 h-4" />
         {label || "AI Generate"}
       </Button>
 
@@ -243,7 +243,7 @@ export function AIGenerateDialog({ entityType, table, upsertKey = "slug", onDone
           <DialogHeader className="px-6 pt-6 pb-3 border-b border-border/60 sticky top-0 bg-card/95 backdrop-blur z-10">
             <DialogTitle className="flex items-center gap-2 text-lg">
               <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-sm">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
+                <CircleDot className="w-5 h-5 text-primary-foreground" />
               </span>
               AI Bulk {entityType} Generator
             </DialogTitle>
@@ -444,7 +444,7 @@ export function AIGenerateDialog({ entityType, table, upsertKey = "slug", onDone
             {/* Generate */}
             <div className="flex flex-wrap gap-3 items-center">
               <Button onClick={generate} disabled={busy} className="gap-2 rounded-xl shadow-sm">
-                {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <CircleDot className="w-4 h-4" />}
                 {items.length ? "Re-generate preview" : "Generate preview"}
               </Button>
               <div className="text-xs text-muted-foreground">

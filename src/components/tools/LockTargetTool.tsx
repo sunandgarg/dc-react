@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Lock, Sparkles, Target, Flame, ArrowRight, Wand2 } from "lucide-react";
+import { Lock, CircleDot, Target, Flame, ArrowRight, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -37,7 +37,7 @@ export function LockTargetTool() {
       <div className="relative grid md:grid-cols-2 gap-5 items-center">
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur text-[10px] font-extrabold text-orange-700 uppercase tracking-wider">
-            <Sparkles className="w-3 h-3" /> New · AI Powered
+            <CircleDot className="w-3 h-3" /> New · AI Powered
           </div>
           <h3 className="mt-2 text-xl md:text-2xl font-black tracking-tight text-foreground leading-tight">
             🎯 Target with <span className="text-orange-600">AI</span> - lock your dream college

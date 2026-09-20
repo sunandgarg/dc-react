@@ -1,6 +1,6 @@
 import { type ElementType, type ReactNode, useCallback, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Megaphone, Star, Users, GraduationCap, BookOpen, FileText, HelpCircle, Newspaper, Lightbulb, Image, Handshake, Bot, Phone, Database, Scale, Map, Briefcase, ClipboardList, UserCircle, UserCheck, Building2, Award, Sparkles, MapPin, IndianRupee, Library, BarChart3, ChevronDown, Settings, FolderTree, RefreshCw, Network, Link2, ExternalLink, Home, Search, Menu, X, Rocket, PanelTop, DatabaseZap, GitCompareArrows } from "lucide-react";
+import { LayoutDashboard, Megaphone, Star, Users, GraduationCap, BookOpen, FileText, HelpCircle, Newspaper, Lightbulb, Image, Handshake, Bot, Phone, Database, Scale, Map, Briefcase, ClipboardList, UserCircle, UserCheck, Building2, Award, CircleDot, MapPin, IndianRupee, Library, BarChart3, ChevronDown, Settings, FolderTree, RefreshCw, Network, Link2, ExternalLink, Home, Search, Menu, X, Rocket, PanelTop, DatabaseZap, GitCompareArrows } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Module } from "@/lib/rbac";
@@ -37,7 +37,7 @@ const groups: NavGroup[] = [
     description: "Leads and conversion",
     icon: Rocket,
     items: [
-      { label: "Lead Intelligence", href: "/admin/lead-intelligence", icon: Sparkles },
+      { label: "Lead Intelligence", href: "/admin/lead-intelligence", icon: CircleDot },
       { label: "Intent Analytics", href: "/admin/lead-intelligence/analytics", icon: BarChart3 },
       { label: "Intent Configuration", href: "/admin/lead-intelligence/config", icon: Settings },
       { label: "Marketing Automation", href: "/admin/marketing-automation", icon: Megaphone },
@@ -60,10 +60,10 @@ const groups: NavGroup[] = [
       { label: "Articles", href: "/admin/articles", icon: Newspaper, module: "articles" },
       { label: "Media Library", href: "/admin/media", icon: Image, module: "media" },
       { label: "Sarkari Articles", href: "/admin/sarkari/articles", icon: Newspaper, module: "articles" },
-      { label: "Sarkari Job AI Studio", href: "/admin/sarkari/ai-studio", icon: Sparkles, module: "articles" },
+      { label: "Sarkari Job AI Studio", href: "/admin/sarkari/ai-studio", icon: CircleDot, module: "articles" },
       { label: "Content Review", href: "/admin/content-review", icon: GitCompareArrows },
-      { label: "Article Tags", href: "/admin/tags", icon: Sparkles, module: "articles" },
-      { label: "Article Categories", href: "/admin/article-categories", icon: Sparkles, module: "articles" },
+      { label: "Article Tags", href: "/admin/tags", icon: CircleDot, module: "articles" },
+      { label: "Article Categories", href: "/admin/article-categories", icon: CircleDot, module: "articles" },
       { label: "Authors / Team", href: "/admin/authors", icon: UserCheck, module: "authors" },
       { label: "Scholarships", href: "/admin/scholarships", icon: Award, module: "scholarships" },
       { label: "Careers", href: "/admin/careers", icon: Briefcase, module: "careers" },
@@ -78,11 +78,11 @@ const groups: NavGroup[] = [
   {
     label: "CAT Universe",
     description: "MBA tools and resources",
-    icon: Sparkles,
+    icon: CircleDot,
     items: [
-      { label: "Dashboard", href: "/admin/cat-universe", icon: Sparkles, module: "cat_universe" },
-      { label: "Sections", href: "/admin/cat-universe/sections", icon: Sparkles, module: "cat_universe" },
-      { label: "Modules", href: "/admin/cat-universe/modules", icon: Sparkles, module: "cat_universe" },
+      { label: "Dashboard", href: "/admin/cat-universe", icon: CircleDot, module: "cat_universe" },
+      { label: "Sections", href: "/admin/cat-universe/sections", icon: CircleDot, module: "cat_universe" },
+      { label: "Modules", href: "/admin/cat-universe/modules", icon: CircleDot, module: "cat_universe" },
       { label: "Resources", href: "/admin/cat-universe/resources", icon: Library, module: "cat_universe" },
       { label: "Cut-offs", href: "/admin/cat-universe/cutoffs", icon: BarChart3, module: "cat_universe" },
     ],
@@ -95,7 +95,7 @@ const groups: NavGroup[] = [
       { label: "Companies", href: "/admin/companies", icon: Building2, module: "companies" },
       { label: "Placements", href: "/admin/placements", icon: Award, module: "placements" },
       { label: "Faculty", href: "/admin/faculty", icon: UserCheck, module: "faculty" },
-      { label: "Facilities", href: "/admin/facilities", icon: Sparkles, module: "facilities" },
+      { label: "Facilities", href: "/admin/facilities", icon: CircleDot, module: "facilities" },
       { label: "Approval Bodies", href: "/admin/approval-bodies", icon: Award, module: "colleges" },
       { label: "Stream Categories", href: "/admin/categories", icon: Award, module: "colleges" },
       { label: "College Contacts", href: "/admin/contacts", icon: MapPin, module: "contacts" },
@@ -143,7 +143,7 @@ const groups: NavGroup[] = [
       { label: "AI Content Reports", href: "/admin/ai-reports", icon: Star },
       { label: "Email (AWS SES)", href: "/admin/email-providers", icon: Phone, module: "otp_providers" },
       { label: "Integrations", href: "/admin/integrations", icon: BarChart3, module: "integrations" },
-      { label: "Also Check Modules", href: "/admin/also-check", icon: Sparkles },
+      { label: "Also Check Modules", href: "/admin/also-check", icon: CircleDot },
       { label: "Lead Push Legacy", href: "/admin/lead-push-legacy", icon: Network },
       { label: "Lead Push Automation", href: "/admin/lead-push/automation", icon: Network },
       { label: "Sitemap", href: "/admin/sitemap", icon: Map, module: "sitemap" },

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Target, X, Sparkles } from "lucide-react";
+import { Target, X, CircleDot } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { COOKIE_RESOLVED_EVENT, hasCookieDecision, scheduleAfterGate, signalLockPromoResolved } from "@/lib/promptSequence";
 

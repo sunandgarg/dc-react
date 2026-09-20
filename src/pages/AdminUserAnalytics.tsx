@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Sparkles, Monitor, Smartphone, Tablet, Clock, MousePointer, Eye, Download, User, Phone, Mail, Filter as FilterIcon } from "lucide-react";
+import { CircleDot, Monitor, Smartphone, Tablet, Clock, MousePointer, Eye, Download, User, Phone, Mail, Filter as FilterIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -240,7 +240,7 @@ export default function AdminUserAnalytics() {
                     <Download className="w-3.5 h-3.5" /> CSV
                   </Button>
                   <Button size="sm" onClick={() => summarize(selected)} disabled={loadingSummary} className="gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" /> AI Summary
+                    <CircleDot className="w-3.5 h-3.5" /> AI Summary
                   </Button>
                 </div>
               </div>
@@ -248,7 +248,7 @@ export default function AdminUserAnalytics() {
               {summary[selected] && (
                 <Card className="p-3 mb-3 bg-primary/5 border-primary/30">
                   <div className="text-xs font-semibold text-primary mb-1.5 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3" /> AI summary
+                    <CircleDot className="w-3 h-3" /> AI summary
                   </div>
                   <div className="text-sm whitespace-pre-wrap">{summary[selected]}</div>
                 </Card>

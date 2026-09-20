@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, BrainCircuit, Check, Clock3, Download, FileText, Loader2, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BrainCircuit, Check, Clock3, Download, FileText, Loader2, ShieldCheck, CircleDot } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -107,7 +107,7 @@ export default function CatPreparationKit() {
           <div className="container relative z-10 flex min-h-[560px] items-center py-12 md:min-h-[620px]">
             <div className="max-w-2xl text-white">
               <div className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-orange-200">
-                <Sparkles className="h-4 w-4" />
+                <CircleDot className="h-4 w-4" />
                 CAT 2026, organised around real practice
               </div>
               <h1 className="max-w-xl text-4xl font-extrabold leading-tight md:text-6xl">
@@ -185,7 +185,7 @@ export default function CatPreparationKit() {
               <Link to="/cat-universe/ai-interview-practice" className="mt-5 inline-flex items-center gap-2 font-semibold text-orange-300 hover:text-orange-200">Open interview room <ArrowRight className="h-4 w-4" /></Link>
             </div>
             <div className="border-t border-slate-700 pt-8 md:border-l md:border-t-0 md:pl-8 md:pt-0">
-              <Sparkles className="h-8 w-8 text-sky-300" />
+              <CircleDot className="h-8 w-8 text-sky-300" />
               <h2 className="mt-4 text-2xl font-bold">AI-first CAT coaching</h2>
               <p className="mt-3 max-w-xl leading-7 text-slate-300">Turn your target, available time and weakest section into a practical daily plan with measurable checkpoints.</p>
               <Link to="/cat-universe/ai-coach" className="mt-5 inline-flex items-center gap-2 font-semibold text-sky-300 hover:text-sky-200">Create my plan <ArrowRight className="h-4 w-4" /></Link>

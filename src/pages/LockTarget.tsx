@@ -10,7 +10,7 @@ import { AIDisclaimer } from "@/components/AIDisclaimer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Target, Download, Sparkles, Calendar, BookOpen, AlertTriangle, Trophy, Lock, Flame, Share2, Check, LayoutDashboard, Zap, CalendarCheck } from "lucide-react";
+import { Target, Download, CircleDot, Calendar, BookOpen, AlertTriangle, Trophy, Lock, Flame, Share2, Check, LayoutDashboard, Zap, CalendarCheck } from "lucide-react";
 import { backendClient } from "@/integrations/backend/client";
 import { silentSaveLead } from "@/lib/leadCapture";
 import { DekhoCampusAILoader } from "@/components/tools/DekhoCampusAILoader";
@@ -404,7 +404,7 @@ export default function LockTarget() {
                 {/* Verdict + download */}
                 <div className="rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50 to-rose-50 p-5">
                   <div className="flex items-center gap-1.5 text-[11px] font-bold text-orange-700 uppercase tracking-wider mb-2">
-                    <Sparkles className="w-3.5 h-3.5" /> Your locked roadmap
+                    <CircleDot className="w-3.5 h-3.5" /> Your locked roadmap
                   </div>
                   <Badge variant="secondary" className="text-[10px] mb-2">{targetCollege}{targetCourse ? ` · ${targetCourse}` : ""} · Class {classLevel}</Badge>
                   {roadmap.verdict && (

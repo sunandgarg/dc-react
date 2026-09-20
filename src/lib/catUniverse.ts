@@ -100,7 +100,7 @@ export const CAT_UNIVERSE_DEFAULT_SECTIONS: CatUniverseSection[] = [
     slug: "post-exam",
     title: "Post Exam",
     description: "Convert raw attempts into action - score estimates, WAT/SOP help, and next-step strategy.",
-    icon_name: "sparkles",
+    icon_name: "circle-dot",
     accent_class: "from-orange-500 to-rose-500",
     lead_hook: "Just attempted CAT, XAT, or CMAT? Get your score interpreted before the market moves.",
     display_order: 1,

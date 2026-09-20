@@ -26,7 +26,7 @@ const RESOURCES = [
   { slug: "previous-papers", name: "Previous Year Papers", emoji: "📚" },
   { slug: "notes", name: "Chapter Notes", emoji: "📖" },
   { slug: "preparation-tips", name: "Preparation Tips", emoji: "💡" },
-  { slug: "tips-tricks", name: "Tips & Tricks", emoji: "✨" },
+  { slug: "tips-tricks", name: "Tips & Tricks", emoji: "💡" },
   { slug: "answer-key", name: "Answer Key", emoji: "🔑" },
   { slug: "compartment-date-sheet", name: "Compartment Date Sheet", emoji: "📅" },
   { slug: "compartment-result", name: "Compartment Result", emoji: "🏆" },

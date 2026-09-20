@@ -166,7 +166,7 @@ export default function AdminCatUniverse() {
             titleKey="title"
             subtitleKey="slug"
             orderBy={{ column: "display_order", ascending: true }}
-            defaultValues={{ display_order: 0, is_active: true, icon_name: "sparkles", accent_class: "from-orange-500 to-rose-500" }}
+            defaultValues={{ display_order: 0, is_active: true, icon_name: "circle-dot", accent_class: "from-orange-500 to-rose-500" }}
             fields={[
               { key: "slug", label: "Slug", required: true },
               { key: "title", label: "Title", required: true },
@@ -188,7 +188,7 @@ export default function AdminCatUniverse() {
             subtitleKey="slug"
             orderBy={{ column: "display_order", ascending: true }}
             previewBasePath="/cat-universe"
-            defaultValues={{ display_order: 0, is_active: true, show_on_home: false, is_featured: false, module_type: "resource_hub", exam_key: "cat", icon_name: "sparkles", lead_source: "cat_universe_module" }}
+            defaultValues={{ display_order: 0, is_active: true, show_on_home: false, is_featured: false, module_type: "resource_hub", exam_key: "cat", icon_name: "circle-dot", lead_source: "cat_universe_module" }}
             fields={[
               { key: "section_slug", label: "Section slug", required: true },
               { key: "slug", label: "Slug", required: true },

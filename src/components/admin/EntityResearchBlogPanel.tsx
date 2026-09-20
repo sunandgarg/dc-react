@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpenCheck, CalendarClock, CheckCircle2, Loader2, Pause, Play, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
+import { BookOpenCheck, CalendarClock, CheckCircle2, Loader2, Pause, Play, Plus, Search, CircleDot, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
@@ -232,7 +232,7 @@ export function EntityResearchBlogPanel({ onArticlesCreated }: { onArticlesCreat
       </div>
 
       {!!selected.length && <div className="border-b bg-background/60 p-4">
-        <div className="mb-3 flex items-center justify-between"><div><h4 className="text-sm font-semibold">New schedules</h4><p className="text-[11px] text-muted-foreground">Choose the exact daily article target and cadence for each entity.</p></div><Button size="sm" onClick={saveSchedules} disabled={saving} className="gap-2">{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} Activate {selected.length}</Button></div>
+        <div className="mb-3 flex items-center justify-between"><div><h4 className="text-sm font-semibold">New schedules</h4><p className="text-[11px] text-muted-foreground">Choose the exact daily article target and cadence for each entity.</p></div><Button size="sm" onClick={saveSchedules} disabled={saving} className="gap-2">{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CircleDot className="h-4 w-4" />} Activate {selected.length}</Button></div>
         <div className="overflow-x-auto rounded-xl border">
           <table className="w-full min-w-[900px] text-sm">
             <thead className="bg-muted/60 text-left text-xs"><tr><th className="p-3">Entity</th><th className="p-3">Articles/day</th><th className="p-3">Cadence</th><th className="p-3">Output</th><th className="p-3">Review gate</th><th className="w-12 p-3" /></tr></thead>
@@ -264,7 +264,7 @@ export function EntityResearchBlogPanel({ onArticlesCreated }: { onArticlesCreat
                   <select value={schedule.articles_per_day} disabled={isBusy} onChange={(event) => updateSchedule(schedule, { articles_per_day: Number(event.target.value) })} className="h-8 rounded-lg border bg-background px-2 text-xs">{Array.from({ length: 10 }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count}/day</option>)}</select>
                   <select value={schedule.interval_minutes} disabled={isBusy} onChange={(event) => updateSchedule(schedule, { interval_minutes: Number(event.target.value), next_run_at: new Date().toISOString() })} className="h-8 rounded-lg border bg-background px-2 text-xs">{FREQUENCIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
                   <Button size="sm" variant="outline" disabled={isBusy || todayCount >= schedule.articles_per_day} onClick={() => runSchedule(schedule)} className="gap-1">{isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />} Write one</Button>
-                  <Button size="sm" disabled={isBusy || todayCount >= schedule.articles_per_day} onClick={() => runSchedule(schedule, true)} className="gap-1"><Sparkles className="h-3.5 w-3.5" /> Complete today</Button>
+                  <Button size="sm" disabled={isBusy || todayCount >= schedule.articles_per_day} onClick={() => runSchedule(schedule, true)} className="gap-1"><CircleDot className="h-3.5 w-3.5" /> Complete today</Button>
                   <Button size="sm" variant="outline" disabled={busyId === schedule.id} onClick={() => updateSchedule(schedule, { enabled: !schedule.enabled, last_status: schedule.enabled ? "paused" : "ready", next_run_at: schedule.enabled ? schedule.next_run_at : new Date().toISOString() })} className="gap-1">{schedule.enabled ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}{schedule.enabled ? "Pause" : "Resume"}</Button>
                   <Button size="icon" variant="ghost" disabled={busyId === schedule.id} onClick={() => deleteSchedule(schedule)} className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
                 </div>

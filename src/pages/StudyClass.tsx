@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useStudyBoards, useStudySubjects, useStudyToppers } from "@/hooks/useStudyMaterial";
 import { useStudyBoardLinks } from "@/hooks/useStudyBoardLinks";
-import { ArrowRight, BookOpen, ChevronRight, Trophy, FileText, CalendarDays, Award, ClipboardList, Phone, Sparkles, ExternalLink } from "lucide-react";
+import { ArrowRight, BookOpen, ChevronRight, Trophy, FileText, CalendarDays, Award, ClipboardList, Phone, CircleDot, ExternalLink } from "lucide-react";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 
 export default function StudyClass() {
@@ -139,7 +139,7 @@ export default function StudyClass() {
           {/* Quick Links - collegedekho-parity board navigation */}
           <div className="mb-10">
             <h2 className="text-lg md:text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" /> Class {classNum} {boards.find((b: any) => b.slug === boardSlug)?.name} Quick Links
+              <CircleDot className="w-5 h-5 text-primary" /> Class {classNum} {boards.find((b: any) => b.slug === boardSlug)?.name} Quick Links
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[

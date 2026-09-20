@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft, RefreshCw, CheckCircle2, XCircle, Copy, AlertTriangle,
   Gauge, Activity, Clock, Search, TrendingUp, Trophy, Flame, Zap,
-  Target, Sparkles, Ban, ChevronRight, CalendarRange,
+  Target, CircleDot, Ban, ChevronRight, CalendarRange,
 } from "lucide-react";
 import { backendClient } from "@/integrations/backend/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -262,7 +262,7 @@ export default function LeadPushAdminDashboard() {
   const allDone = totalLive > 0 && done === totalLive;
   const noneDone = done === 0 && totalLive > 0;
 
-  const heroEmoji = allDone ? "🎉" : completionPct >= 60 ? "😊" : completionPct >= 30 ? "🙂" : "✨";
+  const heroEmoji = allDone ? "🎉" : completionPct >= 60 ? "😊" : completionPct >= 30 ? "🙂" : "📋";
   const heroMsg = allDone
     ? "All universities pushed today - amazing work!"
     : noneDone ? "Nothing pushed yet - let's get started!"
@@ -280,7 +280,7 @@ export default function LeadPushAdminDashboard() {
             </Button>
             <div>
               <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary" />
+                <CircleDot className="h-5 w-5 text-primary" />
                 Lead Push Command Center
               </h1>
               <p className="text-sm text-muted-foreground">Snapshot view - refresh to pull the latest from the database.</p>

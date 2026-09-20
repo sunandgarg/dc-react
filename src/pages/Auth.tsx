@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
-import { ArrowRight, Loader2, ShieldCheck, Sparkles, GraduationCap, Users, Trophy } from "lucide-react";
+import { ArrowRight, Loader2, ShieldCheck, CircleDot, GraduationCap, Users, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -124,7 +124,7 @@ export default function Auth() {
           {/* LEFT - value prop */}
           <div className="hidden lg:block space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5" /> India's #1 Career Counselling Platform
+              <CircleDot className="w-3.5 h-3.5" /> India's #1 Career Counselling Platform
             </div>
             <h2 className="text-4xl xl:text-5xl font-bold leading-tight text-foreground">
               Your dream college is <span className="text-primary">just one login</span> away

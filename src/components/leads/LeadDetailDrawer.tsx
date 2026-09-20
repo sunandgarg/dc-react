@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Mail, MessageCircle, Copy, MapPin, Calendar, Tag, ExternalLink, Sparkles, StickyNote, ActivitySquare, Send, User, Loader2 } from "lucide-react";
+import { Phone, Mail, MessageCircle, Copy, MapPin, Calendar, Tag, ExternalLink, CircleDot, StickyNote, ActivitySquare, Send, User, Loader2 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";

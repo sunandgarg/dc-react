@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
-import { Download, GraduationCap, Calendar, Clock, CheckCircle2, Award, Linkedin, ChevronDown, Globe, MapPin, Sparkles, Star, Users, TrendingUp, Briefcase, Building2, ChevronLeft, ChevronRight, ScrollText, Zap, ShieldCheck, Flame, BadgeCheck, Rocket, Layers, Phone } from "lucide-react";
+import { Download, GraduationCap, Calendar, Clock, CheckCircle2, Award, Linkedin, ChevronDown, Globe, MapPin, CircleDot, Star, Users, TrendingUp, Briefcase, Building2, ChevronLeft, ChevronRight, ScrollText, Zap, ShieldCheck, Flame, BadgeCheck, Rocket, Layers, Phone } from "lucide-react";
 import { ProfessionalAvatar } from "@/components/ProfessionalAvatar";
 import { YouTubeVideoButton } from "@/components/YouTubeVideoButton";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
@@ -254,7 +254,7 @@ export default function PremiumProgramDetail() {
               <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-muted-foreground">
                 <span className="inline-flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-success" /> 7-day refund</span>
                 <span className="inline-flex items-center gap-1"><BadgeCheck className="w-3.5 h-3.5 text-primary" /> UGC / AICTE recognised</span>
-                <span className="inline-flex items-center gap-1"><Sparkles className="w-3.5 h-3.5 text-primary" /> Dedicated career coach</span>
+                <span className="inline-flex items-center gap-1"><CircleDot className="w-3.5 h-3.5 text-primary" /> Dedicated career coach</span>
                 <span className="inline-flex items-center gap-1"><Users className="w-3.5 h-3.5 text-primary" /> 1:1 mentor support</span>
               </div>
             </div>
@@ -313,7 +313,7 @@ export default function PremiumProgramDetail() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {highlights.map((h, i) => (
                   <div key={i} className="bg-card border border-border rounded-2xl p-4 flex items-start gap-2 hover:border-primary/40 transition">
-                    <Sparkles className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <CircleDot className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                     <p className="text-sm font-medium">{h}</p>
                   </div>
                 ))}

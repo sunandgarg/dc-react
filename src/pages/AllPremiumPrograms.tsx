@@ -9,7 +9,7 @@ import { SEO } from "@/components/SEO";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { ProgramCard } from "@/components/TrendingPrograms";
 import { GraduationCap } from "lucide-react";
-import { getProgramCategoryIcon } from "@/lib/programCategoryImages";
+import { getProgramCategoryIcon, resolveProgramCategoryEmoji } from "@/lib/programCategoryImages";
 
 interface ProgramCategory { id: string; slug: string; name: string; icon_emoji: string; icon_url: string; }
 
@@ -81,12 +81,12 @@ export default function AllPremiumPrograms() {
         {cats.length > 0 && (
           <nav aria-label="Program categories" className="mb-8 -mx-1">
             <div className="flex items-start gap-7 md:gap-10 lg:justify-between overflow-x-auto scrollbar-hide pb-3 px-1">
-              <Chip label="All" emoji="✨" active={activeCat === "all"} onClick={() => setActiveCat("all")} />
+              <Chip label="All" emoji="🎓" active={activeCat === "all"} onClick={() => setActiveCat("all")} />
               {cats.map((c) => (
                 <Chip
                   key={c.id}
                   label={c.name}
-                  emoji={c.icon_emoji}
+                  emoji={resolveProgramCategoryEmoji(c.icon_emoji)}
                   iconUrl={c.icon_url}
                   artworkUrl={getProgramCategoryIcon(c.slug) || c.icon_url}
                   active={activeCat === c.slug}

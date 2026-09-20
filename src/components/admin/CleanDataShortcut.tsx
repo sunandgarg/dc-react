@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, DatabaseZap, Image, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, DatabaseZap, Image, ShieldCheck, CircleDot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const ROUTE_CONTEXT = [
@@ -33,7 +33,7 @@ export function CleanDataShortcut({ pathname }: { pathname: string }) {
             <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-blue-100/80 md:text-xs">
               <span className="inline-flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5" /> Corroborated evidence</span>
               <span className="inline-flex items-center gap-1"><Image className="h-3.5 w-3.5" /> Images, logos and documents</span>
-              <span className="inline-flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" /> Data + SEO/GEO/AEO</span>
+              <span className="inline-flex items-center gap-1"><CircleDot className="h-3.5 w-3.5" /> Data + SEO/GEO/AEO</span>
             </div>
           </div>
         </div>

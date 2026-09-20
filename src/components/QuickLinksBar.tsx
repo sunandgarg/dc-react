@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   GraduationCap, BookOpen, FileText, Globe, Laptop, Calculator, Newspaper,
-  Layers, Star, Image as ImageIcon, Compass, Sparkles, MapPin,
+  Layers, Star, Image as ImageIcon, Compass, CircleDot, MapPin,
   Briefcase, ShieldCheck, HelpCircle, Building2,
 } from "lucide-react";
 
@@ -12,7 +12,7 @@ type QL =
 const links: QL[] = [
   // Priority order requested
   { icon: Laptop, label: "Online Degrees", sectionId: "online-education-heading", fallbackHref: "/courses" },
-  { icon: Sparkles, label: "Earn IIT/IIM/Dr. Tag", sectionId: "trending-programs-heading", fallbackHref: "/premium-programs" },
+  { icon: CircleDot, label: "Earn IIT/IIM/Dr. Tag", sectionId: "trending-programs-heading", fallbackHref: "/premium-programs" },
   { icon: Globe, label: "Study Abroad", sectionId: "online-education-heading", fallbackHref: "/courses" },
   // Then the rest
   { icon: GraduationCap, label: "Top Colleges", href: "/colleges" },

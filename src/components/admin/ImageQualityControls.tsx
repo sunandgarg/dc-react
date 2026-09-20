@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
+import { CircleDot } from "lucide-react";
 
 export type ImageQuality = {
   /** When true, keep original file as-is (no WebP conversion, no resize). */
@@ -53,7 +53,7 @@ export function ImageQualityControls({
           onChange={(e) => onChange({ ...value, hd: e.target.checked })}
           className="w-3 h-3 accent-primary"
         />
-        <Sparkles className="w-3 h-3" /> HD (keep original)
+        <CircleDot className="w-3 h-3" /> HD (keep original)
       </label>
       <span className="text-muted-foreground/70">Max size:</span>
       <select

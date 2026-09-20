@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, ShieldCheck, WandSparkles } from "lucide-react";
+import { Loader2, ShieldCheck, FileCheck2 } from "lucide-react";
 import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ export function OfficialDataFillButton({ entityType, record, onApply }: Official
           </div>
         </div>
         <Button type="button" variant="outline" size="sm" disabled={loading || !name} onClick={fill} className="shrink-0 rounded-xl bg-white">
-          {loading ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <WandSparkles className="mr-2 h-3.5 w-3.5" />}
+          {loading ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <FileCheck2 className="mr-2 h-3.5 w-3.5" />}
           {loading ? "Researching trusted sources..." : "Fill cited details"}
         </Button>
       </div>

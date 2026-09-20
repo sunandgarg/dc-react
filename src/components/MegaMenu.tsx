@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, GraduationCap, BookOpen, FileText, Briefcase, Stethoscope, Palette, Sparkles, Trophy, Scale, Award, NotebookPen, Newspaper } from "lucide-react";
+import { ChevronDown, GraduationCap, BookOpen, FileText, Briefcase, Stethoscope, Palette, CircleDot, Trophy, Scale, Award, NotebookPen, Newspaper } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { STREAM_CATEGORIES } from "@/lib/streamCategories";
@@ -272,9 +272,9 @@ export function MegaMenu() {
     if (l === "Exams") return FileText;
     if (l === "Scholarships") return Award;
     if (l === "Study Material") return NotebookPen;
-    if (l === "CAT Universe") return Sparkles;
+    if (l === "CAT Universe") return CircleDot;
     if (l === "News") return Newspaper;
-    return Sparkles;
+    return CircleDot;
   };
 
   // One shared outer width gives every menu exactly the same alignment. The

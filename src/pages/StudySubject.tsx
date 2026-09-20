@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useStudySubject, useStudyChapters, useStudyResources, useAllSubjectResources } from "@/hooks/useStudyMaterial";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, FileDown, Sparkles, Package, ArrowUp, BookOpen, Lightbulb, NotebookPen, CalendarDays } from "lucide-react";
+import { ChevronRight, FileDown, CircleDot, Package, ArrowUp, BookOpen, Lightbulb, NotebookPen, CalendarDays } from "lucide-react";
 import { DownloadGate } from "@/components/study/DownloadGate";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { SubjectNewsSection } from "@/components/study/SubjectNewsSection";
@@ -112,7 +112,7 @@ export default function StudySubject() {
                   </div>
                   <div>
                     <p className="font-bold text-foreground flex items-center gap-2">
-                      Last 10 Years PYQ - Combined Pack <Sparkles className="w-4 h-4 text-primary" />
+                      Last 10 Years PYQ - Combined Pack <CircleDot className="w-4 h-4 text-primary" />
                     </p>
                     <p className="text-xs text-muted-foreground">All previous year papers in a single PDF</p>
                   </div>

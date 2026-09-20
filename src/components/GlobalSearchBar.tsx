@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Search, Sparkles, X } from "lucide-react";
+import { ArrowRight, Search, CircleDot, X } from "lucide-react";
 import { displayText } from "@/lib/displayText";
 import { searchDirectory, type DirectorySearchResult } from "@/lib/directorySearch";
 import { SearchResultIcon } from "@/components/SearchResultIcon";
@@ -99,7 +99,7 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
             onClick={askDiya}
             className="ml-1 inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-semibold text-white transition hover:bg-primary/90"
           >
-            <Sparkles className="h-3.5 w-3.5" />
+            <CircleDot className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Ask Diya</span>
           </button>
         )}
@@ -112,7 +112,7 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
             {!loading && !results.length && (
               <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={askDiya}
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left hover:bg-slate-50">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary"><Sparkles className="h-4 w-4" /></span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary"><CircleDot className="h-4 w-4" /></span>
                 <span><strong className="block text-sm">Ask Diya about “{query.trim()}”</strong><span className="text-xs text-muted-foreground">No exact match found</span></span>
               </button>
             )}

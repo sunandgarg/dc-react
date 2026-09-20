@@ -6,7 +6,7 @@ import { SEO } from "@/components/SEO";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Target, Sparkles, Calendar, Trophy, Share2, Download, Lock, Plus, BookOpen, AlertTriangle } from "lucide-react";
+import { Target, CircleDot, Calendar, Trophy, Share2, Download, Lock, Plus, BookOpen, AlertTriangle } from "lucide-react";
 import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -102,7 +102,7 @@ export default function TargetDashboard() {
         <div className="flex items-start justify-between gap-3 mt-3 mb-5">
           <div>
             <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-extrabold uppercase tracking-wider">
-              <Sparkles className="w-3 h-3" /> Target with AI
+              <CircleDot className="w-3 h-3" /> Target with AI
             </div>
             <h1 className="text-2xl md:text-3xl font-black tracking-tight mt-1.5">My Target Dashboard</h1>
             <p className="text-sm text-muted-foreground">All your locked dream colleges, predicted fits and AI roadmaps in one place.</p>
@@ -209,7 +209,7 @@ function PrimaryCard({ row, onCopyShare, onDownload }: {
         <div className="grid grid-cols-3 gap-2 mt-4">
           <Stat label="Predicted fit" value={`${fit}%`} icon={<Trophy className="w-3.5 h-3.5" />} />
           <Stat label="Daily hours" value={`${r.hours_per_day || 6}h`} icon={<Calendar className="w-3.5 h-3.5" />} />
-          <Stat label="Phases" value={`${milestones.length || 0}`} icon={<Sparkles className="w-3.5 h-3.5" />} />
+          <Stat label="Phases" value={`${milestones.length || 0}`} icon={<CircleDot className="w-3.5 h-3.5" />} />
         </div>
 
         {verdict && (

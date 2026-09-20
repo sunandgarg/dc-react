@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Sparkles } from "lucide-react";
+import { ChevronDown, CircleDot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RichText } from "@/components/detail/RichText";
 
@@ -54,7 +54,7 @@ export function PageSummary({ html, entityName, kind = "college", className, def
         className="flex w-full items-center gap-3 text-left p-4 md:p-5 group"
       >
         <span className="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/30">
-          <Sparkles className="w-5 h-5" />
+          <CircleDot className="w-5 h-5" />
         </span>
         <div className="flex-1 min-w-0">
           <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary">Quick Summary</p>

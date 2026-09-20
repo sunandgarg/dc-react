@@ -19,7 +19,7 @@ import { LeadIntentDrawer } from "@/components/LeadIntentDrawer";
 import { LeadDetailDrawer, LEAD_STATUSES, statusBadge } from "@/components/leads/LeadDetailDrawer";
 import { MergeLeadsDialog } from "@/components/leads/MergeLeadsDialog";
 import { LeadFilterPresets } from "@/components/leads/LeadFilterPresets";
-import { Sparkles } from "lucide-react";
+import { CircleDot } from "lucide-react";
 import { leadConsentLabel } from "@/lib/leadConsent";
 import { groupLeadsByIdentity, type LeadIdentityGroup } from "@/lib/leadIdentity";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
@@ -857,7 +857,7 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
                             className="w-7 h-7 rounded hover:bg-muted flex items-center justify-center"
                             title="Intent analysis"
                           >
-                            <Sparkles className="w-3.5 h-3.5 text-orange-600" />
+                            <CircleDot className="w-3.5 h-3.5 text-orange-600" />
                           </button>
                           <button
                             onClick={(event) => {

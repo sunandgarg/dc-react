@@ -22,13 +22,13 @@ type Module = {
   enabled: boolean;
 };
 
-const ICON_HINTS = ["Calendar", "CheckCircle2", "GraduationCap", "BookOpen", "FileText", "Award", "Sparkles", "Target", "TrendingUp", "Compass"];
+const ICON_HINTS = ["Calendar", "CheckCircle2", "GraduationCap", "BookOpen", "FileText", "Award", "CircleDot", "Target", "TrendingUp", "Compass"];
 
 export default function AdminAlsoCheck() {
   const qc = useQueryClient();
   const [edits, setEdits] = useState<Record<string, Partial<Module>>>({});
   const [showAdd, setShowAdd] = useState(false);
-  const [newRow, setNewRow] = useState<Partial<Module>>({ key: "", title: "", description: "", url: "", icon: "Sparkles", sort_order: 0, enabled: true });
+  const [newRow, setNewRow] = useState<Partial<Module>>({ key: "", title: "", description: "", url: "", icon: "CircleDot", sort_order: 0, enabled: true });
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-also-check"],
@@ -63,7 +63,7 @@ export default function AdminAlsoCheck() {
       qc.invalidateQueries({ queryKey: ["also-check-modules"] });
       toast.success("Module added");
       setShowAdd(false);
-      setNewRow({ key: "", title: "", description: "", url: "", icon: "Sparkles", sort_order: 0, enabled: true });
+      setNewRow({ key: "", title: "", description: "", url: "", icon: "CircleDot", sort_order: 0, enabled: true });
     },
     onError: (e: Error) => toast.error("Add failed: " + e.message),
   });

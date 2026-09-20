@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { DekhoLogoInline } from "@/components/DekhoLogoInline";
-import { getProgramCategoryIcon } from "@/lib/programCategoryImages";
+import { getProgramCategoryIcon, resolveProgramCategoryEmoji } from "@/lib/programCategoryImages";
 
 function formatPrice(price: number) {
   if (price >= 100000) return `₹${(price / 100000).toFixed(price % 100000 === 0 ? 0 : 1)}L`;
@@ -100,7 +100,7 @@ export function TrendingPrograms() {
             <div className="flex items-start gap-7 md:gap-9 lg:justify-between overflow-x-auto scrollbar-hide pb-3 px-4 md:px-1 snap-x snap-mandatory">
               <CategoryChip
                 label="All"
-                emoji="✨"
+                emoji="🎓"
                 active={activeCat === "all"}
                 onClick={() => { setActiveCat("all"); setVisibleRows(1); }}
               />
@@ -108,7 +108,7 @@ export function TrendingPrograms() {
                 <CategoryChip
                   key={c.id}
                   label={c.name}
-                  emoji={c.icon_emoji}
+                  emoji={resolveProgramCategoryEmoji(c.icon_emoji)}
                   iconUrl={c.icon_url}
                   artworkUrl={getProgramCategoryIcon(c.slug) || c.icon_url}
                   active={activeCat === c.slug}

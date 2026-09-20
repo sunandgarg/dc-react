@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Search, FileText, X, Info, Calendar, Settings, BookOpen, CheckCircle2, Layers, Eye, Sparkles, HelpCircle, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, FileText, X, Info, Calendar, Settings, BookOpen, CheckCircle2, Layers, Eye, CircleDot, HelpCircle, ExternalLink } from "lucide-react";
 import { FaqInlineEditor } from "@/components/admin/FaqInlineEditor";
 import { MultiCategoryPicker } from "@/components/admin/MultiCategoryPicker";
 import { toast } from "sonner";
@@ -155,7 +155,7 @@ export default function AdminExams() {
           { label: "Apps Open", value: stats.open, icon: CheckCircle2, tone: "success" },
           { label: "Upcoming", value: stats.upcoming, icon: Layers, tone: "warning" },
           { label: "Closed/Over", value: stats.closed, icon: Eye, tone: "muted" },
-          { label: "Top Category", value: stats.topCat, icon: Sparkles, tone: "primary" },
+          { label: "Top Category", value: stats.topCat, icon: CircleDot, tone: "primary" },
         ]}
       />
 

@@ -16,7 +16,7 @@ import {
   Loader2,
   LockKeyhole,
   ShieldCheck,
-  Sparkles,
+  CircleDot,
   Target,
   TrendingUp,
   Wand2,
@@ -38,7 +38,7 @@ import {
 } from "@/lib/catUniverse";
 
 const iconMap: Record<string, any> = {
-  sparkles: Sparkles,
+  "circle-dot": CircleDot,
   "book-open": BookOpen,
   target: Target,
   "bar-chart-3": BarChart3,
@@ -48,7 +48,7 @@ const iconMap: Record<string, any> = {
 };
 
 function getIcon(name?: string) {
-  return iconMap[name || "sparkles"] || Sparkles;
+  return iconMap[name || "circle-dot"] || CircleDot;
 }
 
 type BenchmarkRow = { percentile: number; score: number };
@@ -326,7 +326,7 @@ export function CatUniverseCalculator({
           <div className="relative grid gap-7 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-bold text-blue-100">
-                <Sparkles className="h-3.5 w-3.5" /> Gemini-powered CAT response analysis
+                <CircleDot className="h-3.5 w-3.5" /> Gemini-powered CAT response analysis
               </div>
               <h1 className="mt-4 max-w-3xl text-3xl font-black leading-tight tracking-tight md:text-5xl">
                 CAT Score Calculator {new Date().getFullYear()} - turn your response sheet into a clear score story.
@@ -362,7 +362,7 @@ export function CatUniverseCalculator({
                 onClick={() => setLeadOpen(true)}
                 className="mt-3 h-12 w-full rounded-2xl bg-orange-500 font-extrabold text-white shadow-lg shadow-orange-950/20 hover:bg-orange-400"
               >
-                {analyzing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                {analyzing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CircleDot className="mr-2 h-4 w-4" />}
                 {analyzing ? "Analysing response sheet..." : "Analyse my CAT response sheet"}
               </Button>
               <button

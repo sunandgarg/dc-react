@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { backendClient } from "@/integrations/backend/client";
 import * as Icons from "lucide-react";
-import { Sparkles } from "lucide-react";
+import { CircleDot } from "lucide-react";
 import { currentYear } from "@/lib/currentYear";
 import { useCarouselNav, CarouselControls } from "@/components/CarouselControls";
 
@@ -29,9 +29,9 @@ type Module = {
 };
 
 function resolveIcon(name?: string | null) {
-  if (!name) return Sparkles;
+  if (!name || /sparkles?|stars?/i.test(name)) return CircleDot;
   const Cmp = (Icons as any)[name];
-  return Cmp || Sparkles;
+  return Cmp || CircleDot;
 }
 
 function isExternal(url: string) {

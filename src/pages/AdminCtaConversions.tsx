@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { BarChart3, MousePointerClick, Users, Sparkles, Download, Info, Lock } from "lucide-react";
+import { BarChart3, MousePointerClick, Users, CircleDot, Download, Info, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 import { CSVTools } from "@/components/CSVTools";
@@ -166,10 +166,10 @@ export default function AdminCtaConversions() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           <StatCard icon={MousePointerClick} label="Total Clicks" value={loading ? null : stats.totalClicks} hint="All CTA click events in range" />
           <StatCard icon={Users} label="Unique Sessions" value={loading ? null : stats.uniqueSessions} hint="Distinct browser sessions" />
-          <StatCard icon={Sparkles} label="Pages Tracked" value={loading ? null : stats.byPage.size} hint="Distinct page categories" />
+          <StatCard icon={CircleDot} label="Pages Tracked" value={loading ? null : stats.byPage.size} hint="Distinct page categories" />
           <StatCard icon={BarChart3} label="CTA Variants" value={loading ? null : stats.byCta.size} hint="Distinct CTA labels" />
           <StatCard icon={MousePointerClick} label="Clicks / Session" value={loading ? null : Number(kpis.clicksPerSession.toFixed(2))} hint="Avg CTAs per unique session" />
-          <StatCard icon={Sparkles} label={`Top: ${kpis.topPage}`} value={loading ? null : Number((kpis.topPageRate * 100).toFixed(0))} suffix="%" hint="Clicks ÷ sessions on top page" />
+          <StatCard icon={CircleDot} label={`Top: ${kpis.topPage}`} value={loading ? null : Number((kpis.topPageRate * 100).toFixed(0))} suffix="%" hint="Clicks ÷ sessions on top page" />
         </div>
 
         <details className="rounded-lg border bg-muted/30 px-4 py-2 text-xs">

@@ -2,7 +2,7 @@ import { useCallback, useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { backendClient } from "@/integrations/backend/client";
-import { Check, Copy, ExternalLink, Upload, Link as LinkIcon, X, Images, Loader2, Sparkles, Wand2 } from "lucide-react";
+import { Check, Copy, ExternalLink, Upload, Link as LinkIcon, X, Images, Loader2, CircleDot, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { ImageHint, type ImagePresetKey } from "@/components/ImageHint";
 import { fetchRemoteImageFile, optimizeImageFile, optimizeRemoteImage } from "@/lib/imageOptimizer";
@@ -167,7 +167,7 @@ export function ImageUploadField({
               className="rounded-xl gap-1.5 shrink-0"
               title={quality.hd ? "Copy the original linked image to your storage without reducing quality" : "Optimize the linked image and save it to your storage"}
             >
-              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : quality.hd ? <Sparkles className="w-4 h-4" /> : <Wand2 className="w-4 h-4" />}
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : quality.hd ? <CircleDot className="w-4 h-4" /> : <Wand2 className="w-4 h-4" />}
               <span className="hidden sm:inline">{quality.hd ? "Save HD copy" : "Optimize & save"}</span>
             </Button>
           </div>

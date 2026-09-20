@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, GraduationCap, BookOpen, FileText, ClipboardList, Star, Newspaper, MapPin, ArrowRight, Sparkles } from "lucide-react";
+import { Search, GraduationCap, BookOpen, FileText, ClipboardList, Star, Newspaper, MapPin, ArrowRight, CircleDot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { displayText } from "@/lib/displayText";
 import { searchDirectory } from "@/lib/directorySearch";
@@ -128,7 +128,7 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
                   onClick={handleAskAI}
                   className="flex-shrink-0 flex items-center gap-1.5 mr-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <CircleDot className="w-4 h-4" />
                   <span className="hidden sm:inline">Ask AI</span>
                 </button>
               </div>
@@ -183,7 +183,7 @@ export function UniversalSearch({ onOpenChat }: UniversalSearchProps) {
                       className="w-full flex items-center gap-3 text-left hover:opacity-80 transition-opacity"
                     >
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-white" />
+                        <CircleDot className="w-5 h-5 text-white" />
                       </div>
                       <div>
                         <p className="font-semibold text-primary text-sm">Ask AI Counselor</p>

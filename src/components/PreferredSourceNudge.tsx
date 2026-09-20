@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, Sparkles, X } from "lucide-react";
+import { CheckCircle2, CircleDot, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import { GoogleGLogo } from "@/components/GoogleGLogo";
@@ -94,7 +94,7 @@ export function PreferredSourceNudge() {
                 <CheckCircle2 className="h-3 w-3" /> 1 click
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2 py-0.5 text-[10px] font-bold text-orange-700 dark:bg-orange-950 dark:text-orange-200">
-                <Sparkles className="h-3 w-3" /> Latest education updates
+                <CircleDot className="h-3 w-3" /> Latest education updates
               </span>
             </div>
             <p className="mt-2 text-sm font-extrabold leading-snug text-slate-950 dark:text-white">

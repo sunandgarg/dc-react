@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, TrendingUp, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, TrendingUp, CircleDot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { backendClient } from "@/integrations/backend/client";
 import { ProfessionalAvatar } from "@/components/ProfessionalAvatar";
@@ -21,7 +21,7 @@ interface CareerCard {
   image?: string;
 }
 
-const ICONS = ["💼", "🚀", "🎯", "💡", "🏆", "⚡", "🌟", "🔥", "📊", "🧠"];
+const ICONS = ["💼", "🚀", "🎯", "💡", "🏆", "⚡", "🧭", "🔥", "📊", "🧠"];
 const GRADIENTS = [
   "from-primary/20 to-accent/20",
   "from-accent/20 to-golden/20",
@@ -87,7 +87,7 @@ export function CareerScopeCarousel({ courseSlug, careers, courseName }: Props) 
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary" /> Career Paths after {courseName}
+            <CircleDot className="w-5 h-5 text-primary" /> Career Paths after {courseName}
           </h2>
           <p className="text-xs text-muted-foreground mt-1">Meet the {cards.length} roles this course can lead to</p>
         </div>

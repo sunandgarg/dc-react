@@ -863,7 +863,7 @@ CREATE TABLE public.about_values (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     title text NOT NULL,
     description text DEFAULT ''::text NOT NULL,
-    icon_emoji text DEFAULT '⭐'::text NOT NULL,
+    icon_emoji text DEFAULT '🎓'::text NOT NULL,
     display_order integer DEFAULT 0 NOT NULL,
     is_active boolean DEFAULT true NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL
@@ -1024,7 +1024,7 @@ CREATE TABLE public.also_check_modules (
     title text NOT NULL,
     description text,
     url text DEFAULT ''::text NOT NULL,
-    icon text DEFAULT 'Sparkles'::text,
+    icon text DEFAULT 'CircleDot'::text,
     sort_order integer DEFAULT 0 NOT NULL,
     enabled boolean DEFAULT true NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,

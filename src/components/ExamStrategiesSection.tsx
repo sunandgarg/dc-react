@@ -5,7 +5,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { useCarouselNav, CarouselControls } from "@/components/CarouselControls";
 import {
   FileDown, Lightbulb, Calendar, CalendarClock, Clock, Timer,
-  TimerReset, Zap, Flame, Sparkles, Rocket, ArrowRight, Trophy
+  TimerReset, Zap, Flame, CircleDot, Rocket, ArrowRight, Trophy
 } from "lucide-react";
 import { findStrategyByKey } from "@/lib/examStrategies";
 
@@ -66,7 +66,7 @@ function ExamLogo({
   return (
     <div className="relative w-11 h-11 shrink-0 overflow-hidden rounded-xl border border-border bg-primary/10">
       <span className="absolute inset-0 flex items-center justify-center px-1 text-center text-[10px] font-extrabold text-primary">
-        {initials || <Sparkles className="w-5 h-5" />}
+        {initials || <CircleDot className="w-5 h-5" />}
       </span>
       {source && (
         <img

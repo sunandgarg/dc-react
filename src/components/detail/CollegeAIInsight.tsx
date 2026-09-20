@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { CircleDot } from "lucide-react";
 import { displayRating } from "@/lib/ratings";
 
 interface Props {
@@ -34,7 +34,7 @@ export function CollegeAIInsight({ college }: Props) {
     <section className="bg-blue-50/60 border border-blue-100 rounded-3xl p-5 md:p-6">
       <div className="flex items-center gap-3 mb-3 md:mb-4">
         <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center shadow-sm shadow-blue-200">
-          <Sparkles className="w-4 h-4 text-white" />
+          <CircleDot className="w-4 h-4 text-white" />
         </div>
         <span className="font-bold text-blue-700 text-sm md:text-base">
           DekhoCampus AI Insight

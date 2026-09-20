@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { CircleDot } from "lucide-react";
 import { RichTextEditor } from "@/components/RichTextEditor";
 
 interface PageSummaryFieldProps {
@@ -21,7 +21,7 @@ export function PageSummaryField({ value, onChange }: PageSummaryFieldProps) {
     <div className="rounded-xl border border-primary/25 bg-primary/[0.04] p-3 md:p-4">
       <div className="flex items-start gap-3 mb-2">
         <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground shrink-0">
-          <Sparkles className="w-4 h-4" />
+          <CircleDot className="w-4 h-4" />
         </span>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-foreground">Quick Summary (Page Summary)</p>

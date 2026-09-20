@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, BarChart3, CalendarDays, Check, CheckCircle2, Clock3, Loader2, MessageSquareText, RefreshCw, Send, Sparkles, Target } from "lucide-react";
+import { ArrowLeft, BarChart3, CalendarDays, Check, CheckCircle2, Clock3, Loader2, MessageSquareText, RefreshCw, Send, CircleDot, Target } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -101,7 +101,7 @@ export default function CatAiCoach() {
         <PageBreadcrumb items={[{ label: "CAT Universe", href: "/cat-universe" }, { label: "AI CAT Coach" }]} />
         <div className="mt-6 grid gap-6 xl:grid-cols-[380px_1fr]">
           <aside className="rounded-lg border border-slate-200 bg-white p-5 xl:sticky xl:top-4 xl:self-start">
-            <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary"><Sparkles className="h-5 w-5" /></div><div><div className="text-xs font-bold uppercase text-primary">Free CAT 2026 coach</div><h1 className="text-xl font-bold text-slate-950">Build your next seven days</h1></div></div>
+            <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary"><CircleDot className="h-5 w-5" /></div><div><div className="text-xs font-bold uppercase text-primary">Free CAT 2026 coach</div><h1 className="text-xl font-bold text-slate-950">Build your next seven days</h1></div></div>
             <div className="mt-6 space-y-5">
               <label className="block text-sm font-semibold text-slate-800">Target percentile <span className="float-right text-primary">{diagnostic.target_percentile}</span>
                 <input type="range" min="70" max="99.9" step="0.5" value={diagnostic.target_percentile} onChange={(event) => setDiagnostic((item) => ({ ...item, target_percentile: Number(event.target.value) }))} className="mt-3 w-full accent-primary" />

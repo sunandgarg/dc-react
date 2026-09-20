@@ -13,7 +13,7 @@ import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { PageSummary } from "@/components/detail/PageSummary";
 import { RichText } from "@/components/detail/RichText";
-import { Award, Calendar, IndianRupee, GraduationCap, ArrowUp, Share2, ArrowRight, CheckCircle2, Phone, Sparkles, MessageCircle } from "lucide-react";
+import { Award, Calendar, IndianRupee, GraduationCap, ArrowUp, Share2, ArrowRight, CheckCircle2, Phone, CircleDot, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -128,7 +128,7 @@ export default function ScholarshipDetail() {
                   Apply Now <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
                 <Button size="lg" variant="outline" onClick={() => openGuidanceGate("hero")} className="w-full sm:w-auto rounded-xl border-primary/40 text-primary hover:bg-primary/10">
-                  <Sparkles className="w-4 h-4 mr-1" /> Get Free Guidance
+                  <CircleDot className="w-4 h-4 mr-1" /> Get Free Guidance
                 </Button>
                 <Button variant="ghost" size="lg" onClick={handleShare} className="w-full sm:w-auto rounded-xl"><Share2 className="w-4 h-4 mr-1" />Share</Button>
               </div>
@@ -202,7 +202,7 @@ export default function ScholarshipDetail() {
               <div className="rounded-2xl p-5 md:p-6 bg-gradient-to-r from-primary via-primary to-accent text-primary-foreground flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg shadow-primary/20">
                 <div className="flex-1">
                   <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-foreground/15 text-[10.5px] font-bold uppercase tracking-wide mb-1.5">
-                    <Sparkles className="w-3 h-3" /> Limited slots
+                    <CircleDot className="w-3 h-3" /> Limited slots
                   </div>
                   <h3 className="text-lg md:text-xl font-bold">Maximize your chances of getting selected</h3>
                   <p className="text-sm opacity-90 mt-1">Free 1-on-1 counselling - eligibility check, document review & application help.</p>
@@ -257,7 +257,7 @@ export default function ScholarshipDetail() {
                 )}
                 <div className="bg-gradient-to-br from-primary/10 via-card to-accent/5 border border-primary/20 rounded-2xl p-4 text-center">
                   <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10.5px] font-bold uppercase tracking-wide mb-2">
-                    <Sparkles className="w-3 h-3" /> Free
+                    <CircleDot className="w-3 h-3" /> Free
                   </div>
                   <h3 className="text-base font-bold text-foreground">Need help applying?</h3>
                   <p className="text-xs text-muted-foreground mt-1 mb-3">Get free guidance from our scholarship experts</p>

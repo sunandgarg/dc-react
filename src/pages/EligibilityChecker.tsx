@@ -10,7 +10,7 @@ import { AIDisclaimer } from "@/components/AIDisclaimer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Sparkles, MapPin, Star, Globe, Heart } from "lucide-react";
+import { CheckCircle2, CircleDot, MapPin, Star, Globe, Heart } from "lucide-react";
 import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { silentSaveLead } from "@/lib/leadCapture";
@@ -235,7 +235,7 @@ export default function EligibilityChecker() {
               <CheckCircle2 className="w-3 h-3" /> Free · 30 sec
             </div>
             <h1 className="mt-2.5 text-[28px] md:text-4xl font-black tracking-tight text-foreground leading-[1.05]">
-              Find colleges<br/>that actually <span className="text-emerald-600">want you</span> ✨
+              Find colleges<br/>that actually <span className="text-emerald-600">want you</span>
             </h1>
             <p className="mt-2 text-[13px] md:text-base text-foreground/70">
               Skip the maybe-list. We'll only show colleges where your score makes the cut.
@@ -342,7 +342,7 @@ export default function EligibilityChecker() {
             {aiResult && (
               <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-4 md:p-5">
                 <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 uppercase tracking-wider mb-2">
-                  <Sparkles className="w-3.5 h-3.5" /> AI Personalised Verdict
+                  <CircleDot className="w-3.5 h-3.5" /> AI Personalised Verdict
                 </div>
                 {aiResult.summary && (
                   <p className="text-sm md:text-[15px] text-foreground font-medium leading-relaxed whitespace-pre-wrap">

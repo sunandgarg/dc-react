@@ -9,7 +9,7 @@ const TYPE_META: Record<string, { label: string; emoji: string }> = {
   notes: { label: "Notes", emoji: "📓" },
   pyq: { label: "Previous Year Papers", emoji: "📝" },
   "lab-manual": { label: "Lab Manual", emoji: "🧪" },
-  "important-questions": { label: "Important Questions", emoji: "⭐" },
+  "important-questions": { label: "Important Questions", emoji: "📌" },
   "model-papers": { label: "Model Papers", emoji: "📄" },
   "viva-questions": { label: "Viva Questions", emoji: "🎤" },
   "reference-books": { label: "Reference Books", emoji: "📚" },

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import {
   Send,
-  Sparkles,
+  CircleDot,
   Zap,
   MapPin,
   ArrowRight,
@@ -351,7 +351,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
                           className="flex min-h-[72px] w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50"
                         >
                           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                            <Sparkles className="h-5 w-5" />
+                            <CircleDot className="h-5 w-5" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="truncate text-sm font-semibold text-foreground md:text-base">Ask Diya about “{searchQuery.trim()}”</p>
@@ -368,7 +368,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
                         className="flex min-h-12 w-full items-center gap-3 text-left transition-opacity hover:opacity-80"
                       >
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-                          <Sparkles className="w-5 h-5 text-white" />
+                          <CircleDot className="w-5 h-5 text-white" />
                         </div>
                         <div>
                           <p className="font-semibold text-accent text-sm">Ask AI Counselor</p>

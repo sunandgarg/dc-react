@@ -537,7 +537,7 @@
         "nullable": false,
         "primaryKey": false,
         "format": "text",
-        "default": "⭐",
+        "default": "🎓",
         "foreignKey": null
       },
       "display_order": {
@@ -1780,7 +1780,7 @@
         "nullable": true,
         "primaryKey": false,
         "format": "text",
-        "default": "Sparkles",
+        "default": "CircleDot",
         "foreignKey": null
       },
       "sort_order": {
@@ -3822,7 +3822,7 @@
         "nullable": false,
         "primaryKey": false,
         "format": "text",
-        "default": "sparkles",
+        "default": "circle-dot",
         "foreignKey": null
       },
       "badge": {
@@ -4177,7 +4177,7 @@
         "nullable": false,
         "primaryKey": false,
         "format": "text",
-        "default": "sparkles",
+        "default": "circle-dot",
         "foreignKey": null
       },
       "accent_class": {

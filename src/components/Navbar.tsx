@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, ChevronDown, User, Sparkles, Shield, LogOut, Home, Gift, FileText, Settings, BookOpen } from "lucide-react";
+import { Menu, X, ChevronDown, User, CircleDot, Shield, LogOut, Home, Gift, FileText, Settings, BookOpen } from "lucide-react";
 import logo from "@/assets/dekhocampus-logo-small.webp";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";

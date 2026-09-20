@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Search, BookOpen, Info, DollarSign, FileText, Settings, CheckCircle2, Layers, Eye, Sparkles, Briefcase, HelpCircle, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, BookOpen, Info, DollarSign, FileText, Settings, CheckCircle2, Layers, Eye, CircleDot, Briefcase, HelpCircle, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { ImageHint } from "@/components/ImageHint";
 import { UploadOrUrlField, YouTubeField } from "@/components/UploadOrUrlField";
@@ -126,7 +126,7 @@ export default function AdminCourses() {
           { label: "Published", value: stats.published, icon: CheckCircle2, tone: "success" },
           { label: "Drafts", value: stats.draft, icon: Layers, tone: "warning" },
           { label: "Inactive", value: stats.inactive, icon: Eye, tone: "muted" },
-          { label: "Top Category", value: stats.topCat, icon: Sparkles, tone: "primary" },
+          { label: "Top Category", value: stats.topCat, icon: CircleDot, tone: "primary" },
         ]}
       />
 
@@ -193,7 +193,7 @@ export default function AdminCourses() {
                   <Badge variant="outline" className="text-[10px]">{compactDisplayText(c.category, "General", 28)}</Badge>
                   <Badge variant="outline" className="text-[10px]">{compactDisplayText(c.level, "Course", 28)}</Badge>
                   <Badge variant={c.status === "Published" ? "default" : "secondary"} className="text-[10px]">{c.status}</Badge>
-                  <Badge variant="outline" className="text-[10px] bg-primary/5 border-primary/20 text-primary">⭐ P {(c as any).priority ?? 50}</Badge>
+                  <Badge variant="outline" className="text-[10px] bg-primary/5 border-primary/20 text-primary">Priority {(c as any).priority ?? 50}</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground truncate">{c.full_name} • {c.duration} • {c.mode}</p>
               </div>

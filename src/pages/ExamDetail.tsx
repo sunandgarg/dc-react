@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { buildExamHref } from "@/lib/entityUrls";
 import { useSEO } from "@/hooks/useSEO";
-import { Calendar, Users, FileText, Award, Building, BookOpen, CheckCircle, Clock, Newspaper, CreditCard, MapPin, ClipboardList, ExternalLink, Globe, AlertCircle, Download, Sparkles, FileDown } from "lucide-react";
+import { Calendar, Users, FileText, Award, Building, BookOpen, CheckCircle, Clock, Newspaper, CreditCard, MapPin, ClipboardList, ExternalLink, Globe, AlertCircle, Download, CircleDot, FileDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
@@ -190,7 +190,7 @@ export default function ExamDetail() {
             aria-labelledby="strategy-heading"
           >
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10.5px] font-bold uppercase tracking-wide mb-2">
-              <Sparkles className="w-3 h-3" /> Strategy Hub
+              <CircleDot className="w-3 h-3" /> Strategy Hub
             </div>
             <h1 id="strategy-heading" className="text-xl md:text-2xl font-bold text-foreground">
               {strategy.h1(exam.name, year)}

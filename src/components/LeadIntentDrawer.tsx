@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
-import { Sparkles, Flame, Snowflake, Activity, GraduationCap } from "lucide-react";
+import { CircleDot, Flame, Snowflake, Activity, GraduationCap } from "lucide-react";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 
 const CAT: Record<string, { label: string; cls: string; icon: any }> = {
@@ -97,7 +97,7 @@ export function LeadIntentDrawer({ leadId, leadPhone, leadName, siteScope = DEFA
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold">AI Intent Prediction</h3>
                 <Button size="sm" variant="outline" onClick={() => runPrediction(score.id, "ai")} disabled={aiLoading}>
-                  <Sparkles className="h-3.5 w-3.5 mr-1" />{aiLoading ? "…" : "Deep analyze (AI)"}
+                  <CircleDot className="h-3.5 w-3.5 mr-1" />{aiLoading ? "…" : "Deep analyze (AI)"}
                 </Button>
               </div>
               {prediction ? (

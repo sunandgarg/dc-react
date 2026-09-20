@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { GraduationCap, BookOpen, Users, Award, TrendingUp, Sparkles } from "lucide-react";
+import { GraduationCap, BookOpen, Users, Award, TrendingUp, CircleDot } from "lucide-react";
 
 const stats = [
   { icon: GraduationCap, value: "5,000+", label: "Partner Colleges", color: "from-amber-400 to-orange-500" },
@@ -7,7 +7,7 @@ const stats = [
   { icon: Users, value: "1M+", label: "Students Guided", color: "from-violet-400 to-purple-500" },
   { icon: Award, value: "500+", label: "Entrance Exams", color: "from-rose-400 to-pink-500" },
   { icon: TrendingUp, value: "95%", label: "Success Rate", color: "from-amber-500 to-orange-600" },
-  { icon: Sparkles, value: "24/7", label: "AI Support", color: "from-sky-400 to-blue-500" },
+  { icon: CircleDot, value: "24/7", label: "AI Support", color: "from-sky-400 to-blue-500" },
 ];
 
 export function StatsSection() {

@@ -4,7 +4,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Check, ChevronRight, Loader2, Sparkles, X } from "lucide-react";
+import { Check, ChevronRight, Loader2, CircleDot, X } from "lucide-react";
 import {
   useCollegePrograms,
   useCollegeUniversities,
@@ -276,7 +276,7 @@ export function CollegeStudyTagger({ articleId, onDone }: Props) {
               <p className="text-[11px] text-muted-foreground">{linkedUnisOfProgram} of {unis.length} linked</p>
               <div className="flex gap-1.5">
                 <Button size="sm" variant="outline" className="h-7 text-[11px]" disabled={!!bulkBusy} onClick={() => bulkLink("college_university", allUniSlugs, "universities")}>
-                  {bulkBusy === "college_university" ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                  {bulkBusy === "college_university" ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <CircleDot className="w-3 h-3 mr-1" />}
                   Link all universities
                 </Button>
                 {linkedUnisOfProgram > 0 && (
@@ -327,7 +327,7 @@ export function CollegeStudyTagger({ articleId, onDone }: Props) {
               <div className="flex items-center justify-between mb-2 gap-2">
                 <p className="text-[11px] text-muted-foreground">{semSlugs.filter((s) => isLinked("college_semester", s)).length} of {semSlugs.length} linked</p>
                 <Button size="sm" variant="outline" className="h-7 text-[11px]" disabled={!!bulkBusy} onClick={() => bulkLink("college_semester", semSlugs, "semesters")}>
-                  {bulkBusy === "college_semester" ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                  {bulkBusy === "college_semester" ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <CircleDot className="w-3 h-3 mr-1" />}
                   Link all semesters
                 </Button>
               </div>
@@ -374,7 +374,7 @@ export function CollegeStudyTagger({ articleId, onDone }: Props) {
               <div className="flex items-center justify-between mb-2 gap-2">
                 <p className="text-[11px] text-muted-foreground">{subjectSlugs.filter((s) => isLinked("college_subject", s)).length} of {subjectSlugs.length} linked</p>
                 <Button size="sm" variant="outline" className="h-7 text-[11px]" disabled={!!bulkBusy} onClick={() => bulkLink("college_subject", subjectSlugs, "subjects")}>
-                  {bulkBusy === "college_subject" ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                  {bulkBusy === "college_subject" ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <CircleDot className="w-3 h-3 mr-1" />}
                   Link all subjects
                 </Button>
               </div>

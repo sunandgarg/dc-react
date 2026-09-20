@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { functionUrl } from "@/lib/backendMode";
 import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
-import { Download, Sparkles, Flame, Snowflake, Activity, GraduationCap } from "lucide-react";
+import { Download, CircleDot, Flame, Snowflake, Activity, GraduationCap } from "lucide-react";
 
 interface ScoreRow {
   id: string;
@@ -318,7 +318,7 @@ export default function AdminLeadIntelligence() {
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold">AI Intent Prediction</h3>
                     <Button size="sm" variant="outline" onClick={() => runPrediction(selected.id, "ai")} disabled={aiLoading}>
-                      <Sparkles className="h-3.5 w-3.5 mr-1" />{aiLoading ? "…" : "Deep analyze (AI)"}
+                      <CircleDot className="h-3.5 w-3.5 mr-1" />{aiLoading ? "…" : "Deep analyze (AI)"}
                     </Button>
                   </div>
                   {prediction ? (

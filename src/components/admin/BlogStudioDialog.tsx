@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sparkles, Loader2, Image as ImageIcon, BookOpenCheck, Plus, Trash2 } from "lucide-react";
+import { CircleDot, Loader2, Image as ImageIcon, BookOpenCheck, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
 import { slugify } from "@/lib/slugify";
@@ -170,7 +170,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
   };
 
   return <>
-    <Button className="gap-2 rounded-xl" onClick={() => setOpen(true)}><Sparkles className="w-4 h-4" /> {siteScope === "sarkari" ? "Sarkari Job AI Studio" : "AI Blog Studio"}</Button>
+    <Button className="gap-2 rounded-xl" onClick={() => setOpen(true)}><CircleDot className="w-4 h-4" /> {siteScope === "sarkari" ? "Sarkari Job AI Studio" : "AI Blog Studio"}</Button>
     <Dialog open={open} onOpenChange={setOpen}><DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
       <DialogHeader><DialogTitle className="flex items-center gap-2"><BookOpenCheck className="w-5 h-5 text-primary" /> {siteScope === "sarkari" ? "Sarkari Job Editorial Studio" : "Editorial Blog Studio"}</DialogTitle></DialogHeader>
       <div className="space-y-4">
@@ -193,7 +193,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
           {imageMode === "generated" && <p className="mt-2 text-xs text-muted-foreground">OpenAI receives the supplied DekhoCampus cover as a style reference and changes only the illustrated background. Branding and typography are rendered locally and stay fixed.</p>}
         </div>
         <p className="text-xs text-muted-foreground">Research sources are private editorial inputs, never published citations. Every result is checked against all existing article intents, reviewed for factual usefulness, and rechecked when you publish.</p>
-        <Button onClick={generate} disabled={busy} className="gap-2">{busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />} Research, write and generate branded cover</Button>
+        <Button onClick={generate} disabled={busy} className="gap-2">{busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <CircleDot className="w-4 h-4" />} Research, write and generate branded cover</Button>
         {draft && <div className="grid gap-4 border-t pt-4 lg:grid-cols-[1.2fr_.8fr]">
           <div className="space-y-4">
             <div><Label>Article title</Label><Input value={draft.title} onChange={event => setDraft({ ...draft, title: event.target.value })} className="mt-1" /></div>

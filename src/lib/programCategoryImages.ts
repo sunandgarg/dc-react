@@ -26,6 +26,11 @@ export function getProgramCategoryIcon(slug?: string | null) {
   return slug ? CATEGORY_ICONS[slug] : undefined;
 }
 
+export function resolveProgramCategoryEmoji(iconEmoji?: string | null) {
+  const value = String(iconEmoji || "").trim();
+  return !value || /[✨⭐🌟★☆✦✧❇]/u.test(value) ? "🎓" : value;
+}
+
 export function resolveProgramCategoryArtwork(slug?: string | null, adminImageUrl?: string | null) {
   const uploaded = String(adminImageUrl || "").trim();
   const isLegacyBundledIcon = uploaded.startsWith("/category-icons/");

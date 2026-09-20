@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { toast } from "sonner";
 import {
-  Plus, Search, Zap, Activity, Building2, Target, Settings2, Trash2, Play, Sparkles,
+  Plus, Search, Zap, Activity, Building2, Target, Settings2, Trash2, Play, CircleDot,
   CheckCircle2, XCircle, AlertCircle, Clock, ChevronRight, Filter, Workflow, Rocket, X, Check, ChevronsUpDown, BookOpen,
 } from "lucide-react";
 import { useDraftState } from "@/hooks/useDraftState";
@@ -327,7 +327,7 @@ export default function AdminMarketingAutomation() {
           <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur text-xs font-semibold tracking-wide mb-3">
-                <Sparkles className="w-3.5 h-3.5" /> AUTOMATION ENGINE · 2026
+                <CircleDot className="w-3.5 h-3.5" /> AUTOMATION ENGINE · 2026
               </div>
               <h1 className="text-3xl md:text-4xl font-bold leading-tight">Easy Lead Push Setup</h1>
               <p className="text-white/85 mt-1.5 text-sm md:text-base max-w-2xl">
@@ -1030,7 +1030,7 @@ function PrefillEditor({ rule, unis, onSaved }: { rule: Rule; unis: Uni[]; onSav
         <div className="space-y-3">
           <Card className="p-4 border-orange-500/20 bg-orange-500/5">
             <div className="flex items-start gap-3">
-              <Sparkles className="w-4 h-4 text-orange-500 mt-0.5" />
+              <CircleDot className="w-4 h-4 text-orange-500 mt-0.5" />
               <div>
                 <div className="font-semibold text-sm">Layman flow</div>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
@@ -1236,7 +1236,7 @@ function LiveTester({ rules, unis, recentLeads, selectedLead }: { rules: Rule[];
       </Card>
 
       <Card className="p-5">
-        <div className="flex items-center gap-2 mb-3"><Sparkles className="w-4 h-4 text-orange-500" /><h3 className="font-semibold">Plain result</h3></div>
+        <div className="flex items-center gap-2 mb-3"><CircleDot className="w-4 h-4 text-orange-500" /><h3 className="font-semibold">Plain result</h3></div>
         {!result ? (
           <div className="text-sm text-muted-foreground italic">Run Safe Preview to see the exact routing and value changes before pushing.</div>
         ) : (

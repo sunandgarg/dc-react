@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Brain, CheckCircle2, ChevronRight, Clock3, GraduationCap, RotateCw, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowLeft, Brain, CheckCircle2, ChevronRight, Clock3, GraduationCap, RotateCw, ShieldCheck, CircleDot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 
@@ -144,7 +144,7 @@ export function PsychometricTestTool() {
             <Brain className="h-8 w-8" />
           </div>
           <span className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-violet-100 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-violet-700">
-            <Sparkles className="h-3.5 w-3.5" /> Free career discovery
+            <CircleDot className="h-3.5 w-3.5" /> Free career discovery
           </span>
           <h2 className="mx-auto mt-3 max-w-2xl text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
             Start Your Psychometric Career Test
@@ -230,7 +230,7 @@ export function PsychometricTestTool() {
     return (
       <div className="space-y-5">
         <div className={`rounded-3xl bg-gradient-to-br ${topMeta.color} p-6 text-white shadow-md`}>
-          <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider opacity-90"><Sparkles className="h-3.5 w-3.5" /> Your {selectedLevel?.label} career DNA</div>
+          <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider opacity-90"><CircleDot className="h-3.5 w-3.5" /> Your {selectedLevel?.label} career DNA</div>
           <div className="text-4xl">{topMeta.emoji}</div>
           <h2 className="mt-1 text-2xl font-extrabold leading-tight">{topMeta.name}</h2>
           <p className="mt-1 text-sm opacity-95">{topMeta.tag}</p>

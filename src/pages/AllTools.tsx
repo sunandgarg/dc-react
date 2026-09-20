@@ -4,7 +4,7 @@ import { Footer } from "@/components/Footer";
 import { FixedCounsellingCTA } from "@/components/FixedCounsellingCTA";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
-import { Calculator, Percent, IndianRupee, BarChart3, FileCheck, Heart, CalendarDays, Wallet, AlignLeft, Building2, Brain, ArrowRight, Target, Sparkles, Lock } from "lucide-react";
+import { Calculator, Percent, IndianRupee, BarChart3, FileCheck, Heart, CalendarDays, Wallet, AlignLeft, Building2, Brain, ArrowRight, Target, CircleDot, Lock } from "lucide-react";
 import { TOOLS_REGISTRY } from "@/lib/toolsRegistry";
 
 const ICON_MAP: Record<string, any> = {
@@ -53,7 +53,7 @@ export default function AllTools() {
             </div>
             <div className="flex-1">
               <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-extrabold uppercase tracking-wider mb-1.5">
-                <Sparkles className="w-3 h-3" /> New · AI Powered · Free PDF
+                <CircleDot className="w-3 h-3" /> New · AI Powered · Free PDF
               </div>
               <h2 className="text-xl md:text-2xl font-black tracking-tight leading-tight">{featuredTool.title}</h2>
               <p className="text-sm md:text-[15px] text-white/90 mt-1 max-w-2xl">{featuredTool.desc}</p>

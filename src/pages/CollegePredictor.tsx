@@ -9,7 +9,7 @@ import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Star, TrendingUp, Target, Sparkles, Globe, Heart } from "lucide-react";
+import { MapPin, Star, TrendingUp, Target, CircleDot, Globe, Heart } from "lucide-react";
 import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { silentSaveLead } from "@/lib/leadCapture";
@@ -297,7 +297,7 @@ export default function CollegePredictor() {
             {aiResult && (
               <div className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-violet-50 p-4 md:p-5">
                 <div className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-700 uppercase tracking-wider mb-2">
-                  <Sparkles className="w-3.5 h-3.5" /> AI Personalised Verdict
+                  <CircleDot className="w-3.5 h-3.5" /> AI Personalised Verdict
                 </div>
                 {selectedExam && (
                   <Badge variant="secondary" className="text-[10px] mb-2">

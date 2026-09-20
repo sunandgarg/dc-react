@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Save, Pencil, X, HelpCircle, Sparkles, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Trash2, Save, Pencil, X, HelpCircle, CircleDot, ArrowUp, ArrowDown } from "lucide-react";
 import { currentYear } from "@/lib/currentYear";
 import { toast } from "sonner";
 import { buildDefaultFaqs, type FaqEntityType } from "@/lib/defaultFaqs";
@@ -136,7 +136,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName, persisted = true }: 
         <div className="flex gap-2">
           {itemSlug && PAGE_TO_TYPE[page] && (
             <Button type="button" size="sm" variant="outline" onClick={generateDefaults} className="rounded-lg gap-1 h-8 text-xs">
-              <Sparkles className="w-3.5 h-3.5" /> Auto-add {currentYear()} defaults
+              <CircleDot className="w-3.5 h-3.5" /> Auto-add {currentYear()} defaults
             </Button>
           )}
           {!draft && (
