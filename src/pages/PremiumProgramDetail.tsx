@@ -23,7 +23,7 @@ import { FLOATING_CONTACT_BUTTON_CLASS } from "@/components/WhatsAppButton";
 import { safeEmbedUrl } from "@/lib/safeExternalUrl";
 
 function formatPrice(price: number) {
-  if (price >= 100000) return `₹${(price / 100000).toFixed(price % 100000 === 0 ? 0 : 1)}L`;
+  if (price >= 100000) return `₹${Number((price / 100000).toFixed(2))}L`;
   if (price >= 1000) return `₹${(price / 1000).toFixed(0)}K`;
   return `₹${price}`;
 }
