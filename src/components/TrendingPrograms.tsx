@@ -219,29 +219,38 @@ export function ProgramCard({ prog, onLead }: { prog: any; onLead: () => void })
   const emi = Number(prog.emi_starts_at) > 0 ? Number(prog.emi_starts_at) : 0;
   const href = prog.slug ? `/premium-programs/${prog.slug}` : null;
   const fallbackIcon = getProgramCategoryIcon(prog.category_slug);
-  const { heroImage: visualImage, instituteLogo } = resolvePremiumProgramMedia(prog);
+  const { cardImage: visualImage, detailHeroImage, instituteLogo } = resolvePremiumProgramMedia(prog);
   const isInstituteProgram = isIitIimProgram(prog);
+  const hasVisualImage = Boolean(visualImage);
+  const useCampusCrop = isInstituteProgram && visualImage !== detailHeroImage;
   return (
     <article className="group bg-card rounded-2xl border border-border overflow-hidden flex flex-col hover:shadow-xl hover:border-primary/40 transition-all">
-      <div className={`relative w-full border-b border-border/70 overflow-hidden ${isInstituteProgram ? "h-44 bg-slate-900" : "h-40 bg-white"}`}>
+      <div className={`relative h-44 w-full overflow-hidden border-b border-border/70 ${hasVisualImage ? "bg-slate-950" : "bg-white"}`}>
         {href ? (
           <Link to={href} aria-label={`View ${prog.title}`} className="absolute inset-0 z-10" />
         ) : (
           <button type="button" aria-label={`View ${prog.title}`} onClick={onLead} className="absolute inset-0 z-10" />
         )}
-        {isInstituteProgram && visualImage ? (
+        {visualImage ? (
           <>
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-700 via-slate-900 to-black text-white/50">
-              <GraduationCap className="h-12 w-12" aria-hidden="true" />
-            </div>
+            {!useCampusCrop && (
+              <img
+                src={visualImage}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="absolute -inset-3 h-[calc(100%+1.5rem)] w-[calc(100%+1.5rem)] scale-110 object-cover opacity-55 blur-xl"
+              />
+            )}
+            <div className="absolute inset-0 bg-black/15" aria-hidden="true" />
             <img
               src={visualImage}
               alt={`${prog.title} at ${prog.college_name || "the institute"}`}
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+              className={`absolute inset-0 h-full w-full transition-transform duration-500 group-hover:scale-[1.025] ${useCampusCrop ? "object-cover" : "object-contain"}`}
               onError={(event) => { event.currentTarget.style.display = "none"; }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/25" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/20" aria-hidden="true" />
             {instituteLogo ? (
               <div className="absolute bottom-3 left-3 z-20 flex h-12 max-w-[72%] items-center rounded-xl border border-white/60 bg-white/95 px-3 py-2 shadow-lg backdrop-blur-sm pointer-events-none">
                 <img
@@ -278,13 +287,13 @@ export function ProgramCard({ prog, onLead }: { prog: any; onLead: () => void })
           </div>
         )}
         <div className="absolute top-2 left-2 flex items-center gap-1.5 z-20 pointer-events-none">
-          <span className={`px-2.5 py-1 rounded-md text-[11px] font-extrabold tracking-wide uppercase shadow-sm ${isInstituteProgram ? "bg-white/95 text-slate-900 backdrop-blur-sm" : "bg-primary text-primary-foreground"}`}>
+          <span className={`px-2.5 py-1 rounded-md text-[11px] font-extrabold tracking-wide uppercase shadow-sm ${hasVisualImage ? "bg-white/95 text-slate-900 backdrop-blur-sm" : "bg-primary text-primary-foreground"}`}>
             {prog.tag || "IIT"}
           </span>
         </div>
         {prog.badge && (
           <div className="absolute top-2 right-2 z-20 pointer-events-none">
-            <Badge variant={prog.badge_variant as any} className={`text-[10px] font-bold px-2 ${isInstituteProgram ? "border-white/70 bg-black/55 text-white backdrop-blur-sm" : ""}`}>{prog.badge}</Badge>
+            <Badge variant={prog.badge_variant as any} className={`text-[10px] font-bold px-2 ${hasVisualImage ? "border-white/70 bg-black/60 text-white backdrop-blur-sm" : ""}`}>{prog.badge}</Badge>
           </div>
         )}
       </div>

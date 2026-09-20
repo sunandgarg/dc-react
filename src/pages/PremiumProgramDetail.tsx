@@ -124,7 +124,7 @@ export default function PremiumProgramDetail() {
   const legacyPoints: Array<{ title: string; description?: string }> = Array.isArray(program.institute_legacy_points) ? program.institute_legacy_points : [];
 
   const {
-    heroImage: heroImg,
+    detailHeroImage: heroImg,
     instituteLogo,
     certificateImage,
     degreeImage,
@@ -171,21 +171,31 @@ export default function PremiumProgramDetail() {
         <section className="overflow-hidden mb-5 rounded-2xl border border-border bg-card shadow-sm">
           <div className="grid lg:grid-cols-[1.05fr_1fr]">
             {/* Visual */}
-            <div className="relative overflow-hidden bg-primary/5">
+            <div className="relative aspect-[16/10] min-h-[250px] overflow-hidden bg-slate-950 sm:aspect-[16/9] lg:aspect-auto lg:h-full lg:min-h-[440px]">
               <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/5 via-muted to-primary/10" aria-hidden="true">
                 <GraduationCap className="w-24 h-24 text-primary/25" />
               </div>
               {heroImg ? (
-                <img
-                  src={heroImg}
-                  alt={`${program.college_name}: ${program.title}`}
-                  className="relative h-full min-h-[260px] w-full object-cover lg:min-h-[440px]"
-                  loading="eager"
-                  fetchPriority="high"
-                  onError={(event) => { event.currentTarget.style.display = "none"; }}
-                />
+                <>
+                  <img
+                    src={heroImg}
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-2xl"
+                    loading="eager"
+                  />
+                  <div className="absolute inset-0 bg-black/20" aria-hidden="true" />
+                  <img
+                    src={heroImg}
+                    alt={`${program.college_name}: ${program.title}`}
+                    className="relative h-full w-full object-contain"
+                    loading="eager"
+                    fetchPriority="high"
+                    onError={(event) => { event.currentTarget.style.display = "none"; }}
+                  />
+                </>
               ) : heroVideoUrl ? (
-                <iframe src={heroVideoUrl} title={program.title} className="relative h-full min-h-[260px] w-full lg:min-h-[440px]" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" referrerPolicy="strict-origin-when-cross-origin" />
+                <iframe src={heroVideoUrl} title={program.title} className="relative h-full w-full" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" referrerPolicy="strict-origin-when-cross-origin" />
               ) : null}
               {/* Floating badges */}
               <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">

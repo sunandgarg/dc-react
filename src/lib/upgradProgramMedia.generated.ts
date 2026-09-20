@@ -3,6 +3,7 @@
  * Do not hand-edit: update the audited upload plan/map and regenerate.
  * Plan generated: 2026-09-20T16:54:15.175Z
  * Browser upload completed: 2026-09-20T16:30:00+05:30
+ * Original-ratio detail heroes uploaded: 2026-09-20T23:33:48+05:30
  */
 export type UpgradProgramMedia = Readonly<{
   heroImage?: string;
@@ -12,7 +13,7 @@ export type UpgradProgramMedia = Readonly<{
 
 export const UPGRAD_PROGRAM_MEDIA = {
   "advanced-certificate-in-ai-powered-digital-marketing-and-communication-from-mica-mica": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923935574-vlhgyg.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927299925-v3l9ri.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923935810-j6och8.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924030787-j1wjbz.webp",
   },
@@ -20,94 +21,94 @@ export const UPGRAD_PROGRAM_MEDIA = {
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923935439-q0aa9r.webp",
   },
   "capm-certification-pmi": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062495-d2e510.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927356559-e2v8qw.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062694-5x6oq5.webp",
   },
   "certificate-programme-in-general-management-for-young-leaders-ylp-from-iimb-iim-bangalore": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924032796-ywlbuf.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927285147-2uikjj.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924032942-bkdtw5.webp",
   },
   "chief-data-and-ai-officer-program-iiit-b-and-iim-udaipur": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924031442-zujlj4.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927387043-yjmwg2.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413695-4ckc77.webp",
   },
   "chief-technology-and-ai-officer-program-university-of-waterloo": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923707024-cl9c1k.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927363752-s4nl8n.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923707210-n1cvac.webp",
   },
   "chief-technology-officer-and-ai-leadership-programme-iiit-b-and-iim-udaipur": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413478-4fi8x1.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927221699-km106s.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413695-4ckc77.webp",
   },
   "dba-in-emerging-technologies-with-a-concentration-in-generative-and-agentic-ai-golden-gate-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413197-7ul8c6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927400829-e5wuo8.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413335-tacxtq.webp",
   },
   "doctor-of-business-administration-dba-golden-gate-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706259-9jr8ul.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927333167-wob0rx.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413335-tacxtq.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923705169-810xq4.webp",
   },
   "doctor-of-education-ed-d-edgewood-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924033428-gcrgea.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927370922-goja87.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706570-5rnlnl.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924033596-a7fxi4.webp",
   },
   "doctorate-in-business-administration-by-edgewood-university-edgewood-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706445-tm6iej.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927336986-c3ly3i.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706570-5rnlnl.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923705736-nvllki.webp",
   },
   "doctorate-of-business-administration-dba-esgci-paris": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923705380-i8e4ub.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927379918-urw8y5.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923705521-21q8i4.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923705736-nvllki.webp",
   },
   "doctorate-of-business-administration-rushford-business-school": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923704834-6p4z3t.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927292716-s3uswe.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923704985-byjvub.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923705169-810xq4.webp",
   },
   "dual-master-of-education-m-ed-and-doctor-of-education-ed-d-degree-program-edgewood-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923707336-tbelnq.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927383391-gm1pa0.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706570-5rnlnl.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924033727-wdmslf.webp",
   },
   "edgewood-mba-and-dba-edgewood-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923707336-tbelnq.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927383391-gm1pa0.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706570-5rnlnl.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923705169-810xq4.webp",
   },
   "executive-diploma-in-ds-and-ai-the-international-institute-of-information-technology-bangalore": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923411511-t3dsa1.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927296007-dhucbl.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923411803-w0aw2s.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923414331-6a75nb.webp",
   },
   "executive-diploma-in-machine-learning-and-ai-iiit-bangalore": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923411511-t3dsa1.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927296007-dhucbl.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923411803-w0aw2s.webp",
   },
   "executive-post-graduate-certificate-in-ai-native-software-engineering-iit-kharagpur-iit-kharagpur": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413828-fp9urs.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927414974-3rq4id.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413982-z3ftef.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923414188-4ixaid.webp",
   },
   "executive-post-graduate-certificate-in-building-ai-products-systems-and-services-iit-kharagpur-iit-kharagpur": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413828-fp9urs.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927414974-3rq4id.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413982-z3ftef.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923414651-s1hryw.webp",
   },
   "executive-post-graduate-certificate-in-data-science-and-ai-iiit-bangalore": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923932475-z4hlwj.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927329437-b1mpjn.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923411803-w0aw2s.webp",
   },
   "executive-post-graduate-programme-in-applied-ai-and-agentic-ai-iiit-bangalore": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923411511-t3dsa1.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927296007-dhucbl.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923411803-w0aw2s.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923412011-nzo5hs.webp",
   },
   "executive-programme-in-generative-ai-and-agentic-ai-for-leaders-iiit-bangalore": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923412663-6pe0ic.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927367024-036tg8.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923411803-w0aw2s.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923412947-dl7g07.webp",
   },
@@ -118,160 +119,160 @@ export const UPGRAD_PROGRAM_MEDIA = {
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924032360-82mt3f.webp",
   },
   "global-doctor-of-business-administration-from-ssbm-swiss-school-of-business-and-management": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706773-yz55pd.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927355759-j4vty2.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706906-eps1qk.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923705736-nvllki.webp",
   },
   "insurance-fundamentals-program-hdfc-life": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924032479-2pgidd.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927340240-rlh378.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924032609-dwlztl.webp",
   },
   "leadership-and-communications-in-projects-microsoft": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062694-5x6oq5.webp",
   },
   "master-doctor-of-business-administration-mba-dba-golden-gate-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923707470-7mf5dy.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927397156-4f5zm9.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923413335-tacxtq.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923707609-6k7m09.webp",
   },
   "master-of-arts-in-industrial-organizational-psychology-golden-gate-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706259-9jr8ul.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927333167-wob0rx.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923934944-pp1uw1.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924031308-in8gfs.webp",
   },
   "master-of-education-m-ed-from-edgewood-university-edgewood-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923707336-tbelnq.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927383391-gm1pa0.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706570-5rnlnl.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924033727-wdmslf.webp",
   },
   "master-of-education-m-ed-from-northeastern-university-northeastern-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924033078-lfjjm1.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927360162-b35ahy.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924033213-2hsg42.webp",
   },
   "master-of-science-in-artificial-intelligence-and-data-science-o-p-jindal-global-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923933309-r4oi2h.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927325593-90sih9.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923933474-3oknic.webp",
   },
   "master-of-science-in-machine-learning-and-ai-liverpool-john-moores-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923414780-mrovpy.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927404192-inl86r.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923414903-rmrei3.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923704658-npxhxe.webp",
   },
   "masters-in-international-accounting-and-finance-accredited-by-acca-uk-o-p-jindal-global-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924031576-3j7tbu.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927314922-2y462y.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924031743-msd7fg.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924031864-f7mgen.webp",
   },
   "mba-from-edgewood-university-edgewood-college": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923707336-tbelnq.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927383391-gm1pa0.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923706570-5rnlnl.webp",
   },
   "mba-from-golden-gate-university-golden-gate-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923934823-lc3nv3.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927304788-ae8ob3.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923934944-pp1uw1.webp",
   },
   "mba-from-ljmu-with-iim-udaipur-certification-liverpool-john-moores-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923933974-0ooxo0.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927352178-wm2x2u.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923934108-yspnf3.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923934309-13b95f.webp",
   },
   "mba-from-o-p-jindal-global-university-o-p-jindal-global-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923934485-j7hcht.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927390308-3mrdcv.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923934620-xoswi1.webp",
   },
   "mba-from-paris-school-of-business-with-certification-from-iim-lucknow-psb-mba-iiml-certification": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923933608-o0o0ts.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927411603-2708cj.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923933840-662y77.webp",
   },
   "mba-in-business-and-law-from-o-p-jindal-global-university-o-p-jindal-global-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923934485-j7hcht.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927390308-3mrdcv.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923935058-n44v64.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923935273-ezjbd3.webp",
   },
   "microsoft-project-2007-2010-microsoft": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062926-asudv5.webp",
   },
   "microsoft-project-2013-microsoft": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062926-asudv5.webp",
   },
   "microsoft-project-2016-microsoft": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062926-asudv5.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063031-0xbum3.webp",
   },
   "ms-in-data-science-liverpool-john-moores-university": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923932823-t2bkjw.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927303783-4mbcsj.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923932956-nadpo9.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923933173-gvg5nv.webp",
   },
   "pfmp-certification-course-pmi": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063209-9b4cbw.webp",
   },
   "pmi-rmp-certification-pmi": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062694-5x6oq5.webp",
   },
   "pmp-certification-pmi": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063450-mup0z6.webp",
   },
   "pmp-renewal-learning-path-pmi": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062694-5x6oq5.webp",
   },
   "prince2-agile-foundation-and-practitioner-prince2": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063577-2cow7d.webp",
   },
   "prince2-agile-foundation-certification-prince2": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063728-kt2tg3.webp",
   },
   "prince2-agile-practitioner-certification-prince2": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063863-k96m59.webp",
   },
   "prince2-foundation-and-practitioner-certification-prince2": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063577-2cow7d.webp",
   },
   "prince2-foundation-prince2": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063994-hq7e37.webp",
   },
   "prince2-practitioner-prince2": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924064274-jfqjpx.webp",
   },
   "professional-certificate-programme-in-ai-for-business-professionals-iim-kozhikode": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923412235-et5tfs.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927322185-ow2bs0.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923412365-gdublm.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923412533-kg2ar0.webp",
   },
   "professional-certificate-programme-in-data-science-and-agentic-ai-iiit-bangalore": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923412663-6pe0ic.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927367024-036tg8.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923411803-w0aw2s.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923412805-qrc20o.webp",
   },
   "professional-certification-in-hr-management-and-analytics-iim-kozhikode": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924032008-6v0s9m.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927281050-nu53e2.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923412365-gdublm.webp",
   },
   "program-management-professional-pgmp-certification-pmi": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062809-00nea6.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927288822-b64nvb.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063327-rly4xu.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924063031-0xbum3.webp",
   },
   "project-management-masters-certification-program-pmi": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062495-d2e510.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927356559-e2v8qw.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789924062694-5x6oq5.webp",
   },
   "universal-ai-by-mit-open-learning-mit-open-learning": {
-    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923707806-n4vs8s.webp",
+    heroImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789927318827-toxj6p.webp",
     instituteLogo: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923708072-1x7cc1.webp",
     certificateImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/approval-logos/1789923708240-ffz3ae.webp",
   },

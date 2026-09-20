@@ -22,8 +22,9 @@ describe("isIitIimProgram", () => {
   });
 
   it("uses the audited AWS hero, logo and certificate for mapped programmes", () => {
+    const slug = "executive-post-graduate-certificate-in-building-ai-products-systems-and-services-iit-kharagpur-iit-kharagpur";
     const resolved = resolvePremiumProgramMedia({
-      slug: "executive-post-graduate-certificate-in-building-ai-products-systems-and-services-iit-kharagpur-iit-kharagpur",
+      slug,
       hero_image: "https://example.com/generic-cover.webp",
       institute_logo: "https://example.com/generic-logo.webp",
       certificate_image: "https://example.com/generic-certificate.webp",
@@ -31,7 +32,9 @@ describe("isIitIimProgram", () => {
     });
 
     expect(resolved).toEqual({
-      heroImage: expect.stringMatching(/^https:\/\/aws-origin\.dekhocampus\.com\//),
+      cardImage: "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/media-library/1789919914234-ua4doe.webp",
+      detailHeroImage: UPGRAD_PROGRAM_MEDIA[slug].heroImage,
+      heroImage: UPGRAD_PROGRAM_MEDIA[slug].heroImage,
       instituteLogo: expect.stringMatching(/^https:\/\/aws-origin\.dekhocampus\.com\//),
       certificateImage: expect.stringMatching(/^https:\/\/aws-origin\.dekhocampus\.com\//),
       degreeImage: "https://example.com/degree.webp",
@@ -46,6 +49,8 @@ describe("isIitIimProgram", () => {
       certificate_image: "https://example.com/certificate.webp",
       degree_image: "https://example.com/degree.webp",
     })).toEqual({
+      cardImage: "https://example.com/hero.webp",
+      detailHeroImage: "https://example.com/hero.webp",
       heroImage: "https://example.com/hero.webp",
       instituteLogo: "https://example.com/logo.webp",
       certificateImage: "https://example.com/certificate.webp",
@@ -60,6 +65,8 @@ describe("isIitIimProgram", () => {
       institute_logo: "https://example.com/imt-logo.webp",
       certificate_image: "https://example.com/imt-certificate.webp",
     })).toEqual({
+      cardImage: "https://example.com/imt-hero.webp",
+      detailHeroImage: "https://example.com/imt-hero.webp",
       heroImage: "https://example.com/imt-hero.webp",
       instituteLogo: expect.stringMatching(/^https:\/\/aws-origin\.dekhocampus\.com\//),
       certificateImage: "https://example.com/imt-certificate.webp",
@@ -70,6 +77,18 @@ describe("isIitIimProgram", () => {
       slug: "generative-ai-mastery-certificate-for-content-creation-microsoft",
       hero_image: "https://example.com/full-size-microsoft-hero.webp",
     }).heroImage).toBe("https://example.com/full-size-microsoft-hero.webp");
+  });
+
+  it("uses programme art for details while keeping campus art on the 15 institute cards", () => {
+    const resolved = resolvePremiumProgramMedia({
+      slug: "professional-certificate-programme-in-ai-for-business-professionals-iim-kozhikode",
+      hero_image: "https://example.com/database-hero.webp",
+    });
+
+    expect(resolved.cardImage).toContain("/media-library/1789919934865-kk6j2x.webp");
+    expect(resolved.detailHeroImage).toContain("/media-library/");
+    expect(resolved.cardImage).not.toBe(resolved.detailHeroImage);
+    expect(resolved.heroImage).toBe(resolved.detailHeroImage);
   });
 
   it("contains all 60 audited programme records and only AWS-origin generated URLs", () => {

@@ -50,8 +50,18 @@ function parseArgs(argv) {
     verifyRemote: false,
     plan: resolve(REPO_ROOT, "../upgrad-sync/upgrad-media-upload-plan.json"),
     uploads: resolve(REPO_ROOT, "scripts/upgrad-media-browser-upload-map.json"),
+    detailPlan: resolve(REPO_ROOT, "../upgrad-sync/detail-hero-media-manifest.json"),
+    detailUploads: resolve(REPO_ROOT, "scripts/upgrad-detail-hero-browser-upload-map.json"),
     output: resolve(REPO_ROOT, "src/lib/upgradProgramMedia.generated.ts"),
   };
+
+  const pathOptions = new Map([
+    ["--plan", "plan"],
+    ["--uploads", "uploads"],
+    ["--detail-plan", "detailPlan"],
+    ["--detail-uploads", "detailUploads"],
+    ["--output", "output"],
+  ]);
 
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
@@ -63,10 +73,10 @@ function parseArgs(argv) {
       options.verifyRemote = true;
       continue;
     }
-    if (["--plan", "--uploads", "--output"].includes(argument)) {
+    if (pathOptions.has(argument)) {
       const value = argv[index + 1];
       if (!value) fail(`${argument} requires a path`);
-      options[argument.slice(2)] = resolve(process.cwd(), value);
+      options[pathOptions.get(argument)] = resolve(process.cwd(), value);
       index += 1;
       continue;
     }
@@ -74,6 +84,66 @@ function parseArgs(argv) {
   }
 
   return options;
+}
+
+function validateDetailHeroes(detailPlan, detailUploads, knownProgrammeSlugs) {
+  if (detailPlan?.schema_version !== 1 || !Array.isArray(detailPlan.assets)) {
+    fail("Detail-hero manifest has an unsupported schema");
+  }
+  if (detailUploads?.schema_version !== 1 || !Array.isArray(detailUploads.assets)) {
+    fail("Detail-hero upload map has an unsupported schema");
+  }
+
+  const detailAssetsBySha = new Map();
+  for (const asset of detailPlan.assets) {
+    if (!/^[a-f0-9]{64}$/.test(asset.sha256)) fail(`Invalid detail-hero SHA-256: ${asset.sha256}`);
+    if (!Array.isArray(asset.programme_slugs) || asset.programme_slugs.length === 0) {
+      fail(`Detail hero ${asset.sha256} has no programme associations`);
+    }
+    if (detailAssetsBySha.has(asset.sha256)) fail(`Duplicate detail-hero SHA-256: ${asset.sha256}`);
+    detailAssetsBySha.set(asset.sha256, asset);
+  }
+
+  const detailUrlBySha = new Map();
+  const seenUrls = new Set();
+  for (const uploaded of detailUploads.assets) {
+    const prefix = uploaded.sha256_prefix;
+    const publicUrl = uploaded.public_url;
+    if (!/^[a-f0-9]{16}$/.test(prefix)) fail(`Invalid detail-hero upload SHA prefix: ${prefix}`);
+    if (typeof publicUrl !== "string" || !publicUrl.startsWith(AWS_PUBLIC_PREFIX)) {
+      fail(`Non-AWS detail-hero URL: ${publicUrl}`);
+    }
+    if (seenUrls.has(publicUrl)) fail(`Duplicate detail-hero uploaded URL: ${publicUrl}`);
+    seenUrls.add(publicUrl);
+
+    const matches = [...detailAssetsBySha.keys()].filter((sha256) => sha256.startsWith(prefix));
+    if (matches.length !== 1) {
+      fail(`Detail-hero SHA prefix ${prefix} matched ${matches.length} assets; expected exactly one`);
+    }
+    const [sha256] = matches;
+    if (detailUrlBySha.has(sha256)) fail(`Duplicate detail-hero upload mapping for ${sha256}`);
+    detailUrlBySha.set(sha256, publicUrl);
+  }
+
+  const missingUploads = [...detailAssetsBySha.keys()].filter((sha256) => !detailUrlBySha.has(sha256));
+  if (missingUploads.length > 0) {
+    fail(`${missingUploads.length} detail heroes have no browser-upload URL: ${missingUploads.join(", ")}`);
+  }
+  if (detailUrlBySha.size !== detailAssetsBySha.size) {
+    fail(`Detail-hero upload count ${detailUrlBySha.size} does not match manifest count ${detailAssetsBySha.size}`);
+  }
+
+  const detailHeroUrlBySlug = new Map();
+  for (const [sha256, asset] of detailAssetsBySha) {
+    const publicUrl = detailUrlBySha.get(sha256);
+    for (const slug of asset.programme_slugs) {
+      if (!knownProgrammeSlugs.has(slug)) fail(`Detail hero references unknown programme slug: ${slug}`);
+      if (detailHeroUrlBySlug.has(slug)) fail(`Multiple detail heroes reference programme slug: ${slug}`);
+      detailHeroUrlBySlug.set(slug, publicUrl);
+    }
+  }
+
+  return { detailHeroUrlBySlug, detailUrlBySha };
 }
 
 async function verifyRemoteUploads(uploadedUrlBySha) {
@@ -150,7 +220,7 @@ function validateInputs(plan, uploads) {
   return { planAssetsBySha, uploadedUrlBySha };
 }
 
-function buildProgrammeMap(plan, planAssetsBySha, uploadedUrlBySha) {
+function buildProgrammeMap(plan, planAssetsBySha, uploadedUrlBySha, detailHeroUrlBySlug) {
   const programmes = {};
   const sortedProgrammes = [...plan.programmes].sort((left, right) => left.slug.localeCompare(right.slug));
 
@@ -175,19 +245,23 @@ function buildProgrammeMap(plan, planAssetsBySha, uploadedUrlBySha) {
       output[field] = uploadedUrl;
     }
 
+    const detailHeroUrl = detailHeroUrlBySlug.get(programme.slug);
+    if (detailHeroUrl && !excluded.has("heroImage")) output.heroImage = detailHeroUrl;
+
     programmes[programme.slug] = output;
   }
 
   return programmes;
 }
 
-function renderTypeScript(programmes, plan, uploads) {
+function renderTypeScript(programmes, plan, uploads, detailUploads) {
   const lines = [
     "/**",
     " * AUTO-GENERATED by scripts/generate-upgrad-program-media-map.mjs.",
     " * Do not hand-edit: update the audited upload plan/map and regenerate.",
     ` * Plan generated: ${plan.generated_at}`,
     ` * Browser upload completed: ${uploads.uploaded_at}`,
+    ` * Original-ratio detail heroes uploaded: ${detailUploads.uploaded_at}`,
     " */",
     "export type UpgradProgramMedia = Readonly<{",
     "  heroImage?: string;",
@@ -216,14 +290,23 @@ const options = parseArgs(process.argv.slice(2));
 const plan = readJson(options.plan);
 const uploads = readJson(options.uploads);
 const { planAssetsBySha, uploadedUrlBySha } = validateInputs(plan, uploads);
-if (options.verifyRemote) await verifyRemoteUploads(uploadedUrlBySha);
-const programmes = buildProgrammeMap(plan, planAssetsBySha, uploadedUrlBySha);
-const generated = renderTypeScript(programmes, plan, uploads);
+const detailPlan = readJson(options.detailPlan);
+const detailUploads = readJson(options.detailUploads);
+const knownProgrammeSlugs = new Set(plan.programmes.map((programme) => programme.slug));
+const { detailHeroUrlBySlug, detailUrlBySha } = validateDetailHeroes(detailPlan, detailUploads, knownProgrammeSlugs);
+if (options.verifyRemote) {
+  await Promise.all([
+    verifyRemoteUploads(uploadedUrlBySha),
+    verifyRemoteUploads(detailUrlBySha),
+  ]);
+}
+const programmes = buildProgrammeMap(plan, planAssetsBySha, uploadedUrlBySha, detailHeroUrlBySlug);
+const generated = renderTypeScript(programmes, plan, uploads, detailUploads);
 
 if (options.check) {
   const existing = readFileSync(options.output, "utf8");
   if (existing !== generated) fail(`${options.output} is stale; regenerate it`);
-  console.log(`Validated ${Object.keys(programmes).length} programmes and ${uploadedUrlBySha.size} AWS assets.`);
+  console.log(`Validated ${Object.keys(programmes).length} programmes, ${uploadedUrlBySha.size} base assets and ${detailUrlBySha.size} original-ratio detail heroes.`);
 } else {
   writeFileSync(options.output, generated);
   console.log(`Generated ${options.output} with ${Object.keys(programmes).length} programmes.`);
