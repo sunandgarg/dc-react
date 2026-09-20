@@ -123,7 +123,12 @@ export default function PremiumProgramDetail() {
   const testimonials: Array<{ name: string; quote: string; role?: string; photo?: string; company?: string }> = Array.isArray(program.testimonials) ? program.testimonials : [];
   const legacyPoints: Array<{ title: string; description?: string }> = Array.isArray(program.institute_legacy_points) ? program.institute_legacy_points : [];
 
-  const { heroImage: heroImg, instituteLogo } = resolvePremiumProgramMedia(program);
+  const {
+    heroImage: heroImg,
+    instituteLogo,
+    certificateImage,
+    degreeImage,
+  } = resolvePremiumProgramMedia(program);
   const heroVideoUrl = safeEmbedUrl(program.hero_video_url);
   const isInstituteProgram = isIitIimProgram(program);
   const navItems: Array<{ id: string; label: string; show: boolean }> = [
@@ -140,7 +145,9 @@ export default function PremiumProgramDetail() {
   ].filter((n) => n.show);
 
   return (
-    <div className={`min-h-screen bg-background ${isInstituteProgram ? "pb-[106px] lg:pb-0" : ""}`}>
+    <div className={`min-h-screen bg-background ${isInstituteProgram
+      ? "pb-[calc(7.625rem+var(--dc-mobile-bottom-nav-offset,0px))] lg:pb-0"
+      : "pb-[calc(5rem+var(--dc-mobile-bottom-nav-offset,0px))] lg:pb-0"}`}>
       <SEO
         title={program.meta_title || `${program.title} - ${program.college_name} | DekhoCampus`}
         description={program.meta_description || program.summary || `Apply for ${program.title} from ${program.college_name}. ${program.duration} ${program.program_type} program.`}
@@ -160,11 +167,11 @@ export default function PremiumProgramDetail() {
       <div className="container px-3 md:px-6 pt-1" style={{ overflowX: "clip" }}>
         <PageBreadcrumb items={[{ label: "Premium Programs", href: "/premium-programs" }, { label: program.title }]} />
 
-        {/* IIT/IIM/IIIT pages use an editorial details-left, campus-image-right hero. */}
-        <section className={`overflow-hidden mb-5 border border-border bg-card shadow-sm ${isInstituteProgram ? "rounded-[28px]" : "rounded-2xl"}`}>
-          <div className={`grid ${isInstituteProgram ? "lg:grid-cols-[1.16fr_0.84fr]" : "lg:grid-cols-[1.05fr_1fr]"}`}>
+        {/* Shared programme hero: visual first, then decision details. */}
+        <section className="overflow-hidden mb-5 rounded-2xl border border-border bg-card shadow-sm">
+          <div className="grid lg:grid-cols-[1.05fr_1fr]">
             {/* Visual */}
-            <div className={`relative overflow-hidden bg-primary/5 ${isInstituteProgram ? "h-[230px] lg:order-2 lg:h-auto lg:min-h-[500px]" : ""}`}>
+            <div className="relative overflow-hidden bg-primary/5">
               <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/5 via-muted to-primary/10" aria-hidden="true">
                 <GraduationCap className="w-24 h-24 text-primary/25" />
               </div>
@@ -172,49 +179,30 @@ export default function PremiumProgramDetail() {
                 <img
                   src={heroImg}
                   alt={`${program.college_name}: ${program.title}`}
-                  className={isInstituteProgram
-                    ? "absolute inset-0 h-full w-full object-cover"
-                    : "relative h-full min-h-[260px] w-full object-cover lg:min-h-[440px]"}
+                  className="relative h-full min-h-[260px] w-full object-cover lg:min-h-[440px]"
                   loading="eager"
                   fetchPriority="high"
                   onError={(event) => { event.currentTarget.style.display = "none"; }}
                 />
               ) : heroVideoUrl ? (
-                <iframe src={heroVideoUrl} title={program.title} className={`relative w-full h-full ${isInstituteProgram ? "min-h-[230px] lg:min-h-[500px]" : "min-h-[260px] lg:min-h-[440px]"}`} allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" referrerPolicy="strict-origin-when-cross-origin" />
+                <iframe src={heroVideoUrl} title={program.title} className="relative h-full min-h-[260px] w-full lg:min-h-[440px]" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" referrerPolicy="strict-origin-when-cross-origin" />
               ) : null}
               {/* Floating badges */}
-              <div className={`absolute top-3 flex flex-wrap gap-1.5 ${isInstituteProgram ? "right-3 justify-end" : "left-3"}`}>
-                <span className={`px-2.5 py-1 rounded-md text-[11px] font-extrabold uppercase shadow ${isInstituteProgram ? "bg-white/95 text-slate-900 backdrop-blur-sm" : "bg-primary text-primary-foreground"}`}>{program.tag || "Premium"}</span>
+              <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+                <span className="rounded-md bg-primary px-2.5 py-1 text-[11px] font-extrabold uppercase text-primary-foreground shadow">{program.tag || "Premium"}</span>
                 {program.badge && <Badge variant="outline" className="text-[10px] bg-background/85 backdrop-blur border-border">{program.badge}</Badge>}
                 {program.delivery_mode && <Badge variant="secondary" className="text-[10px] bg-background/85 backdrop-blur">{program.delivery_mode}</Badge>}
               </div>
             </div>
 
             {/* Details */}
-            <div className={`p-5 md:p-6 lg:p-8 flex flex-col ${isInstituteProgram ? "lg:order-1 lg:justify-center" : ""}`}>
-              {isInstituteProgram && (
-                <div className="mb-4 flex items-center gap-3">
-                  {instituteLogo ? (
-                    <div className="flex h-14 w-24 shrink-0 items-center justify-center rounded-xl border border-border bg-white p-2 shadow-sm sm:h-16 sm:w-28">
-                      <img src={instituteLogo} alt={`${program.college_name} logo`} className="max-h-full max-w-full object-contain" />
-                    </div>
-                  ) : (
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <Building2 className="h-6 w-6" aria-hidden="true" />
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">Offered by</p>
-                    <p className="text-sm font-bold leading-snug text-foreground sm:text-base">{program.college_name}</p>
-                  </div>
-                </div>
-              )}
+            <div className="flex flex-col p-5 md:p-6 lg:p-7">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground mb-2">
-                {!isInstituteProgram && <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" />{program.college_name}</span>}
+                <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" />{program.college_name}</span>
                 {program.country && <span className="inline-flex items-center gap-1"><Globe className="w-3 h-3" />{program.country}</span>}
                 {program.ranking_text && <span className="inline-flex items-center gap-1"><TrendingUp className="w-3 h-3 text-primary" />{program.ranking_text}</span>}
               </div>
-              <h1 className={`font-extrabold text-foreground leading-[1.12] tracking-tight ${isInstituteProgram ? "text-2xl md:text-[38px]" : "text-2xl md:text-[34px]"}`}>
+              <h1 className="text-2xl font-extrabold leading-[1.12] tracking-tight text-foreground md:text-[34px]">
                 {program.title}
               </h1>
               {program.summary && <p className="text-sm md:text-base text-muted-foreground mt-2 leading-relaxed line-clamp-3">{program.summary}</p>}
@@ -501,24 +489,24 @@ export default function PremiumProgramDetail() {
           )}
 
           {/* CERTIFICATE + DEGREE */}
-          {(program.certificate_image || program.degree_image) && (
+          {(certificateImage || degreeImage) && (
             <Section id="certificate" title="Your Certificate & Degree">
               <div className="grid sm:grid-cols-2 gap-4">
-                {program.certificate_image && (
+                {certificateImage && (
                   <div className="bg-card border border-border rounded-2xl p-4 text-center">
                     <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold mb-3">
                       <Award className="w-3.5 h-3.5" /> Sample Certificate
                     </div>
-                    <img src={program.certificate_image} alt="Sample certificate" className="w-full rounded-lg border border-border shadow-sm" loading="lazy" />
+                    <img src={certificateImage} alt={`Sample certificate for ${program.title}`} className="w-full rounded-lg border border-border shadow-sm" loading="lazy" />
                     <p className="text-xs text-muted-foreground mt-3">Verified completion certificate from <b>{program.college_name}</b>.</p>
                   </div>
                 )}
-                {program.degree_image && (
+                {degreeImage && (
                   <div className="bg-card border border-border rounded-2xl p-4 text-center">
                     <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[11px] font-bold mb-3">
                       <ScrollText className="w-3.5 h-3.5" /> Sample Degree
                     </div>
-                    <img src={program.degree_image} alt="Sample degree" className="w-full rounded-lg border border-border shadow-sm" loading="lazy" />
+                    <img src={degreeImage} alt={`Sample degree for ${program.title}`} className="w-full rounded-lg border border-border shadow-sm" loading="lazy" />
                     <p className="text-xs text-muted-foreground mt-3">Recognised degree awarded by <b>{program.college_name}</b> on successful completion.</p>
                   </div>
                 )}
@@ -648,21 +636,21 @@ export default function PremiumProgramDetail() {
 
       {/* MOBILE STICKY BOTTOM CTA */}
       {isInstituteProgram ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] shadow-2xl backdrop-blur lg:hidden">
+        <div className="dc-bottom-nav-aware-tight fixed inset-x-0 z-40 border-t border-border bg-background/95 p-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] shadow-2xl backdrop-blur lg:hidden">
           <div className="mx-auto grid max-w-md grid-cols-2 gap-2">
-            <Button className="col-span-2 h-10 rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white hover:bg-[#d9151c]" onClick={() => openLead("apply")}>
+            <Button className="col-span-2 h-11 rounded-xl border-0 bg-[#ed1c24] font-extrabold text-white hover:bg-[#d9151c]" onClick={() => openLead("apply")}>
               Apply Now
             </Button>
-            <Button variant="outline" className="h-9 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800" onClick={() => openLead("brochure")}>
+            <Button variant="outline" className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800" onClick={() => openLead("brochure")}>
               <Download className="mr-1.5 h-4 w-4 shrink-0" /> Brochure
             </Button>
-            <Button variant="outline" className="h-9 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800" onClick={() => openLead("counsel")}>
+            <Button variant="outline" className="h-11 min-w-0 rounded-xl border-slate-300 px-1 text-[11px] font-bold text-slate-800" onClick={() => openLead("counsel")}>
               Talk to Counsellor
             </Button>
           </div>
         </div>
       ) : (
-        <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-background/95 backdrop-blur border-t border-border p-3 flex items-center gap-2 shadow-2xl">
+        <div className="dc-bottom-nav-aware-tight fixed inset-x-0 z-40 flex items-center gap-2 border-t border-border bg-background/95 p-3 shadow-2xl backdrop-blur lg:hidden">
           <div className="flex-1 min-w-0">
             <p className="text-xs text-muted-foreground">Starts at</p>
             <p className="text-base font-extrabold text-primary leading-tight">{formatPrice(emi)}/mo</p>

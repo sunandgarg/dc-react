@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { InstitutionLogo } from "@/components/InstitutionLogo";
 import { backendClient } from "@/integrations/backend/client";
 import { getProgramCategoryIcon } from "@/lib/programCategoryImages";
+import { resolvePremiumProgramMedia } from "@/lib/premiumProgram";
 import indiaTricolourMap from "@/assets/india-tricolour-map-256.png";
 
 interface InstituteProgram {
@@ -382,7 +383,7 @@ export function HomeDiscoverySection() {
                       Global degree
                     </span>
                   )}
-                  <InstitutionLogo src={institute.institute_logo} alt={`${institute.college_name} logo`} className={`h-12 w-full bg-white sm:h-14 ${isGlobal ? "mt-2" : ""}`} imageClassName="px-1.5" />
+                  <InstitutionLogo src={resolvePremiumProgramMedia(institute).instituteLogo} alt={`${institute.college_name} logo`} className={`h-12 w-full bg-white sm:h-14 ${isGlobal ? "mt-2" : ""}`} imageClassName="px-1.5" />
                   <span className="w-full truncate text-[11px] font-bold text-foreground">{shortInstituteName(institute.college_name)}</span>
                 </Link>
               );
