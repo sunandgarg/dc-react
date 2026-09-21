@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CircleDot, Loader2, Image as ImageIcon, BookOpenCheck, Plus, Trash2 } from "lucide-react";
+import { CircleDot, Loader2, Image as ImageIcon, BookOpenCheck, Plus, Trash2, Download } from "lucide-react";
 import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
 import { slugify } from "@/lib/slugify";
@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { DEFAULT_SITE_SCOPE, siteScopeLabel, type SiteScope } from "@/lib/siteScope";
+import { ArticleScorePanel } from "@/components/admin/ArticleScorePanel";
 
 type Suggestion = { entity_type: string; entity_slug: string; label: string };
 type DraftFaq = { question: string; answer: string };
@@ -178,7 +179,14 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
   return <>
     <Button className="gap-2 rounded-xl" onClick={() => setOpen(true)}><CircleDot className="w-4 h-4" /> {siteScope === "sarkari" ? "Sarkari Job AI Studio" : "AI Blog Studio"}</Button>
     <Dialog open={open} onOpenChange={setOpen}><DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
-      <DialogHeader><DialogTitle className="flex items-center gap-2"><BookOpenCheck className="w-5 h-5 text-primary" /> {siteScope === "sarkari" ? "Sarkari Job Editorial Studio" : "Editorial Blog Studio"}</DialogTitle></DialogHeader>
+      <DialogHeader>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <DialogTitle className="flex items-center gap-2"><BookOpenCheck className="w-5 h-5 text-primary" /> {siteScope === "sarkari" ? "Sarkari Job Editorial Studio" : "Editorial Blog Studio"}</DialogTitle>
+          <a href="/docs/dekhocampus-ai-blog-studio-rules-2026.pdf" download="dekhocampus-ai-blog-studio-rules-2026.pdf" className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:border-primary/50 hover:bg-muted">
+            <Download className="h-3.5 w-3.5" /> Writer rules PDF
+          </a>
+        </div>
+      </DialogHeader>
       <div className="space-y-4">
         <div><Label>Topic</Label><Input value={topic} onChange={event => setTopic(event.target.value)} placeholder={siteScope === "sarkari" ? "e.g. SSC CGL notification, eligibility, dates and application process" : "e.g. JEE Main counselling dates and choice filling guide"} /></div>
         <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {textModelLabel(editorial.text_model)}. It checks novelty within the {siteScopeLabel(siteScope)} library, synthesises evidence, drafts the article and performs a second quality review. The 50-design rotation renders covers locally with no image-generation API charge.</div>
@@ -229,6 +237,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
               <p className="mt-2 text-xs text-muted-foreground">Model: {textModelLabel(modelUsed || editorial.text_model)}. Private sources checked: {researchSources.length}.</p>
               {!!quality?.issues?.length && <p className="mt-2 text-xs text-amber-700">{quality.issues.join("; ")}</p>}
             </div>
+            <ArticleScorePanel article={draft} faqs={draft.faqs || []} faqsLoaded />
             {siteScope === "dekhocampus" && <div><Label>Suggested entity links</Label><div className="mt-2 flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div></div>}
             <Button onClick={save} disabled={busy} className="w-full">{busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}{siteScope === "sarkari" ? "Publish Sarkari article after final checks" : "Publish after final checks"}</Button>
           </div>

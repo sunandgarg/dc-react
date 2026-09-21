@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Search, Newspaper, Info, FileText, Settings, ExternalLink, HelpCircle, CheckSquare2, Square, Loader2, Eye, EyeOff, RotateCcw } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Newspaper, Info, FileText, Settings, ExternalLink, HelpCircle, CheckSquare2, Square, Loader2, Eye, EyeOff, RotateCcw, Download } from "lucide-react";
 import { toast } from "sonner";
 import { CSVTools } from "@/components/CSVTools";
 import { useAuth } from "@/hooks/useAuth";
@@ -39,6 +39,7 @@ import { syncAutoSlug } from "@/lib/slugify";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 import { normalizeArticleSlug, validateArticleSave } from "@/lib/articleEditor";
 import { NumberedPagination } from "@/components/NumberedPagination";
+import { ArticleScorePanel } from "@/components/admin/ArticleScorePanel";
 
 const STATUSES = ["Draft", "Published"];
 const VERTICALS = ["Engineering", "Medical", "Management", "Law", "Design", "Science", "General"];
@@ -242,7 +243,14 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           <p className="mt-1 text-xs text-orange-800">Only <code>site_scope=sarkari</code> content is listed, imported, edited and deleted here. DekhoCampus articles remain separate.</p>
         </div>
       )}
-      {isAdmin && <div className="mb-3 flex flex-wrap gap-2"><BlogStudioDialog siteScope={siteScope} initiallyOpen={studioMode} onSaved={() => { void refetchArticles(); }} /></div>}
+      {isAdmin && <div className="mb-3 flex flex-wrap gap-2">
+        <BlogStudioDialog siteScope={siteScope} initiallyOpen={studioMode} onSaved={() => { void refetchArticles(); }} />
+        <Button asChild variant="outline" className="gap-2 rounded-xl">
+          <a href="/docs/dekhocampus-ai-blog-studio-rules-2026.pdf" download="dekhocampus-ai-blog-studio-rules-2026.pdf">
+            <Download className="h-4 w-4" /> Download writer rules PDF
+          </a>
+        </Button>
+      </div>}
       {isAdmin && !isSarkari && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />}
       {isAdmin && !isSarkari && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
@@ -545,6 +553,22 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                   <textarea value={editing.meta_description || ""} onChange={(e) => update("meta_description", e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none" />
                 </div>
               </AdminFormSection>
+
+              <ArticleScorePanel
+                article={{
+                  title: editing.title,
+                  slug: editing.slug,
+                  description: editing.description,
+                  content: editing.content,
+                  meta_title: editing.meta_title,
+                  meta_description: editing.meta_description,
+                  meta_keywords: editing.meta_keywords,
+                  author: editing.author,
+                  author_id: (editing as any).author_id,
+                  updated_at: (editing as any).updated_at,
+                }}
+                faqsLoaded={false}
+              />
 
               <AdminFormSection title="Live article preview" icon={<Eye className="w-4 h-4 text-primary" />}>
                 <article className="mx-auto w-full max-w-4xl overflow-hidden rounded-lg border border-border bg-background">

@@ -165,6 +165,14 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(prompt, /meta_description of no more than 155 characters/i);
   assert.match(prompt, /testament, tapestry, paramount/i);
   assert.match(prompt, /strict JSON with clean semantic HTML in content_html, not Markdown/i);
+  assert.match(prompt, /corporate-academic filler/i);
+  assert.match(prompt, /metaphor traps/i);
+  assert.match(prompt, /hybrid AEO\/GEO structure/i);
+  assert.match(prompt, /40-60 word direct answer/i);
+  assert.match(prompt, /semantic <h2>/i);
+  assert.match(prompt, /never invent a survey, benchmark, quote or statistic/i);
+  assert.match(prompt, /Do not make every section the same size/i);
+  assert.match(prompt, /do not introduce spelling mistakes or claim the copy is undetectable/i);
 });
 
 test("DekhoCampus human editorial policy is present without breaking the HTML contract", () => {
@@ -174,6 +182,15 @@ test("DekhoCampus human editorial policy is present without breaking the HTML co
   assert.match(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.audience, /Indian students/i);
   assert.ok(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.includes("holistic development"));
   assert.ok(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.includes("game-changer"));
+  assert.ok(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.includes("transformative"));
+  assert.ok(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.includes("empower"));
+  assert.ok(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.includes("ecosystem"));
+  assert.ok(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.includes("it is worth noting that"));
+  assert.match(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.vocabulary, /concrete verbs/i);
+  assert.match(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.syntax, /contractions/i);
+  assert.match(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.semantic_structure, /semantic HTML/i);
+  assert.match(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.information_gain, /Never invent/i);
+  assert.match(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.anti_symmetry, /same size/i);
   const normalized = normalizeBlogAgentSettings({});
   assert.equal(normalized.tone, DEFAULT_EDITORIAL_TONE);
   const prompt = articlePrompt("CUET UG 2027 subject selection", [], 900, [], {});

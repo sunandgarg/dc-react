@@ -1,0 +1,1260 @@
+{
+  "batch": "exam-human-editorial-recheck-002",
+  "checked_at": "2026-09-21T00:00:00+05:30",
+  "source_batches": [
+    "reports/exam-refresh-batch-001-2026-09-21.json",
+    "reports/exam-refresh-batch-002-2026-09-21.json"
+  ],
+  "scope": "The ten exams immediately after JEE Main in the existing ordered refresh list: JEE Advanced through SRMJEEE UG",
+  "policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, official-source-first facts, no invented dates, no raw Markdown, semantic HTML, four visible FAQs, four verified internal links and one or two verified official external links.",
+  "updates": [
+    {
+      "id": "4ea0689e-a807-4ad6-b90e-a21ec74d6c1f",
+      "old_slug": "jee-advanced-2026",
+      "slug": "jee-advanced-2026",
+      "name": "JEE Advanced",
+      "full_name": "Joint Entrance Examination (Advanced) 2027",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced by JAB / organising IIT",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Engineering",
+      "level": "Undergraduate",
+      "mode": "Computer-based test in two compulsory papers",
+      "frequency": "Once a year",
+      "eligibility": "JEE (Advanced) eligibility is set by the Joint Admission Board for each cycle. Candidates must first satisfy the JEE Main qualification route and then meet the year-of-appearance, age, attempt, subject and performance conditions published in the 2027 information brochure.",
+      "important_dates": [
+        {
+          "event": "2027 information brochure",
+          "date": "Not announced"
+        },
+        {
+          "event": "Registration",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced"
+        },
+        {
+          "event": "Answer keys and result",
+          "date": "Not announced"
+        },
+        {
+          "event": "JoSAA process",
+          "date": "Schedule announced separately"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics"
+      ],
+      "description": "JEE Advanced 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The examination has two compulsory papers. The exact question types, marking scheme, duration and language instructions for 2027 will be final only after the official brochure is released.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information brochure</td><td>Not announced</td></tr><tr><td>Registration</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Answer keys and result</td><td>Not announced</td></tr><tr><td>JoSAA process</td><td>Schedule announced separately</td></tr></tbody></table>",
+      "summary_content": "<h2>JEE Advanced 2027 at a glance</h2><p>JEE Advanced 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information brochure</td><td>Not announced</td></tr><tr><td>Registration</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Answer keys and result</td><td>Not announced</td></tr><tr><td>JoSAA process</td><td>Schedule announced separately</td></tr></tbody></table><h2>Official verification</h2><p>Next-cycle dates are not published by the authority; displayed as not announced.</p>",
+      "page_summary": "JEE Advanced 2027: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "JEE Advanced 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JEE Advanced 2027 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "JEE Advanced 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://jeeadv.ac.in/",
+      "official_website": "https://jeeadv.ac.in/",
+      "registration_url": "https://jeeadv.ac.in/",
+      "data_source_urls": [
+        "https://jeeadv.ac.in/",
+        "https://jeeadv.ac.in/imp_dates.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "verification_note": "Next-cycle dates are not published by the authority; displayed as not announced.. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "title": "JEE Advanced 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "JEE Advanced 2027 dates are not out yet, so a student should not borrow a coaching calendar and treat it as an official deadline. Build preparation around the published syllabus, then wait for the Joint Admission Board brochure before relying on eligibility or paper rules.",
+      "article_html": "<p>JEE Advanced 2027 dates are not out yet, so a student should not borrow a coaching calendar and treat it as an official deadline. Build preparation around the published syllabus, then wait for the Joint Admission Board brochure before relying on eligibility or paper rules.</p><h2>JEE Advanced 2027 dates and current status</h2><p>Next-cycle dates are not published by the authority; displayed as not announced.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information brochure</td><td>Not announced</td></tr><tr><td>Registration</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Answer keys and result</td><td>Not announced</td></tr><tr><td>JoSAA process</td><td>Schedule announced separately</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>The JAB sets the cycle-specific rules. The JEE Main qualification route, year of appearance, age, attempt limit, subjects and performance conditions must all be checked in the 2027 brochure.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the JEE Advanced paper tests</h2><p>Two compulsory papers are expected, but the final question types, marking and duration belong to the 2027 brochure. Paper 1 and Paper 2 are not optional shortcuts.</p><h3>Subject or skill areas</h3><ul><li>Physics</li><li>Chemistry</li><li>Mathematics</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p><p>Before you submit anything, check the official application portal and the official notification or dates page listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>JEE Advanced rewards problem selection as much as raw speed. Practise Physics, Chemistry and Mathematics together, but review why a question was chosen or left rather than only counting attempts.</p><ul><li>Keep separate error logs for concepts, calculations and question selection.</li><li>Practise both papers in timed blocks and review the full solution path.</li><li>Use the official syllabus as the boundary for revision.</li><li>Track JEE Main qualification and JoSAA steps separately from preparation.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>A JEE Advanced rank is followed by JoSAA choice filling and institute-specific document checks. Seat allocation is not automatic; freeze, float and slide decisions have consequences.</p><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p><h2>Questions students actually ask</h2><h3>When will JEE Advanced 2027 dates be released?</h3><p>The organising IIT and JAB have not published the 2027 schedule in the checked official material. Treat every date as pending until the brochure or official notice appears.</p><h3>Can I appear for JEE Advanced without JEE Main?</h3><p>The qualification route and eligible rank list are cycle-specific. Check the 2027 JAB brochure instead of relying on an older attempt rule.</p><h3>Is the JEE Advanced paper pattern fixed?</h3><p>No. Use the previous pattern only for practice. The 2027 brochure and candidate notice control the final format and marking.</p><h3>Does a JEE Advanced rank guarantee an IIT seat?</h3><p>No. The rank must still be used in JoSAA choice filling, and the candidate must meet programme, category and document conditions.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li></ul>",
+      "faqs": [
+        {
+          "question": "When will JEE Advanced 2027 dates be released?",
+          "answer": "The organising IIT and JAB have not published the 2027 schedule in the checked official material. Treat every date as pending until the brochure or official notice appears."
+        },
+        {
+          "question": "Can I appear for JEE Advanced without JEE Main?",
+          "answer": "The qualification route and eligible rank list are cycle-specific. Check the 2027 JAB brochure instead of relying on an older attempt rule."
+        },
+        {
+          "question": "Is the JEE Advanced paper pattern fixed?",
+          "answer": "No. Use the previous pattern only for practice. The 2027 brochure and candidate notice control the final format and marking."
+        },
+        {
+          "question": "Does a JEE Advanced rank guarantee an IIT seat?",
+          "answer": "No. The rank must still be used in JoSAA choice filling, and the candidate must meet programme, category and document conditions."
+        }
+      ],
+      "internal_links": [
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://jeeadv.ac.in/",
+        "official_notification": "https://jeeadv.ac.in/imp_dates.html"
+      },
+      "official_apply_url": "https://jeeadv.ac.in/",
+      "official_notification_url": "https://jeeadv.ac.in/imp_dates.html",
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    },
+    {
+      "id": "243b6c91-3520-4b1e-9fc1-2288c1c7e456",
+      "old_slug": "neet-ug-2026",
+      "slug": "neet-ug-2026",
+      "name": "NEET UG",
+      "full_name": "National Eligibility cum Entrance Test (UG) 2027",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced by NTA",
+      "application_start_date": "Not announced by NTA",
+      "application_end_date": "Not announced by NTA",
+      "result_date": "Not announced by NTA",
+      "category": "Medical",
+      "level": "Undergraduate",
+      "mode": "Mode, centres and paper instructions will follow the NTA 2027 bulletin",
+      "frequency": "Once a year",
+      "eligibility": "Applicants must follow the NEET (UG) 2027 information bulletin for qualifying subjects, minimum marks, age rules, nationality, category documents and counselling requirements. Students appearing in the qualifying examination should check the official wording before submitting the form.",
+      "important_dates": [
+        {
+          "event": "2027 information bulletin",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Answer key",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Result",
+          "date": "Not announced by NTA"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Botany",
+        "Zoology"
+      ],
+      "description": "NEET UG 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>The conducting authority has not published the next cycle's complete schedule yet. We keep the date blank rather than turning an old cycle or a coaching estimate into a fact.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA will confirm the 2027 duration, question count, marking, language and examination mode in the official bulletin. Use the current NTA syllabus notice, not a coaching summary, when planning preparation.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information bulletin</td><td>Not announced by NTA</td></tr><tr><td>Application window</td><td>Not announced by NTA</td></tr><tr><td>Examination</td><td>Not announced by NTA</td></tr><tr><td>Answer key</td><td>Not announced by NTA</td></tr><tr><td>Result</td><td>Not announced by NTA</td></tr></tbody></table>",
+      "summary_content": "<h2>NEET UG 2027 at a glance</h2><p>NEET UG 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information bulletin</td><td>Not announced by NTA</td></tr><tr><td>Application window</td><td>Not announced by NTA</td></tr><tr><td>Examination</td><td>Not announced by NTA</td></tr><tr><td>Answer key</td><td>Not announced by NTA</td></tr><tr><td>Result</td><td>Not announced by NTA</td></tr></tbody></table><h2>Official verification</h2><p>Next-cycle dates are not published by the authority; displayed as not announced.</p>",
+      "page_summary": "NEET UG 2027: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "NEET UG 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check NEET UG 2027 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "NEET UG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://neet.nta.nic.in/",
+      "official_website": "https://neet.nta.nic.in/",
+      "registration_url": "https://neet.nta.nic.in/",
+      "data_source_urls": [
+        "https://neet.nta.nic.in/",
+        "https://neet.nta.nic.in/admission-bulletin/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "verification_note": "Next-cycle dates are not published by the authority; displayed as not announced.. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "title": "NEET UG 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "NEET UG 2027 dates have not been published by NTA in the checked bulletin material. That is useful information, not a dead end: prepare from the notified syllabus, keep documents ready and do not pay against a forwarded deadline.",
+      "article_html": "<p>NEET UG 2027 dates have not been published by NTA in the checked bulletin material. That is useful information, not a dead end: prepare from the notified syllabus, keep documents ready and do not pay against a forwarded deadline.</p><h2>NEET UG 2027 dates and current status</h2><p>Next-cycle dates are not published by the authority; displayed as not announced.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information bulletin</td><td>Not announced by NTA</td></tr><tr><td>Application window</td><td>Not announced by NTA</td></tr><tr><td>Examination</td><td>Not announced by NTA</td></tr><tr><td>Answer key</td><td>Not announced by NTA</td></tr><tr><td>Result</td><td>Not announced by NTA</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>NEET eligibility depends on qualifying subjects, marks, age wording, nationality, category documents and the counselling route. The 2027 NTA bulletin must settle each point, especially for students appearing in Class 12.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the NEET UG paper tests</h2><p>NTA will confirm the 2027 duration, question count, marking, language and mode. Physics, Chemistry, Botany and Zoology remain the practical study buckets until the new notice says otherwise.</p><h3>Subject or skill areas</h3><ul><li>Physics</li><li>Chemistry</li><li>Botany</li><li>Zoology</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>The conducting authority has not published the next cycle's complete schedule yet. We keep the date blank rather than turning an old cycle or a coaching estimate into a fact.</p><p>Before you submit anything, check the official application portal and the official notification or dates page listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>NEET preparation is won in the small daily choices. Read the prescribed Biology text carefully, then use timed mixed practice so Physics and Chemistry do not get pushed aside.</p><ul><li>Make a chapter tracker for Physics, Chemistry and Biology rather than a vague monthly plan.</li><li>Revisit incorrect questions within the same week.</li><li>Use full-length tests to practise the actual response-sheet rhythm.</li><li>Keep application documents and counselling certificates in a separate checklist.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>After the score, admission depends on the notified counselling authorities, state or central quota rules and document verification. A score alone is not a seat offer.</p><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p><h2>Questions students actually ask</h2><h3>When will NEET UG 2027 registration start?</h3><p>NTA has not announced the 2027 application window in the checked official material. Verify the bulletin before entering personal details or paying a fee.</p><h3>Can a Class 12 appearing student apply for NEET UG?</h3><p>The answer depends on the qualifying-subject and completion rules in the 2027 bulletin. Read that wording before submitting the form.</p><h3>Will the NEET UG 2027 pattern stay the same?</h3><p>Do not assume it. NTA will confirm question count, marking, duration and language in the current bulletin.</p><h3>Does NEET score decide the college automatically?</h3><p>No. Counselling, quota, category, choice filling and document verification still decide the final allotment.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams/top-medical-entrance-exams-in-india\">Medical entrance exams</a></li><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li></ul>",
+      "faqs": [
+        {
+          "question": "When will NEET UG 2027 registration start?",
+          "answer": "NTA has not announced the 2027 application window in the checked official material. Verify the bulletin before entering personal details or paying a fee."
+        },
+        {
+          "question": "Can a Class 12 appearing student apply for NEET UG?",
+          "answer": "The answer depends on the qualifying-subject and completion rules in the 2027 bulletin. Read that wording before submitting the form."
+        },
+        {
+          "question": "Will the NEET UG 2027 pattern stay the same?",
+          "answer": "Do not assume it. NTA will confirm question count, marking, duration and language in the current bulletin."
+        },
+        {
+          "question": "Does NEET score decide the college automatically?",
+          "answer": "No. Counselling, quota, category, choice filling and document verification still decide the final allotment."
+        }
+      ],
+      "internal_links": [
+        "/exams/top-medical-entrance-exams-in-india",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://neet.nta.nic.in/",
+        "official_notification": "https://neet.nta.nic.in/admission-bulletin/"
+      },
+      "official_apply_url": "https://neet.nta.nic.in/",
+      "official_notification_url": "https://neet.nta.nic.in/admission-bulletin/",
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    },
+    {
+      "id": "874416d9-1219-4247-8572-2eb08cd82d75",
+      "old_slug": "cat",
+      "slug": "cat",
+      "name": "CAT",
+      "full_name": "Common Admission Test (CAT) 2026",
+      "status": "Applications open; final deadline 22 September 2026",
+      "exam_date": "29 November 2026, Sunday",
+      "application_start_date": "3 August 2026, 10:00 AM IST",
+      "application_end_date": "22 September 2026, 5:00 PM IST",
+      "result_date": "To be announced by IIM Indore",
+      "category": "Management",
+      "level": "Postgraduate",
+      "mode": "Computer-based test in three sessions",
+      "frequency": "Once a year",
+      "eligibility": "CAT 2026 applicants need a recognised bachelor's degree with the minimum marks stated in the official notification, or an equivalent professional qualification. Final-year students may apply subject to the completion and document rules. Each IIM follows its own shortlisting and admission policy.",
+      "important_dates": [
+        {
+          "event": "Registration opens",
+          "date": "3 August 2026, 10:00 AM IST"
+        },
+        {
+          "event": "Registration closes",
+          "date": "22 September 2026, 5:00 PM IST"
+        },
+        {
+          "event": "Admit card window",
+          "date": "4–29 November 2026"
+        },
+        {
+          "event": "CAT 2026 examination",
+          "date": "29 November 2026"
+        },
+        {
+          "event": "Result",
+          "date": "To be announced"
+        }
+      ],
+      "syllabus": [
+        "Verbal Ability and Reading Comprehension",
+        "Data Interpretation and Logical Reasoning",
+        "Quantitative Ability"
+      ],
+      "description": "CAT 2026 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>CAT 2026 is a 120-minute computer-based test with three 40-minute sections. Candidates must follow the official IIM Indore bulletin for question counts, calculator rules, marking, test-city choices and accessibility provisions.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>3 August 2026, 10:00 AM IST</td></tr><tr><td>Registration closes</td><td>22 September 2026, 5:00 PM IST</td></tr><tr><td>Admit card window</td><td>4–29 November 2026</td></tr><tr><td>CAT 2026 examination</td><td>29 November 2026</td></tr><tr><td>Result</td><td>To be announced</td></tr></tbody></table>",
+      "summary_content": "<h2>CAT 2026 at a glance</h2><p>CAT 2026 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>3 August 2026, 10:00 AM IST</td></tr><tr><td>Registration closes</td><td>22 September 2026, 5:00 PM IST</td></tr><tr><td>Admit card window</td><td>4-29 November 2026</td></tr><tr><td>CAT 2026 examination</td><td>29 November 2026</td></tr><tr><td>Result</td><td>To be announced</td></tr></tbody></table><h2>Official verification</h2><p>Dates copied from the authority&#39;s current cycle notice.</p>",
+      "page_summary": "CAT 2026: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "CAT 2026: Dates, Eligibility & Pattern",
+      "meta_description": "Check CAT 2026 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "CAT 2026, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://iimcat.ac.in/",
+      "official_website": "https://iimcat.ac.in/",
+      "registration_url": "https://iimcat.ac.in/",
+      "data_source_urls": [
+        "https://iimcat.ac.in/",
+        "https://iimidr.ac.in/programmes/academic-programmes/post-graduate-programme-in-management-pgp/pgp-indore-admissions-details/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "verification_note": "Dates copied from the authority's current cycle notice.. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "title": "CAT 2026: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "CAT 2026 registration is shown as open in the checked authority notice, with the final deadline listed as 22 September 2026 at 5:00 PM IST. If you are applying, check the live IIM CAT portal today rather than relying on a saved screenshot.",
+      "article_html": "<p>CAT 2026 registration is shown as open in the checked authority notice, with the final deadline listed as 22 September 2026 at 5:00 PM IST. If you are applying, check the live IIM CAT portal today rather than relying on a saved screenshot.</p><h2>CAT 2026 dates and current status</h2><p>Dates copied from the authority&#39;s current cycle notice.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>3 August 2026, 10:00 AM IST</td></tr><tr><td>Registration closes</td><td>22 September 2026, 5:00 PM IST</td></tr><tr><td>Admit card window</td><td>4-29 November 2026</td></tr><tr><td>CAT 2026 examination</td><td>29 November 2026</td></tr><tr><td>Result</td><td>To be announced</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>CAT applicants generally need a recognised bachelor&#39;s degree with the minimum marks in the current notice. Final-year students may apply, but each IIM sets its own shortlisting and admission rules after the score is released.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the CAT paper tests</h2><p>The current notice describes a 120-minute computer-based test with three timed sections: Verbal Ability and Reading Comprehension, Data Interpretation and Logical Reasoning, and Quantitative Ability. Follow the IIM Indore bulletin for the final operational details.</p><h3>Subject or skill areas</h3><ul><li>Verbal Ability and Reading Comprehension</li><li>Data Interpretation and Logical Reasoning</li><li>Quantitative Ability</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p><p>Before you submit anything, check the official application portal and the official notification or dates page listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>CAT is not solved by collecting endless mock scores. A working plan protects section practice, then spends more time reviewing avoidable errors than celebrating a good percentile.</p><ul><li>Give VARC, DILR and QA separate practice blocks.</li><li>Review every mock by question selection, not only by marks.</li><li>Practise with the section timer so one difficult set cannot consume the paper.</li><li>Keep academic and work-history details ready before the form closes.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>CAT results feed different IIM and institute shortlisting processes. A percentile is not an admission offer, and work experience, academics, category and interview stages can all matter.</p><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p><h2>Questions students actually ask</h2><h3>What is the CAT 2026 registration deadline?</h3><p>The checked authority record lists 22 September 2026 at 5:00 PM IST. Confirm the live portal before submitting because deadlines can be changed by the organiser.</p><h3>Can final-year students apply for CAT?</h3><p>Yes, subject to the current eligibility and graduation-completion instructions. The form and later admission verification must match your documents.</p><h3>Does CAT have one common college cutoff?</h3><p>No. IIMs and other institutes publish their own shortlisting and admission rules after considering the CAT score and other profile factors.</p><h3>Is a high CAT percentile a guaranteed admission?</h3><p>No. It may help you reach a shortlist, but the final decision depends on each institute&#39;s process and your verified profile.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li></ul>",
+      "faqs": [
+        {
+          "question": "What is the CAT 2026 registration deadline?",
+          "answer": "The checked authority record lists 22 September 2026 at 5:00 PM IST. Confirm the live portal before submitting because deadlines can be changed by the organiser."
+        },
+        {
+          "question": "Can final-year students apply for CAT?",
+          "answer": "Yes, subject to the current eligibility and graduation-completion instructions. The form and later admission verification must match your documents."
+        },
+        {
+          "question": "Does CAT have one common college cutoff?",
+          "answer": "No. IIMs and other institutes publish their own shortlisting and admission rules after considering the CAT score and other profile factors."
+        },
+        {
+          "question": "Is a high CAT percentile a guaranteed admission?",
+          "answer": "No. It may help you reach a shortlist, but the final decision depends on each institute's process and your verified profile."
+        }
+      ],
+      "internal_links": [
+        "/exams/top-management-entrance-exams-in-india",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://iimcat.ac.in/",
+        "official_notification": "https://iimidr.ac.in/programmes/academic-programmes/post-graduate-programme-in-management-pgp/pgp-indore-admissions-details/"
+      },
+      "official_apply_url": "https://iimcat.ac.in/",
+      "official_notification_url": "https://iimidr.ac.in/programmes/academic-programmes/post-graduate-programme-in-management-pgp/pgp-indore-admissions-details/",
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    },
+    {
+      "id": "484a7717-df09-4f59-a2db-34dec8f9edd7",
+      "old_slug": "clat-2026",
+      "slug": "clat-2026",
+      "name": "CLAT",
+      "full_name": "Common Law Admission Test (CLAT) 2027",
+      "status": "Applications open",
+      "exam_date": "6 December 2026, 2:00 PM–4:00 PM IST",
+      "application_start_date": "3 August 2026",
+      "application_end_date": "31 October 2026, 11:59 PM IST",
+      "result_date": "To be announced by the Consortium",
+      "category": "Law",
+      "level": "Undergraduate and postgraduate",
+      "mode": "Offline pen-and-paper examination",
+      "frequency": "Once a year",
+      "eligibility": "CLAT 2027 eligibility differs for UG and PG. Candidates should use the Consortium's 2027 eligibility and instructions pages for qualifying examination, marks, category certificates and programme-specific requirements. Students appearing for boards or qualifying examinations in 2027 may apply subject to the Consortium's rules.",
+      "important_dates": [
+        {
+          "event": "Online enrolment opens",
+          "date": "3 August 2026"
+        },
+        {
+          "event": "Application closes",
+          "date": "31 October 2026, 11:59 PM IST"
+        },
+        {
+          "event": "CLAT 2027 examination",
+          "date": "6 December 2026, 2:00 PM–4:00 PM IST"
+        },
+        {
+          "event": "PWD examination window",
+          "date": "6 December 2026, 2:00 PM–4:40 PM IST"
+        },
+        {
+          "event": "Counselling",
+          "date": "December 2026 / January 2027"
+        }
+      ],
+      "syllabus": [
+        "Current Affairs including General Knowledge",
+        "English Language",
+        "Legal Reasoning",
+        "Logical Reasoning",
+        "Quantitative Techniques",
+        "PG Constitutional and legal subjects"
+      ],
+      "description": "CLAT 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>CLAT 2027 is scheduled offline. UG candidates must follow the official question-paper format for section details, reading passages, marks and tie-breaking. PG applicants should use the separate PG format and syllabus published by the Consortium.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Online enrolment opens</td><td>3 August 2026</td></tr><tr><td>Application closes</td><td>31 October 2026, 11:59 PM IST</td></tr><tr><td>CLAT 2027 examination</td><td>6 December 2026, 2:00 PM–4:00 PM IST</td></tr><tr><td>PWD examination window</td><td>6 December 2026, 2:00 PM–4:40 PM IST</td></tr><tr><td>Counselling</td><td>December 2026 / January 2027</td></tr></tbody></table>",
+      "summary_content": "<h2>CLAT 2027 at a glance</h2><p>CLAT 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Online enrolment opens</td><td>3 August 2026</td></tr><tr><td>Application closes</td><td>31 October 2026, 11:59 PM IST</td></tr><tr><td>CLAT 2027 examination</td><td>6 December 2026, 2:00 PM-4:00 PM IST</td></tr><tr><td>PWD examination window</td><td>6 December 2026, 2:00 PM-4:40 PM IST</td></tr><tr><td>Counselling</td><td>December 2026 / January 2027</td></tr></tbody></table><h2>Official verification</h2><p>Dates copied from the authority&#39;s current cycle notice.</p>",
+      "page_summary": "CLAT 2027: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "CLAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check CLAT 2027 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "CLAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+      "official_website": "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+      "registration_url": "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+      "data_source_urls": [
+        "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+        "https://clat2027.consortiumofnlus.ac.in/clat-2027/ug-instructions.html",
+        "https://clat2027.consortiumofnlus.ac.in/clat-2027/FAQs.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "verification_note": "Dates copied from the authority's current cycle notice.. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "title": "CLAT 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "CLAT 2027 applications are shown as open, with the current closing time listed as 31 October 2026 at 11:59 PM. Law applicants should read the Consortium instructions before treating the date, programme choice or document list as final.",
+      "article_html": "<p>CLAT 2027 applications are shown as open, with the current closing time listed as 31 October 2026 at 11:59 PM. Law applicants should read the Consortium instructions before treating the date, programme choice or document list as final.</p><h2>CLAT 2027 dates and current status</h2><p>Dates copied from the authority&#39;s current cycle notice.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Online enrolment opens</td><td>3 August 2026</td></tr><tr><td>Application closes</td><td>31 October 2026, 11:59 PM IST</td></tr><tr><td>CLAT 2027 examination</td><td>6 December 2026, 2:00 PM-4:00 PM IST</td></tr><tr><td>PWD examination window</td><td>6 December 2026, 2:00 PM-4:40 PM IST</td></tr><tr><td>Counselling</td><td>December 2026 / January 2027</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>CLAT eligibility differs between UG and PG programmes. The Consortium&#39;s 2027 instructions control qualifying examination, marks, category certificates and programme-specific conditions.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the CLAT paper tests</h2><p>CLAT tests reading-heavy decision making rather than memory alone. The Consortium notice should be used for the final section design, duration, question count and reservation instructions.</p><h3>Subject or skill areas</h3><ul><li>Current Affairs including General Knowledge</li><li>English Language</li><li>Legal Reasoning</li><li>Logical Reasoning</li><li>Quantitative Techniques</li><li>PG Constitutional and legal subjects</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p><p>Before you submit anything, check the official application portal and the official notification or dates page listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>CLAT preparation improves when reading becomes a daily habit. Long passages, legal reasoning and current affairs all punish last-minute cramming, so build stamina before chasing speed.</p><ul><li>Read one serious news or policy passage daily and write a short summary.</li><li>Practise legal reasoning from passages instead of memorising isolated principles.</li><li>Use timed sets for English, current affairs, legal reasoning, logical reasoning and quantitative techniques.</li><li>Keep UG and PG eligibility documents separate; they are not interchangeable.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>After the result, the Consortium and participating NLUs publish the admission and counselling steps. Choice order, category proof and fee payment deadlines deserve the same attention as the score.</p><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p><h2>Questions students actually ask</h2><h3>When does CLAT 2027 registration close?</h3><p>The checked Consortium notice lists 31 October 2026 at 11:59 PM. Confirm the live application page before the deadline because an extension is possible only through an official notice.</p><h3>Are CLAT UG and PG eligibility rules the same?</h3><p>No. They have different qualifying requirements and programme conditions. Use the relevant 2027 Consortium instructions.</p><h3>What should I read for CLAT preparation?</h3><p>Build reading stamina across law, policy, social issues and current affairs, then practise timed passage-based questions.</p><h3>Does a CLAT rank guarantee an NLU seat?</h3><p>No. Seat allocation also depends on counselling choices, category documents, available seats and fee deadlines.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li><li><a href=\"/news\">Latest education news</a></li></ul>",
+      "faqs": [
+        {
+          "question": "When does CLAT 2027 registration close?",
+          "answer": "The checked Consortium notice lists 31 October 2026 at 11:59 PM. Confirm the live application page before the deadline because an extension is possible only through an official notice."
+        },
+        {
+          "question": "Are CLAT UG and PG eligibility rules the same?",
+          "answer": "No. They have different qualifying requirements and programme conditions. Use the relevant 2027 Consortium instructions."
+        },
+        {
+          "question": "What should I read for CLAT preparation?",
+          "answer": "Build reading stamina across law, policy, social issues and current affairs, then practise timed passage-based questions."
+        },
+        {
+          "question": "Does a CLAT rank guarantee an NLU seat?",
+          "answer": "No. Seat allocation also depends on counselling choices, category documents, available seats and fee deadlines."
+        }
+      ],
+      "internal_links": [
+        "/exams",
+        "/courses",
+        "/colleges",
+        "/news"
+      ],
+      "external_links": {
+        "apply": "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+        "official_notification": "https://clat2027.consortiumofnlus.ac.in/clat-2027/ug-instructions.html"
+      },
+      "official_apply_url": "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+      "official_notification_url": "https://clat2027.consortiumofnlus.ac.in/clat-2027/ug-instructions.html",
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    },
+    {
+      "id": "1bf4b6a1-5575-40f8-85d8-3701d46b3aba",
+      "old_slug": "gate-2026",
+      "slug": "gate-2026",
+      "name": "GATE",
+      "full_name": "Graduate Aptitude Test in Engineering (GATE) 2027",
+      "status": "Applications open",
+      "exam_date": "6, 7, 13, 14, 20 and 21 February 2027",
+      "application_start_date": "2 September 2026",
+      "application_end_date": "27 September 2026 without late fee; 5 October 2026 with late fee",
+      "result_date": "19 March 2027",
+      "category": "Engineering",
+      "level": "Postgraduate",
+      "mode": "Computer-based test",
+      "frequency": "Once a year",
+      "eligibility": "GATE 2027 has no age limit and permits eligible candidates to choose one or two papers from the official combinations. The qualifying degree, paper choice, category documents and institute-level admission rules must be checked on the GATE 2027 website.",
+      "important_dates": [
+        {
+          "event": "GOAPS opens",
+          "date": "2 September 2026"
+        },
+        {
+          "event": "Regular registration closes",
+          "date": "27 September 2026"
+        },
+        {
+          "event": "Extended registration closes",
+          "date": "5 October 2026"
+        },
+        {
+          "event": "City allotment notification",
+          "date": "4 January 2027"
+        },
+        {
+          "event": "GATE examinations",
+          "date": "6, 7, 13, 14, 20 and 21 February 2027"
+        },
+        {
+          "event": "Result",
+          "date": "19 March 2027"
+        }
+      ],
+      "syllabus": [
+        "General Aptitude",
+        "Engineering Mathematics where applicable",
+        "Discipline-specific GATE paper syllabus",
+        "Robotics and Automation (new 2027 paper)"
+      ],
+      "description": "GATE 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>GATE 2027 uses computer-based papers. The official site lists 30 test papers and publishes the paper-wise syllabus, question format, virtual calculator rules and two-paper combinations. The relevant brochure is the final authority.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>GOAPS opens</td><td>2 September 2026</td></tr><tr><td>Regular registration closes</td><td>27 September 2026</td></tr><tr><td>Extended registration closes</td><td>5 October 2026</td></tr><tr><td>City allotment notification</td><td>4 January 2027</td></tr><tr><td>GATE examinations</td><td>6, 7, 13, 14, 20 and 21 February 2027</td></tr><tr><td>Result</td><td>19 March 2027</td></tr></tbody></table>",
+      "summary_content": "<h2>GATE 2027 at a glance</h2><p>GATE 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>GOAPS opens</td><td>2 September 2026</td></tr><tr><td>Regular registration closes</td><td>27 September 2026</td></tr><tr><td>Extended registration closes</td><td>5 October 2026</td></tr><tr><td>City allotment notification</td><td>4 January 2027</td></tr><tr><td>GATE examinations</td><td>6, 7, 13, 14, 20 and 21 February 2027</td></tr><tr><td>Result</td><td>19 March 2027</td></tr></tbody></table><h2>Official verification</h2><p>Dates copied from the authority&#39;s current cycle notice.</p>",
+      "page_summary": "GATE 2027: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "GATE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check GATE 2027 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "GATE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://gate2027.iitm.ac.in/",
+      "official_website": "https://gate2027.iitm.ac.in/",
+      "registration_url": "https://gate2027.iitm.ac.in/",
+      "data_source_urls": [
+        "https://gate2027.iitm.ac.in/",
+        "https://gate2027.iitm.ac.in/important_dates",
+        "https://gate2027.iitm.ac.in/faqs"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "verification_note": "Dates copied from the authority's current cycle notice.. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "title": "GATE 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "GATE 2027 registration is shown as open in the IIT Madras authority record. The listed application window closes on 27 September 2026 without a late fee and on 5 October 2026 with a late fee, so check the portal before choosing the cheaper or later option.",
+      "article_html": "<p>GATE 2027 registration is shown as open in the IIT Madras authority record. The listed application window closes on 27 September 2026 without a late fee and on 5 October 2026 with a late fee, so check the portal before choosing the cheaper or later option.</p><h2>GATE 2027 dates and current status</h2><p>Dates copied from the authority&#39;s current cycle notice.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>GOAPS opens</td><td>2 September 2026</td></tr><tr><td>Regular registration closes</td><td>27 September 2026</td></tr><tr><td>Extended registration closes</td><td>5 October 2026</td></tr><tr><td>City allotment notification</td><td>4 January 2027</td></tr><tr><td>GATE examinations</td><td>6, 7, 13, 14, 20 and 21 February 2027</td></tr><tr><td>Result</td><td>19 March 2027</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>GATE accepts candidates from eligible undergraduate degree pathways and also permits certain students who are currently studying in a qualifying programme. The 2027 brochure controls the exact year, papers, documents and institute rules.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the GATE paper tests</h2><p>GATE 2027 is scheduled across multiple February dates in the checked notice. Paper choice, subject syllabus, calculator rules, question types and response instructions should come from the official brochure for the selected paper.</p><h3>Subject or skill areas</h3><ul><li>General Aptitude</li><li>Engineering Mathematics where applicable</li><li>Discipline-specific GATE paper syllabus</li><li>Robotics and Automation (new 2027 paper)</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p><p>Before you submit anything, check the official application portal and the official notification or dates page listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>GATE rewards depth. Pick the paper first, map its syllabus into weekly blocks and solve questions until you can explain the wrong answer without looking at the solution.</p><ul><li>Fix one paper and map every syllabus unit before collecting study material.</li><li>Mix engineering mathematics, general aptitude and core-subject practice.</li><li>Use a revision notebook for formulas and recurring mistakes.</li><li>Check the form&#39;s paper, category and certificate details before payment.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>GATE scores are used differently by IITs, IISc, PSUs and other institutions. Always check the specific programme or recruitment notice instead of assuming one score rule applies everywhere.</p><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p><h2>Questions students actually ask</h2><h3>What is the GATE 2027 application deadline?</h3><p>The checked IIT Madras notice lists 27 September 2026 without a late fee and 5 October 2026 with a late fee. Verify the live portal before paying.</p><h3>Can I choose more than one GATE paper?</h3><p>The permitted paper combinations and fee rules are cycle-specific. Check the 2027 brochure before finalising the form.</p><h3>When is the GATE 2027 result expected?</h3><p>The checked record lists 19 March 2027. Treat the official GATE notice as the final source for result publication and score access.</p><h3>Does GATE score guarantee an IIT or PSU offer?</h3><p>No. Each institute or employer sets its own eligibility, shortlist, interview and document rules.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li></ul>",
+      "faqs": [
+        {
+          "question": "What is the GATE 2027 application deadline?",
+          "answer": "The checked IIT Madras notice lists 27 September 2026 without a late fee and 5 October 2026 with a late fee. Verify the live portal before paying."
+        },
+        {
+          "question": "Can I choose more than one GATE paper?",
+          "answer": "The permitted paper combinations and fee rules are cycle-specific. Check the 2027 brochure before finalising the form."
+        },
+        {
+          "question": "When is the GATE 2027 result expected?",
+          "answer": "The checked record lists 19 March 2027. Treat the official GATE notice as the final source for result publication and score access."
+        },
+        {
+          "question": "Does GATE score guarantee an IIT or PSU offer?",
+          "answer": "No. Each institute or employer sets its own eligibility, shortlist, interview and document rules."
+        }
+      ],
+      "internal_links": [
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://gate2027.iitm.ac.in/",
+        "official_notification": "https://gate2027.iitm.ac.in/important_dates"
+      },
+      "official_apply_url": "https://gate2027.iitm.ac.in/",
+      "official_notification_url": "https://gate2027.iitm.ac.in/important_dates",
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    },
+    {
+      "id": "6a368f50-77ff-4b39-b6fa-98f23fe7ccc9",
+      "old_slug": "uceed-2026",
+      "slug": "uceed-2026",
+      "name": "UCEED",
+      "full_name": "Undergraduate Common Entrance Examination for Design (UCEED) 2027",
+      "status": "Upcoming; 2027 examination date announced",
+      "exam_date": "17 January 2027, forenoon",
+      "application_start_date": "Details to be released by 1 October 2026",
+      "application_end_date": "Details to be released by 1 October 2026",
+      "result_date": "To be announced",
+      "category": "Design",
+      "level": "Undergraduate",
+      "mode": "Centre-based examination with computer-based Part A and drawing Part B",
+      "frequency": "Once a year",
+      "eligibility": "UCEED 2027 eligibility, age limits, attempts and qualifying-examination rules will be published with the 2027 details. Candidates should verify the rules on the IIT Bombay UCEED website before applying and separately check the admission rules of each participating institute.",
+      "important_dates": [
+        {
+          "event": "2027 details and brochure",
+          "date": "Due by 1 October 2026"
+        },
+        {
+          "event": "Registration",
+          "date": "Not announced"
+        },
+        {
+          "event": "UCEED 2027 examination",
+          "date": "17 January 2027"
+        },
+        {
+          "event": "Result",
+          "date": "Not announced"
+        },
+        {
+          "event": "B.Des admission rounds",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Visualization and spatial reasoning",
+        "Observation and design sensitivity",
+        "Environment and society",
+        "Analytical and logical reasoning",
+        "Language and creativity",
+        "Drawing and sketching"
+      ],
+      "description": "UCEED 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>UCEED has Part A and Part B. IIT Bombay has announced the 17 January 2027 examination date, while the remaining 2027 registration and paper details are due on the official website by 1 October 2026.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 details and brochure</td><td>Due by 1 October 2026</td></tr><tr><td>Registration</td><td>Not announced</td></tr><tr><td>UCEED 2027 examination</td><td>17 January 2027</td></tr><tr><td>Result</td><td>Not announced</td></tr><tr><td>B.Des admission rounds</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>UCEED 2027 at a glance</h2><p>UCEED 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 details and brochure</td><td>Due by 1 October 2026</td></tr><tr><td>Registration</td><td>Not announced</td></tr><tr><td>UCEED 2027 examination</td><td>17 January 2027</td></tr><tr><td>Result</td><td>Not announced</td></tr><tr><td>B.Des admission rounds</td><td>Not announced</td></tr></tbody></table><h2>Official verification</h2><p>Dates copied from the authority&#39;s current cycle notice.</p>",
+      "page_summary": "UCEED 2027: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "UCEED 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check UCEED 2027 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "UCEED 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://www.uceed.iitb.ac.in/2026/",
+      "official_website": "https://www.uceed.iitb.ac.in/2026/",
+      "registration_url": "https://www.uceed.iitb.ac.in/2026/",
+      "data_source_urls": [
+        "https://www.uceed.iitb.ac.in/2026/",
+        "https://www.uceed.iitb.ac.in/2026/important-dates.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "verification_note": "Dates copied from the authority's current cycle notice.. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "title": "UCEED 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "UCEED 2027 is listed for 17 January 2027 in the official IIT Bombay material, while application details are due to be released by 1 October 2026. Design applicants should prepare now, but wait for the 2027 brochure before paying or choosing a centre.",
+      "article_html": "<p>UCEED 2027 is listed for 17 January 2027 in the official IIT Bombay material, while application details are due to be released by 1 October 2026. Design applicants should prepare now, but wait for the 2027 brochure before paying or choosing a centre.</p><h2>UCEED 2027 dates and current status</h2><p>Dates copied from the authority&#39;s current cycle notice.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 details and brochure</td><td>Due by 1 October 2026</td></tr><tr><td>Registration</td><td>Not announced</td></tr><tr><td>UCEED 2027 examination</td><td>17 January 2027</td></tr><tr><td>Result</td><td>Not announced</td></tr><tr><td>B.Des admission rounds</td><td>Not announced</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>UCEED eligibility, qualifying examination year, age conditions and participating institute rules come from the current IIT Bombay brochure. B.Des admission conditions can differ across participating institutes.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the UCEED paper tests</h2><p>UCEED tests visual and design thinking along with reasoning and communication. The 2027 brochure will settle the final paper structure, duration, marking and application process.</p><h3>Subject or skill areas</h3><ul><li>Visualization and spatial reasoning</li><li>Observation and design sensitivity</li><li>Environment and society</li><li>Analytical and logical reasoning</li><li>Language and creativity</li><li>Drawing and sketching</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p><p>Before you submit anything, check the official application portal and the official notification or dates page listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>Design preparation is not only sketching. You need observation, visual logic, spatial thinking and enough timed practice to make decisions without polishing one answer forever.</p><ul><li>Practise short visual reasoning and observation tasks under a timer.</li><li>Keep a sketchbook of objects, layouts and alternative solutions.</li><li>Review the reason an option works, not just whether it looks attractive.</li><li>Track the B.Des admission rules of every institute you may list.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>The UCEED score is followed by institute-specific B.Des applications and admission rounds. Keep the scorecard, category proof and portfolio-related instructions ready where required.</p><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p><h2>Questions students actually ask</h2><h3>When is UCEED 2027 scheduled?</h3><p>The checked IIT Bombay page lists 17 January 2027 in the forenoon. Confirm the final timing in the 2027 brochure.</p><h3>When will UCEED 2027 applications open?</h3><p>The official material says details are due by 1 October 2026. Do not treat an earlier coaching date as an application notice.</p><h3>Is UCEED only a drawing test?</h3><p>No. It also tests visual reasoning, observation, spatial thinking and design aptitude. The brochure defines the exact paper.</p><h3>Does UCEED rank itself allot a B.Des seat?</h3><p>No. Participating institutes run their own admission rounds, eligibility checks and seat allocation steps.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li><li><a href=\"/news\">Latest education news</a></li></ul>",
+      "faqs": [
+        {
+          "question": "When is UCEED 2027 scheduled?",
+          "answer": "The checked IIT Bombay page lists 17 January 2027 in the forenoon. Confirm the final timing in the 2027 brochure."
+        },
+        {
+          "question": "When will UCEED 2027 applications open?",
+          "answer": "The official material says details are due by 1 October 2026. Do not treat an earlier coaching date as an application notice."
+        },
+        {
+          "question": "Is UCEED only a drawing test?",
+          "answer": "No. It also tests visual reasoning, observation, spatial thinking and design aptitude. The brochure defines the exact paper."
+        },
+        {
+          "question": "Does UCEED rank itself allot a B.Des seat?",
+          "answer": "No. Participating institutes run their own admission rounds, eligibility checks and seat allocation steps."
+        }
+      ],
+      "internal_links": [
+        "/exams",
+        "/courses",
+        "/colleges",
+        "/news"
+      ],
+      "external_links": {
+        "apply": "https://www.uceed.iitb.ac.in/2026/",
+        "official_notification": "https://www.uceed.iitb.ac.in/2026/important-dates.html"
+      },
+      "official_apply_url": "https://www.uceed.iitb.ac.in/2026/",
+      "official_notification_url": "https://www.uceed.iitb.ac.in/2026/important-dates.html",
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    },
+    {
+      "id": "f31d18ac-0e9c-4648-b979-856b3f24fbfa",
+      "old_slug": "cuet-2026",
+      "slug": "cuet-2026",
+      "name": "CUET",
+      "full_name": "Common University Entrance Test (UG) 2027",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced by NTA",
+      "application_start_date": "Not announced by NTA",
+      "application_end_date": "Not announced by NTA",
+      "result_date": "Not announced by NTA",
+      "category": "Science",
+      "level": "Undergraduate",
+      "mode": "Mode and subject combinations will follow the NTA 2027 bulletin",
+      "frequency": "Once a year",
+      "eligibility": "CUET (UG) eligibility is programme and university specific. Candidates must check the participating university list, subject combinations, qualifying marks and reservation documents in the NTA 2027 information bulletin and the admission pages of their chosen universities.",
+      "important_dates": [
+        {
+          "event": "2027 information bulletin",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Answer key",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Result / NTA scores",
+          "date": "Not announced by NTA"
+        }
+      ],
+      "syllabus": [
+        "Language subjects",
+        "Domain-specific subjects",
+        "General Test where required by the chosen programme"
+      ],
+      "description": "CUET 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>The conducting authority has not published the next cycle's complete schedule yet. We keep the date blank rather than turning an old cycle or a coaching estimate into a fact.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA will publish the 2027 subject choices, examination mode, question format, duration and marking scheme. A student should select subjects only after checking the eligibility rules of the universities and programmes they want.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information bulletin</td><td>Not announced by NTA</td></tr><tr><td>Application window</td><td>Not announced by NTA</td></tr><tr><td>Examination</td><td>Not announced by NTA</td></tr><tr><td>Answer key</td><td>Not announced by NTA</td></tr><tr><td>Result / NTA scores</td><td>Not announced by NTA</td></tr></tbody></table>",
+      "summary_content": "<h2>CUET 2027 at a glance</h2><p>CUET 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information bulletin</td><td>Not announced by NTA</td></tr><tr><td>Application window</td><td>Not announced by NTA</td></tr><tr><td>Examination</td><td>Not announced by NTA</td></tr><tr><td>Answer key</td><td>Not announced by NTA</td></tr><tr><td>Result / NTA scores</td><td>Not announced by NTA</td></tr></tbody></table><h2>Official verification</h2><p>Next-cycle dates are not published by the authority; displayed as not announced.</p>",
+      "page_summary": "CUET 2027: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "CUET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check CUET 2027 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "CUET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://cuet.nta.nic.in/",
+      "official_website": "https://cuet.nta.nic.in/",
+      "registration_url": "https://cuet.nta.nic.in/",
+      "data_source_urls": [
+        "https://cuet.nta.nic.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "verification_note": "Next-cycle dates are not published by the authority; displayed as not announced.. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "title": "CUET 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "CUET UG 2027 dates have not been announced by NTA in the checked official material. The smart move is to shortlist programmes first, map their required subjects and wait for the bulletin before locking a subject combination.",
+      "article_html": "<p>CUET UG 2027 dates have not been announced by NTA in the checked official material. The smart move is to shortlist programmes first, map their required subjects and wait for the bulletin before locking a subject combination.</p><h2>CUET 2027 dates and current status</h2><p>Next-cycle dates are not published by the authority; displayed as not announced.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information bulletin</td><td>Not announced by NTA</td></tr><tr><td>Application window</td><td>Not announced by NTA</td></tr><tr><td>Examination</td><td>Not announced by NTA</td></tr><tr><td>Answer key</td><td>Not announced by NTA</td></tr><tr><td>Result / NTA scores</td><td>Not announced by NTA</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>CUET eligibility is programme and university specific. Subject combinations, qualifying marks, reservation documents and admission rules must be checked on the NTA bulletin and each participating university&#39;s admission page.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the CUET paper tests</h2><p>CUET can involve language, domain subjects and the General Test depending on the programme. NTA will confirm the 2027 subject choices, mode, duration, question format and marking.</p><h3>Subject or skill areas</h3><ul><li>Language subjects</li><li>Domain-specific subjects</li><li>General Test where required by the chosen programme</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>The conducting authority has not published the next cycle's complete schedule yet. We keep the date blank rather than turning an old cycle or a coaching estimate into a fact.</p><p>Before you submit anything, check the official application portal listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>CUET planning starts before the form. A student who picks subjects first and checks programme eligibility later can create a problem no amount of mock practice will fix.</p><ul><li>List target university programmes before choosing test subjects.</li><li>Match Class 12 subjects with each programme&#39;s published eligibility.</li><li>Practise language, domain and General Test sections only where your targets require them.</li><li>Keep university-specific application and counselling dates on a separate tracker.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>NTA scores are used by participating universities through their own admission portals and rules. The exam result does not replace a university application or preference process.</p><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p><h2>Questions students actually ask</h2><h3>When will CUET UG 2027 registration begin?</h3><p>NTA has not published the 2027 schedule in the checked official material. Watch the NTA portal and the admission pages of your target universities.</p><h3>How do I choose CUET subjects?</h3><p>Start with the degree programmes you want, then match their language, domain and General Test requirements. Do not choose by habit alone.</p><h3>Does CUET score guarantee admission to a university?</h3><p>No. Universities apply their own eligibility, preference, category and counselling rules after receiving the NTA score.</p><h3>Can I use the 2026 CUET subject rules for 2027?</h3><p>Use them only for early planning. The 2027 bulletin and programme-specific university pages must decide the final combination.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li><li><a href=\"/news\">Latest education news</a></li></ul>",
+      "faqs": [
+        {
+          "question": "When will CUET UG 2027 registration begin?",
+          "answer": "NTA has not published the 2027 schedule in the checked official material. Watch the NTA portal and the admission pages of your target universities."
+        },
+        {
+          "question": "How do I choose CUET subjects?",
+          "answer": "Start with the degree programmes you want, then match their language, domain and General Test requirements. Do not choose by habit alone."
+        },
+        {
+          "question": "Does CUET score guarantee admission to a university?",
+          "answer": "No. Universities apply their own eligibility, preference, category and counselling rules after receiving the NTA score."
+        },
+        {
+          "question": "Can I use the 2026 CUET subject rules for 2027?",
+          "answer": "Use them only for early planning. The 2027 bulletin and programme-specific university pages must decide the final combination."
+        }
+      ],
+      "internal_links": [
+        "/exams",
+        "/courses",
+        "/colleges",
+        "/news"
+      ],
+      "external_links": {
+        "apply": "https://cuet.nta.nic.in/"
+      },
+      "official_apply_url": "https://cuet.nta.nic.in/",
+      "official_notification_url": null,
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    },
+    {
+      "id": "6ef5c13b-4606-47a8-aab2-3d6cf0793b12",
+      "old_slug": "xat-2026",
+      "slug": "xat-2026",
+      "name": "XAT",
+      "full_name": "Xavier Aptitude Test (XAT) 2027",
+      "status": "Applications open",
+      "exam_date": "3 January 2027, 2:00 PM–5:00 PM IST",
+      "application_start_date": "15 July 2026",
+      "application_end_date": "6 December 2026",
+      "result_date": "To be announced by XLRI",
+      "category": "Management",
+      "level": "Postgraduate",
+      "mode": "Computer-based test",
+      "frequency": "Once a year",
+      "eligibility": "XAT 2027 applicants should follow the official XLRI/XAT instructions for the recognised bachelor's degree requirement, final-year status and programme-specific rules. Individual institutes decide their own shortlisting and admission process after accepting XAT scores.",
+      "important_dates": [
+        {
+          "event": "Registration opens",
+          "date": "15 July 2026"
+        },
+        {
+          "event": "Registration closes",
+          "date": "6 December 2026"
+        },
+        {
+          "event": "Admit card",
+          "date": "20 December 2026, tentative"
+        },
+        {
+          "event": "XAT 2027 examination",
+          "date": "3 January 2027, 2:00 PM–5:00 PM IST"
+        },
+        {
+          "event": "Result",
+          "date": "To be announced"
+        }
+      ],
+      "syllabus": [
+        "Verbal Ability and Logical Reasoning",
+        "Decision Making",
+        "Quantitative Aptitude and Data Interpretation",
+        "General Knowledge"
+      ],
+      "description": "XAT 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The official XAT website lists a computer-based examination on 3 January 2027 from 2:00 PM to 5:00 PM. Candidates should use the current instructions for question counts, marking, calculator rules and test-city information.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>15 July 2026</td></tr><tr><td>Registration closes</td><td>6 December 2026</td></tr><tr><td>Admit card</td><td>20 December 2026, tentative</td></tr><tr><td>XAT 2027 examination</td><td>3 January 2027, 2:00 PM–5:00 PM IST</td></tr><tr><td>Result</td><td>To be announced</td></tr></tbody></table>",
+      "summary_content": "<h2>XAT 2027 at a glance</h2><p>XAT 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>15 July 2026</td></tr><tr><td>Registration closes</td><td>6 December 2026</td></tr><tr><td>Admit card</td><td>20 December 2026, tentative</td></tr><tr><td>XAT 2027 examination</td><td>3 January 2027, 2:00 PM-5:00 PM IST</td></tr><tr><td>Result</td><td>To be announced</td></tr></tbody></table><h2>Official verification</h2><p>Dates copied from the authority&#39;s current cycle notice.</p>",
+      "page_summary": "XAT 2027: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "XAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check XAT 2027 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "XAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://xatonline.in/",
+      "official_website": "https://xatonline.in/",
+      "registration_url": "https://xatonline.in/",
+      "data_source_urls": [
+        "https://xatonline.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "verification_note": "Dates copied from the authority's current cycle notice.. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "title": "XAT 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "XAT 2027 registration is listed from 15 July to 6 December 2026, with the examination scheduled for 3 January 2027 from 2:00 PM to 5:00 PM in the checked authority record. Check the live XAT portal before paying because the organiser controls every deadline.",
+      "article_html": "<p>XAT 2027 registration is listed from 15 July to 6 December 2026, with the examination scheduled for 3 January 2027 from 2:00 PM to 5:00 PM in the checked authority record. Check the live XAT portal before paying because the organiser controls every deadline.</p><h2>XAT 2027 dates and current status</h2><p>Dates copied from the authority&#39;s current cycle notice.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>15 July 2026</td></tr><tr><td>Registration closes</td><td>6 December 2026</td></tr><tr><td>Admit card</td><td>20 December 2026, tentative</td></tr><tr><td>XAT 2027 examination</td><td>3 January 2027, 2:00 PM-5:00 PM IST</td></tr><tr><td>Result</td><td>To be announced</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>XAT applicants should follow the current XLRI instructions for the recognised bachelor&#39;s degree requirement and final-year status. Institutes accepting XAT scores set their own shortlisting and admission conditions.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the XAT paper tests</h2><p>XAT combines verbal and logical reasoning, decision making, quantitative aptitude and data interpretation, plus general knowledge. Use the current instructions for question counts, marking and test-city details.</p><h3>Subject or skill areas</h3><ul><li>Verbal Ability and Logical Reasoning</li><li>Decision Making</li><li>Quantitative Aptitude and Data Interpretation</li><li>General Knowledge</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Dates shown here are taken from the conducting authority's current notice and can change. Check the official portal before paying a fee or travelling to a centre.</p><p>Before you submit anything, check the official application portal listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>Decision Making is where many otherwise strong candidates lose marks. Practise choosing the most defensible option from a passage, then review why the tempting answer fails.</p><ul><li>Give Decision Making a fixed weekly slot instead of treating it as a last-minute add-on.</li><li>Rotate verbal, quantitative and data-interpretation sets under timed conditions.</li><li>Keep a light but regular General Knowledge routine.</li><li>Check the form&#39;s institute preferences and academic details before submission.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>XLRI and other institutes use XAT scores through their own admission processes. Shortlisting, interviews, academics and work experience can matter beyond the test score.</p><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p><h2>Questions students actually ask</h2><h3>What is the XAT 2027 exam date?</h3><p>The checked authority record lists 3 January 2027 from 2:00 PM to 5:00 PM IST. Confirm the admit-card instructions before exam day.</p><h3>When does XAT 2027 registration close?</h3><p>The record lists 6 December 2026. Check the live XAT portal for any official change before paying or editing the form.</p><h3>Is Decision Making compulsory in XAT preparation?</h3><p>Yes, it is a named part of the test structure and needs passage-based practice rather than generic reasoning drills.</p><h3>Does XAT score guarantee XLRI admission?</h3><p>No. XLRI and other institutes run separate shortlisting and selection processes.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li></ul>",
+      "faqs": [
+        {
+          "question": "What is the XAT 2027 exam date?",
+          "answer": "The checked authority record lists 3 January 2027 from 2:00 PM to 5:00 PM IST. Confirm the admit-card instructions before exam day."
+        },
+        {
+          "question": "When does XAT 2027 registration close?",
+          "answer": "The record lists 6 December 2026. Check the live XAT portal for any official change before paying or editing the form."
+        },
+        {
+          "question": "Is Decision Making compulsory in XAT preparation?",
+          "answer": "Yes, it is a named part of the test structure and needs passage-based practice rather than generic reasoning drills."
+        },
+        {
+          "question": "Does XAT score guarantee XLRI admission?",
+          "answer": "No. XLRI and other institutes run separate shortlisting and selection processes."
+        }
+      ],
+      "internal_links": [
+        "/exams/top-management-entrance-exams-in-india",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://xatonline.in/"
+      },
+      "official_apply_url": "https://xatonline.in/",
+      "official_notification_url": null,
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    },
+    {
+      "id": "005b84df-f49d-418c-a207-e0aa1d167f40",
+      "old_slug": "bitsat-2026",
+      "slug": "bitsat-2026",
+      "name": "BITSAT",
+      "full_name": "Birla Institute of Technology and Science Admission Test (BITSAT) 2027",
+      "status": "2027 official schedule not announced; 2026 cycle closed",
+      "exam_date": "Not announced by BITS Pilani",
+      "application_start_date": "Not announced by BITS Pilani",
+      "application_end_date": "Not announced by BITS Pilani",
+      "result_date": "Not announced by BITS Pilani",
+      "category": "Engineering",
+      "level": "Undergraduate",
+      "mode": "Computer-based online test",
+      "frequency": "Usually held in two sessions; 2027 dates require BITS confirmation",
+      "eligibility": "BITSAT eligibility is programme specific. Candidates must wait for the BITSAT 2027 brochure for the permitted Class 12 passing years, subject combination, marks, attempt and admission-preference rules. The official admissions website is the only reliable source for the live cycle.",
+      "important_dates": [
+        {
+          "event": "2027 brochure",
+          "date": "Not announced by BITS Pilani"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced by BITS Pilani"
+        },
+        {
+          "event": "Session 1",
+          "date": "Not announced by BITS Pilani"
+        },
+        {
+          "event": "Session 2",
+          "date": "Not announced by BITS Pilani"
+        },
+        {
+          "event": "Admission iterations",
+          "date": "Not announced by BITS Pilani"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "English Proficiency",
+        "Logical Reasoning",
+        "Mathematics or Biology depending on the programme"
+      ],
+      "description": "BITSAT 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>The conducting authority has not published the next cycle's complete schedule yet. We keep the date blank rather than turning an old cycle or a coaching estimate into a fact.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>BITS Pilani will publish the 2027 computer-based test structure, sessions, duration, question count, marking and slot-booking rules in the official brochure. Do not carry forward 2026 dates as 2027 dates.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 brochure</td><td>Not announced by BITS Pilani</td></tr><tr><td>Application window</td><td>Not announced by BITS Pilani</td></tr><tr><td>Session 1</td><td>Not announced by BITS Pilani</td></tr><tr><td>Session 2</td><td>Not announced by BITS Pilani</td></tr><tr><td>Admission iterations</td><td>Not announced by BITS Pilani</td></tr></tbody></table>",
+      "summary_content": "<h2>BITSAT 2027 at a glance</h2><p>BITSAT 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 brochure</td><td>Not announced by BITS Pilani</td></tr><tr><td>Application window</td><td>Not announced by BITS Pilani</td></tr><tr><td>Session 1</td><td>Not announced by BITS Pilani</td></tr><tr><td>Session 2</td><td>Not announced by BITS Pilani</td></tr><tr><td>Admission iterations</td><td>Not announced by BITS Pilani</td></tr></tbody></table><h2>Official verification</h2><p>Next-cycle dates are not published by the authority; displayed as not announced.</p>",
+      "page_summary": "BITSAT 2027: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "BITSAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check BITSAT 2027 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "BITSAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://www.bitsadmission.com/FD/FD.html",
+      "official_website": "https://www.bitsadmission.com/FD/FD.html",
+      "registration_url": "https://www.bitsadmission.com/FD/FD.html",
+      "data_source_urls": [
+        "https://www.bitsadmission.com/FD/FD.html",
+        "https://www.bitsadmission.com/FD/BITSAT_FAQs.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "verification_note": "Next-cycle dates are not published by the authority; displayed as not announced.. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "title": "BITSAT 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "BITSAT 2027 dates are not announced by BITS Pilani in the checked admissions material. Use the waiting period to strengthen speed across Physics, Chemistry, Mathematics or Biology, English and Logical Reasoning, but do not copy 2026 deadlines into a 2027 plan.",
+      "article_html": "<p>BITSAT 2027 dates are not announced by BITS Pilani in the checked admissions material. Use the waiting period to strengthen speed across Physics, Chemistry, Mathematics or Biology, English and Logical Reasoning, but do not copy 2026 deadlines into a 2027 plan.</p><h2>BITSAT 2027 dates and current status</h2><p>Next-cycle dates are not published by the authority; displayed as not announced.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 brochure</td><td>Not announced by BITS Pilani</td></tr><tr><td>Application window</td><td>Not announced by BITS Pilani</td></tr><tr><td>Session 1</td><td>Not announced by BITS Pilani</td></tr><tr><td>Session 2</td><td>Not announced by BITS Pilani</td></tr><tr><td>Admission iterations</td><td>Not announced by BITS Pilani</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>BITSAT eligibility is programme specific. The BITSAT 2027 brochure must confirm the Class 12 passing year, subject combination, marks, attempt rules and admission-preference process.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the BITSAT paper tests</h2><p>BITS Pilani will publish the 2027 computer-based test structure, sessions, duration, question count, marking and slot-booking rules. The permitted subject route also depends on the degree programme.</p><h3>Subject or skill areas</h3><ul><li>Physics</li><li>Chemistry</li><li>English Proficiency</li><li>Logical Reasoning</li><li>Mathematics or Biology depending on the programme</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>The conducting authority has not published the next cycle's complete schedule yet. We keep the date blank rather than turning an old cycle or a coaching estimate into a fact.</p><p>Before you submit anything, check the official application portal and the official notification or dates page listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>BITSAT is a speed-and-accuracy paper. A beautiful long solution is not useful if it takes three times the available time, so practise clean choices and quick recovery from a bad question.</p><ul><li>Revise Physics, Chemistry and Mathematics or Biology according to your target programme.</li><li>Add short English and Logical Reasoning drills through the week.</li><li>Practise mixed timed sets and record questions lost to rushing.</li><li>Keep session and preference decisions separate from study tracking.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>BITS admission follows score submission, preference filling and the institute&#39;s iteration process. A test score does not by itself confirm a branch or campus.</p><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p><h2>Questions students actually ask</h2><h3>When will BITSAT 2027 applications open?</h3><p>BITS Pilani has not published the 2027 application window in the checked official material. Wait for the admissions brochure.</p><h3>Can I choose Mathematics or Biology in BITSAT?</h3><p>The permitted subject route depends on the programme and the current brochure. Check before selecting a degree preference.</p><h3>Will BITSAT 2027 have the same pattern as 2026?</h3><p>Do not assume it. BITS Pilani will confirm the current duration, marking, sessions and slot rules.</p><h3>Does a BITSAT score guarantee a branch?</h3><p>No. Preference filling, score, eligibility, available seats and admission iterations determine the final offer.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li></ul>",
+      "faqs": [
+        {
+          "question": "When will BITSAT 2027 applications open?",
+          "answer": "BITS Pilani has not published the 2027 application window in the checked official material. Wait for the admissions brochure."
+        },
+        {
+          "question": "Can I choose Mathematics or Biology in BITSAT?",
+          "answer": "The permitted subject route depends on the programme and the current brochure. Check before selecting a degree preference."
+        },
+        {
+          "question": "Will BITSAT 2027 have the same pattern as 2026?",
+          "answer": "Do not assume it. BITS Pilani will confirm the current duration, marking, sessions and slot rules."
+        },
+        {
+          "question": "Does a BITSAT score guarantee a branch?",
+          "answer": "No. Preference filling, score, eligibility, available seats and admission iterations determine the final offer."
+        }
+      ],
+      "internal_links": [
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.bitsadmission.com/FD/FD.html",
+        "official_notification": "https://www.bitsadmission.com/FD/BITSAT_FAQs.html"
+      },
+      "official_apply_url": "https://www.bitsadmission.com/FD/FD.html",
+      "official_notification_url": "https://www.bitsadmission.com/FD/BITSAT_FAQs.html",
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    },
+    {
+      "id": "743b9a90-c1e7-466d-8d49-7334768ef35c",
+      "old_slug": "srmjeee",
+      "slug": "srmjeee",
+      "name": "SRMJEEE UG",
+      "full_name": "SRM Joint Engineering Entrance Examination (UG) 2027",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced by SRMIST",
+      "application_start_date": "Not announced by SRMIST",
+      "application_end_date": "Not announced by SRMIST",
+      "result_date": "Not announced by SRMIST",
+      "category": "Engineering",
+      "level": "Undergraduate",
+      "mode": "Online proctored / computer-based mode as notified by SRMIST",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "SRMIST will define the 2027 qualifying subjects, marks, passing-year rules and programme eligibility in its official admission notice. Check the B.Tech programme page before submitting an application.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by the conducting authority"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced by SRMIST"
+        },
+        {
+          "event": "Last date to apply",
+          "date": "Not announced by SRMIST"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced by SRMIST"
+        },
+        {
+          "event": "Result / score card",
+          "date": "Not announced by SRMIST"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics or Biology as applicable",
+        "English and aptitude where specified"
+      ],
+      "description": "SRMJEEE UG 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, answer key, result and counselling notices.</li></ol><p><a href=\"https://applications.srmist.edu.in/\" rel=\"noopener noreferrer\">Apply on the official portal</a> · <a href=\"https://www.srmist.edu.in/admission-india/\" rel=\"noopener noreferrer\">Read the official notification page</a></p><p>The authority has not released the complete 2027 schedule yet. We show an explicit pending status instead of copying 2026 dates or publishing an estimate.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>SRMIST publishes the phase-wise schedule, mode, slot and scoring rules for each cycle. The 2027 question count, duration, negative marking and phase dates must be taken from the next official handbook.</p><p>Question counts, marking, shifts and accessibility rules can change. The latest official bulletin overrides every older coaching summary.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Practise in the same mode and time limits as the actual paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep an error log and revise it weekly.</li><li>Track form, admit-card and counselling deadlines separately from study tasks.</li></ul><p>Thoda-thoda consistent work is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or rank is not an admission offer. Follow the counselling or institute portal named by the authority, check category and document rules, fill choices carefully and pay only through the authorised payment page.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the scorecard only from the official candidate login. Save the PDF and note the score, rank, validity and next admission step. If a date is not published, it remains marked as pending.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by the conducting authority</td></tr><tr><td>Application window</td><td>Not announced by SRMIST</td></tr><tr><td>Last date to apply</td><td>Not announced by SRMIST</td></tr><tr><td>Examination</td><td>Not announced by SRMIST</td></tr><tr><td>Result / score card</td><td>Not announced by SRMIST</td></tr></tbody></table>",
+      "summary_content": "<h2>SRMJEEE UG 2027 at a glance</h2><p>SRMJEEE UG 2027 dates, eligibility, application, exam pattern, preparation and result guidance, with unpublished details clearly marked for official confirmation.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by the conducting authority</td></tr><tr><td>Application window</td><td>Not announced by SRMIST</td></tr><tr><td>Last date to apply</td><td>Not announced by SRMIST</td></tr><tr><td>Examination</td><td>Not announced by SRMIST</td></tr><tr><td>Result / score card</td><td>Not announced by SRMIST</td></tr></tbody></table><h2>Official verification</h2><p>Use the official authority notice for the live cycle.</p>",
+      "page_summary": "SRMJEEE UG 2027: current date status, eligibility, application steps, syllabus, pattern, preparation and counselling guidance.",
+      "meta_title": "SRMJEEE UG 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check SRMJEEE UG 2027 dates, eligibility, application steps, syllabus and result guidance. Verify every deadline on the official portal.",
+      "meta_keywords": "SRMJEEE UG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://www.srmist.edu.in/admission-india/",
+      "official_website": "https://www.srmist.edu.in/admission-india/",
+      "registration_url": "https://applications.srmist.edu.in/",
+      "data_source_urls": [
+        "https://applications.srmist.edu.in/",
+        "https://www.srmist.edu.in/admission-india/",
+        "https://webstor.srmist.edu.in/web_assets/downloads/2026/instructional-manual-for-srmjeee-ug-2026-phase-i.pdf"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_002",
+      "internal_links": [
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://applications.srmist.edu.in/",
+        "official_notification": "https://www.srmist.edu.in/admission-india/"
+      },
+      "title": "SRMJEEE UG 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "SRMJEEE UG 2027 dates are not published in the checked SRMIST admission material. Keep the official application portal bookmarked, but wait for the 2027 notice before treating a phase date, fee or eligibility rule as final.",
+      "article_html": "<p>SRMJEEE UG 2027 dates are not published in the checked SRMIST admission material. Keep the official application portal bookmarked, but wait for the 2027 notice before treating a phase date, fee or eligibility rule as final.</p><h2>SRMJEEE UG 2027 dates and current status</h2><p>Use the authority notice for the live cycle.</p><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by the conducting authority</td></tr><tr><td>Application window</td><td>Not announced by SRMIST</td></tr><tr><td>Last date to apply</td><td>Not announced by SRMIST</td></tr><tr><td>Examination</td><td>Not announced by SRMIST</td></tr><tr><td>Result / score card</td><td>Not announced by SRMIST</td></tr></tbody></table><h2>Who can apply and what to check</h2><p>SRMIST sets programme-specific eligibility, subject, marks and document rules. The 2027 information should be checked on the admission page and the official application portal, especially for different campuses or degree choices.</p><ul><li>Match the qualifying examination and subjects with the target programme.</li><li>Keep category, identity and academic documents consistent.</li><li>Read the current authority notice before paying or submitting the form.</li></ul><h2>What the SRMJEEE UG paper tests</h2><p>The 2027 phase schedule, question format, duration, marking and slot instructions must come from SRMIST. Do not carry a previous phase&#39;s details into the new cycle without checking the current manual.</p><h3>Subject or skill areas</h3><ul><li>Physics</li><li>Chemistry</li><li>Mathematics or Biology as applicable</li><li>English and aptitude where specified</li></ul><h2>How to apply without creating a preventable problem</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>Apply on the official portal · Read the official notification page</p><p>The authority has not released the complete 2027 schedule yet. We show an explicit pending status instead of copying 2026 dates or publishing an estimate.</p><p>Before you submit anything, check the official application portal and the official notification or dates page listed in the verified links for this exam. Those pages control the live cycle; this guide does not replace them.</p><h2>How to prepare without burning out</h2><p>SRMJEEE preparation should stay close to the programme you want. Build a steady PCM or Biology routine, then add speed practice because online entrance tests punish slow switching between topics.</p><ul><li>Match the Physics, Chemistry, Mathematics or Biology plan to the programme you want.</li><li>Use short computer-based practice sets and review calculation mistakes.</li><li>Keep campus and branch preferences written down before the form opens.</li><li>Save every payment receipt, confirmation page and phase notice.</li></ul><p>Small, repeatable work beats a dramatic plan that collapses after one week. Keep one place for mistakes, one place for deadlines and one honest view of your weak areas.</p><h2>Results, counselling and the next decision</h2><p>After the result, SRMIST controls counselling, campus and programme preference steps. Read the offer and fee conditions before accepting a seat.</p><p>Download the scorecard only from the official candidate login. Save the PDF and note the score, rank, validity and next admission step. If a date is not published, it remains marked as pending.</p><h2>Questions students actually ask</h2><h3>When will SRMJEEE UG 2027 registration start?</h3><p>SRMIST has not published the 2027 schedule in the checked official material. Use the official admission page for the live notice.</p><h3>Which subjects should I prepare for SRMJEEE?</h3><p>The subject combination depends on the programme. Match the current SRMIST eligibility and syllabus instructions before planning.</p><h3>Can I choose more than one SRM campus?</h3><p>Campus and programme preference rules are cycle-specific. Read the application and counselling instructions before submitting choices.</p><h3>Does SRMJEEE rank guarantee admission?</h3><p>No. Eligibility, preference, available seats, fee payment and SRMIST counselling steps still apply.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/courses\">Relevant courses</a></li><li><a href=\"/colleges\">College options</a></li></ul>",
+      "faqs": [
+        {
+          "question": "When will SRMJEEE UG 2027 registration start?",
+          "answer": "SRMIST has not published the 2027 schedule in the checked official material. Use the official admission page for the live notice."
+        },
+        {
+          "question": "Which subjects should I prepare for SRMJEEE?",
+          "answer": "The subject combination depends on the programme. Match the current SRMIST eligibility and syllabus instructions before planning."
+        },
+        {
+          "question": "Can I choose more than one SRM campus?",
+          "answer": "Campus and programme preference rules are cycle-specific. Read the application and counselling instructions before submitting choices."
+        },
+        {
+          "question": "Does SRMJEEE rank guarantee admission?",
+          "answer": "No. Eligibility, preference, available seats, fee payment and SRMIST counselling steps still apply."
+        }
+      ],
+      "official_apply_url": "https://applications.srmist.edu.in/",
+      "official_notification_url": "https://www.srmist.edu.in/admission-india/",
+      "verification_note": "Official source status checked. Article dates and eligibility wording were rechecked on 2026-09-21; no unpublished value was filled in.",
+      "editorial_policy": "DekhoCampus human editorial policy v2: direct Indian admissions voice, no raw Markdown, no fabricated dates, official-source-first exam facts, topic-native structure, four visible FAQs, four verified internal links and one or two verified official external links."
+    }
+  ],
+  "quality_audits": {
+    "jee-advanced-2026": {
+      "passed": true,
+      "score": 100,
+      "word_count": 665,
+      "internal_links": 4,
+      "external_links": 2,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    },
+    "neet-ug-2026": {
+      "passed": true,
+      "score": 100,
+      "word_count": 656,
+      "internal_links": 4,
+      "external_links": 2,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    },
+    "cat": {
+      "passed": true,
+      "score": 100,
+      "word_count": 689,
+      "internal_links": 4,
+      "external_links": 2,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    },
+    "clat-2026": {
+      "passed": true,
+      "score": 100,
+      "word_count": 673,
+      "internal_links": 4,
+      "external_links": 2,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    },
+    "gate-2026": {
+      "passed": true,
+      "score": 100,
+      "word_count": 688,
+      "internal_links": 4,
+      "external_links": 2,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    },
+    "uceed-2026": {
+      "passed": true,
+      "score": 100,
+      "word_count": 649,
+      "internal_links": 4,
+      "external_links": 2,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    },
+    "cuet-2026": {
+      "passed": true,
+      "score": 100,
+      "word_count": 657,
+      "internal_links": 4,
+      "external_links": 1,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    },
+    "xat-2026": {
+      "passed": true,
+      "score": 100,
+      "word_count": 651,
+      "internal_links": 4,
+      "external_links": 1,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    },
+    "bitsat-2026": {
+      "passed": true,
+      "score": 100,
+      "word_count": 654,
+      "internal_links": 4,
+      "external_links": 2,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    },
+    "srmjeee": {
+      "passed": true,
+      "score": 100,
+      "word_count": 637,
+      "internal_links": 4,
+      "external_links": 2,
+      "forbidden_hits": [],
+      "checks": {
+        "word_count": true,
+        "metadata": true,
+        "semantic_html": true,
+        "answer_first": true,
+        "table": true,
+        "faqs": true,
+        "internal_links": true,
+        "official_links": true,
+        "no_published_urls": true,
+        "no_forbidden_language": true,
+        "no_long_dash": true,
+        "no_placeholders": true
+      }
+    }
+  },
+  "production_write": "not performed; this is a reviewable batch artifact and requires the production data migration after approval"
+}
