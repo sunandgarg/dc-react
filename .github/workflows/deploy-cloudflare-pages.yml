@@ -38,6 +38,10 @@ jobs:
           SITEMAP_API_URL: none
           SITEMAP_SEED_URL: https://dekhocampus.com/sitemap.xml
           SITEMAP_SEED_FETCH_BASE_URL: https://aws-origin.dekhocampus.com
+          # S3-backed child chunks can be larger than the root index. Allow
+          # the streamed AWS response enough time on a cold origin.
+          SITEMAP_FETCH_TIMEOUT_MS: 60000
+          SITEMAP_FETCH_ATTEMPTS: 2
         run: |
           npm ci
           npm test

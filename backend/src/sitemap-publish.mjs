@@ -366,10 +366,18 @@ function objectRepository() {
   const config = storageConfig();
   if (config.provider !== "s3") throw publishError(503, "SITEMAP_STORAGE_NOT_CONFIGURED", "AWS S3 sitemap storage is not configured");
   return {
-    async get(key) {
+    async get(key, options = {}) {
       try {
         const result = await config.client.send(new GetObjectCommand({ Bucket: config.bucket, Key: key }));
-        return { body: await result.Body.transformToString(), contentType: result.ContentType, cacheControl: result.CacheControl, etag: result.ETag };
+        // Stream public sitemap chunks directly to the caller. Waiting for
+        // transformToString() makes Nginx and Cloudflare wait for the whole
+        // object before receiving headers, which is especially slow for the
+        // larger catalogue chunks. Root/index reads still use a string because
+        // the publisher needs to inspect their locations.
+        const body = options.stream && typeof result.Body?.transformToWebStream === "function"
+          ? result.Body.transformToWebStream()
+          : await result.Body.transformToString();
+        return { body, contentType: result.ContentType, cacheControl: result.CacheControl, etag: result.ETag };
       } catch (error) {
         if (error?.$metadata?.httpStatusCode === 404 || ["NoSuchKey", "NotFound"].includes(error?.name)) return null;
         throw error;
@@ -415,7 +423,7 @@ export async function readPublishedSitemap(request, options = {}) {
   const key = publicKey(new URL(request.url).pathname);
   if (!key) return null;
   const repository = options.repository || objectRepository();
-  let object = await repository.get(key);
+  let object = await repository.get(key, { stream: true });
   if (!object && key.startsWith(`${SITEMAP_PREFIX}/generations/`)) {
     const filename = key.split("/").at(-1);
     const root = await repository.get(`${SITEMAP_PREFIX}/public/sitemap.xml`);
