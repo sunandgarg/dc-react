@@ -594,7 +594,9 @@
 
     .dc-scroll-table.dc-course-fee-table > table {
       width: max-content;
-      min-width: 42rem;
+      /* Keep the first, options and fee columns in the initial mobile view.
+         Desktop retains the wider scan-friendly table. */
+      min-width: 30rem;
       max-width: none;
       table-layout: fixed;
     }

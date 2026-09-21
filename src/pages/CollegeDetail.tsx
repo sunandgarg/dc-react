@@ -470,12 +470,12 @@ export default function CollegeDetail() {
                 tabIndex={0}
                 aria-label="Scrollable course and fee table"
               >
-                <table id="college-course-fee-table" aria-describedby="college-course-fee-hint" className="!w-full min-w-[42rem] table-fixed text-sm">
+                <table id="college-course-fee-table" aria-describedby="college-course-fee-hint" className="!w-full min-w-[30rem] table-fixed text-sm sm:min-w-[42rem]">
                   <colgroup>
-                    <col className="w-[14rem]" />
-                    <col className="w-[10rem]" />
-                    <col className="w-[11rem]" />
-                    <col className="w-[6rem]" />
+                    <col className="w-[9rem] sm:w-[14rem]" />
+                    <col className="w-[7rem] sm:w-[10rem]" />
+                    <col className="w-[8.5rem] sm:w-[11rem]" />
+                    <col className="w-[5rem] sm:w-[6rem]" />
                   </colgroup>
                   <thead>
                     <tr className="border-b border-border bg-muted/40">
@@ -493,8 +493,8 @@ export default function CollegeDetail() {
                         return (
                           <Fragment key={group.key}>
                             <tr className="border-b border-border last:border-0">
-                              <td className="px-2 py-4 sm:px-3">
-                                <button type="button" onClick={() => toggleCourseGroup(group.key)} className="text-left font-semibold text-primary hover:underline">
+                              <td className="px-2 py-4 align-top sm:px-3">
+                                <button type="button" onClick={() => toggleCourseGroup(group.key)} className="block max-w-full break-words text-left font-semibold leading-5 text-primary hover:underline">
                                   {group.label}
                                 </button>
                               </td>
