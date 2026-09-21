@@ -1,0 +1,1016 @@
+{
+  "batch": "exam-refresh-batch-027",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten canonical rows after batches 001-026; duplicate, demo, discontinued and superseded rows excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "upsee",
+    "jipmer-mbbs",
+    "lsat-india",
+    "icar-aieea",
+    "icar-aice-jrf-srf-phd"
+  ],
+  "updates": [
+    {
+      "id": "c302eb12-f7b5-4020-8265-49d8fdaee365",
+      "old_slug": "met",
+      "slug": "met",
+      "name": "MET",
+      "title": "MET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "MAHE undergraduate and postgraduate admission",
+      "mode": "Manipal Entrance Test and MAHE counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MAHE publishes programme-wise Class 12 or degree, subject, marks, age and document rules. B.Tech, M.Tech, health science and other routes do not share one eligibility clause.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Manipal Academy of Higher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and mathematics for applicable engineering routes",
+        "Programme-specific biology, aptitude or health science subjects",
+        "Online test booking and slot instructions",
+        "Score, preference filling and MAHE counselling"
+      ],
+      "description": "MET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>MAHE must confirm the 2027 programme list, test mode, attempts, timing, marking, slot booking and counselling calendar. The 2026 schedule is preparation context only.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics, chemistry and mathematics for applicable engineering routes</li><li>Programme-specific biology, aptitude or health science subjects</li><li>Online test booking and slot instructions</li><li>Score, preference filling and MAHE counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Manipal Academy of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Manipal Academy of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MET 2027 at a glance</h2><p>MET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Manipal Academy of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Manipal Academy of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MET 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://www.manipal.edu/mu/admission/indian-students/online-entrance-exam-overview/overview.html",
+      "official_website": "https://www.manipal.edu/mu/admission/indian-students/online-entrance-exam-overview/overview.html",
+      "registration_url": "https://apply.manipal.edu/",
+      "data_source_urls": [
+        "https://www.manipal.edu/mu/admission/indian-students/online-entrance-exam-overview/overview.html",
+        "https://www.manipal.edu/content/dam/manipal/mu/documents/Admissions/adm2026/2026%20MET%20and%20Counseling%20Schedule%20V6.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://apply.manipal.edu/",
+        "official_notification": "https://www.manipal.edu/content/dam/manipal/mu/documents/Admissions/adm2026/2026%20MET%20and%20Counseling%20Schedule%20V6.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will MET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Manipal Academy of Higher Education posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MET 2027?</h2><p>MAHE publishes programme-wise Class 12 or degree, subject, marks, age and document rules. B.Tech, M.Tech, health science and other routes do not share one eligibility clause. The active 2027 notice will control the final answer.</p><ul><li>Physics, chemistry and mathematics for applicable engineering routes</li><li>Programme-specific biology, aptitude or health science subjects</li></ul><h2>When are MET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Manipal Academy of Higher Education posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Manipal Academy of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>MAHE must confirm the 2027 programme list, test mode, attempts, timing, marking, slot booking and counselling calendar. The 2026 schedule is preparation context only.</p><p><strong>Authority fact:</strong> The official MAHE overview says admission to listed programmes, including B.Tech at MIT Manipal, uses the Manipal Entrance Test, a department test, a combination of both or a national test depending on the programme.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics, chemistry and mathematics for applicable engineering routes</li><li>Programme-specific biology, aptitude or health science subjects</li><li>Online test booking and slot instructions</li><li>Score, preference filling and MAHE counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://apply.manipal.edu/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.manipal.edu/content/dam/manipal/mu/documents/Admissions/adm2026/2026%20MET%20and%20Counseling%20Schedule%20V6.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Manipal Academy of Higher Education posts the next notice.</p><h3>Where should I apply for MET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "8a63cc16-eb3a-4943-b20d-7adb1b21d71f",
+      "old_slug": "kiitee",
+      "slug": "kiitee",
+      "name": "KIITEE",
+      "title": "KIITEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "KIITEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "KIIT university programme admission",
+      "mode": "KIITEE online examination and KIIT counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "KIIT publishes separate Class 12, degree, subject, marks, age and document conditions for each programme. Medical and dental admission follows NEET, so do not treat every KIIT course as one KIITEE route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by KIIT Deemed to be University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and mathematics or biology where required",
+        "English, aptitude or course-specific sections",
+        "Programme eligibility and age conditions",
+        "Phase, slot, result and counselling instructions"
+      ],
+      "description": "KIITEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "KIITEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>KIIT must confirm the 2027 phases, application window, paper format, duration, marking, admit card, result and counselling schedule. Current-cycle pages cannot confirm future dates.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics, chemistry and mathematics or biology where required</li><li>English, aptitude or course-specific sections</li><li>Programme eligibility and age conditions</li><li>Phase, slot, result and counselling instructions</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until KIIT Deemed to be University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by KIIT Deemed to be University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>KIITEE 2027 at a glance</h2><p>KIITEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until KIIT Deemed to be University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by KIIT Deemed to be University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "KIITEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "KIITEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check KIITEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "KIITEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "KIITEE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://kiitee.kiit.ac.in/",
+      "official_website": "https://kiitee.kiit.ac.in/",
+      "registration_url": "https://kiitee.kiit.ac.in/",
+      "data_source_urls": [
+        "https://kiitee.kiit.ac.in/",
+        "https://kiitee.kiit.ac.in/eligibility-criteria/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://kiitee.kiit.ac.in/",
+        "official_notification": "https://kiitee.kiit.ac.in/eligibility-criteria/"
+      },
+      "faqs": [
+        {
+          "question": "When will KIITEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until KIIT Deemed to be University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for KIITEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>KIITEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for KIITEE 2027?</h2><p>KIIT publishes separate Class 12, degree, subject, marks, age and document conditions for each programme. Medical and dental admission follows NEET, so do not treat every KIIT course as one KIITEE route. The active 2027 notice will control the final answer.</p><ul><li>Physics, chemistry and mathematics or biology where required</li><li>English, aptitude or course-specific sections</li></ul><h2>When are KIITEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until KIIT Deemed to be University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by KIIT Deemed to be University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>KIIT must confirm the 2027 phases, application window, paper format, duration, marking, admit card, result and counselling schedule. Current-cycle pages cannot confirm future dates.</p><p><strong>Authority fact:</strong> The official KIIT admission pages identify KIITEE as the entrance route for covered programmes and publish course-wise eligibility and counselling information.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics, chemistry and mathematics or biology where required</li><li>English, aptitude or course-specific sections</li><li>Programme eligibility and age conditions</li><li>Phase, slot, result and counselling instructions</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://kiitee.kiit.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://kiitee.kiit.ac.in/eligibility-criteria/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will KIITEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until KIIT Deemed to be University posts the next notice.</p><h3>Where should I apply for KIITEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "1e890977-d39e-4456-b06e-cf22289fdca2",
+      "old_slug": "ipu-cet",
+      "slug": "ipu-cet",
+      "name": "IPU CET",
+      "title": "IPU CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "IPU CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "GGSIPU selected programme admission",
+      "mode": "GGSIPU CET or notified national-score route and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "GGSIPU publishes programme-code, qualification, marks, category, region and document rules in its UG and PG brochures. Some programmes use IPU CET, while others use a notified national score or merit route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Guru Gobind Singh Indraprastha University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific subject or aptitude syllabus",
+        "CET versus CUET, JEE or another national-score route",
+        "Application code, category and region conditions",
+        "Counselling registration, choice filling and verification"
+      ],
+      "description": "IPU CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IPU CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>GGSIPU must publish the 2027 programme list, CET papers, application windows, test dates, score routes and counselling calendar. Do not reuse a 2026 code or deadline without the new brochure.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Programme-specific subject or aptitude syllabus</li><li>CET versus CUET, JEE or another national-score route</li><li>Application code, category and region conditions</li><li>Counselling registration, choice filling and verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Guru Gobind Singh Indraprastha University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Guru Gobind Singh Indraprastha University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>IPU CET 2027 at a glance</h2><p>IPU CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Guru Gobind Singh Indraprastha University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Guru Gobind Singh Indraprastha University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "IPU CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IPU CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IPU CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IPU CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IPU CET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.ipu.ac.in/adm2026/adm2026main.php",
+      "official_website": "https://www.ipu.ac.in/adm2026/adm2026main.php",
+      "registration_url": "https://ipu.admissions.nic.in/",
+      "data_source_urls": [
+        "https://www.ipu.ac.in/adm2026/adm2026main.php",
+        "https://ipu.admissions.nic.in/schedule-notices/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://ipu.admissions.nic.in/",
+        "official_notification": "https://ipu.admissions.nic.in/schedule-notices/"
+      },
+      "faqs": [
+        {
+          "question": "When will IPU CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Guru Gobind Singh Indraprastha University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for IPU CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>IPU CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for IPU CET 2027?</h2><p>GGSIPU publishes programme-code, qualification, marks, category, region and document rules in its UG and PG brochures. Some programmes use IPU CET, while others use a notified national score or merit route. The active 2027 notice will control the final answer.</p><ul><li>Programme-specific subject or aptitude syllabus</li><li>CET versus CUET, JEE or another national-score route</li></ul><h2>When are IPU CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Guru Gobind Singh Indraprastha University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Guru Gobind Singh Indraprastha University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>GGSIPU must publish the 2027 programme list, CET papers, application windows, test dates, score routes and counselling calendar. Do not reuse a 2026 code or deadline without the new brochure.</p><p><strong>Authority fact:</strong> The official GGSIPU admission portal separates CET notices, brochures, online applications and counselling schedules, so the programme code must be checked before registering.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Programme-specific subject or aptitude syllabus</li><li>CET versus CUET, JEE or another national-score route</li><li>Application code, category and region conditions</li><li>Counselling registration, choice filling and verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://ipu.admissions.nic.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://ipu.admissions.nic.in/schedule-notices/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will IPU CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Guru Gobind Singh Indraprastha University posts the next notice.</p><h3>Where should I apply for IPU CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "d0a35379-27c3-476d-96f3-4d0533023701",
+      "old_slug": "aiapget",
+      "slug": "aiapget",
+      "name": "AIAPGET",
+      "title": "AIAPGET 2027: Dates, Eligibility & Pattern",
+      "full_name": "AIAPGET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Medical",
+      "level": "Postgraduate AYUSH admission",
+      "mode": "NTA computer-based entrance examination and AYUSH counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "NTA and the AYUSH regulators publish degree, internship, registration, subject, category and document conditions for Ayurveda, Unani, Siddha and Homoeopathy postgraduate admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Testing Agency"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Ayurveda, Unani, Siddha or Homoeopathy subject syllabus",
+        "Clinical and basic medical sciences as notified",
+        "Computer-based test instructions",
+        "All India rank, quota and AYUSH counselling"
+      ],
+      "description": "AIAPGET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AIAPGET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA must confirm the 2027 application, subject paper, duration, marking, city choices, admit card, result and counselling process. The 2025 FAQ is context, not a future schedule.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Ayurveda, Unani, Siddha or Homoeopathy subject syllabus</li><li>Clinical and basic medical sciences as notified</li><li>Computer-based test instructions</li><li>All India rank, quota and AYUSH counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AIAPGET 2027 at a glance</h2><p>AIAPGET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AIAPGET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AIAPGET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AIAPGET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AIAPGET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AIAPGET 2027",
+        "exam update",
+        "Medical",
+        "2027"
+      ],
+      "website": "https://exams.nta.nic.in/aiapget/",
+      "official_website": "https://exams.nta.nic.in/aiapget/",
+      "registration_url": "https://exams.nta.nic.in/aiapget/",
+      "data_source_urls": [
+        "https://exams.nta.nic.in/aiapget/",
+        "https://exams.nta.ac.in/AIAPGET/images/faqs-for-aiapget-2025.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://exams.nta.nic.in/aiapget/",
+        "official_notification": "https://exams.nta.ac.in/AIAPGET/images/faqs-for-aiapget-2025.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will AIAPGET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AIAPGET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AIAPGET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AIAPGET 2027?</h2><p>NTA and the AYUSH regulators publish degree, internship, registration, subject, category and document conditions for Ayurveda, Unani, Siddha and Homoeopathy postgraduate admission. The active 2027 notice will control the final answer.</p><ul><li>Ayurveda, Unani, Siddha or Homoeopathy subject syllabus</li><li>Clinical and basic medical sciences as notified</li></ul><h2>When are AIAPGET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>NTA must confirm the 2027 application, subject paper, duration, marking, city choices, admit card, result and counselling process. The 2025 FAQ is context, not a future schedule.</p><p><strong>Authority fact:</strong> The official NTA FAQ describes AIAPGET as the entrance examination for postgraduate MD or MS courses in Ayurveda, Unani, Siddha and Homoeopathy and confirms computer-based testing with negative marking.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Ayurveda, Unani, Siddha or Homoeopathy subject syllabus</li><li>Clinical and basic medical sciences as notified</li><li>Computer-based test instructions</li><li>All India rank, quota and AYUSH counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://exams.nta.nic.in/aiapget/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://exams.nta.ac.in/AIAPGET/images/faqs-for-aiapget-2025.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AIAPGET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice.</p><h3>Where should I apply for AIAPGET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "64c9f47d-7405-44a8-8795-9938f66dc1ee",
+      "old_slug": "dnb-pdcet",
+      "slug": "dnb-pdcet",
+      "name": "DNB PDCET",
+      "title": "DNB PDCET 2027: Dates, Eligibility & Pattern",
+      "full_name": "DNB PDCET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Medical",
+      "level": "Post Diploma DNB admission",
+      "mode": "NBEMS computer-based entrance examination and centralized counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "NBEMS requires a recognised postgraduate diploma and the session-specific completion, registration and document conditions. The broad specialty in the diploma must match the DNB PDCET seat rule.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Board of Examinations in Medical Sciences"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Broad-specialty postgraduate medical knowledge",
+        "Diploma completion and registration proof",
+        "Computer-based paper and session instructions",
+        "Score, merit, seat matrix and counselling"
+      ],
+      "description": "DNB PDCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "DNB PDCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NBEMS must publish the 2027 session bulletin, application window, paper format, timing, marking, result and counselling dates. Use the active NBEMS notice when it appears.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Broad-specialty postgraduate medical knowledge</li><li>Diploma completion and registration proof</li><li>Computer-based paper and session instructions</li><li>Score, merit, seat matrix and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Board of Examinations in Medical Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>DNB PDCET 2027 at a glance</h2><p>DNB PDCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Board of Examinations in Medical Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "DNB PDCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "DNB PDCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check DNB PDCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "DNB PDCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "DNB PDCET 2027",
+        "exam update",
+        "Medical",
+        "2027"
+      ],
+      "website": "https://natboard.edu.in/viewnbeexam?exam=pdcet",
+      "official_website": "https://natboard.edu.in/viewnbeexam?exam=pdcet",
+      "registration_url": "https://natboard.edu.in/viewnbeexam?exam=pdcet",
+      "data_source_urls": [
+        "https://natboard.edu.in/viewnbeexam?exam=pdcet",
+        "https://natboard.edu.in/allnotice.php?NBEMSNOTICE=examination"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://natboard.edu.in/viewnbeexam?exam=pdcet",
+        "official_notification": "https://natboard.edu.in/allnotice.php?NBEMSNOTICE=examination"
+      },
+      "faqs": [
+        {
+          "question": "When will DNB PDCET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice."
+        },
+        {
+          "question": "Where should I apply for DNB PDCET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>DNB PDCET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for DNB PDCET 2027?</h2><p>NBEMS requires a recognised postgraduate diploma and the session-specific completion, registration and document conditions. The broad specialty in the diploma must match the DNB PDCET seat rule. The active 2027 notice will control the final answer.</p><ul><li>Broad-specialty postgraduate medical knowledge</li><li>Diploma completion and registration proof</li></ul><h2>When are DNB PDCET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by National Board of Examinations in Medical Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>NBEMS must publish the 2027 session bulletin, application window, paper format, timing, marking, result and counselling dates. Use the active NBEMS notice when it appears.</p><p><strong>Authority fact:</strong> The official NBEMS examination page says eligible candidates with a recognised postgraduate diploma can apply for DNB PDCET in the same broad specialty and provides bulletins, applications and results.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Broad-specialty postgraduate medical knowledge</li><li>Diploma completion and registration proof</li><li>Computer-based paper and session instructions</li><li>Score, merit, seat matrix and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://natboard.edu.in/viewnbeexam?exam=pdcet\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://natboard.edu.in/allnotice.php?NBEMSNOTICE=examination\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will DNB PDCET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice.</p><h3>Where should I apply for DNB PDCET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "0a258845-de12-44bf-abf0-c2a73ad5afdf",
+      "old_slug": "jipmat",
+      "slug": "jipmat",
+      "name": "JIPMAT",
+      "title": "JIPMAT 2027: Dates, Eligibility & Pattern",
+      "full_name": "JIPMAT 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "IIM Bodh Gaya and IIM Jammu five-year IPM admission",
+      "mode": "NTA computer-based test and IIM selection process",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "NTA and IIM Bodh Gaya and IIM Jammu publish Class 12, passing year, marks, category and document conditions. Read both institute admission policies after checking the NTA form.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Testing Agency"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Quantitative aptitude",
+        "Data interpretation and logical reasoning",
+        "Verbal ability and reading comprehension",
+        "IIM merit, verification and joining steps"
+      ],
+      "description": "JIPMAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JIPMAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA must confirm the 2027 application, computer-based timing, question structure, marking, city choices, result and IIM admission process. The 2026 notice is not a future deadline.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Quantitative aptitude</li><li>Data interpretation and logical reasoning</li><li>Verbal ability and reading comprehension</li><li>IIM merit, verification and joining steps</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>JIPMAT 2027 at a glance</h2><p>JIPMAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "JIPMAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JIPMAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JIPMAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JIPMAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JIPMAT 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://exams.nta.nic.in/jipmat/",
+      "official_website": "https://exams.nta.nic.in/jipmat/",
+      "registration_url": "https://exams.nta.nic.in/jipmat/",
+      "data_source_urls": [
+        "https://exams.nta.nic.in/jipmat/",
+        "https://nta.ac.in/Download/Notice/Notice_20260416131815.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://exams.nta.nic.in/jipmat/",
+        "official_notification": "https://nta.ac.in/Download/Notice/Notice_20260416131815.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will JIPMAT 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice."
+        },
+        {
+          "question": "Where should I apply for JIPMAT 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>JIPMAT 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for JIPMAT 2027?</h2><p>NTA and IIM Bodh Gaya and IIM Jammu publish Class 12, passing year, marks, category and document conditions. Read both institute admission policies after checking the NTA form. The active 2027 notice will control the final answer.</p><ul><li>Quantitative aptitude</li><li>Data interpretation and logical reasoning</li></ul><h2>When are JIPMAT 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>NTA must confirm the 2027 application, computer-based timing, question structure, marking, city choices, result and IIM admission process. The 2026 notice is not a future deadline.</p><p><strong>Authority fact:</strong> NTA states JIPMAT is conducted for admission to the five-year Integrated Programme in Management at IIM Bodh Gaya and IIM Jammu through a computer-based test.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Quantitative aptitude</li><li>Data interpretation and logical reasoning</li><li>Verbal ability and reading comprehension</li><li>IIM merit, verification and joining steps</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://exams.nta.nic.in/jipmat/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://nta.ac.in/Download/Notice/Notice_20260416131815.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will JIPMAT 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice.</p><h3>Where should I apply for JIPMAT 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "c109ceb7-9f1f-468e-9017-5bea52dccaeb",
+      "old_slug": "ncet",
+      "slug": "ncet",
+      "name": "NCET",
+      "title": "NCET 2027: Dates, Eligibility & Pattern",
+      "full_name": "NCET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Four-year Integrated Teacher Education Programme admission",
+      "mode": "NTA computer-based test and participating institution counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "NTA and each participating university publish Class 12 subjects, marks, language, category and programme conditions. A qualifying NCET score does not replace the institution's own eligibility check.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Testing Agency and National Council for Teacher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Language and subject combinations",
+        "General test or aptitude components where notified",
+        "ITEP institution and programme choices",
+        "Score, merit list and university counselling"
+      ],
+      "description": "NCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "NCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA must confirm the 2027 application, computer-based paper, shifts, duration, marking, result and participating-institution list. The 2026 bulletin remains background only.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Language and subject combinations</li><li>General test or aptitude components where notified</li><li>ITEP institution and programme choices</li><li>Score, merit list and university counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency and National Council for Teacher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency and National Council for Teacher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>NCET 2027 at a glance</h2><p>NCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency and National Council for Teacher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency and National Council for Teacher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "NCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "NCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check NCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "NCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "NCET 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://exams.nta.nic.in/ncet/",
+      "official_website": "https://exams.nta.nic.in/ncet/",
+      "registration_url": "https://exams.nta.nic.in/ncet/",
+      "data_source_urls": [
+        "https://exams.nta.nic.in/ncet/",
+        "https://web.ncte.gov.in/page/ncet---information-2026"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://exams.nta.nic.in/ncet/",
+        "official_notification": "https://web.ncte.gov.in/page/ncet---information-2026"
+      },
+      "faqs": [
+        {
+          "question": "When will NCET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency and National Council for Teacher Education posts the next notice."
+        },
+        {
+          "question": "Where should I apply for NCET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>NCET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for NCET 2027?</h2><p>NTA and each participating university publish Class 12 subjects, marks, language, category and programme conditions. A qualifying NCET score does not replace the institution's own eligibility check. The active 2027 notice will control the final answer.</p><ul><li>Language and subject combinations</li><li>General test or aptitude components where notified</li></ul><h2>When are NCET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency and National Council for Teacher Education posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency and National Council for Teacher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>NTA must confirm the 2027 application, computer-based paper, shifts, duration, marking, result and participating-institution list. The 2026 bulletin remains background only.</p><p><strong>Authority fact:</strong> The NTA notice describes NCET as the national test for admission to the four-year ITEP and says candidates must follow the bulletin and participating university requirements.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Language and subject combinations</li><li>General test or aptitude components where notified</li><li>ITEP institution and programme choices</li><li>Score, merit list and university counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://exams.nta.nic.in/ncet/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://web.ncte.gov.in/page/ncet---information-2026\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will NCET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency and National Council for Teacher Education posts the next notice.</p><h3>Where should I apply for NCET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "3df4b1ba-9cef-4d76-855b-cc92a30941de",
+      "old_slug": "gat-b",
+      "slug": "gat-b",
+      "name": "GAT-B",
+      "title": "GAT-B 2027: Dates, Eligibility & Pattern",
+      "full_name": "GAT-B 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Science",
+      "level": "DBT-supported postgraduate biotechnology admission",
+      "mode": "NTA computer-based entrance examination and institute admission",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The annual bulletin sets degree, subject, marks, nationality, category and participating-institution conditions for DBT-supported postgraduate biotechnology programmes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Testing Agency, Department of Biotechnology and Regional Centre for Biotechnology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Biology and biotechnology fundamentals",
+        "Biochemistry, genetics and molecular biology",
+        "Engineering or allied science topics where the paper requires them",
+        "Score, merit list and separate institute admission"
+      ],
+      "description": "GAT-B 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "GAT-B 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA, DBT and RCB must confirm the 2027 application, paper sections, timing, marking, result and participating institutions. The 2026 bulletin cannot supply a future date.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Biology and biotechnology fundamentals</li><li>Biochemistry, genetics and molecular biology</li><li>Engineering or allied science topics where the paper requires them</li><li>Score, merit list and separate institute admission</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency, Department of Biotechnology and Regional Centre for Biotechnology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency, Department of Biotechnology and Regional Centre for Biotechnology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>GAT-B 2027 at a glance</h2><p>GAT-B 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency, Department of Biotechnology and Regional Centre for Biotechnology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency, Department of Biotechnology and Regional Centre for Biotechnology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "GAT-B 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "GAT-B 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check GAT-B 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "GAT-B 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "GAT-B 2027",
+        "exam update",
+        "Science",
+        "2027"
+      ],
+      "website": "https://exams.nta.nic.in/gat-bet/",
+      "official_website": "https://exams.nta.nic.in/gat-bet/",
+      "registration_url": "https://exams.nta.nic.in/gat-bet/",
+      "data_source_urls": [
+        "https://exams.nta.nic.in/gat-bet/",
+        "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/03/20260319564085673.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://exams.nta.nic.in/gat-bet/",
+        "official_notification": "https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/03/20260319564085673.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will GAT-B 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency, Department of Biotechnology and Regional Centre for Biotechnology posts the next notice."
+        },
+        {
+          "question": "Where should I apply for GAT-B 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>GAT-B 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for GAT-B 2027?</h2><p>The annual bulletin sets degree, subject, marks, nationality, category and participating-institution conditions for DBT-supported postgraduate biotechnology programmes. The active 2027 notice will control the final answer.</p><ul><li>Biology and biotechnology fundamentals</li><li>Biochemistry, genetics and molecular biology</li></ul><h2>When are GAT-B 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency, Department of Biotechnology and Regional Centre for Biotechnology posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency, Department of Biotechnology and Regional Centre for Biotechnology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>NTA, DBT and RCB must confirm the 2027 application, paper sections, timing, marking, result and participating institutions. The 2026 bulletin cannot supply a future date.</p><p><strong>Authority fact:</strong> The official 2026 bulletin describes GAT-B as an all-India entrance examination for DBT-supported postgraduate programmes in biotechnology and allied areas at participating institutions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Biology and biotechnology fundamentals</li><li>Biochemistry, genetics and molecular biology</li><li>Engineering or allied science topics where the paper requires them</li><li>Score, merit list and separate institute admission</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://exams.nta.nic.in/gat-bet/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cdnbbsr.s3waas.gov.in/s388a839f2f6f1427879fc33ee4acf4f66/uploads/2026/03/20260319564085673.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will GAT-B 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency, Department of Biotechnology and Regional Centre for Biotechnology posts the next notice.</p><h3>Where should I apply for GAT-B 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "2da71ba3-22a0-44f0-9a87-9519f380ae3e",
+      "old_slug": "bet-biotechnology",
+      "slug": "bet-biotechnology",
+      "name": "BET",
+      "title": "BET 2027: Dates, Eligibility & Pattern",
+      "full_name": "BET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Science",
+      "level": "DBT Junior Research Fellowship eligibility",
+      "mode": "NTA computer-based Biotechnology Eligibility Test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "DBT and RCB publish the recognised degree, subject, marks, nationality, category and fellowship conditions in the annual BET notice. Read the active advertisement before choosing a category.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Department of Biotechnology and Regional Centre for Biotechnology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Biotechnology and life-science concepts",
+        "Research aptitude and experimental reasoning",
+        "Fellowship category and eligibility documents",
+        "Score, rank and PhD or project selection steps"
+      ],
+      "description": "BET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "BET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA and DBT must confirm the 2027 registration, computer-based format, sections, timing, marking, result and fellowship process. The 2026 advertisement is not a 2027 calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Biotechnology and life-science concepts</li><li>Research aptitude and experimental reasoning</li><li>Fellowship category and eligibility documents</li><li>Score, rank and PhD or project selection steps</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Department of Biotechnology and Regional Centre for Biotechnology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Department of Biotechnology and Regional Centre for Biotechnology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>BET 2027 at a glance</h2><p>BET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Department of Biotechnology and Regional Centre for Biotechnology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Department of Biotechnology and Regional Centre for Biotechnology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "BET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "BET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check BET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "BET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "BET 2027",
+        "exam update",
+        "Science",
+        "2027"
+      ],
+      "website": "https://exams.nta.nic.in/gat-bet/",
+      "official_website": "https://exams.nta.nic.in/gat-bet/",
+      "registration_url": "https://exams.nta.nic.in/gat-bet/",
+      "data_source_urls": [
+        "https://exams.nta.nic.in/gat-bet/",
+        "https://dbt.gov.in/offerings/whats-new/advertisement-for-gat-b-bet-2026"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://exams.nta.nic.in/gat-bet/",
+        "official_notification": "https://dbt.gov.in/offerings/whats-new/advertisement-for-gat-b-bet-2026"
+      },
+      "faqs": [
+        {
+          "question": "When will BET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Department of Biotechnology and Regional Centre for Biotechnology posts the next notice."
+        },
+        {
+          "question": "Where should I apply for BET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>BET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for BET 2027?</h2><p>DBT and RCB publish the recognised degree, subject, marks, nationality, category and fellowship conditions in the annual BET notice. Read the active advertisement before choosing a category. The active 2027 notice will control the final answer.</p><ul><li>Biotechnology and life-science concepts</li><li>Research aptitude and experimental reasoning</li></ul><h2>When are BET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Department of Biotechnology and Regional Centre for Biotechnology posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Department of Biotechnology and Regional Centre for Biotechnology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>NTA and DBT must confirm the 2027 registration, computer-based format, sections, timing, marking, result and fellowship process. The 2026 advertisement is not a 2027 calendar.</p><p><strong>Authority fact:</strong> The DBT advertisement describes BET as the route for shortlisting Indian citizens for the DBT-Junior Research Fellowship, with category and institute conditions set in the current notice.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Biotechnology and life-science concepts</li><li>Research aptitude and experimental reasoning</li><li>Fellowship category and eligibility documents</li><li>Score, rank and PhD or project selection steps</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://exams.nta.nic.in/gat-bet/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://dbt.gov.in/offerings/whats-new/advertisement-for-gat-b-bet-2026\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will BET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Department of Biotechnology and Regional Centre for Biotechnology posts the next notice.</p><h3>Where should I apply for BET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "303f5b6e-57b3-49fa-83e3-5659a9e54344",
+      "old_slug": "icar-aieea-pg",
+      "slug": "icar-aieea-pg",
+      "name": "ICAR AIEEA PG",
+      "title": "ICAR AIEEA PG 2027: Dates & Pattern",
+      "full_name": "ICAR AIEEA PG 2027: Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture",
+      "level": "Agriculture and allied sciences postgraduate admission",
+      "mode": "NTA computer-based examination and ICAR counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "ICAR and NTA publish subject, degree, marks, category, subject group, seat and document conditions for AIEEA PG. The target agriculture discipline must match the qualifying degree rule.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Indian Council of Agricultural Research and National Testing Agency"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Agriculture and allied science subject groups",
+        "Discipline-specific postgraduate knowledge",
+        "Computer-based test and answer-key process",
+        "ICAR rank, scholarship and counselling choices"
+      ],
+      "description": "ICAR AIEEA PG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "ICAR AIEEA PG 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA and ICAR must confirm the 2027 application, paper groups, timing, marking, result, seat matrix and counselling calendar. The 2026 notice is context only.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Agriculture and allied science subject groups</li><li>Discipline-specific postgraduate knowledge</li><li>Computer-based test and answer-key process</li><li>ICAR rank, scholarship and counselling choices</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Council of Agricultural Research and National Testing Agency posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Indian Council of Agricultural Research and National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>ICAR AIEEA PG 2027 at a glance</h2><p>ICAR AIEEA PG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Council of Agricultural Research and National Testing Agency posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Indian Council of Agricultural Research and National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "ICAR AIEEA PG 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "ICAR AIEEA PG 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check ICAR AIEEA PG 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "ICAR AIEEA PG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "ICAR AIEEA PG 2027",
+        "exam update",
+        "Agriculture",
+        "2027"
+      ],
+      "website": "https://exams.nta.nic.in/icar/",
+      "official_website": "https://exams.nta.nic.in/icar/",
+      "registration_url": "https://exams.nta.nic.in/icar/",
+      "data_source_urls": [
+        "https://exams.nta.nic.in/icar/",
+        "https://icar.gov.in/sites/default/files/Circulars/Public%20Notice%20PG%20and%20PhD%202026%20Registration%20open.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_027",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://exams.nta.nic.in/icar/",
+        "official_notification": "https://icar.gov.in/sites/default/files/Circulars/Public%20Notice%20PG%20and%20PhD%202026%20Registration%20open.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will ICAR AIEEA PG 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Council of Agricultural Research and National Testing Agency posts the next notice."
+        },
+        {
+          "question": "Where should I apply for ICAR AIEEA PG 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>ICAR AIEEA PG 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for ICAR AIEEA PG 2027?</h2><p>ICAR and NTA publish subject, degree, marks, category, subject group, seat and document conditions for AIEEA PG. The target agriculture discipline must match the qualifying degree rule. The active 2027 notice will control the final answer.</p><ul><li>Agriculture and allied science subject groups</li><li>Discipline-specific postgraduate knowledge</li></ul><h2>When are ICAR AIEEA PG 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Council of Agricultural Research and National Testing Agency posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Indian Council of Agricultural Research and National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>NTA and ICAR must confirm the 2027 application, paper groups, timing, marking, result, seat matrix and counselling calendar. The 2026 notice is context only.</p><p><strong>Authority fact:</strong> The official ICAR notice says AIEEA PG is the entrance route for postgraduate agriculture and allied sciences admission and directs candidates to NTA for the bulletin and registration.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Agriculture and allied science subject groups</li><li>Discipline-specific postgraduate knowledge</li><li>Computer-based test and answer-key process</li><li>ICAR rank, scholarship and counselling choices</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://exams.nta.nic.in/icar/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://icar.gov.in/sites/default/files/Circulars/Public%20Notice%20PG%20and%20PhD%202026%20Registration%20open.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will ICAR AIEEA PG 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Council of Agricultural Research and National Testing Agency posts the next notice.</p><h3>Where should I apply for ICAR AIEEA PG 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
