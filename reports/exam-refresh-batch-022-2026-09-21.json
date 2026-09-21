@@ -1,0 +1,1026 @@
+{
+  "batch": "exam-refresh-batch-022",
+  "checked_at": "2026-09-21T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Next ten unique canonical rows after batches 001-021; duplicate, demo, discontinued and superseded sessions excluded",
+  "policy": "Official sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notification link; existing slugs preserved; four visible FAQs per record; no production database write.",
+  "excluded_related_sessions": [
+    "dekho-sample-jee-main",
+    "jee-mains-2",
+    "aiims-pg",
+    "bitsat-exam",
+    "bitsat-exam-2",
+    "ceed",
+    "national-eligibility-cum-entrance-test-neet",
+    "ca-cpt",
+    "du-jat",
+    "kvpy",
+    "law-faculty-admission-test",
+    "madhya-pradesh-pre-polytechnic-test",
+    "mu-oet",
+    "national-talent-search-examination",
+    "pessat-btech-legacy"
+  ],
+  "updates": [
+    {
+      "id": "d57c00f9-a45c-4e25-b55c-aa65982ac3b8",
+      "old_slug": "indira-gandhi-rashtriya-uran-akademi-igrua",
+      "slug": "indira-gandhi-rashtriya-uran-akademi-igrua",
+      "name": "Indira Gandhi Rashtriya Uran Akademi (IGRUA)",
+      "title": "IGRUA Entrance 2027: Dates, Eligibility & Pattern",
+      "full_name": "IGRUA Entrance 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Indira Gandhi Rashtriya Uran Akademi pilot and aircraft maintenance admission",
+      "mode": "IGRUA entrance examination and selection stages",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "IGRUA publishes separate requirements for the Ab-initio to CPL course and Aircraft Maintenance Engineering course. Check age, education, medical, identity, category and document rules in the current advertisement.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Indira Gandhi Rashtriya Uran Akademi"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics and mathematics fundamentals",
+        "English language and comprehension",
+        "Reasoning and general awareness",
+        "Pilot aptitude, medical and interview stages where notified"
+      ],
+      "description": "IGRUA Entrance 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IGRUA Entrance 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://igrua.gov.in/igrua-entrance\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://igrua.gov.in/sites/default/files/2026-02/Advertisement%20CPL.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The academy must confirm the 2027 application, computer-based or written stage, aptitude assessment, medical requirements, interview and final selection schedule. A previous cycle cannot be treated as the 2027 pattern.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Indira Gandhi Rashtriya Uran Akademi</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>IGRUA Entrance 2027 at a glance</h2><p>IGRUA Entrance 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Indira Gandhi Rashtriya Uran Akademi</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "IGRUA Entrance 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IGRUA Entrance 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IGRUA Entrance 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IGRUA Entrance 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IGRUA Entrance 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://igrua.gov.in/igrua-entrance",
+      "official_website": "https://igrua.gov.in/igrua-entrance",
+      "registration_url": "https://igrua.gov.in/igrua-entrance",
+      "data_source_urls": [
+        "https://igrua.gov.in/igrua-entrance",
+        "https://igrua.gov.in/sites/default/files/2026-02/Advertisement%20CPL.pdf"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://igrua.gov.in/igrua-entrance",
+        "official_notification": "https://igrua.gov.in/sites/default/files/2026-02/Advertisement%20CPL.pdf"
+      },
+      "faqs": [
+        {
+          "q": "When will IGRUA Entrance 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for IGRUA Entrance 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Indira Gandhi Rashtriya Uran Akademi</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Physics and mathematics fundamentals</li><li>English language and comprehension</li><li>Reasoning and general awareness</li><li>Pilot aptitude, medical and interview stages where notified</li></ul><h2>How the test or selection works</h2><p>The academy must confirm the 2027 application, computer-based or written stage, aptitude assessment, medical requirements, interview and final selection schedule. A previous cycle cannot be treated as the 2027 pattern.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://igrua.gov.in/igrua-entrance\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://igrua.gov.in/sites/default/files/2026-02/Advertisement%20CPL.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will IGRUA Entrance 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for IGRUA Entrance 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul><p>IGRUA Entrance 2027 is a 2027 planning guide for Indira Gandhi Rashtriya Uran Akademi pilot and aircraft maintenance admission. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p><h2>Eligibility and who should check twice</h2><p>IGRUA publishes separate requirements for the Ab-initio to CPL course and Aircraft Maintenance Engineering course. Check age, education, medical, identity, category and document rules in the current advertisement.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p>"
+    },
+    {
+      "id": "878379e4-21da-46f1-8217-a3daacd08912",
+      "old_slug": "indraprastha-university-common-entrance-test",
+      "slug": "indraprastha-university-common-entrance-test",
+      "name": "Indraprastha University Common Entrance Test",
+      "title": "IPU CET 2027: Eligibility, Dates & Pattern",
+      "full_name": "IPU CET 2027: Eligibility, Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Guru Gobind Singh Indraprastha University programme admission",
+      "mode": "GGSIPU CET, CUET or notified programme route",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "GGSIPU publishes programme-wise Class 12 or graduation, subjects, marks, age, category and accepted-test rules. The brochure for the selected code controls whether CET, CUET, CLAT, NEET or another route is used.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Guru Gobind Singh Indraprastha University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific language and domain subjects",
+        "General aptitude or reasoning where the code requires it",
+        "Mathematics, science or commerce topics where notified",
+        "Counselling, reservation and document-verification rules"
+      ],
+      "description": "IPU CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IPU CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://ipu.admissions.nic.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://ipu.ac.in/adm2026/adm2026undergraduate.php\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The University must confirm the 2027 code-wise test, duration, marking, centres, admit card, result and counselling schedule. Do not assume one IPU CET pattern applies to every course.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Guru Gobind Singh Indraprastha University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>IPU CET 2027 at a glance</h2><p>IPU CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Guru Gobind Singh Indraprastha University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "IPU CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IPU CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IPU CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IPU CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IPU CET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://ipu.admissions.nic.in/notices/",
+      "official_website": "https://ipu.admissions.nic.in/notices/",
+      "registration_url": "https://ipu.admissions.nic.in/",
+      "data_source_urls": [
+        "https://ipu.admissions.nic.in/notices/",
+        "https://ipu.ac.in/adm2026/adm2026undergraduate.php"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://ipu.admissions.nic.in/",
+        "official_notification": "https://ipu.ac.in/adm2026/adm2026undergraduate.php"
+      },
+      "faqs": [
+        {
+          "q": "When will IPU CET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for IPU CET 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Eligibility and who should check twice</h2><p>GGSIPU publishes programme-wise Class 12 or graduation, subjects, marks, age, category and accepted-test rules. The brochure for the selected code controls whether CET, CUET, CLAT, NEET or another route is used.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Guru Gobind Singh Indraprastha University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Programme-specific language and domain subjects</li><li>General aptitude or reasoning where the code requires it</li><li>Mathematics, science or commerce topics where notified</li><li>Counselling, reservation and document-verification rules</li></ul><h2>How the test or selection works</h2><p>The University must confirm the 2027 code-wise test, duration, marking, centres, admit card, result and counselling schedule. Do not assume one IPU CET pattern applies to every course.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://ipu.admissions.nic.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://ipu.ac.in/adm2026/adm2026undergraduate.php\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will IPU CET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for IPU CET 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul><p>IPU CET 2027 is a 2027 planning guide for Guru Gobind Singh Indraprastha University programme admission. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p>"
+    },
+    {
+      "id": "bac940b8-19ae-4ac4-a709-e6d9050e266b",
+      "old_slug": "institute-of-banking-personnel-selection-clerk",
+      "slug": "institute-of-banking-personnel-selection-clerk",
+      "name": "Institute of Banking Personnel Selection-Clerk",
+      "title": "IBPS Clerk 2027: Dates, Eligibility & Pattern",
+      "full_name": "IBPS Clerk 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "IBPS Customer Service Associate bank recruitment",
+      "mode": "Common Recruitment Process for Customer Service Associates",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "IBPS publishes nationality, age, graduation, local-language, reservation and document rules in the annual CRP CSA notification. Participating banks and vacancy details can change each cycle.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Institute of Banking Personnel Selection"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "English language",
+        "Numerical ability and quantitative aptitude",
+        "Reasoning ability",
+        "General or financial awareness and computer aptitude where notified"
+      ],
+      "description": "IBPS Clerk 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IBPS Clerk 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.ibps.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.ibps.in/index.php/notification-for-common-recruitment-process-for-crp-csa-xvi/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>IBPS must confirm the 2027 preliminary and main examination dates, sections, timing, marking, language options, vacancies and provisional allotment rules. The current notification overrides an earlier CRP cycle.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Institute of Banking Personnel Selection</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>IBPS Clerk 2027 at a glance</h2><p>IBPS Clerk 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Institute of Banking Personnel Selection</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "IBPS Clerk 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IBPS Clerk 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IBPS Clerk 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IBPS Clerk 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IBPS Clerk 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.ibps.in/",
+      "official_website": "https://www.ibps.in/",
+      "registration_url": "https://www.ibps.in/",
+      "data_source_urls": [
+        "https://www.ibps.in/",
+        "https://www.ibps.in/index.php/notification-for-common-recruitment-process-for-crp-csa-xvi/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.ibps.in/",
+        "official_notification": "https://www.ibps.in/index.php/notification-for-common-recruitment-process-for-crp-csa-xvi/"
+      },
+      "faqs": [
+        {
+          "q": "When will IBPS Clerk 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for IBPS Clerk 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Institute of Banking Personnel Selection</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>English language</li><li>Numerical ability and quantitative aptitude</li><li>Reasoning ability</li><li>General or financial awareness and computer aptitude where notified</li></ul><h2>How the test or selection works</h2><p>IBPS must confirm the 2027 preliminary and main examination dates, sections, timing, marking, language options, vacancies and provisional allotment rules. The current notification overrides an earlier CRP cycle.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.ibps.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.ibps.in/index.php/notification-for-common-recruitment-process-for-crp-csa-xvi/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will IBPS Clerk 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for IBPS Clerk 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul><p>IBPS Clerk 2027 is a 2027 planning guide for IBPS Customer Service Associate bank recruitment. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p><h2>Eligibility and who should check twice</h2><p>IBPS publishes nationality, age, graduation, local-language, reservation and document rules in the annual CRP CSA notification. Participating banks and vacancy details can change each cycle.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p>"
+    },
+    {
+      "id": "68befe1d-d1a6-4a40-83dc-4cfde7fdfa97",
+      "old_slug": "jawaharlal-nehru-university-combined-entrance-examination-for-biotechnology",
+      "slug": "jawaharlal-nehru-university-combined-entrance-examination-for-biotechnology",
+      "name": "Jawaharlal Nehru University Combined Entrance Examination for Biotechnology",
+      "title": "JNU CEEB 2027: Admission Route & Dates",
+      "full_name": "JNU CEEB 2027: Admission Route & Dates",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Jawaharlal Nehru University biotechnology admission route",
+      "mode": "GAT-B or another notified national admission route",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "JNU publishes programme-wise degree, subject, marks, category and document conditions. Biotechnology programmes may use a national test such as GAT-B rather than the older CEEB label, so the current JNU notice controls.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Jawaharlal Nehru University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Biology and biotechnology fundamentals",
+        "Chemistry and allied life sciences",
+        "Physics, mathematics or statistics where the programme requires them",
+        "Research aptitude and programme-specific eligibility"
+      ],
+      "description": "JNU CEEB 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JNU CEEB 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://jnu.ac.in/admissions\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://dbt.nta.nic.in/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>JNU must confirm the 2027 biotechnology admission test or score route, application portal, counselling, merit and document-verification schedule. A historical CEEB pattern should be used only for context.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Jawaharlal Nehru University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>JNU CEEB 2027 at a glance</h2><p>JNU CEEB 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Jawaharlal Nehru University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "JNU CEEB 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JNU CEEB 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JNU CEEB 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JNU CEEB 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JNU CEEB 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://jnu.ac.in/admissions",
+      "official_website": "https://jnu.ac.in/admissions",
+      "registration_url": "https://jnu.ac.in/admissions",
+      "data_source_urls": [
+        "https://jnu.ac.in/admissions",
+        "https://dbt.nta.nic.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://jnu.ac.in/admissions",
+        "official_notification": "https://dbt.nta.nic.in/"
+      },
+      "faqs": [
+        {
+          "q": "When will JNU CEEB 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for JNU CEEB 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>JNU CEEB 2027 is a 2027 planning guide for Jawaharlal Nehru University biotechnology admission route. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p><h2>Eligibility and who should check twice</h2><p>JNU publishes programme-wise degree, subject, marks, category and document conditions. Biotechnology programmes may use a national test such as GAT-B rather than the older CEEB label, so the current JNU notice controls.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Jawaharlal Nehru University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Biology and biotechnology fundamentals</li><li>Chemistry and allied life sciences</li><li>Physics, mathematics or statistics where the programme requires them</li><li>Research aptitude and programme-specific eligibility</li></ul><h2>How the test or selection works</h2><p>JNU must confirm the 2027 biotechnology admission test or score route, application portal, counselling, merit and document-verification schedule. A historical CEEB pattern should be used only for context.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://jnu.ac.in/admissions\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://dbt.nta.nic.in/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will JNU CEEB 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for JNU CEEB 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "a72f2205-b5c3-4f11-bcd0-179ab5f8aa5e",
+      "old_slug": "jenpas-ug",
+      "slug": "jenpas-ug",
+      "name": "JENPAS UG",
+      "title": "JENPAS UG 2027: Dates, Eligibility & Pattern",
+      "full_name": "JENPAS UG 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "West Bengal undergraduate health and allied science admission",
+      "mode": "WBJEEB OMR entrance examination and counselling",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "WBJEEB publishes course-wise Class 12 subjects, marks, domicile, reservation and certificate requirements for nursing and allied health programmes. Read the current information bulletin before selecting a paper.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by West Bengal Joint Entrance Examinations Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and biology where required",
+        "Health aptitude and life science concepts",
+        "English, reasoning and general awareness where notified",
+        "OMR instructions, category certificates and counselling rules"
+      ],
+      "description": "JENPAS UG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JENPAS UG 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://wbjeeb.nic.in/jenpas-ug/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://wbjeeb.nic.in/archive-event/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>WBJEEB must confirm the 2027 paper, duration, OMR rules, marking, application window, result, rank card and counselling schedule. The 2026 page is evidence of the route, not a 2027 date confirmation.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by West Bengal Joint Entrance Examinations Board</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>JENPAS UG 2027 at a glance</h2><p>JENPAS UG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by West Bengal Joint Entrance Examinations Board</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "JENPAS UG 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JENPAS UG 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JENPAS UG 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JENPAS UG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JENPAS UG 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/jenpas-ug/",
+      "official_website": "https://wbjeeb.nic.in/jenpas-ug/",
+      "registration_url": "https://wbjeeb.nic.in/jenpas-ug/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/jenpas-ug/",
+        "https://wbjeeb.nic.in/archive-event/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://wbjeeb.nic.in/jenpas-ug/",
+        "official_notification": "https://wbjeeb.nic.in/archive-event/"
+      },
+      "faqs": [
+        {
+          "q": "When will JENPAS UG 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for JENPAS UG 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>JENPAS UG 2027 is a 2027 planning guide for West Bengal undergraduate health and allied science admission. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p><h2>Eligibility and who should check twice</h2><p>WBJEEB publishes course-wise Class 12 subjects, marks, domicile, reservation and certificate requirements for nursing and allied health programmes. Read the current information bulletin before selecting a paper.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by West Bengal Joint Entrance Examinations Board</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Physics, chemistry and biology where required</li><li>Health aptitude and life science concepts</li><li>English, reasoning and general awareness where notified</li><li>OMR instructions, category certificates and counselling rules</li></ul><h2>How the test or selection works</h2><p>WBJEEB must confirm the 2027 paper, duration, OMR rules, marking, application window, result, rank card and counselling schedule. The 2026 page is evidence of the route, not a 2027 date confirmation.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://wbjeeb.nic.in/jenpas-ug/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://wbjeeb.nic.in/archive-event/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will JENPAS UG 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for JENPAS UG 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "a95db72a-cf20-4620-972e-b4c1656888a5",
+      "old_slug": "jharkhand-pcece",
+      "slug": "jharkhand-pcece",
+      "name": "Polytechnic Entrance Competitive Examination",
+      "title": "Jharkhand PECE 2027: Dates & Eligibility",
+      "full_name": "Jharkhand PECE 2027: Dates & Eligibility",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Jharkhand polytechnic diploma admission",
+      "mode": "JCECEB Polytechnic Entrance Competitive Examination and counselling",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "JCECEB publishes Class 10, subject, domicile, reservation, age and document requirements for polytechnic admission. The current prospectus and notice decide branch choices and counselling rules.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Jharkhand Combined Entrance Competitive Examination Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "Physics and chemistry or general science",
+        "English and general knowledge where notified",
+        "Diploma counselling, seat matrix and certificate rules"
+      ],
+      "description": "Jharkhand PECE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Jharkhand PECE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://poly.jceceb.org.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://jceceb.jharkhand.gov.in/Links/exam_notice.aspx\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Board must confirm the 2027 PECE application, paper, duration, marking, admit card, result, merit list and counselling schedule. Lateral-entry diploma routes have a separate process.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Jharkhand Combined Entrance Competitive Examination Board</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>Jharkhand PECE 2027 at a glance</h2><p>Jharkhand PECE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Jharkhand Combined Entrance Competitive Examination Board</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "Jharkhand PECE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Jharkhand PECE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Jharkhand PECE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Jharkhand PECE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Jharkhand PECE 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://poly.jceceb.org.in/",
+      "official_website": "https://poly.jceceb.org.in/",
+      "registration_url": "https://poly.jceceb.org.in/",
+      "data_source_urls": [
+        "https://poly.jceceb.org.in/",
+        "https://jceceb.jharkhand.gov.in/Links/exam_notice.aspx"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://poly.jceceb.org.in/",
+        "official_notification": "https://jceceb.jharkhand.gov.in/Links/exam_notice.aspx"
+      },
+      "faqs": [
+        {
+          "q": "When will Jharkhand PECE 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for Jharkhand PECE 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Jharkhand Combined Entrance Competitive Examination Board</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Mathematics</li><li>Physics and chemistry or general science</li><li>English and general knowledge where notified</li><li>Diploma counselling, seat matrix and certificate rules</li></ul><h2>How the test or selection works</h2><p>The Board must confirm the 2027 PECE application, paper, duration, marking, admit card, result, merit list and counselling schedule. Lateral-entry diploma routes have a separate process.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://poly.jceceb.org.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://jceceb.jharkhand.gov.in/Links/exam_notice.aspx\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will Jharkhand PECE 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for Jharkhand PECE 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul><p>Jharkhand PECE 2027 is a 2027 planning guide for Jharkhand polytechnic diploma admission. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p><h2>Eligibility and who should check twice</h2><p>JCECEB publishes Class 10, subject, domicile, reservation, age and document requirements for polytechnic admission. The current prospectus and notice decide branch choices and counselling rules.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p>"
+    },
+    {
+      "id": "deb15e48-fba1-4b8b-9670-b266144980ae",
+      "old_slug": "jipmer-pg",
+      "slug": "jipmer-pg",
+      "name": "Jawaharlal Institute of Postgraduate Medical Education & Research (MD MS)",
+      "title": "JIPMER PG 2027: INI CET Route & Dates",
+      "full_name": "JIPMER PG 2027: INI CET Route & Dates",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "JIPMER postgraduate medical admission",
+      "mode": "INI-CET or another notified national medical entrance route",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "JIPMER and the national examination authority publish degree, internship, registration, category and document rules for MD, MS, MDS and other postgraduate routes. JIPMER PG should not be presented as a separate old examination when admission is through INI-CET.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Jawaharlal Institute of Postgraduate Medical Education and Research"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Pre-clinical, para-clinical and clinical medical sciences",
+        "Medicine, surgery and allied specialities",
+        "Image, case and applied clinical reasoning",
+        "INI-CET registration, counselling and institute-specific rules"
+      ],
+      "description": "JIPMER PG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JIPMER PG 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.aiimsexams.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.jipmer.edu.in/sites/default/files/4.%20INI-CET%20Part%20B%20JULY%202025%20JIPMER%20PUDUCHERRY_Updated.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The authority must confirm the 2027 INI-CET sessions, application, exam, result, seat allocation and joining schedule. Use the current INI-CET prospectus and JIPMER notice for final details.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Jawaharlal Institute of Postgraduate Medical Education and Research</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>JIPMER PG 2027 at a glance</h2><p>JIPMER PG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Jawaharlal Institute of Postgraduate Medical Education and Research</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "JIPMER PG 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JIPMER PG 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JIPMER PG 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JIPMER PG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JIPMER PG 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://jipmer.ac.in/announcement/academics/entrance-examinations-admissions",
+      "official_website": "https://jipmer.ac.in/announcement/academics/entrance-examinations-admissions",
+      "registration_url": "https://www.aiimsexams.ac.in/",
+      "data_source_urls": [
+        "https://jipmer.ac.in/announcement/academics/entrance-examinations-admissions",
+        "https://www.jipmer.edu.in/sites/default/files/4.%20INI-CET%20Part%20B%20JULY%202025%20JIPMER%20PUDUCHERRY_Updated.pdf"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.aiimsexams.ac.in/",
+        "official_notification": "https://www.jipmer.edu.in/sites/default/files/4.%20INI-CET%20Part%20B%20JULY%202025%20JIPMER%20PUDUCHERRY_Updated.pdf"
+      },
+      "faqs": [
+        {
+          "q": "When will JIPMER PG 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for JIPMER PG 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Eligibility and who should check twice</h2><p>JIPMER and the national examination authority publish degree, internship, registration, category and document rules for MD, MS, MDS and other postgraduate routes. JIPMER PG should not be presented as a separate old examination when admission is through INI-CET.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Jawaharlal Institute of Postgraduate Medical Education and Research</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Pre-clinical, para-clinical and clinical medical sciences</li><li>Medicine, surgery and allied specialities</li><li>Image, case and applied clinical reasoning</li><li>INI-CET registration, counselling and institute-specific rules</li></ul><h2>How the test or selection works</h2><p>The authority must confirm the 2027 INI-CET sessions, application, exam, result, seat allocation and joining schedule. Use the current INI-CET prospectus and JIPMER notice for final details.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.aiimsexams.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.jipmer.edu.in/sites/default/files/4.%20INI-CET%20Part%20B%20JULY%202025%20JIPMER%20PUDUCHERRY_Updated.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will JIPMER PG 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for JIPMER PG 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul><p>JIPMER PG 2027 is a 2027 planning guide for JIPMER postgraduate medical admission. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p>"
+    },
+    {
+      "id": "dc07dd50-53d2-4522-b715-57d2ad6cd287",
+      "old_slug": "joint-admission-test-for-masters",
+      "slug": "joint-admission-test-for-masters",
+      "name": "Joint Admission Test for Masters",
+      "title": "IIT JAM 2027: Dates, Eligibility & Pattern",
+      "full_name": "IIT JAM 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Joint Admission Test for Masters science and postgraduate admissions",
+      "mode": "Computer-based test and institute counselling",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "JAM publishes the accepted undergraduate degree or final-year status, test-paper rules and institute-specific minimum educational qualifications. Qualifying the test does not by itself guarantee admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by IIT JAM organising institute"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Biotechnology, chemistry, economics, geology, mathematics, mathematical statistics or physics",
+        "Undergraduate-level concepts in the selected paper",
+        "MCQ, MSQ and numerical answer practice",
+        "JOAPS application, score and institute admission requirements"
+      ],
+      "description": "IIT JAM 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IIT JAM 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://joaps.iitb.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://jam2026.iitb.ac.in/index.html\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The next organising institute must confirm the 2027 registration, test papers, sessions, centres, marking, result and admission schedule. Use older JAM information for preparation only.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by IIT JAM organising institute</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>IIT JAM 2027 at a glance</h2><p>IIT JAM 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by IIT JAM organising institute</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "IIT JAM 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IIT JAM 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IIT JAM 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IIT JAM 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IIT JAM 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://jam.iitb.ac.in/",
+      "official_website": "https://jam.iitb.ac.in/",
+      "registration_url": "https://joaps.iitb.ac.in/",
+      "data_source_urls": [
+        "https://jam.iitb.ac.in/",
+        "https://jam2026.iitb.ac.in/index.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://joaps.iitb.ac.in/",
+        "official_notification": "https://jam2026.iitb.ac.in/index.html"
+      },
+      "faqs": [
+        {
+          "q": "When will IIT JAM 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for IIT JAM 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>IIT JAM 2027 is a 2027 planning guide for Joint Admission Test for Masters science and postgraduate admissions. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p><h2>Eligibility and who should check twice</h2><p>JAM publishes the accepted undergraduate degree or final-year status, test-paper rules and institute-specific minimum educational qualifications. Qualifying the test does not by itself guarantee admission.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by IIT JAM organising institute</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Biotechnology, chemistry, economics, geology, mathematics, mathematical statistics or physics</li><li>Undergraduate-level concepts in the selected paper</li><li>MCQ, MSQ and numerical answer practice</li><li>JOAPS application, score and institute admission requirements</li></ul><h2>How the test or selection works</h2><p>The next organising institute must confirm the 2027 registration, test papers, sessions, centres, marking, result and admission schedule. Use older JAM information for preparation only.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://joaps.iitb.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://jam2026.iitb.ac.in/index.html\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will IIT JAM 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for IIT JAM 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "a6d922b0-4d90-4832-abb4-127744d7b39d",
+      "old_slug": "odisha-public-service-commission-civil-service",
+      "slug": "odisha-public-service-commission-civil-service",
+      "name": "Odisha Public Service Commission Civil Service",
+      "title": "OPSC OCS 2027: Dates, Eligibility & Pattern",
+      "full_name": "OPSC OCS 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Odisha Civil Services recruitment examination",
+      "mode": "Preliminary, main written examination and personality test",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "OPSC publishes degree, age, nationality, Odia language, reservation and document conditions in each Odisha Civil Services notification. The advertisement controls services, vacancies and certificate formats.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Odisha Public Service Commission"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "General studies and current affairs",
+        "Odisha history, geography, culture and governance",
+        "Aptitude and comprehension in the preliminary stage",
+        "Main papers, language papers and personality test where notified"
+      ],
+      "description": "OPSC OCS 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "OPSC OCS 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://opscechayan.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://opsc.gov.in/Public/OPSC/Default.aspx#notifications\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>OPSC must confirm the 2027 notification, application, preliminary exam, main written papers, result and personality-test schedule. Vacancies and service preferences are notification-specific.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Odisha Public Service Commission</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>OPSC OCS 2027 at a glance</h2><p>OPSC OCS 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Odisha Public Service Commission</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "OPSC OCS 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "OPSC OCS 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check OPSC OCS 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "OPSC OCS 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "OPSC OCS 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://opsc.gov.in/Public/OPSC/Default.aspx",
+      "official_website": "https://opsc.gov.in/Public/OPSC/Default.aspx",
+      "registration_url": "https://opscechayan.in/",
+      "data_source_urls": [
+        "https://opsc.gov.in/Public/OPSC/Default.aspx",
+        "https://opsc.gov.in/Public/OPSC/Default.aspx#notifications"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://opscechayan.in/",
+        "official_notification": "https://opsc.gov.in/Public/OPSC/Default.aspx#notifications"
+      },
+      "faqs": [
+        {
+          "q": "When will OPSC OCS 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for OPSC OCS 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>OPSC OCS 2027 is a 2027 planning guide for Odisha Civil Services recruitment examination. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p><h2>Eligibility and who should check twice</h2><p>OPSC publishes degree, age, nationality, Odia language, reservation and document conditions in each Odisha Civil Services notification. The advertisement controls services, vacancies and certificate formats.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Odisha Public Service Commission</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>General studies and current affairs</li><li>Odisha history, geography, culture and governance</li><li>Aptitude and comprehension in the preliminary stage</li><li>Main papers, language papers and personality test where notified</li></ul><h2>How the test or selection works</h2><p>OPSC must confirm the 2027 notification, application, preliminary exam, main written papers, result and personality-test schedule. Vacancies and service preferences are notification-specific.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://opscechayan.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://opsc.gov.in/Public/OPSC/Default.aspx#notifications\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will OPSC OCS 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for OPSC OCS 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "54a00dd3-1ffa-4f5c-a962-a8d5fe8ad452",
+      "old_slug": "upsc-ifs",
+      "slug": "upsc-ifs",
+      "name": "UPSC Indian Forest Service",
+      "title": "UPSC IFS 2027: Dates, Eligibility & Pattern",
+      "full_name": "UPSC IFS 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Indian Forest Service examination",
+      "mode": "Civil Services Preliminary screening, IFS Main and interview",
+      "frequency": "Once per admission or recruitment cycle unless the authority publishes multiple sessions",
+      "eligibility": "UPSC publishes age, nationality, degree subjects, attempts, physical standards, medical rules and document requirements in the annual Indian Forest Service notice. Candidates first qualify through the Civil Services Preliminary Examination route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Union Public Service Commission"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "General Studies and aptitude in the preliminary stage",
+        "Botany, forestry, zoology, agriculture or other notified optional subjects",
+        "General English and general knowledge in the main examination",
+        "Interview, medical and physical-standard requirements"
+      ],
+      "description": "UPSC IFS 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "UPSC IFS 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://upsconline.nic.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://egazette.gov.in/WriteReadData/2026/269830.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>UPSC must confirm the 2027 notification, preliminary date, main written papers, optional subjects, result, interview and medical schedule. The Gazette rules and UPSC notice together control the final process.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Union Public Service Commission</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>UPSC IFS 2027 at a glance</h2><p>UPSC IFS 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Union Public Service Commission</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "UPSC IFS 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "UPSC IFS 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check UPSC IFS 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "UPSC IFS 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "UPSC IFS 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.upsc.gov.in/exams-related-info/exam-notification/archives",
+      "official_website": "https://www.upsc.gov.in/exams-related-info/exam-notification/archives",
+      "registration_url": "https://upsconline.nic.in/",
+      "data_source_urls": [
+        "https://www.upsc.gov.in/exams-related-info/exam-notification/archives",
+        "https://egazette.gov.in/WriteReadData/2026/269830.pdf"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_022",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://upsconline.nic.in/",
+        "official_notification": "https://egazette.gov.in/WriteReadData/2026/269830.pdf"
+      },
+      "faqs": [
+        {
+          "q": "When will UPSC IFS 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for UPSC IFS 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>UPSC IFS 2027 is a 2027 planning guide for Indian Forest Service examination. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates or routes still pending.</p><h2>Eligibility and who should check twice</h2><p>UPSC publishes age, nationality, degree subjects, attempts, physical standards, medical rules and document requirements in the annual Indian Forest Service notice. Candidates first qualify through the Civil Services Preliminary Examination route.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Union Public Service Commission</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>General Studies and aptitude in the preliminary stage</li><li>Botany, forestry, zoology, agriculture or other notified optional subjects</li><li>General English and general knowledge in the main examination</li><li>Interview, medical and physical-standard requirements</li></ul><h2>How the test or selection works</h2><p>UPSC must confirm the 2027 notification, preliminary date, main written papers, optional subjects, result, interview and medical schedule. The Gazette rules and UPSC notice together control the final process.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 route is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://upsconline.nic.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://egazette.gov.in/WriteReadData/2026/269830.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will UPSC IFS 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for UPSC IFS 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
