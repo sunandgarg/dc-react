@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, articlePrompt, articleRevisionPrompt, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -118,6 +118,8 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   const productionSetup = await readFile(new URL("../scripts/configure-production-site-integrations.mjs", import.meta.url), "utf8");
   assert.match(productionSetup, /BLOG_EEAT_48_MIGRATION_KEY/);
   assert.match(productionSetup, /BLOG_GPT_5_6_LUNA_EDITORIAL_MIGRATION_KEY/);
+  assert.match(productionSetup, /BLOG_DEKHOCAMPUS_HUMAN_EDITORIAL_MIGRATION_KEY/);
+  assert.match(productionSetup, /Direct, practical, opinionated and conversational Indian admissions guidance/);
   assert.match(productionSetup, /text_model: "gpt-5\.6-luna"/);
   assert.match(productionSetup, /interval_minutes: 60/);
   assert.match(productionSetup, /posts_per_run: 2/);
@@ -163,6 +165,23 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(prompt, /meta_description of no more than 155 characters/i);
   assert.match(prompt, /testament, tapestry, paramount/i);
   assert.match(prompt, /strict JSON with clean semantic HTML in content_html, not Markdown/i);
+});
+
+test("DekhoCampus human editorial policy is present without breaking the HTML contract", () => {
+  assert.equal(typeof DEFAULT_EDITORIAL_TONE, "string");
+  assert.match(DEFAULT_EDITORIAL_TONE, /Direct, practical, opinionated/i);
+  assert.match(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.persona, /street-smart/i);
+  assert.match(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.audience, /Indian students/i);
+  assert.ok(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.includes("holistic development"));
+  assert.ok(DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.includes("game-changer"));
+  const normalized = normalizeBlogAgentSettings({});
+  assert.equal(normalized.tone, DEFAULT_EDITORIAL_TONE);
+  const prompt = articlePrompt("CUET UG 2027 subject selection", [], 900, [], {});
+  assert.match(prompt, /DekhoCampus human editorial mode/i);
+  assert.match(prompt, /No raw Markdown syntax/i);
+  assert.match(prompt, /semantic HTML/i);
+  assert.match(prompt, /holistic development/i);
+  assert.match(prompt, /street-smart college admissions expert/i);
 });
 
 test("AI Blog Studio can select every saved competitor source", async () => {

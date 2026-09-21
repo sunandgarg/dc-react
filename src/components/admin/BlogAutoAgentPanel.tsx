@@ -82,7 +82,7 @@ const DEFAULT_SETTINGS: Settings = {
   author_ids: [],
   language: "English",
   audience: "Indian students and parents",
-  tone: "Clear, practical, trustworthy",
+  tone: "Direct, practical, opinionated and conversational Indian admissions guidance for stressed students and parents",
   content_goals: ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"],
   required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],
   minimum_sources: 2,

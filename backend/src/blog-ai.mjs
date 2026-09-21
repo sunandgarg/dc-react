@@ -28,6 +28,25 @@ export const STRICT_ARTICLE_DUPLICATE_THRESHOLD = 0.72;
 export const ARTICLE_WRITE_LOCK_SCOPES = Object.freeze(["dekhocampus", "sarkari"]);
 const DEFAULT_CONTENT_GOALS = ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"];
 const DEFAULT_REQUIRED_SECTIONS = ["Answer first", "Key facts", "Decision guidance", "FAQs"];
+export const DEFAULT_EDITORIAL_TONE = "Direct, practical, opinionated and conversational Indian admissions guidance for stressed students and parents";
+export const DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY = Object.freeze({
+  persona: "Senior, street-smart college admissions expert and lead writer for DekhoCampus",
+  audience: "Highly stressed Indian students aged 17-19 and their anxious parents",
+  voice: "Direct, practical, opinionated, conversational and slightly edgy; explain confusing admission rules plainly and show the real consequence",
+  formatting: "No raw Markdown syntax. The application receives semantic HTML, so use HTML only when the existing article contract requires headings, useful lists, tables or visible FAQs.",
+  pacing: "Break predictable cadence with occasional 2-5 word sentences, longer conversational sentences, standalone punchy lines, contractions, direct address and rhetorical questions answered immediately",
+  structure: "Choose a topic-native path. Do not force a symmetrical executive-summary, key-facts, rationale, guide, risk-matrix, checklist and FAQ sequence; consolidate repeated cautions and end when the useful point is complete",
+  banned: [
+    "holistic development", "academic excellence", "myriad of options", "embark on your journey", "transformative experience", "navigating the landscape", "educational tapestry", "vibrant campus life",
+    "delve", "foster", "harness", "leverage", "encapsulate", "illuminate", "demystify", "unravel", "pivot", "elevate", "underscore", "showcase", "streamline", "bolster", "optimize",
+    "crucial", "robust", "pivotal", "multifaceted", "seamless", "bespoke", "groundbreaking", "imperative", "paramount", "overarching", "dynamic", "nuanced", "quintessential",
+    "furthermore", "moreover", "additionally", "nevertheless", "consequently", "henceforth", "in tandem with", "it is worth noting that", "a testament to",
+    "in conclusion", "ultimately", "to summarize", "let's dive in", "here is a detailed guide", "certainly",
+    "game-changer", "game changer", "dive in", "unlock the power", "in today's world", "in today's digital world", "beacon", "vital role", "firstly", "secondly", "in summary", "landscape",
+  ],
+});
+const HUMAN_EDITORIAL_RULES_TEXT = `Use the ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.persona} persona for ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.audience}. Voice: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.voice}. ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.formatting} Pacing: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.pacing}. Structure: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.structure}. Start with a topic-specific hook that gives the reader the useful consequence immediately, never with a prompt label. Use contractions, direct reader address and occasional rhetorical questions when they sound natural. Do not invent personal experience, credentials, quotes or outcomes. Avoid raw Markdown headings, fenced code, Markdown bullets, Markdown tables, bold or italic markers. The page renderer still needs semantic HTML for its existing SEO and accessibility contract. Never publish any banned wording from this list: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.join(", ")}.`;
+const BLOG_MODEL_SYSTEM_RULES = `Return valid JSON only. Write factual, original Indian editorial English using the DekhoCampus human editorial policy. Never expose a source name, competitor name, citation, reference, footnote, external URL, attribution phrase, research note, quality score or AI process in any publishable field. Do not copy or spin another page. Never begin with prompt residue such as Answer first:, Answer:, Executive summary: or Here is the answer:. Never flatten a comparison matrix into a plain-text label stack. ${HUMAN_EDITORIAL_RULES_TEXT} Keep normal paragraphs concise and edited. The renderer requires semantic HTML, not Markdown.`;
 const SARKARI_ARTICLE_CATEGORIES = new Set(["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"]);
 const OPENAI_TEXT_PRICING_PER_MILLION = {
   "gpt-5.6-luna": { input: 0.2, cachedInput: 0.02, output: 1.2 },
@@ -108,7 +127,7 @@ export function normalizeBlogAgentSettings(value = {}) {
     author_ids: normalizeStringList(value.author_ids, [], 20),
     language: String(value.language || "English").trim().slice(0, 80) || "English",
     audience: String(value.audience || "Indian students and parents").trim().slice(0, 240) || "Indian students and parents",
-    tone: String(value.tone || "Clear, practical, trustworthy").trim().slice(0, 240) || "Clear, practical, trustworthy",
+    tone: String(value.tone || DEFAULT_EDITORIAL_TONE).trim().slice(0, 240) || DEFAULT_EDITORIAL_TONE,
     content_goals: [...DEFAULT_CONTENT_GOALS],
     required_sections: [...new Set([...DEFAULT_REQUIRED_SECTIONS, ...configuredSections])].slice(0, 12),
     minimum_sources: Math.min(MAX_RESEARCH_SOURCES, Math.max(2, Math.trunc(Number(value.minimum_sources) || 2))),
@@ -132,8 +151,11 @@ export function normalizeBlogAgentSettings(value = {}) {
 }
 const PUBLISHED_COMPETITOR_PATTERN = /\b(?:college\s*dunia|college\s*dekho|shiksha|careers\s*360|kollege\s*apply|get\s*my\s*uni|pagal\s*guy|sarvgyan)\b/i;
 const PUBLISHED_ATTRIBUTION_PATTERN = /\b(?:according to|as reported by|sources? (?:say|says|suggest|suggests|indicate|indicates)|reports? (?:say|says|suggest|suggests|indicate|indicates)|information (?:from|published by)|data (?:from|published by))\b/i;
-const EDITORIAL_CLICHE_PATTERN = /\b(?:as an ai|language model|in today'?s fast-paced world|it is important to note|furthermore|moreover|delve(?: into)?|unlock|seamless|robust|comprehensive|crucial|in conclusion)\b/i;
-const STRICT_AI_CLICHE_PATTERN = /\b(?:delve|testament|tapestry|paramount|in conclusion|furthermore|moreover|game[- ]changer|dive in|unlock the power|in today'?s (?:digital )?world|beacon|vital role|firstly|secondly|in summary)\b/i;
+const escapeRegex = (value) => String(value).split("").map((character) => "\\^$.*+?()[]{}|".includes(character) ? `\\${character}` : character).join("");
+const HUMAN_BANNED_WORD_PATTERN = new RegExp(`(?:${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.map(escapeRegex).join("|")})`, "i");
+const EDITORIAL_CLICHE_PATTERN = /\b(?:as an ai|language model|in today'?s fast-paced world|it is important to note|furthermore|moreover|delve(?: into)?|unlock|seamless|robust|comprehensive|crucial|in conclusion|holistic development|academic excellence|myriad of options|embark on your journey|transformative experience|navigating the landscape|educational tapestry|vibrant campus life)\b/i;
+const STRICT_AI_CLICHE_PATTERN = new RegExp(`(?:${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.map(escapeRegex).join("|")})`, "i");
+const MARKDOWN_ARTIFACT_PATTERN = /(?:^|\n)\s*(?:#{1,6}\s|```|[-*+]\s|\d+[.)]\s)|\*\*|__|(?:^|\n)\s*\|[^\n]+\|/m;
 const PROMPT_RESIDUE_OPENING_PATTERN = /^\s*(?:answer\s*first|answer|executive\s+summary)\s*[:\-]/i;
 const FLATTENED_TABLE_COPY_PATTERN = /\bstudent\s+profile\b[\s\S]{0,220}\btarget\s+courses\b[\s\S]{0,220}\brisk\s+to\s+check\b[\s\S]{0,220}\bsafer\s+approach\b/i;
 const FORMULAIC_SECTION_SEQUENCE = ["executive summary", "key facts", "conceptual rationale", "step by step guide", "risk matrix", "red flags", "frequently asked questions"];
@@ -1199,7 +1221,7 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
   const requestBody = JSON.stringify({
     model,
     messages: [
-      { role: "system", content: "Return valid JSON only. Write factual, original, natural Indian editorial English with varied human rhythm. Never expose a source name, competitor name, citation, reference, footnote, external URL, attribution phrase, research note, quality score, or AI process in any publishable field. Do not copy or spin another page. Never begin article copy with prompt residue such as Answer first:, Answer:, Executive summary: or Here is the answer:. Never flatten a comparison matrix into a plain-text label stack. Vary the outline instead of forcing a fixed executive-summary/key-facts/risk-matrix/checklist sequence, consolidate repeated verification advice, and add named evidence-supported examples when useful. Never use an em dash or en dash. Never use these AI cliches: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly, in summary. Keep normal paragraphs concise and human-edited." },
+      { role: "system", content: BLOG_MODEL_SYSTEM_RULES },
       { role: "user", content: prompt },
     ],
     response_format: responseFormat,
@@ -1366,7 +1388,7 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
   const requestedModel = options.model || (control?.provider === "gemini" && control?.model ? control.model : config.geminiModel);
   const model = normalizeGeminiModel(requestedModel);
   const requestBody = JSON.stringify({
-    systemInstruction: { parts: [{ text: "Return valid JSON only. Use factual, original, natural Indian editorial English with varied human rhythm. Never start article copy with prompt residue such as Answer first: or Executive summary:. Never flatten a comparison table into a line-by-line label stack. Vary the outline and consolidate repeated advice. Never use an em dash, en dash, or these AI cliches: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly, in summary." }] },
+    systemInstruction: { parts: [{ text: BLOG_MODEL_SYSTEM_RULES }] },
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     generationConfig: {
       responseMimeType: "application/json",
@@ -1656,6 +1678,7 @@ Editorial contract:
 - Editorial audience guidance: ${editorial.audience}.
 - Language: ${editorial.language}.
 - Voice: ${editorial.tone}.
+- DekhoCampus human editorial mode: ${HUMAN_EDITORIAL_RULES_TEXT}
 - Discovery goals: ${editorial.content_goals.join(", ")}. SEO means precise search intent and metadata; AEO means a direct answer near the start; GEO and LLMO mean unambiguous entities, dates, claims, relationships and self-contained explanations. E-E-A-T is an editorial discipline, never a phrase to place in the article.
 - Target about ${targetWords} words, using only the length the topic genuinely needs.
 - Required reader modules: ${editorial.required_sections.join("; ")}.
@@ -1679,6 +1702,10 @@ E-E-A-T execution:
 - Trust: keep names, dates and claims internally consistent; disclose uncertainty; avoid guarantees; and tell readers which responsible official authority to verify before a consequential action.
 
 Human editorial standard:
+- Adopt the DekhoCampus insider voice: a senior, street-smart admissions expert speaking plainly to a stressed Indian student or parent. Be direct about confusing rules, seat allotments and misleading claims without making unsupported accusations or promises.
+- Follow the formatting blackout for source text: no raw Markdown headings, fences, bullet markers, numbered markers, Markdown tables, bold or italic markers. Return semantic HTML only because the site renderer and accessibility layer require HTML headings, lists, tables and visible FAQs where the existing contract calls for them.
+- Do not force a dedicated FAQ block or a symmetrical outline when the topic does not need one. The existing storage and quality contract still requires 4-8 distinct FAQs mirrored visibly, so place them naturally and make each one topic-specific rather than boilerplate.
+- Vary syntax on purpose. Use contractions, direct questions, short standalone lines and longer sentences when they clarify a decision. Do not manufacture typos or awkward grammar: human writing means judged, readable imperfection, not errors.
 - Write natural Indian English with strong burstiness and rhythm. Deliberately alternate occasional punchy 3-6 word sentences with nuanced multi-clause sentences. Vary paragraph length, sentence openings and cadence so the prose sounds edited by a veteran journalist, not mechanically uniform.
 - Use active voice, contractions where natural, direct reader address and restrained rhetorical questions. Keep the flow conversational but authoritative, with balanced, non-promotional judgement.
 - Keep normal paragraphs to two to four sentences. Use a list or table only when it makes a decision, comparison, fee, date, eligibility rule, checklist or process clearer.
@@ -1690,6 +1717,7 @@ Human editorial standard:
 - Add grounded specifics when the private evidence supports them: a named authority, institution, subject code, paper section, counselling portal, date, fee rule or realistic student scenario. Never invent a gritty detail merely to make prose sound human.
 - Avoid fake quotations, testimonials, first-hand claims, keyword stuffing, repeated conclusions, generic introductions and repeated facts.
 - Do not use em dashes or en dashes. The following words and phrases are forbidden in every publishable field: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon and vital role. Also avoid firstly, secondly, in summary, landscape, seamless, robust, comprehensive and crucial. Use a contextual transition tied to the preceding idea instead of a generic signpost.
+- The extended DekhoCampus banned lexicon is also forbidden in every publishable field: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.join(", ")}.
 - Privately score natural sentence variation (20), specific useful information (20), non-repetitive language (15), logical human flow (15), Indian context (10), balanced tone (10) and careful editing (10). Rewrite weak sections until the internal score is at least 70. Never publish this score or mention AI detection, humanisation or the revision process.
 
 Search and page structure:
@@ -1846,6 +1874,8 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   check("No published research leakage", !/https?:\/\/|\bwww\.|<h[2-4][^>]*>\s*(?:sources?|references?|citations?|bibliography|credits?)/i.test(contentHtml), 5, "published content contains a source URL or source section", true);
   check("No competitor or attribution leakage", !PUBLISHED_COMPETITOR_PATTERN.test(publishedText) && !PUBLISHED_ATTRIBUTION_PATTERN.test(publishedText), 0, "published content contains a competitor name or source-attribution phrase", true);
   check("No long dash characters", !/[\u2013\u2014]/.test(publishedText), 0, "published content contains an em dash or en dash", true);
+  check("No raw Markdown syntax", !MARKDOWN_ARTIFACT_PATTERN.test(contentHtml), 2, "content_html contains Markdown markers; use semantic HTML only", true);
+  check("DekhoCampus banned lexicon", !HUMAN_BANNED_WORD_PATTERN.test(publishedText), 0, "published content contains wording from the DekhoCampus banned lexicon", true);
 
   const proseParagraphs = [...contentHtml.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
     .map((match) => stripHtml(match[1]))
@@ -1858,6 +1888,9 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   const clicheCount = (body.match(new RegExp(EDITORIAL_CLICHE_PATTERN.source, "gi")) || []).length;
   check("Natural editorial language", clicheCount <= 2 && !/\b(?:as an ai|language model|ai[- ]generated|humanisation|humanization|ai detector)\b/i.test(body) && oversizedParagraphs.length === 0, 5, "article contains formulaic language, AI-process wording, or an oversized paragraph", true);
   check("Strict anti-AI wording", !STRICT_AI_CLICHE_PATTERN.test(publishedText), 0, "article contains a forbidden AI cliche or generic transition", true);
+  const sentenceLengths = body.split(/[.!?]+(?:\s|$)/).map((sentence) => (sentence.match(/[A-Za-z0-9][A-Za-z0-9'/-]*/g) || []).length).filter(Boolean);
+  const hasBurstiness = sentenceLengths.some((length) => length <= 7) && sentenceLengths.some((length) => length >= 18);
+  check("Human sentence rhythm", hasBurstiness, 2, "sentence lengths are too uniform; add a short punchy line and a longer explanatory sentence");
 
   const paragraphs = proseParagraphs
     .map((paragraph) => normalizeArticleTitle(paragraph))
@@ -1917,12 +1950,14 @@ async function reviewGeneratedDraft(draft, topic, signals, editorial, model, fea
 Topic brief: ${JSON.stringify(topic)}.
 Required subject scope: ${profile.subject}.
 Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, deterministic_target_score: editorial.editorial_quality_target, independent_review_threshold: independentReviewThreshold })}.
+DekhoCampus human editorial policy: ${HUMAN_EDITORIAL_RULES_TEXT}
 Private evidence signals: ${JSON.stringify(signals)}.
 Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}.
 
 Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Apply a people-first trust review and score all four E-E-A-T dimensions: Experience through useful evidence-backed scenarios or actions without fabricated first-hand claims; Expertise through accurate explanation and reasoning; Authoritativeness through correct identification of responsible entities and rules; and Trust through consistency, uncertainty disclosure and safe verification guidance. The article must clearly serve the intended reader, add substantial topic-specific value, distinguish verified facts from interpretation, avoid fabricated experience or expertise, and exist to help a decision or action rather than merely capture search traffic. Confirm that the first 2-3 sentences answer the intent directly, the primary topic phrase appears naturally near the start and in 1-2 useful H2 headings, the meta title is no longer than 60 characters, the meta description is no longer than 155 characters, and the body contains a genuine comparison or summary table.
 
 Also score the internal human editorial rubric exactly as follows: natural sentence variation 20, specific useful information 20, non-repetitive language 15, logical human flow 15, appropriate Indian context 10, balanced non-promotional tone 10, and evidence of careful editing 10. Expect deliberate rhythm changes, including occasional 3-6 word sentences alongside nuanced multi-clause sentences, active voice, natural contractions and contextual transitions. Reject any visible source or competitor name, citation, reference, footnote, external link, attribution phrase, em dash, en dash, AI-process wording, invented byline, duplicated H1, repeated fact, or paragraph that reads like an unedited template. Reject an opening that literally starts with "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Reject a flattened plain-text comparison matrix, especially a run of labels such as Student profile, Target courses, Risk to check and Safer approach. Reject a mechanically repeated section order such as Executive summary, Key facts, Conceptual rationale, Step-by-step guide, Risk matrix, Red flags and FAQs when the topic does not require it. Check that repeated official-verification advice has been consolidated rather than restated under every heading, and prefer named, evidence-supported examples when they genuinely clarify the decision. Reject these words and phrases in publishable copy: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly and in summary. Normal prose paragraphs should usually contain two to four sentences. Do not reveal this scoring rubric in the article.
+Reject raw Markdown syntax, including hash headings, fenced code, Markdown bullets, numbered markers, pipe tables and bold or italic markers. Require a genuinely human cadence with at least one short punchy sentence and one longer explanatory sentence, but do not reward spelling mistakes or fake slang. Apply the full DekhoCampus banned lexicon from the human editorial policy, not only the short legacy list.
 
 Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. Mark publishable false only for a material factual, safety, intent, completeness or reader-action defect. Optional polish must not block publication; an article scoring 85-89 can be publishable when it is accurate, complete and useful. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`;
   const generated = await blogTextJson(reviewPrompt, feature, {
@@ -1954,6 +1989,7 @@ export function articleRevisionPrompt(draft, topic, signals, correctionIssues = 
 Topic brief: ${JSON.stringify(topic)}
 Required subject scope: ${profile.subject}
 Publishing requirements: ${JSON.stringify({ audience: editorial.audience, goals: editorial.content_goals, required_sections: editorial.required_sections, deterministic_target_score: editorial.editorial_quality_target })}
+DekhoCampus human editorial policy: ${HUMAN_EDITORIAL_RULES_TEXT}
 Review corrections: ${JSON.stringify(feedback)}
 Private fact-checking context: ${JSON.stringify(signals)}
 Existing draft: ${JSON.stringify({ title: draft?.title, slug: draft?.slug, description: draft?.description, content_html: draft?.content_html, meta_title: draft?.meta_title, meta_description: draft?.meta_description, meta_keywords: draft?.meta_keywords, tags: draft?.tags, category: draft?.category, hero_hook: draft?.hero_hook, faqs: draft?.faqs })}

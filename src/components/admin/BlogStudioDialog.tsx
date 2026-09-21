@@ -44,7 +44,7 @@ const DEFAULT_EDITORIAL_SETTINGS: EditorialSettings = {
   editorial_quality_target: 90,
   language: "English",
   audience: "Indian students and parents",
-  tone: "Clear, practical, trustworthy",
+  tone: "Direct, practical, opinionated and conversational Indian admissions guidance for stressed students and parents",
 };
 const SARKARI_CATEGORIES = ["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"];
 

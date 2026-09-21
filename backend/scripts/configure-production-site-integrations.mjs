@@ -13,6 +13,7 @@ const integrations = [
 ];
 const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
 const BLOG_GPT_5_6_LUNA_EDITORIAL_MIGRATION_KEY = "blog_gpt_5_6_luna_editorial_policy_v1";
+const BLOG_DEKHOCAMPUS_HUMAN_EDITORIAL_MIGRATION_KEY = "blog_dekhocampus_human_editorial_policy_v1";
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
 const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v3";
@@ -64,7 +65,7 @@ try {
         word_limit: 0,
         language: "English",
         audience: "Indian students and parents",
-        tone: "Clear, practical, trustworthy",
+        tone: "Direct, practical, opinionated and conversational Indian admissions guidance for stressed students and parents",
         content_goals: ["SEO", "AEO", "GEO", "LLMO"],
         required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],
         minimum_sources: 2,
@@ -129,6 +130,26 @@ try {
           model: "gpt-5.6-luna",
           source_privacy: "strict",
           human_editorial_score_minimum: 70,
+          applied_at: new Date().toISOString(),
+        }),
+      },
+    });
+  }
+  const humanEditorialMigration = await prisma.app_settings.findUnique({ where: { key: BLOG_DEKHOCAMPUS_HUMAN_EDITORIAL_MIGRATION_KEY } });
+  if (!humanEditorialMigration) {
+    const updated = await prisma.blog_auto_agent_settings.updateMany({
+      data: {
+        tone: "Direct, practical, opinionated and conversational Indian admissions guidance for stressed students and parents",
+        updated_at: new Date(),
+      },
+    });
+    if (!updated.count) throw new Error("Auto Blog Agent settings are missing");
+    await prisma.app_settings.create({
+      data: {
+        key: BLOG_DEKHOCAMPUS_HUMAN_EDITORIAL_MIGRATION_KEY,
+        value: JSON.stringify({
+          persona: "senior street-smart college admissions expert",
+          formatting: "semantic HTML without raw Markdown syntax",
           applied_at: new Date().toISOString(),
         }),
       },
