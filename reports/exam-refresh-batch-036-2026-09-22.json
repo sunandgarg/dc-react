@@ -1,0 +1,1019 @@
+{
+  "batch": "exam-refresh-batch-036",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten canonical rows after batches 001-035; duplicate, demo, discontinued and superseded rows excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "wbjee-jelet",
+    "wbjee-jeca",
+    "jemscn",
+    "jepbn",
+    "aiims-pg",
+    "upsee",
+    "jipmer-mbbs",
+    "lsat-india"
+  ],
+  "updates": [
+    {
+      "id": "96adfe88-9507-481e-a169-dfd6322d9ebf",
+      "old_slug": "mah-bped-cet",
+      "slug": "mah-bped-cet",
+      "name": "MAH B.P.Ed CET",
+      "title": "MAH B.P.Ed CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MAH B.P.Ed CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Physical Education",
+      "level": "Maharashtra two-year B.P.Ed admission",
+      "mode": "Maharashtra State CET Cell computer-based test, field test and CAP",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MAH B.P.Ed CET publishes graduation, physical-education, marks, category, domicile and document conditions in the current information brochure.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by State Common Entrance Test Cell, Maharashtra"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mental ability",
+        "General knowledge",
+        "Teacher aptitude",
+        "Field or physical-education test where notified"
+      ],
+      "description": "MAH B.P.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MAH B.P.Ed CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, computer-based paper, field-test requirements, marking, result and CAP calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mental ability</li><li>General knowledge</li><li>Teacher aptitude</li><li>Field or physical-education test where notified</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MAH B.P.Ed CET 2027 at a glance</h2><p>MAH B.P.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MAH B.P.Ed CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MAH B.P.Ed CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MAH B.P.Ed CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MAH B.P.Ed CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MAH B.P.Ed CET 2027",
+        "exam update",
+        "Physical Education",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/",
+      "official_website": "https://cetcell.mahacet.org/",
+      "registration_url": "https://cetcell.mahacet.org/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/",
+        "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-BPEd_2026.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetcell.mahacet.org/",
+        "official_notification": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-BPEd_2026.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will MAH B.P.Ed CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MAH B.P.Ed CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MAH B.P.Ed CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MAH B.P.Ed CET 2027?</h2><p>MAH B.P.Ed CET publishes graduation, physical-education, marks, category, domicile and document conditions in the current information brochure. The active 2027 notice will control the final answer.</p><ul><li>Mental ability</li><li>General knowledge</li></ul><h2>When are MAH B.P.Ed CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, computer-based paper, field-test requirements, marking, result and CAP calendar.</p><p><strong>Authority fact:</strong> The official brochure identifies the B.P.Ed CET as the route for the two-year professional B.P.Ed degree and explains the authority-led admission process.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mental ability</li><li>General knowledge</li><li>Teacher aptitude</li><li>Field or physical-education test where notified</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetcell.mahacet.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-BPEd_2026.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MAH B.P.Ed CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><h3>Where should I apply for MAH B.P.Ed CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "1f34be93-495e-4ea4-acaf-0b391e33e3a1",
+      "old_slug": "mah-mped-cet",
+      "slug": "mah-mped-cet",
+      "name": "MAH M.P.Ed CET",
+      "title": "MAH M.P.Ed CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MAH M.P.Ed CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Physical Education/Postgraduate",
+      "level": "Maharashtra two-year M.P.Ed admission",
+      "mode": "Maharashtra State CET Cell computer-based test, field test and CAP",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MAH M.P.Ed CET publishes B.P.Ed or equivalent study, marks, category, domicile and document conditions in its information brochure.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by State Common Entrance Test Cell, Maharashtra"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physical education theory",
+        "Sports and games knowledge",
+        "Mental ability and general knowledge",
+        "Field test, merit and CAP reporting"
+      ],
+      "description": "MAH M.P.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MAH M.P.Ed CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, online paper, field test, marking, result and CAP calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physical education theory</li><li>Sports and games knowledge</li><li>Mental ability and general knowledge</li><li>Field test, merit and CAP reporting</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MAH M.P.Ed CET 2027 at a glance</h2><p>MAH M.P.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MAH M.P.Ed CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MAH M.P.Ed CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MAH M.P.Ed CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MAH M.P.Ed CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MAH M.P.Ed CET 2027",
+        "exam update",
+        "Physical Education/Postgraduate",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/cet-3/",
+      "official_website": "https://cetcell.mahacet.org/cet-3/",
+      "registration_url": "https://cetcell.mahacet.org/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/cet-3/",
+        "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-MPEd_2026.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetcell.mahacet.org/",
+        "official_notification": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-MPEd_2026.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will MAH M.P.Ed CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MAH M.P.Ed CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MAH M.P.Ed CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MAH M.P.Ed CET 2027?</h2><p>MAH M.P.Ed CET publishes B.P.Ed or equivalent study, marks, category, domicile and document conditions in its information brochure. The active 2027 notice will control the final answer.</p><ul><li>Physical education theory</li><li>Sports and games knowledge</li></ul><h2>When are MAH M.P.Ed CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, online paper, field test, marking, result and CAP calendar.</p><p><strong>Authority fact:</strong> The official M.P.Ed brochure separates the online CET from the physical field test and directs candidates to the CET Cell for any revised schedule.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physical education theory</li><li>Sports and games knowledge</li><li>Mental ability and general knowledge</li><li>Field test, merit and CAP reporting</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetcell.mahacet.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-MPEd_2026.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MAH M.P.Ed CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><h3>Where should I apply for MAH M.P.Ed CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "5348305f-22f8-49ef-bbcb-0ccea819e83a",
+      "old_slug": "mah-med-cet",
+      "slug": "mah-med-cet",
+      "name": "MAH M.Ed CET",
+      "title": "MAH M.Ed CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MAH M.Ed CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education/Postgraduate",
+      "level": "Maharashtra M.Ed admission",
+      "mode": "Maharashtra State CET Cell computer-based test and CAP",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MAH M.Ed CET publishes B.Ed or equivalent qualification, marks, category, domicile and document conditions in the current brochure.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by State Common Entrance Test Cell, Maharashtra"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mental ability",
+        "Teacher education and general knowledge",
+        "Education-related concepts",
+        "Score, CAP registration and college reporting"
+      ],
+      "description": "MAH M.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MAH M.Ed CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, online paper, duration, marking, result and CAP calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mental ability</li><li>Teacher education and general knowledge</li><li>Education-related concepts</li><li>Score, CAP registration and college reporting</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MAH M.Ed CET 2027 at a glance</h2><p>MAH M.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MAH M.Ed CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MAH M.Ed CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MAH M.Ed CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MAH M.Ed CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MAH M.Ed CET 2027",
+        "exam update",
+        "Education/Postgraduate",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/cet-3/",
+      "official_website": "https://cetcell.mahacet.org/cet-3/",
+      "registration_url": "https://cetcell.mahacet.org/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/cet-3/",
+        "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-MEd_2026.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetcell.mahacet.org/",
+        "official_notification": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-MEd_2026.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will MAH M.Ed CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MAH M.Ed CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MAH M.Ed CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MAH M.Ed CET 2027?</h2><p>MAH M.Ed CET publishes B.Ed or equivalent qualification, marks, category, domicile and document conditions in the current brochure. The active 2027 notice will control the final answer.</p><ul><li>Mental ability</li><li>Teacher education and general knowledge</li></ul><h2>When are MAH M.Ed CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, online paper, duration, marking, result and CAP calendar.</p><p><strong>Authority fact:</strong> The official M.Ed brochure states that the CET is conducted online and that the State CET Cell controls the admission process for recognised colleges.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mental ability</li><li>Teacher education and general knowledge</li><li>Education-related concepts</li><li>Score, CAP registration and college reporting</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetcell.mahacet.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-MEd_2026.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MAH M.Ed CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><h3>Where should I apply for MAH M.Ed CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "3b782f12-8815-4e22-842c-d0326cae1147",
+      "old_slug": "mah-aac-cet",
+      "slug": "mah-aac-cet",
+      "name": "MAH AAC CET",
+      "title": "MAH AAC CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MAH AAC CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Fine Arts",
+      "level": "Maharashtra fine-arts undergraduate admission",
+      "mode": "Maharashtra State CET Cell drawing, design and general knowledge tests",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MAH AAC CET publishes Class 12, subject, marks, portfolio or practical-test and document conditions for fine-arts admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by State Common Entrance Test Cell, Maharashtra"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Object drawing and design basics",
+        "Memory drawing or visual communication",
+        "General knowledge and art awareness",
+        "Practical test, merit and CAP"
+      ],
+      "description": "MAH AAC CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MAH AAC CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, practical papers, duration, marking, result and CAP calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Object drawing and design basics</li><li>Memory drawing or visual communication</li><li>General knowledge and art awareness</li><li>Practical test, merit and CAP</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MAH AAC CET 2027 at a glance</h2><p>MAH AAC CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MAH AAC CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MAH AAC CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MAH AAC CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MAH AAC CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MAH AAC CET 2027",
+        "exam update",
+        "Fine Arts",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/",
+      "official_website": "https://cetcell.mahacet.org/",
+      "registration_url": "https://cetcell.mahacet.org/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/",
+        "https://cetcell.mahacet.org/cms-download/information-brochure-for-mah-aac-cet-a-y-2026-27/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetcell.mahacet.org/",
+        "official_notification": "https://cetcell.mahacet.org/cms-download/information-brochure-for-mah-aac-cet-a-y-2026-27/"
+      },
+      "faqs": [
+        {
+          "question": "When will MAH AAC CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MAH AAC CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MAH AAC CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MAH AAC CET 2027?</h2><p>MAH AAC CET publishes Class 12, subject, marks, portfolio or practical-test and document conditions for fine-arts admission. The active 2027 notice will control the final answer.</p><ul><li>Object drawing and design basics</li><li>Memory drawing or visual communication</li></ul><h2>When are MAH AAC CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, practical papers, duration, marking, result and CAP calendar.</p><p><strong>Authority fact:</strong> The official CET Cell lists MAH-AAC-CET under Fine Art Education and publishes its information brochure and registration notices on the state portal.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Object drawing and design basics</li><li>Memory drawing or visual communication</li><li>General knowledge and art awareness</li><li>Practical test, merit and CAP</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetcell.mahacet.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetcell.mahacet.org/cms-download/information-brochure-for-mah-aac-cet-a-y-2026-27/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MAH AAC CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><h3>Where should I apply for MAH AAC CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "be2c6b2e-ef21-42be-8cf0-2345dedc6748",
+      "old_slug": "mh-nursing-cet",
+      "slug": "mh-nursing-cet",
+      "name": "MH Nursing CET",
+      "title": "MH Nursing CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MH Nursing CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing",
+      "level": "Maharashtra B.Sc Nursing admission",
+      "mode": "Maharashtra nursing computer-based test and state counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MH Nursing CET publishes Class 12 science subjects, marks, age, medical fitness, category and document conditions in the nursing brochure.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by State Common Entrance Test Cell, Maharashtra"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Biology",
+        "English, rank and preference filling"
+      ],
+      "description": "MH Nursing CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MH Nursing CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, computer-based paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology</li><li>English, rank and preference filling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MH Nursing CET 2027 at a glance</h2><p>MH Nursing CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MH Nursing CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MH Nursing CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MH Nursing CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MH Nursing CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MH Nursing CET 2027",
+        "exam update",
+        "Nursing",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/",
+      "official_website": "https://cetcell.mahacet.org/",
+      "registration_url": "https://cetcell.mahacet.org/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/",
+        "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Nursing-CET-2026-brochure-1.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetcell.mahacet.org/",
+        "official_notification": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Nursing-CET-2026-brochure-1.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will MH Nursing CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MH Nursing CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MH Nursing CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MH Nursing CET 2027?</h2><p>MH Nursing CET publishes Class 12 science subjects, marks, age, medical fitness, category and document conditions in the nursing brochure. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are MH Nursing CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, computer-based paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official nursing brochure names the State CET Cell as the competent authority for the B.Sc Nursing entrance and selection process.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology</li><li>English, rank and preference filling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetcell.mahacet.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetcell.mahacet.org/wp-content/uploads/2023/12/Nursing-CET-2026-brochure-1.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MH Nursing CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><h3>Where should I apply for MH Nursing CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "68f78412-ffcc-46d7-86dc-9c095c946bd8",
+      "old_slug": "mah-mhmct-cet",
+      "slug": "mah-mhmct-cet",
+      "name": "MAH M.HMCT CET",
+      "title": "MAH M.HMCT CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MAH M.HMCT CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Hotel Management/Postgraduate",
+      "level": "Maharashtra Master of Hotel Management and Catering Technology admission",
+      "mode": "Maharashtra State CET Cell computer-based test and CAP",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MAH M.HMCT CET publishes bachelor-level qualification, marks, category, domicile and document conditions for the postgraduate hotel-management route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by State Common Entrance Test Cell, Maharashtra"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Hotel and hospitality fundamentals",
+        "Reasoning and general awareness",
+        "English communication",
+        "Score, CAP registration and institute reporting"
+      ],
+      "description": "MAH M.HMCT CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MAH M.HMCT CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, online paper, duration, marking, result and CAP calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Hotel and hospitality fundamentals</li><li>Reasoning and general awareness</li><li>English communication</li><li>Score, CAP registration and institute reporting</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MAH M.HMCT CET 2027 at a glance</h2><p>MAH M.HMCT CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MAH M.HMCT CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MAH M.HMCT CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MAH M.HMCT CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MAH M.HMCT CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MAH M.HMCT CET 2027",
+        "exam update",
+        "Hotel Management/Postgraduate",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/cet-3/",
+      "official_website": "https://cetcell.mahacet.org/cet-3/",
+      "registration_url": "https://cetcell.mahacet.org/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/cet-3/",
+        "https://cetcell.mahacet.org/cms-home/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetcell.mahacet.org/",
+        "official_notification": "https://cetcell.mahacet.org/cms-home/"
+      },
+      "faqs": [
+        {
+          "question": "When will MAH M.HMCT CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MAH M.HMCT CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MAH M.HMCT CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MAH M.HMCT CET 2027?</h2><p>MAH M.HMCT CET publishes bachelor-level qualification, marks, category, domicile and document conditions for the postgraduate hotel-management route. The active 2027 notice will control the final answer.</p><ul><li>Hotel and hospitality fundamentals</li><li>Reasoning and general awareness</li></ul><h2>When are MAH M.HMCT CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, online paper, duration, marking, result and CAP calendar.</p><p><strong>Authority fact:</strong> The official CET Cell lists MHMCT under its higher and technical education examinations and publishes course notices through the state portal.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Hotel and hospitality fundamentals</li><li>Reasoning and general awareness</li><li>English communication</li><li>Score, CAP registration and institute reporting</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetcell.mahacet.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetcell.mahacet.org/cms-home/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MAH M.HMCT CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><h3>Where should I apply for MAH M.HMCT CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "21059db6-9da1-47fa-bae5-158bc9a32ff1",
+      "old_slug": "mah-bed-med-integrated-cet",
+      "slug": "mah-bed-med-integrated-cet",
+      "name": "MAH B.Ed-M.Ed Integrated CET",
+      "title": "MAH B.Ed-M.Ed CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MAH B.Ed-M.Ed CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Maharashtra three-year integrated B.Ed-M.Ed admission",
+      "mode": "Maharashtra State CET Cell computer-based test and CAP",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MAH B.Ed-M.Ed CET publishes the qualifying degree, marks, category, domicile and document conditions for the three-year integrated course.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by State Common Entrance Test Cell, Maharashtra"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mental ability",
+        "Teacher aptitude",
+        "General knowledge",
+        "Score, CAP choice filling and reporting"
+      ],
+      "description": "MAH B.Ed-M.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MAH B.Ed-M.Ed CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, online paper, duration, marking, result and CAP calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mental ability</li><li>Teacher aptitude</li><li>General knowledge</li><li>Score, CAP choice filling and reporting</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MAH B.Ed-M.Ed CET 2027 at a glance</h2><p>MAH B.Ed-M.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MAH B.Ed-M.Ed CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MAH B.Ed-M.Ed CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MAH B.Ed-M.Ed CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MAH B.Ed-M.Ed CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MAH B.Ed-M.Ed CET 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/cet-3/",
+      "official_website": "https://cetcell.mahacet.org/cet-3/",
+      "registration_url": "https://cetcell.mahacet.org/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/cet-3/",
+        "https://cetcell.mahacet.org/cms-home/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetcell.mahacet.org/",
+        "official_notification": "https://cetcell.mahacet.org/cms-home/"
+      },
+      "faqs": [
+        {
+          "question": "When will MAH B.Ed-M.Ed CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MAH B.Ed-M.Ed CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MAH B.Ed-M.Ed CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MAH B.Ed-M.Ed CET 2027?</h2><p>MAH B.Ed-M.Ed CET publishes the qualifying degree, marks, category, domicile and document conditions for the three-year integrated course. The active 2027 notice will control the final answer.</p><ul><li>Mental ability</li><li>Teacher aptitude</li></ul><h2>When are MAH B.Ed-M.Ed CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, online paper, duration, marking, result and CAP calendar.</p><p><strong>Authority fact:</strong> The official CET Cell lists B.Ed-M.Ed as a separate higher-education CET and issues its application, objection and CAP notices through the state portal.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mental ability</li><li>Teacher aptitude</li><li>General knowledge</li><li>Score, CAP choice filling and reporting</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetcell.mahacet.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetcell.mahacet.org/cms-home/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MAH B.Ed-M.Ed CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><h3>Where should I apply for MAH B.Ed-M.Ed CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "7bf85709-89df-46ec-a58a-fe63f161e939",
+      "old_slug": "tg-pglcet",
+      "slug": "tg-pglcet",
+      "name": "TG PGLCET",
+      "title": "TG PGLCET 2027: Dates, Eligibility & Pattern",
+      "full_name": "TG PGLCET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Law/Postgraduate",
+      "level": "Telangana two-year LL.M admission",
+      "mode": "Telangana postgraduate law entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "TG PGLCET publishes LL.B. or equivalent qualification, marks, local status, category and document conditions for two-year LL.M admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Telangana Council of Higher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Jurisprudence and constitutional law",
+        "Public and private international law",
+        "Commercial and labour law",
+        "Rank, web options and certificate verification"
+      ],
+      "description": "TG PGLCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "TG PGLCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Telangana must confirm the 2027 registration, law subjects, duration, marking, result and web-counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Jurisprudence and constitutional law</li><li>Public and private international law</li><li>Commercial and labour law</li><li>Rank, web options and certificate verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Telangana Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>TG PGLCET 2027 at a glance</h2><p>TG PGLCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Telangana Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "TG PGLCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "TG PGLCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check TG PGLCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "TG PGLCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "TG PGLCET 2027",
+        "exam update",
+        "Law/Postgraduate",
+        "2027"
+      ],
+      "website": "https://lawcetadm.tgche.ac.in/index_LLB.html",
+      "official_website": "https://lawcetadm.tgche.ac.in/index_LLB.html",
+      "registration_url": "https://lawcetadm.tgche.ac.in/index_LLB.html",
+      "data_source_urls": [
+        "https://lawcetadm.tgche.ac.in/index_LLB.html",
+        "https://www.osmania.ac.in/News2026/lawcet%20notif.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://lawcetadm.tgche.ac.in/index_LLB.html",
+        "official_notification": "https://www.osmania.ac.in/News2026/lawcet%20notif.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will TG PGLCET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice."
+        },
+        {
+          "question": "Where should I apply for TG PGLCET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>TG PGLCET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for TG PGLCET 2027?</h2><p>TG PGLCET publishes LL.B. or equivalent qualification, marks, local status, category and document conditions for two-year LL.M admission. The active 2027 notice will control the final answer.</p><ul><li>Jurisprudence and constitutional law</li><li>Public and private international law</li></ul><h2>When are TG PGLCET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Telangana Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Telangana must confirm the 2027 registration, law subjects, duration, marking, result and web-counselling calendar.</p><p><strong>Authority fact:</strong> The official Telangana admissions portal handles certificate verification and web counselling, while the Osmania University notice identifies the authority conducting TG PGLCET.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Jurisprudence and constitutional law</li><li>Public and private international law</li><li>Commercial and labour law</li><li>Rank, web options and certificate verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://lawcetadm.tgche.ac.in/index_LLB.html\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.osmania.ac.in/News2026/lawcet%20notif.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will TG PGLCET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice.</p><h3>Where should I apply for TG PGLCET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "34c5fbfb-b5dc-477d-b655-aa528bdd48aa",
+      "old_slug": "ap-pglcet",
+      "slug": "ap-pglcet",
+      "name": "AP PGLCET",
+      "title": "AP PGLCET 2027: Dates, Eligibility & Pattern",
+      "full_name": "AP PGLCET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Law/Postgraduate",
+      "level": "Andhra Pradesh two-year LL.M admission",
+      "mode": "APSCHE computer-based law test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "AP PGLCET publishes LL.B. qualification, marks, local or non-local status, category and document conditions in the official instruction booklet.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Andhra Pradesh State Council of Higher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Jurisprudence and constitutional law",
+        "Public and private international law",
+        "Mercantile and labour law",
+        "Rank, web options and certificate verification"
+      ],
+      "description": "AP PGLCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AP PGLCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>APSCHE must confirm the 2027 registration, law subjects, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Jurisprudence and constitutional law</li><li>Public and private international law</li><li>Mercantile and labour law</li><li>Rank, web options and certificate verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Andhra Pradesh State Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AP PGLCET 2027 at a glance</h2><p>AP PGLCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Andhra Pradesh State Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AP PGLCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AP PGLCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AP PGLCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AP PGLCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AP PGLCET 2027",
+        "exam update",
+        "Law/Postgraduate",
+        "2027"
+      ],
+      "website": "https://cets.apsche.ap.gov.in/LAWCET/LAWCET/LAWCET_HomePage.aspx",
+      "official_website": "https://cets.apsche.ap.gov.in/LAWCET/LAWCET/LAWCET_HomePage.aspx",
+      "registration_url": "https://cets.apsche.ap.gov.in/LAWCET/LAWCET/LAWCET_HomePage.aspx",
+      "data_source_urls": [
+        "https://cets.apsche.ap.gov.in/LAWCET/LAWCET/LAWCET_HomePage.aspx",
+        "https://cets.apsche.ap.gov.in/LAWCET/PDF/APLAWCET2026_IntructionsBooklet_V1.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cets.apsche.ap.gov.in/LAWCET/LAWCET/LAWCET_HomePage.aspx",
+        "official_notification": "https://cets.apsche.ap.gov.in/LAWCET/PDF/APLAWCET2026_IntructionsBooklet_V1.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will AP PGLCET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AP PGLCET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AP PGLCET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AP PGLCET 2027?</h2><p>AP PGLCET publishes LL.B. qualification, marks, local or non-local status, category and document conditions in the official instruction booklet. The active 2027 notice will control the final answer.</p><ul><li>Jurisprudence and constitutional law</li><li>Public and private international law</li></ul><h2>When are AP PGLCET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Andhra Pradesh State Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>APSCHE must confirm the 2027 registration, law subjects, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official APSCHE portal combines AP LAWCET and AP PGLCET information, including rank cards, answer keys, hall tickets and counselling notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Jurisprudence and constitutional law</li><li>Public and private international law</li><li>Mercantile and labour law</li><li>Rank, web options and certificate verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cets.apsche.ap.gov.in/LAWCET/LAWCET/LAWCET_HomePage.aspx\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cets.apsche.ap.gov.in/LAWCET/PDF/APLAWCET2026_IntructionsBooklet_V1.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AP PGLCET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice.</p><h3>Where should I apply for AP PGLCET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "ce0876ae-785f-4f07-9d90-1dc2e8ccf897",
+      "old_slug": "rajasthan-pre-deled",
+      "slug": "rajasthan-pre-deled",
+      "name": "Rajasthan Pre D.El.Ed",
+      "title": "Rajasthan Pre D.El.Ed 2027: Dates & Pattern",
+      "full_name": "Rajasthan Pre D.El.Ed 2027: Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Rajasthan two-year D.El.Ed admission",
+      "mode": "State Pre D.El.Ed entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "Rajasthan Pre D.El.Ed publishes Senior Secondary qualification, marks, category, language option and document conditions in the official notice.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Rajasthan education authorities and the notified examination coordinator"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mental ability",
+        "Rajasthan general awareness",
+        "Teaching aptitude",
+        "Language proficiency, rank and counselling"
+      ],
+      "description": "Rajasthan Pre D.El.Ed 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Rajasthan Pre D.El.Ed 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The notified Rajasthan authority must confirm the 2027 registration, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mental ability</li><li>Rajasthan general awareness</li><li>Teaching aptitude</li><li>Language proficiency, rank and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan education authorities and the notified examination coordinator posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Rajasthan education authorities and the notified examination coordinator</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Rajasthan Pre D.El.Ed 2027 at a glance</h2><p>Rajasthan Pre D.El.Ed 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan education authorities and the notified examination coordinator posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Rajasthan education authorities and the notified examination coordinator</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Rajasthan Pre D.El.Ed 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Rajasthan Pre D.El.Ed 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Rajasthan Pre D.El.Ed 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Rajasthan Pre D.El.Ed 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Rajasthan Pre D.El.Ed 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://predeled.e-raj.in/",
+      "official_website": "https://predeled.e-raj.in/",
+      "registration_url": "https://predeled.e-raj.in/",
+      "data_source_urls": [
+        "https://predeled.e-raj.in/",
+        "https://predeled.e-raj.in/counselling/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_036",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://predeled.e-raj.in/",
+        "official_notification": "https://predeled.e-raj.in/counselling/"
+      },
+      "faqs": [
+        {
+          "question": "When will Rajasthan Pre D.El.Ed 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan education authorities and the notified examination coordinator posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Rajasthan Pre D.El.Ed 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Rajasthan Pre D.El.Ed 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Rajasthan Pre D.El.Ed 2027?</h2><p>Rajasthan Pre D.El.Ed publishes Senior Secondary qualification, marks, category, language option and document conditions in the official notice. The active 2027 notice will control the final answer.</p><ul><li>Mental ability</li><li>Rajasthan general awareness</li></ul><h2>When are Rajasthan Pre D.El.Ed 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan education authorities and the notified examination coordinator posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Rajasthan education authorities and the notified examination coordinator</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The notified Rajasthan authority must confirm the 2027 registration, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official counselling portal explains choice filling, seat allotment, reporting and upward movement, so candidates should follow the live portal rather than an old coaching calendar.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mental ability</li><li>Rajasthan general awareness</li><li>Teaching aptitude</li><li>Language proficiency, rank and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://predeled.e-raj.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://predeled.e-raj.in/counselling/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Rajasthan Pre D.El.Ed 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan education authorities and the notified examination coordinator posts the next notice.</p><h3>Where should I apply for Rajasthan Pre D.El.Ed 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
