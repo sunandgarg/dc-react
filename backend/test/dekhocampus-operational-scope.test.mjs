@@ -196,8 +196,10 @@ test("Cloudflare Pages builds reuse the published sitemap instead of walking MyS
 
   assert.match(workflow, /SITEMAP_API_URL: none/);
   assert.match(workflow, /SITEMAP_SEED_URL: https:\/\/dekhocampus\.com\/sitemap\.xml/);
+  assert.match(workflow, /SITEMAP_SEED_FETCH_BASE_URL: https:\/\/aws-origin\.dekhocampus\.com/);
   assert.match(generator, /const IS_CLOUDFLARE_PAGES_BUILD = env\.CF_PAGES === "1"/);
   assert.match(generator, /IS_CLOUDFLARE_PAGES_BUILD && !env\.SITEMAP_API_URL/);
+  assert.match(generator, /SITEMAP_SEED_FETCH_BASE_URL/);
 });
 
 test("AWS runtime allows a low-memory API enough time to become healthy", async () => {

@@ -32,9 +32,12 @@ jobs:
           VITE_MEDIA_BASE_URL: https://aws-origin.dekhocampus.com/storage/v1/object/public
           # AWS publishes the complete MySQL sitemap before this workflow runs.
           # Reuse that immutable XML generation instead of walking the small
-          # production database pool a second time from the Pages build.
+          # production database pool a second time from the Pages build. Read
+          # the canonical URLs through the AWS origin so Pages does not fetch
+          # its own not-yet-published sitemap during the build.
           SITEMAP_API_URL: none
           SITEMAP_SEED_URL: https://dekhocampus.com/sitemap.xml
+          SITEMAP_SEED_FETCH_BASE_URL: https://aws-origin.dekhocampus.com
         run: |
           npm ci
           npm test

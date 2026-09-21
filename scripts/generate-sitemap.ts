@@ -46,6 +46,12 @@ const API_URL = (env.SITEMAP_API_URL === "none" || (IS_CLOUDFLARE_PAGES_BUILD &&
 const SITEMAP_SEED_URL = env.SITEMAP_SEED_URL === "none"
   ? ""
   : env.SITEMAP_SEED_URL || "https://dekhocampus.com/sitemap.xml";
+// A build can read the canonical sitemap through a separate origin while
+// keeping the published <loc> values on dekhocampus.com. Cloudflare Pages
+// uses this to avoid recursively fetching its own not-yet-published sitemap.
+const SITEMAP_SEED_FETCH_BASE_URL = env.SITEMAP_SEED_FETCH_BASE_URL
+  ? String(env.SITEMAP_SEED_FETCH_BASE_URL).replace(/\/+$/, "")
+  : "";
 const PAGE_SIZE = 1000;
 
 function boundedInteger(value: unknown, fallback: number, minimum: number, maximum: number) {
@@ -389,7 +395,10 @@ async function fetchSeedEntries(): Promise<SitemapEntry[]> {
     if (visited.has(source)) continue;
     visited.add(source);
     try {
-      const xml = await fetchTextWithRetry(source, { headers: { "User-Agent": "DekhoCampus sitemap migration/1.0" } }, retryOptions(`seed ${source}`));
+      const fetchSource = SITEMAP_SEED_FETCH_BASE_URL
+        ? new URL(source).toString().replace(/^https?:\/\/[^/]+/i, SITEMAP_SEED_FETCH_BASE_URL)
+        : source;
+      const xml = await fetchTextWithRetry(fetchSource, { headers: { "User-Agent": "DekhoCampus sitemap migration/1.0" } }, retryOptions(`seed ${source}`));
       if (/<sitemapindex\b/i.test(xml)) {
         for (const match of xml.matchAll(/<loc>([\s\S]*?)<\/loc>/gi)) {
           const child = decodeXml(match[1].trim());
