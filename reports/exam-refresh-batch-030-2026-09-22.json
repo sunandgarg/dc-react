@@ -1,0 +1,1019 @@
+{
+  "batch": "exam-refresh-batch-030",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten canonical rows after batches 001-029; duplicate, demo, discontinued and superseded rows excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "wbjee-jelet",
+    "wbjee-jeca",
+    "jemscn",
+    "jepbn",
+    "icar-aieea-pg",
+    "upsee",
+    "jipmer-mbbs",
+    "lsat-india"
+  ],
+  "updates": [
+    {
+      "id": "d7269a1c-3114-4d8c-adbb-c1733f0c9d54",
+      "old_slug": "assam-jlee",
+      "slug": "assam-jlee",
+      "name": "Assam JLEE",
+      "title": "Assam JLEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "Assam JLEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "Assam lateral-entry B.Tech admission",
+      "mode": "ASTU entrance test and institute admission",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "ASTU publishes diploma, marks, domicile, category and document conditions for lateral entry to B.Tech. Read the current notice before relying on a previous-cycle rule.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Assam Science and Technology University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Diploma-level engineering subjects",
+        "Mathematics and basic engineering concepts",
+        "Aptitude and time management",
+        "Rank, document check and institute admission"
+      ],
+      "description": "Assam JLEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Assam JLEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>ASTU must confirm the 2027 form, test mode, duration, marking, rank list and admission calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Diploma-level engineering subjects</li><li>Mathematics and basic engineering concepts</li><li>Aptitude and time management</li><li>Rank, document check and institute admission</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Assam Science and Technology University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Assam JLEE 2027 at a glance</h2><p>Assam JLEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Assam Science and Technology University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Assam JLEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Assam JLEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Assam JLEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Assam JLEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Assam JLEE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://astu.ac.in/?page_id=40085",
+      "official_website": "https://astu.ac.in/?page_id=40085",
+      "registration_url": "https://astu.ac.in/",
+      "data_source_urls": [
+        "https://astu.ac.in/?page_id=40085",
+        "https://dte.assam.gov.in/search?Apply=Apply&title=2026"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://astu.ac.in/",
+        "official_notification": "https://dte.assam.gov.in/search?Apply=Apply&title=2026"
+      },
+      "faqs": [
+        {
+          "question": "When will Assam JLEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Assam JLEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Assam JLEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Assam JLEE 2027?</h2><p>ASTU publishes diploma, marks, domicile, category and document conditions for lateral entry to B.Tech. Read the current notice before relying on a previous-cycle rule. The active 2027 notice will control the final answer.</p><ul><li>Diploma-level engineering subjects</li><li>Mathematics and basic engineering concepts</li></ul><h2>When are Assam JLEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Assam Science and Technology University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>ASTU must confirm the 2027 form, test mode, duration, marking, rank list and admission calendar.</p><p><strong>Authority fact:</strong> ASTU's official notices and scorecard pages are the source for JLEE application, answer-key, result and admission actions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Diploma-level engineering subjects</li><li>Mathematics and basic engineering concepts</li><li>Aptitude and time management</li><li>Rank, document check and institute admission</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://astu.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://dte.assam.gov.in/search?Apply=Apply&title=2026\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Assam JLEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice.</p><h3>Where should I apply for Assam JLEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "0c52ac2a-b688-446c-890e-77e08a2ce228",
+      "old_slug": "assam-jmee",
+      "slug": "assam-jmee",
+      "name": "Assam JMEE",
+      "title": "Assam JMEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "Assam JMEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Computer Applications",
+      "level": "Assam MCA admission",
+      "mode": "ASTU entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "ASTU publishes the graduation, mathematics, marks, domicile, category and document rules for MCA admission through JMEE.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Assam Science and Technology University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "Logical reasoning",
+        "Computer awareness",
+        "Rank, counselling and document verification"
+      ],
+      "description": "Assam JMEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Assam JMEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>ASTU must confirm the 2027 form, test mode, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mathematics</li><li>Logical reasoning</li><li>Computer awareness</li><li>Rank, counselling and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Assam Science and Technology University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Assam JMEE 2027 at a glance</h2><p>Assam JMEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Assam Science and Technology University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Assam JMEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Assam JMEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Assam JMEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Assam JMEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Assam JMEE 2027",
+        "exam update",
+        "Computer Applications",
+        "2027"
+      ],
+      "website": "https://astu.ac.in/?page_id=40085",
+      "official_website": "https://astu.ac.in/?page_id=40085",
+      "registration_url": "https://astu.ac.in/",
+      "data_source_urls": [
+        "https://astu.ac.in/?page_id=40085",
+        "https://dte.assam.gov.in/search?Apply=Apply&title=2026"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://astu.ac.in/",
+        "official_notification": "https://dte.assam.gov.in/search?Apply=Apply&title=2026"
+      },
+      "faqs": [
+        {
+          "question": "When will Assam JMEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Assam JMEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Assam JMEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Assam JMEE 2027?</h2><p>ASTU publishes the graduation, mathematics, marks, domicile, category and document rules for MCA admission through JMEE. The active 2027 notice will control the final answer.</p><ul><li>Mathematics</li><li>Logical reasoning</li></ul><h2>When are Assam JMEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Assam Science and Technology University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>ASTU must confirm the 2027 form, test mode, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official ASTU page groups JMEE notices, answer keys, scorecards and admission information with the university's entrance activity.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mathematics</li><li>Logical reasoning</li><li>Computer awareness</li><li>Rank, counselling and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://astu.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://dte.assam.gov.in/search?Apply=Apply&title=2026\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Assam JMEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Assam Science and Technology University posts the next notice.</p><h3>Where should I apply for Assam JMEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "9f1b9524-9a65-4d5c-9119-8258a41e4b46",
+      "old_slug": "mp-pat",
+      "slug": "mp-pat",
+      "name": "MP PAT",
+      "title": "MP PAT 2027: Dates, Eligibility & Pattern",
+      "full_name": "MP PAT 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture",
+      "level": "Madhya Pradesh agriculture undergraduate admission",
+      "mode": "MP ESB computer-based entrance test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MP ESB publishes Class 12 subjects, marks, domicile, category and document conditions for PAT-linked agriculture programmes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Madhya Pradesh Employees Selection Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics and chemistry",
+        "Mathematics or biology as notified",
+        "Agriculture and general knowledge",
+        "Answer key, result and counselling"
+      ],
+      "description": "MP PAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MP PAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>MP ESB must confirm the 2027 registration, paper, duration, marking, admit card, result and counselling schedule.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology as notified</li><li>Agriculture and general knowledge</li><li>Answer key, result and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Madhya Pradesh Employees Selection Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MP PAT 2027 at a glance</h2><p>MP PAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Madhya Pradesh Employees Selection Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MP PAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MP PAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MP PAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MP PAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MP PAT 2027",
+        "exam update",
+        "Agriculture",
+        "2027"
+      ],
+      "website": "https://esb.mp.gov.in/rulebooks/rule_books.htm",
+      "official_website": "https://esb.mp.gov.in/rulebooks/rule_books.htm",
+      "registration_url": "https://esb.mp.gov.in/",
+      "data_source_urls": [
+        "https://esb.mp.gov.in/rulebooks/rule_books.htm",
+        "https://esb.mp.gov.in/Exams_Schedule/exams_schedule_ESB26.htm"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://esb.mp.gov.in/",
+        "official_notification": "https://esb.mp.gov.in/Exams_Schedule/exams_schedule_ESB26.htm"
+      },
+      "faqs": [
+        {
+          "question": "When will MP PAT 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MP PAT 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MP PAT 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MP PAT 2027?</h2><p>MP ESB publishes Class 12 subjects, marks, domicile, category and document conditions for PAT-linked agriculture programmes. The active 2027 notice will control the final answer.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology as notified</li></ul><h2>When are MP PAT 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Madhya Pradesh Employees Selection Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>MP ESB must confirm the 2027 registration, paper, duration, marking, admit card, result and counselling schedule.</p><p><strong>Authority fact:</strong> The official MP ESB rulebook page is the controlling source for PAT instructions, eligibility, paper details and candidate notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology as notified</li><li>Agriculture and general knowledge</li><li>Answer key, result and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://esb.mp.gov.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://esb.mp.gov.in/Exams_Schedule/exams_schedule_ESB26.htm\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MP PAT 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice.</p><h3>Where should I apply for MP PAT 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "74585f7f-4fde-4b6f-bef1-148d5014ced4",
+      "old_slug": "mp-pnst",
+      "slug": "mp-pnst",
+      "name": "MP PNST",
+      "title": "MP PNST 2027: Dates, Eligibility & Pattern",
+      "full_name": "MP PNST 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing",
+      "level": "Madhya Pradesh B.Sc Nursing admission",
+      "mode": "MP ESB computer-based entrance test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MP ESB publishes Class 12 science subjects, marks, domicile, category and document conditions for PNST and related nursing admissions.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Madhya Pradesh Employees Selection Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Biology and English",
+        "Rank, counselling and certificate checks"
+      ],
+      "description": "MP PNST 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MP PNST 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>MP ESB must confirm the 2027 registration, paper, duration, marking, result and nursing counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology and English</li><li>Rank, counselling and certificate checks</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Madhya Pradesh Employees Selection Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MP PNST 2027 at a glance</h2><p>MP PNST 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Madhya Pradesh Employees Selection Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MP PNST 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MP PNST 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MP PNST 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MP PNST 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MP PNST 2027",
+        "exam update",
+        "Nursing",
+        "2027"
+      ],
+      "website": "https://esb.mp.gov.in/rulebooks/rule_books.htm",
+      "official_website": "https://esb.mp.gov.in/rulebooks/rule_books.htm",
+      "registration_url": "https://esb.mp.gov.in/",
+      "data_source_urls": [
+        "https://esb.mp.gov.in/rulebooks/rule_books.htm",
+        "https://esb.mp.gov.in/Exams_Schedule/exams_schedule_ESB26.htm"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://esb.mp.gov.in/",
+        "official_notification": "https://esb.mp.gov.in/Exams_Schedule/exams_schedule_ESB26.htm"
+      },
+      "faqs": [
+        {
+          "question": "When will MP PNST 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MP PNST 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MP PNST 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MP PNST 2027?</h2><p>MP ESB publishes Class 12 science subjects, marks, domicile, category and document conditions for PNST and related nursing admissions. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are MP PNST 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Madhya Pradesh Employees Selection Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>MP ESB must confirm the 2027 registration, paper, duration, marking, result and nursing counselling calendar.</p><p><strong>Authority fact:</strong> MP ESB's rulebook and schedule pages are the official record for nursing test rules, admit cards, results and follow-up actions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology and English</li><li>Rank, counselling and certificate checks</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://esb.mp.gov.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://esb.mp.gov.in/Exams_Schedule/exams_schedule_ESB26.htm\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MP PNST 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice.</p><h3>Where should I apply for MP PNST 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "15045556-4995-42be-a2ca-609a4141ddd4",
+      "old_slug": "mp-addet",
+      "slug": "mp-addet",
+      "name": "MP ADDET",
+      "title": "MP ADDET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MP ADDET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Veterinary",
+      "level": "Madhya Pradesh animal husbandry and dairy technology admission",
+      "mode": "MP ESB computer-based entrance test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MP ESB publishes Class 12 science subjects, marks, domicile, category and document conditions for ADDET programmes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Madhya Pradesh Employees Selection Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics and chemistry",
+        "Biology or mathematics as notified",
+        "Animal husbandry and dairy basics",
+        "Answer key, result and allotment"
+      ],
+      "description": "MP ADDET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MP ADDET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>MP ESB must confirm the 2027 form, paper, duration, marking, result and allotment calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics and chemistry</li><li>Biology or mathematics as notified</li><li>Animal husbandry and dairy basics</li><li>Answer key, result and allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Madhya Pradesh Employees Selection Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MP ADDET 2027 at a glance</h2><p>MP ADDET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Madhya Pradesh Employees Selection Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MP ADDET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MP ADDET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MP ADDET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MP ADDET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MP ADDET 2027",
+        "exam update",
+        "Veterinary",
+        "2027"
+      ],
+      "website": "https://esb.mp.gov.in/rulebooks/rule_books.htm",
+      "official_website": "https://esb.mp.gov.in/rulebooks/rule_books.htm",
+      "registration_url": "https://esb.mp.gov.in/",
+      "data_source_urls": [
+        "https://esb.mp.gov.in/rulebooks/rule_books.htm",
+        "https://esb.mp.gov.in/Exams_Schedule/exams_schedule_ESB26.htm"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://esb.mp.gov.in/",
+        "official_notification": "https://esb.mp.gov.in/Exams_Schedule/exams_schedule_ESB26.htm"
+      },
+      "faqs": [
+        {
+          "question": "When will MP ADDET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MP ADDET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MP ADDET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MP ADDET 2027?</h2><p>MP ESB publishes Class 12 science subjects, marks, domicile, category and document conditions for ADDET programmes. The active 2027 notice will control the final answer.</p><ul><li>Physics and chemistry</li><li>Biology or mathematics as notified</li></ul><h2>When are MP ADDET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Madhya Pradesh Employees Selection Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>MP ESB must confirm the 2027 form, paper, duration, marking, result and allotment calendar.</p><p><strong>Authority fact:</strong> The MP ESB rulebook page is the official place to check ADDET paper rules, candidate instructions and result actions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics and chemistry</li><li>Biology or mathematics as notified</li><li>Animal husbandry and dairy basics</li><li>Answer key, result and allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://esb.mp.gov.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://esb.mp.gov.in/Exams_Schedule/exams_schedule_ESB26.htm\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MP ADDET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Madhya Pradesh Employees Selection Board posts the next notice.</p><h3>Where should I apply for MP ADDET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "ad2c9e93-edcf-4f87-923f-53718a7c6440",
+      "old_slug": "iiith-ugee",
+      "slug": "iiith-ugee",
+      "name": "IIIT Hyderabad UGEE",
+      "title": "IIIT Hyderabad UGEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "IIIT Hyderabad UGEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "IIIT Hyderabad dual-degree undergraduate admission",
+      "mode": "IIIT Hyderabad entrance test and interview",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "IIIT Hyderabad publishes Class 12 subjects, marks, attempt and document conditions for the UGEE dual-degree route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by International Institute of Information Technology Hyderabad"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Subject proficiency",
+        "Reasoning and aptitude",
+        "Computer-based test instructions",
+        "Shortlist, interview and dual-degree offer"
+      ],
+      "description": "IIIT Hyderabad UGEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IIIT Hyderabad UGEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>IIIT Hyderabad must confirm the 2027 registration, sections, duration, marking, shortlist and interview calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Subject proficiency</li><li>Reasoning and aptitude</li><li>Computer-based test instructions</li><li>Shortlist, interview and dual-degree offer</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by International Institute of Information Technology Hyderabad</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>IIIT Hyderabad UGEE 2027 at a glance</h2><p>IIIT Hyderabad UGEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by International Institute of Information Technology Hyderabad</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "IIIT Hyderabad UGEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IIIT Hyderabad UGEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IIIT Hyderabad UGEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IIIT Hyderabad UGEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IIIT Hyderabad UGEE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://ugadmissions.iiit.ac.in/",
+      "official_website": "https://ugadmissions.iiit.ac.in/",
+      "registration_url": "https://ugadmissions.iiit.ac.in/",
+      "data_source_urls": [
+        "https://ugadmissions.iiit.ac.in/",
+        "https://ugadmissions.iiit.ac.in/ugee/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://ugadmissions.iiit.ac.in/",
+        "official_notification": "https://ugadmissions.iiit.ac.in/ugee/"
+      },
+      "faqs": [
+        {
+          "question": "When will IIIT Hyderabad UGEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice."
+        },
+        {
+          "question": "Where should I apply for IIIT Hyderabad UGEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>IIIT Hyderabad UGEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for IIIT Hyderabad UGEE 2027?</h2><p>IIIT Hyderabad publishes Class 12 subjects, marks, attempt and document conditions for the UGEE dual-degree route. The active 2027 notice will control the final answer.</p><ul><li>Subject proficiency</li><li>Reasoning and aptitude</li></ul><h2>When are IIIT Hyderabad UGEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by International Institute of Information Technology Hyderabad</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>IIIT Hyderabad must confirm the 2027 registration, sections, duration, marking, shortlist and interview calendar.</p><p><strong>Authority fact:</strong> IIIT Hyderabad runs its own undergraduate admission portal; candidates should use the UGEE notice and portal rather than a coaching calendar.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Subject proficiency</li><li>Reasoning and aptitude</li><li>Computer-based test instructions</li><li>Shortlist, interview and dual-degree offer</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://ugadmissions.iiit.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://ugadmissions.iiit.ac.in/ugee/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will IIIT Hyderabad UGEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice.</p><h3>Where should I apply for IIIT Hyderabad UGEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "3911180e-3f01-4d68-a7ea-a48c18470a94",
+      "old_slug": "iiith-pgee",
+      "slug": "iiith-pgee",
+      "name": "IIIT Hyderabad PGEE",
+      "title": "IIIT Hyderabad PGEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "IIIT Hyderabad PGEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Postgraduate",
+      "level": "IIIT Hyderabad postgraduate and research admission",
+      "mode": "IIIT Hyderabad PGEE and programme selection",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "IIIT Hyderabad publishes degree, discipline, marks, test and document conditions for M.Tech, MS by Research and PhD routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by International Institute of Information Technology Hyderabad"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific mathematics and computing",
+        "Core engineering or research subjects",
+        "Computer-based examination instructions",
+        "Interview, offer and document verification"
+      ],
+      "description": "IIIT Hyderabad PGEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IIIT Hyderabad PGEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>IIIT Hyderabad must confirm the 2027 form, programme papers, duration, marking, interview and offer timeline.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Programme-specific mathematics and computing</li><li>Core engineering or research subjects</li><li>Computer-based examination instructions</li><li>Interview, offer and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by International Institute of Information Technology Hyderabad</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>IIIT Hyderabad PGEE 2027 at a glance</h2><p>IIIT Hyderabad PGEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by International Institute of Information Technology Hyderabad</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "IIIT Hyderabad PGEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IIIT Hyderabad PGEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IIIT Hyderabad PGEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IIIT Hyderabad PGEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IIIT Hyderabad PGEE 2027",
+        "exam update",
+        "Postgraduate",
+        "2027"
+      ],
+      "website": "https://pdm.iiit.ac.in/admissions/",
+      "official_website": "https://pdm.iiit.ac.in/admissions/",
+      "registration_url": "https://pdm.iiit.ac.in/admissions/",
+      "data_source_urls": [
+        "https://pdm.iiit.ac.in/admissions/",
+        "https://ugadmissions.iiit.ac.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://pdm.iiit.ac.in/admissions/",
+        "official_notification": "https://ugadmissions.iiit.ac.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will IIIT Hyderabad PGEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice."
+        },
+        {
+          "question": "Where should I apply for IIIT Hyderabad PGEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>IIIT Hyderabad PGEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for IIIT Hyderabad PGEE 2027?</h2><p>IIIT Hyderabad publishes degree, discipline, marks, test and document conditions for M.Tech, MS by Research and PhD routes. The active 2027 notice will control the final answer.</p><ul><li>Programme-specific mathematics and computing</li><li>Core engineering or research subjects</li></ul><h2>When are IIIT Hyderabad PGEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by International Institute of Information Technology Hyderabad</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>IIIT Hyderabad must confirm the 2027 form, programme papers, duration, marking, interview and offer timeline.</p><p><strong>Authority fact:</strong> The official PDM admissions page lists PGEE as an entrance route for postgraduate and research programmes and publishes the cycle instructions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Programme-specific mathematics and computing</li><li>Core engineering or research subjects</li><li>Computer-based examination instructions</li><li>Interview, offer and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://pdm.iiit.ac.in/admissions/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://ugadmissions.iiit.ac.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will IIIT Hyderabad PGEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice.</p><h3>Where should I apply for IIIT Hyderabad PGEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "a2121f96-631e-470b-bebd-769320e345d2",
+      "old_slug": "iiith-leee",
+      "slug": "iiith-leee",
+      "name": "IIIT Hyderabad LEEE",
+      "title": "IIIT Hyderabad LEEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "IIIT Hyderabad LEEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "IIIT Hyderabad lateral-entry dual-degree admission",
+      "mode": "Computer-based aptitude and subject test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "IIIT Hyderabad publishes diploma or B.Tech-related study, marks, subject and document conditions for lateral entry to its dual-degree programmes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by International Institute of Information Technology Hyderabad"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Aptitude",
+        "Programme subject paper",
+        "Time management under negative marking",
+        "Shortlist, interview and admission"
+      ],
+      "description": "IIIT Hyderabad LEEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IIIT Hyderabad LEEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>IIIT Hyderabad must confirm the 2027 form, paper timings, marking, shortlist, interview and admission dates.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Aptitude</li><li>Programme subject paper</li><li>Time management under negative marking</li><li>Shortlist, interview and admission</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by International Institute of Information Technology Hyderabad</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>IIIT Hyderabad LEEE 2027 at a glance</h2><p>IIIT Hyderabad LEEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by International Institute of Information Technology Hyderabad</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "IIIT Hyderabad LEEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IIIT Hyderabad LEEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IIIT Hyderabad LEEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IIIT Hyderabad LEEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IIIT Hyderabad LEEE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://ugadmissions.iiit.ac.in/leee/",
+      "official_website": "https://ugadmissions.iiit.ac.in/leee/",
+      "registration_url": "https://ugadmissions.iiit.ac.in/leee/",
+      "data_source_urls": [
+        "https://ugadmissions.iiit.ac.in/leee/",
+        "https://ugadmissions.iiit.ac.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://ugadmissions.iiit.ac.in/leee/",
+        "official_notification": "https://ugadmissions.iiit.ac.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will IIIT Hyderabad LEEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice."
+        },
+        {
+          "question": "Where should I apply for IIIT Hyderabad LEEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>IIIT Hyderabad LEEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for IIIT Hyderabad LEEE 2027?</h2><p>IIIT Hyderabad publishes diploma or B.Tech-related study, marks, subject and document conditions for lateral entry to its dual-degree programmes. The active 2027 notice will control the final answer.</p><ul><li>Aptitude</li><li>Programme subject paper</li></ul><h2>When are IIIT Hyderabad LEEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by International Institute of Information Technology Hyderabad</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>IIIT Hyderabad must confirm the 2027 form, paper timings, marking, shortlist, interview and admission dates.</p><p><strong>Authority fact:</strong> The official LEEE page describes a computer-based aptitude paper and subject paper, with the current cycle specifying 60 and 120 minutes and negative marking; 2027 rules can change.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Aptitude</li><li>Programme subject paper</li><li>Time management under negative marking</li><li>Shortlist, interview and admission</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://ugadmissions.iiit.ac.in/leee/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://ugadmissions.iiit.ac.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will IIIT Hyderabad LEEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until International Institute of Information Technology Hyderabad posts the next notice.</p><h3>Where should I apply for IIIT Hyderabad LEEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "7b11423a-463a-4623-a159-6ac512f6f07e",
+      "old_slug": "cmi-entrance",
+      "slug": "cmi-entrance",
+      "name": "CMI Entrance Examination",
+      "title": "CMI Entrance Exam 2027: Dates, Eligibility & Pattern",
+      "full_name": "CMI Entrance Exam 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Science",
+      "level": "Chennai Mathematical Institute undergraduate and postgraduate admission",
+      "mode": "CMI programme-specific entrance tests and interview",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "CMI publishes programme, qualifying-study, marks, subject and document conditions for BS, MSc and PhD admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Chennai Mathematical Institute"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "Computer science or related programme subjects",
+        "Proof-style problem solving",
+        "Interview, offer and document verification"
+      ],
+      "description": "CMI Entrance Exam 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "CMI Entrance Exam 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>CMI must confirm the 2027 application, papers, duration, marking, result, interview and joining calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mathematics</li><li>Computer science or related programme subjects</li><li>Proof-style problem solving</li><li>Interview, offer and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chennai Mathematical Institute posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Chennai Mathematical Institute</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>CMI Entrance Exam 2027 at a glance</h2><p>CMI Entrance Exam 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chennai Mathematical Institute posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Chennai Mathematical Institute</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "CMI Entrance Exam 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "CMI Entrance Exam 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check CMI Entrance Exam 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "CMI Entrance Exam 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CMI Entrance Exam 2027",
+        "exam update",
+        "Science",
+        "2027"
+      ],
+      "website": "https://www.cmi.ac.in/admissions/",
+      "official_website": "https://www.cmi.ac.in/admissions/",
+      "registration_url": "https://apply2026.cmi.ac.in/",
+      "data_source_urls": [
+        "https://www.cmi.ac.in/admissions/",
+        "https://www.cmi.ac.in/admissions/syllabus.php"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://apply2026.cmi.ac.in/",
+        "official_notification": "https://www.cmi.ac.in/admissions/syllabus.php"
+      },
+      "faqs": [
+        {
+          "question": "When will CMI Entrance Exam 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chennai Mathematical Institute posts the next notice."
+        },
+        {
+          "question": "Where should I apply for CMI Entrance Exam 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>CMI Entrance Exam 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for CMI Entrance Exam 2027?</h2><p>CMI publishes programme, qualifying-study, marks, subject and document conditions for BS, MSc and PhD admission. The active 2027 notice will control the final answer.</p><ul><li>Mathematics</li><li>Computer science or related programme subjects</li></ul><h2>When are CMI Entrance Exam 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chennai Mathematical Institute posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Chennai Mathematical Institute</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>CMI must confirm the 2027 application, papers, duration, marking, result, interview and joining calendar.</p><p><strong>Authority fact:</strong> CMI's official admissions pages publish programme-specific entrance information and a separate syllabus page; the authority can also notify interviews.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mathematics</li><li>Computer science or related programme subjects</li><li>Proof-style problem solving</li><li>Interview, offer and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://apply2026.cmi.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.cmi.ac.in/admissions/syllabus.php\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will CMI Entrance Exam 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chennai Mathematical Institute posts the next notice.</p><h3>Where should I apply for CMI Entrance Exam 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "222159e6-eaa7-4791-9f15-c5cfc005004c",
+      "old_slug": "vitmee-mtech",
+      "slug": "vitmee-mtech",
+      "name": "VITMEE M.Tech",
+      "title": "VITMEE M.Tech 2027: Dates, Eligibility & Pattern",
+      "full_name": "VITMEE M.Tech 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "VIT M.Tech admission",
+      "mode": "VITMEE computer-based test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "VIT publishes qualifying degree, branch, marks, GATE or VITMEE route and document conditions for M.Tech admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Vellore Institute of Technology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Engineering mathematics where notified",
+        "Branch-specific technical subjects",
+        "Computer-based test practice",
+        "Shortlist, campus preference and fee payment"
+      ],
+      "description": "VITMEE M.Tech 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "VITMEE M.Tech 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>VIT must confirm the 2027 form, test mode, duration, marking, shortlist, counselling and joining calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Engineering mathematics where notified</li><li>Branch-specific technical subjects</li><li>Computer-based test practice</li><li>Shortlist, campus preference and fee payment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>VITMEE M.Tech 2027 at a glance</h2><p>VITMEE M.Tech 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "VITMEE M.Tech 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "VITMEE M.Tech 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check VITMEE M.Tech 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "VITMEE M.Tech 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "VITMEE M.Tech 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://vit.ac.in/all-courses/pg/m.tech-programmes",
+      "official_website": "https://vit.ac.in/all-courses/pg/m.tech-programmes",
+      "registration_url": "https://vit.ac.in/all-courses/pg/m.tech-programmes",
+      "data_source_urls": [
+        "https://vit.ac.in/all-courses/pg/m.tech-programmes",
+        "https://vit.ac.in/files/prospectus/VITMEE-MTech-Information-Brochure.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_030",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://vit.ac.in/all-courses/pg/m.tech-programmes",
+        "official_notification": "https://vit.ac.in/files/prospectus/VITMEE-MTech-Information-Brochure.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will VITMEE M.Tech 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice."
+        },
+        {
+          "question": "Where should I apply for VITMEE M.Tech 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>VITMEE M.Tech 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for VITMEE M.Tech 2027?</h2><p>VIT publishes qualifying degree, branch, marks, GATE or VITMEE route and document conditions for M.Tech admission. The active 2027 notice will control the final answer.</p><ul><li>Engineering mathematics where notified</li><li>Branch-specific technical subjects</li></ul><h2>When are VITMEE M.Tech 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>VIT must confirm the 2027 form, test mode, duration, marking, shortlist, counselling and joining calendar.</p><p><strong>Authority fact:</strong> VIT's M.Tech programme page and VITMEE brochure describe the institute's computer-based entrance route, shortlist and campus preference process.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Engineering mathematics where notified</li><li>Branch-specific technical subjects</li><li>Computer-based test practice</li><li>Shortlist, campus preference and fee payment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://vit.ac.in/all-courses/pg/m.tech-programmes\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://vit.ac.in/files/prospectus/VITMEE-MTech-Information-Brochure.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will VITMEE M.Tech 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><h3>Where should I apply for VITMEE M.Tech 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
