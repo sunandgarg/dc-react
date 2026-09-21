@@ -1,0 +1,1019 @@
+{
+  "batch": "exam-refresh-batch-035",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten canonical rows after batches 001-034; duplicate, demo, discontinued and superseded rows excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "wbjee-jelet",
+    "wbjee-jeca",
+    "jemscn",
+    "jepbn",
+    "aiims-pg",
+    "upsee",
+    "jipmer-mbbs",
+    "lsat-india"
+  ],
+  "updates": [
+    {
+      "id": "6c10f184-a319-46b1-80d4-ce01b9a1af27",
+      "old_slug": "cuee",
+      "slug": "cuee",
+      "name": "CUEE",
+      "title": "CUEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "CUEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "University",
+      "level": "Centurion University undergraduate and postgraduate admission",
+      "mode": "Centurion University entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "Centurion University publishes programme-wise Class 12 or graduation, subject, marks, category and document conditions for CUEE routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Centurion University of Technology and Management"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific subject knowledge",
+        "English and communication where notified",
+        "Quantitative or logical reasoning where notified",
+        "Merit, interview and document verification"
+      ],
+      "description": "CUEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "CUEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Centurion University must confirm the 2027 registration, programme-wise paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Programme-specific subject knowledge</li><li>English and communication where notified</li><li>Quantitative or logical reasoning where notified</li><li>Merit, interview and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Centurion University of Technology and Management posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Centurion University of Technology and Management</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>CUEE 2027 at a glance</h2><p>CUEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Centurion University of Technology and Management posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Centurion University of Technology and Management</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "CUEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "CUEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check CUEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "CUEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CUEE 2027",
+        "exam update",
+        "University",
+        "2027"
+      ],
+      "website": "https://cutm.ac.in/admission-process/",
+      "official_website": "https://cutm.ac.in/admission-process/",
+      "registration_url": "https://admissions.cutm.ac.in/",
+      "data_source_urls": [
+        "https://cutm.ac.in/admission-process/",
+        "https://cutm.ac.in/eligibility/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://admissions.cutm.ac.in/",
+        "official_notification": "https://cutm.ac.in/eligibility/"
+      },
+      "faqs": [
+        {
+          "question": "When will CUEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Centurion University of Technology and Management posts the next notice."
+        },
+        {
+          "question": "Where should I apply for CUEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>CUEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for CUEE 2027?</h2><p>Centurion University publishes programme-wise Class 12 or graduation, subject, marks, category and document conditions for CUEE routes. The active 2027 notice will control the final answer.</p><ul><li>Programme-specific subject knowledge</li><li>English and communication where notified</li></ul><h2>When are CUEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Centurion University of Technology and Management posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Centurion University of Technology and Management</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Centurion University must confirm the 2027 registration, programme-wise paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The university admissions pages describe CUEE as an institutional route, so the selected programme notice—not a coaching summary—controls eligibility and selection.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Programme-specific subject knowledge</li><li>English and communication where notified</li><li>Quantitative or logical reasoning where notified</li><li>Merit, interview and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://admissions.cutm.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cutm.ac.in/eligibility/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will CUEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Centurion University of Technology and Management posts the next notice.</p><h3>Where should I apply for CUEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "84ca5d00-997a-4795-8f8d-a87d40764e8e",
+      "old_slug": "iit-jam",
+      "slug": "iit-jam",
+      "name": "IIT JAM",
+      "title": "IIT JAM 2027: Dates, Eligibility & Pattern",
+      "full_name": "IIT JAM 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Science/Postgraduate",
+      "level": "IIT and IISc postgraduate science admission",
+      "mode": "Computer-based Joint Admission Test for Masters",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "JAM 2027 publishes paper-wise eligibility and admission requirements for the participating IITs, IISc and other institutes in the official brochure.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by IIT Kharagpur as JAM 2027 organising institute"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "Physics, chemistry or mathematical statistics",
+        "Biotechnology, economics or geology where offered",
+        "Rank, admission form and institute choice"
+      ],
+      "description": "IIT JAM 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IIT JAM 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>IIT Kharagpur must confirm the 2027 application, test date, papers, duration, marking, result and admission timetable.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mathematics</li><li>Physics, chemistry or mathematical statistics</li><li>Biotechnology, economics or geology where offered</li><li>Rank, admission form and institute choice</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until IIT Kharagpur as JAM 2027 organising institute posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by IIT Kharagpur as JAM 2027 organising institute</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>IIT JAM 2027 at a glance</h2><p>IIT JAM 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until IIT Kharagpur as JAM 2027 organising institute posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by IIT Kharagpur as JAM 2027 organising institute</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "IIT JAM 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IIT JAM 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IIT JAM 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IIT JAM 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IIT JAM 2027",
+        "exam update",
+        "Science/Postgraduate",
+        "2027"
+      ],
+      "website": "https://jam.iitkgp.ac.in/",
+      "official_website": "https://jam.iitkgp.ac.in/",
+      "registration_url": "https://jam.iitkgp.ac.in/",
+      "data_source_urls": [
+        "https://jam.iitkgp.ac.in/",
+        "https://www.jam.iitkgp.ac.in/faq.html"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://jam.iitkgp.ac.in/",
+        "official_notification": "https://www.jam.iitkgp.ac.in/faq.html"
+      },
+      "faqs": [
+        {
+          "question": "When will IIT JAM 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until IIT Kharagpur as JAM 2027 organising institute posts the next notice."
+        },
+        {
+          "question": "Where should I apply for IIT JAM 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>IIT JAM 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for IIT JAM 2027?</h2><p>JAM 2027 publishes paper-wise eligibility and admission requirements for the participating IITs, IISc and other institutes in the official brochure. The active 2027 notice will control the final answer.</p><ul><li>Mathematics</li><li>Physics, chemistry or mathematical statistics</li></ul><h2>When are IIT JAM 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until IIT Kharagpur as JAM 2027 organising institute posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by IIT Kharagpur as JAM 2027 organising institute</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>IIT Kharagpur must confirm the 2027 application, test date, papers, duration, marking, result and admission timetable.</p><p><strong>Authority fact:</strong> The official JAM 2027 portal identifies IIT Kharagpur as the organising institute and provides paper, admission and candidate-help information.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mathematics</li><li>Physics, chemistry or mathematical statistics</li><li>Biotechnology, economics or geology where offered</li><li>Rank, admission form and institute choice</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://jam.iitkgp.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.jam.iitkgp.ac.in/faq.html\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will IIT JAM 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until IIT Kharagpur as JAM 2027 organising institute posts the next notice.</p><h3>Where should I apply for IIT JAM 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "c370eb77-2df1-41df-9b2f-df595687c6d3",
+      "old_slug": "jest",
+      "slug": "jest",
+      "name": "JEST",
+      "title": "JEST 2027: Dates, Eligibility & Pattern",
+      "full_name": "JEST 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Science/Research",
+      "level": "Physics and theoretical computer science research admission",
+      "mode": "Joint Entrance Screening Test and institute selection",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "JEST participating institutes publish their own degree, subject, marks and document requirements for PhD, integrated PhD and related research programmes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by JEST participating institutes"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Core physics concepts",
+        "Mathematical methods",
+        "Theoretical computer science where selected",
+        "Institute shortlist, interview and document verification"
+      ],
+      "description": "JEST 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JEST 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The JEST authority must confirm the 2027 application, subjects, duration, marking, result and institute interview calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Core physics concepts</li><li>Mathematical methods</li><li>Theoretical computer science where selected</li><li>Institute shortlist, interview and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JEST participating institutes posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by JEST participating institutes</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>JEST 2027 at a glance</h2><p>JEST 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JEST participating institutes posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by JEST participating institutes</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "JEST 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JEST 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JEST 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JEST 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JEST 2027",
+        "exam update",
+        "Science/Research",
+        "2027"
+      ],
+      "website": "https://www.jest.org.in/",
+      "official_website": "https://www.jest.org.in/",
+      "registration_url": "https://www.jest.org.in/",
+      "data_source_urls": [
+        "https://www.jest.org.in/",
+        "https://www.jest.org.in/faq"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.jest.org.in/",
+        "official_notification": "https://www.jest.org.in/faq"
+      },
+      "faqs": [
+        {
+          "question": "When will JEST 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JEST participating institutes posts the next notice."
+        },
+        {
+          "question": "Where should I apply for JEST 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>JEST 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for JEST 2027?</h2><p>JEST participating institutes publish their own degree, subject, marks and document requirements for PhD, integrated PhD and related research programmes. The active 2027 notice will control the final answer.</p><ul><li>Core physics concepts</li><li>Mathematical methods</li></ul><h2>When are JEST 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JEST participating institutes posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by JEST participating institutes</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The JEST authority must confirm the 2027 application, subjects, duration, marking, result and institute interview calendar.</p><p><strong>Authority fact:</strong> The official JEST site describes an annual national-level examination in physics and theoretical computer science and directs candidates to participating-institute rules.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Core physics concepts</li><li>Mathematical methods</li><li>Theoretical computer science where selected</li><li>Institute shortlist, interview and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.jest.org.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.jest.org.in/faq\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will JEST 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JEST participating institutes posts the next notice.</p><h3>Where should I apply for JEST 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "4cd3df24-685b-4a3c-acdc-d3b0d1f03251",
+      "old_slug": "tifr-gs",
+      "slug": "tifr-gs",
+      "name": "TIFR GS",
+      "title": "TIFR GS 2027: Dates, Eligibility & Pattern",
+      "full_name": "TIFR GS 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Science/Research",
+      "level": "TIFR graduate and integrated PhD admission",
+      "mode": "TIFR Graduate School entrance test and interview",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "TIFR publishes subject-wise degree, marks, final-year and document conditions for Graduate School programmes in its annual advertisement.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Tata Institute of Fundamental Research"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "Physics",
+        "Chemistry or biology",
+        "Written test, shortlist and interview"
+      ],
+      "description": "TIFR GS 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "TIFR GS 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>TIFR must confirm the GS-2027 registration, test date, subject papers, marking, interview and joining calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mathematics</li><li>Physics</li><li>Chemistry or biology</li><li>Written test, shortlist and interview</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tata Institute of Fundamental Research posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Tata Institute of Fundamental Research</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>TIFR GS 2027 at a glance</h2><p>TIFR GS 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tata Institute of Fundamental Research posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Tata Institute of Fundamental Research</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "TIFR GS 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "TIFR GS 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check TIFR GS 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "TIFR GS 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "TIFR GS 2027",
+        "exam update",
+        "Science/Research",
+        "2027"
+      ],
+      "website": "https://www.tifr.res.in/academics/gs_admissions.php",
+      "official_website": "https://www.tifr.res.in/academics/gs_admissions.php",
+      "registration_url": "https://www.tifr.res.in/academics/gs_admissions.php",
+      "data_source_urls": [
+        "https://www.tifr.res.in/academics/gs_admissions.php",
+        "https://tifrweb.tifr.res.in/academics/gs_advertisement.php"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.tifr.res.in/academics/gs_admissions.php",
+        "official_notification": "https://tifrweb.tifr.res.in/academics/gs_advertisement.php"
+      },
+      "faqs": [
+        {
+          "question": "When will TIFR GS 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tata Institute of Fundamental Research posts the next notice."
+        },
+        {
+          "question": "Where should I apply for TIFR GS 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>TIFR GS 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for TIFR GS 2027?</h2><p>TIFR publishes subject-wise degree, marks, final-year and document conditions for Graduate School programmes in its annual advertisement. The active 2027 notice will control the final answer.</p><ul><li>Mathematics</li><li>Physics</li></ul><h2>When are TIFR GS 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tata Institute of Fundamental Research posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Tata Institute of Fundamental Research</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>TIFR must confirm the GS-2027 registration, test date, subject papers, marking, interview and joining calendar.</p><p><strong>Authority fact:</strong> The official TIFR academics page already identifies the GS-2027 admissions cycle and links the Graduate School examination information.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mathematics</li><li>Physics</li><li>Chemistry or biology</li><li>Written test, shortlist and interview</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.tifr.res.in/academics/gs_admissions.php\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://tifrweb.tifr.res.in/academics/gs_advertisement.php\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will TIFR GS 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tata Institute of Fundamental Research posts the next notice.</p><h3>Where should I apply for TIFR GS 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "c9f962bc-fed8-408c-ab4b-eebe7df9548b",
+      "old_slug": "ini-ss",
+      "slug": "ini-ss",
+      "name": "INI-SS",
+      "title": "INI-SS 2027: Dates, Eligibility & Pattern",
+      "full_name": "INI-SS 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Medical/Super Specialty",
+      "level": "DM, M.Ch. and MD Hospital Administration admission",
+      "mode": "AIIMS Institute of National Importance Super-Specialty Entrance Test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "INI-SS publishes specialty-wise postgraduate medical qualification, registration, category and document conditions in the session prospectus.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by All India Institute of Medical Sciences, New Delhi"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Specialty and feeder qualification knowledge",
+        "Clinical and applied concepts",
+        "Single-best-answer practice",
+        "Merit, institute allocation and document verification"
+      ],
+      "description": "INI-SS 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "INI-SS 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>AIIMS must confirm the 2027 session, application, computer-based paper, duration, marking, result and seat-allocation calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Specialty and feeder qualification knowledge</li><li>Clinical and applied concepts</li><li>Single-best-answer practice</li><li>Merit, institute allocation and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>INI-SS 2027 at a glance</h2><p>INI-SS 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "INI-SS 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "INI-SS 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check INI-SS 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "INI-SS 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "INI-SS 2027",
+        "exam update",
+        "Medical/Super Specialty",
+        "2027"
+      ],
+      "website": "https://iniss.aiimsexams.ac.in/",
+      "official_website": "https://iniss.aiimsexams.ac.in/",
+      "registration_url": "https://iniss.aiimsexams.ac.in/",
+      "data_source_urls": [
+        "https://iniss.aiimsexams.ac.in/",
+        "https://aiimsexams.ac.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://iniss.aiimsexams.ac.in/",
+        "official_notification": "https://aiimsexams.ac.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will INI-SS 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice."
+        },
+        {
+          "question": "Where should I apply for INI-SS 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>INI-SS 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for INI-SS 2027?</h2><p>INI-SS publishes specialty-wise postgraduate medical qualification, registration, category and document conditions in the session prospectus. The active 2027 notice will control the final answer.</p><ul><li>Specialty and feeder qualification knowledge</li><li>Clinical and applied concepts</li></ul><h2>When are INI-SS 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>AIIMS must confirm the 2027 session, application, computer-based paper, duration, marking, result and seat-allocation calendar.</p><p><strong>Authority fact:</strong> The official INI-SS portal is the application and candidate-login route, while AIIMS publishes notices, prospectuses and seat-allocation instructions through its examinations portal.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Specialty and feeder qualification knowledge</li><li>Clinical and applied concepts</li><li>Single-best-answer practice</li><li>Merit, institute allocation and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://iniss.aiimsexams.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://aiimsexams.ac.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will INI-SS 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><h3>Where should I apply for INI-SS 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "328f4e6f-e9a6-47c2-8c3b-303c341f026c",
+      "old_slug": "aiims-bsc-nursing",
+      "slug": "aiims-bsc-nursing",
+      "name": "AIIMS B.Sc. (Hons.) Nursing Entrance",
+      "title": "AIIMS B.Sc. Nursing 2027: Dates & Pattern",
+      "full_name": "AIIMS B.Sc. Nursing 2027: Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing",
+      "level": "AIIMS B.Sc. (Hons.) Nursing admission",
+      "mode": "AIIMS computer-based nursing entrance examination",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "AIIMS publishes Class 12 subjects, marks, age, medical fitness and document conditions for B.Sc. (Hons.) Nursing in the session prospectus.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by All India Institute of Medical Sciences, New Delhi"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Biology",
+        "English, test score and seat allocation"
+      ],
+      "description": "AIIMS B.Sc. Nursing 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AIIMS B.Sc. Nursing 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>AIIMS must confirm the 2027 registration, computer-based paper, duration, marking, result and seat-allocation calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology</li><li>English, test score and seat allocation</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AIIMS B.Sc. Nursing 2027 at a glance</h2><p>AIIMS B.Sc. Nursing 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AIIMS B.Sc. Nursing 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AIIMS B.Sc. Nursing 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AIIMS B.Sc. Nursing 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AIIMS B.Sc. Nursing 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AIIMS B.Sc. Nursing 2027",
+        "exam update",
+        "Nursing",
+        "2027"
+      ],
+      "website": "https://aiimsexams.ac.in/",
+      "official_website": "https://aiimsexams.ac.in/",
+      "registration_url": "https://aiimsexams.ac.in/",
+      "data_source_urls": [
+        "https://aiimsexams.ac.in/",
+        "https://www.aiims.edu/aiims/academic/bsc/bsnursing.htm"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://aiimsexams.ac.in/",
+        "official_notification": "https://www.aiims.edu/aiims/academic/bsc/bsnursing.htm"
+      },
+      "faqs": [
+        {
+          "question": "When will AIIMS B.Sc. Nursing 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AIIMS B.Sc. Nursing 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AIIMS B.Sc. Nursing 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AIIMS B.Sc. Nursing 2027?</h2><p>AIIMS publishes Class 12 subjects, marks, age, medical fitness and document conditions for B.Sc. (Hons.) Nursing in the session prospectus. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are AIIMS B.Sc. Nursing 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>AIIMS must confirm the 2027 registration, computer-based paper, duration, marking, result and seat-allocation calendar.</p><p><strong>Authority fact:</strong> The official AIIMS examination portal lists B.Sc. Nursing among its academic entrance routes and the AIIMS academic page records the nursing-course framework.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology</li><li>English, test score and seat allocation</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://aiimsexams.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.aiims.edu/aiims/academic/bsc/bsnursing.htm\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AIIMS B.Sc. Nursing 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><h3>Where should I apply for AIIMS B.Sc. Nursing 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "20075225-0fe4-4b4b-a13a-a777ae408783",
+      "old_slug": "aiims-bsc-paramedical",
+      "slug": "aiims-bsc-paramedical",
+      "name": "AIIMS B.Sc. Paramedical Entrance",
+      "title": "AIIMS B.Sc. Paramedical 2027: Dates & Pattern",
+      "full_name": "AIIMS B.Sc. Paramedical 2027: Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Allied Health/Paramedical",
+      "level": "AIIMS B.Sc. Allied and Health Care admission",
+      "mode": "AIIMS computer-based allied-health entrance examination",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "AIIMS publishes Class 12 subjects, marks, age, course-wise conditions and documents for B.Sc. Allied and Health Care programmes in the session notice.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by All India Institute of Medical Sciences, New Delhi"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and biology or mathematics",
+        "English and general aptitude where notified",
+        "Course-specific health-science basics",
+        "Rank, online seat allocation and reporting"
+      ],
+      "description": "AIIMS B.Sc. Paramedical 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AIIMS B.Sc. Paramedical 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>AIIMS must confirm the 2027 registration, course papers, duration, marking, result and seat-allocation calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics, chemistry and biology or mathematics</li><li>English and general aptitude where notified</li><li>Course-specific health-science basics</li><li>Rank, online seat allocation and reporting</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AIIMS B.Sc. Paramedical 2027 at a glance</h2><p>AIIMS B.Sc. Paramedical 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AIIMS B.Sc. Paramedical 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AIIMS B.Sc. Paramedical 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AIIMS B.Sc. Paramedical 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AIIMS B.Sc. Paramedical 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AIIMS B.Sc. Paramedical 2027",
+        "exam update",
+        "Allied Health/Paramedical",
+        "2027"
+      ],
+      "website": "https://aiimsexams.ac.in/",
+      "official_website": "https://aiimsexams.ac.in/",
+      "registration_url": "https://aiimsexams.ac.in/",
+      "data_source_urls": [
+        "https://aiimsexams.ac.in/",
+        "https://aiimsexams.ac.in/landingpage/archive"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://aiimsexams.ac.in/",
+        "official_notification": "https://aiimsexams.ac.in/landingpage/archive"
+      },
+      "faqs": [
+        {
+          "question": "When will AIIMS B.Sc. Paramedical 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AIIMS B.Sc. Paramedical 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AIIMS B.Sc. Paramedical 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AIIMS B.Sc. Paramedical 2027?</h2><p>AIIMS publishes Class 12 subjects, marks, age, course-wise conditions and documents for B.Sc. Allied and Health Care programmes in the session notice. The active 2027 notice will control the final answer.</p><ul><li>Physics, chemistry and biology or mathematics</li><li>English and general aptitude where notified</li></ul><h2>When are AIIMS B.Sc. Paramedical 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>AIIMS must confirm the 2027 registration, course papers, duration, marking, result and seat-allocation calendar.</p><p><strong>Authority fact:</strong> AIIMS now labels the route B.Sc. Allied and Health Care in current notices, so candidates should match the exact course name before applying.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics, chemistry and biology or mathematics</li><li>English and general aptitude where notified</li><li>Course-specific health-science basics</li><li>Rank, online seat allocation and reporting</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://aiimsexams.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://aiimsexams.ac.in/landingpage/archive\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AIIMS B.Sc. Paramedical 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><h3>Where should I apply for AIIMS B.Sc. Paramedical 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "3f8b74ae-fe91-4641-b61a-bfb4bb146f55",
+      "old_slug": "aiims-msc-nursing",
+      "slug": "aiims-msc-nursing",
+      "name": "AIIMS M.Sc. Nursing Entrance",
+      "title": "AIIMS M.Sc. Nursing 2027: Dates & Pattern",
+      "full_name": "AIIMS M.Sc. Nursing 2027: Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing/Postgraduate",
+      "level": "AIIMS M.Sc. Nursing admission",
+      "mode": "AIIMS postgraduate nursing entrance examination",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "AIIMS publishes B.Sc. Nursing or equivalent qualification, registration, marks, category and document conditions for M.Sc. Nursing in the session prospectus.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by All India Institute of Medical Sciences, New Delhi"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Nursing foundations",
+        "Medical-surgical and community nursing",
+        "Research and applied nursing concepts",
+        "Rank, institute allocation and document verification"
+      ],
+      "description": "AIIMS M.Sc. Nursing 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AIIMS M.Sc. Nursing 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>AIIMS must confirm the 2027 application, computer-based paper, duration, marking, result and seat-allocation calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Nursing foundations</li><li>Medical-surgical and community nursing</li><li>Research and applied nursing concepts</li><li>Rank, institute allocation and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AIIMS M.Sc. Nursing 2027 at a glance</h2><p>AIIMS M.Sc. Nursing 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AIIMS M.Sc. Nursing 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AIIMS M.Sc. Nursing 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AIIMS M.Sc. Nursing 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AIIMS M.Sc. Nursing 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AIIMS M.Sc. Nursing 2027",
+        "exam update",
+        "Nursing/Postgraduate",
+        "2027"
+      ],
+      "website": "https://aiimsexams.ac.in/",
+      "official_website": "https://aiimsexams.ac.in/",
+      "registration_url": "https://aiimsexams.ac.in/",
+      "data_source_urls": [
+        "https://aiimsexams.ac.in/",
+        "https://aiimsexams.ac.in/landingpage/archive"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://aiimsexams.ac.in/",
+        "official_notification": "https://aiimsexams.ac.in/landingpage/archive"
+      },
+      "faqs": [
+        {
+          "question": "When will AIIMS M.Sc. Nursing 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AIIMS M.Sc. Nursing 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AIIMS M.Sc. Nursing 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AIIMS M.Sc. Nursing 2027?</h2><p>AIIMS publishes B.Sc. Nursing or equivalent qualification, registration, marks, category and document conditions for M.Sc. Nursing in the session prospectus. The active 2027 notice will control the final answer.</p><ul><li>Nursing foundations</li><li>Medical-surgical and community nursing</li></ul><h2>When are AIIMS M.Sc. Nursing 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>AIIMS must confirm the 2027 application, computer-based paper, duration, marking, result and seat-allocation calendar.</p><p><strong>Authority fact:</strong> AIIMS publishes M.Sc. Nursing examination, seat-allocation and reporting notices through its official examinations portal.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Nursing foundations</li><li>Medical-surgical and community nursing</li><li>Research and applied nursing concepts</li><li>Rank, institute allocation and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://aiimsexams.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://aiimsexams.ac.in/landingpage/archive\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AIIMS M.Sc. Nursing 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><h3>Where should I apply for AIIMS M.Sc. Nursing 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "848dd92d-c9aa-462a-a61b-34b63c233f3b",
+      "old_slug": "aiims-bsc-nursing-post-basic",
+      "slug": "aiims-bsc-nursing-post-basic",
+      "name": "AIIMS B.Sc. Nursing (Post-Basic) Entrance",
+      "title": "AIIMS Post-Basic Nursing 2027: Dates & Pattern",
+      "full_name": "AIIMS Post-Basic Nursing 2027: Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing",
+      "level": "AIIMS B.Sc. Nursing (Post-Basic) admission",
+      "mode": "AIIMS written or computer-based test and personal assessment",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "AIIMS publishes GNM, nursing-registration, work-experience where applicable, marks and document conditions for B.Sc. Nursing (Post-Basic).",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by All India Institute of Medical Sciences, New Delhi"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Nursing foundations and clinical care",
+        "Community and mental-health nursing",
+        "Professional practice and administration",
+        "Written score, personal assessment and reporting"
+      ],
+      "description": "AIIMS Post-Basic Nursing 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AIIMS Post-Basic Nursing 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>AIIMS must confirm the 2027 registration, written test, personal assessment, result and seat-allocation calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Nursing foundations and clinical care</li><li>Community and mental-health nursing</li><li>Professional practice and administration</li><li>Written score, personal assessment and reporting</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AIIMS Post-Basic Nursing 2027 at a glance</h2><p>AIIMS Post-Basic Nursing 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AIIMS Post-Basic Nursing 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AIIMS Post-Basic Nursing 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AIIMS Post-Basic Nursing 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AIIMS Post-Basic Nursing 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AIIMS Post-Basic Nursing 2027",
+        "exam update",
+        "Nursing",
+        "2027"
+      ],
+      "website": "https://aiimsexams.ac.in/",
+      "official_website": "https://aiimsexams.ac.in/",
+      "registration_url": "https://aiimsexams.ac.in/",
+      "data_source_urls": [
+        "https://aiimsexams.ac.in/",
+        "https://aiimsexams.ac.in/landingpage/archive"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://aiimsexams.ac.in/",
+        "official_notification": "https://aiimsexams.ac.in/landingpage/archive"
+      },
+      "faqs": [
+        {
+          "question": "When will AIIMS Post-Basic Nursing 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AIIMS Post-Basic Nursing 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AIIMS Post-Basic Nursing 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AIIMS Post-Basic Nursing 2027?</h2><p>AIIMS publishes GNM, nursing-registration, work-experience where applicable, marks and document conditions for B.Sc. Nursing (Post-Basic). The active 2027 notice will control the final answer.</p><ul><li>Nursing foundations and clinical care</li><li>Community and mental-health nursing</li></ul><h2>When are AIIMS Post-Basic Nursing 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by All India Institute of Medical Sciences, New Delhi</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>AIIMS must confirm the 2027 registration, written test, personal assessment, result and seat-allocation calendar.</p><p><strong>Authority fact:</strong> The AIIMS notices distinguish the written test, personal assessment and seat-allocation steps for Post-Basic Nursing sessions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Nursing foundations and clinical care</li><li>Community and mental-health nursing</li><li>Professional practice and administration</li><li>Written score, personal assessment and reporting</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://aiimsexams.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://aiimsexams.ac.in/landingpage/archive\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AIIMS Post-Basic Nursing 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until All India Institute of Medical Sciences, New Delhi posts the next notice.</p><h3>Where should I apply for AIIMS Post-Basic Nursing 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "07a0b563-56c6-4bd8-ab95-a38e24b14320",
+      "old_slug": "mah-bed-cet",
+      "slug": "mah-bed-cet",
+      "name": "MAH B.Ed CET",
+      "title": "MAH B.Ed CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "MAH B.Ed CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Maharashtra two-year B.Ed admission",
+      "mode": "Maharashtra State CET Cell computer-based test and CAP",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MAH B.Ed CET publishes graduation, subject, marks, category, domicile and document conditions in the current information brochure.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by State Common Entrance Test Cell, Maharashtra"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mental ability",
+        "General knowledge",
+        "Teacher aptitude",
+        "CET score, CAP registration and college reporting"
+      ],
+      "description": "MAH B.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MAH B.Ed CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, computer-based paper, duration, marking, result and CAP calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mental ability</li><li>General knowledge</li><li>Teacher aptitude</li><li>CET score, CAP registration and college reporting</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MAH B.Ed CET 2027 at a glance</h2><p>MAH B.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MAH B.Ed CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MAH B.Ed CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MAH B.Ed CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MAH B.Ed CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MAH B.Ed CET 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/cms-home/",
+      "official_website": "https://cetcell.mahacet.org/cms-home/",
+      "registration_url": "https://cetcell.mahacet.org/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/cms-home/",
+        "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-BEd-ELCT_2026.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_035",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetcell.mahacet.org/",
+        "official_notification": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-BEd-ELCT_2026.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will MAH B.Ed CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MAH B.Ed CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MAH B.Ed CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MAH B.Ed CET 2027?</h2><p>MAH B.Ed CET publishes graduation, subject, marks, category, domicile and document conditions in the current information brochure. The active 2027 notice will control the final answer.</p><ul><li>Mental ability</li><li>General knowledge</li></ul><h2>When are MAH B.Ed CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by State Common Entrance Test Cell, Maharashtra</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The Maharashtra CET Cell must confirm the 2027 registration, computer-based paper, duration, marking, result and CAP calendar.</p><p><strong>Authority fact:</strong> The official Maharashtra CET Cell states that it conducts the B.Ed CET and related admission process for recognised colleges through its portal.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mental ability</li><li>General knowledge</li><li>Teacher aptitude</li><li>CET score, CAP registration and college reporting</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetcell.mahacet.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetcell.mahacet.org/wp-content/uploads/2023/12/Final_CET-IB-BEd-ELCT_2026.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MAH B.Ed CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Common Entrance Test Cell, Maharashtra posts the next notice.</p><h3>Where should I apply for MAH B.Ed CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
