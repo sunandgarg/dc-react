@@ -1,0 +1,1019 @@
+{
+  "batch": "exam-refresh-batch-033",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten canonical rows after batches 001-032; duplicate, demo, discontinued and superseded rows excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "wbjee-jelet",
+    "wbjee-jeca",
+    "jemscn",
+    "jepbn",
+    "aiims-pg",
+    "upsee",
+    "jipmer-mbbs",
+    "lsat-india"
+  ],
+  "updates": [
+    {
+      "id": "f999e453-7dce-48d3-a301-49af34bf7982",
+      "old_slug": "upcatet",
+      "slug": "upcatet",
+      "name": "UPCATET",
+      "title": "UPCATET 2027: Dates, Eligibility & Pattern",
+      "full_name": "UPCATET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture",
+      "level": "Uttar Pradesh agriculture and technology admission",
+      "mode": "UPCATET entrance test and state counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "UPCATET publishes Class 12 or degree, subject, marks, domicile, category and document conditions for undergraduate, master's and doctoral routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by UPCATET conducting universities"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and mathematics or biology",
+        "Agriculture and allied subjects",
+        "General knowledge and reasoning",
+        "Rank, choice filling and counselling"
+      ],
+      "description": "UPCATET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "UPCATET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The conducting universities must confirm the 2027 form, programme papers, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics, chemistry and mathematics or biology</li><li>Agriculture and allied subjects</li><li>General knowledge and reasoning</li><li>Rank, choice filling and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until UPCATET conducting universities posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by UPCATET conducting universities</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>UPCATET 2027 at a glance</h2><p>UPCATET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until UPCATET conducting universities posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by UPCATET conducting universities</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "UPCATET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "UPCATET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check UPCATET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "UPCATET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "UPCATET 2027",
+        "exam update",
+        "Agriculture",
+        "2027"
+      ],
+      "website": "https://www.upcatetexam.org/",
+      "official_website": "https://www.upcatetexam.org/",
+      "registration_url": "https://www.upcatetexam.org/",
+      "data_source_urls": [
+        "https://www.upcatetexam.org/",
+        "https://counselling.upcatetexam.org/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.upcatetexam.org/",
+        "official_notification": "https://counselling.upcatetexam.org/"
+      },
+      "faqs": [
+        {
+          "question": "When will UPCATET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until UPCATET conducting universities posts the next notice."
+        },
+        {
+          "question": "Where should I apply for UPCATET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>UPCATET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for UPCATET 2027?</h2><p>UPCATET publishes Class 12 or degree, subject, marks, domicile, category and document conditions for undergraduate, master's and doctoral routes. The active 2027 notice will control the final answer.</p><ul><li>Physics, chemistry and mathematics or biology</li><li>Agriculture and allied subjects</li></ul><h2>When are UPCATET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until UPCATET conducting universities posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by UPCATET conducting universities</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The conducting universities must confirm the 2027 form, programme papers, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official UPCATET portal publishes application, brochure, admit-card, result and counselling actions for the participating Uttar Pradesh agriculture universities.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics, chemistry and mathematics or biology</li><li>Agriculture and allied subjects</li><li>General knowledge and reasoning</li><li>Rank, choice filling and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.upcatetexam.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://counselling.upcatetexam.org/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will UPCATET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until UPCATET conducting universities posts the next notice.</p><h3>Where should I apply for UPCATET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "e4f178ec-9d8a-4412-b290-cac5392d0564",
+      "old_slug": "ouat-entrance",
+      "slug": "ouat-entrance",
+      "name": "OUAT Entrance Examination",
+      "title": "OUAT Entrance Exam 2027: Dates, Eligibility & Pattern",
+      "full_name": "OUAT Entrance Exam 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture",
+      "level": "Odisha agriculture and allied undergraduate admission",
+      "mode": "OUAT common entrance examination and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "OUAT publishes Class 12 subjects, marks, domicile, category and document conditions for its agriculture, veterinary, horticulture and allied programmes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Odisha University of Agriculture and Technology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and biology or mathematics",
+        "Agriculture and allied science",
+        "English and general awareness where notified",
+        "Weighted score, rank card and counselling"
+      ],
+      "description": "OUAT Entrance Exam 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "OUAT Entrance Exam 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>OUAT must confirm the 2027 application, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics, chemistry and biology or mathematics</li><li>Agriculture and allied science</li><li>English and general awareness where notified</li><li>Weighted score, rank card and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Odisha University of Agriculture and Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Odisha University of Agriculture and Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>OUAT Entrance Exam 2027 at a glance</h2><p>OUAT Entrance Exam 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Odisha University of Agriculture and Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Odisha University of Agriculture and Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "OUAT Entrance Exam 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "OUAT Entrance Exam 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check OUAT Entrance Exam 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "OUAT Entrance Exam 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "OUAT Entrance Exam 2027",
+        "exam update",
+        "Agriculture",
+        "2027"
+      ],
+      "website": "https://ouat.ac.in/",
+      "official_website": "https://ouat.ac.in/",
+      "registration_url": "https://ouat.ac.in/",
+      "data_source_urls": [
+        "https://ouat.ac.in/",
+        "https://ouat.ac.in/or/nahep/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://ouat.ac.in/",
+        "official_notification": "https://ouat.ac.in/or/nahep/"
+      },
+      "faqs": [
+        {
+          "question": "When will OUAT Entrance Exam 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Odisha University of Agriculture and Technology posts the next notice."
+        },
+        {
+          "question": "Where should I apply for OUAT Entrance Exam 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>OUAT Entrance Exam 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for OUAT Entrance Exam 2027?</h2><p>OUAT publishes Class 12 subjects, marks, domicile, category and document conditions for its agriculture, veterinary, horticulture and allied programmes. The active 2027 notice will control the final answer.</p><ul><li>Physics, chemistry and biology or mathematics</li><li>Agriculture and allied science</li></ul><h2>When are OUAT Entrance Exam 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Odisha University of Agriculture and Technology posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Odisha University of Agriculture and Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>OUAT must confirm the 2027 application, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> OUAT's official website publishes the common entrance examination, prospectus, admit card, rank card, counselling and admission notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics, chemistry and biology or mathematics</li><li>Agriculture and allied science</li><li>English and general awareness where notified</li><li>Weighted score, rank card and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://ouat.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://ouat.ac.in/or/nahep/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will OUAT Entrance Exam 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Odisha University of Agriculture and Technology posts the next notice.</p><h3>Where should I apply for OUAT Entrance Exam 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "25c423cd-6a01-48cc-aecc-52a483bee134",
+      "old_slug": "gbpuat-entrance",
+      "slug": "gbpuat-entrance",
+      "name": "GBPUAT Entrance Examination",
+      "title": "GBPUAT Entrance Exam 2027: Dates & Pattern",
+      "full_name": "GBPUAT Entrance Exam 2027: Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture",
+      "level": "Pantnagar agriculture and technology admission",
+      "mode": "University entrance examination and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "GBPUAT publishes programme-wise Class 12, degree, subject, marks, domicile, category and document conditions for undergraduate, master's and PhD routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Govind Ballabh Pant University of Agriculture and Technology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and mathematics or biology",
+        "Agriculture and technology subjects",
+        "Research or programme-specific preparation",
+        "Rank, counselling and document verification"
+      ],
+      "description": "GBPUAT Entrance Exam 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "GBPUAT Entrance Exam 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>GBPUAT must confirm the 2027 programme papers, form, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics, chemistry and mathematics or biology</li><li>Agriculture and technology subjects</li><li>Research or programme-specific preparation</li><li>Rank, counselling and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Govind Ballabh Pant University of Agriculture and Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Govind Ballabh Pant University of Agriculture and Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>GBPUAT Entrance Exam 2027 at a glance</h2><p>GBPUAT Entrance Exam 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Govind Ballabh Pant University of Agriculture and Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Govind Ballabh Pant University of Agriculture and Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "GBPUAT Entrance Exam 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "GBPUAT Entrance Exam 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check GBPUAT Entrance Exam 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "GBPUAT Entrance Exam 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "GBPUAT Entrance Exam 2027",
+        "exam update",
+        "Agriculture",
+        "2027"
+      ],
+      "website": "https://www.gbpuat.org.in/Default.aspx",
+      "official_website": "https://www.gbpuat.org.in/Default.aspx",
+      "registration_url": "https://www.gbpuat.org.in/Default.aspx",
+      "data_source_urls": [
+        "https://www.gbpuat.org.in/Default.aspx",
+        "https://www.gbpuat.ac.in/academics/admissions/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.gbpuat.org.in/Default.aspx",
+        "official_notification": "https://www.gbpuat.ac.in/academics/admissions/"
+      },
+      "faqs": [
+        {
+          "question": "When will GBPUAT Entrance Exam 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Govind Ballabh Pant University of Agriculture and Technology posts the next notice."
+        },
+        {
+          "question": "Where should I apply for GBPUAT Entrance Exam 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>GBPUAT Entrance Exam 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for GBPUAT Entrance Exam 2027?</h2><p>GBPUAT publishes programme-wise Class 12, degree, subject, marks, domicile, category and document conditions for undergraduate, master's and PhD routes. The active 2027 notice will control the final answer.</p><ul><li>Physics, chemistry and mathematics or biology</li><li>Agriculture and technology subjects</li></ul><h2>When are GBPUAT Entrance Exam 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Govind Ballabh Pant University of Agriculture and Technology posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Govind Ballabh Pant University of Agriculture and Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>GBPUAT must confirm the 2027 programme papers, form, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official GBPUAT portal publishes the entrance prospectus, admit-card, result, counselling and programme admission notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics, chemistry and mathematics or biology</li><li>Agriculture and technology subjects</li><li>Research or programme-specific preparation</li><li>Rank, counselling and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.gbpuat.org.in/Default.aspx\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.gbpuat.ac.in/academics/admissions/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will GBPUAT Entrance Exam 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Govind Ballabh Pant University of Agriculture and Technology posts the next notice.</p><h3>Where should I apply for GBPUAT Entrance Exam 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "e733bced-2d9a-4656-8a85-9656cd025f9c",
+      "old_slug": "pau-cet",
+      "slug": "pau-cet",
+      "name": "PAU CET",
+      "title": "PAU CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "PAU CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture",
+      "level": "Punjab Agricultural University undergraduate and postgraduate admission",
+      "mode": "PAU Common Entrance Test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "PAU publishes programme-specific Class 12 or degree, subject, marks, domicile, category and document conditions for routes using PAU CET.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Punjab Agricultural University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and biology or mathematics",
+        "Agriculture and allied science",
+        "Programme-specific aptitude",
+        "Rank, counselling and seat confirmation"
+      ],
+      "description": "PAU CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PAU CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>PAU must confirm the 2027 programme list, application, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics, chemistry and biology or mathematics</li><li>Agriculture and allied science</li><li>Programme-specific aptitude</li><li>Rank, counselling and seat confirmation</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Punjab Agricultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PAU CET 2027 at a glance</h2><p>PAU CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Punjab Agricultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PAU CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PAU CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PAU CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PAU CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PAU CET 2027",
+        "exam update",
+        "Agriculture",
+        "2027"
+      ],
+      "website": "https://pau.edu/index.php?DO=viewBannerDetail&_act=manageBanner&intID=7301",
+      "official_website": "https://pau.edu/index.php?DO=viewBannerDetail&_act=manageBanner&intID=7301",
+      "registration_url": "https://pau.edu/",
+      "data_source_urls": [
+        "https://pau.edu/index.php?DO=viewBannerDetail&_act=manageBanner&intID=7301",
+        "https://pau.edu/content/pauhome/pau-11.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://pau.edu/",
+        "official_notification": "https://pau.edu/content/pauhome/pau-11.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will PAU CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PAU CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PAU CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PAU CET 2027?</h2><p>PAU publishes programme-specific Class 12 or degree, subject, marks, domicile, category and document conditions for routes using PAU CET. The active 2027 notice will control the final answer.</p><ul><li>Physics, chemistry and biology or mathematics</li><li>Agriculture and allied science</li></ul><h2>When are PAU CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Punjab Agricultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>PAU must confirm the 2027 programme list, application, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official PAU admission notice says admission to listed programmes is based on PAU CET rank and publishes the university's current test and counselling updates.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics, chemistry and biology or mathematics</li><li>Agriculture and allied science</li><li>Programme-specific aptitude</li><li>Rank, counselling and seat confirmation</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://pau.edu/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://pau.edu/content/pauhome/pau-11.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PAU CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice.</p><h3>Where should I apply for PAU CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "2a5603a3-25fc-4e84-b15e-763248a800a6",
+      "old_slug": "pau-aat",
+      "slug": "pau-aat",
+      "name": "PAU AAT",
+      "title": "PAU AAT 2027: Dates, Eligibility & Pattern",
+      "full_name": "PAU AAT 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture",
+      "level": "Punjab Agricultural University agriculture aptitude admission",
+      "mode": "Agriculture Aptitude Test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "PAU publishes Class 12, subject, marks, domicile, category and document conditions for programmes using its Agriculture Aptitude Test.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Punjab Agricultural University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Agriculture basics",
+        "Biology, chemistry and allied science",
+        "Aptitude and general awareness",
+        "Rank, counselling and document checks"
+      ],
+      "description": "PAU AAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PAU AAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>PAU must confirm the 2027 AAT application, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Agriculture basics</li><li>Biology, chemistry and allied science</li><li>Aptitude and general awareness</li><li>Rank, counselling and document checks</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Punjab Agricultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PAU AAT 2027 at a glance</h2><p>PAU AAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Punjab Agricultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PAU AAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PAU AAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PAU AAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PAU AAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PAU AAT 2027",
+        "exam update",
+        "Agriculture",
+        "2027"
+      ],
+      "website": "https://pau.edu/index.php?DO=viewBannerDetail&_act=manageBanner&intID=7301",
+      "official_website": "https://pau.edu/index.php?DO=viewBannerDetail&_act=manageBanner&intID=7301",
+      "registration_url": "https://pau.edu/",
+      "data_source_urls": [
+        "https://pau.edu/index.php?DO=viewBannerDetail&_act=manageBanner&intID=7301",
+        "https://pau.edu/content/pauhome/pau-11.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://pau.edu/",
+        "official_notification": "https://pau.edu/content/pauhome/pau-11.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will PAU AAT 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PAU AAT 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PAU AAT 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PAU AAT 2027?</h2><p>PAU publishes Class 12, subject, marks, domicile, category and document conditions for programmes using its Agriculture Aptitude Test. The active 2027 notice will control the final answer.</p><ul><li>Agriculture basics</li><li>Biology, chemistry and allied science</li></ul><h2>When are PAU AAT 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Punjab Agricultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>PAU must confirm the 2027 AAT application, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official PAU notice lists AAT as an entrance route and publishes application, test and counselling updates for the admission cycle.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Agriculture basics</li><li>Biology, chemistry and allied science</li><li>Aptitude and general awareness</li><li>Rank, counselling and document checks</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://pau.edu/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://pau.edu/content/pauhome/pau-11.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PAU AAT 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjab Agricultural University posts the next notice.</p><h3>Where should I apply for PAU AAT 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "84f501b8-e58c-4db0-b39d-8c9573a03833",
+      "old_slug": "ap-agricet",
+      "slug": "ap-agricet",
+      "name": "AGRICET",
+      "title": "AGRICET 2027: Dates, Eligibility & Pattern",
+      "full_name": "AGRICET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture",
+      "level": "Andhra Pradesh diploma agriculture lateral-entry admission",
+      "mode": "ANGRAU Agriculture Common Entrance Test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "ANGRAU publishes diploma agriculture, marks, local status, category and document conditions for entry to the notified agriculture degree route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Acharya N.G. Ranga Agricultural University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Diploma agriculture subjects",
+        "Crop production and soil science",
+        "Horticulture and allied basics",
+        "Rank, web counselling and certificates"
+      ],
+      "description": "AGRICET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AGRICET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>ANGRAU must confirm the 2027 application, paper, duration, marking, result and web-counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Diploma agriculture subjects</li><li>Crop production and soil science</li><li>Horticulture and allied basics</li><li>Rank, web counselling and certificates</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Acharya N.G. Ranga Agricultural University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Acharya N.G. Ranga Agricultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AGRICET 2027 at a glance</h2><p>AGRICET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Acharya N.G. Ranga Agricultural University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Acharya N.G. Ranga Agricultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AGRICET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AGRICET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AGRICET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AGRICET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AGRICET 2027",
+        "exam update",
+        "Agriculture",
+        "2027"
+      ],
+      "website": "https://angrauagricet.aptonline.in/AGRICET/AGRICET_HomePage",
+      "official_website": "https://angrauagricet.aptonline.in/AGRICET/AGRICET_HomePage",
+      "registration_url": "https://angrauagricet.aptonline.in/AGRICET/AGRICET_HomePage",
+      "data_source_urls": [
+        "https://angrauagricet.aptonline.in/AGRICET/AGRICET_HomePage",
+        "https://angrau.ac.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://angrauagricet.aptonline.in/AGRICET/AGRICET_HomePage",
+        "official_notification": "https://angrau.ac.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will AGRICET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Acharya N.G. Ranga Agricultural University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AGRICET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AGRICET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AGRICET 2027?</h2><p>ANGRAU publishes diploma agriculture, marks, local status, category and document conditions for entry to the notified agriculture degree route. The active 2027 notice will control the final answer.</p><ul><li>Diploma agriculture subjects</li><li>Crop production and soil science</li></ul><h2>When are AGRICET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Acharya N.G. Ranga Agricultural University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Acharya N.G. Ranga Agricultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>ANGRAU must confirm the 2027 application, paper, duration, marking, result and web-counselling calendar.</p><p><strong>Authority fact:</strong> The official AGRICET portal identifies ANGRAU as the conducting university and provides notification, brochure, syllabus, hall-ticket and answer-key links.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Diploma agriculture subjects</li><li>Crop production and soil science</li><li>Horticulture and allied basics</li><li>Rank, web counselling and certificates</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://angrauagricet.aptonline.in/AGRICET/AGRICET_HomePage\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://angrau.ac.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AGRICET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Acharya N.G. Ranga Agricultural University posts the next notice.</p><h3>Where should I apply for AGRICET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "1e19c387-eafb-4c30-a0f3-908dfe9b6f57",
+      "old_slug": "ap-horticet",
+      "slug": "ap-horticet",
+      "name": "HORTICET",
+      "title": "HORTICET 2027: Dates, Eligibility & Pattern",
+      "full_name": "HORTICET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture",
+      "level": "Andhra Pradesh horticulture diploma-to-degree admission",
+      "mode": "Dr YSR Horticultural University entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "Dr YSRHU publishes diploma horticulture, marks, local status, category and document conditions for the HORTICET route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Dr Y.S.R. Horticultural University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Diploma horticulture subjects",
+        "Fruit, vegetable and floriculture basics",
+        "Plant science and crop management",
+        "Rank, counselling and certificate verification"
+      ],
+      "description": "HORTICET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "HORTICET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Dr YSRHU must confirm the 2027 application, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Diploma horticulture subjects</li><li>Fruit, vegetable and floriculture basics</li><li>Plant science and crop management</li><li>Rank, counselling and certificate verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dr Y.S.R. Horticultural University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Dr Y.S.R. Horticultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>HORTICET 2027 at a glance</h2><p>HORTICET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dr Y.S.R. Horticultural University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Dr Y.S.R. Horticultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "HORTICET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "HORTICET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check HORTICET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "HORTICET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "HORTICET 2027",
+        "exam update",
+        "Agriculture",
+        "2027"
+      ],
+      "website": "https://drysrhu.ap.gov.in/",
+      "official_website": "https://drysrhu.ap.gov.in/",
+      "registration_url": "https://drysrhu.ap.gov.in/",
+      "data_source_urls": [
+        "https://drysrhu.ap.gov.in/",
+        "https://drysrhu.ap.gov.in/AdmissionNotifications.html"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://drysrhu.ap.gov.in/",
+        "official_notification": "https://drysrhu.ap.gov.in/AdmissionNotifications.html"
+      },
+      "faqs": [
+        {
+          "question": "When will HORTICET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dr Y.S.R. Horticultural University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for HORTICET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>HORTICET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for HORTICET 2027?</h2><p>Dr YSRHU publishes diploma horticulture, marks, local status, category and document conditions for the HORTICET route. The active 2027 notice will control the final answer.</p><ul><li>Diploma horticulture subjects</li><li>Fruit, vegetable and floriculture basics</li></ul><h2>When are HORTICET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dr Y.S.R. Horticultural University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Dr Y.S.R. Horticultural University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Dr YSRHU must confirm the 2027 application, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The university's official admissions page publishes HORTICET notifications, undergraduate brochures, registration links and counselling updates.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Diploma horticulture subjects</li><li>Fruit, vegetable and floriculture basics</li><li>Plant science and crop management</li><li>Rank, counselling and certificate verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://drysrhu.ap.gov.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://drysrhu.ap.gov.in/AdmissionNotifications.html\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will HORTICET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dr Y.S.R. Horticultural University posts the next notice.</p><h3>Where should I apply for HORTICET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "077ef999-f558-4bfc-b2a3-468866279fdc",
+      "old_slug": "tg-polycet",
+      "slug": "tg-polycet",
+      "name": "TG POLYCET",
+      "title": "TG POLYCET 2027: Dates, Eligibility & Pattern",
+      "full_name": "TG POLYCET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Polytechnic",
+      "level": "Telangana diploma engineering and allied admission",
+      "mode": "SBTET Telangana entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "SBTET publishes SSC or equivalent subjects, marks, local status, category and document conditions for engineering, technology, agriculture, horticulture and animal-husbandry diploma routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by State Board of Technical Education and Training, Telangana"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "Physics and chemistry or science",
+        "Agriculture and allied topics where notified",
+        "Rank, web options and allotment"
+      ],
+      "description": "TG POLYCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "TG POLYCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>SBTET must confirm the 2027 form, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mathematics</li><li>Physics and chemistry or science</li><li>Agriculture and allied topics where notified</li><li>Rank, web options and allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Board of Technical Education and Training, Telangana posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Board of Technical Education and Training, Telangana</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>TG POLYCET 2027 at a glance</h2><p>TG POLYCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Board of Technical Education and Training, Telangana posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by State Board of Technical Education and Training, Telangana</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "TG POLYCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "TG POLYCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check TG POLYCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "TG POLYCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "TG POLYCET 2027",
+        "exam update",
+        "Polytechnic",
+        "2027"
+      ],
+      "website": "https://tgpolycet.nic.in/default.aspx",
+      "official_website": "https://tgpolycet.nic.in/default.aspx",
+      "registration_url": "https://tgpolycet.nic.in/default.aspx",
+      "data_source_urls": [
+        "https://tgpolycet.nic.in/default.aspx",
+        "https://www.sbtet.telangana.gov.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://tgpolycet.nic.in/default.aspx",
+        "official_notification": "https://www.sbtet.telangana.gov.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will TG POLYCET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Board of Technical Education and Training, Telangana posts the next notice."
+        },
+        {
+          "question": "Where should I apply for TG POLYCET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>TG POLYCET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for TG POLYCET 2027?</h2><p>SBTET publishes SSC or equivalent subjects, marks, local status, category and document conditions for engineering, technology, agriculture, horticulture and animal-husbandry diploma routes. The active 2027 notice will control the final answer.</p><ul><li>Mathematics</li><li>Physics and chemistry or science</li></ul><h2>When are TG POLYCET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Board of Technical Education and Training, Telangana posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by State Board of Technical Education and Training, Telangana</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>SBTET must confirm the 2027 form, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official TG POLYCET portal publishes the detailed notification, candidate login, allotment, institute profiles and spot-admission guidance.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mathematics</li><li>Physics and chemistry or science</li><li>Agriculture and allied topics where notified</li><li>Rank, web options and allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://tgpolycet.nic.in/default.aspx\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.sbtet.telangana.gov.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will TG POLYCET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until State Board of Technical Education and Training, Telangana posts the next notice.</p><h3>Where should I apply for TG POLYCET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "cc477319-3492-4d71-8408-42032c986b59",
+      "old_slug": "ap-edcet",
+      "slug": "ap-edcet",
+      "name": "AP EDCET",
+      "title": "AP EdCET 2027: Dates, Eligibility & Pattern",
+      "full_name": "AP EdCET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Andhra Pradesh B.Ed admission",
+      "mode": "APSCHE Education Common Entrance Test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "APSCHE publishes graduation, subject, marks, local status, category and document conditions for the two-year B.Ed route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Andhra Pradesh State Council of Higher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "General English",
+        "General knowledge and teaching aptitude",
+        "Methodology subject",
+        "Rank, web counselling and certificate checks"
+      ],
+      "description": "AP EdCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AP EdCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>APSCHE must confirm the 2027 application, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>General English</li><li>General knowledge and teaching aptitude</li><li>Methodology subject</li><li>Rank, web counselling and certificate checks</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Andhra Pradesh State Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AP EdCET 2027 at a glance</h2><p>AP EdCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Andhra Pradesh State Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AP EdCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AP EdCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AP EdCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AP EdCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AP EdCET 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://cets.apsche.ap.gov.in/edcet/Edcet/EDCET_HomePage.aspx",
+      "official_website": "https://cets.apsche.ap.gov.in/edcet/Edcet/EDCET_HomePage.aspx",
+      "registration_url": "https://cets.apsche.ap.gov.in/edcet/Edcet/EDCET_HomePage.aspx",
+      "data_source_urls": [
+        "https://cets.apsche.ap.gov.in/edcet/Edcet/EDCET_HomePage.aspx",
+        "https://cets.apsche.ap.gov.in/APSCHE/APSCHEHome.aspx"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cets.apsche.ap.gov.in/edcet/Edcet/EDCET_HomePage.aspx",
+        "official_notification": "https://cets.apsche.ap.gov.in/APSCHE/APSCHEHome.aspx"
+      },
+      "faqs": [
+        {
+          "question": "When will AP EdCET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AP EdCET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AP EdCET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AP EdCET 2027?</h2><p>APSCHE publishes graduation, subject, marks, local status, category and document conditions for the two-year B.Ed route. The active 2027 notice will control the final answer.</p><ul><li>General English</li><li>General knowledge and teaching aptitude</li></ul><h2>When are AP EdCET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Andhra Pradesh State Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>APSCHE must confirm the 2027 application, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official AP EdCET portal publishes the instruction booklet, schedule, hall ticket, response sheets, answer keys, rank card and results.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>General English</li><li>General knowledge and teaching aptitude</li><li>Methodology subject</li><li>Rank, web counselling and certificate checks</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cets.apsche.ap.gov.in/edcet/Edcet/EDCET_HomePage.aspx\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cets.apsche.ap.gov.in/APSCHE/APSCHEHome.aspx\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AP EdCET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Andhra Pradesh State Council of Higher Education posts the next notice.</p><h3>Where should I apply for AP EdCET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "c4ab34df-5761-408c-ac42-b0273619ffc6",
+      "old_slug": "tg-edcet",
+      "slug": "tg-edcet",
+      "name": "TG EDCET",
+      "title": "TG EdCET 2027: Dates, Eligibility & Pattern",
+      "full_name": "TG EdCET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Telangana B.Ed admission",
+      "mode": "Telangana Education Common Entrance Test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "Telangana publishes graduation, subject, marks, local status, category and document conditions for the two-year B.Ed route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Telangana Council of Higher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "General English",
+        "Teaching aptitude",
+        "General knowledge",
+        "Methodology subject, rank and counselling"
+      ],
+      "description": "TG EdCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "TG EdCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Telangana authority must confirm the 2027 application, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>General English</li><li>Teaching aptitude</li><li>General knowledge</li><li>Methodology subject, rank and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Telangana Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>TG EdCET 2027 at a glance</h2><p>TG EdCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Telangana Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "TG EdCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "TG EdCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check TG EdCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "TG EdCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "TG EdCET 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://edcetadm.tgche.ac.in/",
+      "official_website": "https://edcetadm.tgche.ac.in/",
+      "registration_url": "https://edcetadm.tgche.ac.in/",
+      "data_source_urls": [
+        "https://edcetadm.tgche.ac.in/",
+        "https://edcetadm.tgche.ac.in/spcat/index.aspx"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_033",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://edcetadm.tgche.ac.in/",
+        "official_notification": "https://edcetadm.tgche.ac.in/spcat/index.aspx"
+      },
+      "faqs": [
+        {
+          "question": "When will TG EdCET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice."
+        },
+        {
+          "question": "Where should I apply for TG EdCET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>TG EdCET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for TG EdCET 2027?</h2><p>Telangana publishes graduation, subject, marks, local status, category and document conditions for the two-year B.Ed route. The active 2027 notice will control the final answer.</p><ul><li>General English</li><li>Teaching aptitude</li></ul><h2>When are TG EdCET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Telangana Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The Telangana authority must confirm the 2027 application, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official TG EdCET admissions portal publishes detailed notifications, certificate-verification, allotment and reporting instructions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>General English</li><li>Teaching aptitude</li><li>General knowledge</li><li>Methodology subject, rank and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://edcetadm.tgche.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://edcetadm.tgche.ac.in/spcat/index.aspx\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will TG EdCET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice.</p><h3>Where should I apply for TG EdCET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
