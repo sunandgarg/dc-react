@@ -1,0 +1,114 @@
+{
+  "batch": "exam-human-editorial-recheck-001",
+  "checked_at": "2026-09-21T00:00:00+05:30",
+  "source_batch": "reports/exam-refresh-batch-001-2026-09-21.json",
+  "scope": "One exam, processed individually as the first recheck after the DekhoCampus human editorial policy update",
+  "policy": "DekhoCampus human editorial policy v1: direct Indian admissions voice, no raw Markdown, no invented dates, semantic HTML for the site contract, four visible FAQs, four internal links and two official external links.",
+  "source_urls": [
+    "https://jeemain.nta.nic.in/",
+    "https://jeemain.nta.nic.in/information-bulletin/"
+  ],
+  "updates": [
+    {
+      "id": "7feca44a-63b4-4a3b-a874-7f9ce88c217f",
+      "old_slug": "jee-main-2026",
+      "slug": "jee-main-2026",
+      "name": "JEE Main",
+      "full_name": "Joint Entrance Examination (Main) 2027",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced by NTA",
+      "application_start_date": "Not announced by NTA",
+      "application_end_date": "Not announced by NTA",
+      "result_date": "Not announced by NTA",
+      "category": "Engineering",
+      "level": "Undergraduate",
+      "mode": "Computer-based test; Paper 2B drawing is offline where applicable",
+      "frequency": "Usually conducted in two sessions; 2027 dates require NTA confirmation",
+      "eligibility": "Candidates should read the JEE (Main) 2027 information bulletin when NTA publishes it. The bulletin will define the qualifying-examination year, subject combination, attempt rules and institute-specific admission conditions. Do not rely on a previous cycle's eligibility without checking the new notice.",
+      "important_dates": [
+        {
+          "event": "2027 information bulletin",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Session 1 examination",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Session 2 examination",
+          "date": "Not announced by NTA"
+        },
+        {
+          "event": "Result / score card",
+          "date": "Not announced by NTA"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics",
+        "Architecture Aptitude for Paper 2A",
+        "Planning Aptitude for Paper 2B"
+      ],
+      "description": "JEE Main 2027 dates are pending. Check the NTA bulletin, paper choice, eligibility, preparation and application steps without carrying stale 2026 claims forward.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official examination website and confirm the cycle before starting a form.</li><li>Read the current bulletin, eligibility rules and document checklist.</li><li>Register with an email address and mobile number that you can access throughout the admission cycle.</li><li>Enter academic, category and identity details exactly as shown on your documents.</li><li>Upload the required files, pay through the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key, result and counselling notices.</li></ol><p>The conducting authority has not published the next cycle's complete schedule yet. We keep the date blank rather than turning an old cycle or a coaching estimate into a fact.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA will confirm the 2027 paper structure, question count, marking and language options in the official bulletin. Paper 1 is the engineering route; Paper 2A and Paper 2B serve architecture and planning applicants.</p><p>Do not treat a previous year's question count or marking scheme as final for a new cycle. The latest brochure and candidate notice always take priority.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Start with the authority-published syllabus and make a topic checklist.</li><li>Use timed practice in the same mode as the real paper.</li><li>After each mock, separate concept gaps from reading, calculation and time-management mistakes.</li><li>Keep a small error log and revisit it every week.</li><li>Track forms, admit cards and counselling separately from study tasks so a good score is not lost to a missed deadline.</li></ul><p>Short daily sessions beat last-minute panic. Thoda-thoda consistent work is usually easier to sustain.</p>",
+      "counselling_content": "<h2>What happens after the exam?</h2><p>A score or rank is not the same as an admission offer. Follow the counselling or institute portal named by the conducting authority, check category and document rules, fill choices carefully and pay only through the authorised payment page. The participating institute or counselling body decides final seat allocation.</p>",
+      "result_content": "<h2>Result and scorecard</h2><p>Download the result or scorecard only from the official candidate login. Save the PDF and note the score, rank, validity period and next admission step. If a date is not published, we label it as pending instead of inventing a result day.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information bulletin</td><td>Not announced by NTA</td></tr><tr><td>Application window</td><td>Not announced by NTA</td></tr><tr><td>Session 1 examination</td><td>Not announced by NTA</td></tr><tr><td>Session 2 examination</td><td>Not announced by NTA</td></tr><tr><td>Result / score card</td><td>Not announced by NTA</td></tr></tbody></table>",
+      "summary_content": "<h2>JEE Main 2027 at a glance</h2><p>undefined</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 information bulletin</td><td>Not announced by NTA</td></tr><tr><td>Application window</td><td>Not announced by NTA</td></tr><tr><td>Session 1 examination</td><td>Not announced by NTA</td></tr><tr><td>Session 2 examination</td><td>Not announced by NTA</td></tr><tr><td>Result / score card</td><td>Not announced by NTA</td></tr></tbody></table><h2>Official verification</h2><p>The conducting authority has not published the next cycle's complete schedule yet. We keep the date blank rather than turning an old cycle or a coaching estimate into a fact.</p>",
+      "page_summary": "JEE Main 2027: eligibility, application steps, syllabus, pattern, official date status, result process and preparation guidance.",
+      "meta_title": "JEE Main 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JEE Main 2027 date status, paper choice, eligibility and application steps. Verify every deadline on the NTA bulletin.",
+      "meta_keywords": "JEE Main 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "website": "https://jeemain.nta.nic.in/",
+      "official_website": "https://jeemain.nta.nic.in/",
+      "registration_url": "https://jeemain.nta.nic.in/",
+      "data_source_urls": [
+        "https://jeemain.nta.nic.in/",
+        "https://jeemain.nta.nic.in/information-bulletin/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "human_editorial_recheck_001",
+      "verification_note": "NTA's official site lists 2026 material and no JEE Main 2027 bulletin in the source check on 2026-09-21; all 2027 dates remain explicitly pending.",
+      "title": "JEE Main 2027: Dates, Eligibility and Exam Pattern",
+      "hero_hook": "JEE Main 2027 dates are pending, so prepare from the syllabus and wait for the NTA bulletin before applying.",
+      "article_html": "<p>JEE Main 2027 dates are not out yet. NTA's official site currently lists the 2026 bulletin and 2026 notices, so do not copy a coaching calendar into your form, travel plan or study timetable. Keep preparing, but wait for the 2027 bulletin before treating a date or eligibility rule as final.</p><h2>Key facts for JEE Main 2027</h2><p>There is no published 2027 information bulletin in the NTA material checked on 21 September 2026. That means the application window, two session dates and result day stay pending. This is less exciting than a confident-looking date, but it is safer for a student making real decisions.</p><table><thead><tr><th>Event</th><th>2027 status</th></tr></thead><tbody><tr><td>2027 information bulletin</td><td>Not published by NTA</td></tr><tr><td>Application window</td><td>Not published by NTA</td></tr><tr><td>Session 1 examination</td><td>Not published by NTA</td></tr><tr><td>Session 2 examination</td><td>Not published by NTA</td></tr><tr><td>Result or NTA score</td><td>Not published by NTA</td></tr></tbody></table><p>When NTA opens the cycle, use the notice on the official site as the source of truth. Old dates are useful for rough planning only.</p><h2>Check the paper before you check the timetable</h2><p>Paper 1 is the B.E. and B.Tech route. Paper 2A is for B.Arch and Paper 2B is for B.Planning. The subject mix, qualifying-examination year, attempt wording and institute conditions must come from the 2027 bulletin, not from a screenshot forwarded in a group.</p><ul><li>Match your Class 12 subjects with the programme you want.</li><li>Read the qualifying-year and attempt clauses when NTA publishes them.</li><li>Keep category, identity and marks documents consistent before registration opens.</li></ul><h2>What to study while NTA is still silent</h2><p>Use the published syllabus as a working checklist, then leave room for changes in the final bulletin. Physics, Chemistry and Mathematics anchor Paper 1. Architecture applicants also need the Paper 2A aptitude and drawing components, while planning applicants should track the Paper 2B requirements.</p><p>Do not spend every evening chasing rumours. Pick a small set of timed questions, review the mistakes and keep an error log. Short, honest practice beats a dramatic plan that collapses after one week.</p><h2>How to apply without creating a preventable problem</h2><ol><li>Open the NTA JEE Main site and confirm the 2027 cycle is live.</li><li>Read the information bulletin and document instructions before entering details.</li><li>Use an email address and mobile number you can access for the entire cycle.</li><li>Copy academic, category and identity details exactly from your documents.</li><li>Upload files, pay only on the authorised portal and save the confirmation page.</li><li>Use the same candidate login for corrections, admit card, answer key and result updates.</li></ol><p>If a field is unclear, stop and read the notice again. Guessing in a form is a small shortcut with a very long tail.</p><h2>After the score</h2><p>A JEE Main score is not an admission offer. Check the counselling or institute process named in the official notice, compare the category and document rules, and fill choices only after you understand the order of preference. Save the scorecard and every payment or allotment receipt.</p><h2>FAQs students actually ask</h2><h3>When will JEE Main 2027 dates be released?</h3><p>NTA has not published the JEE Main 2027 bulletin in the official material checked on 21 September 2026. Treat the date as pending and check the NTA examination site before planning travel or paying a fee.</p><h3>Which papers are available in JEE Main?</h3><p>Paper 1 is the B.E. and B.Tech route. Paper 2A is for B.Arch and Paper 2B is for B.Planning. The 2027 bulletin will confirm the final paper rules and subject details.</p><h3>Can I use the 2026 eligibility rules for JEE Main 2027?</h3><p>Use them only as preparation context. NTA may change the qualifying-examination year, subject combination or attempt wording, so the 2027 bulletin must decide whether you can apply.</p><h3>Does a JEE Main score guarantee a seat?</h3><p>No. A score or rank still has to pass the relevant institute, category, document and counselling rules. Seat allocation is handled through the notified counselling or institute process.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "faqs": [
+        {
+          "question": "When will JEE Main 2027 dates be released?",
+          "answer": "NTA has not published the JEE Main 2027 bulletin in the official material checked on 21 September 2026. Treat the date as pending and check the NTA examination site before planning travel or paying a fee."
+        },
+        {
+          "question": "Which papers are available in JEE Main?",
+          "answer": "Paper 1 is the B.E. and B.Tech route. Paper 2A is for B.Arch and Paper 2B is for B.Planning. The 2027 bulletin will confirm the final paper rules and subject details."
+        },
+        {
+          "question": "Can I use the 2026 eligibility rules for JEE Main 2027?",
+          "answer": "Use them only as preparation context. NTA may change the qualifying-examination year, subject combination or attempt wording, so the 2027 bulletin must decide whether you can apply."
+        },
+        {
+          "question": "Does a JEE Main score guarantee a seat?",
+          "answer": "No. A score or rank still has to pass the relevant institute, category, document and counselling rules. Seat allocation is handled through the notified counselling or institute process."
+        }
+      ],
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://jeemain.nta.nic.in/",
+        "official_notification": "https://jeemain.nta.nic.in/information-bulletin/"
+      },
+      "editorial_policy": "DekhoCampus human editorial policy v1: direct Indian admissions voice, no raw Markdown, no invented dates, semantic HTML for the site contract, four visible FAQs, four internal links and two official external links."
+    }
+  ]
+}
