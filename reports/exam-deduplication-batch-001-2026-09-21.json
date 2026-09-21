@@ -1,0 +1,246 @@
+{
+  "batch": "exam-deduplication-001",
+  "checked_at": "2026-09-21T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "operation": "soft_delete_after_merge",
+  "rationale": "Remove confirmed duplicate exam rows without breaking indexed URLs or foreign-key references. Canonical rows remain active; duplicate rows should be set is_active=false after any content/reference merge.",
+  "important_distinction": "CEED and UCEED are different design exams. Their duplicate rows are removed, but one canonical CEED row and one canonical UCEED row remain.",
+  "canonical_rows": [
+    {
+      "id": "22e4c25a-09e3-435e-a512-bc3d46b5cc54",
+      "name": "JEE Main",
+      "slug": "jee-mains"
+    },
+    {
+      "id": "5966ee69-0c74-4a16-83c9-1a20e46463c4",
+      "name": "JEE Advanced",
+      "slug": "jee-advanced"
+    },
+    {
+      "id": "8720f71d-a911-4735-bb5f-ce1181a6fc91",
+      "name": "NEET UG",
+      "slug": "national-eligibility-cum-entrance-test-neet"
+    },
+    {
+      "id": "2307c7a9-a10d-4ed2-aec7-334c0960e4e6",
+      "name": "CAT",
+      "slug": "common-admission-test"
+    },
+    {
+      "id": "b7998bdf-a4a9-400a-9446-f4a0bd1ed85b",
+      "name": "CLAT",
+      "slug": "clat"
+    },
+    {
+      "id": "f24379ee-aad3-4b6d-99dc-e449dfc17045",
+      "name": "GATE",
+      "slug": "gate"
+    },
+    {
+      "id": "ac281e4e-e526-43bd-9c25-47b408ec2dcf",
+      "name": "UCEED",
+      "slug": "uceed"
+    },
+    {
+      "id": "3b6b2846-b3ad-48f2-81c5-cccea74bef96",
+      "name": "XAT",
+      "slug": "xat"
+    },
+    {
+      "id": "e79ff5cb-aa94-4c8e-b271-1c5be04f4493",
+      "name": "BITSAT",
+      "slug": "bitsat"
+    },
+    {
+      "id": "54233372-6e90-47a5-a61e-49031ca723eb",
+      "name": "COMEDK UGET",
+      "slug": "comedk"
+    },
+    {
+      "id": "6aee3463-2af7-442d-a3f5-9d2a79e2c560",
+      "name": "WBJEE",
+      "slug": "wbjee"
+    },
+    {
+      "id": "6e861fe9-beff-4560-b145-df130ae8d77b",
+      "name": "AP EAPCET",
+      "slug": "ap-eamcet"
+    },
+    {
+      "id": "68c8cf19-b7c5-4624-a2c7-21a1df96dd90",
+      "name": "CEED",
+      "slug": "CEED"
+    },
+    {
+      "id": "0375f25c-63d1-48f7-8515-09344f131150",
+      "name": "BHU PET",
+      "slug": "bhu-pet"
+    },
+    {
+      "id": "f31d18ac-0e9c-4648-b979-856b3f24fbfa",
+      "name": "CUET UG",
+      "slug": "cuet-2026"
+    }
+  ],
+  "deletions": [
+    {
+      "id": "7feca44a-63b4-4a3b-a874-7f9ce88c217f",
+      "name": "JEE Main",
+      "old_slug": "jee-main-2026",
+      "merge_to_id": "22e4c25a-09e3-435e-a512-bc3d46b5cc54",
+      "merge_to_slug": "jee-mains",
+      "reason": "year-suffixed duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "ee645bd6-dfa2-42f2-a125-b2fc175c5c05",
+      "name": "JEE Main (Demo)",
+      "old_slug": "dekho-sample-jee-main",
+      "merge_to_id": "22e4c25a-09e3-435e-a512-bc3d46b5cc54",
+      "merge_to_slug": "jee-mains",
+      "reason": "demo duplicate; remove from production catalogue",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "4ea0689e-a807-4ad6-b90e-a21ec74d6c1f",
+      "name": "JEE Advanced",
+      "old_slug": "jee-advanced-2026",
+      "merge_to_id": "5966ee69-0c74-4a16-83c9-1a20e46463c4",
+      "merge_to_slug": "jee-advanced",
+      "reason": "year-suffixed duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "7a986b2e-1b62-4a83-b076-6959b480eb4b",
+      "name": "NEET UG",
+      "old_slug": "neet",
+      "merge_to_id": "8720f71d-a911-4735-bb5f-ce1181a6fc91",
+      "merge_to_slug": "national-eligibility-cum-entrance-test-neet",
+      "reason": "lower-quality duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "243b6c91-3520-4b1e-9fc1-2288c1c7e456",
+      "name": "NEET UG",
+      "old_slug": "neet-ug-2026",
+      "merge_to_id": "8720f71d-a911-4735-bb5f-ce1181a6fc91",
+      "merge_to_slug": "national-eligibility-cum-entrance-test-neet",
+      "reason": "year-suffixed duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "874416d9-1219-4247-8572-2eb08cd82d75",
+      "name": "CAT",
+      "old_slug": "cat",
+      "merge_to_id": "2307c7a9-a10d-4ed2-aec7-334c0960e4e6",
+      "merge_to_slug": "common-admission-test",
+      "reason": "lower-quality duplicate; merge any batch-001 CAT content into canonical row",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "484a7717-df09-4f59-a2db-34dec8f9edd7",
+      "name": "CLAT",
+      "old_slug": "clat-2026",
+      "merge_to_id": "b7998bdf-a4a9-400a-9446-f4a0bd1ed85b",
+      "merge_to_slug": "clat",
+      "reason": "year-suffixed duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "1bf4b6a1-5575-40f8-85d8-3701d46b3aba",
+      "name": "GATE",
+      "old_slug": "gate-2026",
+      "merge_to_id": "f24379ee-aad3-4b6d-99dc-e449dfc17045",
+      "merge_to_slug": "gate",
+      "reason": "year-suffixed duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "6a368f50-77ff-4b39-b6fa-98f23fe7ccc9",
+      "name": "UCEED",
+      "old_slug": "uceed-2026",
+      "merge_to_id": "ac281e4e-e526-43bd-9c25-47b408ec2dcf",
+      "merge_to_slug": "uceed",
+      "reason": "year-suffixed duplicate; UCEED remains distinct from CEED",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "6ef5c13b-4606-47a8-aab2-3d6cf0793b12",
+      "name": "XAT",
+      "old_slug": "xat-2026",
+      "merge_to_id": "3b6b2846-b3ad-48f2-81c5-cccea74bef96",
+      "merge_to_slug": "xat",
+      "reason": "year-suffixed duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "005b84df-f49d-418c-a207-e0aa1d167f40",
+      "name": "BITSAT",
+      "old_slug": "bitsat-2026",
+      "merge_to_id": "e79ff5cb-aa94-4c8e-b271-1c5be04f4493",
+      "merge_to_slug": "bitsat",
+      "reason": "year-suffixed duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "708b3668-c17d-4ba4-90cf-8f66918c760e",
+      "name": "COMEDK UGET",
+      "old_slug": "comedk-uget",
+      "merge_to_id": "54233372-6e90-47a5-a61e-49031ca723eb",
+      "merge_to_slug": "comedk",
+      "reason": "slug duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "7da7272a-3b27-4caf-87f1-0ee550c01e9b",
+      "name": "WBJEE",
+      "old_slug": "west-bengal-joint-entrance-examinations-board",
+      "merge_to_id": "6aee3463-2af7-442d-a3f5-9d2a79e2c560",
+      "merge_to_slug": "wbjee",
+      "reason": "long-slug duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "5e8b29e1-d73b-4550-8981-d9ac7b924806",
+      "name": "AP EAPCET",
+      "old_slug": "ap-eapcet",
+      "merge_to_id": "6e861fe9-beff-4560-b145-df130ae8d77b",
+      "merge_to_slug": "ap-eamcet",
+      "reason": "alternate-name duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "5c6ea222-e568-42bd-b6a2-4cd84e1c4da7",
+      "name": "CEED",
+      "old_slug": "ceed",
+      "merge_to_id": "68c8cf19-b7c5-4624-a2c7-21a1df96dd90",
+      "merge_to_slug": "CEED",
+      "reason": "case-only slug duplicate; CEED is distinct from UCEED",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "957a6d86-8938-4af2-8b5d-306d63587965",
+      "name": "Banaras Hindu University Postgraduate Entrance Test",
+      "old_slug": "banaras-hindu-university-postgraduate-entrance-test",
+      "merge_to_id": "0375f25c-63d1-48f7-8515-09344f131150",
+      "merge_to_slug": "bhu-pet",
+      "reason": "long-slug duplicate",
+      "operation": "soft_delete"
+    },
+    {
+      "id": "914acdc7-befc-42c0-863e-c04cf9bde4db",
+      "name": "CUET UG",
+      "old_slug": "cuet-ug",
+      "merge_to_id": "f31d18ac-0e9c-4648-b979-856b3f24fbfa",
+      "merge_to_slug": "cuet-2026",
+      "reason": "same NTA CUET UG route; lower-quality duplicate approved for removal",
+      "operation": "soft_delete"
+    }
+  ],
+  "safety_checks": [
+    "Resolve each id before mutation and abort if a row is missing or already inactive.",
+    "Merge content, internal references and any batch-001/002 updates into merge_to_id before deactivation.",
+    "Do not hard-delete rows until foreign-key/reference counts are zero and a backup exists.",
+    "Preserve existing canonical slugs; redirect duplicate slugs to the canonical slug if the router supports redirects."
+  ]
+}
