@@ -1,0 +1,1027 @@
+{
+  "batch": "exam-refresh-batch-025",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Next ten unique canonical rows after batches 001-024; duplicate, demo, discontinued and superseded sessions excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "dekho-sample-jee-main",
+    "jee-mains-2",
+    "aiims-pg",
+    "bitsat-exam",
+    "bitsat-exam-2",
+    "ceed",
+    "national-eligibility-cum-entrance-test-neet",
+    "ca-cpt",
+    "du-jat",
+    "kvpy",
+    "law-faculty-admission-test",
+    "madhya-pradesh-pre-polytechnic-test",
+    "mu-oet",
+    "national-talent-search-examination",
+    "pessat-btech-legacy",
+    "banaras-hindu-university-postgraduate-entrance-test"
+  ],
+  "updates": [
+    {
+      "id": "a2043a34-6d4e-4c98-9c01-8f006a8367c7",
+      "old_slug": "vocational-lateral-entry-test",
+      "slug": "vocational-lateral-entry-test",
+      "name": "Vocational Lateral Entry Test",
+      "title": "VOCLET 2027: Dates, Eligibility & Pattern",
+      "full_name": "VOCLET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Vocational",
+      "level": "West Bengal diploma lateral-entry admission",
+      "mode": "VOCLET or the notified West Bengal vocational admission route",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The council publishes the qualification, trade, lateral-entry, category and document conditions in the current VOCLET or common-admission notice. Read the trade table before applying because diploma routes can have different entry requirements.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by West Bengal State Council of Technical and Vocational Education and Skill Development"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics and science basics",
+        "Trade or vocational qualification conditions",
+        "Reasoning and general awareness where notified",
+        "Choice filling, merit and polytechnic allotment"
+      ],
+      "description": "VOCLET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "VOCLET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The council must confirm the 2027 route, registration, paper or merit method, document checks, result and counselling. The available 2023 brochure is context, not a 2027 timetable.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mathematics and science basics</li><li>Trade or vocational qualification conditions</li><li>Reasoning and general awareness where notified</li><li>Choice filling, merit and polytechnic allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal State Council of Technical and Vocational Education and Skill Development posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal State Council of Technical and Vocational Education and Skill Development</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>VOCLET 2027 at a glance</h2><p>VOCLET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal State Council of Technical and Vocational Education and Skill Development posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal State Council of Technical and Vocational Education and Skill Development</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "VOCLET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "VOCLET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check VOCLET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "VOCLET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "VOCLET 2027",
+        "exam update",
+        "Vocational",
+        "2027"
+      ],
+      "website": "https://webscte.co.in/",
+      "official_website": "https://webscte.co.in/",
+      "registration_url": "https://scvtwb.in/",
+      "data_source_urls": [
+        "https://webscte.co.in/",
+        "https://sctvesd.wb.gov.in/welcome/download/013d407166ec4fa56eb1e1f8cbe183b9"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://scvtwb.in/",
+        "official_notification": "https://sctvesd.wb.gov.in/welcome/download/013d407166ec4fa56eb1e1f8cbe183b9"
+      },
+      "faqs": [
+        {
+          "question": "When will VOCLET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal State Council of Technical and Vocational Education and Skill Development posts the next notice."
+        },
+        {
+          "question": "Where should I apply for VOCLET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>VOCLET 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for VOCLET 2027?</h2><p>The council publishes the qualification, trade, lateral-entry, category and document conditions in the current VOCLET or common-admission notice. Read the trade table before applying because diploma routes can have different entry requirements. The 2027 bulletin will control the final answer.</p><ul><li>Mathematics and science basics</li><li>Trade or vocational qualification conditions</li></ul><h2>When are VOCLET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal State Council of Technical and Vocational Education and Skill Development posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal State Council of Technical and Vocational Education and Skill Development</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The council must confirm the 2027 route, registration, paper or merit method, document checks, result and counselling. The available 2023 brochure is context, not a 2027 timetable.</p><p><strong>Authority fact:</strong> The council's official VOCLET brochure describes admission to the second year of diploma engineering and technology or Modern Office Practice and Management courses, so the old row name is retained while the current notice remains the authority.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mathematics and science basics</li><li>Trade or vocational qualification conditions</li><li>Reasoning and general awareness where notified</li><li>Choice filling, merit and polytechnic allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://scvtwb.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://sctvesd.wb.gov.in/welcome/download/013d407166ec4fa56eb1e1f8cbe183b9\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will VOCLET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal State Council of Technical and Vocational Education and Skill Development posts the next notice.</p><h3>Where should I apply for VOCLET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "7e4f82fb-d281-4ff3-9b18-fdf9449017ff",
+      "old_slug": "wb-jelet",
+      "slug": "wb-jelet",
+      "name": "West Bengal Joint Entrance Lateral Engineering Test",
+      "title": "JELET 2027: Dates, Eligibility & Pattern",
+      "full_name": "JELET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "West Bengal lateral entry to engineering, technology and pharmacy",
+      "mode": "WBJEEB OMR examination and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "WBJEEB publishes diploma, B.Sc., subject, marks, domicile, category and document conditions for entry to the second year or third semester. Engineering, technology and pharmacy routes can carry different clauses.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by West Bengal Joint Entrance Examinations Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Engineering mathematics and branch fundamentals",
+        "Physics and chemistry where the bulletin requires them",
+        "Pharmacy or technology subject rules",
+        "OMR instructions, rank and counselling choices"
+      ],
+      "description": "JELET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JELET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>WBJEEB must confirm the 2027 application, OMR paper, duration, marking, exam centres, rank card and counselling schedule. Do not copy the 2026 date into the new cycle.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Engineering mathematics and branch fundamentals</li><li>Physics and chemistry where the bulletin requires them</li><li>Pharmacy or technology subject rules</li><li>OMR instructions, rank and counselling choices</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>JELET 2027 at a glance</h2><p>JELET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "JELET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JELET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JELET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JELET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JELET 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/jelet/",
+      "official_website": "https://wbjeeb.nic.in/jelet/",
+      "registration_url": "https://wbjeeb.nic.in/jelet/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/jelet/",
+        "https://wbjeeb.nic.in/current-events-jelet/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://wbjeeb.nic.in/jelet/",
+        "official_notification": "https://wbjeeb.nic.in/current-events-jelet/"
+      },
+      "faqs": [
+        {
+          "question": "When will JELET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for JELET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>JELET 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for JELET 2027?</h2><p>WBJEEB publishes diploma, B.Sc., subject, marks, domicile, category and document conditions for entry to the second year or third semester. Engineering, technology and pharmacy routes can carry different clauses. The 2027 bulletin will control the final answer.</p><ul><li>Engineering mathematics and branch fundamentals</li><li>Physics and chemistry where the bulletin requires them</li></ul><h2>When are JELET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>WBJEEB must confirm the 2027 application, OMR paper, duration, marking, exam centres, rank card and counselling schedule. Do not copy the 2026 date into the new cycle.</p><p><strong>Authority fact:</strong> The official 2026 JELET page says the test is for entry to the second year or third semester of four-year engineering, technology and pharmacy degree courses in West Bengal.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Engineering mathematics and branch fundamentals</li><li>Physics and chemistry where the bulletin requires them</li><li>Pharmacy or technology subject rules</li><li>OMR instructions, rank and counselling choices</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://wbjeeb.nic.in/jelet/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://wbjeeb.nic.in/current-events-jelet/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will JELET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><h3>Where should I apply for JELET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "8706c9d6-258d-4e40-8ff8-cef28e8e0109",
+      "old_slug": "west-bengal-joint-entrance-exam-for-computer-application",
+      "slug": "west-bengal-joint-entrance-exam-for-computer-application",
+      "name": "West Bengal Joint Entrance Exam for Computer Application",
+      "title": "JECA 2027: Dates, Eligibility & Pattern",
+      "full_name": "JECA 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "West Bengal Master of Computer Applications admission",
+      "mode": "WBJEEB common entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "WBJEEB publishes the recognised bachelor degree, mathematics or related subject, marks, domicile, category and document rules for MCA admission. Confirm the programme clause before choosing a paper or college.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by West Bengal Joint Entrance Examinations Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics and quantitative ability",
+        "Logical reasoning",
+        "Computer awareness and fundamentals",
+        "English, application steps and counselling"
+      ],
+      "description": "JECA 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JECA 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>WBJEEB must confirm the 2027 registration, paper format, duration, marking, answer-key process, result and counselling. Current-cycle information is preparation context only.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mathematics and quantitative ability</li><li>Logical reasoning</li><li>Computer awareness and fundamentals</li><li>English, application steps and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>JECA 2027 at a glance</h2><p>JECA 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "JECA 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JECA 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JECA 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JECA 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JECA 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/jeca/",
+      "official_website": "https://wbjeeb.nic.in/jeca/",
+      "registration_url": "https://wbjeeb.nic.in/jeca/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/jeca/",
+        "https://wbjeeb.nic.in/current-events-jeca/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://wbjeeb.nic.in/jeca/",
+        "official_notification": "https://wbjeeb.nic.in/current-events-jeca/"
+      },
+      "faqs": [
+        {
+          "question": "When will JECA 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for JECA 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>JECA 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for JECA 2027?</h2><p>WBJEEB publishes the recognised bachelor degree, mathematics or related subject, marks, domicile, category and document rules for MCA admission. Confirm the programme clause before choosing a paper or college. The 2027 bulletin will control the final answer.</p><ul><li>Mathematics and quantitative ability</li><li>Logical reasoning</li></ul><h2>When are JECA 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>WBJEEB must confirm the 2027 registration, paper format, duration, marking, answer-key process, result and counselling. Current-cycle information is preparation context only.</p><p><strong>Authority fact:</strong> The official JECA page identifies the examination and counselling route for MCA admission in West Bengal for the academic session 2026-27; the 2027 bulletin must confirm the next cycle.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mathematics and quantitative ability</li><li>Logical reasoning</li><li>Computer awareness and fundamentals</li><li>English, application steps and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://wbjeeb.nic.in/jeca/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://wbjeeb.nic.in/current-events-jeca/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will JECA 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><h3>Where should I apply for JECA 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "2965f737-ec5f-4854-9fb6-9de55ba487d1",
+      "old_slug": "west-bengal-joint-entrance-exam-for-post-basic-nursing",
+      "slug": "west-bengal-joint-entrance-exam-for-post-basic-nursing",
+      "name": "West Bengal Joint Entrance Exam for Post Basic Nursing",
+      "title": "JEPBN 2027: Dates, Eligibility & Pattern",
+      "full_name": "JEPBN 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Medical",
+      "level": "West Bengal Post Basic B.Sc Nursing admission",
+      "mode": "WBJEEB OMR examination and nursing counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "WBJEEB publishes nursing qualification, registration, marks, domicile, category, experience and document rules in the JEPBN bulletin. Check the current notice for the exact Post Basic B.Sc Nursing route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by West Bengal Joint Entrance Examinations Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Nursing foundations",
+        "Medical-surgical and community nursing",
+        "Child health, mental health and midwifery",
+        "OMR rules, rank and counselling documents"
+      ],
+      "description": "JEPBN 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JEPBN 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>WBJEEB must confirm the 2027 application, OMR paper, duration, marking, admit card, result and counselling schedule. The 2026 archive is not a 2027 date sheet.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Nursing foundations</li><li>Medical-surgical and community nursing</li><li>Child health, mental health and midwifery</li><li>OMR rules, rank and counselling documents</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>JEPBN 2027 at a glance</h2><p>JEPBN 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "JEPBN 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JEPBN 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JEPBN 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JEPBN 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JEPBN 2027",
+        "exam update",
+        "Medical",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/jepbn/",
+      "official_website": "https://wbjeeb.nic.in/jepbn/",
+      "registration_url": "https://wbjeeb.nic.in/jepbn/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/jepbn/",
+        "https://wbjeeb.nic.in/archive-jepbn/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://wbjeeb.nic.in/jepbn/",
+        "official_notification": "https://wbjeeb.nic.in/archive-jepbn/"
+      },
+      "faqs": [
+        {
+          "question": "When will JEPBN 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for JEPBN 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>JEPBN 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for JEPBN 2027?</h2><p>WBJEEB publishes nursing qualification, registration, marks, domicile, category, experience and document rules in the JEPBN bulletin. Check the current notice for the exact Post Basic B.Sc Nursing route. The 2027 bulletin will control the final answer.</p><ul><li>Nursing foundations</li><li>Medical-surgical and community nursing</li></ul><h2>When are JEPBN 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>WBJEEB must confirm the 2027 application, OMR paper, duration, marking, admit card, result and counselling schedule. The 2026 archive is not a 2027 date sheet.</p><p><strong>Authority fact:</strong> The official JEPBN page describes an OMR common entrance test for Post Basic B.Sc Nursing admission to participating West Bengal colleges and institutes.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Nursing foundations</li><li>Medical-surgical and community nursing</li><li>Child health, mental health and midwifery</li><li>OMR rules, rank and counselling documents</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://wbjeeb.nic.in/jepbn/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://wbjeeb.nic.in/archive-jepbn/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will JEPBN 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><h3>Where should I apply for JEPBN 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "45ad4e62-67c0-444d-aaf0-b96b71da587c",
+      "old_slug": "west-bengal-joint-entrance-for-mater-of-science-nursing",
+      "slug": "west-bengal-joint-entrance-for-mater-of-science-nursing",
+      "name": "West Bengal Joint Entrance for Mater of Science Nursing",
+      "title": "JEMScN 2027: Dates, Eligibility & Pattern",
+      "full_name": "JEMScN 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Medical",
+      "level": "West Bengal Master of Science Nursing admission",
+      "mode": "WBJEEB OMR examination and nursing counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "WBJEEB publishes B.Sc Nursing, registration, marks, category, domicile and document conditions in its JEMScN bulletin. Match your nursing qualification and registration details before applying.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by West Bengal Joint Entrance Examinations Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Advanced nursing and research basics",
+        "Medical-surgical, child and community nursing",
+        "Obstetrics, mental health and nursing education",
+        "OMR, rank card and counselling verification"
+      ],
+      "description": "JEMScN 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JEMScN 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>WBJEEB must confirm the 2027 application, paper, duration, marking, answer-key process, result and counselling. Do not turn the 2026 tentative date into a future fact.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Advanced nursing and research basics</li><li>Medical-surgical, child and community nursing</li><li>Obstetrics, mental health and nursing education</li><li>OMR, rank card and counselling verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>JEMScN 2027 at a glance</h2><p>JEMScN 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "JEMScN 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JEMScN 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JEMScN 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JEMScN 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JEMScN 2027",
+        "exam update",
+        "Medical",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/jemscn/",
+      "official_website": "https://wbjeeb.nic.in/jemscn/",
+      "registration_url": "https://wbjeeb.nic.in/jemscn/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/jemscn/",
+        "https://wbjeeb.nic.in/current-events-jemscn/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://wbjeeb.nic.in/jemscn/",
+        "official_notification": "https://wbjeeb.nic.in/current-events-jemscn/"
+      },
+      "faqs": [
+        {
+          "question": "When will JEMScN 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for JEMScN 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>JEMScN 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for JEMScN 2027?</h2><p>WBJEEB publishes B.Sc Nursing, registration, marks, category, domicile and document conditions in its JEMScN bulletin. Match your nursing qualification and registration details before applying. The 2027 bulletin will control the final answer.</p><ul><li>Advanced nursing and research basics</li><li>Medical-surgical, child and community nursing</li></ul><h2>When are JEMScN 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>WBJEEB must confirm the 2027 application, paper, duration, marking, answer-key process, result and counselling. Do not turn the 2026 tentative date into a future fact.</p><p><strong>Authority fact:</strong> The official JEMScN page identifies an OMR common entrance test for M.Sc Nursing admission in West Bengal and publishes a separate information bulletin and rules.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Advanced nursing and research basics</li><li>Medical-surgical, child and community nursing</li><li>Obstetrics, mental health and nursing education</li><li>OMR, rank card and counselling verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://wbjeeb.nic.in/jemscn/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://wbjeeb.nic.in/current-events-jemscn/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will JEMScN 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><h3>Where should I apply for JEMScN 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "73b0d68c-737d-4b06-af22-895bdd8c8f78",
+      "old_slug": "imu-cet",
+      "slug": "imu-cet",
+      "name": "IMU CET",
+      "title": "IMU CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "IMU CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "Indian Maritime University undergraduate and postgraduate admission",
+      "mode": "IMU computer-based common entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "IMU publishes programme-wise age, Class 12 or degree, PCM, medical fitness, nationality, category and document conditions. B.Tech, B.Sc, DNS, MBA and M.Tech routes do not share one eligibility rule.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Indian Maritime University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "English and general aptitude",
+        "Physics, chemistry and mathematics for applicable UG routes",
+        "Marine engineering and nautical science fundamentals",
+        "Medical, document and counselling requirements"
+      ],
+      "description": "IMU CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IMU CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>IMU must confirm the 2027 registration, programme list, test mode, duration, marking, rank certificate and counselling schedule. Treat the 2026 prospectus as background only.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>English and general aptitude</li><li>Physics, chemistry and mathematics for applicable UG routes</li><li>Marine engineering and nautical science fundamentals</li><li>Medical, document and counselling requirements</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Maritime University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Indian Maritime University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>IMU CET 2027 at a glance</h2><p>IMU CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Maritime University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Indian Maritime University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "IMU CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IMU CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IMU CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IMU CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IMU CET 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://www.imu.edu.in/imunew/admissions-2026-27",
+      "official_website": "https://www.imu.edu.in/imunew/admissions-2026-27",
+      "registration_url": "https://www.imu.edu.in/imunew/admissions-2026-27",
+      "data_source_urls": [
+        "https://www.imu.edu.in/imunew/admissions-2026-27",
+        "https://www.imu.edu.in/imunew/uploads/files/admissions/2026/Prospectus_2026-27_24022026.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.imu.edu.in/imunew/admissions-2026-27",
+        "official_notification": "https://www.imu.edu.in/imunew/uploads/files/admissions/2026/Prospectus_2026-27_24022026.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will IMU CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Maritime University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for IMU CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>IMU CET 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for IMU CET 2027?</h2><p>IMU publishes programme-wise age, Class 12 or degree, PCM, medical fitness, nationality, category and document conditions. B.Tech, B.Sc, DNS, MBA and M.Tech routes do not share one eligibility rule. The 2027 bulletin will control the final answer.</p><ul><li>English and general aptitude</li><li>Physics, chemistry and mathematics for applicable UG routes</li></ul><h2>When are IMU CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Maritime University posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Indian Maritime University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>IMU must confirm the 2027 registration, programme list, test mode, duration, marking, rank certificate and counselling schedule. Treat the 2026 prospectus as background only.</p><p><strong>Authority fact:</strong> The official 2026-27 prospectus lists IMU-CET as the common test route for several programmes and warns that the university may change the test mode or question distribution by notice.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>English and general aptitude</li><li>Physics, chemistry and mathematics for applicable UG routes</li><li>Marine engineering and nautical science fundamentals</li><li>Medical, document and counselling requirements</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.imu.edu.in/imunew/admissions-2026-27\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.imu.edu.in/imunew/uploads/files/admissions/2026/Prospectus_2026-27_24022026.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will IMU CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Indian Maritime University posts the next notice.</p><h3>Where should I apply for IMU CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "e79ff5cb-aa94-4c8e-b271-1c5be04f4493",
+      "old_slug": "bitsat",
+      "slug": "bitsat",
+      "name": "BITSAT",
+      "title": "BITSAT 2027: Dates, Eligibility & Pattern",
+      "full_name": "BITSAT 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "BITS Pilani integrated first-degree admission",
+      "mode": "BITS computer-based online admission test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "BITS publishes Class 12 subjects, marks, attempt, PCM or PCB route, tie-break and document conditions in the yearly brochure. Check the exact degree, campus and admission route before selecting a session.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Birla Institute of Technology and Science, Pilani"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics and chemistry",
+        "Mathematics or biology",
+        "English proficiency and logical reasoning",
+        "Session booking, score, preference form and counselling"
+      ],
+      "description": "BITSAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "BITSAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>BITS must confirm the 2027 session dates, application, two-session rules, question structure, duration, marking, score reporting and preference filling. The 2026 brochure cannot confirm 2027 dates.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology</li><li>English proficiency and logical reasoning</li><li>Session booking, score, preference form and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Birla Institute of Technology and Science, Pilani posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Birla Institute of Technology and Science, Pilani</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>BITSAT 2027 at a glance</h2><p>BITSAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Birla Institute of Technology and Science, Pilani posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Birla Institute of Technology and Science, Pilani</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "BITSAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "BITSAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check BITSAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "BITSAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "BITSAT 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://www.bitsadmission.com/FD/FD_brochure.html",
+      "official_website": "https://www.bitsadmission.com/FD/FD_brochure.html",
+      "registration_url": "https://www.bitsadmission.com/",
+      "data_source_urls": [
+        "https://www.bitsadmission.com/FD/FD_brochure.html",
+        "https://www.bitsadmission.com/FD/downloads/BITSAT-2026_brochure.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.bitsadmission.com/",
+        "official_notification": "https://www.bitsadmission.com/FD/downloads/BITSAT-2026_brochure.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will BITSAT 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Birla Institute of Technology and Science, Pilani posts the next notice."
+        },
+        {
+          "question": "Where should I apply for BITSAT 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>BITSAT 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for BITSAT 2027?</h2><p>BITS publishes Class 12 subjects, marks, attempt, PCM or PCB route, tie-break and document conditions in the yearly brochure. Check the exact degree, campus and admission route before selecting a session. The 2027 bulletin will control the final answer.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology</li></ul><h2>When are BITSAT 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Birla Institute of Technology and Science, Pilani posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Birla Institute of Technology and Science, Pilani</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>BITS must confirm the 2027 session dates, application, two-session rules, question structure, duration, marking, score reporting and preference filling. The 2026 brochure cannot confirm 2027 dates.</p><p><strong>Authority fact:</strong> The official BITSAT brochure says admission to integrated first-degree programmes at Pilani, Goa and Hyderabad is based on a computer-based online test conducted by BITS Pilani.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology</li><li>English proficiency and logical reasoning</li><li>Session booking, score, preference form and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.bitsadmission.com/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.bitsadmission.com/FD/downloads/BITSAT-2026_brochure.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will BITSAT 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Birla Institute of Technology and Science, Pilani posts the next notice.</p><h3>Where should I apply for BITSAT 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "dc7a924f-45b8-42a2-86d3-caf4b16fe283",
+      "old_slug": "mah-mba-mms-cet",
+      "slug": "mah-mba-mms-cet",
+      "name": "MAH MBA/MMS CET",
+      "title": "MAH MBA/MMS CET 2027: Dates & Pattern",
+      "full_name": "MAH MBA/MMS CET 2027: Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "Maharashtra first-year full-time MBA and MMS admission",
+      "mode": "Maharashtra State CET Cell computer-based test and CAP",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The State CET Cell publishes graduation, final-year, marks, Maharashtra candidature, category and document rules for MBA or MMS admission. CAP registration and institute eligibility are separate checks after the test.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Maharashtra State Common Entrance Test Cell"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Logical reasoning",
+        "Abstract reasoning",
+        "Quantitative aptitude",
+        "Verbal ability, reading and CAP document checks"
+      ],
+      "description": "MAH MBA/MMS CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MAH MBA/MMS CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The State CET Cell must confirm the 2027 application, attempts, computer-based sections, duration, marking, result and CAP schedule. Do not reuse a 2026 second-attempt deadline as 2027 information.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Logical reasoning</li><li>Abstract reasoning</li><li>Quantitative aptitude</li><li>Verbal ability, reading and CAP document checks</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Maharashtra State Common Entrance Test Cell posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Maharashtra State Common Entrance Test Cell</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MAH MBA/MMS CET 2027 at a glance</h2><p>MAH MBA/MMS CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Maharashtra State Common Entrance Test Cell posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Maharashtra State Common Entrance Test Cell</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MAH MBA/MMS CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MAH MBA/MMS CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MAH MBA/MMS CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MAH MBA/MMS CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MAH MBA/MMS CET 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/",
+      "official_website": "https://cetcell.mahacet.org/",
+      "registration_url": "https://cetcell.mahacet.org/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/",
+        "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MAH-MBA-MMS-CET-2026-Information-Brochure.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetcell.mahacet.org/",
+        "official_notification": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/MAH-MBA-MMS-CET-2026-Information-Brochure.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will MAH MBA/MMS CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Maharashtra State Common Entrance Test Cell posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MAH MBA/MMS CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MAH MBA/MMS CET 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for MAH MBA/MMS CET 2027?</h2><p>The State CET Cell publishes graduation, final-year, marks, Maharashtra candidature, category and document rules for MBA or MMS admission. CAP registration and institute eligibility are separate checks after the test. The 2027 bulletin will control the final answer.</p><ul><li>Logical reasoning</li><li>Abstract reasoning</li></ul><h2>When are MAH MBA/MMS CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Maharashtra State Common Entrance Test Cell posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Maharashtra State Common Entrance Test Cell</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The State CET Cell must confirm the 2027 application, attempts, computer-based sections, duration, marking, result and CAP schedule. Do not reuse a 2026 second-attempt deadline as 2027 information.</p><p><strong>Authority fact:</strong> The official 2026 information brochure describes MAH MBA/MMS CET as the online test for first-year full-time postgraduate management courses in Maharashtra institutions covered by the state route.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Logical reasoning</li><li>Abstract reasoning</li><li>Quantitative aptitude</li><li>Verbal ability, reading and CAP document checks</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetcell.mahacet.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetcell.mahacet.org/wp-content/uploads/2023/12/MAH-MBA-MMS-CET-2026-Information-Brochure.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MAH MBA/MMS CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Maharashtra State Common Entrance Test Cell posts the next notice.</p><h3>Where should I apply for MAH MBA/MMS CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "3e2df7c6-535e-4137-946f-696e056d8e53",
+      "old_slug": "tg-icet",
+      "slug": "tg-icet",
+      "name": "TG ICET",
+      "title": "TG ICET 2027: Dates, Eligibility & Pattern",
+      "full_name": "TG ICET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "Telangana MBA and MCA admission",
+      "mode": "Telangana Integrated Common Entrance Test computer-based test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "TGCHE publishes the recognised bachelor degree, marks, category, local status and document rules for MBA and MCA admission. Qualifying the test does not replace college-level eligibility or counselling requirements.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Telangana Council of Higher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Analytical ability",
+        "Mathematical ability",
+        "Communication ability",
+        "Computer-based sessions, rank and certificate verification"
+      ],
+      "description": "TG ICET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "TG ICET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>TGCHE must confirm the 2027 registration, sessions, question structure, duration, marking, result, certificate verification and counselling. Previous TG ICET dates are not a 2027 calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Analytical ability</li><li>Mathematical ability</li><li>Communication ability</li><li>Computer-based sessions, rank and certificate verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Telangana Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>TG ICET 2027 at a glance</h2><p>TG ICET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Telangana Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "TG ICET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "TG ICET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check TG ICET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "TG ICET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "TG ICET 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://tgicet.nic.in/",
+      "official_website": "https://tgicet.nic.in/",
+      "registration_url": "https://icet.tgche.ac.in/",
+      "data_source_urls": [
+        "https://tgicet.nic.in/",
+        "https://icet.tgche.ac.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://icet.tgche.ac.in/",
+        "official_notification": "https://tgicet.nic.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will TG ICET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice."
+        },
+        {
+          "question": "Where should I apply for TG ICET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>TG ICET 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for TG ICET 2027?</h2><p>TGCHE publishes the recognised bachelor degree, marks, category, local status and document rules for MBA and MCA admission. Qualifying the test does not replace college-level eligibility or counselling requirements. The 2027 bulletin will control the final answer.</p><ul><li>Analytical ability</li><li>Mathematical ability</li></ul><h2>When are TG ICET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Telangana Council of Higher Education</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>TGCHE must confirm the 2027 registration, sessions, question structure, duration, marking, result, certificate verification and counselling. Previous TG ICET dates are not a 2027 calendar.</p><p><strong>Authority fact:</strong> The official TGICET portal identifies MBA and MCA admissions for Telangana universities and affiliated colleges and publishes the candidate registration and allotment workflow.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Analytical ability</li><li>Mathematical ability</li><li>Communication ability</li><li>Computer-based sessions, rank and certificate verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://icet.tgche.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://tgicet.nic.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will TG ICET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Telangana Council of Higher Education posts the next notice.</p><h3>Where should I apply for TG ICET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "0c8b771c-33d5-4c89-a0d8-85b249aaf392",
+      "old_slug": "cuet-pg",
+      "slug": "cuet-pg",
+      "name": "CUET PG",
+      "title": "CUET PG 2027: Dates, Eligibility & Pattern",
+      "full_name": "CUET PG 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "National postgraduate admission test for participating universities",
+      "mode": "National Testing Agency computer-based test and university counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "NTA and each participating university publish programme-wise bachelor degrees, subject combinations, marks, category and document rules. A CUET PG score does not remove the university's own counselling or eligibility check.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Testing Agency"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific subject knowledge",
+        "Language or comprehension where the paper requires it",
+        "General aptitude or reasoning where notified",
+        "University choice, score use and counselling"
+      ],
+      "description": "CUET PG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "CUET PG 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or category route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA must confirm the 2027 paper list, application window, city choices, computer-based schedule, duration, marking, scorecard and participating-university process. The current bulletin is not a future date sheet.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Programme-specific subject knowledge</li><li>Language or comprehension where the paper requires it</li><li>General aptitude or reasoning where notified</li><li>University choice, score use and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>CUET PG 2027 at a glance</h2><p>CUET PG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "CUET PG 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "CUET PG 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check CUET PG 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "CUET PG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CUET PG 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://exams.nta.nic.in/cuet-pg/",
+      "official_website": "https://exams.nta.nic.in/cuet-pg/",
+      "registration_url": "https://exams.nta.nic.in/cuet-pg/",
+      "data_source_urls": [
+        "https://exams.nta.nic.in/cuet-pg/",
+        "https://exams.nta.nic.in/document/cuet-pg-information-bulletin/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_025",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://exams.nta.nic.in/cuet-pg/",
+        "official_notification": "https://exams.nta.nic.in/document/cuet-pg-information-bulletin/"
+      },
+      "faqs": [
+        {
+          "question": "When will CUET PG 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice."
+        },
+        {
+          "question": "Where should I apply for CUET PG 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>CUET PG 2027 is a planning page, not a licence to copy last year's calendar. Check the authority route first, match the course or category you want, and save a dated screenshot or PDF of every official update.</p><h2>Who can apply for CUET PG 2027?</h2><p>NTA and each participating university publish programme-wise bachelor degrees, subject combinations, marks, category and document rules. A CUET PG score does not remove the university's own counselling or eligibility check. The 2027 bulletin will control the final answer.</p><ul><li>Programme-specific subject knowledge</li><li>Language or comprehension where the paper requires it</li></ul><h2>When are CUET PG 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice. Do not fill a form or plan travel around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by National Testing Agency</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>NTA must confirm the 2027 paper list, application window, city choices, computer-based schedule, duration, marking, scorecard and participating-university process. The current bulletin is not a future date sheet.</p><p><strong>Authority fact:</strong> The official NTA CUET PG page publishes subject-wise notices, scorecard updates and participating-university information, while the bulletin controls the active examination rules.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Programme-specific subject knowledge</li><li>Language or comprehension where the paper requires it</li><li>General aptitude or reasoning where notified</li><li>University choice, score use and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://exams.nta.nic.in/cuet-pg/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://exams.nta.nic.in/document/cuet-pg-information-bulletin/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will CUET PG 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Testing Agency posts the next notice.</p><h3>Where should I apply for CUET PG 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
