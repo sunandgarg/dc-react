@@ -1,0 +1,1027 @@
+{
+  "batch": "exam-refresh-batch-013",
+  "checked_at": "2026-09-21T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Next ten unique canonical exam records not already rewritten in batches 001-012; demo rows, discontinued tests, duplicate sessions and aliases excluded",
+  "policy": "Official sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notification link; existing slugs preserved; four visible FAQs per record; no production database write.",
+  "excluded_related_sessions": [
+    "dekho-sample-jee-main",
+    "ap-eamcet",
+    "jee-mains-2",
+    "aiims-pg",
+    "bitsat-exam",
+    "bitsat-exam-2",
+    "ceed",
+    "national-eligibility-cum-entrance-test-neet",
+    "ca-cpt",
+    "du-jat",
+    "kvpy"
+  ],
+  "updates": [
+    {
+      "id": "e3ab39d5-6ddc-4d5b-b400-227c9a6571fb",
+      "old_slug": "puthat",
+      "slug": "puthat",
+      "name": "Panjab University Tourism & Hospitality Aptitude Test",
+      "title": "PUTHAT 2027: Dates, Eligibility and Pattern",
+      "full_name": "PUTHAT 2027: Dates, Eligibility and Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "Not announced",
+      "category": "General",
+      "level": "Panjab University tourism and hospitality entrance",
+      "mode": "University entrance examination",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "Panjab University publishes Class 12, minimum marks, English-subject, category and document rules for the Bachelor of Hotel Management and Catering Technology and Bachelor of Tourism and Travel Management routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Panjab University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "English and language skills",
+        "General knowledge and current affairs",
+        "Reasoning and numerical ability",
+        "Tourism, hospitality and service awareness where notified"
+      ],
+      "description": "PUTHAT 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PUTHAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.puthat.puchd.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://puthat.puchd.ac.in/pdf/puthat_2026.pdf\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Panjab University must confirm the 2027 paper, duration, marking, test centre, admit card, result and counselling schedule.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Panjab University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>PUTHAT 2027 at a glance</h2><p>PUTHAT 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Panjab University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "PUTHAT 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "PUTHAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PUTHAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PUTHAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PUTHAT 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.puthat.puchd.ac.in/",
+      "official_website": "https://www.puthat.puchd.ac.in/",
+      "registration_url": "https://www.puthat.puchd.ac.in/",
+      "data_source_urls": [
+        "https://www.puthat.puchd.ac.in/",
+        "https://puthat.puchd.ac.in/pdf/puthat_2026.pdf"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.puthat.puchd.ac.in/",
+        "official_notification": "https://puthat.puchd.ac.in/pdf/puthat_2026.pdf"
+      },
+      "faqs": [
+        {
+          "q": "When will PUTHAT 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for PUTHAT 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>PUTHAT 2027 is an Indian Panjab University tourism and hospitality entrance route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>What to study</h2><ul><li>English and language skills</li><li>General knowledge and current affairs</li><li>Reasoning and numerical ability</li><li>Tourism, hospitality and service awareness where notified</li></ul><h2>Who can apply</h2><p>Panjab University publishes Class 12, minimum marks, English-subject, category and document rules for the Bachelor of Hotel Management and Catering Technology and Bachelor of Tourism and Travel Management routes.</p><h2>How the test or selection works</h2><p>Panjab University must confirm the 2027 paper, duration, marking, test centre, admit card, result and counselling schedule.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Panjab University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.puthat.puchd.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://puthat.puchd.ac.in/pdf/puthat_2026.pdf\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will PUTHAT 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for PUTHAT 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "1e8138d0-47da-407a-bd9b-cc10319edbe4",
+      "old_slug": "ts-icet",
+      "slug": "ts-icet",
+      "name": "Telangana State Integrated Common Entrance Test",
+      "title": "TS ICET 2027: Eligibility, Dates and Pattern",
+      "full_name": "TS ICET 2027: Eligibility, Dates and Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "Not announced",
+      "category": "Management",
+      "level": "Telangana MBA and MCA entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "The Telangana ICET authority publishes recognised degree, minimum marks, final-year, local-area, category and document conditions for MBA and MCA admissions. Read the current information booklet for the course route you choose.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Telangana State Council of Higher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Analytical ability",
+        "Mathematical ability",
+        "Communication ability",
+        "Programme and counselling rules in the official booklet"
+      ],
+      "description": "TS ICET 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "TS ICET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://icet.tsche.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.tsche.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The conducting university must confirm the 2027 application dates, sections, question count, duration, marking, normalization and web-counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Telangana State Council of Higher Education</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>TS ICET 2027 at a glance</h2><p>TS ICET 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Telangana State Council of Higher Education</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>",
+      "page_summary": "TS ICET 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "TS ICET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check TS ICET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "TS ICET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "TS ICET 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://icet.tsche.ac.in/",
+      "official_website": "https://icet.tsche.ac.in/",
+      "registration_url": "https://icet.tsche.ac.in/",
+      "data_source_urls": [
+        "https://icet.tsche.ac.in/",
+        "https://www.tsche.ac.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/exams/top-management-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://icet.tsche.ac.in/",
+        "official_notification": "https://www.tsche.ac.in/"
+      },
+      "faqs": [
+        {
+          "q": "When will TS ICET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for TS ICET 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>TS ICET 2027 is an Indian Telangana MBA and MCA entrance route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Telangana State Council of Higher Education</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>How the test or selection works</h2><p>The conducting university must confirm the 2027 application dates, sections, question count, duration, marking, normalization and web-counselling calendar.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>Who can apply</h2><p>The Telangana ICET authority publishes recognised degree, minimum marks, final-year, local-area, category and document conditions for MBA and MCA admissions. Read the current information booklet for the course route you choose.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://icet.tsche.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.tsche.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>What to study</h2><ul><li>Analytical ability</li><li>Mathematical ability</li><li>Communication ability</li><li>Programme and counselling rules in the official booklet</li></ul><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will TS ICET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for TS ICET 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>"
+    },
+    {
+      "id": "6171b2c2-eede-4f4e-838c-776e42365149",
+      "old_slug": "tripura-jee",
+      "slug": "tripura-jee",
+      "name": "Tripura Board of Joint Entrance Examination",
+      "title": "Tripura JEE 2027: Dates, Eligibility and Pattern",
+      "full_name": "Tripura JEE 2027: Dates, Eligibility and Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "Not announced",
+      "category": "Engineering",
+      "level": "Tripura professional-course entrance",
+      "mode": "Offline or notified state entrance examination",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "TBJEE publishes state eligibility, domicile, Class 12 subjects, group selection, reservation and document conditions for engineering, agriculture, veterinary, fisheries and allied professional courses.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Tripura Board of Joint Entrance Examination"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics for PCM group",
+        "Biology for PCB group"
+      ],
+      "description": "Tripura JEE 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Tripura JEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://tbjee.nic.in/welcome.html\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://tbjee.nic.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>TBJEE must confirm the 2027 groups, papers, question distribution, duration, marking, answer-key challenge, result and counselling process.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Tripura Board of Joint Entrance Examination</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>Tripura JEE 2027 at a glance</h2><p>Tripura JEE 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Tripura Board of Joint Entrance Examination</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "Tripura JEE 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "Tripura JEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Tripura JEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Tripura JEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Tripura JEE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://tbjee.nic.in/welcome.html",
+      "official_website": "https://tbjee.nic.in/welcome.html",
+      "registration_url": "https://tbjee.nic.in/welcome.html",
+      "data_source_urls": [
+        "https://tbjee.nic.in/welcome.html",
+        "https://tbjee.nic.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://tbjee.nic.in/welcome.html",
+        "official_notification": "https://tbjee.nic.in/"
+      },
+      "faqs": [
+        {
+          "q": "When will Tripura JEE 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for Tripura JEE 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>Tripura JEE 2027 is an Indian Tripura professional-course entrance route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>Who can apply</h2><p>TBJEE publishes state eligibility, domicile, Class 12 subjects, group selection, reservation and document conditions for engineering, agriculture, veterinary, fisheries and allied professional courses.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Tripura Board of Joint Entrance Examination</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Physics</li><li>Chemistry</li><li>Mathematics for PCM group</li><li>Biology for PCB group</li></ul><h2>How the test or selection works</h2><p>TBJEE must confirm the 2027 groups, papers, question distribution, duration, marking, answer-key challenge, result and counselling process.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://tbjee.nic.in/welcome.html\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://tbjee.nic.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will Tripura JEE 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for Tripura JEE 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    },
+    {
+      "id": "20c4f72e-22e4-4e55-b3b4-38b2883df365",
+      "old_slug": "ulsat",
+      "slug": "ulsat",
+      "name": "ULSAT",
+      "title": "ULSAT 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "ULSAT 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "Not announced",
+      "category": "Law",
+      "level": "UPES law entrance",
+      "mode": "Online test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "UPES publishes Class 10 and 12 marks, programme, CLAT or CUET exemption and document rules for ULSAT routes. Confirm the selected law programme and the current non-exam pathways before applying.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by University of Petroleum and Energy Studies"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Language comprehension",
+        "Quantitative and numerical ability",
+        "Logical reasoning",
+        "Legal general knowledge",
+        "Legal aptitude"
+      ],
+      "description": "ULSAT 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "ULSAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.upes.ac.in/admissions/admission-alerts/ulsat\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upes.ac.in/admissions/important-dates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>UPES must confirm the 2027 online test window, duration, question count, passkey process, result and counselling or interview steps.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>ULSAT 2027 at a glance</h2><p>ULSAT 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Law courses</a></li><li><a href=\"/colleges\">Law colleges</a></li></ul>",
+      "page_summary": "ULSAT 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "ULSAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check ULSAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "ULSAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "ULSAT 2027",
+        "exam update",
+        "Law",
+        "2027"
+      ],
+      "website": "https://www.upes.ac.in/admissions/admission-alerts/ulsat",
+      "official_website": "https://www.upes.ac.in/admissions/admission-alerts/ulsat",
+      "registration_url": "https://www.upes.ac.in/admissions/admission-alerts/ulsat",
+      "data_source_urls": [
+        "https://www.upes.ac.in/admissions/admission-alerts/ulsat",
+        "https://www.upes.ac.in/admissions/important-dates"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.upes.ac.in/admissions/admission-alerts/ulsat",
+        "official_notification": "https://www.upes.ac.in/admissions/important-dates"
+      },
+      "faqs": [
+        {
+          "q": "When will ULSAT 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for ULSAT 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>ULSAT 2027 is an Indian UPES law entrance route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>How the test or selection works</h2><p>UPES must confirm the 2027 online test window, duration, question count, passkey process, result and counselling or interview steps.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>Who can apply</h2><p>UPES publishes Class 10 and 12 marks, programme, CLAT or CUET exemption and document rules for ULSAT routes. Confirm the selected law programme and the current non-exam pathways before applying.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.upes.ac.in/admissions/admission-alerts/ulsat\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upes.ac.in/admissions/important-dates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>What to study</h2><ul><li>Language comprehension</li><li>Quantitative and numerical ability</li><li>Logical reasoning</li><li>Legal general knowledge</li><li>Legal aptitude</li></ul><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will ULSAT 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for ULSAT 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Law courses</a></li><li><a href=\"/colleges\">Law colleges</a></li></ul>"
+    },
+    {
+      "id": "3090a9e7-5444-4f3c-84b4-09b7ce411cb9",
+      "old_slug": "upes-met",
+      "slug": "upes-met",
+      "name": "UPES Management Entrance Test",
+      "title": "UPESMET 2027: Dates, Eligibility and Pattern",
+      "full_name": "UPESMET 2027: Dates, Eligibility and Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "Not announced",
+      "category": "Management",
+      "level": "UPES MBA entrance",
+      "mode": "Online test or accepted national-level score route",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "UPES publishes Class 10, Class 12 and graduation marks, programme-specific subjects and national-test exemptions for MBA applicants. Check the exact specialisation before relying on a generic MBA eligibility line.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by University of Petroleum and Energy Studies"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Verbal ability and reading comprehension",
+        "Quantitative aptitude",
+        "Data interpretation",
+        "Logical reasoning and business awareness"
+      ],
+      "description": "UPESMET 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "UPESMET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.upes.ac.in/admissions/mba\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upes.ac.in/admissions/important-dates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>UPES must confirm the 2027 test window, sections, duration, marking, accepted scores, interview and admission timeline.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>UPESMET 2027 at a glance</h2><p>UPESMET 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>",
+      "page_summary": "UPESMET 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "UPESMET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check UPESMET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "UPESMET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "UPESMET 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://www.upes.ac.in/admissions/mba",
+      "official_website": "https://www.upes.ac.in/admissions/mba",
+      "registration_url": "https://www.upes.ac.in/admissions/mba",
+      "data_source_urls": [
+        "https://www.upes.ac.in/admissions/mba",
+        "https://www.upes.ac.in/admissions/important-dates"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/exams/top-management-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.upes.ac.in/admissions/mba",
+        "official_notification": "https://www.upes.ac.in/admissions/important-dates"
+      },
+      "faqs": [
+        {
+          "q": "When will UPESMET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for UPESMET 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>UPESMET 2027 is an Indian UPES MBA entrance route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>Who can apply</h2><p>UPES publishes Class 10, Class 12 and graduation marks, programme-specific subjects and national-test exemptions for MBA applicants. Check the exact specialisation before relying on a generic MBA eligibility line.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Verbal ability and reading comprehension</li><li>Quantitative aptitude</li><li>Data interpretation</li><li>Logical reasoning and business awareness</li></ul><h2>How the test or selection works</h2><p>UPES must confirm the 2027 test window, sections, duration, marking, accepted scores, interview and admission timeline.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.upes.ac.in/admissions/mba\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upes.ac.in/admissions/important-dates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will UPESMET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for UPESMET 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>"
+    },
+    {
+      "id": "8628fc0e-39d1-4e86-81f4-1bd96a9e7b7e",
+      "old_slug": "upes-dat",
+      "slug": "upes-dat",
+      "name": "UPES Design Aptitude Test",
+      "title": "UPESDAT 2027: Eligibility, Dates and Pattern",
+      "full_name": "UPESDAT 2027: Eligibility, Dates and Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "Not announced",
+      "category": "General",
+      "level": "UPES design aptitude entrance",
+      "mode": "Online design aptitude test and selection stages",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "UPES publishes programme-specific Class 10, Class 12, portfolio, age and document conditions for B.Des and M.Des routes. Read the live programme page before submitting an application.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by University of Petroleum and Energy Studies"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Visual and design aptitude",
+        "Observation and creative thinking",
+        "Basic quantitative and logical reasoning",
+        "Portfolio or interview components where notified"
+      ],
+      "description": "UPESDAT 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "UPESDAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.upes.ac.in/admissions\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upes.ac.in/admissions\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>UPES must confirm the 2027 online test, duration, question format, portfolio, interview and final-selection process.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>UPESDAT 2027 at a glance</h2><p>UPESDAT 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "UPESDAT 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "UPESDAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check UPESDAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "UPESDAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "UPESDAT 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.upes.ac.in/admissions/important-dates",
+      "official_website": "https://www.upes.ac.in/admissions/important-dates",
+      "registration_url": "https://www.upes.ac.in/admissions",
+      "data_source_urls": [
+        "https://www.upes.ac.in/admissions/important-dates",
+        "https://www.upes.ac.in/admissions"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.upes.ac.in/admissions",
+        "official_notification": "https://www.upes.ac.in/admissions"
+      },
+      "faqs": [
+        {
+          "q": "When will UPESDAT 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for UPESDAT 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>UPESDAT 2027 is an Indian UPES design aptitude entrance route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>What to study</h2><ul><li>Visual and design aptitude</li><li>Observation and creative thinking</li><li>Basic quantitative and logical reasoning</li><li>Portfolio or interview components where notified</li></ul><h2>Who can apply</h2><p>UPES publishes programme-specific Class 10, Class 12, portfolio, age and document conditions for B.Des and M.Des routes. Read the live programme page before submitting an application.</p><h2>How the test or selection works</h2><p>UPES must confirm the 2027 online test, duration, question format, portfolio, interview and final-selection process.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.upes.ac.in/admissions\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upes.ac.in/admissions\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will UPESDAT 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for UPESDAT 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "2d503ec5-5174-4551-b7ab-32a329a9cf90",
+      "old_slug": "upeseat",
+      "slug": "upeseat",
+      "name": "UPESEAT",
+      "title": "UPESEAT 2027: Dates, Eligibility and Pattern",
+      "full_name": "UPESEAT 2027: Dates, Eligibility and Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "Not announced",
+      "category": "Engineering",
+      "level": "UPES undergraduate engineering entrance",
+      "mode": "Online test or accepted alternative route",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "UPES publishes Class 10 and 12 marks, PCM or PCB subjects, programme-specific thresholds and JEE Main, SAT, CUET or board-merit exemptions for B.Tech applicants.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by University of Petroleum and Energy Studies"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics or Biology for the selected school",
+        "English, aptitude and programme-specific areas where notified"
+      ],
+      "description": "UPESEAT 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "UPESEAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.upes.ac.in/admissions/admission-alerts/upeseat\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upes.ac.in/admissions/important-dates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>UPES must confirm the 2027 online test window, duration, question count, marking, slot booking and alternate admission routes.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>UPESEAT 2027 at a glance</h2><p>UPESEAT 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "UPESEAT 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "UPESEAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check UPESEAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "UPESEAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "UPESEAT 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://www.upes.ac.in/admissions/admission-alerts/upeseat",
+      "official_website": "https://www.upes.ac.in/admissions/admission-alerts/upeseat",
+      "registration_url": "https://www.upes.ac.in/admissions/admission-alerts/upeseat",
+      "data_source_urls": [
+        "https://www.upes.ac.in/admissions/admission-alerts/upeseat",
+        "https://www.upes.ac.in/admissions/important-dates"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.upes.ac.in/admissions/admission-alerts/upeseat",
+        "official_notification": "https://www.upes.ac.in/admissions/important-dates"
+      },
+      "faqs": [
+        {
+          "q": "When will UPESEAT 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for UPESEAT 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>UPESEAT 2027 is an Indian UPES undergraduate engineering entrance route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>Who can apply</h2><p>UPES publishes Class 10 and 12 marks, PCM or PCB subjects, programme-specific thresholds and JEE Main, SAT, CUET or board-merit exemptions for B.Tech applicants.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by University of Petroleum and Energy Studies</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Physics</li><li>Chemistry</li><li>Mathematics or Biology for the selected school</li><li>English, aptitude and programme-specific areas where notified</li></ul><h2>How the test or selection works</h2><p>UPES must confirm the 2027 online test window, duration, question count, marking, slot booking and alternate admission routes.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://www.upes.ac.in/admissions/admission-alerts/upeseat\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upes.ac.in/admissions/important-dates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will UPESEAT 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for UPESEAT 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    },
+    {
+      "id": "845333a0-283b-4188-96a1-5bc5caf611b2",
+      "old_slug": "upsc-ese",
+      "slug": "upsc-ese",
+      "name": "UPSC Engineering Services Exam",
+      "title": "UPSC ESE 2027: Dates, Eligibility and Pattern",
+      "full_name": "UPSC ESE 2027: Dates, Eligibility and Pattern",
+      "status": "2027 notification and first exam date announced",
+      "exam_date": "31 January 2027",
+      "application_start_date": "16 September 2026",
+      "application_end_date": "6 October 2026, 6:00 pm",
+      "result_date": "To be notified by UPSC",
+      "category": "Engineering",
+      "level": "national engineering recruitment examination",
+      "mode": "Preliminary, Main and Personality Test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "UPSC publishes nationality, engineering-degree, age, discipline, fee, reservation and medical conditions in the Engineering Services notice. The chosen engineering branch must match an advertised category.",
+      "important_dates": [
+        {
+          "event": "Notification",
+          "date": "16 September 2026"
+        },
+        {
+          "event": "Application opens",
+          "date": "16 September 2026"
+        },
+        {
+          "event": "Application closes",
+          "date": "6 October 2026, 6:00 pm"
+        },
+        {
+          "event": "Preliminary examination",
+          "date": "31 January 2027"
+        },
+        {
+          "event": "Main examination / result",
+          "date": "To be notified by UPSC"
+        }
+      ],
+      "syllabus": [
+        "General studies and engineering aptitude",
+        "Civil, mechanical, electrical or electronics and telecommunication engineering",
+        "Conventional engineering papers in the Main examination",
+        "Personality Test and service-specific requirements"
+      ],
+      "description": "UPSC ESE 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "UPSC ESE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://upsconline.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upsc.gov.in/examinations/Engineering%20Services%20(Preliminary)%20Examination,%202027\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>UPSC has published the 2027 notification and Preliminary date in the official source checked on 2026-09-21. Any later stage remains subject to the Commission's next notice.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>UPSC has published the 2027 Preliminary notification; the detailed Main schedule, written result and Personality Test timeline must still be followed from the Commission's live notice.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Notification</td><td>16 September 2026</td></tr><tr><td>Application opens</td><td>16 September 2026</td></tr><tr><td>Application closes</td><td>6 October 2026, 6:00 pm</td></tr><tr><td>Preliminary examination</td><td>31 January 2027</td></tr><tr><td>Main examination / result</td><td>To be notified by UPSC</td></tr></tbody></table>",
+      "summary_content": "<h2>UPSC ESE 2027 at a glance</h2><p>UPSC ESE 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Notification</td><td>16 September 2026</td></tr><tr><td>Application opens</td><td>16 September 2026</td></tr><tr><td>Application closes</td><td>6 October 2026, 6:00 pm</td></tr><tr><td>Preliminary examination</td><td>31 January 2027</td></tr><tr><td>Main examination / result</td><td>To be notified by UPSC</td></tr></tbody></table><p>UPSC has published the 2027 notification and Preliminary date in the official source checked on 2026-09-21. Any later stage remains subject to the Commission's next notice.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "UPSC ESE 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "UPSC ESE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check UPSC ESE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "UPSC ESE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "UPSC ESE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://upsconline.nic.in/",
+      "official_website": "https://upsconline.nic.in/",
+      "registration_url": "https://upsconline.nic.in/",
+      "data_source_urls": [
+        "https://upsconline.nic.in/",
+        "https://www.upsc.gov.in/examinations/Engineering%20Services%20(Preliminary)%20Examination,%202027"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://upsconline.nic.in/",
+        "official_notification": "https://www.upsc.gov.in/examinations/Engineering%20Services%20(Preliminary)%20Examination,%202027"
+      },
+      "faqs": [
+        {
+          "q": "When will UPSC ESE 2027 dates be released?",
+          "a": "UPSC has published the 2027 notification and Preliminary date in the official source checked on 2026-09-21. Any later stage remains subject to the Commission's next notice."
+        },
+        {
+          "q": "Where should I apply for UPSC ESE 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>UPSC ESE 2027 is an Indian national engineering recruitment examination route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Notification</td><td>16 September 2026</td></tr><tr><td>Application opens</td><td>16 September 2026</td></tr><tr><td>Application closes</td><td>6 October 2026, 6:00 pm</td></tr><tr><td>Preliminary examination</td><td>31 January 2027</td></tr><tr><td>Main examination / result</td><td>To be notified by UPSC</td></tr></tbody></table><h2>How the test or selection works</h2><p>UPSC has published the 2027 Preliminary notification; the detailed Main schedule, written result and Personality Test timeline must still be followed from the Commission's live notice.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>Who can apply</h2><p>UPSC publishes nationality, engineering-degree, age, discipline, fee, reservation and medical conditions in the Engineering Services notice. The chosen engineering branch must match an advertised category.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://upsconline.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upsc.gov.in/examinations/Engineering%20Services%20(Preliminary)%20Examination,%202027\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>UPSC has published the 2027 notification and Preliminary date in the official source checked on 2026-09-21. Any later stage remains subject to the Commission's next notice.</p><h2>What to study</h2><ul><li>General studies and engineering aptitude</li><li>Civil, mechanical, electrical or electronics and telecommunication engineering</li><li>Conventional engineering papers in the Main examination</li><li>Personality Test and service-specific requirements</li></ul><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will UPSC ESE 2027 dates be released?</h3><p>UPSC has published the 2027 notification and Preliminary date in the official source checked on 2026-09-21. Any later stage remains subject to the Commission's next notice.</p><h3>Where should I apply for UPSC ESE 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    },
+    {
+      "id": "6615c613-6504-469d-8c3b-2aa49778f38b",
+      "old_slug": "uspc-nda-and-na",
+      "slug": "uspc-nda-and-na",
+      "name": "National Defence Academy and Naval Academy Examination",
+      "title": "NDA and NA 2027: Dates, Eligibility and Pattern",
+      "full_name": "NDA and NA 2027: Dates, Eligibility and Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "Not announced",
+      "category": "General",
+      "level": "national defence academy entrance",
+      "mode": "Written examination followed by SSB selection",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "UPSC publishes nationality, age, Class 12 subjects, gender, marital-status, physical and medical conditions for the Army, Navy, Air Force and Naval Academy routes. The latest notice controls the exact cohort dates.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Union Public Service Commission"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "General Ability Test",
+        "English",
+        "General knowledge, physics, chemistry, history, geography and current events"
+      ],
+      "description": "NDA and NA 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "NDA and NA 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://upsconline.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upsc.gov.in/exams-related-info/exam-notification/archives\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>UPSC must confirm the 2027 written papers, duration, marking, negative marking, SSB process, medical standards and final merit rules.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Union Public Service Commission</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>NDA and NA 2027 at a glance</h2><p>NDA and NA 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Union Public Service Commission</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "NDA and NA 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "NDA and NA 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check NDA and NA 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "NDA and NA 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "NDA and NA 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://upsconline.nic.in/",
+      "official_website": "https://upsconline.nic.in/",
+      "registration_url": "https://upsconline.nic.in/",
+      "data_source_urls": [
+        "https://upsconline.nic.in/",
+        "https://www.upsc.gov.in/exams-related-info/exam-notification/archives"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://upsconline.nic.in/",
+        "official_notification": "https://www.upsc.gov.in/exams-related-info/exam-notification/archives"
+      },
+      "faqs": [
+        {
+          "q": "When will NDA and NA 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for NDA and NA 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>NDA and NA 2027 is an Indian national defence academy entrance route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Union Public Service Commission</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>How the test or selection works</h2><p>UPSC must confirm the 2027 written papers, duration, marking, negative marking, SSB process, medical standards and final merit rules.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>Who can apply</h2><p>UPSC publishes nationality, age, Class 12 subjects, gender, marital-status, physical and medical conditions for the Army, Navy, Air Force and Naval Academy routes. The latest notice controls the exact cohort dates.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://upsconline.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upsc.gov.in/exams-related-info/exam-notification/archives\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>What to study</h2><ul><li>Mathematics</li><li>General Ability Test</li><li>English</li><li>General knowledge, physics, chemistry, history, geography and current events</li></ul><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will NDA and NA 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for NDA and NA 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "857b7683-55be-49dc-aa03-09b3254aa36f",
+      "old_slug": "vitbee",
+      "slug": "vitbee",
+      "name": "VIT Business School Entrance Exam",
+      "title": "VITBEE 2027: Dates, Eligibility and Pattern",
+      "full_name": "VITBEE 2027: Dates, Eligibility and Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "Not announced",
+      "category": "Management",
+      "level": "VIT Business School MBA entrance",
+      "mode": "Computer-based test followed by interview",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "VIT Business School publishes Class 10, Class 12 and bachelor's degree requirements, final-year rules, accepted CAT/XAT/MAT routes and document conditions for MBA admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by VIT Business School"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Verbal ability and reading comprehension",
+        "Data interpretation and logical reasoning",
+        "Quantitative aptitude",
+        "Business and general awareness"
+      ],
+      "description": "VITBEE 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "VITBEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://bschool.vit.ac.in/admissions/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://vit.ac.in/files/MBA/VITBEE-Syllabus.pdf\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>VIT Business School must confirm the 2027 CBT date, question count, duration, no-negative-marking rule, shortlist and personal interview schedule.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official next step and verify documents before choice filling, interview or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by VIT Business School</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>VITBEE 2027 at a glance</h2><p>VITBEE 2027 guide with official 2027 date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by VIT Business School</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>",
+      "page_summary": "VITBEE 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "VITBEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check VITBEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "VITBEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "VITBEE 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://bschool.vit.ac.in/admissions/",
+      "official_website": "https://bschool.vit.ac.in/admissions/",
+      "registration_url": "https://bschool.vit.ac.in/admissions/",
+      "data_source_urls": [
+        "https://bschool.vit.ac.in/admissions/",
+        "https://vit.ac.in/files/MBA/VITBEE-Syllabus.pdf"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_013",
+      "internal_links": [
+        "/exams",
+        "/exams/top-management-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://bschool.vit.ac.in/admissions/",
+        "official_notification": "https://vit.ac.in/files/MBA/VITBEE-Syllabus.pdf"
+      },
+      "faqs": [
+        {
+          "q": "When will VITBEE 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for VITBEE 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score, rank or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>VITBEE 2027 is an Indian VIT Business School MBA entrance route. The useful starting point is a clean match between your qualification, target programme and the latest official notice, so this guide separates confirmed information from items still pending.</p><h2>Who can apply</h2><p>VIT Business School publishes Class 10, Class 12 and bachelor's degree requirements, final-year rules, accepted CAT/XAT/MAT routes and document conditions for MBA admission.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by VIT Business School</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Verbal ability and reading comprehension</li><li>Data interpretation and logical reasoning</li><li>Quantitative aptitude</li><li>Business and general awareness</li></ul><h2>How the test or selection works</h2><p>VIT Business School must confirm the 2027 CBT date, question count, duration, no-negative-marking rule, shortlist and personal interview schedule.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next selection stage.</li></ol><p><a href=\"https://bschool.vit.ac.in/admissions/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://vit.ac.in/files/MBA/VITBEE-Syllabus.pdf\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>What happens after the score</h2><p>A score or shortlist is not an admission or appointment offer. Follow the authority's official counselling, interview, joining or document-verification instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will VITBEE 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for VITBEE 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score, rank or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, documents, category rules, interviews or the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>"
+    }
+  ]
+}
