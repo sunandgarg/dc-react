@@ -1,0 +1,1026 @@
+{
+  "batch": "exam-refresh-batch-020",
+  "checked_at": "2026-09-21T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Next ten unique canonical rows after batches 001-019; duplicate, demo, discontinued and superseded sessions excluded",
+  "policy": "Official sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notification link; existing slugs preserved; four visible FAQs per record; no production database write.",
+  "excluded_related_sessions": [
+    "dekho-sample-jee-main",
+    "jee-mains-2",
+    "aiims-pg",
+    "bitsat-exam",
+    "bitsat-exam-2",
+    "ceed",
+    "national-eligibility-cum-entrance-test-neet",
+    "ca-cpt",
+    "du-jat",
+    "kvpy",
+    "law-faculty-admission-test",
+    "madhya-pradesh-pre-polytechnic-test",
+    "mu-oet",
+    "national-talent-search-examination",
+    "pessat-btech-legacy"
+  ],
+  "updates": [
+    {
+      "id": "6c650bcb-4c57-4646-adb3-79a7f46e39b1",
+      "old_slug": "aprdc",
+      "slug": "aprdc",
+      "name": "Andhra Pradesh Road Development Corporation",
+      "title": "APRDC CET 2027: Eligibility, Dates & Pattern",
+      "full_name": "APRDC CET 2027: Eligibility, Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Andhra Pradesh Residential Degree College undergraduate entrance",
+      "mode": "State entrance test and counselling",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "APREIS publishes Intermediate, stream, local-area, category and document rules for the residential degree college route. The current prospectus controls the qualifying subjects and any marks or domicile conditions.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Andhra Pradesh Residential Educational Institutions Society"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Arts, commerce or science stream subjects as notified",
+        "Intermediate-level concepts for the selected group",
+        "Language and general instructions in the prospectus",
+        "Counselling, certificate verification and joining requirements"
+      ],
+      "description": "APRDC CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "APRDC CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://aprs.apcfss.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://aprs.apcfss.in/APRDC_CET_Prospectus_2026_27.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>APREIS must confirm the 2027 application window, stream-wise paper, duration, language, marking, merit list and counselling schedule. Do not carry an old APRDC calendar into the 2027 page.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Andhra Pradesh Residential Educational Institutions Society</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>APRDC CET 2027 at a glance</h2><p>APRDC CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Andhra Pradesh Residential Educational Institutions Society</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "APRDC CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "APRDC CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check APRDC CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "APRDC CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "APRDC CET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://aprs.apcfss.in/",
+      "official_website": "https://aprs.apcfss.in/",
+      "registration_url": "https://aprs.apcfss.in/",
+      "data_source_urls": [
+        "https://aprs.apcfss.in/",
+        "https://aprs.apcfss.in/APRDC_CET_Prospectus_2026_27.pdf"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://aprs.apcfss.in/",
+        "official_notification": "https://aprs.apcfss.in/APRDC_CET_Prospectus_2026_27.pdf"
+      },
+      "faqs": [
+        {
+          "q": "When will APRDC CET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for APRDC CET 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>APRDC CET 2027 is a 2027 planning guide for Andhra Pradesh Residential Degree College undergraduate entrance. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p><h2>Eligibility and who should check twice</h2><p>APREIS publishes Intermediate, stream, local-area, category and document rules for the residential degree college route. The current prospectus controls the qualifying subjects and any marks or domicile conditions.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Andhra Pradesh Residential Educational Institutions Society</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Arts, commerce or science stream subjects as notified</li><li>Intermediate-level concepts for the selected group</li><li>Language and general instructions in the prospectus</li><li>Counselling, certificate verification and joining requirements</li></ul><h2>How the test or selection works</h2><p>APREIS must confirm the 2027 application window, stream-wise paper, duration, language, marking, merit list and counselling schedule. Do not carry an old APRDC calendar into the 2027 page.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://aprs.apcfss.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://aprs.apcfss.in/APRDC_CET_Prospectus_2026_27.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will APRDC CET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for APRDC CET 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "4d2fa274-22b7-4d7c-87d0-f20e12383e22",
+      "old_slug": "irmasat",
+      "slug": "irmasat",
+      "name": "IRMA Social Awareness Test",
+      "title": "IRMASAT 2027: Eligibility, Dates & Selection",
+      "full_name": "IRMASAT 2027: Eligibility, Dates & Selection",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "IRMA rural management admission and selection route",
+      "mode": "Programme-specific score, assessment and interview route",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "IRMA publishes programme-wise graduation, marks, accepted entrance scores, category, work-experience and document requirements. Whether an IRMASAT assessment is used, and how it fits with the interview, is controlled by the current admission notice.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Institute of Rural Management Anand"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Issues in rural and social development",
+        "Business, economy and current affairs",
+        "Data interpretation, reasoning and communication",
+        "Written assessment, interview or other stages where notified"
+      ],
+      "description": "IRMASAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "IRMASAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://admissions.irma.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.irma.ac.in/admission/mba/prospectus\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>IRMA must confirm the 2027 assessment route, accepted scores, written test or IRMASAT use, interview stages, duration, marking and final-selection timeline. The latest admission notice overrides older summaries.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Institute of Rural Management Anand</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>IRMASAT 2027 at a glance</h2><p>IRMASAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Institute of Rural Management Anand</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>",
+      "page_summary": "IRMASAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "IRMASAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check IRMASAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "IRMASAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "IRMASAT 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://admissions.irma.ac.in/admission/mba/admission-notice",
+      "official_website": "https://admissions.irma.ac.in/admission/mba/admission-notice",
+      "registration_url": "https://admissions.irma.ac.in/",
+      "data_source_urls": [
+        "https://admissions.irma.ac.in/admission/mba/admission-notice",
+        "https://www.irma.ac.in/admission/mba/prospectus"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/exams/top-management-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://admissions.irma.ac.in/",
+        "official_notification": "https://www.irma.ac.in/admission/mba/prospectus"
+      },
+      "faqs": [
+        {
+          "q": "When will IRMASAT 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for IRMASAT 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>IRMASAT 2027 is a 2027 planning guide for IRMA rural management admission and selection route. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p><h2>Eligibility and who should check twice</h2><p>IRMA publishes programme-wise graduation, marks, accepted entrance scores, category, work-experience and document requirements. Whether an IRMASAT assessment is used, and how it fits with the interview, is controlled by the current admission notice.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Institute of Rural Management Anand</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Issues in rural and social development</li><li>Business, economy and current affairs</li><li>Data interpretation, reasoning and communication</li><li>Written assessment, interview or other stages where notified</li></ul><h2>How the test or selection works</h2><p>IRMA must confirm the 2027 assessment route, accepted scores, written test or IRMASAT use, interview stages, duration, marking and final-selection timeline. The latest admission notice overrides older summaries.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://admissions.irma.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.irma.ac.in/admission/mba/prospectus\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will IRMASAT 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for IRMASAT 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>"
+    },
+    {
+      "id": "12f57c34-6c3a-437d-9a08-7aa956d59308",
+      "old_slug": "itm-nest",
+      "slug": "itm-nest",
+      "name": "Institute of Technology and Management National Entrance and Scholarship Test",
+      "title": "ITM-NEST 2027: Eligibility, Dates & Pattern",
+      "full_name": "ITM-NEST 2027: Eligibility, Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "ITM University Gwalior programme admission test",
+      "mode": "University entrance test or programme selection route",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "ITM University publishes qualification, subject, marks, programme, interview and document requirements by course. ITM-NEST may be combined with qualifying marks or another accepted score, so confirm the selected programme's current notice.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by ITM University Gwalior"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Quantitative aptitude and basic mathematics where notified",
+        "English communication and comprehension",
+        "Reasoning and analytical thinking",
+        "Programme-specific interview, written test or portfolio stage"
+      ],
+      "description": "ITM-NEST 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "ITM-NEST 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.itmuniversity.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://resources.itmuniversity.ac.in/newweb/soe/brochure%20SOE%20Final.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>ITM University must confirm the 2027 ITM-NEST route, application window, paper or interview stages, duration, marking, result and fee deadlines. The older brochure is reference material, not a 2027 calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by ITM University Gwalior</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>ITM-NEST 2027 at a glance</h2><p>ITM-NEST 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by ITM University Gwalior</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>",
+      "page_summary": "ITM-NEST 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "ITM-NEST 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check ITM-NEST 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "ITM-NEST 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "ITM-NEST 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://www.itmuniversity.ac.in/",
+      "official_website": "https://www.itmuniversity.ac.in/",
+      "registration_url": "https://www.itmuniversity.ac.in/",
+      "data_source_urls": [
+        "https://www.itmuniversity.ac.in/",
+        "https://resources.itmuniversity.ac.in/newweb/soe/brochure%20SOE%20Final.pdf"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/exams/top-management-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.itmuniversity.ac.in/",
+        "official_notification": "https://resources.itmuniversity.ac.in/newweb/soe/brochure%20SOE%20Final.pdf"
+      },
+      "faqs": [
+        {
+          "q": "When will ITM-NEST 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for ITM-NEST 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Eligibility and who should check twice</h2><p>ITM University publishes qualification, subject, marks, programme, interview and document requirements by course. ITM-NEST may be combined with qualifying marks or another accepted score, so confirm the selected programme's current notice.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by ITM University Gwalior</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Quantitative aptitude and basic mathematics where notified</li><li>English communication and comprehension</li><li>Reasoning and analytical thinking</li><li>Programme-specific interview, written test or portfolio stage</li></ul><h2>How the test or selection works</h2><p>ITM University must confirm the 2027 ITM-NEST route, application window, paper or interview stages, duration, marking, result and fee deadlines. The older brochure is reference material, not a 2027 calendar.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.itmuniversity.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://resources.itmuniversity.ac.in/newweb/soe/brochure%20SOE%20Final.pdf\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will ITM-NEST 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for ITM-NEST 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul><p>ITM-NEST 2027 is a 2027 planning guide for ITM University Gwalior programme admission test. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p>"
+    },
+    {
+      "id": "7903831c-03a6-4a00-891a-0d7c058d9065",
+      "old_slug": "nrti-aat",
+      "slug": "nrti-aat",
+      "name": "National Rail and Transportation Institute",
+      "title": "GSV/NRTI Entrance Test 2027: Dates & Pattern",
+      "full_name": "GSV/NRTI Entrance Test 2027: Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Gati Shakti Vishwavidyalaya undergraduate and postgraduate entrance route",
+      "mode": "Computer-based university entrance test and selection",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "GSV publishes programme-specific Class 12 or graduation, subject, marks, category and document requirements. The university's current notice controls whether a separate entrance test is required for the selected route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Gati Shakti Vishwavidyalaya (formerly NRTI)"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "English or language comprehension",
+        "Reasoning and general intelligence",
+        "Quantitative and numerical ability",
+        "Data analysis, current affairs and programme-specific topics"
+      ],
+      "description": "GSV NRTI Entrance Test 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "GSV NRTI Entrance Test 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://gsv.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://gsv.ac.in/admission/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>GSV must confirm the 2027 application, programme-wise test, duration, question count, marking, admit card, result and counselling process. NRTI naming in older material should be read alongside the university's current GSV notice.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Gati Shakti Vishwavidyalaya (formerly NRTI)</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>GSV NRTI Entrance Test 2027 at a glance</h2><p>GSV NRTI Entrance Test 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Gati Shakti Vishwavidyalaya (formerly NRTI)</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "GSV NRTI Entrance Test 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "GSV NRTI Entrance Test 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check GSV NRTI Entrance Test 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "GSV NRTI Entrance Test 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "GSV NRTI Entrance Test 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://gsv.ac.in/entrance-test/",
+      "official_website": "https://gsv.ac.in/entrance-test/",
+      "registration_url": "https://gsv.ac.in/",
+      "data_source_urls": [
+        "https://gsv.ac.in/entrance-test/",
+        "https://gsv.ac.in/admission/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://gsv.ac.in/",
+        "official_notification": "https://gsv.ac.in/admission/"
+      },
+      "faqs": [
+        {
+          "q": "When will GSV NRTI Entrance Test 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for GSV NRTI Entrance Test 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Gati Shakti Vishwavidyalaya (formerly NRTI)</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>English or language comprehension</li><li>Reasoning and general intelligence</li><li>Quantitative and numerical ability</li><li>Data analysis, current affairs and programme-specific topics</li></ul><h2>How the test or selection works</h2><p>GSV must confirm the 2027 application, programme-wise test, duration, question count, marking, admit card, result and counselling process. NRTI naming in older material should be read alongside the university's current GSV notice.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://gsv.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://gsv.ac.in/admission/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will GSV NRTI Entrance Test 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for GSV NRTI Entrance Test 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul><p>GSV NRTI Entrance Test 2027 is a 2027 planning guide for Gati Shakti Vishwavidyalaya undergraduate and postgraduate entrance route. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p><h2>Eligibility and who should check twice</h2><p>GSV publishes programme-specific Class 12 or graduation, subject, marks, category and document requirements. The university's current notice controls whether a separate entrance test is required for the selected route.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p>"
+    },
+    {
+      "id": "425adf5b-fb6d-4215-8f00-16a313596f22",
+      "old_slug": "rupgcet",
+      "slug": "rupgcet",
+      "name": "Rayalaseema University Postgraduate Common Entrance Test",
+      "title": "RUPGCET 2027: Eligibility, Dates & Admission Route",
+      "full_name": "RUPGCET 2027: Eligibility, Dates & Admission Route",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Rayalaseema University postgraduate admission route",
+      "mode": "AP PGCET or university postgraduate admission and counselling",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "Rayalaseema University and Andhra Pradesh's common entrance authority publish course-wise graduation, subject, marks, category and document rules. The current notice decides whether the course uses AP PGCET, a university route or merit.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Rayalaseema University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Subject-specific postgraduate syllabus",
+        "Language, reasoning or general awareness where notified",
+        "Course-wise paper and candidate instructions",
+        "Counselling, seat matrix and document verification"
+      ],
+      "description": "RUPGCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "RUPGCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.rayalaseemauniversity.ac.in/index.php\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cets.apsche.ap.gov.in/APSCHEHome.aspx\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The university or AP state entrance authority must confirm the 2027 route, paper, duration, marking, application window, result and counselling. The legacy RUPGCET label must not be treated as proof of a separate active examination.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Rayalaseema University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>RUPGCET 2027 at a glance</h2><p>RUPGCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Rayalaseema University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "RUPGCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "RUPGCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check RUPGCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "RUPGCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "RUPGCET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.rayalaseemauniversity.ac.in/index.php",
+      "official_website": "https://www.rayalaseemauniversity.ac.in/index.php",
+      "registration_url": "https://www.rayalaseemauniversity.ac.in/index.php",
+      "data_source_urls": [
+        "https://www.rayalaseemauniversity.ac.in/index.php",
+        "https://cets.apsche.ap.gov.in/APSCHEHome.aspx"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.rayalaseemauniversity.ac.in/index.php",
+        "official_notification": "https://cets.apsche.ap.gov.in/APSCHEHome.aspx"
+      },
+      "faqs": [
+        {
+          "q": "When will RUPGCET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for RUPGCET 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>RUPGCET 2027 is a 2027 planning guide for Rayalaseema University postgraduate admission route. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p><h2>Eligibility and who should check twice</h2><p>Rayalaseema University and Andhra Pradesh's common entrance authority publish course-wise graduation, subject, marks, category and document rules. The current notice decides whether the course uses AP PGCET, a university route or merit.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Rayalaseema University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Subject-specific postgraduate syllabus</li><li>Language, reasoning or general awareness where notified</li><li>Course-wise paper and candidate instructions</li><li>Counselling, seat matrix and document verification</li></ul><h2>How the test or selection works</h2><p>The university or AP state entrance authority must confirm the 2027 route, paper, duration, marking, application window, result and counselling. The legacy RUPGCET label must not be treated as proof of a separate active examination.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.rayalaseemauniversity.ac.in/index.php\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cets.apsche.ap.gov.in/APSCHEHome.aspx\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will RUPGCET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for RUPGCET 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "06dfb296-b67c-486f-af2f-e38feb9ec7f4",
+      "old_slug": "rajasthan-jet",
+      "slug": "rajasthan-jet",
+      "name": "Rajasthan JET",
+      "title": "Rajasthan JET 2027: Eligibility, Dates & Pattern",
+      "full_name": "Rajasthan JET 2027: Eligibility, Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Rajasthan agriculture and allied sciences entrance",
+      "mode": "State agriculture entrance test and counselling",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "The JET coordinator publishes subject combinations, qualifying examination, Rajasthan candidature, category and document requirements for agriculture and allied programmes. Read the current booklet for undergraduate, Pre-PG or PhD routes separately.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Swami Keshwanand Rajasthan Agricultural University, Bikaner"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics and chemistry",
+        "Mathematics, biology or agriculture group as selected",
+        "Agriculture and allied-science concepts",
+        "Counselling, choice filling and certificate verification"
+      ],
+      "description": "Rajasthan JET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Rajasthan JET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://jetskrau2026.com/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://raubikaner.org/2026/06/12/jet-pre-pg-ph-d-2026-notification-coordinator-new-date-etc/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The coordinator must confirm the 2027 registration, group-wise question paper, duration, marking, centres, result and counselling schedule. The 2026 notification is a source for structure only, not a 2027 date.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Swami Keshwanand Rajasthan Agricultural University, Bikaner</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>Rajasthan JET 2027 at a glance</h2><p>Rajasthan JET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Swami Keshwanand Rajasthan Agricultural University, Bikaner</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "Rajasthan JET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Rajasthan JET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Rajasthan JET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Rajasthan JET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Rajasthan JET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://jetskrau2026.com/",
+      "official_website": "https://jetskrau2026.com/",
+      "registration_url": "https://jetskrau2026.com/",
+      "data_source_urls": [
+        "https://jetskrau2026.com/",
+        "https://raubikaner.org/2026/06/12/jet-pre-pg-ph-d-2026-notification-coordinator-new-date-etc/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://jetskrau2026.com/",
+        "official_notification": "https://raubikaner.org/2026/06/12/jet-pre-pg-ph-d-2026-notification-coordinator-new-date-etc/"
+      },
+      "faqs": [
+        {
+          "q": "When will Rajasthan JET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for Rajasthan JET 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Eligibility and who should check twice</h2><p>The JET coordinator publishes subject combinations, qualifying examination, Rajasthan candidature, category and document requirements for agriculture and allied programmes. Read the current booklet for undergraduate, Pre-PG or PhD routes separately.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Swami Keshwanand Rajasthan Agricultural University, Bikaner</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Physics and chemistry</li><li>Mathematics, biology or agriculture group as selected</li><li>Agriculture and allied-science concepts</li><li>Counselling, choice filling and certificate verification</li></ul><h2>How the test or selection works</h2><p>The coordinator must confirm the 2027 registration, group-wise question paper, duration, marking, centres, result and counselling schedule. The 2026 notification is a source for structure only, not a 2027 date.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://jetskrau2026.com/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://raubikaner.org/2026/06/12/jet-pre-pg-ph-d-2026-notification-coordinator-new-date-etc/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will Rajasthan JET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for Rajasthan JET 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul><p>Rajasthan JET 2027 is a 2027 planning guide for Rajasthan agriculture and allied sciences entrance. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p>"
+    },
+    {
+      "id": "37c29657-9b65-43ea-9294-0c0ca4639ac6",
+      "old_slug": "banda-university-of-agriculture-and-technology",
+      "slug": "banda-university-of-agriculture-and-technology",
+      "name": "Banda University of Agriculture and Technology",
+      "title": "UPCATET 2027: Eligibility, Dates & Pattern",
+      "full_name": "UPCATET 2027: Eligibility, Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Uttar Pradesh agriculture and technology university entrance",
+      "mode": "State agriculture entrance test and counselling",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "The UPCATET authority publishes programme-wise Class 12, graduation, subject, domicile, age, category and document requirements for the participating Uttar Pradesh agriculture universities.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Banda University of Agriculture and Technology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and biology or mathematics by group",
+        "Agriculture and allied subjects",
+        "Veterinary, fisheries, food or technology topics where notified",
+        "Counselling, choice filling and certificate verification"
+      ],
+      "description": "UPCATET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "UPCATET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.upcatetexam.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.upcatetexam.org/news-notification.html\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The authority must confirm the 2027 application, group-wise paper, duration, marking, answer-key challenge, result and counselling schedule. The current official portal is the source of truth when the new cycle opens.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Banda University of Agriculture and Technology</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>UPCATET 2027 at a glance</h2><p>UPCATET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Banda University of Agriculture and Technology</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "UPCATET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "UPCATET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check UPCATET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "UPCATET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "UPCATET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.upcatetexam.org/",
+      "official_website": "https://www.upcatetexam.org/",
+      "registration_url": "https://www.upcatetexam.org/",
+      "data_source_urls": [
+        "https://www.upcatetexam.org/",
+        "https://www.upcatetexam.org/news-notification.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.upcatetexam.org/",
+        "official_notification": "https://www.upcatetexam.org/news-notification.html"
+      },
+      "faqs": [
+        {
+          "q": "When will UPCATET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for UPCATET 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>UPCATET 2027 is a 2027 planning guide for Uttar Pradesh agriculture and technology university entrance. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p><h2>Eligibility and who should check twice</h2><p>The UPCATET authority publishes programme-wise Class 12, graduation, subject, domicile, age, category and document requirements for the participating Uttar Pradesh agriculture universities.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Banda University of Agriculture and Technology</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Physics, chemistry and biology or mathematics by group</li><li>Agriculture and allied subjects</li><li>Veterinary, fisheries, food or technology topics where notified</li><li>Counselling, choice filling and certificate verification</li></ul><h2>How the test or selection works</h2><p>The authority must confirm the 2027 application, group-wise paper, duration, marking, answer-key challenge, result and counselling schedule. The current official portal is the source of truth when the new cycle opens.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.upcatetexam.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.upcatetexam.org/news-notification.html\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will UPCATET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for UPCATET 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "a4cca4d1-7e9a-4bab-8262-16ff06a8c3c3",
+      "old_slug": "buat",
+      "slug": "buat",
+      "name": "Banasthali University Aptitude Test",
+      "title": "BUAT 2027: Banasthali Aptitude Test Dates & Pattern",
+      "full_name": "BUAT 2027: Banasthali Aptitude Test Dates & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Banasthali Vidyapith programme aptitude and admission test",
+      "mode": "Online aptitude test or merit-based programme selection",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "Banasthali Vidyapith publishes course-specific qualification, marks, women-only admission, hostel and document requirements. Some programmes use merit, while others use an aptitude test or practical assessment.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Banasthali Vidyapith"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific mathematics, science or language topics",
+        "Reasoning and aptitude where notified",
+        "Portfolio or practical assessment for selected creative routes",
+        "Interview, document and joining requirements"
+      ],
+      "description": "BUAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "BUAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.banasthali.org/banasthali/admissions/onlineform.php\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.banasthali.org/banasthali/admissions/imp.html\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Banasthali must confirm the 2027 course-wise aptitude dates, online mode, duration, syllabus, marking, merit calculation and offer process. A previous course date cannot be presented as a 2027 schedule.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Banasthali Vidyapith</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>BUAT 2027 at a glance</h2><p>BUAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Banasthali Vidyapith</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "BUAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "BUAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check BUAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "BUAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "BUAT 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.banasthali.org/banasthali/wcms/hi/home/admissions/index.html",
+      "official_website": "https://www.banasthali.org/banasthali/wcms/hi/home/admissions/index.html",
+      "registration_url": "https://www.banasthali.org/banasthali/admissions/onlineform.php",
+      "data_source_urls": [
+        "https://www.banasthali.org/banasthali/wcms/hi/home/admissions/index.html",
+        "https://www.banasthali.org/banasthali/admissions/imp.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.banasthali.org/banasthali/admissions/onlineform.php",
+        "official_notification": "https://www.banasthali.org/banasthali/admissions/imp.html"
+      },
+      "faqs": [
+        {
+          "q": "When will BUAT 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for BUAT 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Banasthali Vidyapith</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Programme-specific mathematics, science or language topics</li><li>Reasoning and aptitude where notified</li><li>Portfolio or practical assessment for selected creative routes</li><li>Interview, document and joining requirements</li></ul><h2>How the test or selection works</h2><p>Banasthali must confirm the 2027 course-wise aptitude dates, online mode, duration, syllabus, marking, merit calculation and offer process. A previous course date cannot be presented as a 2027 schedule.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.banasthali.org/banasthali/admissions/onlineform.php\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.banasthali.org/banasthali/admissions/imp.html\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will BUAT 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for BUAT 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul><p>BUAT 2027 is a 2027 planning guide for Banasthali Vidyapith programme aptitude and admission test. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p><h2>Eligibility and who should check twice</h2><p>Banasthali Vidyapith publishes course-specific qualification, marks, women-only admission, hostel and document requirements. Some programmes use merit, while others use an aptitude test or practical assessment.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p>"
+    },
+    {
+      "id": "bf7a3fde-f016-4f69-9600-4a48395c160d",
+      "old_slug": "cg-pb-b-sc-exam",
+      "slug": "cg-pb-b-sc-exam",
+      "name": "Chhattisgarh Professional Examination Board Exam",
+      "title": "CG B.Sc Nursing 2027: Dates, Eligibility & Pattern",
+      "full_name": "CG B.Sc Nursing 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Chhattisgarh B.Sc Nursing state entrance",
+      "mode": "CG Vyapam entrance examination and counselling",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "CG Vyapam and the Chhattisgarh medical education authority publish Class 12 science, nursing, domicile, category and document requirements. The active 2027 rulebook controls subject combinations and counselling eligibility.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Chhattisgarh Professional Examination Board (CG Vyapam)"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Biology",
+        "English, health awareness and any topics listed in the official syllabus"
+      ],
+      "description": "CG B.Sc Nursing 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "CG B.Sc Nursing 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://vyapamcg.cgstate.gov.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cgdme.cgstate.gov.in/BSC.php\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>CG Vyapam must confirm the 2027 application, computer or centre-based mode, duration, question count, marking, admit card, result and nursing counselling schedule.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Chhattisgarh Professional Examination Board (CG Vyapam)</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>CG B.Sc Nursing 2027 at a glance</h2><p>CG B.Sc Nursing 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Chhattisgarh Professional Examination Board (CG Vyapam)</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "CG B.Sc Nursing 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "CG B.Sc Nursing 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check CG B.Sc Nursing 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "CG B.Sc Nursing 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CG B.Sc Nursing 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://vyapamcg.cgstate.gov.in/",
+      "official_website": "https://vyapamcg.cgstate.gov.in/",
+      "registration_url": "https://vyapamcg.cgstate.gov.in/",
+      "data_source_urls": [
+        "https://vyapamcg.cgstate.gov.in/",
+        "https://cgdme.cgstate.gov.in/BSC.php"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://vyapamcg.cgstate.gov.in/",
+        "official_notification": "https://cgdme.cgstate.gov.in/BSC.php"
+      },
+      "faqs": [
+        {
+          "q": "When will CG B.Sc Nursing 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for CG B.Sc Nursing 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Chhattisgarh Professional Examination Board (CG Vyapam)</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Physics</li><li>Chemistry</li><li>Biology</li><li>English, health awareness and any topics listed in the official syllabus</li></ul><h2>How the test or selection works</h2><p>CG Vyapam must confirm the 2027 application, computer or centre-based mode, duration, question count, marking, admit card, result and nursing counselling schedule.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://vyapamcg.cgstate.gov.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cgdme.cgstate.gov.in/BSC.php\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will CG B.Sc Nursing 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for CG B.Sc Nursing 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul><p>CG B.Sc Nursing 2027 is a 2027 planning guide for Chhattisgarh B.Sc Nursing state entrance. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p><h2>Eligibility and who should check twice</h2><p>CG Vyapam and the Chhattisgarh medical education authority publish Class 12 science, nursing, domicile, category and document requirements. The active 2027 rulebook controls subject combinations and counselling eligibility.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p>"
+    },
+    {
+      "id": "a5687b17-4407-4c25-a75c-58e0341a3020",
+      "old_slug": "dr-b-r-ambedkar-open-university",
+      "slug": "dr-b-r-ambedkar-open-university",
+      "name": "Dr. B.R.Ambedkar Open University",
+      "title": "BRAOU Admissions 2027: Eligibility & Application",
+      "full_name": "BRAOU Admissions 2027: Eligibility & Application",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Dr. B. R. Ambedkar Open University programme admission route",
+      "mode": "Open-university admission and programme-specific selection",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "BRAOU publishes programme-wise Class 12, graduation, subject, age, category, UGC-DEB and document conditions. Most open-learning routes use admission and document verification rather than one common entrance examination.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Dr. B. R. Ambedkar Open University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or selection",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling or next stage",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific qualification and subject requirements",
+        "Prospectus, assignment and learner-support instructions",
+        "Entrance or interview topics where a programme requires them",
+        "Registration, fee payment and study-centre rules"
+      ],
+      "description": "BRAOU Admissions 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "BRAOU Admissions 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.braouonline.in/MISC/UGPGProspectus.aspx\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://braou.ac.in/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>BRAOU must confirm the 2027 programme notifications, entrance-test routes where applicable, application windows, prospectus, fee payment, document verification and learner-support schedule. This record is an admission route, not proof of a single university-wide exam.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>Follow the authority's official counselling, interview, joining or document-verification instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or selection update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Dr. B. R. Ambedkar Open University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>BRAOU Admissions 2027 at a glance</h2><p>BRAOU Admissions 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Dr. B. R. Ambedkar Open University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "BRAOU Admissions 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "BRAOU Admissions 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check BRAOU Admissions 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "BRAOU Admissions 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "BRAOU Admissions 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.braouonline.in/MISC/UGPGProspectus.aspx",
+      "official_website": "https://www.braouonline.in/MISC/UGPGProspectus.aspx",
+      "registration_url": "https://www.braouonline.in/MISC/UGPGProspectus.aspx",
+      "data_source_urls": [
+        "https://www.braouonline.in/MISC/UGPGProspectus.aspx",
+        "https://braou.ac.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_020",
+      "internal_links": [
+        "/exams",
+        "/eligibility-checker",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.braouonline.in/MISC/UGPGProspectus.aspx",
+        "official_notification": "https://braou.ac.in/"
+      },
+      "faqs": [
+        {
+          "q": "When will BRAOU Admissions 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle."
+        },
+        {
+          "q": "Where should I apply for BRAOU Admissions 2027?",
+          "a": "Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or shortlist guarantee selection?",
+          "a": "No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision."
+        }
+      ],
+      "article_html": "<p>BRAOU Admissions 2027 is a 2027 planning guide for Dr. B. R. Ambedkar Open University programme admission route. Start by matching your qualification and target programme with the latest official notice; confirmed rules are kept separate from dates still pending.</p><h2>Eligibility and who should check twice</h2><p>BRAOU publishes programme-wise Class 12, graduation, subject, age, category, UGC-DEB and document conditions. Most open-learning routes use admission and document verification rather than one common entrance examination.</p><p>Keep marksheets, identity proof, category certificates and qualifying-exam details together. A small mismatch in a form can delay verification even when preparation is strong.</p><h2>Dates worth putting on your calendar</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Dr. B. R. Ambedkar Open University</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or selection</td><td>Not announced</td></tr><tr><td>Result / counselling or next stage</td><td>Not announced</td></tr></tbody></table><h2>What to study</h2><ul><li>Programme-specific qualification and subject requirements</li><li>Prospectus, assignment and learner-support instructions</li><li>Entrance or interview topics where a programme requires them</li><li>Registration, fee payment and study-centre rules</li></ul><h2>How the test or selection works</h2><p>BRAOU must confirm the 2027 programme notifications, entrance-test routes where applicable, application windows, prospectus, fee payment, document verification and learner-support schedule. This record is an admission route, not proof of a single university-wide exam.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides an older summary.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm that the 2027 cycle is live.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an email address and mobile number you can access through the cycle.</li><li>Enter academic, identity and category details exactly as supported by your documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling or the next stage.</li></ol><p><a href=\"https://www.braouonline.in/MISC/UGPGProspectus.aspx\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://braou.ac.in/\" rel=\"noopener noreferrer\">Read the official notice or handbook</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h2>How to prepare without wasting attempts</h2><ul><li>Turn the official syllabus into a weekly checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card, result and counselling dates separately from study targets.</li></ul><p>Roz thoda consistent practice usually beats a last-week sprint.</p><h2>What happens after the score or application</h2><p>A score, shortlist or submitted form is not an admission, appointment or joining offer. Follow the authority's official next step and verify documents before choice filling, interview or reporting.</p><h2>FAQs</h2><h3>When will BRAOU Admissions 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates stay pending instead of being guessed from an earlier cycle.</p><h3>Where should I apply for BRAOU Admissions 2027?</h3><p>Use the official application link on this page. Avoid agents, unofficial payment pages and social posts that promise a guaranteed seat.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use old papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or shortlist guarantee selection?</h3><p>No. Selection can also depend on merit, counselling, vacancies, document verification, interviews or the authority's final decision.</p><h2>Useful DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/eligibility-checker\">Eligibility checker</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
