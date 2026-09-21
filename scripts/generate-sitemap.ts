@@ -56,6 +56,13 @@ const SITEMAP_SEED_FETCH_BASE_URL = env.SITEMAP_SEED_FETCH_BASE_URL
   // build bot with a challenge page. This is also the origin used by the
   // Pages workflow's health check.
   : IS_CLOUDFLARE_PAGES_BUILD ? "https://aws-origin.dekhocampus.com" : "";
+// Pages builds do not have the MySQL API rows available. Recovering the
+// published seed would require walking every child XML file through the AWS
+// origin, which can block a deployment for many minutes when one chunk is
+// slow or unavailable. AWS publishes the complete sitemap separately, so a
+// static Pages build should remain fast and generate its own safe route set.
+const ALLOW_PAGES_SEED_RECOVERY = env.SITEMAP_ALLOW_SEED_RECOVERY === "1";
+const SHOULD_FETCH_SEED = !IS_CLOUDFLARE_PAGES_BUILD || ALLOW_PAGES_SEED_RECOVERY;
 const PAGE_SIZE = 1000;
 
 function boundedInteger(value: unknown, fallback: number, minimum: number, maximum: number) {
@@ -558,7 +565,10 @@ function writeSitemaps(entries: SitemapEntry[], articles: any[]) {
 
   const tags = [...new Set(articles.flatMap((article) => Array.isArray(article.tags) ? article.tags : []).map(tagSlug).filter(Boolean))];
   const liveEntityRowsVisible = Boolean(colleges.length || courses.length || exams.length || articles.length || premiumPrograms.length);
-  const seedEntries = liveEntityRowsVisible ? [] : await fetchSeedEntries();
+  const seedEntries = liveEntityRowsVisible || !SHOULD_FETCH_SEED ? [] : await fetchSeedEntries();
+  if (!liveEntityRowsVisible && IS_CLOUDFLARE_PAGES_BUILD && !ALLOW_PAGES_SEED_RECOVERY) {
+    console.warn("[sitemap] no live API rows during Cloudflare Pages build; skipping remote seed recovery to avoid a deployment timeout");
+  }
   if (!liveEntityRowsVisible) {
     console.warn("[sitemap] no live entity rows are visible. Configure SITEMAP_API_URL for the deployed Node/MySQL API so detail URLs can be generated.");
   }
