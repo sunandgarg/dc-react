@@ -1,0 +1,1019 @@
+{
+  "batch": "exam-refresh-batch-031",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten canonical rows after batches 001-030; duplicate, demo, discontinued and superseded rows excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; published VITREE January 2027 milestone retained; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "aiims-pg",
+    "upsee",
+    "jipmer-mbbs",
+    "lsat-india",
+    "wbjee-jelet",
+    "wbjee-jeca",
+    "jemscn",
+    "jepbn"
+  ],
+  "updates": [
+    {
+      "id": "137fb793-7f9d-4bd7-8cee-d2dc38283cd6",
+      "old_slug": "vitmee-mca",
+      "slug": "vitmee-mca",
+      "name": "VITMEE MCA",
+      "title": "VITMEE MCA 2027: Dates, Eligibility & Pattern",
+      "full_name": "VITMEE MCA 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Computer Applications",
+      "level": "VIT Master of Computer Applications admission",
+      "mode": "VITMEE computer-based test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "VIT publishes bachelor's degree, marks, mathematics or computing study and document conditions for MCA admission. Final-year students must meet the document deadline in the current bulletin.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Vellore Institute of Technology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Technical computer applications",
+        "English communication",
+        "Logical reasoning and problem solving",
+        "Rank, campus preference and counselling"
+      ],
+      "description": "VITMEE MCA 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "VITMEE MCA 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>VIT must confirm the 2027 form, paper, duration, marking, shortlist, campus preference and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Technical computer applications</li><li>English communication</li><li>Logical reasoning and problem solving</li><li>Rank, campus preference and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>VITMEE MCA 2027 at a glance</h2><p>VITMEE MCA 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "VITMEE MCA 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "VITMEE MCA 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check VITMEE MCA 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "VITMEE MCA 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "VITMEE MCA 2027",
+        "exam update",
+        "Computer Applications",
+        "2027"
+      ],
+      "website": "https://admissions.vit.ac.in/vitmee-mca-2026-applications/login",
+      "official_website": "https://admissions.vit.ac.in/vitmee-mca-2026-applications/login",
+      "registration_url": "https://admissions.vit.ac.in/vitmee-mca-2026-applications/login",
+      "data_source_urls": [
+        "https://admissions.vit.ac.in/vitmee-mca-2026-applications/login",
+        "https://vit.ac.in/files/MCA/MCA-VITMEE-Information-Brochure.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://admissions.vit.ac.in/vitmee-mca-2026-applications/login",
+        "official_notification": "https://vit.ac.in/files/MCA/MCA-VITMEE-Information-Brochure.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will VITMEE MCA 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice."
+        },
+        {
+          "question": "Where should I apply for VITMEE MCA 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>VITMEE MCA 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for VITMEE MCA 2027?</h2><p>VIT publishes bachelor's degree, marks, mathematics or computing study and document conditions for MCA admission. Final-year students must meet the document deadline in the current bulletin. The active 2027 notice will control the final answer.</p><ul><li>Technical computer applications</li><li>English communication</li></ul><h2>When are VITMEE MCA 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>VIT must confirm the 2027 form, paper, duration, marking, shortlist, campus preference and counselling calendar.</p><p><strong>Authority fact:</strong> VIT's MCA admissions page describes a two-hour computer-based paper with technical and English communication questions and no negative marking in the 2026 cycle.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Technical computer applications</li><li>English communication</li><li>Logical reasoning and problem solving</li><li>Rank, campus preference and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://admissions.vit.ac.in/vitmee-mca-2026-applications/login\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://vit.ac.in/files/MCA/MCA-VITMEE-Information-Brochure.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will VITMEE MCA 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><h3>Where should I apply for VITMEE MCA 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "44c75942-83ea-4d32-bfb1-6c9cf3eda1d8",
+      "old_slug": "vitmee-msc",
+      "slug": "vitmee-msc",
+      "name": "VITMEE M.Sc.",
+      "title": "VITMEE M.Sc. 2027: Dates, Eligibility & Pattern",
+      "full_name": "VITMEE M.Sc. 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Science",
+      "level": "VIT M.Sc. AI, machine learning and data science admission",
+      "mode": "VITMEE computer-based test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "VIT publishes qualifying degree, branch, marks, subject and document conditions for the M.Sc. programmes that use VITMEE.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Vellore Institute of Technology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Computer science or allied technical subjects",
+        "Mathematics and data concepts",
+        "English communication",
+        "Rank, campus preference and counselling"
+      ],
+      "description": "VITMEE M.Sc. 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "VITMEE M.Sc. 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>VIT must confirm the 2027 application, paper, duration, marking, shortlist and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Computer science or allied technical subjects</li><li>Mathematics and data concepts</li><li>English communication</li><li>Rank, campus preference and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>VITMEE M.Sc. 2027 at a glance</h2><p>VITMEE M.Sc. 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "VITMEE M.Sc. 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "VITMEE M.Sc. 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check VITMEE M.Sc. 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "VITMEE M.Sc. 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "VITMEE M.Sc. 2027",
+        "exam update",
+        "Science",
+        "2027"
+      ],
+      "website": "https://vit.ac.in/all-courses/pg/mscprogrammes",
+      "official_website": "https://vit.ac.in/all-courses/pg/mscprogrammes",
+      "registration_url": "https://vit.ac.in/all-courses/pg/mscprogrammes",
+      "data_source_urls": [
+        "https://vit.ac.in/all-courses/pg/mscprogrammes",
+        "https://uatcc.vit.ac.in/wp-content/uploads/2026/02/M.Sc_.Programme-With-Entrance-Information-Brochure.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://vit.ac.in/all-courses/pg/mscprogrammes",
+        "official_notification": "https://uatcc.vit.ac.in/wp-content/uploads/2026/02/M.Sc_.Programme-With-Entrance-Information-Brochure.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will VITMEE M.Sc. 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice."
+        },
+        {
+          "question": "Where should I apply for VITMEE M.Sc. 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>VITMEE M.Sc. 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for VITMEE M.Sc. 2027?</h2><p>VIT publishes qualifying degree, branch, marks, subject and document conditions for the M.Sc. programmes that use VITMEE. The active 2027 notice will control the final answer.</p><ul><li>Computer science or allied technical subjects</li><li>Mathematics and data concepts</li></ul><h2>When are VITMEE M.Sc. 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>VIT must confirm the 2027 application, paper, duration, marking, shortlist and counselling calendar.</p><p><strong>Authority fact:</strong> The official M.Sc. page says the two-year AI and Data Science programmes use VITMEE and describes a 100-question paper with technical and English sections for the 2026 cycle.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Computer science or allied technical subjects</li><li>Mathematics and data concepts</li><li>English communication</li><li>Rank, campus preference and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://vit.ac.in/all-courses/pg/mscprogrammes\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://uatcc.vit.ac.in/wp-content/uploads/2026/02/M.Sc_.Programme-With-Entrance-Information-Brochure.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will VITMEE M.Sc. 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><h3>Where should I apply for VITMEE M.Sc. 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "64dc9e92-fcb4-45ed-9f41-4a90c982d836",
+      "old_slug": "vitmee-mdes",
+      "slug": "vitmee-mdes",
+      "name": "VITMEE M.Des",
+      "title": "VITMEE M.Des. 2027: Dates, Eligibility & Pattern",
+      "full_name": "VITMEE M.Des. 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Design",
+      "level": "VIT Master of Design admission",
+      "mode": "VITMEE computer-based test or CEED route and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "VIT publishes recognised degree, marks, design or allied discipline and document conditions for M.Des. Candidates with an eligible CEED score may follow the alternate route stated by VIT.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Vellore Institute of Technology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Design aptitude",
+        "Product and visual design thinking",
+        "Portfolio and qualifying-degree documents",
+        "Shortlist, interview or counselling and fee payment"
+      ],
+      "description": "VITMEE M.Des. 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "VITMEE M.Des. 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>VIT must confirm the 2027 application, paper, duration, marking, CEED alternative, shortlist and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Design aptitude</li><li>Product and visual design thinking</li><li>Portfolio and qualifying-degree documents</li><li>Shortlist, interview or counselling and fee payment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>VITMEE M.Des. 2027 at a glance</h2><p>VITMEE M.Des. 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "VITMEE M.Des. 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "VITMEE M.Des. 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check VITMEE M.Des. 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "VITMEE M.Des. 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "VITMEE M.Des. 2027",
+        "exam update",
+        "Design",
+        "2027"
+      ],
+      "website": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/",
+      "official_website": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/",
+      "registration_url": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/",
+      "data_source_urls": [
+        "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/",
+        "https://vit.ac.in/all-courses/pg"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/",
+        "official_notification": "https://vit.ac.in/all-courses/pg"
+      },
+      "faqs": [
+        {
+          "question": "When will VITMEE M.Des. 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice."
+        },
+        {
+          "question": "Where should I apply for VITMEE M.Des. 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>VITMEE M.Des. 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for VITMEE M.Des. 2027?</h2><p>VIT publishes recognised degree, marks, design or allied discipline and document conditions for M.Des. Candidates with an eligible CEED score may follow the alternate route stated by VIT. The active 2027 notice will control the final answer.</p><ul><li>Design aptitude</li><li>Product and visual design thinking</li></ul><h2>When are VITMEE M.Des. 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Vellore Institute of Technology</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>VIT must confirm the 2027 application, paper, duration, marking, CEED alternative, shortlist and counselling calendar.</p><p><strong>Authority fact:</strong> VIT's M.Des. admissions page says applicants without an eligible CEED score must take VITMEE M.Des., followed by shortlisting and online counselling.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Design aptitude</li><li>Product and visual design thinking</li><li>Portfolio and qualifying-degree documents</li><li>Shortlist, interview or counselling and fee payment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://admissions.vit.ac.in/vitmee-m-des-2026-applications/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://vit.ac.in/all-courses/pg\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will VITMEE M.Des. 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vellore Institute of Technology posts the next notice.</p><h3>Where should I apply for VITMEE M.Des. 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "5d98e67c-fb67-4535-bb48-6ad25d2a437f",
+      "old_slug": "vitree",
+      "slug": "vitree",
+      "name": "VITREE",
+      "title": "VITREE 2027: Dates, Eligibility & Pattern",
+      "full_name": "VITREE 2027: Dates, Eligibility & Pattern",
+      "status": "Official 2027 session milestone published; check portal for remaining dates",
+      "exam_date": "06 December 2026 (Sunday), as listed on the official VIT portal",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Research",
+      "level": "VIT PhD, Direct PhD and Deep Tech admission",
+      "mode": "VIT research entrance test and interview",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "VIT publishes master's, bachelor's, discipline, marks, research area and document conditions for PhD, Direct PhD and Deep Tech routes.",
+      "important_dates": [
+        {
+          "event": "January 2027 session examination",
+          "date": "06 December 2026 (Sunday), as listed on the official VIT portal"
+        },
+        {
+          "event": "Application and interview",
+          "date": "See the official research admission portal"
+        },
+        {
+          "event": "Result or offer",
+          "date": "See the official research admission portal"
+        },
+        {
+          "event": "Joining",
+          "date": "See the official research admission portal"
+        }
+      ],
+      "syllabus": [
+        "Research methodology",
+        "Discipline-specific subject knowledge",
+        "Research proposal and interview preparation",
+        "Offer, supervisor allocation and joining documents"
+      ],
+      "description": "VITREE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "VITREE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The official VIT portal has listed 06 December 2026 for the January 2027 session. Check the live notice for application, interview, result and joining milestones.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Research methodology</li><li>Discipline-specific subject knowledge</li><li>Research proposal and interview preparation</li><li>Offer, supervisor allocation and joining documents</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official Vellore Institute of Technology page has published the key session milestone shown below. Check the live portal for any later correction, application deadline or result notice.</p><ul><li><strong>January 2027 session examination:</strong> 06 December 2026 (Sunday), as listed on the official VIT portal</li><li><strong>Application and interview:</strong> See the official research admission portal</li><li><strong>Result or offer:</strong> See the official research admission portal</li><li><strong>Joining:</strong> See the official research admission portal</li></ul>",
+      "summary_content": "<h2>VITREE 2027 at a glance</h2><p>VITREE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official Vellore Institute of Technology page has published the key session milestone shown below. Check the live portal for any later correction, application deadline or result notice.</p><ul><li><strong>January 2027 session examination:</strong> 06 December 2026 (Sunday), as listed on the official VIT portal</li><li><strong>Application and interview:</strong> See the official research admission portal</li><li><strong>Result or offer:</strong> See the official research admission portal</li><li><strong>Joining:</strong> See the official research admission portal</li></ul>",
+      "page_summary": "VITREE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "VITREE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check VITREE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "VITREE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "VITREE 2027",
+        "exam update",
+        "Research",
+        "2027"
+      ],
+      "website": "https://vit.ac.in/admissions/research",
+      "official_website": "https://vit.ac.in/admissions/research",
+      "registration_url": "https://admissions.vit.ac.in/phdapplication/login",
+      "data_source_urls": [
+        "https://vit.ac.in/admissions/research",
+        "https://vit.ac.in/files/prospectus/VITREE_Information_Brochure.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://admissions.vit.ac.in/phdapplication/login",
+        "official_notification": "https://vit.ac.in/files/prospectus/VITREE_Information_Brochure.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will VITREE 2027 dates be released?",
+          "answer": "The official Vellore Institute of Technology page has published the key session milestone shown below. Check the live portal for any later correction, application deadline or result notice."
+        },
+        {
+          "question": "Where should I apply for VITREE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>VITREE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for VITREE 2027?</h2><p>VIT publishes master's, bachelor's, discipline, marks, research area and document conditions for PhD, Direct PhD and Deep Tech routes. The active 2027 notice will control the final answer.</p><ul><li>Research methodology</li><li>Discipline-specific subject knowledge</li></ul><h2>When are VITREE 2027 dates?</h2><p>The official Vellore Institute of Technology page has published the key session milestone shown below. Check the live portal for any later correction, application deadline or result notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>January 2027 session examination:</strong> 06 December 2026 (Sunday), as listed on the official VIT portal</li><li><strong>Application and interview:</strong> See the official research admission portal</li><li><strong>Result or offer:</strong> See the official research admission portal</li><li><strong>Joining:</strong> See the official research admission portal</li></ul><h2>What is the current route?</h2><p>The official VIT portal has listed 06 December 2026 for the January 2027 session. Check the live notice for application, interview, result and joining milestones.</p><p><strong>Authority fact:</strong> VIT's official research page lists VITREE January 2027 and the official application portal; the portal controls the live application and interview instructions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Research methodology</li><li>Discipline-specific subject knowledge</li><li>Research proposal and interview preparation</li><li>Offer, supervisor allocation and joining documents</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://admissions.vit.ac.in/phdapplication/login\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://vit.ac.in/files/prospectus/VITREE_Information_Brochure.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will VITREE 2027 dates be released?</h3><p>The official Vellore Institute of Technology page has published the key session milestone shown below. Check the live portal for any later correction, application deadline or result notice.</p><h3>Where should I apply for VITREE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "cbdd5037-a2c3-417f-951b-d65d65d16bea",
+      "old_slug": "amueee",
+      "slug": "amueee",
+      "name": "AMUEEE",
+      "title": "AMUEEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "AMUEEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "Aligarh Muslim University B.Tech admission",
+      "mode": "AMU admission test or notified engineering admission route",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "AMU publishes Class 12 subjects, marks, nationality, category, JEE or university-test route and document conditions for engineering admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Aligarh Muslim University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and mathematics where notified",
+        "Engineering aptitude",
+        "AMU admission-test instructions",
+        "Rank, counselling and document verification"
+      ],
+      "description": "AMUEEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AMUEEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>AMU must confirm the 2027 route, application, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics, chemistry and mathematics where notified</li><li>Engineering aptitude</li><li>AMU admission-test instructions</li><li>Rank, counselling and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Aligarh Muslim University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Aligarh Muslim University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AMUEEE 2027 at a glance</h2><p>AMUEEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Aligarh Muslim University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Aligarh Muslim University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AMUEEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AMUEEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AMUEEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AMUEEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AMUEEE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://www.amucontrollerexams.com/",
+      "official_website": "https://www.amucontrollerexams.com/",
+      "registration_url": "https://oaps.amuonline.ac.in/login",
+      "data_source_urls": [
+        "https://www.amucontrollerexams.com/",
+        "https://amucontrollerexams.com/page/view/general-admission-1550578415"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://oaps.amuonline.ac.in/login",
+        "official_notification": "https://amucontrollerexams.com/page/view/general-admission-1550578415"
+      },
+      "faqs": [
+        {
+          "question": "When will AMUEEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Aligarh Muslim University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AMUEEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AMUEEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AMUEEE 2027?</h2><p>AMU publishes Class 12 subjects, marks, nationality, category, JEE or university-test route and document conditions for engineering admission. The active 2027 notice will control the final answer.</p><ul><li>Physics, chemistry and mathematics where notified</li><li>Engineering aptitude</li></ul><h2>When are AMUEEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Aligarh Muslim University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Aligarh Muslim University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>AMU must confirm the 2027 route, application, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official AMU Controller of Exams site publishes application guides, admission-test syllabi, answer keys, results and counselling notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics, chemistry and mathematics where notified</li><li>Engineering aptitude</li><li>AMU admission-test instructions</li><li>Rank, counselling and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://oaps.amuonline.ac.in/login\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://amucontrollerexams.com/page/view/general-admission-1550578415\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AMUEEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Aligarh Muslim University posts the next notice.</p><h3>Where should I apply for AMUEEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "c0de576e-feb3-4b13-83f3-dff5d10ba3a1",
+      "old_slug": "reva-cet",
+      "slug": "reva-cet",
+      "name": "REVA CET",
+      "title": "REVA CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "REVA CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "REVA University programme admission and selection",
+      "mode": "REVA entrance or programme-specific selection process",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "REVA publishes programme-specific Class 12 or degree, subject, marks, entrance and document conditions. Some programmes may use REVA RISE, national exams or merit selection.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by REVA University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific aptitude or subject preparation",
+        "English and reasoning where notified",
+        "Personal interview or selection task where required",
+        "Offer letter, fee payment and document checks"
+      ],
+      "description": "REVA CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "REVA CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>REVA must confirm the 2027 programme list, test route, timing, marking, result and admission calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Programme-specific aptitude or subject preparation</li><li>English and reasoning where notified</li><li>Personal interview or selection task where required</li><li>Offer letter, fee payment and document checks</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until REVA University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by REVA University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>REVA CET 2027 at a glance</h2><p>REVA CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until REVA University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by REVA University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "REVA CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "REVA CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check REVA CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "REVA CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "REVA CET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.reva.edu.in/new-admissions/",
+      "official_website": "https://www.reva.edu.in/new-admissions/",
+      "registration_url": "https://www.reva.edu.in/new-admissions/",
+      "data_source_urls": [
+        "https://www.reva.edu.in/new-admissions/",
+        "https://www.reva.edu.in/how-to-apply"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.reva.edu.in/new-admissions/",
+        "official_notification": "https://www.reva.edu.in/how-to-apply"
+      },
+      "faqs": [
+        {
+          "question": "When will REVA CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until REVA University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for REVA CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>REVA CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for REVA CET 2027?</h2><p>REVA publishes programme-specific Class 12 or degree, subject, marks, entrance and document conditions. Some programmes may use REVA RISE, national exams or merit selection. The active 2027 notice will control the final answer.</p><ul><li>Programme-specific aptitude or subject preparation</li><li>English and reasoning where notified</li></ul><h2>When are REVA CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until REVA University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by REVA University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>REVA must confirm the 2027 programme list, test route, timing, marking, result and admission calendar.</p><p><strong>Authority fact:</strong> REVA's official how-to-apply page lists eligibility review, online application and programme-specific entrance or selection steps.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Programme-specific aptitude or subject preparation</li><li>English and reasoning where notified</li><li>Personal interview or selection task where required</li><li>Offer letter, fee payment and document checks</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.reva.edu.in/new-admissions/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.reva.edu.in/how-to-apply\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will REVA CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until REVA University posts the next notice.</p><h3>Where should I apply for REVA CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "e523cccf-00dc-411d-ba60-4b541a7e506e",
+      "old_slug": "dsat",
+      "slug": "dsat",
+      "name": "DSAT",
+      "title": "DSAT 2027: Dates, Eligibility & Pattern",
+      "full_name": "DSAT 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Dayananda Sagar University admission and scholarship test",
+      "mode": "DSU DSAT and programme counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "DSU publishes programme-wise Class 12 or degree, subject, marks and document conditions for DSAT and other accepted routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Dayananda Sagar University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics, chemistry and mathematics for engineering routes",
+        "English, aptitude or subject tests where notified",
+        "Scholarship criteria",
+        "Offer, fee payment and verification"
+      ],
+      "description": "DSAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "DSAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>DSU must confirm the 2027 DSAT form, test mode, duration, marking, scholarship rules and admission calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics, chemistry and mathematics for engineering routes</li><li>English, aptitude or subject tests where notified</li><li>Scholarship criteria</li><li>Offer, fee payment and verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dayananda Sagar University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Dayananda Sagar University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>DSAT 2027 at a glance</h2><p>DSAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dayananda Sagar University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Dayananda Sagar University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "DSAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "DSAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check DSAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "DSAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "DSAT 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.dsu.edu.in/admission",
+      "official_website": "https://www.dsu.edu.in/admission",
+      "registration_url": "https://www.dsu.edu.in/admission",
+      "data_source_urls": [
+        "https://www.dsu.edu.in/admission",
+        "https://www.dsu.edu.in/c3/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.dsu.edu.in/admission",
+        "official_notification": "https://www.dsu.edu.in/c3/"
+      },
+      "faqs": [
+        {
+          "question": "When will DSAT 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dayananda Sagar University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for DSAT 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>DSAT 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for DSAT 2027?</h2><p>DSU publishes programme-wise Class 12 or degree, subject, marks and document conditions for DSAT and other accepted routes. The active 2027 notice will control the final answer.</p><ul><li>Physics, chemistry and mathematics for engineering routes</li><li>English, aptitude or subject tests where notified</li></ul><h2>When are DSAT 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dayananda Sagar University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Dayananda Sagar University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>DSU must confirm the 2027 DSAT form, test mode, duration, marking, scholarship rules and admission calendar.</p><p><strong>Authority fact:</strong> The official DSU admissions page lists DSAT alongside recognised national and state routes and links applicants to programme eligibility and fee information.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics, chemistry and mathematics for engineering routes</li><li>English, aptitude or subject tests where notified</li><li>Scholarship criteria</li><li>Offer, fee payment and verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.dsu.edu.in/admission\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.dsu.edu.in/c3/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will DSAT 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Dayananda Sagar University posts the next notice.</p><h3>Where should I apply for DSAT 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "7cc224bf-a304-4bf7-a9c2-02f45fde819f",
+      "old_slug": "bvp-cet",
+      "slug": "bvp-cet",
+      "name": "BVP CET",
+      "title": "BVP CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "BVP CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Bharati Vidyapeeth Deemed University programme admission",
+      "mode": "Bharati Vidyapeeth Common Entrance Test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "Bharati Vidyapeeth publishes programme-specific Class 12 or degree, subject, marks, category and document conditions for each CET route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Bharati Vidyapeeth Deemed University"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific physics, chemistry and mathematics",
+        "Biology or aptitude where notified",
+        "CET instructions and time management",
+        "Result, counselling and document verification"
+      ],
+      "description": "BVP CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "BVP CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Bharati Vidyapeeth must confirm the 2027 programme-wise forms, paper, duration, marking, results and counselling schedule.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Programme-specific physics, chemistry and mathematics</li><li>Biology or aptitude where notified</li><li>CET instructions and time management</li><li>Result, counselling and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bharati Vidyapeeth Deemed University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Bharati Vidyapeeth Deemed University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>BVP CET 2027 at a glance</h2><p>BVP CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bharati Vidyapeeth Deemed University posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Bharati Vidyapeeth Deemed University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "BVP CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "BVP CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check BVP CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "BVP CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "BVP CET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://bvducet.bharatividyapeeth.edu/",
+      "official_website": "https://bvducet.bharatividyapeeth.edu/",
+      "registration_url": "https://bvducet.bharatividyapeeth.edu/",
+      "data_source_urls": [
+        "https://bvducet.bharatividyapeeth.edu/",
+        "https://bvducet.bharatividyapeeth.edu/z_m_examdetails_list.php?orderby=dlevel"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://bvducet.bharatividyapeeth.edu/",
+        "official_notification": "https://bvducet.bharatividyapeeth.edu/z_m_examdetails_list.php?orderby=dlevel"
+      },
+      "faqs": [
+        {
+          "question": "When will BVP CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bharati Vidyapeeth Deemed University posts the next notice."
+        },
+        {
+          "question": "Where should I apply for BVP CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>BVP CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for BVP CET 2027?</h2><p>Bharati Vidyapeeth publishes programme-specific Class 12 or degree, subject, marks, category and document conditions for each CET route. The active 2027 notice will control the final answer.</p><ul><li>Programme-specific physics, chemistry and mathematics</li><li>Biology or aptitude where notified</li></ul><h2>When are BVP CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bharati Vidyapeeth Deemed University posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Bharati Vidyapeeth Deemed University</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Bharati Vidyapeeth must confirm the 2027 programme-wise forms, paper, duration, marking, results and counselling schedule.</p><p><strong>Authority fact:</strong> The official CET platform lists programme-wise entrance tests, schedules, admit-card links, results, counselling updates and syllabi.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Programme-specific physics, chemistry and mathematics</li><li>Biology or aptitude where notified</li><li>CET instructions and time management</li><li>Result, counselling and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://bvducet.bharatividyapeeth.edu/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://bvducet.bharatividyapeeth.edu/z_m_examdetails_list.php?orderby=dlevel\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will BVP CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bharati Vidyapeeth Deemed University posts the next notice.</p><h3>Where should I apply for BVP CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "8adde06b-f078-48ca-a82b-0b305b4e3669",
+      "old_slug": "cg-pet",
+      "slug": "cg-pet",
+      "name": "CG PET",
+      "title": "CG PET 2027: Dates, Eligibility & Pattern",
+      "full_name": "CG PET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "Chhattisgarh B.E. and B.Tech admission",
+      "mode": "CG Vyapam state entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "CG Vyapam publishes Class 12 subjects, marks, domicile, category and document conditions for B.E., B.Tech and notified agriculture, food or dairy technology routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Chhattisgarh Professional Examination Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics",
+        "Answer key, rank and state counselling"
+      ],
+      "description": "CG PET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "CG PET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>CG Vyapam must confirm the 2027 form, paper, duration, marking, admit card, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Mathematics</li><li>Answer key, rank and state counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Chhattisgarh Professional Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>CG PET 2027 at a glance</h2><p>CG PET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Chhattisgarh Professional Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "CG PET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "CG PET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check CG PET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "CG PET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CG PET 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://vyapamcg.cgstate.gov.in/",
+      "official_website": "https://vyapamcg.cgstate.gov.in/",
+      "registration_url": "https://vyapamcg.cgstate.gov.in/",
+      "data_source_urls": [
+        "https://vyapamcg.cgstate.gov.in/",
+        "https://vyapamprofile.cgstate.gov.in/Online/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://vyapamcg.cgstate.gov.in/",
+        "official_notification": "https://vyapamprofile.cgstate.gov.in/Online/"
+      },
+      "faqs": [
+        {
+          "question": "When will CG PET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for CG PET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>CG PET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for CG PET 2027?</h2><p>CG Vyapam publishes Class 12 subjects, marks, domicile, category and document conditions for B.E., B.Tech and notified agriculture, food or dairy technology routes. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are CG PET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Chhattisgarh Professional Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>CG Vyapam must confirm the 2027 form, paper, duration, marking, admit card, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official CG Vyapam portal is the source for PET applications, departmental rules, syllabus, admit cards, answer keys and results.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Mathematics</li><li>Answer key, rank and state counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://vyapamcg.cgstate.gov.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://vyapamprofile.cgstate.gov.in/Online/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will CG PET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice.</p><h3>Where should I apply for CG PET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "eaa6723b-845e-471a-a932-14f1424f0daa",
+      "old_slug": "cg-ppht",
+      "slug": "cg-ppht",
+      "name": "CG PPHT",
+      "title": "CG PPHT 2027: Dates, Eligibility & Pattern",
+      "full_name": "CG PPHT 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Pharmacy",
+      "level": "Chhattisgarh B.Pharmacy and D.Pharmacy admission",
+      "mode": "CG Vyapam state entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "CG Vyapam publishes Class 12 science subjects, marks, domicile, category and document conditions for B.Pharmacy and D.Pharmacy admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Chhattisgarh Professional Examination Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics and chemistry",
+        "Mathematics or biology group as notified",
+        "Pharmacy aptitude and time management",
+        "Answer key, rank and counselling"
+      ],
+      "description": "CG PPHT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "CG PPHT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>CG Vyapam must confirm the 2027 form, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology group as notified</li><li>Pharmacy aptitude and time management</li><li>Answer key, rank and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Chhattisgarh Professional Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>CG PPHT 2027 at a glance</h2><p>CG PPHT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Chhattisgarh Professional Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "CG PPHT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "CG PPHT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check CG PPHT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "CG PPHT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CG PPHT 2027",
+        "exam update",
+        "Pharmacy",
+        "2027"
+      ],
+      "website": "https://vyapamcg.cgstate.gov.in/",
+      "official_website": "https://vyapamcg.cgstate.gov.in/",
+      "registration_url": "https://vyapamcg.cgstate.gov.in/",
+      "data_source_urls": [
+        "https://vyapamcg.cgstate.gov.in/",
+        "https://vyapamprofile.cgstate.gov.in/Online/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_031",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://vyapamcg.cgstate.gov.in/",
+        "official_notification": "https://vyapamprofile.cgstate.gov.in/Online/"
+      },
+      "faqs": [
+        {
+          "question": "When will CG PPHT 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for CG PPHT 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>CG PPHT 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for CG PPHT 2027?</h2><p>CG Vyapam publishes Class 12 science subjects, marks, domicile, category and document conditions for B.Pharmacy and D.Pharmacy admission. The active 2027 notice will control the final answer.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology group as notified</li></ul><h2>When are CG PPHT 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Chhattisgarh Professional Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>CG Vyapam must confirm the 2027 form, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official CG Vyapam portal is the source for PPHT applications, departmental rules, syllabus, admit cards, answer keys and results.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology group as notified</li><li>Pharmacy aptitude and time management</li><li>Answer key, rank and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://vyapamcg.cgstate.gov.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://vyapamprofile.cgstate.gov.in/Online/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will CG PPHT 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Chhattisgarh Professional Examination Board posts the next notice.</p><h3>Where should I apply for CG PPHT 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
