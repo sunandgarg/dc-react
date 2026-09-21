@@ -1,0 +1,1017 @@
+{
+  "batch": "exam-refresh-batch-007",
+  "checked_at": "2026-09-21T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Next ten unique canonical exam records after batches 001-006; duplicate sessions, aliases and legacy rows excluded",
+  "policy": "Official sources only; unpublished 2027 dates remain pending; announced 2027 dates are preserved; four internal links plus one official application link and one official notification link; existing slugs preserved; four visible FAQs per record.",
+  "excluded_related_sessions": [
+    "dekho-sample-jee-main",
+    "ap-eamcet",
+    "jee-mains-2",
+    "aiims-pg",
+    "bitsat-exam",
+    "bitsat-exam-2",
+    "ceed",
+    "national-eligibility-cum-entrance-test-neet"
+  ],
+  "updates": [
+    {
+      "id": "f24379ee-aad3-4b6d-99dc-e449dfc17045",
+      "old_slug": "gate",
+      "slug": "gate",
+      "name": "GATE",
+      "title": "GATE 2027: Dates, Eligibility, Papers and Exam Pattern",
+      "full_name": "GATE 2027: Dates, Eligibility, Papers and Exam Pattern",
+      "status": "2027 date information published by authority",
+      "exam_date": "6–7, 13–14 and 20–21 February 2027",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "Postgraduate and doctoral entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "The GATE 2027 brochure controls paper-wise qualifying degrees, subject rules, candidate categories, score use and two-paper combinations. A GATE score does not itself guarantee admission or recruitment.",
+      "important_dates": [
+        {
+          "event": "Registration opens",
+          "date": "2 September 2026"
+        },
+        {
+          "event": "Regular registration closes",
+          "date": "27 September 2026"
+        },
+        {
+          "event": "Extended registration closes",
+          "date": "5 October 2026"
+        },
+        {
+          "event": "Admit card download",
+          "date": "4 January 2027"
+        },
+        {
+          "event": "Examination",
+          "date": "6–7, 13–14 and 20–21 February 2027"
+        },
+        {
+          "event": "Result",
+          "date": "19 March 2027"
+        }
+      ],
+      "syllabus": [
+        "Paper-specific engineering, science, commerce, arts or humanities syllabus",
+        "General aptitude",
+        "The new Robotics and Automation paper and revised sectional codes where applicable"
+      ],
+      "description": "GATE 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "GATE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://gate2027.iitm.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://gate2027.iitm.ac.in/important_dates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>IIT Madras and the GATE organising institutes has published the date information shown above. Recheck the official page before relying on a deadline.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>GATE 2027 uses paper-specific computer-based tests. The official site must be treated as the source for duration, marks, permitted combinations, virtual calculator and question types.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>2 September 2026</td></tr><tr><td>Regular registration closes</td><td>27 September 2026</td></tr><tr><td>Extended registration closes</td><td>5 October 2026</td></tr><tr><td>Admit card download</td><td>4 January 2027</td></tr><tr><td>Examination</td><td>6–7, 13–14 and 20–21 February 2027</td></tr><tr><td>Result</td><td>19 March 2027</td></tr></tbody></table>",
+      "summary_content": "<h2>GATE 2027 at a glance</h2><p>GATE 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>2 September 2026</td></tr><tr><td>Regular registration closes</td><td>27 September 2026</td></tr><tr><td>Extended registration closes</td><td>5 October 2026</td></tr><tr><td>Admit card download</td><td>4 January 2027</td></tr><tr><td>Examination</td><td>6–7, 13–14 and 20–21 February 2027</td></tr><tr><td>Result</td><td>19 March 2027</td></tr></tbody></table><p>IIT Madras and the GATE organising institutes has published the date information shown above. Recheck the official page before relying on a deadline.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "GATE 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "GATE 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check GATE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "GATE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "GATE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://gate2027.iitm.ac.in/",
+      "official_website": "https://gate2027.iitm.ac.in/",
+      "registration_url": "https://gate2027.iitm.ac.in/",
+      "data_source_urls": [
+        "https://gate2027.iitm.ac.in/",
+        "https://gate2027.iitm.ac.in/important_dates"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://gate2027.iitm.ac.in/",
+        "official_notification": "https://gate2027.iitm.ac.in/important_dates"
+      },
+      "faqs": [
+        {
+          "q": "When will GATE 2027 dates be released?",
+          "a": "IIT Madras and the GATE organising institutes has published the date information shown above. Recheck the official page before relying on a deadline."
+        },
+        {
+          "q": "Where should I apply for GATE 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>GATE 2027 is an Indian postgraduate and doctoral entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>2 September 2026</td></tr><tr><td>Regular registration closes</td><td>27 September 2026</td></tr><tr><td>Extended registration closes</td><td>5 October 2026</td></tr><tr><td>Admit card download</td><td>4 January 2027</td></tr><tr><td>Examination</td><td>6–7, 13–14 and 20–21 February 2027</td></tr><tr><td>Result</td><td>19 March 2027</td></tr></tbody></table><h2>Eligibility</h2><p>The GATE 2027 brochure controls paper-wise qualifying degrees, subject rules, candidate categories, score use and two-paper combinations. A GATE score does not itself guarantee admission or recruitment.</p><h2>Syllabus</h2><ul><li>Paper-specific engineering, science, commerce, arts or humanities syllabus</li><li>General aptitude</li><li>The new Robotics and Automation paper and revised sectional codes where applicable</li></ul><h2>Exam pattern</h2><p>GATE 2027 uses paper-specific computer-based tests. The official site must be treated as the source for duration, marks, permitted combinations, virtual calculator and question types.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://gate2027.iitm.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://gate2027.iitm.ac.in/important_dates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>IIT Madras and the GATE organising institutes has published the date information shown above. Recheck the official page before relying on a deadline.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will GATE 2027 dates be released?</h3><p>IIT Madras and the GATE organising institutes has published the date information shown above. Recheck the official page before relying on a deadline.</p><h3>Where should I apply for GATE 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    },
+    {
+      "id": "22e4c25a-09e3-435e-a512-bc3d46b5cc54",
+      "old_slug": "jee-mains",
+      "slug": "jee-mains",
+      "name": "JEE Main",
+      "title": "JEE Main 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "JEE Main 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "Undergraduate engineering and architecture entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "NTA publishes the 2027 age, qualifying examination, subject, paper and category rules. B.E./B.Tech, B.Arch and B.Planning routes have different subject requirements, so use the current bulletin for the selected paper.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Testing Agency"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "Physics",
+        "Chemistry for Paper 1",
+        "Aptitude, drawing and mathematics for the applicable architecture or planning papers"
+      ],
+      "description": "JEE Main 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "JEE Main 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://jeemain.nta.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://jeemain.nta.nic.in/information-bulletin/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA must confirm the 2027 session calendar, paper choices, shifts, duration, marking, city choice and correction rules in the official bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by National Testing Agency</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>JEE Main 2027 at a glance</h2><p>JEE Main 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by National Testing Agency</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "JEE Main 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "JEE Main 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check JEE Main 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JEE Main 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JEE Main 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://jeemain.nta.nic.in/",
+      "official_website": "https://jeemain.nta.nic.in/",
+      "registration_url": "https://jeemain.nta.nic.in/",
+      "data_source_urls": [
+        "https://jeemain.nta.nic.in/",
+        "https://jeemain.nta.nic.in/information-bulletin/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://jeemain.nta.nic.in/",
+        "official_notification": "https://jeemain.nta.nic.in/information-bulletin/"
+      },
+      "faqs": [
+        {
+          "q": "When will JEE Main 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for JEE Main 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>JEE Main 2027 is an Indian undergraduate engineering and architecture entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by National Testing Agency</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>NTA publishes the 2027 age, qualifying examination, subject, paper and category rules. B.E./B.Tech, B.Arch and B.Planning routes have different subject requirements, so use the current bulletin for the selected paper.</p><h2>Syllabus</h2><ul><li>Mathematics</li><li>Physics</li><li>Chemistry for Paper 1</li><li>Aptitude, drawing and mathematics for the applicable architecture or planning papers</li></ul><h2>Exam pattern</h2><p>NTA must confirm the 2027 session calendar, paper choices, shifts, duration, marking, city choice and correction rules in the official bulletin.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://jeemain.nta.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://jeemain.nta.nic.in/information-bulletin/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will JEE Main 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for JEE Main 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    },
+    {
+      "id": "3b6b2846-b3ad-48f2-81c5-cccea74bef96",
+      "old_slug": "xat",
+      "slug": "xat",
+      "name": "XAT",
+      "title": "XAT 2027: Dates, Eligibility and Exam Pattern",
+      "full_name": "XAT 2027: Dates, Eligibility and Exam Pattern",
+      "status": "2027 date information published by authority",
+      "exam_date": "3 January 2027, 2:00 PM–5:00 PM",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "Postgraduate management entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "XLRI and participating institutes publish programme-wise degree, marks, final-year and document requirements. Check each institute separately because an XAT score is used by many schools with different admission rules.",
+      "important_dates": [
+        {
+          "event": "Registration opens",
+          "date": "15 July 2026"
+        },
+        {
+          "event": "Registration closes",
+          "date": "6 December 2026"
+        },
+        {
+          "event": "Admit card",
+          "date": "20 December 2026, tentative"
+        },
+        {
+          "event": "XAT 2027 examination",
+          "date": "3 January 2027, 2:00 PM–5:00 PM"
+        }
+      ],
+      "syllabus": [
+        "Verbal and logical ability",
+        "Decision making",
+        "Quantitative ability and data interpretation",
+        "General knowledge where notified"
+      ],
+      "description": "XAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "XAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://xatonline.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://xatonline.in/registration\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>XLRI Jamshedpur on behalf of XAMI has published the date information shown above. Recheck the official page before relying on a deadline.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The official XAT portal controls the 2027 sections, time, marking, essay or writing components if any, test cities, admit card and score use.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>15 July 2026</td></tr><tr><td>Registration closes</td><td>6 December 2026</td></tr><tr><td>Admit card</td><td>20 December 2026, tentative</td></tr><tr><td>XAT 2027 examination</td><td>3 January 2027, 2:00 PM–5:00 PM</td></tr></tbody></table>",
+      "summary_content": "<h2>XAT 2027 at a glance</h2><p>XAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>15 July 2026</td></tr><tr><td>Registration closes</td><td>6 December 2026</td></tr><tr><td>Admit card</td><td>20 December 2026, tentative</td></tr><tr><td>XAT 2027 examination</td><td>3 January 2027, 2:00 PM–5:00 PM</td></tr></tbody></table><p>XLRI Jamshedpur on behalf of XAMI has published the date information shown above. Recheck the official page before relying on a deadline.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>",
+      "page_summary": "XAT 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "XAT 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check XAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "XAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "XAT 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://xatonline.in/",
+      "official_website": "https://xatonline.in/",
+      "registration_url": "https://xatonline.in/",
+      "data_source_urls": [
+        "https://xatonline.in/",
+        "https://xatonline.in/registration"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams/top-management-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://xatonline.in/",
+        "official_notification": "https://xatonline.in/registration"
+      },
+      "faqs": [
+        {
+          "q": "When will XAT 2027 dates be released?",
+          "a": "XLRI Jamshedpur on behalf of XAMI has published the date information shown above. Recheck the official page before relying on a deadline."
+        },
+        {
+          "q": "Where should I apply for XAT 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>XAT 2027 is an Indian postgraduate management entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>Registration opens</td><td>15 July 2026</td></tr><tr><td>Registration closes</td><td>6 December 2026</td></tr><tr><td>Admit card</td><td>20 December 2026, tentative</td></tr><tr><td>XAT 2027 examination</td><td>3 January 2027, 2:00 PM–5:00 PM</td></tr></tbody></table><h2>Eligibility</h2><p>XLRI and participating institutes publish programme-wise degree, marks, final-year and document requirements. Check each institute separately because an XAT score is used by many schools with different admission rules.</p><h2>Syllabus</h2><ul><li>Verbal and logical ability</li><li>Decision making</li><li>Quantitative ability and data interpretation</li><li>General knowledge where notified</li></ul><h2>Exam pattern</h2><p>The official XAT portal controls the 2027 sections, time, marking, essay or writing components if any, test cities, admit card and score use.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://xatonline.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://xatonline.in/registration\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>XLRI Jamshedpur on behalf of XAMI has published the date information shown above. Recheck the official page before relying on a deadline.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will XAT 2027 dates be released?</h3><p>XLRI Jamshedpur on behalf of XAMI has published the date information shown above. Recheck the official page before relying on a deadline.</p><h3>Where should I apply for XAT 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>"
+    },
+    {
+      "id": "2307c7a9-a10d-4ed2-aec7-334c0960e4e6",
+      "old_slug": "common-admission-test",
+      "slug": "common-admission-test",
+      "name": "CAT",
+      "title": "CAT 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "CAT 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "Postgraduate management entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "The CAT notification controls the 2027 degree, marks, reservation, final-year and document requirements. Individual IIMs and other accepting institutes apply their own shortlisting and admission policies.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Indian Institutes of Management"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Verbal ability and reading comprehension",
+        "Data interpretation and logical reasoning",
+        "Quantitative ability"
+      ],
+      "description": "CAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "CAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://iimcat.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://iimcat.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The CAT conducting IIM must confirm the 2027 registration window, test slots, sections, duration, marking, accessibility and score-use rules.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Indian Institutes of Management</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>CAT 2027 at a glance</h2><p>CAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Indian Institutes of Management</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>",
+      "page_summary": "CAT 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "CAT 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check CAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "CAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CAT 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://iimcat.ac.in/",
+      "official_website": "https://iimcat.ac.in/",
+      "registration_url": "https://iimcat.ac.in/",
+      "data_source_urls": [
+        "https://iimcat.ac.in/",
+        "https://iimcat.ac.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams/top-management-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://iimcat.ac.in/",
+        "official_notification": "https://iimcat.ac.in/"
+      },
+      "faqs": [
+        {
+          "q": "When will CAT 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for CAT 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>CAT 2027 is an Indian postgraduate management entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Indian Institutes of Management</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>The CAT notification controls the 2027 degree, marks, reservation, final-year and document requirements. Individual IIMs and other accepting institutes apply their own shortlisting and admission policies.</p><h2>Syllabus</h2><ul><li>Verbal ability and reading comprehension</li><li>Data interpretation and logical reasoning</li><li>Quantitative ability</li></ul><h2>Exam pattern</h2><p>The CAT conducting IIM must confirm the 2027 registration window, test slots, sections, duration, marking, accessibility and score-use rules.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://iimcat.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://iimcat.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will CAT 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for CAT 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>"
+    },
+    {
+      "id": "5966ee69-0c74-4a16-83c9-1a20e46463c4",
+      "old_slug": "jee-advanced",
+      "slug": "jee-advanced",
+      "name": "JEE Advanced",
+      "title": "JEE Advanced 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "JEE Advanced 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "Undergraduate IIT entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "The 2027 information brochure controls JEE Main qualification, age, attempt, Class 12, category, foreign-national and document conditions. Admission also depends on JoSAA rules and seat availability.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by JEE Advanced organising institute"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics",
+        "Paper-specific problem solving"
+      ],
+      "description": "JEE Advanced 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "JEE Advanced 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://jeeadv.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://jeeadv.ac.in/registration.html\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The official brochure must be used for the 2027 Paper 1 and Paper 2 schedule, question types, marking, languages, city choice, rank lists and JoSAA hand-off.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by JEE Advanced organising institute</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>JEE Advanced 2027 at a glance</h2><p>JEE Advanced 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by JEE Advanced organising institute</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "JEE Advanced 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "JEE Advanced 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check JEE Advanced 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JEE Advanced 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JEE Advanced 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://jeeadv.ac.in/",
+      "official_website": "https://jeeadv.ac.in/",
+      "registration_url": "https://jeeadv.ac.in/",
+      "data_source_urls": [
+        "https://jeeadv.ac.in/",
+        "https://jeeadv.ac.in/registration.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://jeeadv.ac.in/",
+        "official_notification": "https://jeeadv.ac.in/registration.html"
+      },
+      "faqs": [
+        {
+          "q": "When will JEE Advanced 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for JEE Advanced 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>JEE Advanced 2027 is an Indian undergraduate iit entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by JEE Advanced organising institute</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>The 2027 information brochure controls JEE Main qualification, age, attempt, Class 12, category, foreign-national and document conditions. Admission also depends on JoSAA rules and seat availability.</p><h2>Syllabus</h2><ul><li>Physics</li><li>Chemistry</li><li>Mathematics</li><li>Paper-specific problem solving</li></ul><h2>Exam pattern</h2><p>The official brochure must be used for the 2027 Paper 1 and Paper 2 schedule, question types, marking, languages, city choice, rank lists and JoSAA hand-off.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://jeeadv.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://jeeadv.ac.in/registration.html\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will JEE Advanced 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for JEE Advanced 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    },
+    {
+      "id": "aa36ab52-f135-4ee1-8911-e680d6c42cd3",
+      "old_slug": "graduate-management-admission-test",
+      "slug": "graduate-management-admission-test",
+      "name": "Graduate Management Admission Test",
+      "title": "GMAT 2027: Registration, Format and Score Reporting",
+      "full_name": "GMAT 2027: Registration, Format and Score Reporting",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "Graduate management assessment",
+      "mode": "Computer-delivered appointment",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "GMAT registration is appointment-based rather than a single annual Indian admission form. Each business school sets its own score, degree, work-experience and document requirements.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Graduate Management Admission Council"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Quantitative reasoning",
+        "Verbal reasoning",
+        "Data insights"
+      ],
+      "description": "GMAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "GMAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.mba.com/exams/gmat-exam\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.gmac.com/frequently-asked-questions/gmat-exam\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>GMAC controls the current adaptive format, scheduling, identification, score reporting, retake and accommodation rules. Check mba.com before booking an appointment.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Graduate Management Admission Council</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>GMAT 2027 at a glance</h2><p>GMAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Graduate Management Admission Council</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>",
+      "page_summary": "GMAT 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "GMAT 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check GMAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "GMAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "GMAT 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://www.mba.com/exams/gmat-exam",
+      "official_website": "https://www.mba.com/exams/gmat-exam",
+      "registration_url": "https://www.mba.com/exams/gmat-exam",
+      "data_source_urls": [
+        "https://www.mba.com/exams/gmat-exam",
+        "https://www.gmac.com/frequently-asked-questions/gmat-exam"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams/top-management-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.mba.com/exams/gmat-exam",
+        "official_notification": "https://www.gmac.com/frequently-asked-questions/gmat-exam"
+      },
+      "faqs": [
+        {
+          "q": "When will GMAT 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for GMAT 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>GMAT 2027 is an Indian graduate management assessment route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Graduate Management Admission Council</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>GMAT registration is appointment-based rather than a single annual Indian admission form. Each business school sets its own score, degree, work-experience and document requirements.</p><h2>Syllabus</h2><ul><li>Quantitative reasoning</li><li>Verbal reasoning</li><li>Data insights</li></ul><h2>Exam pattern</h2><p>GMAC controls the current adaptive format, scheduling, identification, score reporting, retake and accommodation rules. Check mba.com before booking an appointment.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.mba.com/exams/gmat-exam\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.gmac.com/frequently-asked-questions/gmat-exam\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will GMAT 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for GMAT 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>"
+    },
+    {
+      "id": "7da7272a-3b27-4caf-87f1-0ee550c01e9b",
+      "old_slug": "west-bengal-joint-entrance-examinations-board",
+      "slug": "west-bengal-joint-entrance-examinations-board",
+      "name": "WBJEE",
+      "title": "WBJEE 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "WBJEE 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "West Bengal undergraduate professional entrance",
+      "mode": "Offline OMR examination",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "WBJEEB publishes the 2027 domicile, Class 12 subject, marks, age, reservation, institute and document rules for the selected course. Read the brochure before choosing paper combinations.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by West Bengal Joint Entrance Examinations Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "Physics",
+        "Chemistry",
+        "Course and paper-specific weightage"
+      ],
+      "description": "WBJEE 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "WBJEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://wbjeeb.nic.in/wbjee/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://wbjeeb.nic.in/wbjee/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>WBJEEB must confirm the 2027 application window, paper dates, OMR instructions, marking, answer-key challenge and counselling process.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by West Bengal Joint Entrance Examinations Board</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>WBJEE 2027 at a glance</h2><p>WBJEE 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by West Bengal Joint Entrance Examinations Board</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "WBJEE 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "WBJEE 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check WBJEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "WBJEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "WBJEE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/",
+      "official_website": "https://wbjeeb.nic.in/",
+      "registration_url": "https://wbjeeb.nic.in/wbjee/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/",
+        "https://wbjeeb.nic.in/wbjee/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://wbjeeb.nic.in/wbjee/",
+        "official_notification": "https://wbjeeb.nic.in/wbjee/"
+      },
+      "faqs": [
+        {
+          "q": "When will WBJEE 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for WBJEE 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>WBJEE 2027 is an Indian west bengal undergraduate professional entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by West Bengal Joint Entrance Examinations Board</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>WBJEEB publishes the 2027 domicile, Class 12 subject, marks, age, reservation, institute and document rules for the selected course. Read the brochure before choosing paper combinations.</p><h2>Syllabus</h2><ul><li>Mathematics</li><li>Physics</li><li>Chemistry</li><li>Course and paper-specific weightage</li></ul><h2>Exam pattern</h2><p>WBJEEB must confirm the 2027 application window, paper dates, OMR instructions, marking, answer-key challenge and counselling process.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://wbjeeb.nic.in/wbjee/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://wbjeeb.nic.in/wbjee/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will WBJEE 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for WBJEE 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    },
+    {
+      "id": "0ed471be-3531-4e07-84df-4226c1beb4e7",
+      "old_slug": "lsat",
+      "slug": "lsat",
+      "name": "Law School Admission Test",
+      "title": "LSAT 2027: Test Dates, Registration and Format",
+      "full_name": "LSAT 2027: Test Dates, Registration and Format",
+      "status": "2027 date information published by authority",
+      "exam_date": "15 January 2027; registration deadline 1 December 2026",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Law",
+      "level": "Law school admission assessment",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "LSAC publishes the international testing-cycle, registration, identity, accommodation and score rules. Confirm that the law school you want accepts the LSAT route and check its own admission conditions.",
+      "important_dates": [
+        {
+          "event": "January 2027 international testing begins",
+          "date": "15 January 2027; registration deadline 1 December 2026"
+        },
+        {
+          "event": "April 2027 international testing begins",
+          "date": "9 April 2027; registration deadline 25 February 2027"
+        },
+        {
+          "event": "June 2027 international testing begins",
+          "date": "11 June 2027; registration deadline 29 April 2027"
+        }
+      ],
+      "syllabus": [
+        "Logical reasoning",
+        "Reading comprehension",
+        "Argumentative writing where scheduled"
+      ],
+      "description": "LSAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "LSAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.lsac.org/lsat/register-lsat\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.lsac.org/LSATdates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>Law School Admission Council has published the date information shown above. Recheck the official page before relying on a deadline.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The official LSAC dates page controls the testing region, registration deadline, writing component, score release and any cycle change.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>January 2027 international testing begins</td><td>15 January 2027; registration deadline 1 December 2026</td></tr><tr><td>April 2027 international testing begins</td><td>9 April 2027; registration deadline 25 February 2027</td></tr><tr><td>June 2027 international testing begins</td><td>11 June 2027; registration deadline 29 April 2027</td></tr></tbody></table>",
+      "summary_content": "<h2>LSAT 2027 at a glance</h2><p>LSAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>January 2027 international testing begins</td><td>15 January 2027; registration deadline 1 December 2026</td></tr><tr><td>April 2027 international testing begins</td><td>9 April 2027; registration deadline 25 February 2027</td></tr><tr><td>June 2027 international testing begins</td><td>11 June 2027; registration deadline 29 April 2027</td></tr></tbody></table><p>Law School Admission Council has published the date information shown above. Recheck the official page before relying on a deadline.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Law entrance exams</a></li><li><a href=\"/courses\">Law courses</a></li><li><a href=\"/colleges\">Law colleges</a></li></ul>",
+      "page_summary": "LSAT 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "LSAT 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check LSAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "LSAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "LSAT 2027",
+        "exam update",
+        "Law",
+        "2027"
+      ],
+      "website": "https://www.lsac.org/lsat",
+      "official_website": "https://www.lsac.org/lsat",
+      "registration_url": "https://www.lsac.org/lsat/register-lsat",
+      "data_source_urls": [
+        "https://www.lsac.org/lsat",
+        "https://www.lsac.org/LSATdates"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.lsac.org/lsat/register-lsat",
+        "official_notification": "https://www.lsac.org/LSATdates"
+      },
+      "faqs": [
+        {
+          "q": "When will LSAT 2027 dates be released?",
+          "a": "Law School Admission Council has published the date information shown above. Recheck the official page before relying on a deadline."
+        },
+        {
+          "q": "Where should I apply for LSAT 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>LSAT 2027 is an Indian law school admission assessment route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>January 2027 international testing begins</td><td>15 January 2027; registration deadline 1 December 2026</td></tr><tr><td>April 2027 international testing begins</td><td>9 April 2027; registration deadline 25 February 2027</td></tr><tr><td>June 2027 international testing begins</td><td>11 June 2027; registration deadline 29 April 2027</td></tr></tbody></table><h2>Eligibility</h2><p>LSAC publishes the international testing-cycle, registration, identity, accommodation and score rules. Confirm that the law school you want accepts the LSAT route and check its own admission conditions.</p><h2>Syllabus</h2><ul><li>Logical reasoning</li><li>Reading comprehension</li><li>Argumentative writing where scheduled</li></ul><h2>Exam pattern</h2><p>The official LSAC dates page controls the testing region, registration deadline, writing component, score release and any cycle change.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.lsac.org/lsat/register-lsat\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.lsac.org/LSATdates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>Law School Admission Council has published the date information shown above. Recheck the official page before relying on a deadline.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will LSAT 2027 dates be released?</h3><p>Law School Admission Council has published the date information shown above. Recheck the official page before relying on a deadline.</p><h3>Where should I apply for LSAT 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Law entrance exams</a></li><li><a href=\"/courses\">Law courses</a></li><li><a href=\"/colleges\">Law colleges</a></li></ul>"
+    },
+    {
+      "id": "03d970a2-202d-42b3-8f7b-915869b2f7db",
+      "old_slug": "anu-pgcet",
+      "slug": "anu-pgcet",
+      "name": "Acharya Nagarjuna University Post Graduate Common Entrance Test",
+      "title": "ANU PGCET 2027: Eligibility, Dates and Admission Process",
+      "full_name": "ANU PGCET 2027: Eligibility, Dates and Admission Process",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Postgraduate university entrance",
+      "mode": "As notified by Acharya Nagarjuna University",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "ANU publishes programme-wise qualifying degrees, subjects, marks, reservation, local status and certificates. Requirements can differ across postgraduate departments, so use the chosen programme notice.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Acharya Nagarjuna University Directorate of Admissions"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Programme-specific postgraduate subjects",
+        "General aptitude or language where notified",
+        "Department and programme selection rules"
+      ],
+      "description": "ANU PGCET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "ANU PGCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.nagarjunauniversity.ac.in/anudoa\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://nagarjunauniversity.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>ANU must publish the 2027 registration window, papers, duration, marking, results and counselling or department-admission steps.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Acharya Nagarjuna University Directorate of Admissions</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>ANU PGCET 2027 at a glance</h2><p>ANU PGCET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Acharya Nagarjuna University Directorate of Admissions</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">National and state exams</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "ANU PGCET 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "ANU PGCET 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check ANU PGCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "ANU PGCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "ANU PGCET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.nagarjunauniversity.ac.in/anudoa",
+      "official_website": "https://www.nagarjunauniversity.ac.in/anudoa",
+      "registration_url": "https://www.nagarjunauniversity.ac.in/anudoa",
+      "data_source_urls": [
+        "https://www.nagarjunauniversity.ac.in/anudoa",
+        "https://nagarjunauniversity.ac.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.nagarjunauniversity.ac.in/anudoa",
+        "official_notification": "https://nagarjunauniversity.ac.in/"
+      },
+      "faqs": [
+        {
+          "q": "When will ANU PGCET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for ANU PGCET 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>ANU PGCET 2027 is an Indian postgraduate university entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Acharya Nagarjuna University Directorate of Admissions</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>ANU publishes programme-wise qualifying degrees, subjects, marks, reservation, local status and certificates. Requirements can differ across postgraduate departments, so use the chosen programme notice.</p><h2>Syllabus</h2><ul><li>Programme-specific postgraduate subjects</li><li>General aptitude or language where notified</li><li>Department and programme selection rules</li></ul><h2>Exam pattern</h2><p>ANU must publish the 2027 registration window, papers, duration, marking, results and counselling or department-admission steps.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.nagarjunauniversity.ac.in/anudoa\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://nagarjunauniversity.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will ANU PGCET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for ANU PGCET 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">National and state exams</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "508a8812-82bf-468d-a5ef-8f5948fe67b9",
+      "old_slug": "ap-icet",
+      "slug": "ap-icet",
+      "name": "AP ICET",
+      "title": "AP ICET 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "AP ICET 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "State MBA and MCA entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission or testing cycle unless the authority publishes multiple sessions",
+      "eligibility": "APSCHE publishes separate MBA and MCA degree, marks, local status, category and counselling conditions. Confirm the 2027 route for the university and course you select.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by APSCHE"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or testing",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Analytical ability",
+        "Mathematical ability",
+        "Communication ability"
+      ],
+      "description": "AP ICET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.",
+      "hero_hook": "AP ICET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://cets.apsche.ap.gov.in/icet/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://cets.apsche.ap.gov.in/icet/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>APSCHE must confirm the 2027 application, sessions, duration, marking, answer key, result and web-counselling schedule in the official notice.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by APSCHE</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>AP ICET 2027 at a glance</h2><p>AP ICET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and next-step guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by APSCHE</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>",
+      "page_summary": "AP ICET 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "AP ICET 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check AP ICET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AP ICET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AP ICET 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://cets.apsche.ap.gov.in/icet/",
+      "official_website": "https://cets.apsche.ap.gov.in/icet/",
+      "registration_url": "https://cets.apsche.ap.gov.in/icet/",
+      "data_source_urls": [
+        "https://cets.apsche.ap.gov.in/icet/",
+        "https://cets.apsche.ap.gov.in/icet/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_007",
+      "internal_links": [
+        "/exams",
+        "/exams/top-management-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cets.apsche.ap.gov.in/icet/",
+        "official_notification": "https://cets.apsche.ap.gov.in/icet/"
+      },
+      "faqs": [
+        {
+          "q": "When will AP ICET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for AP ICET 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>AP ICET 2027 is an Indian state mba and mca entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by APSCHE</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination or testing</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>APSCHE publishes separate MBA and MCA degree, marks, local status, category and counselling conditions. Confirm the 2027 route for the university and course you select.</p><h2>Syllabus</h2><ul><li>Analytical ability</li><li>Mathematical ability</li><li>Communication ability</li></ul><h2>Exam pattern</h2><p>APSCHE must confirm the 2027 application, sessions, duration, marking, answer key, result and web-counselling schedule in the official notice.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://cets.apsche.ap.gov.in/icet/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://cets.apsche.ap.gov.in/icet/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will AP ICET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for AP ICET 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-management-entrance-exams-in-india\">Management entrance exams</a></li><li><a href=\"/courses\">Management courses</a></li><li><a href=\"/colleges\">Management colleges</a></li></ul>"
+    }
+  ]
+}

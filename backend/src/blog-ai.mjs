@@ -8,7 +8,7 @@ import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 import { queueIndexNowUrls } from "./indexnow.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
-const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5.5";
+const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5.6-luna";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const RECOMMENDED_DAILY_POSTS = 8;
 const MAX_POSTS_PER_RUN = 3;
@@ -18,7 +18,7 @@ const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
 const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
-// GPT-5.5 supports substantially larger outputs, but keep a conservative
+// Luna supports substantially larger outputs, but keep a conservative
 // application ceiling so long-form structured drafts cannot run unbounded.
 const MAX_OPENAI_OUTPUT_TOKENS = 48_000;
 const MAX_RESEARCH_SOURCES = 6;
@@ -30,6 +30,7 @@ const DEFAULT_CONTENT_GOALS = ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"];
 const DEFAULT_REQUIRED_SECTIONS = ["Answer first", "Key facts", "Decision guidance", "FAQs"];
 const SARKARI_ARTICLE_CATEGORIES = new Set(["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"]);
 const OPENAI_TEXT_PRICING_PER_MILLION = {
+  "gpt-5.6-luna": { input: 0.2, cachedInput: 0.02, output: 1.2 },
   "gpt-5.5": { input: 5, cachedInput: 0.5, output: 30 },
   "gpt-5.4-mini": { input: 0.75, cachedInput: 0.075, output: 4.5 },
   "gpt-5-nano": { input: 0.05, cachedInput: 0.005, output: 0.4 },
@@ -69,6 +70,7 @@ const cleanJson = (value) => String(value || "").replace(/^```json\s*|\s*```$/gi
 const slugify = (value) => String(value || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 100);
 const stripHtml = (value) => String(value || "").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 const LEGACY_GEMINI_MODELS = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
+const LEGACY_OPENAI_BLOG_MODELS = new Set(["gpt-5.5"]);
 const normalizeGeminiModel = (value) => {
   const model = String(value || "").trim();
   if (!model.startsWith("gemini-")) return DEFAULT_GEMINI_MODEL;
@@ -77,7 +79,7 @@ const normalizeGeminiModel = (value) => {
 export const normalizeBlogTextModel = (value) => {
   const model = String(value || "").trim();
   if (model.startsWith("gemini-")) return normalizeGeminiModel(model);
-  if (model.startsWith("gpt-")) return model;
+  if (model.startsWith("gpt-")) return LEGACY_OPENAI_BLOG_MODELS.has(model) ? DEFAULT_OPENAI_TEXT_MODEL : model;
   return DEFAULT_OPENAI_TEXT_MODEL;
 };
 export const blogTextProvider = (model) => normalizeBlogTextModel(model).startsWith("gemini-") ? "gemini" : "openai";
@@ -131,6 +133,19 @@ export function normalizeBlogAgentSettings(value = {}) {
 const PUBLISHED_COMPETITOR_PATTERN = /\b(?:college\s*dunia|college\s*dekho|shiksha|careers\s*360|kollege\s*apply|get\s*my\s*uni|pagal\s*guy|sarvgyan)\b/i;
 const PUBLISHED_ATTRIBUTION_PATTERN = /\b(?:according to|as reported by|sources? (?:say|says|suggest|suggests|indicate|indicates)|reports? (?:say|says|suggest|suggests|indicate|indicates)|information (?:from|published by)|data (?:from|published by))\b/i;
 const EDITORIAL_CLICHE_PATTERN = /\b(?:as an ai|language model|in today'?s fast-paced world|it is important to note|furthermore|moreover|delve(?: into)?|unlock|seamless|robust|comprehensive|crucial|in conclusion)\b/i;
+const STRICT_AI_CLICHE_PATTERN = /\b(?:delve|testament|tapestry|paramount|in conclusion|furthermore|moreover|game[- ]changer|dive in|unlock the power|in today'?s (?:digital )?world|beacon|vital role|firstly|secondly|in summary)\b/i;
+const PROMPT_RESIDUE_OPENING_PATTERN = /^\s*(?:answer\s*first|answer|executive\s+summary)\s*[:\-]/i;
+const FLATTENED_TABLE_COPY_PATTERN = /\bstudent\s+profile\b[\s\S]{0,220}\btarget\s+courses\b[\s\S]{0,220}\brisk\s+to\s+check\b[\s\S]{0,220}\bsafer\s+approach\b/i;
+const FORMULAIC_SECTION_SEQUENCE = ["executive summary", "key facts", "conceptual rationale", "step by step guide", "risk matrix", "red flags", "frequently asked questions"];
+
+function hasFormulaicSectionSequence(headings) {
+  let cursor = 0;
+  for (const heading of headings) {
+    if (heading === FORMULAIC_SECTION_SEQUENCE[cursor] || heading.startsWith(`${FORMULAIC_SECTION_SEQUENCE[cursor]} `)) cursor += 1;
+    if (cursor >= 5) return true;
+  }
+  return false;
+}
 
 const stripPublishedAttributionPhrases = (value) => String(value || "")
   .replace(/\baccording to\b\s*/gi, "")
@@ -1052,6 +1067,7 @@ async function provider(name) {
 
 export async function ensureSupportedAiModels() {
   const legacyModels = [...LEGACY_GEMINI_MODELS];
+  const legacyOpenAiBlogModels = [...LEGACY_OPENAI_BLOG_MODELS];
   await Promise.all([
     prisma.ai_providers.updateMany({
       where: { provider_name: "gemini", default_model: { in: legacyModels } },
@@ -1068,6 +1084,22 @@ export async function ensureSupportedAiModels() {
     prisma.blog_auto_agent_settings.updateMany({
       where: { text_model: { in: legacyModels } },
       data: { text_model: DEFAULT_GEMINI_MODEL, updated_at: new Date() },
+    }).catch(() => null),
+    prisma.ai_providers.updateMany({
+      where: { provider_name: "openai", default_model: { in: legacyOpenAiBlogModels } },
+      data: { default_model: DEFAULT_OPENAI_TEXT_MODEL, updated_at: new Date() },
+    }).catch(() => null),
+    prisma.ai_runtime_controls.updateMany({
+      where: { feature: { in: ["blog-studio", "blog-agent"] }, provider: "openai", model: { in: legacyOpenAiBlogModels } },
+      data: { model: DEFAULT_OPENAI_TEXT_MODEL, updated_at: new Date() },
+    }).catch(() => null),
+    prisma.blog_ai_provider_settings.updateMany({
+      where: { text_model: { in: legacyOpenAiBlogModels } },
+      data: { text_model: DEFAULT_OPENAI_TEXT_MODEL, updated_at: new Date() },
+    }).catch(() => null),
+    prisma.blog_auto_agent_settings.updateMany({
+      where: { text_model: { in: legacyOpenAiBlogModels } },
+      data: { model_provider: "openai", text_model: DEFAULT_OPENAI_TEXT_MODEL, updated_at: new Date() },
     }).catch(() => null),
   ]);
 }
@@ -1167,7 +1199,7 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
   const requestBody = JSON.stringify({
     model,
     messages: [
-      { role: "system", content: "Return valid JSON only. Write factual, original, natural Indian editorial English. Never expose a source name, competitor name, citation, reference, footnote, external URL, attribution phrase, research note, quality score, or AI process in any publishable field. Do not copy or spin another page. Never use an em dash or en dash. Keep normal paragraphs concise and human-edited." },
+      { role: "system", content: "Return valid JSON only. Write factual, original, natural Indian editorial English with varied human rhythm. Never expose a source name, competitor name, citation, reference, footnote, external URL, attribution phrase, research note, quality score, or AI process in any publishable field. Do not copy or spin another page. Never begin article copy with prompt residue such as Answer first:, Answer:, Executive summary: or Here is the answer:. Never flatten a comparison matrix into a plain-text label stack. Vary the outline instead of forcing a fixed executive-summary/key-facts/risk-matrix/checklist sequence, consolidate repeated verification advice, and add named evidence-supported examples when useful. Never use an em dash or en dash. Never use these AI cliches: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly, in summary. Keep normal paragraphs concise and human-edited." },
       { role: "user", content: prompt },
     ],
     response_format: responseFormat,
@@ -1334,7 +1366,7 @@ async function geminiJson(prompt, feature = "blog-studio", options = {}) {
   const requestedModel = options.model || (control?.provider === "gemini" && control?.model ? control.model : config.geminiModel);
   const model = normalizeGeminiModel(requestedModel);
   const requestBody = JSON.stringify({
-    systemInstruction: { parts: [{ text: "Return valid JSON only. Use factual, original language. Never use an em dash." }] },
+    systemInstruction: { parts: [{ text: "Return valid JSON only. Use factual, original, natural Indian editorial English with varied human rhythm. Never start article copy with prompt residue such as Answer first: or Executive summary:. Never flatten a comparison table into a line-by-line label stack. Vary the outline and consolidate repeated advice. Never use an em dash, en dash, or these AI cliches: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly, in summary." }] },
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     generationConfig: {
       responseMimeType: "application/json",
@@ -1580,12 +1612,28 @@ export function articlePrompt(topic, signals, wordLimit = 0, correctionIssues = 
     ...(rawEditorialSettings && typeof rawEditorialSettings === "object" && !Array.isArray(rawEditorialSettings) ? rawEditorialSettings : {}),
   });
   const targetWords = resolveArticleWordTarget(topic, wordLimit);
+  const topicTitle = typeof topic === "string" ? topic : String(topic?.title || topic?.headline || topic?.topic || "");
+  const primaryKeyword = String(typeof topic === "string"
+    ? topic
+    : topic?.primary_keyword || topic?.primary_entity || topicTitle).trim();
+  const secondaryKeywords = normalizeStringList(
+    typeof topic === "object" && topic !== null
+      ? (Array.isArray(topic.secondary_keywords) ? topic.secondary_keywords : topic.tags)
+      : [],
+    [],
+    10,
+  );
+  const searchIntent = String(typeof topic === "object" && topic !== null && topic.search_intent
+    ? topic.search_intent
+    : "Informational").trim();
   const topicBrief = typeof topic === "string"
-    ? { title: topic }
+    ? { title: topic, primary_keyword: primaryKeyword, secondary_keywords: secondaryKeywords, search_intent: searchIntent }
     : {
-      title: String(topic?.title || topic?.headline || topic?.topic || ""),
+      title: topicTitle,
       angle: String(topic?.angle || ""),
-      search_intent: String(topic?.search_intent || ""),
+      search_intent: searchIntent,
+      primary_keyword: primaryKeyword,
+      secondary_keywords: secondaryKeywords,
       primary_entity: String(topic?.primary_entity || ""),
       unique_value: String(topic?.unique_value || ""),
       impact_reason: String(topic?.impact_reason || ""),
@@ -1602,6 +1650,8 @@ export function articlePrompt(topic, signals, wordLimit = 0, correctionIssues = 
   return `Today is ${new Date().toISOString().slice(0, 10)}. Write one original ${profile.brand} article about ${profile.subject} from this editorial brief: ${JSON.stringify(topicBrief)}.
 
 Editorial contract:
+- Role: act as a veteran niche education journalist and senior SEO content strategist. Produce authoritative, deeply engaging, human-sounding work that satisfies the stated intent and demonstrates E-E-A-T without claiming experience the evidence cannot support.
+- Article specification: primary keyword "${primaryKeyword}"; secondary keywords ${JSON.stringify(secondaryKeywords)}; target audience "${editorial.audience}"; search intent "${searchIntent}"; target length about ${targetWords} words.
 - Primary audience: ${profile.audience}.
 - Editorial audience guidance: ${editorial.audience}.
 - Language: ${editorial.language}.
@@ -1629,21 +1679,31 @@ E-E-A-T execution:
 - Trust: keep names, dates and claims internally consistent; disclose uncertainty; avoid guarantees; and tell readers which responsible official authority to verify before a consequential action.
 
 Human editorial standard:
-- Write natural Indian English with varied short and medium sentences, different sentence openings, smooth transitions, and balanced, non-promotional judgement.
+- Write natural Indian English with strong burstiness and rhythm. Deliberately alternate occasional punchy 3-6 word sentences with nuanced multi-clause sentences. Vary paragraph length, sentence openings and cadence so the prose sounds edited by a veteran journalist, not mechanically uniform.
+- Use active voice, contractions where natural, direct reader address and restrained rhetorical questions. Keep the flow conversational but authoritative, with balanced, non-promotional judgement.
 - Keep normal paragraphs to two to four sentences. Use a list or table only when it makes a decision, comparison, fee, date, eligibility rule, checklist or process clearer.
+- Never begin the article with prompt residue such as "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Start with a natural, topic-specific sentence that gives the reader the useful consequence immediately, without announcing the writing instruction.
+- Do not force a symmetrical counsellor template such as Executive summary -> Key facts -> Conceptual rationale -> Step-by-step guide -> Risk matrix -> Red flags -> FAQs. Choose a topic-native outline; vary section order, heading wording and section length according to the actual decision a reader faces.
+- Never paste a comparison matrix as a flattened sequence of labels in prose. If a table genuinely clarifies a choice, output a semantic HTML table with labelled headers. If the information is better read as standard copy, use bullets or short descriptive paragraphs instead of rows copied line by line.
+- Avoid one uniform didactic voice. Let the article contain measured judgement, a practical observation, a short aside or a direct reader question when the evidence supports it. Keep the advice trustworthy without making every paragraph sound like the same counsellor script.
+- Consolidate repeated cautions. State the official-verification rule once, then apply it to the specific date, subject, fee or eligibility consequence instead of repeating the same hedge under several headings.
+- Add grounded specifics when the private evidence supports them: a named authority, institution, subject code, paper section, counselling portal, date, fee rule or realistic student scenario. Never invent a gritty detail merely to make prose sound human.
 - Avoid fake quotations, testimonials, first-hand claims, keyword stuffing, repeated conclusions, generic introductions and repeated facts.
-- Do not use em dashes or en dashes. Avoid formulaic words and phrases including furthermore, moreover, delve, landscape, unlock, seamless, robust, comprehensive, crucial and in conclusion.
+- Do not use em dashes or en dashes. The following words and phrases are forbidden in every publishable field: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon and vital role. Also avoid firstly, secondly, in summary, landscape, seamless, robust, comprehensive and crucial. Use a contextual transition tied to the preceding idea instead of a generic signpost.
 - Privately score natural sentence variation (20), specific useful information (20), non-repetitive language (15), logical human flow (15), Indian context (10), balanced tone (10) and careful editing (10). Rewrite weak sections until the internal score is at least 70. Never publish this score or mention AI detection, humanisation or the revision process.
 
 Search and page structure:
 - The page renderer uses title as the single H1. Do not put an H1 inside content_html; use only logical H2 and H3 headings there.
-- Use the primary entity and search intent naturally in the title, opening and one useful subheading. Never force keyword density.
+- Answer the search intent directly in the first 2-3 sentences. Do not begin with a definition, scene-setting filler, a label such as "Answer first:", or phrases such as "In today's fast-paced digital world".
+- Front-load the primary keyword in meta_title, keep it within the first 100 words, use the exact phrase naturally in exactly 1-2 H2 headings, and use it naturally 3-5 times across the article body. Integrate secondary keywords only where they help the reader. Never keyword-stuff or damage clarity to hit a count.
+- Use descriptive H2/H3 headings, bullets where useful, and at least one genuine comparison or summary table with labelled headers when a table improves the decision. Never turn table headings and cells into a plain-text stack. The table must condense a useful decision, not repeat nearby prose.
+- Add information competitors often omit: evidence-supported specifics, realistic practical examples and concrete actions. Every example must be plausible and must not be presented as personal experience.
 - Internal links are allowed only when a verified DekhoCampus path is present in the supplied context. Use descriptive anchor text and relative URLs. Never invent a path and never add an external link.
 - The page UI supplies the real author or reviewer and Last updated date. Do not invent a byline, credential, correction history or editorial-process note inside content_html.
 
-Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}. Write a complete, specific, accurate title of roughly 55-85 characters preserving the key exam, institution, authority, date or outcome. Write meta_title at 50-65 characters and meta_description at 140-160 characters. Set hero_hook exactly equal to title. Open with a concise answer that identifies the entity, current consequence and next useful action. Answer one identifiable search intent and deliver the unique value through evidence-backed comparison, calculation, timeline, checklist, interpretation or decision guidance beyond a rewritten announcement. Build topic-specific sections instead of a reusable template. Every section must help the reader decide, act, avoid a mistake or understand a concrete consequence.
+Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}. Return strict JSON with clean semantic HTML in content_html, not Markdown, because the page renderer supplies the H1 and renders the body HTML. Write a complete, specific, accurate title of roughly 55-85 characters preserving the key exam, institution, authority, date or outcome. Write a click-worthy meta_title of no more than 60 characters with the primary keyword front-loaded, and a benefit-led meta_description of no more than 155 characters. Set hero_hook exactly equal to title. Open with a concise 2-3 sentence answer that identifies the entity, current consequence and next useful action. Answer one identifiable search intent and deliver the unique value through evidence-backed comparison, calculation, timeline, checklist, interpretation or decision guidance beyond a rewritten announcement. Build topic-specific sections instead of a reusable template. Every section must help the reader decide, act, avoid a mistake or understand a concrete consequence.
 
-Do not put ${profile.brand} in the title, use an ellipsis, add trailing punctuation, or use generic phrases such as Complete Guide or Everything You Need to Know. Write 4-8 distinct search-intent FAQs and include the exact same questions and answers in a visible FAQ section in content_html. Use descriptive H2/H3 headings, short readable paragraphs, and at least one useful list or table. Never invent interviews, first-hand testing, personal experience, quotes, statistics or official facts. When evidence is uncertain, omit the claim or label it subject to official confirmation, then tell readers what detail to verify on the responsible official authority portal without naming or linking a research source.`;
+Do not put ${profile.brand} in the title, use an ellipsis, add trailing punctuation, or use generic phrases such as Complete Guide or Everything You Need to Know. Write 4-8 distinct search-intent FAQs and include the exact same questions and answers in a visible FAQ section in content_html. Use descriptive H2/H3 headings, short readable paragraphs, useful bullets and at least one comparison or summary table. Never invent interviews, first-hand testing, personal experience, quotes, statistics or official facts. When evidence is uncertain, omit the claim or label it subject to official confirmation, then tell readers what detail to verify on the responsible official authority portal without naming or linking a research source.`;
 }
 
 const ARTICLE_RESPONSE_SCHEMA = {
@@ -1749,13 +1809,19 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   const introduction = normalizedTopicLanguage(body.split(/\s+/).slice(0, 110).join(" "));
   const introAnchors = [...topicProfile.anchors].filter((anchor) => introduction.includes(anchor)).length;
   const hasAnswerFirstOpening = topicProfile.anchors.size < 2 || introAnchors >= Math.min(2, topicProfile.anchors.size);
+  const openingParagraph = contentHtml.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1];
+  const openingText = stripHtml(openingParagraph || body).trim();
+  const hasPromptResidueOpening = PROMPT_RESIDUE_OPENING_PATTERN.test(openingText);
+  const hasFlattenedTableCopy = FLATTENED_TABLE_COPY_PATTERN.test(body);
+  const hasFormulaicOutline = hasFormulaicSectionSequence(headings);
 
   check("Specific title", titleLength >= 45 && titleLength <= 95 && !/\.\.\.|complete guide|everything you need to know/i.test(String(draft?.title || "")), 5, "title must be specific, complete and 45-95 characters");
-  check("Search metadata", metaTitleLength >= 45 && metaTitleLength <= 70 && metaDescriptionLength >= 120 && metaDescriptionLength <= 170, 8, "meta title or description is outside its useful search length");
+  check("Search metadata", metaTitleLength >= 35 && metaTitleLength <= 60 && metaDescriptionLength >= 100 && metaDescriptionLength <= 155, 8, "meta title must be 35-60 characters and meta description must be 100-155 characters");
   check("Editorial summary", descriptionLength >= 80 && descriptionLength <= 360, 4, "description must clearly summarize the article in 80-360 characters");
   check("Useful depth", words.length >= minimumWords && words.length <= Math.ceil(targetWords * 1.45), 13, `article has ${words.length} words; useful range is ${minimumWords}-${Math.ceil(targetWords * 1.45)}`, true);
   check("Descriptive structure", headings.length >= 3, 7, "article needs at least three descriptive H2/H3 sections");
-  check("Scannable evidence", /<(?:ul|ol|table)\b/i.test(contentHtml), 5, "article needs at least one useful list or table");
+  check("Scannable evidence", /<(?:ul|ol)\b/i.test(contentHtml), 2, "article needs at least one useful bullet or numbered list");
+  check("Decision table", /<table\b/i.test(contentHtml) && /<th\b/i.test(contentHtml), 3, "article needs at least one comparison or summary table with labelled headers", true);
   const missingSections = editorial.required_sections.filter((section) => {
     const normalizedSection = normalizeArticleTitle(section);
     if (["answer first", "quick answer"].includes(normalizedSection) && hasAnswerFirstOpening) return false;
@@ -1767,6 +1833,9 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   check("Visible FAQ parity", faqs.length >= 4 && mirroredFaqs === faqs.length, 7, "every dedicated FAQ must also appear visibly in the article", true);
 
   check("Answer-first opening", hasAnswerFirstOpening, 8, "opening does not answer the requested topic directly");
+  check("No prompt residue opening", !hasPromptResidueOpening, 3, "opening repeats a prompt label such as 'Answer first:' instead of sounding like authored copy", true);
+  check("No flattened table copy", !hasFlattenedTableCopy, 4, "comparison content has been pasted as a line-by-line table copy; use semantic table markup, bullets or descriptive prose", true);
+  check("Topic-native outline", !hasFormulaicOutline, 3, "section order follows a repetitive executive-summary/risk-matrix/checklist template; vary the outline for the topic", true);
   let topicFocused = true;
   if (topicProfile.anchors.size >= 2) {
     const coveredAnchors = [...topicProfile.anchors].filter((anchor) => new RegExp(`\\b${anchor.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(searchableBody));
@@ -1788,6 +1857,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   });
   const clicheCount = (body.match(new RegExp(EDITORIAL_CLICHE_PATTERN.source, "gi")) || []).length;
   check("Natural editorial language", clicheCount <= 2 && !/\b(?:as an ai|language model|ai[- ]generated|humanisation|humanization|ai detector)\b/i.test(body) && oversizedParagraphs.length === 0, 5, "article contains formulaic language, AI-process wording, or an oversized paragraph", true);
+  check("Strict anti-AI wording", !STRICT_AI_CLICHE_PATTERN.test(publishedText), 0, "article contains a forbidden AI cliche or generic transition", true);
 
   const paragraphs = proseParagraphs
     .map((paragraph) => normalizeArticleTitle(paragraph))
@@ -1850,9 +1920,9 @@ Editorial goals: ${JSON.stringify({ audience: editorial.audience, goals: editori
 Private evidence signals: ${JSON.stringify(signals)}.
 Draft: ${JSON.stringify({ title: draft.title, description: draft.description, meta_title: draft.meta_title, meta_description: draft.meta_description, content_html: draft.content_html, faqs: draft.faqs })}.
 
-Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Apply a people-first trust review and score all four E-E-A-T dimensions: Experience through useful evidence-backed scenarios or actions without fabricated first-hand claims; Expertise through accurate explanation and reasoning; Authoritativeness through correct identification of responsible entities and rules; and Trust through consistency, uncertainty disclosure and safe verification guidance. The article must clearly serve the intended reader, add substantial topic-specific value, distinguish verified facts from interpretation, avoid fabricated experience or expertise, and exist to help a decision or action rather than merely capture search traffic.
+Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ consistency. Apply a people-first trust review and score all four E-E-A-T dimensions: Experience through useful evidence-backed scenarios or actions without fabricated first-hand claims; Expertise through accurate explanation and reasoning; Authoritativeness through correct identification of responsible entities and rules; and Trust through consistency, uncertainty disclosure and safe verification guidance. The article must clearly serve the intended reader, add substantial topic-specific value, distinguish verified facts from interpretation, avoid fabricated experience or expertise, and exist to help a decision or action rather than merely capture search traffic. Confirm that the first 2-3 sentences answer the intent directly, the primary topic phrase appears naturally near the start and in 1-2 useful H2 headings, the meta title is no longer than 60 characters, the meta description is no longer than 155 characters, and the body contains a genuine comparison or summary table.
 
-Also score the internal human editorial rubric exactly as follows: natural sentence variation 20, specific useful information 20, non-repetitive language 15, logical human flow 15, appropriate Indian context 10, balanced non-promotional tone 10, and evidence of careful editing 10. Reject any visible source or competitor name, citation, reference, footnote, external link, attribution phrase, em dash, en dash, AI-process wording, invented byline, duplicated H1, repeated fact, or paragraph that reads like an unedited template. Normal prose paragraphs should usually contain two to four sentences. Do not reveal this scoring rubric in the article.
+Also score the internal human editorial rubric exactly as follows: natural sentence variation 20, specific useful information 20, non-repetitive language 15, logical human flow 15, appropriate Indian context 10, balanced non-promotional tone 10, and evidence of careful editing 10. Expect deliberate rhythm changes, including occasional 3-6 word sentences alongside nuanced multi-clause sentences, active voice, natural contractions and contextual transitions. Reject any visible source or competitor name, citation, reference, footnote, external link, attribution phrase, em dash, en dash, AI-process wording, invented byline, duplicated H1, repeated fact, or paragraph that reads like an unedited template. Reject an opening that literally starts with "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Reject a flattened plain-text comparison matrix, especially a run of labels such as Student profile, Target courses, Risk to check and Safer approach. Reject a mechanically repeated section order such as Executive summary, Key facts, Conceptual rationale, Step-by-step guide, Risk matrix, Red flags and FAQs when the topic does not require it. Check that repeated official-verification advice has been consolidated rather than restated under every heading, and prefer named, evidence-supported examples when they genuinely clarify the decision. Reject these words and phrases in publishable copy: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly and in summary. Normal prose paragraphs should usually contain two to four sentences. Do not reveal this scoring rubric in the article.
 
 Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. Mark publishable false only for a material factual, safety, intent, completeness or reader-action defect. Optional polish must not block publication; an article scoring 85-89 can be publishable when it is accurate, complete and useful. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`;
   const generated = await blogTextJson(reviewPrompt, feature, {
@@ -1888,7 +1958,7 @@ Review corrections: ${JSON.stringify(feedback)}
 Private fact-checking context: ${JSON.stringify(signals)}
 Existing draft: ${JSON.stringify({ title: draft?.title, slug: draft?.slug, description: draft?.description, content_html: draft?.content_html, meta_title: draft?.meta_title, meta_description: draft?.meta_description, meta_keywords: draft?.meta_keywords, tags: draft?.tags, category: draft?.category, hero_hook: draft?.hero_hook, faqs: draft?.faqs })}
 
-Return the complete replacement {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}, not a patch. Preserve the article's exact search intent and answer it immediately. Make the revision people-first and satisfy all four E-E-A-T dimensions: add evidence-backed practical experience without claiming personal experience, demonstrate expertise through accurate explanation, establish authoritativeness by naming the responsible entity and separating rules from interpretation, and preserve trust through consistent facts, uncertainty disclosure and safe verification guidance. Never invent personal experience, expertise, interviews or testing. For any time-sensitive detail not established by the private context, remove unsupported certainty, state what the reader must verify on the relevant official authority portal, and do not invent a date, option, process or URL. Keep meta_title at 50-65 characters, meta_description at 140-160 characters, 4-8 distinct FAQs, and mirror the same FAQ questions and answers in content_html. The page title is already the single H1, so use only H2/H3 in content_html. Keep normal paragraphs to two to four sentences, use natural Indian English and varied sentence openings, and remove repetitive or formulaic wording. Never expose a source name, competitor name, URL, citation, footnote, attribution phrase, research note, quality score, AI comment or review feedback in any publishable field. Never use an em dash or en dash.`;
+Return the complete replacement {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}, not a patch. Return strict JSON with semantic HTML in content_html, not Markdown. Preserve the article's exact search intent and answer it directly in the first 2-3 sentences. Make the revision people-first and satisfy all four E-E-A-T dimensions: add evidence-backed practical experience without claiming personal experience, demonstrate expertise through accurate explanation, establish authoritativeness by naming the responsible entity and separating rules from interpretation, and preserve trust through consistent facts, uncertainty disclosure and safe verification guidance. Never invent personal experience, expertise, interviews or testing. For any time-sensitive detail not established by the private context, remove unsupported certainty, state what the reader must verify on the relevant official authority portal, and do not invent a date, option, process or URL. Front-load the primary topic phrase in a click-worthy meta_title of no more than 60 characters; keep meta_description benefit-led and no more than 155 characters. Keep the primary topic phrase within the first 100 words, use it naturally in exactly 1-2 H2 headings and 3-5 times in the article body without keyword stuffing. Include useful bullets and at least one genuine comparison or summary table with labelled headers when a table helps; never paste table labels and cells as a plain-text stack. Keep 4-8 distinct FAQs and mirror the same FAQ questions and answers in content_html. The page title is already the single H1, so use only H2/H3 in content_html. Keep normal paragraphs to two to four sentences and vary paragraph length. Use natural Indian English, active voice, contractions where natural, contextual transitions and deliberately varied rhythm, including occasional 3-6 word sentences alongside nuanced multi-clause sentences. Do not start with "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Do not force an Executive summary, Key facts, Conceptual rationale, Step-by-step guide, Risk matrix, Red flags, FAQs sequence; choose a topic-native structure and consolidate repeated official-verification advice. Add named, evidence-supported examples when they genuinely improve the reader's decision. Never use delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly or in summary. Remove repetitive or formulaic wording. Never expose a source name, competitor name, URL, citation, footnote, attribution phrase, research note, quality score, AI comment or review feedback in any publishable field. Never use an em dash or en dash.`;
 }
 
 async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null, requiredTitle = "", editorialSettings = {}, model: requestedModel = "", feature = "blog-studio", siteScope = "dekhocampus" } = {}) {
@@ -1982,6 +2052,15 @@ export async function handleBlogAiSettings(request, userId) {
   const updates = { text_model: normalizeBlogTextModel(requestedTextModel), image_model: DEFAULT_OPENAI_IMAGE_MODEL, image_quality: ["low", "medium", "high"].includes(body.image_quality) ? body.image_quality : "low", updated_at: new Date(), updated_by: userId };
   const current = await prisma.blog_ai_provider_settings.findUnique({ where: { id: "default" } });
   await prisma.blog_ai_provider_settings.upsert({ where: { id: "default" }, create: { id: "default", claude_api_key_ciphertext: current?.claude_api_key_ciphertext || "", openai_api_key_ciphertext: current?.openai_api_key_ciphertext || "", ...updates }, update: updates });
+  await Promise.all([
+    prisma.blog_auto_agent_settings.updateMany({
+      data: { model_provider: blogTextProvider(updates.text_model), text_model: updates.text_model, updated_at: new Date() },
+    }),
+    prisma.ai_runtime_controls.updateMany({
+      where: { feature: { in: ["blog-studio", "blog-agent"] } },
+      data: { provider: blogTextProvider(updates.text_model), model: updates.text_model, updated_at: new Date(), updated_by: userId },
+    }),
+  ]);
   for (const [name, key, model] of [["gemini", body.gemini_api_key, DEFAULT_GEMINI_MODEL], ["openai", body.openai_api_key, updates.text_model.startsWith("gpt-") ? updates.text_model : DEFAULT_OPENAI_TEXT_MODEL]]) {
     if (!String(key || "").trim()) continue;
     const existing = await provider(name);

@@ -12,7 +12,7 @@ const integrations = [
   ["facebook_pixel_id", "Meta Pixel / Dataset ID", "analytics", "28062999866677764"],
 ];
 const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
-const BLOG_GPT_5_5_EDITORIAL_MIGRATION_KEY = "blog_gpt_5_5_editorial_policy_v1";
+const BLOG_GPT_5_6_LUNA_EDITORIAL_MIGRATION_KEY = "blog_gpt_5_6_luna_editorial_policy_v1";
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
 const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v3";
@@ -36,9 +36,9 @@ try {
   });
   const editorialPolicyMigration = await prisma.app_settings.findUnique({ where: { key: BLOG_EDITORIAL_POLICY_MIGRATION_KEY } });
   let blogSettingsUpdated = 0;
-  let gpt55BlogSettingsUpdated = 0;
-  let gpt55ProviderSettingsUpdated = 0;
-  let gpt55RuntimeControlsUpdated = 0;
+  let lunaBlogSettingsUpdated = 0;
+  let lunaProviderSettingsUpdated = 0;
+  let lunaRuntimeControlsUpdated = 0;
   let providerSettingsUpdated = 0;
   let runtimeControlsUpdated = 0;
   let entitySchedulesUpdated = 0;
@@ -56,7 +56,7 @@ try {
       where: { id: "default" },
       data: {
         model_provider: "openai",
-        text_model: "gpt-5.5",
+        text_model: "gpt-5.6-luna",
         interval_minutes: 180,
         posts_per_run: 1,
         daily_post_cap: 8,
@@ -84,12 +84,12 @@ try {
     blogSettingsUpdated = updated.count;
     const providerSettings = await prisma.blog_ai_provider_settings.updateMany({
       where: { id: "default" },
-      data: { text_model: "gpt-5.5", image_quality: "low", updated_at: new Date() },
+      data: { text_model: "gpt-5.6-luna", image_quality: "low", updated_at: new Date() },
     });
     providerSettingsUpdated = providerSettings.count;
     const runtimeControls = await prisma.ai_runtime_controls.updateMany({
       where: { feature: { in: ["blog-studio", "blog-agent"] } },
-      data: { provider: "openai", model: "gpt-5.5", updated_at: new Date() },
+      data: { provider: "openai", model: "gpt-5.6-luna", updated_at: new Date() },
     });
     runtimeControlsUpdated = runtimeControls.count;
     const entitySchedules = await prisma.entity_article_schedules.updateMany({
@@ -99,34 +99,34 @@ try {
     await prisma.app_settings.create({
       data: {
         key: BLOG_EDITORIAL_POLICY_MIGRATION_KEY,
-        value: JSON.stringify({ model: "gpt-5.5", daily_post_cap: 8, interval_minutes: 180, applied_at: new Date().toISOString() }),
+        value: JSON.stringify({ model: "gpt-5.6-luna", daily_post_cap: 8, interval_minutes: 180, applied_at: new Date().toISOString() }),
       },
     });
   }
-  const gpt55EditorialMigration = await prisma.app_settings.findUnique({ where: { key: BLOG_GPT_5_5_EDITORIAL_MIGRATION_KEY } });
-  if (!gpt55EditorialMigration) {
+  const lunaEditorialMigration = await prisma.app_settings.findUnique({ where: { key: BLOG_GPT_5_6_LUNA_EDITORIAL_MIGRATION_KEY } });
+  if (!lunaEditorialMigration) {
     const blogSettings = await prisma.blog_auto_agent_settings.updateMany({
-      data: { model_provider: "openai", text_model: "gpt-5.5", updated_at: new Date() },
+      data: { model_provider: "openai", text_model: "gpt-5.6-luna", updated_at: new Date() },
     });
     if (!blogSettings.count) throw new Error("Auto Blog Agent settings are missing");
-    gpt55BlogSettingsUpdated = blogSettings.count;
+    lunaBlogSettingsUpdated = blogSettings.count;
 
     const providerSettings = await prisma.blog_ai_provider_settings.updateMany({
-      data: { text_model: "gpt-5.5", updated_at: new Date() },
+      data: { text_model: "gpt-5.6-luna", updated_at: new Date() },
     });
-    gpt55ProviderSettingsUpdated = providerSettings.count;
+    lunaProviderSettingsUpdated = providerSettings.count;
 
     const runtimeControls = await prisma.ai_runtime_controls.updateMany({
       where: { feature: { in: ["blog-studio", "blog-agent"] } },
-      data: { provider: "openai", model: "gpt-5.5", updated_at: new Date() },
+      data: { provider: "openai", model: "gpt-5.6-luna", updated_at: new Date() },
     });
-    gpt55RuntimeControlsUpdated = runtimeControls.count;
+    lunaRuntimeControlsUpdated = runtimeControls.count;
 
     await prisma.app_settings.create({
       data: {
-        key: BLOG_GPT_5_5_EDITORIAL_MIGRATION_KEY,
+        key: BLOG_GPT_5_6_LUNA_EDITORIAL_MIGRATION_KEY,
         value: JSON.stringify({
-          model: "gpt-5.5",
+          model: "gpt-5.6-luna",
           source_privacy: "strict",
           human_editorial_score_minimum: 70,
           applied_at: new Date().toISOString(),
@@ -468,10 +468,10 @@ try {
     configured: integrations.map(([key]) => key),
     blog_cover_template: template.publicUrl,
     blog_editorial_policy_migrated: blogSettingsUpdated === 1,
-    blog_gpt_5_5_editorial_policy_migrated: Boolean(gpt55EditorialMigration) || gpt55BlogSettingsUpdated > 0,
-    blog_gpt_5_5_settings_updated: gpt55BlogSettingsUpdated,
-    blog_gpt_5_5_provider_settings_updated: gpt55ProviderSettingsUpdated,
-    blog_gpt_5_5_runtime_controls_updated: gpt55RuntimeControlsUpdated,
+    blog_gpt_5_6_luna_editorial_policy_migrated: Boolean(lunaEditorialMigration) || lunaBlogSettingsUpdated > 0,
+    blog_gpt_5_6_luna_settings_updated: lunaBlogSettingsUpdated,
+    blog_gpt_5_6_luna_provider_settings_updated: lunaProviderSettingsUpdated,
+    blog_gpt_5_6_luna_runtime_controls_updated: lunaRuntimeControlsUpdated,
     blog_cover_settings_updated: blogSettingsUpdated,
     low_cost_image_quality_updated: providerSettingsUpdated,
     openai_blog_runtime_controls_updated: runtimeControlsUpdated,

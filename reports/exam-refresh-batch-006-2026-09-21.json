@@ -1,0 +1,983 @@
+{
+  "batch": "exam-refresh-batch-006",
+  "checked_at": "2026-09-21T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Next ten unique canonical exam records after batches 001-005; duplicate sessions and legacy duplicates excluded",
+  "policy": "Official sources only; unpublished 2027 dates remain pending; announced 2027 dates are preserved; four internal links plus one official application link and one official notification link; existing slugs preserved; four visible FAQs per record.",
+  "excluded_related_sessions": [
+    "ceed",
+    "ap-eamcet",
+    "national-eligibility-cum-entrance-test-neet",
+    "aiims-pg",
+    "bitsat-exam",
+    "bitsat-exam-2"
+  ],
+  "updates": [
+    {
+      "id": "914acdc7-befc-42c0-863e-c04cf9bde4db",
+      "old_slug": "cuet-ug",
+      "slug": "cuet-ug",
+      "name": "CUET UG",
+      "title": "Common University Entrance Test (CUET UG) 2027",
+      "full_name": "Common University Entrance Test (CUET UG) 2027",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Undergraduate university entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "NTA publishes the test rules, while each participating university sets programme-level subjects, marks and other admission conditions. Check both before selecting papers.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Testing Agency"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Language papers",
+        "Domain subjects",
+        "General Aptitude Test where selected",
+        "University and programme subject mapping"
+      ],
+      "description": "CUET UG 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "CUET UG 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://cuet.nta.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://cuet.nta.nic.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA must confirm the 2027 paper combination, duration, marking, languages, city intimation and university admission steps in the current bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by National Testing Agency</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>CUET UG 2027 at a glance</h2><p>CUET UG 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by National Testing Agency</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">National and state exams</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "CUET UG 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "CUET UG 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check CUET UG 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "CUET UG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CUET UG 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://cuet.nta.nic.in/",
+      "official_website": "https://cuet.nta.nic.in/",
+      "registration_url": "https://cuet.nta.nic.in/",
+      "data_source_urls": [
+        "https://cuet.nta.nic.in/",
+        "https://cuet.nta.nic.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cuet.nta.nic.in/",
+        "official_notification": "https://cuet.nta.nic.in/"
+      },
+      "faqs": [
+        {
+          "q": "When will CUET UG 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for CUET UG 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>CUET UG 2027 is an Indian undergraduate university entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by National Testing Agency</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>NTA publishes the test rules, while each participating university sets programme-level subjects, marks and other admission conditions. Check both before selecting papers.</p><h2>Syllabus</h2><ul><li>Language papers</li><li>Domain subjects</li><li>General Aptitude Test where selected</li><li>University and programme subject mapping</li></ul><h2>Exam pattern</h2><p>NTA must confirm the 2027 paper combination, duration, marking, languages, city intimation and university admission steps in the current bulletin.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://cuet.nta.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://cuet.nta.nic.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will CUET UG 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for CUET UG 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">National and state exams</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "ac281e4e-e526-43bd-9c25-47b408ec2dcf",
+      "old_slug": "uceed",
+      "slug": "uceed",
+      "name": "UCEED",
+      "title": "Undergraduate Common Entrance Examination for Design (UCEED) 2027",
+      "full_name": "Undergraduate Common Entrance Examination for Design (UCEED) 2027",
+      "status": "2027 date information published by authority",
+      "exam_date": "17 January 2027",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Design",
+      "level": "Undergraduate design entrance",
+      "mode": "Computer-based Part A and design Part B",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "IIT Bombay will publish the 2027 age, attempt, Class 12 and first-appearance rules in the information brochure. Candidates from any stream should read the exact clause before registering.",
+      "important_dates": [
+        {
+          "event": "UCEED 2027 examination",
+          "date": "17 January 2027"
+        }
+      ],
+      "syllabus": [
+        "Visualisation and spatial reasoning",
+        "Observation and design sensitivity",
+        "Analytical and logical reasoning",
+        "Language, creativity and drawing/design aptitude"
+      ],
+      "description": "UCEED 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "UCEED 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.uceed.iitb.ac.in/2026/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.uceed.iitb.ac.in/2026/announcements.html\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The 2027 paper structure, marks, Part A timing, Part B instructions, marking and admission process must be taken from the official brochure when released.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>UCEED 2027 examination</td><td>17 January 2027</td></tr></tbody></table>",
+      "summary_content": "<h2>UCEED 2027 at a glance</h2><p>UCEED 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>UCEED 2027 examination</td><td>17 January 2027</td></tr></tbody></table><p>IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Design entrance exams</a></li><li><a href=\"/courses\">Design courses</a></li><li><a href=\"/colleges\">Design colleges</a></li></ul>",
+      "page_summary": "UCEED 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "UCEED 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check UCEED 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "UCEED 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "UCEED 2027",
+        "exam update",
+        "Design",
+        "2027"
+      ],
+      "website": "https://www.uceed.iitb.ac.in/2026/",
+      "official_website": "https://www.uceed.iitb.ac.in/2026/",
+      "registration_url": "https://www.uceed.iitb.ac.in/2026/",
+      "data_source_urls": [
+        "https://www.uceed.iitb.ac.in/2026/",
+        "https://www.uceed.iitb.ac.in/2026/announcements.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.uceed.iitb.ac.in/2026/",
+        "official_notification": "https://www.uceed.iitb.ac.in/2026/announcements.html"
+      },
+      "faqs": [
+        {
+          "q": "When will UCEED 2027 dates be released?",
+          "a": "IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline."
+        },
+        {
+          "q": "Where should I apply for UCEED 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>UCEED 2027 is an Indian undergraduate design entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>UCEED 2027 examination</td><td>17 January 2027</td></tr></tbody></table><h2>Eligibility</h2><p>IIT Bombay will publish the 2027 age, attempt, Class 12 and first-appearance rules in the information brochure. Candidates from any stream should read the exact clause before registering.</p><h2>Syllabus</h2><ul><li>Visualisation and spatial reasoning</li><li>Observation and design sensitivity</li><li>Analytical and logical reasoning</li><li>Language, creativity and drawing/design aptitude</li></ul><h2>Exam pattern</h2><p>The 2027 paper structure, marks, Part A timing, Part B instructions, marking and admission process must be taken from the official brochure when released.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.uceed.iitb.ac.in/2026/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.uceed.iitb.ac.in/2026/announcements.html\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will UCEED 2027 dates be released?</h3><p>IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p><h3>Where should I apply for UCEED 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Design entrance exams</a></li><li><a href=\"/courses\">Design courses</a></li><li><a href=\"/colleges\">Design colleges</a></li></ul>"
+    },
+    {
+      "id": "5e8b29e1-d73b-4550-8981-d9ac7b924806",
+      "old_slug": "ap-eapcet",
+      "slug": "ap-eapcet",
+      "name": "AP EAPCET",
+      "title": "AP EAPCET 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "AP EAPCET 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "State undergraduate professional entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "APSCHE publishes separate engineering and agriculture/pharmacy rules covering 10+2 subjects, local or non-local status, age and programme conditions. Use the 2027 booklet for final eligibility.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by APSCHE and JNTU Kakinada"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Engineering: Mathematics, Physics and Chemistry",
+        "Agriculture or pharmacy: Biology, Physics and Chemistry",
+        "Stream-specific subject weighting"
+      ],
+      "description": "AP EAPCET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "AP EAPCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://cets.apsche.ap.gov.in/EAPCET/Eapcet/EAPCET_Homepage.aspx\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://cets.apsche.ap.gov.in/EAPCET/EapcetHomepages/ImportantDates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>APSCHE must confirm the 2027 stream dates, sessions, duration, marking, answer-key process and counselling schedule in the official notice.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by APSCHE and JNTU Kakinada</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>AP EAPCET 2027 at a glance</h2><p>AP EAPCET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by APSCHE and JNTU Kakinada</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "AP EAPCET 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "AP EAPCET 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check AP EAPCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "AP EAPCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AP EAPCET 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://cets.apsche.ap.gov.in/EAPCET/Eapcet/EAPCET_Homepage.aspx",
+      "official_website": "https://cets.apsche.ap.gov.in/EAPCET/Eapcet/EAPCET_Homepage.aspx",
+      "registration_url": "https://cets.apsche.ap.gov.in/EAPCET/Eapcet/EAPCET_Homepage.aspx",
+      "data_source_urls": [
+        "https://cets.apsche.ap.gov.in/EAPCET/Eapcet/EAPCET_Homepage.aspx",
+        "https://cets.apsche.ap.gov.in/EAPCET/EapcetHomepages/ImportantDates"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cets.apsche.ap.gov.in/EAPCET/Eapcet/EAPCET_Homepage.aspx",
+        "official_notification": "https://cets.apsche.ap.gov.in/EAPCET/EapcetHomepages/ImportantDates"
+      },
+      "faqs": [
+        {
+          "q": "When will AP EAPCET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for AP EAPCET 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>AP EAPCET 2027 is an Indian state undergraduate professional entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by APSCHE and JNTU Kakinada</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>APSCHE publishes separate engineering and agriculture/pharmacy rules covering 10+2 subjects, local or non-local status, age and programme conditions. Use the 2027 booklet for final eligibility.</p><h2>Syllabus</h2><ul><li>Engineering: Mathematics, Physics and Chemistry</li><li>Agriculture or pharmacy: Biology, Physics and Chemistry</li><li>Stream-specific subject weighting</li></ul><h2>Exam pattern</h2><p>APSCHE must confirm the 2027 stream dates, sessions, duration, marking, answer-key process and counselling schedule in the official notice.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://cets.apsche.ap.gov.in/EAPCET/Eapcet/EAPCET_Homepage.aspx\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://cets.apsche.ap.gov.in/EAPCET/EapcetHomepages/ImportantDates\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will AP EAPCET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for AP EAPCET 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    },
+    {
+      "id": "68c8cf19-b7c5-4624-a2c7-21a1df96dd90",
+      "old_slug": "CEED",
+      "slug": "CEED",
+      "name": "CEED",
+      "title": "Common Entrance Examination for Design (CEED) 2027",
+      "full_name": "Common Entrance Examination for Design (CEED) 2027",
+      "status": "2027 date information published by authority",
+      "exam_date": "17 January 2027",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Design",
+      "level": "Postgraduate design entrance",
+      "mode": "Computer-based and design aptitude examination",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "IIT Bombay will publish the 2027 degree, age, attempt and qualifying-examination conditions in the information brochure. Institute-level M.Des eligibility can differ after the CEED score.",
+      "important_dates": [
+        {
+          "event": "CEED 2027 examination",
+          "date": "17 January 2027"
+        }
+      ],
+      "syllabus": [
+        "Visual and spatial reasoning",
+        "Observation and design sensitivity",
+        "Environmental and social awareness",
+        "Analytical reasoning and drawing/design aptitude"
+      ],
+      "description": "CEED 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "CEED 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.ceed.iitb.ac.in/2026/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.ceed.iitb.ac.in/2026/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The 2027 Part A and Part B format, marks, duration, answer key and score-card process must follow the official brochure.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>CEED 2027 examination</td><td>17 January 2027</td></tr></tbody></table>",
+      "summary_content": "<h2>CEED 2027 at a glance</h2><p>CEED 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>CEED 2027 examination</td><td>17 January 2027</td></tr></tbody></table><p>IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Design entrance exams</a></li><li><a href=\"/courses\">Design courses</a></li><li><a href=\"/colleges\">Design colleges</a></li></ul>",
+      "page_summary": "CEED 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "CEED 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check CEED 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "CEED 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CEED 2027",
+        "exam update",
+        "Design",
+        "2027"
+      ],
+      "website": "https://www.ceed.iitb.ac.in/2026/",
+      "official_website": "https://www.ceed.iitb.ac.in/2026/",
+      "registration_url": "https://www.ceed.iitb.ac.in/2026/",
+      "data_source_urls": [
+        "https://www.ceed.iitb.ac.in/2026/",
+        "https://www.ceed.iitb.ac.in/2026/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.ceed.iitb.ac.in/2026/",
+        "official_notification": "https://www.ceed.iitb.ac.in/2026/"
+      },
+      "faqs": [
+        {
+          "q": "When will CEED 2027 dates be released?",
+          "a": "IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline."
+        },
+        {
+          "q": "Where should I apply for CEED 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>CEED 2027 is an Indian postgraduate design entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>CEED 2027 examination</td><td>17 January 2027</td></tr></tbody></table><h2>Eligibility</h2><p>IIT Bombay will publish the 2027 degree, age, attempt and qualifying-examination conditions in the information brochure. Institute-level M.Des eligibility can differ after the CEED score.</p><h2>Syllabus</h2><ul><li>Visual and spatial reasoning</li><li>Observation and design sensitivity</li><li>Environmental and social awareness</li><li>Analytical reasoning and drawing/design aptitude</li></ul><h2>Exam pattern</h2><p>The 2027 Part A and Part B format, marks, duration, answer key and score-card process must follow the official brochure.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.ceed.iitb.ac.in/2026/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.ceed.iitb.ac.in/2026/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will CEED 2027 dates be released?</h3><p>IIT Bombay has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p><h3>Where should I apply for CEED 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Design entrance exams</a></li><li><a href=\"/courses\">Design courses</a></li><li><a href=\"/colleges\">Design colleges</a></li></ul>"
+    },
+    {
+      "id": "7a986b2e-1b62-4a83-b076-6959b480eb4b",
+      "old_slug": "neet",
+      "slug": "neet",
+      "name": "NEET UG",
+      "title": "NEET UG 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "NEET UG 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Medical",
+      "level": "Undergraduate medical entrance",
+      "mode": "Pen-and-paper test",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "NTA and the relevant medical regulators publish the 2027 age, qualifying-subject, marks, category and document rules. Check the current information bulletin and the target counselling authority.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Testing Agency"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Botany",
+        "Zoology"
+      ],
+      "description": "NEET UG 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "NEET UG 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://neet.nta.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://neet.nta.nic.in/document-category/public-notices/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>NTA must confirm the 2027 question count, time, language, marking, city choice, correction window and counselling workflow in the current bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by National Testing Agency</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>NEET UG 2027 at a glance</h2><p>NEET UG 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by National Testing Agency</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Medical entrance exams</a></li><li><a href=\"/courses\">Medical courses</a></li><li><a href=\"/colleges\">Medical colleges</a></li></ul>",
+      "page_summary": "NEET UG 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "NEET UG 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check NEET UG 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "NEET UG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "NEET UG 2027",
+        "exam update",
+        "Medical",
+        "2027"
+      ],
+      "website": "https://neet.nta.nic.in/",
+      "official_website": "https://neet.nta.nic.in/",
+      "registration_url": "https://neet.nta.nic.in/",
+      "data_source_urls": [
+        "https://neet.nta.nic.in/",
+        "https://neet.nta.nic.in/document-category/public-notices/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://neet.nta.nic.in/",
+        "official_notification": "https://neet.nta.nic.in/document-category/public-notices/"
+      },
+      "faqs": [
+        {
+          "q": "When will NEET UG 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for NEET UG 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>NEET UG 2027 is an Indian undergraduate medical entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by National Testing Agency</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>NTA and the relevant medical regulators publish the 2027 age, qualifying-subject, marks, category and document rules. Check the current information bulletin and the target counselling authority.</p><h2>Syllabus</h2><ul><li>Physics</li><li>Chemistry</li><li>Botany</li><li>Zoology</li></ul><h2>Exam pattern</h2><p>NTA must confirm the 2027 question count, time, language, marking, city choice, correction window and counselling workflow in the current bulletin.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://neet.nta.nic.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://neet.nta.nic.in/document-category/public-notices/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will NEET UG 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for NEET UG 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Medical entrance exams</a></li><li><a href=\"/courses\">Medical courses</a></li><li><a href=\"/colleges\">Medical colleges</a></li></ul>"
+    },
+    {
+      "id": "b7998bdf-a4a9-400a-9446-f4a0bd1ed85b",
+      "old_slug": "clat",
+      "slug": "clat",
+      "name": "CLAT",
+      "title": "CLAT 2027: Dates, Eligibility and Exam Pattern",
+      "full_name": "CLAT 2027: Dates, Eligibility and Exam Pattern",
+      "status": "2027 date information published by authority",
+      "exam_date": "6 December 2026, 2:00 PM–4:00 PM",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Law",
+      "level": "Undergraduate and postgraduate law entrance",
+      "mode": "Offline pen-and-paper examination",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "The Consortium publishes separate UG and PG eligibility, nationality, qualifying-examination and NLU admission rules. Candidates should read the current instructions for the programme they want.",
+      "important_dates": [
+        {
+          "event": "CLAT 2027 examination",
+          "date": "6 December 2026, 2:00 PM–4:00 PM"
+        },
+        {
+          "event": "CLAT 2027 counselling",
+          "date": "December 2026 or January 2027, as notified"
+        }
+      ],
+      "syllabus": [
+        "English language",
+        "Current affairs and general knowledge",
+        "Legal reasoning",
+        "Logical reasoning",
+        "Quantitative techniques"
+      ],
+      "description": "CLAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "CLAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://clat2027.consortiumofnlus.ac.in/clat-2027/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://clat2027.consortiumofnlus.ac.in/clat-2027/ug-instructions.html\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>Consortium of National Law Universities has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The Consortium must be treated as the source for the 2027 question format, duration, sections, marking, accessibility and counselling process.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>CLAT 2027 examination</td><td>6 December 2026, 2:00 PM–4:00 PM</td></tr><tr><td>CLAT 2027 counselling</td><td>December 2026 or January 2027, as notified</td></tr></tbody></table>",
+      "summary_content": "<h2>CLAT 2027 at a glance</h2><p>CLAT 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>CLAT 2027 examination</td><td>6 December 2026, 2:00 PM–4:00 PM</td></tr><tr><td>CLAT 2027 counselling</td><td>December 2026 or January 2027, as notified</td></tr></tbody></table><p>Consortium of National Law Universities has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Law entrance exams</a></li><li><a href=\"/courses\">Law courses</a></li><li><a href=\"/colleges\">Law colleges</a></li></ul>",
+      "page_summary": "CLAT 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "CLAT 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check CLAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "CLAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "CLAT 2027",
+        "exam update",
+        "Law",
+        "2027"
+      ],
+      "website": "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+      "official_website": "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+      "registration_url": "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+      "data_source_urls": [
+        "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+        "https://clat2027.consortiumofnlus.ac.in/clat-2027/ug-instructions.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://clat2027.consortiumofnlus.ac.in/clat-2027/",
+        "official_notification": "https://clat2027.consortiumofnlus.ac.in/clat-2027/ug-instructions.html"
+      },
+      "faqs": [
+        {
+          "q": "When will CLAT 2027 dates be released?",
+          "a": "Consortium of National Law Universities has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline."
+        },
+        {
+          "q": "Where should I apply for CLAT 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>CLAT 2027 is an Indian undergraduate and postgraduate law entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>CLAT 2027 examination</td><td>6 December 2026, 2:00 PM–4:00 PM</td></tr><tr><td>CLAT 2027 counselling</td><td>December 2026 or January 2027, as notified</td></tr></tbody></table><h2>Eligibility</h2><p>The Consortium publishes separate UG and PG eligibility, nationality, qualifying-examination and NLU admission rules. Candidates should read the current instructions for the programme they want.</p><h2>Syllabus</h2><ul><li>English language</li><li>Current affairs and general knowledge</li><li>Legal reasoning</li><li>Logical reasoning</li><li>Quantitative techniques</li></ul><h2>Exam pattern</h2><p>The Consortium must be treated as the source for the 2027 question format, duration, sections, marking, accessibility and counselling process.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://clat2027.consortiumofnlus.ac.in/clat-2027/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://clat2027.consortiumofnlus.ac.in/clat-2027/ug-instructions.html\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>Consortium of National Law Universities has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will CLAT 2027 dates be released?</h3><p>Consortium of National Law Universities has published the date information shown above. Recheck the official page before paying, travelling or relying on a deadline.</p><h3>Where should I apply for CLAT 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Law entrance exams</a></li><li><a href=\"/courses\">Law courses</a></li><li><a href=\"/colleges\">Law colleges</a></li></ul>"
+    },
+    {
+      "id": "97581dd9-d2e4-4cd2-a16f-355a3cc0f718",
+      "old_slug": "telangana-state-engineering-common-entrance-test",
+      "slug": "telangana-state-engineering-common-entrance-test",
+      "name": "Telangana State Engineering Common Entrance Test",
+      "title": "TS EAMCET 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "TS EAMCET 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "State undergraduate professional entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "The Telangana authority publishes stream-wise qualifying subjects, marks, local status, age and document conditions. Confirm the 2027 engineering, agriculture and pharmacy rules in the official notification.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Telangana State Council of Higher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Engineering: Mathematics, Physics and Chemistry",
+        "Agriculture or pharmacy: Biology, Physics and Chemistry",
+        "Stream-specific intermediate syllabus"
+      ],
+      "description": "TS EAMCET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "TS EAMCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://eapcet.tsche.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://eapcet.tsche.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The conducting authority must confirm the 2027 sessions, duration, marking, answer keys, results and counselling timeline.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Telangana State Council of Higher Education</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>TS EAMCET 2027 at a glance</h2><p>TS EAMCET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Telangana State Council of Higher Education</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "TS EAMCET 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "TS EAMCET 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check TS EAMCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "TS EAMCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "TS EAMCET 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://eapcet.tsche.ac.in/",
+      "official_website": "https://eapcet.tsche.ac.in/",
+      "registration_url": "https://eapcet.tsche.ac.in/",
+      "data_source_urls": [
+        "https://eapcet.tsche.ac.in/",
+        "https://eapcet.tsche.ac.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://eapcet.tsche.ac.in/",
+        "official_notification": "https://eapcet.tsche.ac.in/"
+      },
+      "faqs": [
+        {
+          "q": "When will TS EAMCET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for TS EAMCET 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>TS EAMCET 2027 is an Indian state undergraduate professional entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Telangana State Council of Higher Education</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>The Telangana authority publishes stream-wise qualifying subjects, marks, local status, age and document conditions. Confirm the 2027 engineering, agriculture and pharmacy rules in the official notification.</p><h2>Syllabus</h2><ul><li>Engineering: Mathematics, Physics and Chemistry</li><li>Agriculture or pharmacy: Biology, Physics and Chemistry</li><li>Stream-specific intermediate syllabus</li></ul><h2>Exam pattern</h2><p>The conducting authority must confirm the 2027 sessions, duration, marking, answer keys, results and counselling timeline.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://eapcet.tsche.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://eapcet.tsche.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will TS EAMCET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for TS EAMCET 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    },
+    {
+      "id": "583b08a7-74de-408a-9fb4-fdaf57ff6798",
+      "old_slug": "ts-law-cet",
+      "slug": "ts-law-cet",
+      "name": "Telangana State Law Common Entrance Test",
+      "title": "TS LAWCET 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "TS LAWCET 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Law",
+      "level": "State law entrance",
+      "mode": "Computer-based test",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "The Telangana authority publishes separate qualifying-degree, marks, age, local-status and reservation conditions for the selected 3-year or 5-year law route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Telangana State Council of Higher Education"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "General knowledge and current affairs",
+        "Mental ability",
+        "Legal aptitude",
+        "Reading and reasoning skills"
+      ],
+      "description": "TS LAWCET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "TS LAWCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://lawcet.tsche.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://lawcet.tsche.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Use the 2027 notification for the final question count, duration, language, marking, hall ticket, result and counselling steps.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Telangana State Council of Higher Education</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>TS LAWCET 2027 at a glance</h2><p>TS LAWCET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Telangana State Council of Higher Education</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Law entrance exams</a></li><li><a href=\"/courses\">Law courses</a></li><li><a href=\"/colleges\">Law colleges</a></li></ul>",
+      "page_summary": "TS LAWCET 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "TS LAWCET 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check TS LAWCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "TS LAWCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "TS LAWCET 2027",
+        "exam update",
+        "Law",
+        "2027"
+      ],
+      "website": "https://lawcet.tsche.ac.in/",
+      "official_website": "https://lawcet.tsche.ac.in/",
+      "registration_url": "https://lawcet.tsche.ac.in/",
+      "data_source_urls": [
+        "https://lawcet.tsche.ac.in/",
+        "https://lawcet.tsche.ac.in/"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://lawcet.tsche.ac.in/",
+        "official_notification": "https://lawcet.tsche.ac.in/"
+      },
+      "faqs": [
+        {
+          "q": "When will TS LAWCET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for TS LAWCET 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>TS LAWCET 2027 is an Indian state law entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Telangana State Council of Higher Education</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>The Telangana authority publishes separate qualifying-degree, marks, age, local-status and reservation conditions for the selected 3-year or 5-year law route.</p><h2>Syllabus</h2><ul><li>General knowledge and current affairs</li><li>Mental ability</li><li>Legal aptitude</li><li>Reading and reasoning skills</li></ul><h2>Exam pattern</h2><p>Use the 2027 notification for the final question count, duration, language, marking, hall ticket, result and counselling steps.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://lawcet.tsche.ac.in/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://lawcet.tsche.ac.in/\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will TS LAWCET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for TS LAWCET 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">Law entrance exams</a></li><li><a href=\"/courses\">Law courses</a></li><li><a href=\"/colleges\">Law colleges</a></li></ul>"
+    },
+    {
+      "id": "ad8803a4-e38b-43eb-a62e-73408e4f1915",
+      "old_slug": "uttar-pradesh-combined-agriculture-and-technology-entrance-test",
+      "slug": "uttar-pradesh-combined-agriculture-and-technology-entrance-test",
+      "name": "Uttar Pradesh Combined Agriculture and Technology Entrance Test",
+      "title": "UPCATET 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "UPCATET 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "General",
+      "level": "Agriculture and technology entrance",
+      "mode": "As notified by the organising agriculture university",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "The organising university publishes programme-specific Class 12, subject, domicile, age, category and document rules for UG, postgraduate and PhD routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by UPCATET organising university"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Agriculture and science subjects",
+        "General knowledge and reasoning where notified",
+        "Programme-specific undergraduate, postgraduate or PhD topics"
+      ],
+      "description": "UPCATET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "UPCATET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.upcatetexam.org/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upcatetexam.org/news-notification.html\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>UPCATET must confirm the 2027 application window, papers, centres, marking, results and counselling calendar in its official brochure.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by UPCATET organising university</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>UPCATET 2027 at a glance</h2><p>UPCATET 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by UPCATET organising university</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">National and state exams</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>",
+      "page_summary": "UPCATET 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "UPCATET 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check UPCATET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "UPCATET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "UPCATET 2027",
+        "exam update",
+        "General",
+        "2027"
+      ],
+      "website": "https://www.upcatetexam.org/",
+      "official_website": "https://www.upcatetexam.org/",
+      "registration_url": "https://www.upcatetexam.org/",
+      "data_source_urls": [
+        "https://www.upcatetexam.org/",
+        "https://www.upcatetexam.org/news-notification.html"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.upcatetexam.org/",
+        "official_notification": "https://www.upcatetexam.org/news-notification.html"
+      },
+      "faqs": [
+        {
+          "q": "When will UPCATET 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for UPCATET 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>UPCATET 2027 is an Indian agriculture and technology entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by UPCATET organising university</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>The organising university publishes programme-specific Class 12, subject, domicile, age, category and document rules for UG, postgraduate and PhD routes.</p><h2>Syllabus</h2><ul><li>Agriculture and science subjects</li><li>General knowledge and reasoning where notified</li><li>Programme-specific undergraduate, postgraduate or PhD topics</li></ul><h2>Exam pattern</h2><p>UPCATET must confirm the 2027 application window, papers, centres, marking, results and counselling calendar in its official brochure.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://www.upcatetexam.org/\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://www.upcatetexam.org/news-notification.html\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will UPCATET 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for UPCATET 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams\">National and state exams</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "e724c917-0ddd-4b6c-9604-8dd433d76d05",
+      "old_slug": "vtueee",
+      "slug": "vtueee",
+      "name": "Vel Tech Undergraduate Engineering Entrance Examination",
+      "title": "VTUEEE 2027: Eligibility, Dates and Exam Pattern",
+      "full_name": "VTUEEE 2027: Eligibility, Dates and Exam Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar or pending",
+      "application_end_date": "See official calendar or pending",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "Undergraduate engineering entrance",
+      "mode": "As notified by Vel Tech",
+      "frequency": "Once per admission cycle unless the authority publishes multiple sessions",
+      "eligibility": "Vel Tech publishes the current B.Tech qualifying subjects, marks, age, application and document conditions. Confirm whether the selected programme uses VTUEEE or another admission route.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Vel Tech Rangarajan Dr. Sagunthala R&D Institute of Science and Technology"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result / counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics",
+        "Programme-specific aptitude where notified"
+      ],
+      "description": "VTUEEE 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.",
+      "hero_hook": "VTUEEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://application.veltech.edu.in/engineering-form\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://application.veltech.edu.in/engineering-form\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Vel Tech must confirm the 2027 phase dates, mode, duration, marking, syllabus and counselling or merit-admission rules on the official portal.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p>",
+      "counselling_content": "<h2>After the exam</h2><p>A score is not an admission offer. Follow the authority's official next step and verify documents before choice filling or joining.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result, scorecard or admission update only from the official portal. Save a copy and follow the next notified action.</p>",
+      "dates_content": "<h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Vel Tech Rangarajan Dr. Sagunthala R&amp;D Institute of Science and Technology</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table>",
+      "summary_content": "<h2>VTUEEE 2027 at a glance</h2><p>VTUEEE 2027 guide with official 2027 date status, eligibility, syllabus, exam pattern, application steps, result and counselling guidance.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Vel Tech Rangarajan Dr. Sagunthala R&amp;D Institute of Science and Technology</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>",
+      "page_summary": "VTUEEE 2027: eligibility, application, syllabus, exam pattern, official dates, result and next steps.",
+      "meta_title": "VTUEEE 2027: Dates, Eligibility & Exam Pattern",
+      "meta_description": "Check VTUEEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify every deadline on the authority portal.",
+      "meta_keywords": "VTUEEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "VTUEEE 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://www.veltech.edu.in/",
+      "official_website": "https://www.veltech.edu.in/",
+      "registration_url": "https://application.veltech.edu.in/engineering-form",
+      "data_source_urls": [
+        "https://www.veltech.edu.in/",
+        "https://application.veltech.edu.in/engineering-form"
+      ],
+      "data_verified_at": "2026-09-21T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-21T00:00:00+05:30",
+      "data_clean_state": "verified_batch_006",
+      "internal_links": [
+        "/exams",
+        "/exams/top-engineering-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://application.veltech.edu.in/engineering-form",
+        "official_notification": "https://application.veltech.edu.in/engineering-form"
+      },
+      "faqs": [
+        {
+          "q": "When will VTUEEE 2027 dates be released?",
+          "a": "The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026."
+        },
+        {
+          "q": "Where should I apply for VTUEEE 2027?",
+          "a": "Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment."
+        },
+        {
+          "q": "Can I rely on the previous cycle's pattern?",
+          "a": "Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "q": "Does a score or rank guarantee selection?",
+          "a": "No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision."
+        }
+      ],
+      "article_html": "<p>VTUEEE 2027 is an Indian undergraduate engineering entrance route. This guide puts verified date status, eligibility, syllabus, pattern, application steps and next actions in one place.</p><h2>Important dates</h2><table><thead><tr><th>Event</th><th>Date or status</th></tr></thead><tbody><tr><td>2027 notification</td><td>Not announced by Vel Tech Rangarajan Dr. Sagunthala R&amp;D Institute of Science and Technology</td></tr><tr><td>Application window</td><td>Not announced</td></tr><tr><td>Examination</td><td>Not announced</td></tr><tr><td>Result / counselling</td><td>Not announced</td></tr></tbody></table><h2>Eligibility</h2><p>Vel Tech publishes the current B.Tech qualifying subjects, marks, age, application and document conditions. Confirm whether the selected programme uses VTUEEE or another admission route.</p><h2>Syllabus</h2><ul><li>Physics</li><li>Chemistry</li><li>Mathematics</li><li>Programme-specific aptitude where notified</li></ul><h2>Exam pattern</h2><p>Vel Tech must confirm the 2027 phase dates, mode, duration, marking, syllabus and counselling or merit-admission rules on the official portal.</p><p>Question counts, marking and accessibility rules can change. The current official notice overrides older summaries.</p><h2>How to apply</h2><ol><li>Open the official portal and confirm the 2027 cycle or published calendar.</li><li>Read the current notice, eligibility clause and document checklist.</li><li>Register with an accessible email address and mobile number.</li><li>Enter academic, identity and category details exactly as supported by documents.</li><li>Upload files, pay only through the authorised gateway and save the confirmation page.</li><li>Use the same login for corrections, admit card, result and counselling.</li></ol><p><a href=\"https://application.veltech.edu.in/engineering-form\" rel=\"noopener noreferrer\">Apply or check the official portal</a> · <a href=\"https://application.veltech.edu.in/engineering-form\" rel=\"noopener noreferrer\">Read the official notification source</a></p><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h2>How to prepare</h2><ul><li>Turn the official syllabus into a topic checklist.</li><li>Practise in the notified mode and time limit.</li><li>Keep an error log for concepts, calculation, reading and time management.</li><li>Track form, admit-card and counselling deadlines separately from study targets.</li></ul><p>Roz thoda consistent practice is easier to sustain than a last-week rush.</p><h2>After the exam</h2><p>A score is not an admission offer. Follow the official counselling, joining or recruitment instructions and pay only through the authorised page.</p><h2>FAQs</h2><h3>When will VTUEEE 2027 dates be released?</h3><p>The complete 2027 schedule was not published in the official source checked on 2026-09-21. Dates remain pending instead of being estimated from 2026.</p><h3>Where should I apply for VTUEEE 2027?</h3><p>Use the official application source listed on this page. Avoid agents, coaching links or social posts that request payment.</p><h3>Can I rely on the previous cycle's pattern?</h3><p>Use previous papers for practice only. The latest official bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score or rank guarantee selection?</h3><p>No. Selection also depends on merit, counselling, vacancies, documents, category rules and the authority's final decision.</p><h2>Related DekhoCampus guides</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-engineering-entrance-exams-in-india\">Engineering entrance exams</a></li><li><a href=\"/courses\">Engineering courses</a></li><li><a href=\"/colleges\">Engineering colleges</a></li></ul>"
+    }
+  ]
+}

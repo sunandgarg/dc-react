@@ -83,6 +83,7 @@ export default function CollegeDetail() {
   const [courseSearch, setCourseSearch] = useState("");
   const [expandedCourseGroups, setExpandedCourseGroups] = useState<Set<string>>(new Set());
   const [selectedAcademicLevel, setSelectedAcademicLevel] = useState("");
+  const [aboutExpanded, setAboutExpanded] = useState(false);
   // Canonicalize URL to slug-with-id once the college resolves
   useEffect(() => {
     if (!college?.slug || !(college as any).short_id) return;
@@ -154,6 +155,10 @@ export default function CollegeDetail() {
     setVisibleCourseGroupCount(5);
     setExpandedCourseGroups(new Set());
   }, [collegeRelationSlug, courseSearch, activeFeeLevel?.key]);
+
+  useEffect(() => {
+    setAboutExpanded(false);
+  }, [collegeRelationSlug]);
 
   useEffect(() => {
     if (!collegeFeeLevels.length) return;
@@ -238,6 +243,12 @@ export default function CollegeDetail() {
   })();
   const courseGroupCount = groupedCollegeFees.length;
   const nextCourseBatchSize = Math.min(5, Math.max(0, courseGroupCount - visibleCourseGroupCount));
+  const aboutTextLength = (college.description || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .length;
+  const aboutCanExpand = aboutTextLength > 720;
 
   return (
     <div className="min-h-screen bg-background">
@@ -329,9 +340,31 @@ export default function CollegeDetail() {
               <h2 data-h className="text-xl md:text-[22px] font-extrabold text-foreground leading-tight tracking-tight">
                 About
               </h2>
-              <div className="mt-3">
-                <RichText html={college.description} />
+              <div className="relative mt-3">
+                <div
+                  className={!aboutExpanded && aboutCanExpand
+                    ? "max-h-[11.5rem] overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:7]"
+                    : undefined}
+                >
+                  <RichText html={college.description} />
+                </div>
+                {!aboutExpanded && aboutCanExpand && (
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-card via-card/90 to-transparent" aria-hidden="true" />
+                )}
               </div>
+              {aboutCanExpand && (
+                <div className="mt-3 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setAboutExpanded((expanded) => !expanded)}
+                    aria-expanded={aboutExpanded}
+                    className="group inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/[0.06] px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-primary/45 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                  >
+                    <span>{aboutExpanded ? "Show less" : "More"}</span>
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${aboutExpanded ? "rotate-180" : "group-hover:translate-y-0.5"}`} aria-hidden="true" />
+                  </button>
+                </div>
+              )}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-5">
                 {[
                   { label: "Type", value: college.type },
@@ -431,14 +464,25 @@ export default function CollegeDetail() {
                   </div>
                 </>
               )}
-              <div className="dc-scroll-table dc-course-fee-table">
-                <table id="college-course-fee-table" className="w-full table-fixed text-sm sm:min-w-[620px]">
+              <div
+                className="dc-scroll-table dc-course-fee-table"
+                role="region"
+                tabIndex={0}
+                aria-label="Scrollable course and fee table"
+              >
+                <table id="college-course-fee-table" aria-describedby="college-course-fee-hint" className="!w-full min-w-[42rem] table-fixed text-sm">
+                  <colgroup>
+                    <col className="w-[14rem]" />
+                    <col className="w-[10rem]" />
+                    <col className="w-[11rem]" />
+                    <col className="w-[6rem]" />
+                  </colgroup>
                   <thead>
                     <tr className="border-b border-border bg-muted/40">
-                      <th className="px-2 py-3 text-left text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-sm"><span className="sm:hidden">Course</span><span className="hidden sm:inline">Broad course</span></th>
-                      <th className="px-2 py-3 text-left text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-sm"><span className="sm:hidden">Options</span><span className="hidden sm:inline">Specializations</span></th>
-                      <th className="px-2 py-3 text-left text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-sm"><span className="sm:hidden">Fees</span><span className="hidden sm:inline">Fee range</span></th>
-                      <th className="w-[4.5rem] px-2 py-3 text-right font-medium text-muted-foreground sm:w-24 sm:px-3">Details</th>
+                      <th scope="col" className="px-2 py-3 text-left text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-sm"><span className="sm:hidden">Course</span><span className="hidden sm:inline">Broad course</span></th>
+                      <th scope="col" className="px-2 py-3 text-left text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-sm"><span className="sm:hidden">Options</span><span className="hidden sm:inline">Specializations</span></th>
+                      <th scope="col" className="px-2 py-3 text-left text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-sm"><span className="sm:hidden">Fees</span><span className="hidden sm:inline">Fee range</span></th>
+                      <th scope="col" className="w-[4.5rem] px-2 py-3 text-right font-medium text-muted-foreground sm:w-24 sm:px-3">Details</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -532,6 +576,9 @@ export default function CollegeDetail() {
                   </tbody>
                 </table>
               </div>
+              <p id="college-course-fee-hint" className="mt-2 text-[11px] text-muted-foreground sm:hidden">
+                Swipe sideways to view fees and details
+              </p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 {courseGroupCount > visibleCourseGroupCount && (
                   <Button

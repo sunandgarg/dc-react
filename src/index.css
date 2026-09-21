@@ -587,13 +587,15 @@
     .dc-scroll-table.dc-course-fee-table {
       width: 100%;
       max-width: 100%;
-      overflow-x: hidden;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      touch-action: pan-x pan-y;
     }
 
     .dc-scroll-table.dc-course-fee-table > table {
-      width: 100%;
-      min-width: 100%;
-      max-width: 100%;
+      width: max-content;
+      min-width: 42rem;
+      max-width: none;
       table-layout: fixed;
     }
   }

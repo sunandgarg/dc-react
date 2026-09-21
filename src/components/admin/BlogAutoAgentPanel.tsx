@@ -64,6 +64,11 @@ type GeneratedArticle = { id: string; title: string; slug: string; featured_imag
 type Author = { id: string; name: string; designation?: string; photo?: string };
 
 const DRAFT_KEY = "dc:admin:blog-agent:draft:v1";
+const DEFAULT_TEXT_MODEL = "gpt-5.6-luna";
+const normalizeTextModel = (value?: string) => {
+  const model = String(value || "").trim();
+  return !model || model === "gpt-5.5" ? DEFAULT_TEXT_MODEL : model;
+};
 const DEFAULT_SETTINGS: Settings = {
   enabled: false,
   interval_minutes: 60,
@@ -71,7 +76,7 @@ const DEFAULT_SETTINGS: Settings = {
   daily_post_cap: 48,
   publish_status: "Published",
   model_provider: "openai",
-  text_model: "gpt-5.5",
+  text_model: DEFAULT_TEXT_MODEL,
   word_limit: 0,
   author_mode: "none",
   author_ids: [],
@@ -141,13 +146,14 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         (backendClient as any).from("authors").select("id,name,designation,photo").eq("is_active", true).order("display_order"),
       ]);
       if (settingsData) {
+        const textModel = normalizeTextModel(settingsData.text_model);
         setSupportsAdvancedSettings(Object.prototype.hasOwnProperty.call(settingsData, "image_mode"));
         setSupportsGoogleTrendsSettings(Object.prototype.hasOwnProperty.call(settingsData, "google_trends_daily_enabled"));
         setSettings({
           ...DEFAULT_SETTINGS,
           ...settingsData,
-          model_provider: String(settingsData.text_model || "").startsWith("gemini-") ? "gemini" : "openai",
-          text_model: settingsData.text_model || DEFAULT_SETTINGS.text_model,
+          model_provider: textModel.startsWith("gemini-") ? "gemini" : "openai",
+          text_model: textModel,
           image_provider: "openai",
           image_model: "gpt-image-1",
         });
@@ -176,7 +182,15 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         const draft = sessionStorage.getItem(DRAFT_KEY);
         if (draft) {
           const parsed = JSON.parse(draft);
-          if (parsed.settings) setSettings((current) => ({ ...current, ...parsed.settings }));
+          if (parsed.settings) setSettings((current) => {
+            const textModel = normalizeTextModel(parsed.settings.text_model || current.text_model);
+            return {
+              ...current,
+              ...parsed.settings,
+              model_provider: textModel.startsWith("gemini-") ? "gemini" : "openai",
+              text_model: textModel,
+            };
+          });
           if (parsed.sources) setSources(parsed.sources);
         }
       } catch { /* ignore invalid session draft */ }
@@ -502,7 +516,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         <div>
           <Label className="text-xs">Blog AI provider</Label>
           <div className="mt-1"><Button type="button" size="sm" variant="default" disabled>{settings.text_model.startsWith("gemini-") ? "Google Gemini" : "OpenAI"}</Button></div>
-          <p className="mt-1 text-[10px] text-muted-foreground">GPT-5.5 is recommended when editorial quality matters more than generation cost.</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">OpenAI GPT-5.6 Luna is the default blog-writing model.</p>
           {supportsAdvancedSettings && (
             <select
               aria-label="Blog text model"
@@ -510,7 +524,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("text_model", event.target.value)}
               className="mt-2 h-9 w-full rounded-md border bg-background px-2 text-xs"
             >
-              <option value="gpt-5.5">OpenAI GPT-5.5 - best editorial quality</option>
+              <option value="gpt-5.6-luna">OpenAI GPT-5.6 Luna</option>
               <option value="gpt-5.4-mini">OpenAI GPT-5.4 mini - balanced</option>
               <option value="gpt-5-nano">OpenAI GPT-5 nano - economy</option>
               <option value="gemini-3.6-flash">Gemini 3.6 Flash - alternative</option>

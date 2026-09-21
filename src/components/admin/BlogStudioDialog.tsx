@@ -29,8 +29,14 @@ type EditorialSettings = {
 };
 type Quality = { score?: number; issues?: string[]; model_review?: { score?: number; summary?: string } };
 const LENGTHS = [0, 900, 1200, 1500, 1800] as const;
+const DEFAULT_TEXT_MODEL = "gpt-5.6-luna";
+const normalizeTextModel = (value?: string) => {
+  const model = String(value || "").trim();
+  return !model || model === "gpt-5.5" ? DEFAULT_TEXT_MODEL : model;
+};
+const textModelLabel = (model: string) => model === DEFAULT_TEXT_MODEL ? "OpenAI GPT-5.6 Luna" : model;
 const DEFAULT_EDITORIAL_SETTINGS: EditorialSettings = {
-  text_model: "gpt-5.5",
+  text_model: DEFAULT_TEXT_MODEL,
   word_limit: 0,
   content_goals: ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"],
   required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],
@@ -85,7 +91,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
       setTemplateUrl(data.image_template_url || "");
       setIncludeLogo(Boolean(data.include_logo));
       setLogoUrl(data.logo_url || "");
-      const nextEditorial = { ...DEFAULT_EDITORIAL_SETTINGS, ...data };
+      const nextEditorial = { ...DEFAULT_EDITORIAL_SETTINGS, ...data, text_model: normalizeTextModel(data.text_model) };
       setEditorial(nextEditorial);
       setWordLimit(Number(nextEditorial.word_limit) || 0);
     })();
@@ -175,7 +181,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
       <DialogHeader><DialogTitle className="flex items-center gap-2"><BookOpenCheck className="w-5 h-5 text-primary" /> {siteScope === "sarkari" ? "Sarkari Job Editorial Studio" : "Editorial Blog Studio"}</DialogTitle></DialogHeader>
       <div className="space-y-4">
         <div><Label>Topic</Label><Input value={topic} onChange={event => setTopic(event.target.value)} placeholder={siteScope === "sarkari" ? "e.g. SSC CGL notification, eligibility, dates and application process" : "e.g. JEE Main counselling dates and choice filling guide"} /></div>
-        <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {editorial.text_model}. It checks novelty within the {siteScopeLabel(siteScope)} library, synthesises evidence, drafts the article and performs a second quality review. The 50-design rotation renders covers locally with no image-generation API charge.</div>
+        <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {textModelLabel(editorial.text_model)}. It checks novelty within the {siteScopeLabel(siteScope)} library, synthesises evidence, drafts the article and performs a second quality review. The 50-design rotation renders covers locally with no image-generation API charge.</div>
         <div><Label>Optimised word limit</Label><div className="mt-2 flex flex-wrap gap-2">{LENGTHS.map(length => <Button key={length} variant={wordLimit === length ? "default" : "outline"} onClick={() => setWordLimit(length)}>{length === 0 ? "Adaptive" : `${length} words`}</Button>)}</div><p className="mt-2 text-xs text-muted-foreground">Adaptive is recommended: concise updates stay short, while detailed guides receive more depth.</p></div>
         <div className="rounded-xl border p-3">
           <Label>Cover workflow</Label>
@@ -220,7 +226,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
             {draft.featured_image ? <div className="overflow-hidden rounded-xl border bg-muted"><img alt="Editorial cover" src={draft.featured_image} className="aspect-video w-full object-cover" loading="lazy" /><div className="flex gap-2 p-3 text-xs text-muted-foreground"><ImageIcon className="h-4 w-4" /> Web-optimised editorial cover</div></div> : <div className="rounded-xl border bg-muted p-8 text-center text-sm text-muted-foreground">No cover selected</div>}
             <div className="rounded-xl border p-3 text-sm">
               <div className="flex items-center justify-between gap-3"><span className="font-medium">Editorial quality</span><Badge variant={(quality?.score || 0) >= editorial.editorial_quality_target ? "default" : "secondary"}>{quality?.score || 0}/100</Badge></div>
-              <p className="mt-2 text-xs text-muted-foreground">Model: {modelUsed || editorial.text_model}. Private sources checked: {researchSources.length}.</p>
+              <p className="mt-2 text-xs text-muted-foreground">Model: {textModelLabel(modelUsed || editorial.text_model)}. Private sources checked: {researchSources.length}.</p>
               {!!quality?.issues?.length && <p className="mt-2 text-xs text-amber-700">{quality.issues.join("; ")}</p>}
             </div>
             {siteScope === "dekhocampus" && <div><Label>Suggested entity links</Label><div className="mt-2 flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div></div>}

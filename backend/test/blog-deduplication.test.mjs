@@ -158,12 +158,13 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
   const usefulParagraph = Array.from({ length: 8 }, (_, paragraphIndex) => `<p>${Array.from({ length: 50 }, (_, index) => (
     index % 12 === 11 ? "CAT preparation decision practice review." : `specific${paragraphIndex}-${index} guidance`
   )).join(" ")}</p>`).join("");
+  const decisionTable = "<table><thead><tr><th>Study block</th><th>Decision</th></tr></thead><tbody><tr><td>Practice</td><td>Protect a fixed slot</td></tr></tbody></table>";
   const good = assessGeneratedArticle({
     title: "CAT 2026 Preparation Plan for Working Graduates",
     description: "A practical CAT 2026 plan that helps working graduates divide practice, review errors and protect mock-test time each week.",
     meta_title: "CAT 2026 Preparation Plan for Working Graduates",
     meta_description: "Build a realistic CAT 2026 study plan around a full-time job, weekly mock analysis, focused revision blocks and measurable improvement priorities.",
-    content_html: `<h2>Answer first</h2><p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul><h2>Decision guidance</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
+    content_html: `<h2>Answer first</h2><p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul>${decisionTable}<h2>Decision guidance</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
     faqs: [1, 2, 3, 4].map((number) => ({ question: `Question ${number}?`, answer: `Useful answer ${number}.` })),
   }, "CAT 2026 preparation plan for working graduates", 1200);
   assert.equal(good.passed, true, good.issues.join("; "));
@@ -174,7 +175,7 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
       description: "A practical CAT 2026 plan that helps working graduates divide practice, review errors and protect mock-test time each week.",
       meta_title: "CAT 2026 Preparation Plan for Working Graduates",
       meta_description: "Build a realistic CAT 2026 study plan around a full-time job, weekly mock analysis, focused revision blocks and measurable improvement priorities.",
-      content_html: `<p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul><h2>Decision guidance</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
+      content_html: `<p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul>${decisionTable}<h2>Decision guidance</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
       faqs: [1, 2, 3, 4].map((number) => ({ question: `Question ${number}?`, answer: `Useful answer ${number}.` })),
     },
   }, "CAT 2026 preparation plan for working graduates", 1200);
@@ -195,7 +196,7 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
     description: "According to Shiksha, this plan helps working graduates prepare for CAT with weekly practice and review.",
     meta_title: "CAT 2026 Preparation Plan for Working Graduates",
     meta_description: "Build a realistic CAT 2026 study plan around a full-time job, weekly mock analysis, focused revision blocks and measurable improvement priorities.",
-    content_html: `<h2>Answer first</h2><p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul><h2>Decision guidance</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
+    content_html: `<h2>Answer first</h2><p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul>${decisionTable}<h2>Decision guidance</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
     faqs: [1, 2, 3, 4].map((number) => ({ question: `Question ${number}?`, answer: `Useful answer ${number}.` })),
   }, "CAT 2026 preparation plan for working graduates", 1200);
   assert.equal(leaked.passed, false);

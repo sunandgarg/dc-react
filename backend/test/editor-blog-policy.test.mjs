@@ -117,8 +117,8 @@ test("enforces conservative auto-blog cadence and volume limits", () => {
 test("production cadence is 48 gated posts per day with an explicit E-E-A-T contract", async () => {
   const productionSetup = await readFile(new URL("../scripts/configure-production-site-integrations.mjs", import.meta.url), "utf8");
   assert.match(productionSetup, /BLOG_EEAT_48_MIGRATION_KEY/);
-  assert.match(productionSetup, /BLOG_GPT_5_5_EDITORIAL_MIGRATION_KEY/);
-  assert.match(productionSetup, /text_model: "gpt-5\.5"/);
+  assert.match(productionSetup, /BLOG_GPT_5_6_LUNA_EDITORIAL_MIGRATION_KEY/);
+  assert.match(productionSetup, /text_model: "gpt-5\.6-luna"/);
   assert.match(productionSetup, /interval_minutes: 60/);
   assert.match(productionSetup, /posts_per_run: 2/);
   assert.match(productionSetup, /daily_post_cap: 48/);
@@ -149,6 +149,20 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(prompt, /Do not put an H1 inside content_html/);
   assert.match(prompt, /Privately score natural sentence variation/);
   assert.match(prompt, /Never expose a source name, competitor name/);
+  assert.match(prompt, /veteran niche education journalist and senior SEO content strategist/i);
+  assert.match(prompt, /first 2-3 sentences/i);
+  assert.match(prompt, /Never begin the article with prompt residue/i);
+  assert.match(prompt, /plain-text stack/i);
+  assert.match(prompt, /topic-native outline/i);
+  assert.match(prompt, /Consolidate repeated cautions/i);
+  assert.match(prompt, /named authority/i);
+  assert.match(prompt, /exactly 1-2 H2 headings/i);
+  assert.match(prompt, /3-5 times across the article body/i);
+  assert.match(prompt, /comparison or summary table/i);
+  assert.match(prompt, /meta_title of no more than 60 characters/i);
+  assert.match(prompt, /meta_description of no more than 155 characters/i);
+  assert.match(prompt, /testament, tapestry, paramount/i);
+  assert.match(prompt, /strict JSON with clean semantic HTML in content_html, not Markdown/i);
 });
 
 test("AI Blog Studio can select every saved competitor source", async () => {
@@ -171,7 +185,9 @@ test("normalizes legacy Gemini models and classifies quota errors", () => {
 });
 
 test("selects the quality-first OpenAI blog model and parses structured output", () => {
-  assert.equal(normalizeBlogTextModel(""), "gpt-5.5");
+  assert.equal(normalizeBlogTextModel(""), "gpt-5.6-luna");
+  assert.equal(normalizeBlogTextModel("gpt-5.5"), "gpt-5.6-luna");
+  assert.equal(normalizeBlogTextModel("gpt-5.6-luna"), "gpt-5.6-luna");
   assert.equal(normalizeBlogTextModel("gpt-5-nano"), "gpt-5-nano");
   assert.equal(blogTextProvider("gpt-5-nano"), "openai");
   assert.equal(blogTextProvider("gemini-3.6-flash"), "gemini");
