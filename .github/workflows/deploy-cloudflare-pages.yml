@@ -42,6 +42,9 @@ jobs:
           # the streamed AWS response enough time on a cold origin.
           SITEMAP_FETCH_TIMEOUT_MS: 60000
           SITEMAP_FETCH_ATTEMPTS: 2
+          # Do not honor an edge challenge's multi-minute Retry-After during
+          # a Pages build. The generator will retry the next deployment.
+          SITEMAP_FETCH_MAX_DELAY_MS: 5000
         run: |
           npm ci
           npm test

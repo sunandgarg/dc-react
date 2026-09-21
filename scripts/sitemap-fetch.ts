@@ -83,7 +83,13 @@ async function fetchParsedWithRetry<T>(
     }
 
     if (attempt === attempts) throw failure!;
-    const delayMs = Math.max(retryAfter, Math.min(maxDelayMs, baseDelayMs * (2 ** (attempt - 1))));
+    // Some edge proxies return very large Retry-After values (Cloudflare can
+    // return two minutes for a bot/challenge response). Never let a build
+    // sleep longer than the configured retry ceiling; a sitemap build should
+    // fail fast and let the next deployment retry instead of consuming the
+    // entire Pages build window.
+    const exponentialDelayMs = Math.min(maxDelayMs, baseDelayMs * (2 ** (attempt - 1)));
+    const delayMs = Math.min(maxDelayMs, Math.max(Math.min(retryAfter, maxDelayMs), exponentialDelayMs));
     options.onRetry?.({ attempt, delayMs, error: failure! });
     await sleep(delayMs);
   }

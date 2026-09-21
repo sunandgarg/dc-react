@@ -51,7 +51,11 @@ const SITEMAP_SEED_URL = env.SITEMAP_SEED_URL === "none"
 // uses this to avoid recursively fetching its own not-yet-published sitemap.
 const SITEMAP_SEED_FETCH_BASE_URL = env.SITEMAP_SEED_FETCH_BASE_URL
   ? String(env.SITEMAP_SEED_FETCH_BASE_URL).replace(/\/+$/, "")
-  : "";
+  // The Pages build runs outside the production hostname. Fetch the
+  // published seed through the AWS origin so Cloudflare does not answer the
+  // build bot with a challenge page. This is also the origin used by the
+  // Pages workflow's health check.
+  : IS_CLOUDFLARE_PAGES_BUILD ? "https://aws-origin.dekhocampus.com" : "";
 const PAGE_SIZE = 1000;
 
 function boundedInteger(value: unknown, fallback: number, minimum: number, maximum: number) {
@@ -63,7 +67,8 @@ function boundedInteger(value: unknown, fallback: number, minimum: number, maxim
 // for health checks and visitors while the postbuild walks all sitemap tables.
 const FETCH_CONCURRENCY = boundedInteger(env.SITEMAP_FETCH_CONCURRENCY, 2, 1, 2);
 const FETCH_TIMEOUT_MS = boundedInteger(env.SITEMAP_FETCH_TIMEOUT_MS, 20_000, 2_000, 60_000);
-const FETCH_ATTEMPTS = boundedInteger(env.SITEMAP_FETCH_ATTEMPTS, 4, 1, 5);
+const FETCH_ATTEMPTS = boundedInteger(env.SITEMAP_FETCH_ATTEMPTS, IS_CLOUDFLARE_PAGES_BUILD ? 2 : 4, 1, 5);
+const FETCH_MAX_DELAY_MS = boundedInteger(env.SITEMAP_FETCH_MAX_DELAY_MS, IS_CLOUDFLARE_PAGES_BUILD ? 5_000 : 2_000, 0, 120_000);
 const SEED_FILE_LIMIT = boundedInteger(env.SITEMAP_SEED_FILE_LIMIT, 500, 1, 1_000);
 const NEWS_WINDOW_MS = 2 * 24 * 60 * 60 * 1000;
 const NEWS_SITEMAP_LIMIT = 1_000;
@@ -72,6 +77,7 @@ const limitSitemapSource = createFailFastTaskLimiter(FETCH_CONCURRENCY);
 const retryOptions = (label: string) => ({
   timeoutMs: FETCH_TIMEOUT_MS,
   maxAttempts: FETCH_ATTEMPTS,
+  maxDelayMs: FETCH_MAX_DELAY_MS,
   onRetry: ({ attempt, delayMs, error }: { attempt: number; delayMs: number; error: Error }) => {
     console.warn(`[sitemap] ${label}: ${error.message}; retry ${attempt + 1}/${FETCH_ATTEMPTS} in ${delayMs} ms`);
   },
