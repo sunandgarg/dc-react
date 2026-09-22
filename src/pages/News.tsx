@@ -17,6 +17,7 @@ import { useImportantExams } from "@/hooks/useExamsData";
 import { buildExamHref } from "@/lib/entityUrls";
 import { NumberedPagination } from "@/components/NumberedPagination";
 import { normalizePage } from "@/lib/pagination";
+import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
 
 const categories = [
   { label: "All News", icon: Newspaper, value: "" },
@@ -61,17 +62,17 @@ type Article = {
 };
 
 // Memoized card components - prevents re-render storms when parent state changes
-const LatestCard = memo(function LatestCard({ a, eager }: { a: Article; eager: boolean }) {
+const LatestCard = memo(function LatestCard({ a, eager, live }: { a: Article; eager: boolean; live: boolean }) {
   return (
     <Link to={`/news/${a.slug}`} className="group">
-      <div className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="aspect-video bg-white overflow-hidden">
+      <div className="flex gap-4 rounded-2xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-lg sm:p-4">
+        <div className="h-28 w-40 shrink-0 overflow-hidden rounded-xl bg-white sm:h-32 sm:w-52">
           {a.featured_image ? (
             <img
               src={a.featured_image}
               alt={a.title}
-              width={400}
-              height={225}
+              width={416}
+              height={256}
               loading={eager ? "eager" : "lazy"}
               decoding="async"
               className="w-full h-full object-contain"
@@ -82,9 +83,10 @@ const LatestCard = memo(function LatestCard({ a, eager }: { a: Article; eager: b
             </div>
           )}
         </div>
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="min-w-0 flex-1 py-0.5">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
             {a.category && <Badge variant="secondary" className="text-xs">{a.category}</Badge>}
+            {live && <LiveNewsBadge />}
             <span className="text-xs text-muted-foreground flex items-center gap-1">
               <Clock className="w-3 h-3" />{dateFmtShort.format(new Date(a.created_at))}
             </span>
@@ -99,7 +101,7 @@ const LatestCard = memo(function LatestCard({ a, eager }: { a: Article; eager: b
   );
 });
 
-const SidebarItem = memo(function SidebarItem({ a }: { a: Article }) {
+const SidebarItem = memo(function SidebarItem({ a, live }: { a: Article; live: boolean }) {
   return (
     <Link to={`/news/${a.slug}`} className="flex gap-3 group">
       <div className="w-24 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
@@ -110,7 +112,10 @@ const SidebarItem = memo(function SidebarItem({ a }: { a: Article }) {
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-muted-foreground mb-1">{dateFmtLong.format(new Date(a.created_at))}</p>
+        <div className="mb-1 flex flex-wrap items-center gap-2">
+          <p className="text-xs text-muted-foreground">{dateFmtLong.format(new Date(a.created_at))}</p>
+          {live && <LiveNewsBadge />}
+        </div>
         <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">{a.title}</h3>
       </div>
     </Link>
@@ -124,7 +129,7 @@ function NewsLinkModule({
   moreLabel,
 }: {
   title: string;
-  items: Array<{ href: string; title: string; meta?: string }>;
+  items: Array<{ href: string; title: string; meta?: string; isLive?: boolean }>;
   moreHref: string;
   moreLabel: string;
 }) {
@@ -137,6 +142,7 @@ function NewsLinkModule({
           <li key={`${item.href}-${item.title}`}>
             <Link to={item.href} className="group block py-3 first:pt-1">
               <span className="line-clamp-2 text-sm font-semibold leading-5 text-foreground transition-colors group-hover:text-primary">{item.title}</span>
+              {item.isLive && <LiveNewsBadge className="mt-1" />}
               {item.meta && <span className="mt-1 block text-[11px] text-muted-foreground">{item.meta}</span>}
             </Link>
           </li>
@@ -323,6 +329,23 @@ export default function News() {
   const featured = showPinnedHero ? pinned[0] : undefined;
   const sidebar = showPinnedHero ? pinned.slice(1, 5) : [];
   const gridArticles = latest;
+  const liveArticleIds = useMemo(() => {
+    // The first page is the global latest stream. Do not relabel older
+    // pagination pages as live when they happen to share today's date.
+    if (page !== 1) return new Set<string>();
+    const seen = new Set<string>();
+    return new Set(
+      [...pinned, ...latest]
+        .sort((left, right) => new Date(right.created_at).getTime() - new Date(left.created_at).getTime())
+        .filter((item) => {
+          if (seen.has(item.id)) return false;
+          seen.add(item.id);
+          return isArticlePublishedToday(item.created_at);
+        })
+        .slice(0, 6)
+        .map((item) => item.id),
+    );
+  }, [latest, page, pinned]);
 
   const latestSidebarArticles = useMemo(() => {
     const seen = new Set<string>();
@@ -337,8 +360,9 @@ export default function News() {
         href: `/news/${item.slug}`,
         title: item.title,
         meta: `${item.category || "Education"} · ${dateFmtShort.format(new Date(item.created_at))}`,
+        isLive: liveArticleIds.has(item.id),
       }));
-  }, [latest, pinned]);
+  }, [latest, pinned, liveArticleIds]);
 
   const admissionAlerts = useMemo(() => {
     const terms = /admission|application|counselling|counseling|seat allotment|registration|merit list/i;
@@ -351,13 +375,13 @@ export default function News() {
         return haystack.includes("2027") && terms.test(haystack);
       })
       .slice(0, 5)
-      .map((item) => ({ href: `/news/${item.slug}`, title: item.title, meta: item.category || "Admissions" }));
+      .map((item) => ({ href: `/news/${item.slug}`, title: item.title, meta: item.category || "Admissions", isLive: liveArticleIds.has(item.id) }));
     return items.length ? items : [{
       href: "/news?category=Admissions",
       title: "Latest 2027 admissions, counselling and application updates",
       meta: "Admissions 2027",
     }];
-  }, [latest, pinned]);
+  }, [latest, pinned, liveArticleIds]);
 
   const importantExamLinks = useMemo(() => {
     const items = importantExams.map((exam) => ({
@@ -462,6 +486,7 @@ export default function News() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-6">
                         <Badge className="mb-2 bg-accent text-accent-foreground">{featured.category || "Featured"}</Badge>
+                        {liveArticleIds.has(featured.id) && <LiveNewsBadge intensity="high" className="ml-2" />}
                         <span className="text-white/70 text-sm ml-2">{dateFmtLong.format(new Date(featured.created_at))}</span>
                         <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-accent transition-colors line-clamp-2 mt-1">{featured.title}</h2>
                       </div>
@@ -470,7 +495,7 @@ export default function News() {
                 )}
                 {sidebar.length > 0 && (
                   <div className="space-y-4">
-                    {sidebar.map((a) => <SidebarItem key={a.id} a={a} />)}
+                    {sidebar.map((a) => <SidebarItem key={a.id} a={a} live={liveArticleIds.has(a.id)} />)}
                   </div>
                 )}
               </div>
@@ -480,10 +505,10 @@ export default function News() {
               <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_19rem]">
                 <section className="min-w-0">
                   <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">Latest Posts</h2>
-                  <div className={`grid sm:grid-cols-2 xl:grid-cols-3 gap-6 transition-opacity ${isFetching ? "opacity-60" : "opacity-100"}`}>
+                  <div className={`space-y-4 transition-opacity ${isFetching ? "opacity-60" : "opacity-100"}`}>
                     {gridArticles.map((a, i) => (
                       <Fragment key={a.id}>
-                        <LatestCard a={a} eager={i < 3} />
+                        <LatestCard a={a} eager={i < 3} live={liveArticleIds.has(a.id)} />
                         {i === Math.min(5, Math.floor(gridArticles.length / 2)) && (
                           <div className="sm:col-span-2 xl:col-span-3 my-2 space-y-4">
                             <DynamicAdBanner position="mid-page" page="articles" />

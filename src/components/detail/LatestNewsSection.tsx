@@ -3,6 +3,7 @@ import { Calendar, ChevronRight, Newspaper } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { backendClient } from "@/integrations/backend/client";
 import { useDbArticles } from "@/hooks/useArticlesData";
+import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
 
 interface Props {
   entityName: string;
@@ -65,6 +66,7 @@ export function LatestNewsSection({ entityName, entityType, entitySlug }: Props)
             )}
             <div className="flex-1 min-w-0">
               {a.category && <span className="text-[10px] uppercase tracking-wide text-primary font-semibold">{a.category}</span>}
+              {isArticlePublishedToday(a.created_at) && <LiveNewsBadge className="ml-1 align-middle" />}
               <h3 className="text-sm font-semibold text-foreground line-clamp-2 group-hover:text-primary">{a.title}</h3>
               <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-1">
                 <Calendar className="w-3 h-3" />

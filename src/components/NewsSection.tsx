@@ -6,6 +6,7 @@ import { DynamicAdBanner } from "@/components/DynamicAdBanner";
 import { Link } from "react-router-dom";
 import { useDbArticles } from "@/hooks/useArticlesData";
 import { useMemo } from "react";
+import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
 
 const categoryColors: Record<string, string> = {
   Admissions: "bg-primary/10 text-primary",
@@ -45,6 +46,7 @@ export function NewsSection() {
       title: a.title,
       excerpt: (a.description || "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim(),
       date: fmtDate(a.created_at),
+      publishedAt: a.created_at,
       trending: (a.tags || []).includes("trending"),
       image: a.featured_image && !/\.svg(?:$|\?)/i.test(a.featured_image)
         ? a.featured_image
@@ -96,6 +98,7 @@ export function NewsSection() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-3">
                       <Badge variant="secondary" className={categoryColors[items[0].category] || ""}>{items[0].category}</Badge>
+                      {isArticlePublishedToday(items[0].publishedAt) && <LiveNewsBadge intensity="high" />}
                       {items[0].trending && (
                         <Badge variant="secondary" className="bg-accent/10 text-accent">
                           <TrendingUp className="w-3 h-3 mr-1" /> Trending
@@ -120,6 +123,7 @@ export function NewsSection() {
                       ) : (<span className="text-2xl">{item.image}</span>)}
                       <div className="flex-1 min-w-0">
                         <Badge variant="secondary" className={`text-xs mb-1 ${categoryColors[item.category] || ""}`}>{item.category}</Badge>
+                        {isArticlePublishedToday(item.publishedAt) && <LiveNewsBadge className="mb-1 ml-1 align-middle" />}
                         <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">{item.title}</h4>
                         <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                           <Clock className="w-3 h-3" /> {item.date}

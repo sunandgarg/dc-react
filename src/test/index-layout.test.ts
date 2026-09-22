@@ -107,8 +107,8 @@ describe("Index page layout (static source assertions)", () => {
     expect(homeToolsSrc).toMatch(/Compare colleges[\s\S]*Predict my rank[\s\S]*Check eligibility/);
     expect(homeToolsSrc).not.toMatch(/LeadCaptureForm|CompareCollegesTool|RankPredictorTool/);
     expect(homeNewsSrc).toMatch(/useArticleSidebarArticles\(60\)/);
-    expect(homeNewsSrc).toMatch(/JEE[\s\S]*CAT[\s\S]*CLAT[\s\S]*CUET/);
-    expect(homeNewsSrc).toMatch(/NEWS_LIMIT = 5/);
+    expect(homeNewsSrc).toMatch(/NEWS_LIMIT = 6/);
+    expect(homeNewsSrc).toMatch(/articles\s*\.slice\(0, NEWS_LIMIT\)/);
     expect(homeNewsSrc).toMatch(/Exam and admission updates/);
     expect(homeNewsSrc).not.toMatch(/Live news|animate-ping/);
     expect(homeNewsSrc).not.toMatch(/grid-cols|featured_image|formatDate/);

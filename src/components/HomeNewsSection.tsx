@@ -2,29 +2,16 @@ import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useArticleSidebarArticles } from "@/hooks/useArticlesData";
+import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
 
-const topics = [
-  { label: "JEE", pattern: /\bjee\b|\bjosaa\b/i },
-  { label: "CAT", pattern: /\bcat\b/i },
-  { label: "CLAT", pattern: /\bclat\b/i },
-  { label: "CUET", pattern: /\bcuet\b/i },
-] as const;
-
-const NEWS_LIMIT = 5;
+const NEWS_LIMIT = 6;
 
 export function HomeNewsSection() {
   const { data: articles = [], isLoading } = useArticleSidebarArticles(60);
   const items = useMemo(() => {
-    const curated = topics.flatMap((topic) => {
-      const article = articles.find((item) => topic.pattern.test([item.title, item.category, ...(item.tags || [])].join(" ")));
-      return article ? [{ topic: topic.label, article }] : [];
-    });
-    const selectedIds = new Set(curated.map(({ article }) => article.id));
-    const recent = articles
-      .filter((article) => !selectedIds.has(article.id))
-      .slice(0, Math.max(0, NEWS_LIMIT - curated.length))
+    return articles
+      .slice(0, NEWS_LIMIT)
       .map((article) => ({ topic: article.category || "Update", article }));
-    return [...curated, ...recent].slice(0, NEWS_LIMIT);
   }, [articles]);
 
   if (!isLoading && items.length === 0) return null;
@@ -53,6 +40,7 @@ export function HomeNewsSection() {
               >
                 <span className="h-2 w-2 shrink-0 rounded-full bg-red-600" aria-hidden="true" />
                 <span className="w-16 shrink-0 text-[10px] font-black uppercase tracking-wide text-red-700 sm:w-20">{topic}</span>
+                {isArticlePublishedToday(article.created_at) && <LiveNewsBadge intensity="high" className="shrink-0" />}
                 <span className="min-w-0 flex-1 truncate font-semibold text-foreground transition-colors group-hover:text-primary">{article.title}</span>
                 <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
               </Link>

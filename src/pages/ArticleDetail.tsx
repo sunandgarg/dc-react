@@ -27,6 +27,7 @@ import { lazyRetry } from "@/lib/lazyRetry";
 import { containsRichArticleHtml, stripVisibleArticleSources } from "@/lib/articleContentSanitizer";
 import { buildExamHref } from "@/lib/entityUrls";
 import { InstitutionLogo } from "@/components/InstitutionLogo";
+import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
 
 // Heavy below-the-fold components - lazy loaded for faster initial paint
 const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(m => ({ default: m.AlsoCheckSection })), "AlsoCheckSection");
@@ -124,7 +125,7 @@ function SidebarLinkModule({
   moreLabel,
 }: {
   title: string;
-  items: Array<{ href: string; title: string; meta?: string }>;
+  items: Array<{ href: string; title: string; meta?: string; isLive?: boolean }>;
   moreHref: string;
   moreLabel: string;
 }) {
@@ -137,6 +138,7 @@ function SidebarLinkModule({
           <li key={`${item.href}-${item.title}`}>
             <Link to={item.href} className="group block py-3 first:pt-1">
               <span className="line-clamp-2 text-sm font-semibold leading-5 text-foreground transition-colors group-hover:text-primary">{item.title}</span>
+              {item.isLive && <LiveNewsBadge className="mt-1" />}
               {item.meta && <span className="mt-1 block text-[11px] text-muted-foreground">{item.meta}</span>}
             </Link>
           </li>
@@ -287,6 +289,14 @@ export default function ArticleDetail() {
       .map((x) => x.a);
   }, [article]);
 
+  const liveSidebarIds = useMemo(() => new Set(
+    [...sidebarArticles]
+      .sort((left, right) => new Date(right.created_at).getTime() - new Date(left.created_at).getTime())
+      .filter((item) => isArticlePublishedToday(item.created_at))
+      .slice(0, 6)
+      .map((item) => item.id),
+  ), [sidebarArticles]);
+
   const latestSidebarArticles = useMemo(() => {
     const liveItems = sidebarArticles
       .filter((item) => normalizeSlug(item.slug) !== cleanSlug)
@@ -295,13 +305,14 @@ export default function ArticleDetail() {
         href: `/news/${normalizeSlug(item.slug)}`,
         title: item.title,
         meta: `${item.category || "Education"} · ${new Date(item.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`,
+        isLive: liveSidebarIds.has(item.id),
       }));
     if (liveItems.length) return liveItems;
     return staticArticles
       .filter((item) => normalizeSlug(item.slug) !== cleanSlug)
       .slice(0, 5)
-      .map((item) => ({ href: `/news/${item.slug}`, title: item.title, meta: item.category }));
-  }, [cleanSlug, sidebarArticles]);
+      .map((item) => ({ href: `/news/${item.slug}`, title: item.title, meta: item.category, isLive: false }));
+  }, [cleanSlug, liveSidebarIds, sidebarArticles]);
 
   const admissionAlerts = useMemo(() => {
     const terms = /admission|application|counselling|counseling|seat allotment|registration|merit list/i;
@@ -312,13 +323,14 @@ export default function ArticleDetail() {
         return haystack.includes("2027") && terms.test(haystack);
       })
       .slice(0, 5)
-      .map((item) => ({ href: `/news/${normalizeSlug(item.slug)}`, title: item.title, meta: item.category || "Admissions" }));
+      .map((item) => ({ href: `/news/${normalizeSlug(item.slug)}`, title: item.title, meta: item.category || "Admissions", isLive: liveSidebarIds.has(item.id) }));
     return items.length ? items : [{
       href: "/news?category=Admissions",
       title: "Latest 2027 admissions, counselling and application updates",
       meta: "Admissions 2027",
+      isLive: false,
     }];
-  }, [cleanSlug, sidebarArticles]);
+  }, [cleanSlug, liveSidebarIds, sidebarArticles]);
 
   const importantExamLinks = useMemo(() => {
     const items = importantExams.map((exam) => ({
