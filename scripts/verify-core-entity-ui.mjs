@@ -16,6 +16,21 @@ if (manifest.phase !== expectedPhase) throw new Error(`Expected ${expectedPhase}
 
 const browser = await chromium.launch({ headless: true });
 const checks = [];
+async function navigateForApp(page, url) {
+  let lastError;
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      // A SPA can render its route while a third-party or analytics resource
+      // keeps the load event open. The committed response plus the entity
+      // marker is the meaningful production check here.
+      return await page.goto(url, { waitUntil: "commit", timeout: 60_000 });
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) await page.waitForTimeout(2_000);
+    }
+  }
+  throw lastError;
+}
 try {
   for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "mobile", width: 390, height: 844 }]) {
     const context = await browser.newContext({ viewport });
@@ -23,7 +38,7 @@ try {
       const homepage = await context.newPage();
       const homepageErrors = [];
       homepage.on("pageerror", (error) => homepageErrors.push(error.message));
-      await homepage.goto(`${baseUrl}/?core-regression=${encodeURIComponent(manifest.runToken)}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
+      await navigateForApp(homepage, `${baseUrl}/?core-regression=${encodeURIComponent(manifest.runToken)}`);
       const exploreHeading = homepage.locator("#explore-heading");
       for (let top = 700; top <= 4_200 && await exploreHeading.count() === 0; top += 700) {
         await homepage.evaluate((scrollTop) => window.scrollTo({ top: scrollTop, behavior: "auto" }), top);
@@ -42,7 +57,8 @@ try {
       const page = await context.newPage();
       const pageErrors = [];
       page.on("pageerror", (error) => pageErrors.push(error.message));
-      const response = await page.goto(`${baseUrl}${entity.route}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
+      const response = await navigateForApp(page, `${baseUrl}${entity.route}`);
+      if (response && response.status() >= 400) throw new Error(`${entity.route} returned HTTP ${response.status()}`);
       await page.getByText(entity.marker, { exact: false }).first().waitFor({ state: "visible", timeout: 30_000 });
       const body = await page.locator("body").innerText();
       if (/not found|page unavailable|something went wrong/i.test(body)) throw new Error(`${entity.route} rendered an error state`);
