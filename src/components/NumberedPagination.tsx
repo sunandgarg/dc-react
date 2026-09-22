@@ -39,7 +39,7 @@ export function NumberedPagination({
 
   return (
     <nav aria-label="Article pages" className={cn("flex w-full items-center justify-center", className)}>
-      <ul className="flex max-w-full items-center gap-1 overflow-x-auto px-1 py-1 scrollbar-hide">
+      <ul className="flex min-w-max max-w-full items-center gap-1 overflow-x-auto px-1 py-1 scrollbar-hide">
         <li>
           <a
             href={href(Math.max(1, current - 1))}
@@ -47,7 +47,7 @@ export function NumberedPagination({
             aria-disabled={disabled || current === 1}
             title="Previous page"
             className={cn(
-              "inline-flex h-9 items-center justify-center gap-1 rounded-lg border border-border px-2.5 text-sm font-semibold transition-colors hover:bg-muted sm:px-3",
+              "inline-flex h-9 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-lg border border-border px-2.5 text-sm font-semibold transition-colors hover:bg-muted sm:px-3",
               (disabled || current === 1) && "pointer-events-none opacity-40",
             )}
           >
@@ -57,18 +57,18 @@ export function NumberedPagination({
         </li>
 
         {items.map((item) => item === "ellipsis-start" || item === "ellipsis-end" ? (
-          <li key={item} aria-hidden="true" className="inline-flex h-9 w-8 items-center justify-center text-muted-foreground">
+          <li key={item} aria-hidden="true" className="inline-flex h-9 w-8 shrink-0 items-center justify-center text-muted-foreground">
             <MoreHorizontal className="h-4 w-4" />
           </li>
         ) : (
-          <li key={item}>
+          <li key={item} className={item === 5 && total > 10 && current <= 4 ? "hidden sm:block" : undefined}>
             <a
               href={href(item)}
               onClick={(event) => activate(event, item)}
               aria-current={item === current ? "page" : undefined}
               aria-label={`Page ${item}`}
               className={cn(
-                "inline-flex h-9 min-w-9 items-center justify-center rounded-lg px-2 text-sm font-bold transition-colors",
+                "inline-flex h-9 min-w-9 shrink-0 items-center justify-center whitespace-nowrap rounded-lg px-2 text-sm font-bold transition-colors",
                 item === current
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "border border-transparent text-foreground hover:border-border hover:bg-muted",
@@ -87,7 +87,7 @@ export function NumberedPagination({
             aria-disabled={disabled || current === total}
             title="Next page"
             className={cn(
-              "inline-flex h-9 items-center justify-center gap-1 rounded-lg border border-border px-2.5 text-sm font-semibold transition-colors hover:bg-muted sm:px-3",
+              "inline-flex h-9 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-lg border border-border px-2.5 text-sm font-semibold transition-colors hover:bg-muted sm:px-3",
               (disabled || current === total) && "pointer-events-none opacity-40",
             )}
           >

@@ -12,7 +12,6 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { DynamicAdBanner } from "@/components/DynamicAdBanner";
 import { GoogleAd } from "@/components/ads/GoogleAd";
-import { plainText } from "@/lib/plainText";
 import { useImportantExams } from "@/hooks/useExamsData";
 import { buildExamHref } from "@/lib/entityUrls";
 import { NumberedPagination } from "@/components/NumberedPagination";
@@ -65,8 +64,8 @@ type Article = {
 const LatestCard = memo(function LatestCard({ a, eager, live }: { a: Article; eager: boolean; live: boolean }) {
   return (
     <Link to={`/news/${a.slug}`} className="group">
-      <div className="flex gap-4 rounded-2xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-lg sm:p-4">
-        <div className="h-24 w-32 shrink-0 overflow-hidden rounded-xl bg-white sm:h-24 sm:w-40">
+      <div className="relative flex gap-4 rounded-2xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-lg sm:p-4">
+        <div className="h-24 w-32 shrink-0 self-center overflow-hidden rounded-xl bg-white sm:h-24 sm:w-40">
           {a.featured_image ? (
             <img
               src={a.featured_image}
@@ -83,19 +82,16 @@ const LatestCard = memo(function LatestCard({ a, eager, live }: { a: Article; ea
             </div>
           )}
         </div>
-        <div className="min-w-0 flex-1 py-0.5">
+        <div className={`min-w-0 flex-1 py-0.5 ${live ? "pr-16 sm:pr-20" : ""}`}>
           <div className="mb-2 flex flex-wrap items-center gap-2">
             {a.category && <Badge variant="secondary" className="text-xs">{a.category}</Badge>}
-            {live && <LiveNewsBadge />}
             <span className="text-xs text-muted-foreground flex items-center gap-1">
               <Clock className="w-3 h-3" />{dateFmtShort.format(new Date(a.created_at))}
             </span>
           </div>
           <h3 className="font-semibold leading-5 text-foreground group-hover:text-primary transition-colors line-clamp-3 text-sm sm:text-base">{a.title}</h3>
-          {a.description && (
-            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{plainText(a.description)}</p>
-          )}
         </div>
+        {live && <LiveNewsBadge className="absolute right-3 top-3 sm:right-4 sm:top-4" />}
       </div>
     </Link>
   );
@@ -103,7 +99,7 @@ const LatestCard = memo(function LatestCard({ a, eager, live }: { a: Article; ea
 
 const SidebarItem = memo(function SidebarItem({ a, live }: { a: Article; live: boolean }) {
   return (
-    <Link to={`/news/${a.slug}`} className="flex gap-3 group">
+    <Link to={`/news/${a.slug}`} className="group relative flex gap-3">
       <div className="w-24 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
         {a.featured_image ? (
           <img src={a.featured_image} alt={a.title} width={96} height={80} loading="lazy" decoding="async" className="w-full h-full object-contain bg-white" />
@@ -111,13 +107,13 @@ const SidebarItem = memo(function SidebarItem({ a, live }: { a: Article; live: b
           <div className="w-full h-full bg-primary/10 flex items-center justify-center"><FileText className="w-6 h-6 text-primary/30" /></div>
         )}
       </div>
-      <div className="flex-1 min-w-0">
+      <div className={`min-w-0 flex-1 ${live ? "pr-16" : ""}`}>
         <div className="mb-1 flex flex-wrap items-center gap-2">
           <p className="text-xs text-muted-foreground">{dateFmtLong.format(new Date(a.created_at))}</p>
-          {live && <LiveNewsBadge />}
         </div>
         <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">{a.title}</h3>
       </div>
+      {live && <LiveNewsBadge className="absolute right-0 top-0" />}
     </Link>
   );
 });
