@@ -150,7 +150,7 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(prompt, /natural Indian English/i);
   assert.match(prompt, /Do not put an H1 inside content_html/);
   assert.match(prompt, /Privately score natural sentence variation/);
-  assert.match(prompt, /Never expose a source name, competitor name/);
+  assert.match(prompt, /Do not leak research URLs, citations, footnotes/);
   assert.match(prompt, /veteran niche education journalist and senior SEO content strategist/i);
   assert.match(prompt, /first 2-3 sentences/i);
   assert.match(prompt, /Never begin the article with prompt residue/i);
@@ -382,13 +382,14 @@ test("normalizes editorial controls and adapts depth to student intent", () => {
   assert.equal(normalized.daily_post_cap, 48);
   assert.equal(normalized.word_limit, 0);
   assert.deepEqual(normalized.content_goals, ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"]);
-  assert.deepEqual(normalized.required_sections, ["Answer first", "Key facts", "Decision guidance", "FAQs"]);
+  assert.deepEqual(normalized.required_sections, ["Answer first"]);
   assert.equal(normalized.minimum_sources, 2);
   assert.equal(normalized.editorial_quality_target, 98);
   assert.equal(normalized.image_mode, "rotation");
   assert.equal(resolveArticleWordTarget({ title: "NEET result and scorecard release" }, 0), 900);
   assert.equal(resolveArticleWordTarget({ title: "JEE counselling and choice filling strategy" }, 0), 1500);
   assert.equal(resolveArticleWordTarget({ title: "BTech admission eligibility" }, 0), 1200);
+  assert.equal(resolveArticleWordTarget({ title: "CUET subject choice" }, 450), 450);
 });
 
 test("removes visible source references from publishable article HTML", () => {

@@ -182,6 +182,32 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
   assert.equal(semanticAnswerFirst.passed, true, semanticAnswerFirst.issues.join("; "));
   assert.equal(semanticAnswerFirst.checks.find((check) => check.name === "Required reader modules")?.passed, true);
 
+  const flattened = assessGeneratedArticle({
+    ...{
+      title: "CUET UG 2027 Subject Choice for Delhi University and BHU",
+      description: "A practical CUET UG 2027 subject-choice check for students comparing university eligibility rules before they submit the form.",
+      meta_title: "CUET UG 2027 Subject Choice for DU and BHU",
+      meta_description: "Check CUET UG 2027 subject matching before choosing papers for Delhi University and BHU, with a practical eligibility check.",
+      content_html: `<p>CUET UG 2027 subject choice can decide whether an otherwise strong score is usable for the course you want.</p>${usefulParagraph}<h2>Which subjects should you choose?</h2><p>Student profile Target courses Risk to check Safer approach Commerce Mathematics and Accountancy Subject mismatch Check the university rule</p><h2>Questions students ask</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
+      faqs: [1, 2, 3, 4].map((number) => ({ question: `Question ${number}?`, answer: `Useful answer ${number}.` })),
+    },
+  }, "CUET UG 2027 subject selection", 1200);
+  assert.equal(flattened.passed, false);
+  assert.ok(flattened.issues.some((issue) => issue.includes("line-by-line table copy")));
+
+  const missingSpecificity = assessGeneratedArticle({
+    title: "CAT 2026 Preparation Plan for Working Graduates",
+    description: "A practical CAT 2026 plan that helps working graduates divide practice, review errors and protect mock-test time each week.",
+    meta_title: "CAT 2026 Preparation Plan for Working Graduates",
+    meta_description: "Build a realistic CAT 2026 study plan around a full-time job, weekly mock analysis, focused revision blocks and measurable improvement priorities.",
+    content_html: `<p>Students can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul>${decisionTable}<h2>Decision guidance</h2><p>Track decisions and revise the plan.</p><h2>Frequently asked questions</h2>${[1, 2, 3, 4].map((number) => `<h3>Question ${number}?</h3><p>Useful answer ${number}.</p>`).join("")}`,
+    faqs: [1, 2, 3, 4].map((number) => ({ question: `Question ${number}?`, answer: `Useful answer ${number}.` })),
+  }, "CAT 2026 preparation plan for working graduates", 1200, {
+    evidenceSignals: [{ name: "Delhi University admissions", signal: "The official rule names Delhi University as the responsible institution." }],
+  });
+  assert.equal(missingSpecificity.passed, false);
+  assert.ok(missingSpecificity.issues.some((issue) => issue.includes("supported named authority")));
+
   const bad = assessGeneratedArticle({
     title: "CAT update",
     description: "Thin copy",
