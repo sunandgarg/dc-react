@@ -66,7 +66,7 @@ const LatestCard = memo(function LatestCard({ a, eager, live }: { a: Article; ea
   return (
     <Link to={`/news/${a.slug}`} className="group">
       <div className="flex gap-4 rounded-2xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-lg sm:p-4">
-        <div className="h-28 w-40 shrink-0 overflow-hidden rounded-xl bg-white sm:h-32 sm:w-52">
+        <div className="h-24 w-32 shrink-0 overflow-hidden rounded-xl bg-white sm:h-24 sm:w-40">
           {a.featured_image ? (
             <img
               src={a.featured_image}
@@ -91,7 +91,7 @@ const LatestCard = memo(function LatestCard({ a, eager, live }: { a: Article; ea
               <Clock className="w-3 h-3" />{dateFmtShort.format(new Date(a.created_at))}
             </span>
           </div>
-          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 text-sm">{a.title}</h3>
+          <h3 className="font-semibold leading-5 text-foreground group-hover:text-primary transition-colors line-clamp-3 text-sm sm:text-base">{a.title}</h3>
           {a.description && (
             <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{plainText(a.description)}</p>
           )}
