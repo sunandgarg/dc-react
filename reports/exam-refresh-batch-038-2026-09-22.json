@@ -1,0 +1,1019 @@
+{
+  "batch": "exam-refresh-batch-038",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten canonical rows after batches 001-037; duplicate, demo, discontinued and superseded rows excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "wbjee-jelet",
+    "wbjee-jeca",
+    "jemscn",
+    "jepbn",
+    "aiims-pg",
+    "upsee",
+    "jipmer-mbbs",
+    "lsat-india"
+  ],
+  "updates": [
+    {
+      "id": "1d7ae336-9ae0-4bab-be5c-9b421ed6259a",
+      "old_slug": "jcece-agriculture",
+      "slug": "jcece-agriculture",
+      "name": "JCECE Agriculture & Allied",
+      "title": "JCECE Agriculture 2027: Dates, Eligibility & Pattern",
+      "full_name": "JCECE Agriculture 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Agriculture/Allied",
+      "level": "Jharkhand agriculture and allied undergraduate admission",
+      "mode": "JCECEB entrance examination and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "JCECE Agriculture publishes Class 12 science subjects, marks, age, category, local status and document conditions for agriculture and allied courses.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Jharkhand Combined Entrance Competitive Examination Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics and chemistry",
+        "Mathematics or biology",
+        "Agriculture and allied-science basics",
+        "Rank, choice filling and seat allotment"
+      ],
+      "description": "JCECE Agriculture 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JCECE Agriculture 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>JCECEB must confirm the 2027 registration, subject group, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology</li><li>Agriculture and allied-science basics</li><li>Rank, choice filling and seat allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jharkhand Combined Entrance Competitive Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Jharkhand Combined Entrance Competitive Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>JCECE Agriculture 2027 at a glance</h2><p>JCECE Agriculture 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jharkhand Combined Entrance Competitive Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Jharkhand Combined Entrance Competitive Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "JCECE Agriculture 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JCECE Agriculture 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JCECE Agriculture 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JCECE Agriculture 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JCECE Agriculture 2027",
+        "exam update",
+        "Agriculture/Allied",
+        "2027"
+      ],
+      "website": "https://agriculture.jceceb.org.in/Public/AboutUs",
+      "official_website": "https://agriculture.jceceb.org.in/Public/AboutUs",
+      "registration_url": "https://agriculture.jceceb.org.in/",
+      "data_source_urls": [
+        "https://agriculture.jceceb.org.in/Public/AboutUs",
+        "https://jceceb.jharkhand.gov.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://agriculture.jceceb.org.in/",
+        "official_notification": "https://jceceb.jharkhand.gov.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will JCECE Agriculture 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jharkhand Combined Entrance Competitive Examination Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for JCECE Agriculture 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>JCECE Agriculture 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for JCECE Agriculture 2027?</h2><p>JCECE Agriculture publishes Class 12 science subjects, marks, age, category, local status and document conditions for agriculture and allied courses. The active 2027 notice will control the final answer.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology</li></ul><h2>When are JCECE Agriculture 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jharkhand Combined Entrance Competitive Examination Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Jharkhand Combined Entrance Competitive Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>JCECEB must confirm the 2027 registration, subject group, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official JCECEB agriculture portal describes agriculture, veterinary, forestry, fisheries and allied admission counselling under the state board.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics and chemistry</li><li>Mathematics or biology</li><li>Agriculture and allied-science basics</li><li>Rank, choice filling and seat allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://agriculture.jceceb.org.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://jceceb.jharkhand.gov.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will JCECE Agriculture 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jharkhand Combined Entrance Competitive Examination Board posts the next notice.</p><h3>Where should I apply for JCECE Agriculture 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "13a373aa-6d9c-444f-920d-af2e84341e23",
+      "old_slug": "tjee",
+      "slug": "tjee",
+      "name": "TJEE",
+      "title": "TJEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "TJEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering/Professional",
+      "level": "Tripura engineering, agriculture and professional admission",
+      "mode": "Tripura Board of Joint Entrance Examination test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "TJEE publishes Class 12 subjects, marks, domicile, category and document conditions for engineering, technological, veterinary, agriculture and allied courses.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Tripura Board of Joint Entrance Examination"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics or biology",
+        "Merit list, choice filling and counselling"
+      ],
+      "description": "TJEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "TJEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>TBJEE must confirm the 2027 registration, subject papers, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Mathematics or biology</li><li>Merit list, choice filling and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tripura Board of Joint Entrance Examination posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Tripura Board of Joint Entrance Examination</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>TJEE 2027 at a glance</h2><p>TJEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tripura Board of Joint Entrance Examination posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Tripura Board of Joint Entrance Examination</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "TJEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "TJEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check TJEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "TJEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "TJEE 2027",
+        "exam update",
+        "Engineering/Professional",
+        "2027"
+      ],
+      "website": "https://tbjee.nic.in/",
+      "official_website": "https://tbjee.nic.in/",
+      "registration_url": "https://tbjee.nic.in/",
+      "data_source_urls": [
+        "https://tbjee.nic.in/",
+        "https://highereducation.tripura.gov.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://tbjee.nic.in/",
+        "official_notification": "https://highereducation.tripura.gov.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will TJEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tripura Board of Joint Entrance Examination posts the next notice."
+        },
+        {
+          "question": "Where should I apply for TJEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>TJEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for TJEE 2027?</h2><p>TJEE publishes Class 12 subjects, marks, domicile, category and document conditions for engineering, technological, veterinary, agriculture and allied courses. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are TJEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tripura Board of Joint Entrance Examination posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Tripura Board of Joint Entrance Examination</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>TBJEE must confirm the 2027 registration, subject papers, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official Tripura examination board conducts TJEE to prepare merit lists for several professional degree courses against state seats.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Mathematics or biology</li><li>Merit list, choice filling and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://tbjee.nic.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://highereducation.tripura.gov.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will TJEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Tripura Board of Joint Entrance Examination posts the next notice.</p><h3>Where should I apply for TJEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "ea494a15-b5b5-4c54-bf4a-444a59b59c01",
+      "old_slug": "jkcet",
+      "slug": "jkcet",
+      "name": "JKCET",
+      "title": "JKCET 2027: Dates, Eligibility & Pattern",
+      "full_name": "JKCET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering",
+      "level": "Jammu and Kashmir B.E. and B.Tech admission",
+      "mode": "JKBOPEE offline Common Entrance Test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "JKCET publishes Class 12 Physics, Chemistry and Mathematics, domicile, marks, category and document conditions for B.E. and B.Tech admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Jammu and Kashmir Board of Professional Entrance Examinations"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics",
+        "Offline test, merit, preferences and seat allotment"
+      ],
+      "description": "JKCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JKCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>JKBOPEE must confirm the 2027 registration, offline paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Mathematics</li><li>Offline test, merit, preferences and seat allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jammu and Kashmir Board of Professional Entrance Examinations posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Jammu and Kashmir Board of Professional Entrance Examinations</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>JKCET 2027 at a glance</h2><p>JKCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jammu and Kashmir Board of Professional Entrance Examinations posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Jammu and Kashmir Board of Professional Entrance Examinations</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "JKCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JKCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JKCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JKCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JKCET 2027",
+        "exam update",
+        "Engineering",
+        "2027"
+      ],
+      "website": "https://www.jkbopee.gov.in/",
+      "official_website": "https://www.jkbopee.gov.in/",
+      "registration_url": "https://www.jkbopee.gov.in/",
+      "data_source_urls": [
+        "https://www.jkbopee.gov.in/",
+        "https://jkbopee.iust.ac.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.jkbopee.gov.in/",
+        "official_notification": "https://jkbopee.iust.ac.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will JKCET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jammu and Kashmir Board of Professional Entrance Examinations posts the next notice."
+        },
+        {
+          "question": "Where should I apply for JKCET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>JKCET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for JKCET 2027?</h2><p>JKCET publishes Class 12 Physics, Chemistry and Mathematics, domicile, marks, category and document conditions for B.E. and B.Tech admission. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are JKCET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jammu and Kashmir Board of Professional Entrance Examinations posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Jammu and Kashmir Board of Professional Entrance Examinations</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>JKBOPEE must confirm the 2027 registration, offline paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official BOPEE notice identifies the Board as the authority for the Common Entrance Test and directs candidates to its website for notices and counselling.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Mathematics</li><li>Offline test, merit, preferences and seat allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.jkbopee.gov.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://jkbopee.iust.ac.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will JKCET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Jammu and Kashmir Board of Professional Entrance Examinations posts the next notice.</p><h3>Where should I apply for JKCET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "1ff98bf8-df0a-46f9-b545-a85e0f6231a3",
+      "old_slug": "hp-pat",
+      "slug": "hp-pat",
+      "name": "HP PAT",
+      "title": "HP PAT 2027: Dates, Eligibility & Pattern",
+      "full_name": "HP PAT 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Polytechnic",
+      "level": "Himachal Pradesh first-year diploma admission",
+      "mode": "Himachal Pradesh Takniki Shiksha Board Polytechnic Admission Test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "HP PAT publishes Class 10 subjects, marks, category, domicile and document conditions for first-year diploma engineering and pharmacy routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Himachal Pradesh Takniki Shiksha Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics",
+        "Physics and chemistry",
+        "English and general awareness",
+        "Rank, option entry and counselling"
+      ],
+      "description": "HP PAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "HP PAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The HP Tech Board must confirm the 2027 registration, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mathematics</li><li>Physics and chemistry</li><li>English and general awareness</li><li>Rank, option entry and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Himachal Pradesh Takniki Shiksha Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>HP PAT 2027 at a glance</h2><p>HP PAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Himachal Pradesh Takniki Shiksha Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "HP PAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "HP PAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check HP PAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "HP PAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "HP PAT 2027",
+        "exam update",
+        "Polytechnic",
+        "2027"
+      ],
+      "website": "https://www.hptechboard.com/online-admission-2017",
+      "official_website": "https://www.hptechboard.com/online-admission-2017",
+      "registration_url": "https://www.hptechboard.com/online-admission-2017",
+      "data_source_urls": [
+        "https://www.hptechboard.com/online-admission-2017",
+        "https://techedu.hp.gov.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.hptechboard.com/online-admission-2017",
+        "official_notification": "https://techedu.hp.gov.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will HP PAT 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for HP PAT 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>HP PAT 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for HP PAT 2027?</h2><p>HP PAT publishes Class 10 subjects, marks, category, domicile and document conditions for first-year diploma engineering and pharmacy routes. The active 2027 notice will control the final answer.</p><ul><li>Mathematics</li><li>Physics and chemistry</li></ul><h2>When are HP PAT 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Himachal Pradesh Takniki Shiksha Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The HP Tech Board must confirm the 2027 registration, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official HP Tech Board admission page provides the PAT notice, prospectus, registration and counselling schedule from one place.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mathematics</li><li>Physics and chemistry</li><li>English and general awareness</li><li>Rank, option entry and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.hptechboard.com/online-admission-2017\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://techedu.hp.gov.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will HP PAT 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice.</p><h3>Where should I apply for HP PAT 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "ff139ed4-ce6f-42c6-a25f-8bf566b19e90",
+      "old_slug": "hp-leet",
+      "slug": "hp-leet",
+      "name": "HP LEET",
+      "title": "HP LEET 2027: Dates, Eligibility & Pattern",
+      "full_name": "HP LEET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Polytechnic/Lateral Entry",
+      "level": "Himachal Pradesh second-year diploma admission",
+      "mode": "Himachal Pradesh Takniki Shiksha Board lateral-entry test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "HP LEET publishes ITI, vocational or equivalent qualification, marks, category, domicile and document conditions for second-year diploma entry.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Himachal Pradesh Takniki Shiksha Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mathematics and science",
+        "Trade or technical basics",
+        "Reasoning and general awareness",
+        "Rank, branch choice and counselling"
+      ],
+      "description": "HP LEET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "HP LEET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>The HP Tech Board must confirm the 2027 registration, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mathematics and science</li><li>Trade or technical basics</li><li>Reasoning and general awareness</li><li>Rank, branch choice and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Himachal Pradesh Takniki Shiksha Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>HP LEET 2027 at a glance</h2><p>HP LEET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Himachal Pradesh Takniki Shiksha Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "HP LEET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "HP LEET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check HP LEET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "HP LEET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "HP LEET 2027",
+        "exam update",
+        "Polytechnic/Lateral Entry",
+        "2027"
+      ],
+      "website": "https://www.hptechboard.com/online-admission-2017",
+      "official_website": "https://www.hptechboard.com/online-admission-2017",
+      "registration_url": "https://www.hptechboard.com/online-admission-2017",
+      "data_source_urls": [
+        "https://www.hptechboard.com/online-admission-2017",
+        "https://www.hptechboard.com/other-links/232-press-notes"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.hptechboard.com/online-admission-2017",
+        "official_notification": "https://www.hptechboard.com/other-links/232-press-notes"
+      },
+      "faqs": [
+        {
+          "question": "When will HP LEET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for HP LEET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>HP LEET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for HP LEET 2027?</h2><p>HP LEET publishes ITI, vocational or equivalent qualification, marks, category, domicile and document conditions for second-year diploma entry. The active 2027 notice will control the final answer.</p><ul><li>Mathematics and science</li><li>Trade or technical basics</li></ul><h2>When are HP LEET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Himachal Pradesh Takniki Shiksha Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>The HP Tech Board must confirm the 2027 registration, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official HP Tech Board page separates LEET from first-year PAT admissions and publishes lateral-entry prospectuses and counselling notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mathematics and science</li><li>Trade or technical basics</li><li>Reasoning and general awareness</li><li>Rank, branch choice and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.hptechboard.com/online-admission-2017\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.hptechboard.com/other-links/232-press-notes\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will HP LEET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Himachal Pradesh Takniki Shiksha Board posts the next notice.</p><h3>Where should I apply for HP LEET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "8da9c614-2d74-4d4f-afed-59dcd49ad2fc",
+      "old_slug": "pu-cet-ug",
+      "slug": "pu-cet-ug",
+      "name": "PU CET (UG)",
+      "title": "PU CET UG 2027: Dates, Eligibility & Pattern",
+      "full_name": "PU CET UG 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Science/Pharmacy UG",
+      "level": "Panjab University B.Sc. and B.Pharm admission",
+      "mode": "Panjab University computer-based or notified entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "PU CET UG publishes Class 12 subjects, marks, category, subject combinations and document conditions for B.Sc. (Hons.) and B.Pharm programmes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Panjab University, Chandigarh"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Mathematics or biology",
+        "Score, merit form and physical counselling"
+      ],
+      "description": "PU CET UG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PU CET UG 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Panjab University must confirm the 2027 registration, papers, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Mathematics or biology</li><li>Score, merit form and physical counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Panjab University, Chandigarh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PU CET UG 2027 at a glance</h2><p>PU CET UG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Panjab University, Chandigarh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PU CET UG 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PU CET UG 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PU CET UG 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PU CET UG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PU CET UG 2027",
+        "exam update",
+        "Science/Pharmacy UG",
+        "2027"
+      ],
+      "website": "https://cetug.puchd.ac.in/",
+      "official_website": "https://cetug.puchd.ac.in/",
+      "registration_url": "https://cetug.puchd.ac.in/",
+      "data_source_urls": [
+        "https://cetug.puchd.ac.in/",
+        "https://cetug.puchd.ac.in/pdf/cetprospectus_2026.pdf?132601340415="
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetug.puchd.ac.in/",
+        "official_notification": "https://cetug.puchd.ac.in/pdf/cetprospectus_2026.pdf?132601340415="
+      },
+      "faqs": [
+        {
+          "question": "When will PU CET UG 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PU CET UG 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PU CET UG 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PU CET UG 2027?</h2><p>PU CET UG publishes Class 12 subjects, marks, category, subject combinations and document conditions for B.Sc. (Hons.) and B.Pharm programmes. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are PU CET UG 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Panjab University, Chandigarh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Panjab University must confirm the 2027 registration, papers, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official PU-CET UG portal lists the B.Sc. (Hons.) four-year programme and B.Pharmacy admission, plus merit and physical-counselling instructions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Mathematics or biology</li><li>Score, merit form and physical counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetug.puchd.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://cetug.puchd.ac.in/pdf/cetprospectus_2026.pdf?132601340415=\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PU CET UG 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice.</p><h3>Where should I apply for PU CET UG 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "9e3041b0-71d1-4d8b-bc4f-692af2d97677",
+      "old_slug": "pu-pglaw",
+      "slug": "pu-pglaw",
+      "name": "PU LL.B. Entrance",
+      "title": "PU LL.B. Entrance 2027: Dates, Eligibility & Pattern",
+      "full_name": "PU LL.B. Entrance 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Law",
+      "level": "Panjab University three-year LL.B. admission",
+      "mode": "Panjab University law entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "PU LL.B. Entrance publishes graduation, marks, category and document conditions for the three-year LL.B. programme in its prospectus.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Panjab University, Chandigarh"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "General knowledge and current affairs",
+        "Legal aptitude",
+        "Mental ability",
+        "English language, rank and admission form"
+      ],
+      "description": "PU LL.B. Entrance 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PU LL.B. Entrance 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Panjab University must confirm the 2027 registration, paper, duration, marking, result and admission calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>General knowledge and current affairs</li><li>Legal aptitude</li><li>Mental ability</li><li>English language, rank and admission form</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Panjab University, Chandigarh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PU LL.B. Entrance 2027 at a glance</h2><p>PU LL.B. Entrance 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Panjab University, Chandigarh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PU LL.B. Entrance 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PU LL.B. Entrance 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PU LL.B. Entrance 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PU LL.B. Entrance 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PU LL.B. Entrance 2027",
+        "exam update",
+        "Law",
+        "2027"
+      ],
+      "website": "https://pglaw.puchd.ac.in/",
+      "official_website": "https://pglaw.puchd.ac.in/",
+      "registration_url": "https://pglaw.puchd.ac.in/",
+      "data_source_urls": [
+        "https://pglaw.puchd.ac.in/",
+        "https://admissions.puchd.ac.in/entrance-test-details.php"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://pglaw.puchd.ac.in/",
+        "official_notification": "https://admissions.puchd.ac.in/entrance-test-details.php"
+      },
+      "faqs": [
+        {
+          "question": "When will PU LL.B. Entrance 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PU LL.B. Entrance 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PU LL.B. Entrance 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PU LL.B. Entrance 2027?</h2><p>PU LL.B. Entrance publishes graduation, marks, category and document conditions for the three-year LL.B. programme in its prospectus. The active 2027 notice will control the final answer.</p><ul><li>General knowledge and current affairs</li><li>Legal aptitude</li></ul><h2>When are PU LL.B. Entrance 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Panjab University, Chandigarh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Panjab University must confirm the 2027 registration, paper, duration, marking, result and admission calendar.</p><p><strong>Authority fact:</strong> The official Panjab University admissions schedule identifies PGLAW as the entrance route for the three-year LL.B. course and links its dedicated portal.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>General knowledge and current affairs</li><li>Legal aptitude</li><li>Mental ability</li><li>English language, rank and admission form</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://pglaw.puchd.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://admissions.puchd.ac.in/entrance-test-details.php\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PU LL.B. Entrance 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice.</p><h3>Where should I apply for PU LL.B. Entrance 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "fb8032c3-4125-4399-b5af-ac44a69bcfb3",
+      "old_slug": "puleet",
+      "slug": "puleet",
+      "name": "PULEET",
+      "title": "PULEET 2027: Dates, Eligibility & Pattern",
+      "full_name": "PULEET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering/Lateral Entry",
+      "level": "Panjab University B.E. lateral-entry admission",
+      "mode": "Panjab University lateral engineering entrance test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "PULEET publishes diploma or equivalent qualification, marks, branch, category and document conditions for lateral entry to engineering programmes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Panjab University, Chandigarh"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Engineering mathematics",
+        "Applied science",
+        "Branch-specific diploma concepts",
+        "Rank, preferences and seat allotment"
+      ],
+      "description": "PULEET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PULEET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Panjab University must confirm the 2027 registration, paper, duration, marking, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Engineering mathematics</li><li>Applied science</li><li>Branch-specific diploma concepts</li><li>Rank, preferences and seat allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Panjab University, Chandigarh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PULEET 2027 at a glance</h2><p>PULEET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Panjab University, Chandigarh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PULEET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PULEET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PULEET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PULEET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PULEET 2027",
+        "exam update",
+        "Engineering/Lateral Entry",
+        "2027"
+      ],
+      "website": "https://puleet.puchd.ac.in/",
+      "official_website": "https://puleet.puchd.ac.in/",
+      "registration_url": "https://puleet.puchd.ac.in/",
+      "data_source_urls": [
+        "https://puleet.puchd.ac.in/",
+        "https://puleet.puchd.ac.in/pdf/puleet16042025.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://puleet.puchd.ac.in/",
+        "official_notification": "https://puleet.puchd.ac.in/pdf/puleet16042025.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will PULEET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PULEET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PULEET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PULEET 2027?</h2><p>PULEET publishes diploma or equivalent qualification, marks, branch, category and document conditions for lateral entry to engineering programmes. The active 2027 notice will control the final answer.</p><ul><li>Engineering mathematics</li><li>Applied science</li></ul><h2>When are PULEET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Panjab University, Chandigarh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Panjab University must confirm the 2027 registration, paper, duration, marking, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official PULEET portal identifies the test as the Panjab University Lateral Engineering Entrance Test and publishes its prospectus and notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Engineering mathematics</li><li>Applied science</li><li>Branch-specific diploma concepts</li><li>Rank, preferences and seat allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://puleet.puchd.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://puleet.puchd.ac.in/pdf/puleet16042025.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PULEET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Panjab University, Chandigarh posts the next notice.</p><h3>Where should I apply for PULEET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "55baf20a-c84d-463d-981b-ea5368925f8a",
+      "old_slug": "jain-jet",
+      "slug": "jain-jet",
+      "name": "JAIN Entrance Test",
+      "title": "JAIN JET 2027: Dates, Eligibility & Pattern",
+      "full_name": "JAIN JET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "University",
+      "level": "JAIN University undergraduate and postgraduate admission",
+      "mode": "JAIN Entrance Test, extempore and personal interview",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "JAIN JET publishes programme-wise Class 12 or graduation, marks, category and document conditions for undergraduate and postgraduate admissions.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by JAIN (Deemed-to-be University)"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "English and communication",
+        "Quantitative or logical reasoning where notified",
+        "Programme-specific subject knowledge",
+        "Extempore, interview and document verification"
+      ],
+      "description": "JAIN JET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "JAIN JET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>JAIN must confirm the 2027 registration, programme-wise test, duration, selection stages, result and admission calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>English and communication</li><li>Quantitative or logical reasoning where notified</li><li>Programme-specific subject knowledge</li><li>Extempore, interview and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JAIN (Deemed-to-be University) posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by JAIN (Deemed-to-be University)</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>JAIN JET 2027 at a glance</h2><p>JAIN JET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JAIN (Deemed-to-be University) posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by JAIN (Deemed-to-be University)</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "JAIN JET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "JAIN JET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check JAIN JET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "JAIN JET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "JAIN JET 2027",
+        "exam update",
+        "University",
+        "2027"
+      ],
+      "website": "https://www.jainuniversity.ac.in/",
+      "official_website": "https://www.jainuniversity.ac.in/",
+      "registration_url": "https://www.jainuniversity.ac.in/",
+      "data_source_urls": [
+        "https://www.jainuniversity.ac.in/",
+        "https://www.jainuniversity.ac.in/admission/eligibility-criteria-for-UG-admissions"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.jainuniversity.ac.in/",
+        "official_notification": "https://www.jainuniversity.ac.in/admission/eligibility-criteria-for-UG-admissions"
+      },
+      "faqs": [
+        {
+          "question": "When will JAIN JET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JAIN (Deemed-to-be University) posts the next notice."
+        },
+        {
+          "question": "Where should I apply for JAIN JET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>JAIN JET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for JAIN JET 2027?</h2><p>JAIN JET publishes programme-wise Class 12 or graduation, marks, category and document conditions for undergraduate and postgraduate admissions. The active 2027 notice will control the final answer.</p><ul><li>English and communication</li><li>Quantitative or logical reasoning where notified</li></ul><h2>When are JAIN JET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JAIN (Deemed-to-be University) posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by JAIN (Deemed-to-be University)</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>JAIN must confirm the 2027 registration, programme-wise test, duration, selection stages, result and admission calendar.</p><p><strong>Authority fact:</strong> The official JAIN eligibility page states that JET can include a written test, extempore or pick-and-speak task and personal interview.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>English and communication</li><li>Quantitative or logical reasoning where notified</li><li>Programme-specific subject knowledge</li><li>Extempore, interview and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.jainuniversity.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.jainuniversity.ac.in/admission/eligibility-criteria-for-UG-admissions\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will JAIN JET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until JAIN (Deemed-to-be University) posts the next notice.</p><h3>Where should I apply for JAIN JET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "6307fb90-d414-43f0-9e59-8cc724cce0f7",
+      "old_slug": "mitid-dat",
+      "slug": "mitid-dat",
+      "name": "MITID DAT",
+      "title": "MITID DAT 2027: Dates, Eligibility & Pattern",
+      "full_name": "MITID DAT 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Design",
+      "level": "MIT Institute of Design B.Des. and M.Des. admission",
+      "mode": "MITID online, subjective and offline drawing aptitude test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "MITID DAT publishes Class 12 or degree, marks, portfolio or studio-test and document conditions for B.Des. and M.Des. programmes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by MIT Institute of Design, Pune"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Design inclination and visual clues",
+        "Analytical and logical thinking",
+        "Communication skills",
+        "Subjective response, drawing, studio test and interview"
+      ],
+      "description": "MITID DAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "MITID DAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>MIT Institute of Design must confirm the 2027 application, DAT sections, duration, marking, result and studio-test calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Design inclination and visual clues</li><li>Analytical and logical thinking</li><li>Communication skills</li><li>Subjective response, drawing, studio test and interview</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until MIT Institute of Design, Pune posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by MIT Institute of Design, Pune</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>MITID DAT 2027 at a glance</h2><p>MITID DAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until MIT Institute of Design, Pune posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by MIT Institute of Design, Pune</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "MITID DAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "MITID DAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check MITID DAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "MITID DAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "MITID DAT 2027",
+        "exam update",
+        "Design",
+        "2027"
+      ],
+      "website": "https://www.mitid.edu.in/important-dates/",
+      "official_website": "https://www.mitid.edu.in/important-dates/",
+      "registration_url": "https://www.mitid.edu.in/important-dates/",
+      "data_source_urls": [
+        "https://www.mitid.edu.in/important-dates/",
+        "https://www.mitid.edu.in/admission/admissions-guidelines/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_038",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.mitid.edu.in/important-dates/",
+        "official_notification": "https://www.mitid.edu.in/admission/admissions-guidelines/"
+      },
+      "faqs": [
+        {
+          "question": "When will MITID DAT 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until MIT Institute of Design, Pune posts the next notice."
+        },
+        {
+          "question": "Where should I apply for MITID DAT 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>MITID DAT 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for MITID DAT 2027?</h2><p>MITID DAT publishes Class 12 or degree, marks, portfolio or studio-test and document conditions for B.Des. and M.Des. programmes. The active 2027 notice will control the final answer.</p><ul><li>Design inclination and visual clues</li><li>Analytical and logical thinking</li></ul><h2>When are MITID DAT 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until MIT Institute of Design, Pune posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by MIT Institute of Design, Pune</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>MIT Institute of Design must confirm the 2027 application, DAT sections, duration, marking, result and studio-test calendar.</p><p><strong>Authority fact:</strong> The official admissions guidelines describe objective, descriptive and offline drawing sections, followed by studio tests and interviews for shortlisted candidates.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Design inclination and visual clues</li><li>Analytical and logical thinking</li><li>Communication skills</li><li>Subjective response, drawing, studio test and interview</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.mitid.edu.in/important-dates/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.mitid.edu.in/admission/admissions-guidelines/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will MITID DAT 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until MIT Institute of Design, Pune posts the next notice.</p><h3>Where should I apply for MITID DAT 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
