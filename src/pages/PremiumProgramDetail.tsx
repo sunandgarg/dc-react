@@ -495,7 +495,7 @@ export default function PremiumProgramDetail() {
                     <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold mb-3">
                       <Award className="w-3.5 h-3.5" /> Sample Certificate
                     </div>
-                    <img src={certificateImage} alt={`Sample certificate for ${program.title}`} className="w-full rounded-lg border border-border shadow-sm" loading="lazy" />
+                    <img src={certificateImage} alt={`Sample certificate for ${program.title}`} className="w-full aspect-[4/3] object-contain rounded-lg border border-border shadow-sm bg-white" loading="lazy" decoding="async" />
                     <p className="text-xs text-muted-foreground mt-3">Verified completion certificate from <b>{program.college_name}</b>.</p>
                   </div>
                 )}
@@ -504,7 +504,7 @@ export default function PremiumProgramDetail() {
                     <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[11px] font-bold mb-3">
                       <ScrollText className="w-3.5 h-3.5" /> Sample Degree
                     </div>
-                    <img src={degreeImage} alt={`Sample degree for ${program.title}`} className="w-full rounded-lg border border-border shadow-sm" loading="lazy" />
+                    <img src={degreeImage} alt={`Sample degree for ${program.title}`} className="w-full aspect-[4/3] object-contain rounded-lg border border-border shadow-sm bg-white" loading="lazy" decoding="async" />
                     <p className="text-xs text-muted-foreground mt-3">Recognised degree awarded by <b>{program.college_name}</b> on successful completion.</p>
                   </div>
                 )}

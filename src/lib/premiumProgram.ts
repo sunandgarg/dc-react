@@ -2,6 +2,10 @@ import {
   UPGRAD_PROGRAM_MEDIA,
   type UpgradProgramMedia,
 } from "@/lib/upgradProgramMedia.generated";
+import {
+  UPGRAD_PROGRAM_CERTIFICATE_MEDIA,
+  type UpgradProgramCertificateMedia,
+} from "@/lib/upgradProgramCertificateMedia.generated";
 
 type PremiumProgramIdentity = {
   college_name?: unknown;
@@ -30,6 +34,7 @@ export type ResolvedPremiumProgramMedia = {
 const IIT_IIM_PROGRAM_PATTERN = /(?:^|[^a-z0-9])(?:iiit|iit|iim)(?=$|[^a-z0-9])/i;
 const INSTITUTE_LONG_NAME_PATTERN = /\b(?:indian institute of (?:technology|management|information technology)|international institute of information technology)\b/i;
 const UPGRAD_MEDIA_BY_SLUG = UPGRAD_PROGRAM_MEDIA as Readonly<Record<string, UpgradProgramMedia>>;
+const UPGRAD_CERTIFICATE_MEDIA_BY_SLUG = UPGRAD_PROGRAM_CERTIFICATE_MEDIA as Readonly<Record<string, UpgradProgramCertificateMedia>>;
 
 /**
  * Campus-first catalogue images approved for the IIT, IIM and IIIT cards.
@@ -87,15 +92,17 @@ export function isIitIimProgram(program: PremiumProgramIdentity | null | undefin
 }
 
 /**
- * Resolves audited AWS copies first, then preserves the corresponding database
- * field as a fallback. Empty strings keep callers simple when a programme has
- * no certificate or degree artwork.
+ * Resolves audited upGrad artwork first, then preserves database media only
+ * for non-IIT/IIM programmes. Empty strings keep callers simple when a
+ * programme has no verified certificate or degree artwork.
  */
 export function resolvePremiumProgramMedia(
   program: PremiumProgramIdentity | null | undefined,
 ): ResolvedPremiumProgramMedia {
   const slug = stringValue(program?.slug);
   const curated = UPGRAD_MEDIA_BY_SLUG[slug];
+  const auditedCertificate = UPGRAD_CERTIFICATE_MEDIA_BY_SLUG[slug]?.certificateImage || curated?.certificateImage || "";
+  const isIitIim = isIitIimProgram(program);
   const detailHeroImage = curated?.heroImage
     || stringValue(program?.hero_image)
     || stringValue(program?.image_url);
@@ -106,8 +113,9 @@ export function resolvePremiumProgramMedia(
     heroImage: detailHeroImage,
     instituteLogo: curated?.instituteLogo
       || stringValue(program?.institute_logo),
-    certificateImage: curated?.certificateImage
-      || stringValue(program?.certificate_image),
-    degreeImage: stringValue(program?.degree_image),
+    certificateImage: auditedCertificate || (isIitIim ? "" : stringValue(program?.certificate_image)),
+    // IIT/IIM sample credentials must come from the audited upGrad media set;
+    // never display an unverified database fallback on those programme pages.
+    degreeImage: isIitIim ? "" : stringValue(program?.degree_image),
   };
 }

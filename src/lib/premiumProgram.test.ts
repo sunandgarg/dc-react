@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { isIitIimProgram, resolvePremiumProgramMedia } from "@/lib/premiumProgram";
 import { UPGRAD_PROGRAM_MEDIA } from "@/lib/upgradProgramMedia.generated";
+import { UPGRAD_PROGRAM_CERTIFICATE_MEDIA } from "@/lib/upgradProgramCertificateMedia.generated";
 
 const AWS_PROGRAMME_MEDIA_PREFIX = "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/";
 
@@ -36,8 +37,8 @@ describe("isIitIimProgram", () => {
       detailHeroImage: UPGRAD_PROGRAM_MEDIA[slug].heroImage,
       heroImage: UPGRAD_PROGRAM_MEDIA[slug].heroImage,
       instituteLogo: expect.stringMatching(/^https:\/\/aws-origin\.dekhocampus\.com\//),
-      certificateImage: expect.stringMatching(/^https:\/\/aws-origin\.dekhocampus\.com\//),
-      degreeImage: "https://example.com/degree.webp",
+      certificateImage: UPGRAD_PROGRAM_CERTIFICATE_MEDIA[slug].certificateImage,
+      degreeImage: "",
     });
   });
 
@@ -56,6 +57,19 @@ describe("isIitIimProgram", () => {
       certificateImage: "https://example.com/certificate.webp",
       degreeImage: "https://example.com/degree.webp",
     });
+  });
+
+  it("does not display an unverified degree fallback for IIT/IIM programmes", () => {
+    const resolved = resolvePremiumProgramMedia({
+      slug: "unmapped-iit-programme",
+      college_name: "IIT Delhi",
+      hero_image: "https://example.com/hero.webp",
+      certificate_image: "https://example.com/certificate.webp",
+      degree_image: "https://example.com/unverified-degree.webp",
+    });
+
+    expect(resolved.certificateImage).toBe("");
+    expect(resolved.degreeImage).toBe("");
   });
 
   it("falls back to database media for assets excluded by quality review", () => {
@@ -96,5 +110,15 @@ describe("isIitIimProgram", () => {
     const urls = Object.values(UPGRAD_PROGRAM_MEDIA).flatMap((media) => Object.values(media));
     expect(urls.length).toBeGreaterThan(60);
     expect(urls.every((url) => url.startsWith(AWS_PROGRAMME_MEDIA_PREFIX))).toBe(true);
+  });
+
+  it("contains audited high-resolution upGrad certificate artwork for every mapped IIT/IIM certificate", () => {
+    expect(Object.keys(UPGRAD_PROGRAM_CERTIFICATE_MEDIA)).toHaveLength(7);
+    for (const media of Object.values(UPGRAD_PROGRAM_CERTIFICATE_MEDIA)) {
+      expect(media.certificateImage).toMatch(/^\/assets\/programs\/iit-iim\/certificates\//);
+      expect(media.width).toBe(3840);
+      expect(media.height).toBeGreaterThan(0);
+      expect(media.sourceUrl).toMatch(/(?:upgrad\.com|cloudfront\.net)/);
+    }
   });
 });
