@@ -1,0 +1,1189 @@
+%PDF-1.3
+%ºß¬à
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 4 0 R
+>>
+endobj
+4 0 obj
+<<
+/Length 4966
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F2 19 Tf
+21.8499999999999979 TL
+0.086 0.231 0.451 rg
+45.354330708661422 790.8663779527558972 Td
+(Exam Refresh Batch 041) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.278 0.333 0.412 rg
+45.354330708661422 765.3545669291338527 Td
+(Quality review for ten canonical exam records | Checked 22 September 2026 | Asia/Kolkata) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 0.161 0.231 rg
+45.354330708661422 728.5041732283464171 Td
+(Purpose: this PDF is a review artifact for the next ten exam updates. It is a source-aware content patch and does not write to) Tj
+T* (the production database or publish a page.) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 0.161 0.231 rg
+45.354330708661422 688.819133858267719 Td
+(The batch keeps existing slugs, uses official authority sources, marks every unpublished 2027 date as pending, includes four) Tj
+T* (verified internal links, an official application URL, an official notice or bulletin URL, four visible FAQs, semantic HTML, and) Tj
+T* (metadata length checks.) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.086 0.231 0.451 rg
+45.354330708661422 634.9608661417322537 Td
+(What was checked) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 612.2837007874015853 Td
+(- Official source coverage: at least two distinct authority URLs per exam.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 592.4411811023621794 Td
+(- Date honesty: no 2027 date is invented; pending dates point readers back to the authority.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 572.5986614173227736 Td
+(- Search structure: four internal links, application link, notice link, semantic headings and lists.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 552.7561417322833677 Td
+(- Editorial hygiene: four FAQs, no page H1 in article HTML, title under 60 characters, description under 155 characters.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 532.9136220472440755 Td
+(- Safety: no fabricated fees, rankings, selection promises or admission guarantees.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 513.0711023622046696 Td
+(- Typography: no en dash or em dash in the generated record payload.) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.086 0.231 0.451 rg
+45.354330708661422 493.2285826771653205 Td
+(Batch scorecard) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.086 0.231 0.451 rg
+45.354330708661422 470.5514173228345953 Td
+(Exam | Authority host | Title | Description | Links | FAQs | Sources | Checks) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 447.8742519685038701 Td
+(punjab-bed-cet | pbbed2026.learnpunjabi.org | 50/60 | 136/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 428.0317322834645211 Td
+(karnataka-dcet | cetonline.karnataka.gov.in | 49/60 | 135/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 408.1892125984251152 Td
+(pubdet | wbjeeb.nic.in | 41/60 | 127/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 388.3466929133857661 Td
+(pumdet | wbjeeb.nic.in | 41/60 | 127/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 368.5041732283464171 Td
+(abvmu-cnet | www.abvmuup.edu.in | 45/60 | 131/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 348.6616535433070112 Td
+(abvmu-cahet | www.abvmuup.edu.in | 46/60 | 132/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 328.8191338582676053 Td
+(kerala-llm | cee.kerala.gov.in | 55/60 | 141/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 308.9766141732283131 Td
+(kerala-pg-nursing | cee.kerala.gov.in | 56/60 | 147/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 289.1340944881889072 Td
+(fet-nbems | natboard.edu.in | 38/60 | 124/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 7.4 Tf
+8.5099999999999998 TL
+0.2 0.255 0.333 rg
+45.354330708661422 269.2915748031495013 Td
+(aibe | www.allindiabarexamination.com | 43/60 | 129/155 | 4 | 4 | 2 | 6/6) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.278 0.333 0.412 rg
+45.354330708661422 249.4490551181102092 Td
+(Checks is a pipeline completeness result, not a ranking guarantee, an AI-detector score, or a claim that every live authority page has) Tj
+T* (already published its 2027 calendar.) Tj
+ET
+BT
+/F1 7 Tf
+8.0499999999999989 TL
+0.392 0.455 0.545 rg
+45.354330708661422 22.6774015748030706 Td
+(DekhoCampus exam refresh batch 041 - review artifact) Tj
+ET
+BT
+/F1 7 Tf
+8.0499999999999989 TL
+0.392 0.455 0.545 rg
+493.2283464566929752 22.6774015748030706 Td
+(Page 1 of 4) Tj
+ET
+endstream
+endobj
+5 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 6 0 R
+>>
+endobj
+6 0 obj
+<<
+/Length 6466
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F2 14 Tf
+16.0999999999999979 TL
+0.086 0.231 0.451 rg
+45.354330708661422 790.8663779527558972 Td
+(Record-by-record evidence) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 768.1892125984252289 Td
+(1. Punjab B.Ed CET) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 751.1813385826771992 Td
+(Slug: punjab-bed-cet | Category: Education | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 731.3388188976377933 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 50/60, description 136/155. Article word count: 521 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 711.4962992125983874 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 691.6537795275589815 Td
+(https://pbbed2026.learnpunjabi.org/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 674.6459055118109518 Td
+(https://pbbed2026.learnpunjabi.org/forms/PROSPECTUS.pdf) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 657.6380314960629221 Td
+(Application URL: https://pbbed2026.learnpunjabi.org/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 640.6301574803148924 Td
+(Official notice or bulletin URL: https://pbbed2026.learnpunjabi.org/forms/PROSPECTUS.pdf) Tj
+ET
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 620.7876377952754865 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 578.2679527559055259 Td
+(2. Karnataka DCET) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 561.2600787401574962 Td
+(Slug: karnataka-dcet | Category: Engineering/Lateral Entry | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 541.4175590551180903 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 49/60, description 135/155. Article word count: 493 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 521.5750393700786844 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 501.7325196850393354 Td
+(https://cetonline.karnataka.gov.in/kea/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 484.7246456692913057 Td
+(https://cetonline.karnataka.gov.in/keawebentry456/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 467.716771653543276 Td
+(Application URL: https://cetonline.karnataka.gov.in/kea/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 450.7088976377952463 Td
+(Official notice or bulletin URL: https://cetonline.karnataka.gov.in/keawebentry456/) Tj
+ET
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 430.8663779527558404 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 388.3466929133857661 Td
+(3. PUBDET) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 371.3388188976377364 Td
+(Slug: pubdet | Category: Undergraduate/General | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 351.4962992125983874 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 41/60, description 127/155. Article word count: 505 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 331.6537795275589815 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 311.8112598425195756 Td
+(https://wbjeeb.nic.in/pubdet/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 294.8033858267715459 Td
+(https://wbjeeb.nic.in/pubdet-archive/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 277.7955118110235162 Td
+(Application URL: https://wbjeeb.nic.in/pubdet/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 260.7876377952754865 Td
+(Official notice or bulletin URL: https://wbjeeb.nic.in/pubdet-archive/) Tj
+ET
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 240.9451181102361943 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 198.4254330708660063 Td
+(4. PUMDET) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 181.4175590551179766 Td
+(Slug: pumdet | Category: Postgraduate/General | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 161.5750393700786844 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 41/60, description 127/155. Article word count: 496 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 141.7325196850392786 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 121.8899999999998727 Td
+(https://wbjeeb.nic.in/pumdet/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 104.882125984251843 Td
+(https://wbjeeb.nic.in/pumdet-archive/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 87.8742519685038133 Td
+(Application URL: https://wbjeeb.nic.in/pumdet/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 70.8663779527557836 Td
+(Official notice or bulletin URL: https://wbjeeb.nic.in/pumdet-archive/) Tj
+ET
+BT
+/F1 7 Tf
+8.0499999999999989 TL
+0.392 0.455 0.545 rg
+45.354330708661422 22.6774015748030706 Td
+(DekhoCampus exam refresh batch 041 - review artifact) Tj
+ET
+BT
+/F1 7 Tf
+8.0499999999999989 TL
+0.392 0.455 0.545 rg
+493.2283464566929752 22.6774015748030706 Td
+(Page 2 of 4) Tj
+ET
+endstream
+endobj
+7 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 8 0 R
+>>
+endobj
+8 0 obj
+<<
+/Length 6519
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 790.8663779527558972 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 748.346692913385823 Td
+(5. ABVMU CNET) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 731.3388188976377933 Td
+(Slug: abvmu-cnet | Category: Nursing/Allied Health | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 711.4962992125983874 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 45/60, description 131/155. Article word count: 494 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 691.6537795275589815 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 671.8112598425196893 Td
+(https://www.abvmuup.edu.in/cnet.php) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 654.8033858267716596 Td
+(https://www.abvmuup.edu.in/admission-nursing.php) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 637.7955118110235162 Td
+(Application URL: https://www.abvmuup.edu.in/cnet.php) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 620.7876377952754865 Td
+(Official notice or bulletin URL: https://www.abvmuup.edu.in/admission-nursing.php) Tj
+ET
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 600.9451181102361943 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 558.42543307086612 Td
+(6. ABVMU CAHET) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 541.4175590551180903 Td
+(Slug: abvmu-cahet | Category: Paramedical/Allied Health | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 521.5750393700786844 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 46/60, description 132/155. Article word count: 512 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 501.7325196850393354 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 481.8899999999999295 Td
+(https://www.abvmuup.edu.in/admission-paramedical.php) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 464.8821259842518998 Td
+(https://www.abvmuup.edu.in/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 447.8742519685038701 Td
+(Application URL: https://www.abvmuup.edu.in/admission-paramedical.php) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 430.8663779527558404 Td
+(Official notice or bulletin URL: https://www.abvmuup.edu.in/) Tj
+ET
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 411.0238582677164914 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 368.5041732283464171 Td
+(7. Kerala LL.M Entrance) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 351.4962992125983874 Td
+(Slug: kerala-llm | Category: Law/Postgraduate | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 331.6537795275589815 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 55/60, description 141/155. Article word count: 504 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 311.8112598425195756 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 291.9687401574802834 Td
+(https://cee.kerala.gov.in/llmonline2026/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 274.9608661417322537 Td
+(https://www.cee.kerala.gov.in/llm2026/notification) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 257.952992125984224 Td
+(Application URL: https://cee.kerala.gov.in/llmonline2026/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 240.9451181102361943 Td
+(Official notice or bulletin URL: https://www.cee.kerala.gov.in/llm2026/notification) Tj
+ET
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 221.1025984251967884 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 178.5829133858267141 Td
+(8. Kerala PG Nursing Entrance) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 161.5750393700786844 Td
+(Slug: kerala-pg-nursing | Category: Nursing/Postgraduate | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 141.7325196850392786 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 56/60, description 147/155. Article word count: 515 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 121.8899999999998727 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 102.0474803149605805 Td
+(https://cee.kerala.gov.in/pgnonline2026/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 85.0396062992125508 Td
+(https://cee.kerala.gov.in/pgnonline2026/notification) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 68.0317322834645211 Td
+(Application URL: https://cee.kerala.gov.in/pgnonline2026/) Tj
+ET
+BT
+/F1 7 Tf
+8.0499999999999989 TL
+0.392 0.455 0.545 rg
+45.354330708661422 22.6774015748030706 Td
+(DekhoCampus exam refresh batch 041 - review artifact) Tj
+ET
+BT
+/F1 7 Tf
+8.0499999999999989 TL
+0.392 0.455 0.545 rg
+493.2283464566929752 22.6774015748030706 Td
+(Page 3 of 4) Tj
+ET
+endstream
+endobj
+9 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 10 0 R
+>>
+endobj
+10 0 obj
+<<
+/Length 4850
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 790.8663779527558972 Td
+(Official notice or bulletin URL: https://cee.kerala.gov.in/pgnonline2026/notification) Tj
+ET
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 771.0238582677164914 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 728.5041732283464171 Td
+(9. FET) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 711.4962992125983874 Td
+(Slug: fet-nbems | Category: Medical/Postgraduate | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 691.6537795275589815 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 38/60, description 124/155. Article word count: 500 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 671.8112598425196893 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 651.9687401574802834 Td
+(https://natboard.edu.in/viewnbeexam?exam=fet) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 634.9608661417322537 Td
+(https://www.nbe.edu.in/IB/FET%202025%20information%20bulletin%2012.01.2026_v2.pdf) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 617.952992125984224 Td
+(Application URL: https://natboard.edu.in/viewnbeexam?exam=fet) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 600.9451181102361943 Td
+(Official notice or bulletin URL: https://www.nbe.edu.in/IB/FET%202025%20information%20bulletin%2012.01.2026_v2.pdf) Tj
+ET
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 581.1025984251967884 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.086 0.231 0.451 rg
+45.354330708661422 538.5829133858267141 Td
+(10. AIBE XXI) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 521.5750393700786844 Td
+(Slug: aibe | Category: Law | Status: 2027 official schedule not announced) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 501.7325196850393354 Td
+(Pipeline completeness: 6/6. Metadata lengths: title 43/60, description 129/155. Article word count: 500 words.) Tj
+ET
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.2 0.255 0.333 rg
+45.354330708661422 481.8899999999999295 Td
+(Official sources:) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 462.0474803149605805 Td
+(https://www.allindiabarexamination.com/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 445.0396062992125508 Td
+(https://www.allindiabarexamination.com/notification.html) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 428.0317322834645211 Td
+(Application URL: https://www.allindiabarexamination.com/) Tj
+ET
+BT
+/F1 7.8 Tf
+8.9699999999999989 TL
+0.114 0.373 0.82 rg
+45.354330708661422 411.0238582677164914 Td
+(Official notice or bulletin URL: https://www.allindiabarexamination.com/notification.html) Tj
+ET
+BT
+/F1 8.2 Tf
+9.4299999999999979 TL
+0.278 0.333 0.412 rg
+45.354330708661422 391.1813385826770855 Td
+(Editorial note: 2027 dates remain pending until the authority publishes the next cycle notice. Previous-cycle facts are not presented as) Tj
+T* (confirmed 2027 dates.) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.086 0.231 0.451 rg
+45.354330708661422 348.6616535433070112 Td
+(Review notes and next action) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 0.161 0.231 rg
+45.354330708661422 325.9844881889763428 Td
+(This batch is ready for editorial review. A production database import, cache refresh, sitemap update, and deployment are) Tj
+T* (separate actions and were intentionally not run for this request.) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 0.161 0.231 rg
+45.354330708661422 286.2994488188975311 Td
+(Before publishing, open each authority URL, compare the final 2027 bulletin with the pending fields, and then approve a) Tj
+T* (controlled import. If an authority changes its paper pattern, eligibility, fee or counselling flow, update the record and regenerate) Tj
+T* (the report.) Tj
+ET
+BT
+/F1 7 Tf
+8.0499999999999989 TL
+0.392 0.455 0.545 rg
+45.354330708661422 22.6774015748030706 Td
+(DekhoCampus exam refresh batch 041 - review artifact) Tj
+ET
+BT
+/F1 7 Tf
+8.0499999999999989 TL
+0.392 0.455 0.545 rg
+493.2283464566929752 22.6774015748030706 Td
+(Page 4 of 4) Tj
+ET
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R 5 0 R 7 0 R 9 0 R ]
+/Count 4
+>>
+endobj
+11 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+12 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+13 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+14 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+15 0 obj
+<<
+/Type /Font
+/BaseFont /Courier
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+16 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+17 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+18 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+19 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Roman
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+20 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+21 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Italic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+22 0 obj
+<<
+/Type /Font
+/BaseFont /Times-BoldItalic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+23 0 obj
+<<
+/Type /Font
+/BaseFont /ZapfDingbats
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+24 0 obj
+<<
+/Type /Font
+/BaseFont /Symbol
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+2 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 11 0 R
+/F2 12 0 R
+/F3 13 0 R
+/F4 14 0 R
+/F5 15 0 R
+/F6 16 0 R
+/F7 17 0 R
+/F8 18 0 R
+/F9 19 0 R
+/F10 20 0 R
+/F11 21 0 R
+/F12 22 0 R
+/F13 23 0 R
+/F14 24 0 R
+>>
+/XObject <<
+>>
+>>
+endobj
+25 0 obj
+<<
+/Producer (jsPDF 4.2.1)
+/CreationDate (D:20260922104715+05'30')
+>>
+endobj
+26 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 27
+0000000000 65535 f 
+0000023574 00000 n 
+0000025414 00000 n 
+0000000015 00000 n 
+0000000152 00000 n 
+0000005170 00000 n 
+0000005307 00000 n 
+0000011825 00000 n 
+0000011962 00000 n 
+0000018533 00000 n 
+0000018671 00000 n 
+0000023649 00000 n 
+0000023775 00000 n 
+0000023906 00000 n 
+0000024040 00000 n 
+0000024178 00000 n 
+0000024302 00000 n 
+0000024431 00000 n 
+0000024563 00000 n 
+0000024699 00000 n 
+0000024827 00000 n 
+0000024954 00000 n 
+0000025083 00000 n 
+0000025216 00000 n 
+0000025318 00000 n 
+0000025667 00000 n 
+0000025753 00000 n 
+trailer
+<<
+/Size 27
+/Root 26 0 R
+/Info 25 0 R
+/ID [ <F25F4C656097D9417CD8518F11F5FC22> <F25F4C656097D9417CD8518F11F5FC22> ]
+>>
+startxref
+25857
+%%EOF

@@ -1,0 +1,1014 @@
+{
+  "batch": "exam-refresh-batch-041",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten canonical rows after batches 001-040; duplicate, demo, discontinued and superseded rows excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "punjab-bed-cet-old",
+    "pubdet-legacy",
+    "pumdet-legacy"
+  ],
+  "updates": [
+    {
+      "id": "369629a8-836f-4cd8-8ebc-90018712c364",
+      "old_slug": "punjab-bed-cet",
+      "slug": "punjab-bed-cet",
+      "name": "Punjab B.Ed CET",
+      "title": "Punjab B.Ed CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "Punjab B.Ed CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Punjab two-year B.Ed and Shiksha Shastri admission",
+      "mode": "Punjab joint B.Ed entrance and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The current Punjab B.Ed prospectus sets the qualifying degree, marks, subject, category and document conditions for the two-year B.Ed and Shiksha Shastri routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Punjabi University, Patiala and the Punjab B.Ed admission authority"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "General English or Punjabi",
+        "General awareness and teaching aptitude",
+        "Reasoning and mental ability",
+        "Merit, college preference and counselling"
+      ],
+      "description": "Punjab B.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Punjab B.Ed CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Punjab joint B.Ed entrance and counselling must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>General English or Punjabi</li><li>General awareness and teaching aptitude</li><li>Reasoning and mental ability</li><li>Merit, college preference and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjabi University, Patiala and the Punjab B.Ed admission authority posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Punjabi University, Patiala and the Punjab B.Ed admission authority</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Punjab B.Ed CET 2027 at a glance</h2><p>Punjab B.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjabi University, Patiala and the Punjab B.Ed admission authority posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Punjabi University, Patiala and the Punjab B.Ed admission authority</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Punjab B.Ed CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Punjab B.Ed CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Punjab B.Ed CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Punjab B.Ed CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Punjab B.Ed CET 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://pbbed2026.learnpunjabi.org/",
+      "official_website": "https://pbbed2026.learnpunjabi.org/",
+      "registration_url": "https://pbbed2026.learnpunjabi.org/",
+      "data_source_urls": [
+        "https://pbbed2026.learnpunjabi.org/",
+        "https://pbbed2026.learnpunjabi.org/forms/PROSPECTUS.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://pbbed2026.learnpunjabi.org/",
+        "official_notification": "https://pbbed2026.learnpunjabi.org/forms/PROSPECTUS.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will Punjab B.Ed CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjabi University, Patiala and the Punjab B.Ed admission authority posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Punjab B.Ed CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Punjab B.Ed CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Punjab B.Ed CET 2027?</h2><p>The current Punjab B.Ed prospectus sets the qualifying degree, marks, subject, category and document conditions for the two-year B.Ed and Shiksha Shastri routes. The active 2027 notice will control the final answer.</p><ul><li>General English or Punjabi</li><li>General awareness and teaching aptitude</li></ul><h2>When are Punjab B.Ed CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjabi University, Patiala and the Punjab B.Ed admission authority posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Punjabi University, Patiala and the Punjab B.Ed admission authority</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Punjab joint B.Ed entrance and counselling must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> The official Punjab B.Ed portal publishes the prospectus, application workflow, counselling information and university or college preference instructions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>General English or Punjabi</li><li>General awareness and teaching aptitude</li><li>Reasoning and mental ability</li><li>Merit, college preference and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://pbbed2026.learnpunjabi.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://pbbed2026.learnpunjabi.org/forms/PROSPECTUS.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Punjab B.Ed CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Punjabi University, Patiala and the Punjab B.Ed admission authority posts the next notice.</p><h3>Where should I apply for Punjab B.Ed CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "51a7bd3d-88ae-4f95-936d-58b2d5404f17",
+      "old_slug": "karnataka-dcet",
+      "slug": "karnataka-dcet",
+      "name": "Karnataka DCET",
+      "title": "Karnataka DCET 2027: Dates, Eligibility & Pattern",
+      "full_name": "Karnataka DCET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Engineering/Lateral Entry",
+      "level": "Karnataka diploma lateral-entry engineering admission",
+      "mode": "Karnataka Diploma Common Entrance Test and KEA counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "KEA publishes the diploma, marks, branch, category and document conditions for lateral-entry engineering seats in the current DCET bulletin.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Karnataka Examinations Authority"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Applied mathematics",
+        "Engineering and branch fundamentals",
+        "Technical drawing or relevant diploma subjects",
+        "Rank, option entry and seat allotment"
+      ],
+      "description": "Karnataka DCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Karnataka DCET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Karnataka Diploma Common Entrance Test and KEA counselling must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Applied mathematics</li><li>Engineering and branch fundamentals</li><li>Technical drawing or relevant diploma subjects</li><li>Rank, option entry and seat allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Karnataka Examinations Authority posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Karnataka Examinations Authority</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Karnataka DCET 2027 at a glance</h2><p>Karnataka DCET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Karnataka Examinations Authority posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Karnataka Examinations Authority</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Karnataka DCET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Karnataka DCET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Karnataka DCET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Karnataka DCET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Karnataka DCET 2027",
+        "exam update",
+        "Engineering/Lateral Entry",
+        "2027"
+      ],
+      "website": "https://cetonline.karnataka.gov.in/kea/",
+      "official_website": "https://cetonline.karnataka.gov.in/kea/",
+      "registration_url": "https://cetonline.karnataka.gov.in/kea/",
+      "data_source_urls": [
+        "https://cetonline.karnataka.gov.in/kea/",
+        "https://cetonline.karnataka.gov.in/keawebentry456/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cetonline.karnataka.gov.in/kea/",
+        "official_notification": "https://cetonline.karnataka.gov.in/keawebentry456/"
+      },
+      "faqs": [
+        {
+          "question": "When will Karnataka DCET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Karnataka Examinations Authority posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Karnataka DCET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Karnataka DCET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Karnataka DCET 2027?</h2><p>KEA publishes the diploma, marks, branch, category and document conditions for lateral-entry engineering seats in the current DCET bulletin. The active 2027 notice will control the final answer.</p><ul><li>Applied mathematics</li><li>Engineering and branch fundamentals</li></ul><h2>When are Karnataka DCET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Karnataka Examinations Authority posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Karnataka Examinations Authority</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Karnataka Diploma Common Entrance Test and KEA counselling must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> The official KEA portal is the controlling source for registration, document rules, option entry, allotment and fee instructions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Applied mathematics</li><li>Engineering and branch fundamentals</li><li>Technical drawing or relevant diploma subjects</li><li>Rank, option entry and seat allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cetonline.karnataka.gov.in/kea/\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://cetonline.karnataka.gov.in/keawebentry456/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Karnataka DCET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Karnataka Examinations Authority posts the next notice.</p><h3>Where should I apply for Karnataka DCET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "24c91c49-4892-4009-9a91-5e1ade63ba65",
+      "old_slug": "pubdet",
+      "slug": "pubdet",
+      "name": "PUBDET",
+      "title": "PUBDET 2027: Dates, Eligibility & Pattern",
+      "full_name": "PUBDET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Undergraduate/General",
+      "level": "Presidency University Kolkata undergraduate admission",
+      "mode": "Presidency University Bachelor Degree Entrance Test and WBJEEB counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The PUBDET bulletin sets the Class 12, subject, marks, category and document conditions for Presidency University undergraduate admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by West Bengal Joint Entrance Examinations Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Language and reading comprehension",
+        "General knowledge and current affairs",
+        "Subject-specific humanities or science fundamentals",
+        "Rank, counselling and document verification"
+      ],
+      "description": "PUBDET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PUBDET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Presidency University Bachelor Degree Entrance Test and WBJEEB counselling must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Language and reading comprehension</li><li>General knowledge and current affairs</li><li>Subject-specific humanities or science fundamentals</li><li>Rank, counselling and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PUBDET 2027 at a glance</h2><p>PUBDET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PUBDET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PUBDET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PUBDET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PUBDET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PUBDET 2027",
+        "exam update",
+        "Undergraduate/General",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/pubdet/",
+      "official_website": "https://wbjeeb.nic.in/pubdet/",
+      "registration_url": "https://wbjeeb.nic.in/pubdet/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/pubdet/",
+        "https://wbjeeb.nic.in/pubdet-archive/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://wbjeeb.nic.in/pubdet/",
+        "official_notification": "https://wbjeeb.nic.in/pubdet-archive/"
+      },
+      "faqs": [
+        {
+          "question": "When will PUBDET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PUBDET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PUBDET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PUBDET 2027?</h2><p>The PUBDET bulletin sets the Class 12, subject, marks, category and document conditions for Presidency University undergraduate admission. The active 2027 notice will control the final answer.</p><ul><li>Language and reading comprehension</li><li>General knowledge and current affairs</li></ul><h2>When are PUBDET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Presidency University Bachelor Degree Entrance Test and WBJEEB counselling must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> WBJEEB hosts the PUBDET registration and notice route; its current public page must be checked again when the 2027 bulletin is posted.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Language and reading comprehension</li><li>General knowledge and current affairs</li><li>Subject-specific humanities or science fundamentals</li><li>Rank, counselling and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://wbjeeb.nic.in/pubdet/\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://wbjeeb.nic.in/pubdet-archive/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PUBDET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><h3>Where should I apply for PUBDET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "291935b3-e04b-48c0-8d24-69425048a27b",
+      "old_slug": "pumdet",
+      "slug": "pumdet",
+      "name": "PUMDET",
+      "title": "PUMDET 2027: Dates, Eligibility & Pattern",
+      "full_name": "PUMDET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Postgraduate/General",
+      "level": "Presidency University Kolkata postgraduate admission",
+      "mode": "Presidency University Master Degree Entrance Test and WBJEEB counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The PUMDET bulletin sets the undergraduate subject, marks, category and document conditions for the chosen postgraduate programme.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by West Bengal Joint Entrance Examinations Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Core undergraduate subject knowledge",
+        "Reading and analytical reasoning",
+        "Research or discipline-specific basics",
+        "Rank, preference entry and admission reporting"
+      ],
+      "description": "PUMDET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PUMDET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Presidency University Master Degree Entrance Test and WBJEEB counselling must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Core undergraduate subject knowledge</li><li>Reading and analytical reasoning</li><li>Research or discipline-specific basics</li><li>Rank, preference entry and admission reporting</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PUMDET 2027 at a glance</h2><p>PUMDET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PUMDET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PUMDET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PUMDET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PUMDET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PUMDET 2027",
+        "exam update",
+        "Postgraduate/General",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/pumdet/",
+      "official_website": "https://wbjeeb.nic.in/pumdet/",
+      "registration_url": "https://wbjeeb.nic.in/pumdet/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/pumdet/",
+        "https://wbjeeb.nic.in/pumdet-archive/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://wbjeeb.nic.in/pumdet/",
+        "official_notification": "https://wbjeeb.nic.in/pumdet-archive/"
+      },
+      "faqs": [
+        {
+          "question": "When will PUMDET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PUMDET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PUMDET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PUMDET 2027?</h2><p>The PUMDET bulletin sets the undergraduate subject, marks, category and document conditions for the chosen postgraduate programme. The active 2027 notice will control the final answer.</p><ul><li>Core undergraduate subject knowledge</li><li>Reading and analytical reasoning</li></ul><h2>When are PUMDET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by West Bengal Joint Entrance Examinations Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Presidency University Master Degree Entrance Test and WBJEEB counselling must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> WBJEEB provides the official PUMDET route and separates application, question-paper, result and counselling notices by cycle.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Core undergraduate subject knowledge</li><li>Reading and analytical reasoning</li><li>Research or discipline-specific basics</li><li>Rank, preference entry and admission reporting</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://wbjeeb.nic.in/pumdet/\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://wbjeeb.nic.in/pumdet-archive/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PUMDET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until West Bengal Joint Entrance Examinations Board posts the next notice.</p><h3>Where should I apply for PUMDET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "66be1f9e-fd56-47ae-8dc1-6814e8d34210",
+      "old_slug": "abvmu-cnet",
+      "slug": "abvmu-cnet",
+      "name": "ABVMU CNET",
+      "title": "ABVMU CNET 2027: Dates, Eligibility & Pattern",
+      "full_name": "ABVMU CNET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing/Allied Health",
+      "level": "Uttar Pradesh nursing and allied-health admission",
+      "mode": "Atal Bihari Vajpayee Medical University Common Nursing Entrance Test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "ABVMU publishes programme-wise Class 12 subjects, marks, medical, category and document conditions for its nursing entrance routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Atal Bihari Vajpayee Medical University, Uttar Pradesh"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Biology",
+        "English, nursing aptitude, merit and counselling"
+      ],
+      "description": "ABVMU CNET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "ABVMU CNET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Atal Bihari Vajpayee Medical University Common Nursing Entrance Test and counselling must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology</li><li>English, nursing aptitude, merit and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Atal Bihari Vajpayee Medical University, Uttar Pradesh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>ABVMU CNET 2027 at a glance</h2><p>ABVMU CNET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Atal Bihari Vajpayee Medical University, Uttar Pradesh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "ABVMU CNET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "ABVMU CNET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check ABVMU CNET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "ABVMU CNET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "ABVMU CNET 2027",
+        "exam update",
+        "Nursing/Allied Health",
+        "2027"
+      ],
+      "website": "https://www.abvmuup.edu.in/cnet.php",
+      "official_website": "https://www.abvmuup.edu.in/cnet.php",
+      "registration_url": "https://www.abvmuup.edu.in/cnet.php",
+      "data_source_urls": [
+        "https://www.abvmuup.edu.in/cnet.php",
+        "https://www.abvmuup.edu.in/admission-nursing.php"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.abvmuup.edu.in/cnet.php",
+        "official_notification": "https://www.abvmuup.edu.in/admission-nursing.php"
+      },
+      "faqs": [
+        {
+          "question": "When will ABVMU CNET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice."
+        },
+        {
+          "question": "Where should I apply for ABVMU CNET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>ABVMU CNET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for ABVMU CNET 2027?</h2><p>ABVMU publishes programme-wise Class 12 subjects, marks, medical, category and document conditions for its nursing entrance routes. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are ABVMU CNET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Atal Bihari Vajpayee Medical University, Uttar Pradesh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Atal Bihari Vajpayee Medical University Common Nursing Entrance Test and counselling must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> The university nursing and CNET pages distinguish programme notifications, registration, result and allotment instructions for the Uttar Pradesh cycle.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology</li><li>English, nursing aptitude, merit and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.abvmuup.edu.in/cnet.php\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://www.abvmuup.edu.in/admission-nursing.php\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will ABVMU CNET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice.</p><h3>Where should I apply for ABVMU CNET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "ff8e87ee-07e6-46fc-a7a8-4a75e04b200e",
+      "old_slug": "abvmu-cahet",
+      "slug": "abvmu-cahet",
+      "name": "ABVMU CAHET",
+      "title": "ABVMU CAHET 2027: Dates, Eligibility & Pattern",
+      "full_name": "ABVMU CAHET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Paramedical/Allied Health",
+      "level": "Uttar Pradesh allied-health and paramedical admission",
+      "mode": "ABVMU Common Allied and Health Entrance Test and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The ABVMU paramedical notice sets Class 12 subjects, marks, medical, category and document conditions for each CAHET programme.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Atal Bihari Vajpayee Medical University, Uttar Pradesh"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics and chemistry",
+        "Biology or mathematics where the programme requires it",
+        "English and general awareness",
+        "Rank, choice filling and document verification"
+      ],
+      "description": "ABVMU CAHET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "ABVMU CAHET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>ABVMU Common Allied and Health Entrance Test and counselling must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics and chemistry</li><li>Biology or mathematics where the programme requires it</li><li>English and general awareness</li><li>Rank, choice filling and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Atal Bihari Vajpayee Medical University, Uttar Pradesh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>ABVMU CAHET 2027 at a glance</h2><p>ABVMU CAHET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Atal Bihari Vajpayee Medical University, Uttar Pradesh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "ABVMU CAHET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "ABVMU CAHET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check ABVMU CAHET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "ABVMU CAHET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "ABVMU CAHET 2027",
+        "exam update",
+        "Paramedical/Allied Health",
+        "2027"
+      ],
+      "website": "https://www.abvmuup.edu.in/admission-paramedical.php",
+      "official_website": "https://www.abvmuup.edu.in/admission-paramedical.php",
+      "registration_url": "https://www.abvmuup.edu.in/admission-paramedical.php",
+      "data_source_urls": [
+        "https://www.abvmuup.edu.in/admission-paramedical.php",
+        "https://www.abvmuup.edu.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.abvmuup.edu.in/admission-paramedical.php",
+        "official_notification": "https://www.abvmuup.edu.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will ABVMU CAHET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice."
+        },
+        {
+          "question": "Where should I apply for ABVMU CAHET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>ABVMU CAHET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for ABVMU CAHET 2027?</h2><p>The ABVMU paramedical notice sets Class 12 subjects, marks, medical, category and document conditions for each CAHET programme. The active 2027 notice will control the final answer.</p><ul><li>Physics and chemistry</li><li>Biology or mathematics where the programme requires it</li></ul><h2>When are ABVMU CAHET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Atal Bihari Vajpayee Medical University, Uttar Pradesh</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>ABVMU Common Allied and Health Entrance Test and counselling must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> ABVMU's official admission pages identify CAHET as the route for covered allied-health programmes and publish programme-specific notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics and chemistry</li><li>Biology or mathematics where the programme requires it</li><li>English and general awareness</li><li>Rank, choice filling and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.abvmuup.edu.in/admission-paramedical.php\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://www.abvmuup.edu.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will ABVMU CAHET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Atal Bihari Vajpayee Medical University, Uttar Pradesh posts the next notice.</p><h3>Where should I apply for ABVMU CAHET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "a9225155-4e46-43ac-a8a6-ee7f7ce7ae85",
+      "old_slug": "kerala-llm",
+      "slug": "kerala-llm",
+      "name": "Kerala LL.M Entrance",
+      "title": "Kerala LL.M Entrance 2027: Dates, Eligibility & Pattern",
+      "full_name": "Kerala LL.M Entrance 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Law/Postgraduate",
+      "level": "Kerala LL.M admission",
+      "mode": "Commissioner for Entrance Examinations Kerala LL.M entrance and centralized allotment",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "CEE Kerala publishes the qualifying LL.B degree, marks, category and document conditions in the current LL.M notification.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Commissioner for Entrance Examinations, Kerala"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Constitutional law",
+        "Jurisprudence and legal theory",
+        "Contract, tort and criminal law",
+        "Public international law, score and allotment"
+      ],
+      "description": "Kerala LL.M Entrance 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Kerala LL.M Entrance 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Commissioner for Entrance Examinations Kerala LL.M entrance and centralized allotment must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Constitutional law</li><li>Jurisprudence and legal theory</li><li>Contract, tort and criminal law</li><li>Public international law, score and allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Commissioner for Entrance Examinations, Kerala</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Kerala LL.M Entrance 2027 at a glance</h2><p>Kerala LL.M Entrance 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Commissioner for Entrance Examinations, Kerala</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Kerala LL.M Entrance 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Kerala LL.M Entrance 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Kerala LL.M Entrance 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Kerala LL.M Entrance 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Kerala LL.M Entrance 2027",
+        "exam update",
+        "Law/Postgraduate",
+        "2027"
+      ],
+      "website": "https://cee.kerala.gov.in/llmonline2026/",
+      "official_website": "https://cee.kerala.gov.in/llmonline2026/",
+      "registration_url": "https://cee.kerala.gov.in/llmonline2026/",
+      "data_source_urls": [
+        "https://cee.kerala.gov.in/llmonline2026/",
+        "https://www.cee.kerala.gov.in/llm2026/notification"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cee.kerala.gov.in/llmonline2026/",
+        "official_notification": "https://www.cee.kerala.gov.in/llm2026/notification"
+      },
+      "faqs": [
+        {
+          "question": "When will Kerala LL.M Entrance 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Kerala LL.M Entrance 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Kerala LL.M Entrance 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Kerala LL.M Entrance 2027?</h2><p>CEE Kerala publishes the qualifying LL.B degree, marks, category and document conditions in the current LL.M notification. The active 2027 notice will control the final answer.</p><ul><li>Constitutional law</li><li>Jurisprudence and legal theory</li></ul><h2>When are Kerala LL.M Entrance 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Commissioner for Entrance Examinations, Kerala</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Commissioner for Entrance Examinations Kerala LL.M entrance and centralized allotment must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> The official CEE Kerala LL.M portal provides the application, candidate login, notifications, answer-key or result updates and allotment instructions.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Constitutional law</li><li>Jurisprudence and legal theory</li><li>Contract, tort and criminal law</li><li>Public international law, score and allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cee.kerala.gov.in/llmonline2026/\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://www.cee.kerala.gov.in/llm2026/notification\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Kerala LL.M Entrance 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice.</p><h3>Where should I apply for Kerala LL.M Entrance 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "0b6334fc-55f1-433e-8f2c-07838d4c2a81",
+      "old_slug": "kerala-pg-nursing",
+      "slug": "kerala-pg-nursing",
+      "name": "Kerala PG Nursing Entrance",
+      "title": "Kerala PG Nursing Entrance 2027: Dates, Eligibility & Pattern",
+      "full_name": "Kerala PG Nursing Entrance 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing/Postgraduate",
+      "level": "Kerala M.Sc. Nursing admission",
+      "mode": "Commissioner for Entrance Examinations Kerala PG Nursing entrance and allotment",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "CEE Kerala publishes the B.Sc. Nursing, registration, marks, experience where required, category and document conditions for PG Nursing.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Commissioner for Entrance Examinations, Kerala"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Nursing foundations and advanced practice",
+        "Medical-surgical and community health nursing",
+        "Child and mental-health nursing",
+        "Research, statistics, score and allotment"
+      ],
+      "description": "Kerala PG Nursing Entrance 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Kerala PG Nursing Entrance 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Commissioner for Entrance Examinations Kerala PG Nursing entrance and allotment must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Nursing foundations and advanced practice</li><li>Medical-surgical and community health nursing</li><li>Child and mental-health nursing</li><li>Research, statistics, score and allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Commissioner for Entrance Examinations, Kerala</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Kerala PG Nursing Entrance 2027 at a glance</h2><p>Kerala PG Nursing Entrance 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Commissioner for Entrance Examinations, Kerala</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Kerala PG Nursing Entrance 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Kerala PG Nursing Entrance 2027: Dates, Eligibility &...",
+      "meta_description": "Check Kerala PG Nursing Entrance 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Kerala PG Nursing Entrance 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Kerala PG Nursing Entrance 2027",
+        "exam update",
+        "Nursing/Postgraduate",
+        "2027"
+      ],
+      "website": "https://cee.kerala.gov.in/pgnonline2026/",
+      "official_website": "https://cee.kerala.gov.in/pgnonline2026/",
+      "registration_url": "https://cee.kerala.gov.in/pgnonline2026/",
+      "data_source_urls": [
+        "https://cee.kerala.gov.in/pgnonline2026/",
+        "https://cee.kerala.gov.in/pgnonline2026/notification"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://cee.kerala.gov.in/pgnonline2026/",
+        "official_notification": "https://cee.kerala.gov.in/pgnonline2026/notification"
+      },
+      "faqs": [
+        {
+          "question": "When will Kerala PG Nursing Entrance 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Kerala PG Nursing Entrance 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Kerala PG Nursing Entrance 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Kerala PG Nursing Entrance 2027?</h2><p>CEE Kerala publishes the B.Sc. Nursing, registration, marks, experience where required, category and document conditions for PG Nursing. The active 2027 notice will control the final answer.</p><ul><li>Nursing foundations and advanced practice</li><li>Medical-surgical and community health nursing</li></ul><h2>When are Kerala PG Nursing Entrance 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Commissioner for Entrance Examinations, Kerala</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Commissioner for Entrance Examinations Kerala PG Nursing entrance and allotment must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> The official PG Nursing portal separates application, notification, admit-card, rank and centralized allotment steps for the Kerala cycle.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Nursing foundations and advanced practice</li><li>Medical-surgical and community health nursing</li><li>Child and mental-health nursing</li><li>Research, statistics, score and allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://cee.kerala.gov.in/pgnonline2026/\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://cee.kerala.gov.in/pgnonline2026/notification\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Kerala PG Nursing Entrance 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Commissioner for Entrance Examinations, Kerala posts the next notice.</p><h3>Where should I apply for Kerala PG Nursing Entrance 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "ee470095-6576-4e0b-b72f-1313c1eb1860",
+      "old_slug": "fet-nbems",
+      "slug": "fet-nbems",
+      "name": "FET",
+      "title": "FET 2027: Dates, Eligibility & Pattern",
+      "full_name": "FET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Medical/Postgraduate",
+      "level": "NBEMS Fellowship Entrance Test admission",
+      "mode": "National Board of Examinations in Medical Sciences Fellowship Entrance Test",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "NBEMS publishes feeder-specialty, registration, qualification, internship, category and document conditions in the active FET information bulletin.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by National Board of Examinations in Medical Sciences"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Feeder-specialty clinical knowledge",
+        "Applied medical sciences",
+        "Case-based reasoning and time management",
+        "Score, merit, seat choice and joining verification"
+      ],
+      "description": "FET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "FET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>National Board of Examinations in Medical Sciences Fellowship Entrance Test must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Feeder-specialty clinical knowledge</li><li>Applied medical sciences</li><li>Case-based reasoning and time management</li><li>Score, merit, seat choice and joining verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Board of Examinations in Medical Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>FET 2027 at a glance</h2><p>FET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by National Board of Examinations in Medical Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "FET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "FET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check FET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "FET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "FET 2027",
+        "exam update",
+        "Medical/Postgraduate",
+        "2027"
+      ],
+      "website": "https://natboard.edu.in/viewnbeexam?exam=fet",
+      "official_website": "https://natboard.edu.in/viewnbeexam?exam=fet",
+      "registration_url": "https://natboard.edu.in/viewnbeexam?exam=fet",
+      "data_source_urls": [
+        "https://natboard.edu.in/viewnbeexam?exam=fet",
+        "https://www.nbe.edu.in/IB/FET%202025%20information%20bulletin%2012.01.2026_v2.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://natboard.edu.in/viewnbeexam?exam=fet",
+        "official_notification": "https://www.nbe.edu.in/IB/FET%202025%20information%20bulletin%2012.01.2026_v2.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will FET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice."
+        },
+        {
+          "question": "Where should I apply for FET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>FET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for FET 2027?</h2><p>NBEMS publishes feeder-specialty, registration, qualification, internship, category and document conditions in the active FET information bulletin. The active 2027 notice will control the final answer.</p><ul><li>Feeder-specialty clinical knowledge</li><li>Applied medical sciences</li></ul><h2>When are FET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by National Board of Examinations in Medical Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>National Board of Examinations in Medical Sciences Fellowship Entrance Test must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> The NBEMS FET page is the official route for the bulletin, application, admit card, result and fellowship counselling updates.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Feeder-specialty clinical knowledge</li><li>Applied medical sciences</li><li>Case-based reasoning and time management</li><li>Score, merit, seat choice and joining verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://natboard.edu.in/viewnbeexam?exam=fet\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://www.nbe.edu.in/IB/FET%202025%20information%20bulletin%2012.01.2026_v2.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will FET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until National Board of Examinations in Medical Sciences posts the next notice.</p><h3>Where should I apply for FET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "0a4e04e0-4f12-4c2c-b9b0-f7a4ba2ed141",
+      "old_slug": "aibe",
+      "slug": "aibe",
+      "name": "AIBE XXI",
+      "title": "AIBE XXI 2027: Dates, Eligibility & Pattern",
+      "full_name": "AIBE XXI 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Law",
+      "level": "All India Bar Examination and certificate of practice",
+      "mode": "Bar Council of India All India Bar Examination",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The AIBE notification sets the law-degree, enrolment, category, language, document and certificate-of-practice conditions for the current examination.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Bar Council of India"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Constitutional and administrative law",
+        "Civil and criminal procedure",
+        "Evidence, professional ethics and family law",
+        "Bare-act reading, mock papers and answer-key checks"
+      ],
+      "description": "AIBE XXI 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "AIBE XXI 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Bar Council of India All India Bar Examination must be confirmed in the 2027 bulletin.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Constitutional and administrative law</li><li>Civil and criminal procedure</li><li>Evidence, professional ethics and family law</li><li>Bare-act reading, mock papers and answer-key checks</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bar Council of India posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Bar Council of India</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>AIBE XXI 2027 at a glance</h2><p>AIBE XXI 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bar Council of India posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Bar Council of India</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "AIBE XXI 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "AIBE XXI 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check AIBE XXI 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "AIBE XXI 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "AIBE XXI 2027",
+        "exam update",
+        "Law",
+        "2027"
+      ],
+      "website": "https://www.allindiabarexamination.com/",
+      "official_website": "https://www.allindiabarexamination.com/",
+      "registration_url": "https://www.allindiabarexamination.com/",
+      "data_source_urls": [
+        "https://www.allindiabarexamination.com/",
+        "https://www.allindiabarexamination.com/notification.html"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_041",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.allindiabarexamination.com/",
+        "official_notification": "https://www.allindiabarexamination.com/notification.html"
+      },
+      "faqs": [
+        {
+          "question": "When will AIBE XXI 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bar Council of India posts the next notice."
+        },
+        {
+          "question": "Where should I apply for AIBE XXI 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>AIBE XXI 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for AIBE XXI 2027?</h2><p>The AIBE notification sets the law-degree, enrolment, category, language, document and certificate-of-practice conditions for the current examination. The active 2027 notice will control the final answer.</p><ul><li>Constitutional and administrative law</li><li>Civil and criminal procedure</li></ul><h2>When are AIBE XXI 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bar Council of India posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Bar Council of India</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Bar Council of India All India Bar Examination must be confirmed in the 2027 bulletin.</p><p><strong>Authority fact:</strong> The official AIBE site publishes registration, admit-card, answer-key, result and certificate-of-practice notices for the Bar Council of India examination.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Constitutional and administrative law</li><li>Civil and criminal procedure</li><li>Evidence, professional ethics and family law</li><li>Bare-act reading, mock papers and answer-key checks</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.allindiabarexamination.com/\" rel=\"noopener noreferrer\">Open the official application portal</a> | <a href=\"https://www.allindiabarexamination.com/notification.html\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will AIBE XXI 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bar Council of India posts the next notice.</p><h3>Where should I apply for AIBE XXI 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the authority's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
