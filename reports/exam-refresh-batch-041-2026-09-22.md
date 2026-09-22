@@ -73,4 +73,6 @@ Ten canonical rows are refreshed for the 2027 planning cycle using official auth
 - No future date, fee, ranking or eligibility claim is invented.
 - Previous-cycle information is labelled as context, not a 2027 fact.
 - Existing slugs are preserved for redirect continuity.
+- Every opening, application explanation, preparation tip and FAQ question is unique within this batch.
+- Variation check: 10 records, 10 unique openings, 10 unique applications, 10 unique preparation tips, 40 unique FAQ questions.
 - This is a reviewable patch artifact, not a production database write.

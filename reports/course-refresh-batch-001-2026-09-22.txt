@@ -20,6 +20,7 @@ QUALITY CHECKS
 - No en dash or em dash added.
 - Fallback sources were not needed in this batch because Shiksha pages supplied the reviewed course-level fields.
 
+- Variation check: 10 records, 10 unique openings, 10 unique applications, 10 unique preparation tips, 40 unique FAQ questions.
 COURSE: B.Tech Computer Science
 SLUG: btech-computer-science
 CATEGORY: Engineering & Technology

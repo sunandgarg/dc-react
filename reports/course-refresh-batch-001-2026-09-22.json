@@ -63,11 +63,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>B.Tech Computer Science course overview</h2><p>B.Tech Computer Science is a 4 years (8 semesters) programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha course details state 4 years and 8 semesters. Shiksha describes Class 12 PCM and college-dependent percentage requirements.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>B.Tech Computer Science career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Software Engineer</li><li>Computer Programmer</li><li>Data Scientist</li><li>Database Administrator</li><li>Embedded Systems Engineer</li></ul>",
+      "about_content": "<h2>B.Tech Computer Science course overview</h2><p>Computer science is a degree choice built on maths, logic and long hours at a keyboard, not just a promise of a software job.</p><p>B.Tech Computer Science is a 4 years (8 semesters) programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha course details state 4 years and 8 semesters. Shiksha describes Class 12 PCM and college-dependent percentage requirements.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>B.Tech Computer Science career direction</h2><p>Solve one timed programming problem and one discrete mathematics exercise on alternate days, then write down why the wrong approach failed.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Software Engineer</li><li>Computer Programmer</li><li>Data Scientist</li><li>Database Administrator</li><li>Embedded Systems Engineer</li></ul>",
       "subjects_content": "<h2>B.Tech Computer Science subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Programming and algorithms</li><li>Computer hardware and software</li><li>Networking systems</li><li>Data structures</li></ul>",
       "placements_content": "<h2>B.Tech Computer Science placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>B.Tech Computer Science admission and eligibility</h2><p>Class 12 with Physics and Mathematics plus the institution's other notified subjects. Shiksha lists 50% to 60% PCM for many private colleges and 75% PCM for government or top-tier routes; the selected college controls the final rule. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>JEE Main</li><li>JEE Advanced</li><li>MHT CET</li><li>KCET</li><li>BITSAT</li><li>VITEEE</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>B.Tech Computer Science admission and eligibility</h2><p>Compare the college's PCM rule, entrance route, fee schedule and accreditation before you submit an engineering preference.</p><p>Class 12 with Physics and Mathematics plus the institution's other notified subjects. Shiksha lists 50% to 60% PCM for many private colleges and 75% PCM for government or top-tier routes; the selected college controls the final rule. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>JEE Main</li><li>JEE Advanced</li><li>MHT CET</li><li>KCET</li><li>BITSAT</li><li>VITEEE</li></ul><p>Check the PCM and entrance rules, compare the institution fee notice, and save the submitted counselling choices.</p><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>B.Tech Computer Science fees</h2><p>Shiksha aggregate: INR 2 lakh to INR 15 lakh for the course; college, branch and fee components vary. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>B.Tech Computer Science cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>B.Tech Computer Science specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -120,7 +120,18 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "Computer science is a degree choice built on maths, logic and long hours at a keyboard, not just a promise of a software job.",
+        "application": "Compare the college's PCM rule, entrance route, fee schedule and accreditation before you submit an engineering preference.",
+        "preparation": "Solve one timed programming problem and one discrete mathematics exercise on alternate days, then write down why the wrong approach failed.",
+        "faq_questions": [
+          "Which mathematics subjects matter for BTech Computer Science?",
+          "How should a student compare BTech CSE fee offers?",
+          "What should a beginner practise before the first semester?",
+          "Which college evidence is needed for a placement claim?"
+        ]
+      }
     },
     {
       "id": "ba54b7cb-98e7-4457-896b-f1cfae2ff396",
@@ -180,11 +191,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>B.Tech AI &amp; ML course overview</h2><p>B.Tech AI &amp; ML is a 4 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha states the BTech AI course is generally 4 years in India. Shiksha states Class 12 with PCM and strong mathematics and science foundations.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>B.Tech AI &amp; ML career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>AI Engineer</li><li>Machine Learning Engineer</li><li>Data Scientist</li><li>Research Scientist</li><li>Robotics Engineer</li></ul>",
+      "about_content": "<h2>B.Tech AI &amp; ML course overview</h2><p>AI and machine learning courses look shiny in brochures, but the day-to-day work still rests on probability, linear algebra and patient debugging.</p><p>B.Tech AI &amp; ML is a 4 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha states the BTech AI course is generally 4 years in India. Shiksha states Class 12 with PCM and strong mathematics and science foundations.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>B.Tech AI &amp; ML career direction</h2><p>Keep a notebook for matrices, probability and model errors; redraw each failed calculation before you open a new tutorial.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>AI Engineer</li><li>Machine Learning Engineer</li><li>Data Scientist</li><li>Research Scientist</li><li>Robotics Engineer</li></ul>",
       "subjects_content": "<h2>B.Tech AI &amp; ML subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Computer Science foundations</li><li>Artificial intelligence principles</li><li>Programming</li><li>Machine learning</li><li>Data analytics</li><li>Cloud computing</li><li>Big data tools</li></ul>",
       "placements_content": "<h2>B.Tech AI &amp; ML placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>B.Tech AI &amp; ML admission and eligibility</h2><p>Class 12 with Physics, Chemistry and Mathematics is the general route described by Shiksha. Percentage, entrance test and subject combinations vary by institution. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>JEE Main</li><li>JEE Advanced</li><li>State engineering entrance exams</li><li>University entrance exams</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>B.Tech AI &amp; ML admission and eligibility</h2><p>Verify PCM eligibility, the actual AI curriculum, lab access and the college's fee breakup before treating a course title as a career guarantee.</p><p>Class 12 with Physics, Chemistry and Mathematics is the general route described by Shiksha. Percentage, entrance test and subject combinations vary by institution. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>JEE Main</li><li>JEE Advanced</li><li>State engineering entrance exams</li><li>University entrance exams</li></ul><p>Match the PCM requirement, read the curriculum, review lab evidence and complete the college's entrance or counselling route.</p><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>B.Tech AI &amp; ML fees</h2><p>Not stated as one national fee on the reviewed Shiksha overview; keep fee institution-specific until a college-course row is verified. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>B.Tech AI &amp; ML cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>B.Tech AI &amp; ML specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -236,7 +247,18 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "AI and machine learning courses look shiny in brochures, but the day-to-day work still rests on probability, linear algebra and patient debugging.",
+        "application": "Verify PCM eligibility, the actual AI curriculum, lab access and the college's fee breakup before treating a course title as a career guarantee.",
+        "preparation": "Keep a notebook for matrices, probability and model errors; redraw each failed calculation before you open a new tutorial.",
+        "faq_questions": [
+          "Does BTech AI and ML require strong mathematics?",
+          "Which curriculum details reveal a serious AI programme?",
+          "How can school students start model debugging safely?",
+          "What fee fields should an AI and ML applicant compare?"
+        ]
+      }
     },
     {
       "id": "8aa9cd9a-d0da-4d04-8b80-25a78d5dd741",
@@ -288,11 +310,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>MBBS course overview</h2><p>MBBS is a 5 years plus 6 months internship programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha lists 5 years plus a 6-month internship in the course details table and describes the course as 5.5 years overall. Shiksha lists Class 12 Science with Physics, Chemistry, Biology or Biotechnology and NEET.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>MBBS career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>MBBS Doctor</li><li>Medical Officer</li><li>General Physician</li><li>Paediatrician</li><li>Medical Surgeon</li></ul>",
+      "about_content": "<h2>MBBS course overview</h2><p>MBBS is a long clinical route whose first filter is NEET, while the real workload begins after the allotment letter.</p><p>MBBS is a 5 years plus 6 months internship programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha lists 5 years plus a 6-month internship in the course details table and describes the course as 5.5 years overall. Shiksha lists Class 12 Science with Physics, Chemistry, Biology or Biotechnology and NEET.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>MBBS career direction</h2><p>Label anatomy and physiology diagrams from memory, then explain the clinical function in plain language before revising another chapter.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>MBBS Doctor</li><li>Medical Officer</li><li>General Physician</li><li>Paediatrician</li><li>Medical Surgeon</li></ul>",
       "subjects_content": "<h2>MBBS subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Anatomy</li><li>Physiology</li><li>Biochemistry</li><li>Pathology</li><li>Microbiology</li><li>Forensic Medicine</li><li>Community Medicine</li></ul>",
       "placements_content": "<h2>MBBS placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>MBBS admission and eligibility</h2><p>Class 12 Science with Physics, Chemistry and Biology or Biotechnology, practical subjects and the applicable age requirement; admission is through NEET as stated by Shiksha. Confirm the current regulator and counselling notice. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>NEET UG</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>MBBS admission and eligibility</h2><p>Check NEET counselling, recognised college status, fee notices and the internship structure together; one attractive brochure cannot answer all four.</p><p>Class 12 Science with Physics, Chemistry and Biology or Biotechnology, practical subjects and the applicable age requirement; admission is through NEET as stated by Shiksha. Confirm the current regulator and counselling notice. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>NEET UG</li></ul><ol><li>Confirm NEET and counselling eligibility.</li><li>Compare the college fee and recognition notices.</li><li>Keep allotment and joining documents together.</li></ol><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>MBBS fees</h2><p>Shiksha overview: government INR 10,000 to INR 50,000 per year; private INR 3 lakh to INR 25 lakh per year. College and state fee rules vary. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>MBBS cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>MBBS specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -345,7 +367,18 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "MBBS is a long clinical route whose first filter is NEET, while the real workload begins after the allotment letter.",
+        "application": "Check NEET counselling, recognised college status, fee notices and the internship structure together; one attractive brochure cannot answer all four.",
+        "preparation": "Label anatomy and physiology diagrams from memory, then explain the clinical function in plain language before revising another chapter.",
+        "faq_questions": [
+          "What does NEET counselling decide for MBBS?",
+          "Which MBBS fee figures need an official college notice?",
+          "How should a first-year student revise anatomy diagrams?",
+          "Where can an applicant verify internship details?"
+        ]
+      }
     },
     {
       "id": "83de7c16-7929-4ab2-8dd8-9a2f428d29ab",
@@ -407,11 +440,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>MBA course overview</h2><p>MBA is a Usually 2 years for a full-time MBA; executive, online and integrated formats differ. programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha describes a standard full-time MBA as 2 years and lists other formats separately. Shiksha states graduation is required; marks and test rules vary by college.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>MBA career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Management Consultant</li><li>Project Manager</li><li>Business Development Manager</li><li>Product Manager</li><li>Human Resources Manager</li></ul>",
+      "about_content": "<h2>MBA course overview</h2><p>An MBA pays off only when the course, entrance route and work goal point in the same direction; a famous acronym alone is not a plan.</p><p>MBA is a Usually 2 years for a full-time MBA; executive, online and integrated formats differ. programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha describes a standard full-time MBA as 2 years and lists other formats separately. Shiksha states graduation is required; marks and test rules vary by college.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>MBA career direction</h2><p>Train with timed data-interpretation sets and short business cases, then review the decision you made rather than only the final answer.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Management Consultant</li><li>Project Manager</li><li>Business Development Manager</li><li>Product Manager</li><li>Human Resources Manager</li></ul>",
       "subjects_content": "<h2>MBA subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Finance</li><li>Marketing</li><li>Operations</li><li>Human resources</li><li>Business strategy</li><li>Analytics</li></ul>",
       "placements_content": "<h2>MBA placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>MBA admission and eligibility</h2><p>A recognised bachelor's degree is the baseline route. Minimum marks and entrance requirements vary by institution and programme. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CAT</li><li>XAT</li><li>NMAT</li><li>CMAT</li><li>ATMA</li><li>TANCET</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>MBA admission and eligibility</h2><p>List the accepted test scores, graduation marks, interview stages and complete fee before choosing an MBA application route.</p><p>A recognised bachelor's degree is the baseline route. Minimum marks and entrance requirements vary by institution and programme. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CAT</li><li>XAT</li><li>NMAT</li><li>CMAT</li><li>ATMA</li><li>TANCET</li></ul><p>Check graduation, test, interview and fee conditions in the selected college notice before paying the application fee.</p><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>MBA fees</h2><p>Shiksha examples and ranges vary widely: government programmes may start around INR 50,000, while private and top-tier programmes can run into several lakhs. Use the selected college fee table. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>MBA cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>MBA specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -464,7 +497,18 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "An MBA pays off only when the course, entrance route and work goal point in the same direction; a famous acronym alone is not a plan.",
+        "application": "List the accepted test scores, graduation marks, interview stages and complete fee before choosing an MBA application route.",
+        "preparation": "Train with timed data-interpretation sets and short business cases, then review the decision you made rather than only the final answer.",
+        "faq_questions": [
+          "Which entrance exam fits this MBA format?",
+          "How should an MBA applicant compare total fees?",
+          "What practice improves quantitative speed for MBA tests?",
+          "Which interview stage changes the final selection?"
+        ]
+      }
     },
     {
       "id": "bbe6efbf-5a35-446e-8ec7-ee4715a304bd",
@@ -520,11 +564,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>B.A. LL.B. course overview</h2><p>B.A. LL.B. is a 5 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha course details state 5 years. Shiksha presents conflicting 50% and 55% summary values, so the conflict is retained rather than silently resolved.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>B.A. LL.B. career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Advocate</li><li>Legal Advisor</li><li>Solicitor</li><li>Legal Research Associate</li><li>Compliance Associate</li></ul>",
+      "about_content": "<h2>B.A. LL.B. course overview</h2><p>BA LLB suits students who enjoy arguments, reading and public issues, but the five-year course still demands daily legal reasoning.</p><p>B.A. LL.B. is a 5 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha course details state 5 years. Shiksha presents conflicting 50% and 55% summary values, so the conflict is retained rather than silently resolved.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>B.A. LL.B. career direction</h2><p>Read a short judgment or statute provision each day, mark the rule and counterexample, then solve one timed legal reasoning passage.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Advocate</li><li>Legal Advisor</li><li>Solicitor</li><li>Legal Research Associate</li><li>Compliance Associate</li></ul>",
       "subjects_content": "<h2>B.A. LL.B. subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Constitutional law</li><li>Legal reasoning</li><li>Case analysis</li><li>Research</li><li>Drafting</li><li>Professional ethics</li></ul>",
       "placements_content": "<h2>B.A. LL.B. placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>B.A. LL.B. admission and eligibility</h2><p>Class 12 from a recognised board in any stream. Shiksha shows 50% in its FAQ and 55% in its summary table, so the exact minimum must be checked against the chosen college and category. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CLAT</li><li>CUET</li><li>MHCET Law</li><li>SLAT</li><li>AILET</li><li>KLEE</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>B.A. LL.B. admission and eligibility</h2><p>Compare Class 12 eligibility, CLAT or university entrance rules, the fee schedule and the college's recognition before applying.</p><p>Class 12 from a recognised board in any stream. Shiksha shows 50% in its FAQ and 55% in its summary table, so the exact minimum must be checked against the chosen college and category. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CLAT</li><li>CUET</li><li>MHCET Law</li><li>SLAT</li><li>AILET</li><li>KLEE</li></ul><ol><li>Confirm Class 12 and entrance conditions.</li><li>Compare recognition and full course fees.</li><li>Submit the form and retain counselling choices.</li></ol><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>B.A. LL.B. fees</h2><p>Shiksha reference range: INR 3,600 to INR 80 lakh across colleges; the broad range must not replace the selected institution's fee schedule. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>B.A. LL.B. cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>B.A. LL.B. specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -577,7 +621,18 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "BA LLB suits students who enjoy arguments, reading and public issues, but the five-year course still demands daily legal reasoning.",
+        "application": "Compare Class 12 eligibility, CLAT or university entrance rules, the fee schedule and the college's recognition before applying.",
+        "preparation": "Read a short judgment or statute provision each day, mark the rule and counterexample, then solve one timed legal reasoning passage.",
+        "faq_questions": [
+          "Which entrance route leads to this BA LLB programme?",
+          "What should a Class 12 applicant check in law eligibility?",
+          "How can legal reasoning practice become less mechanical?",
+          "Which recognition detail matters before paying a BA LLB fee?"
+        ]
+      }
     },
     {
       "id": "ae5f0fef-a5c6-4673-8c5d-3f0ac71ab6f0",
@@ -636,11 +691,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>B.Des UX Design course overview</h2><p>B.Des UX Design is a 4 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha B.Des overview states 4 years. Shiksha lists Class 12 with a 50% aggregate as a general B.Des criterion.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>B.Des UX Design career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>UX Designer</li><li>UI Designer</li><li>Product Designer</li><li>Design Researcher</li><li>Interaction Designer</li></ul>",
+      "about_content": "<h2>B.Des UX Design course overview</h2><p>UX design starts with watching how people struggle, not with choosing a trendy colour palette in a portfolio.</p><p>B.Des UX Design is a 4 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha B.Des overview states 4 years. Shiksha lists Class 12 with a 50% aggregate as a general B.Des criterion.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>B.Des UX Design career direction</h2><p>Observe one everyday interface, sketch the user's task and test a small paper prototype with another person.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>UX Designer</li><li>UI Designer</li><li>Product Designer</li><li>Design Researcher</li><li>Interaction Designer</li></ul>",
       "subjects_content": "<h2>B.Des UX Design subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Design thinking</li><li>User research</li><li>Visual design</li><li>Information architecture</li><li>Prototyping</li></ul>",
       "placements_content": "<h2>B.Des UX Design placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>B.Des UX Design admission and eligibility</h2><p>Class 12 with a minimum 50% aggregate is the general B.Des condition shown by Shiksha; entrance and portfolio rules vary by institution. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>UCEED</li><li>NID DAT</li><li>NIFT Entrance Exam</li><li>NATA</li><li>Institution entrance exams</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>B.Des UX Design admission and eligibility</h2><p>Check the design school's entrance, portfolio, studio facilities and fee rules before sending a B.Des application.</p><p>Class 12 with a minimum 50% aggregate is the general B.Des condition shown by Shiksha; entrance and portfolio rules vary by institution. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>UCEED</li><li>NID DAT</li><li>NIFT Entrance Exam</li><li>NATA</li><li>Institution entrance exams</li></ul><p>Read the entrance and portfolio brief, compare studio evidence and fee notices, then submit the required work in the stated format.</p><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>B.Des UX Design fees</h2><p>Shiksha general B.Des range: INR 3,360 to INR 54 lakh. UX-specific fee is institution-specific and must be read from the selected college row. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>B.Des UX Design cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>B.Des UX Design specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -693,7 +748,18 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "UX design starts with watching how people struggle, not with choosing a trendy colour palette in a portfolio.",
+        "application": "Check the design school's entrance, portfolio, studio facilities and fee rules before sending a B.Des application.",
+        "preparation": "Observe one everyday interface, sketch the user's task and test a small paper prototype with another person.",
+        "faq_questions": [
+          "What does a UX design portfolio need to prove?",
+          "Which B.Des entrance route applies to this college?",
+          "How can observation improve a beginner design exercise?",
+          "Which studio and fee details should be verified?"
+        ]
+      }
     },
     {
       "id": "f9d31eca-2607-475d-a5c6-f395003354eb",
@@ -748,11 +814,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>B.Sc. Physics course overview</h2><p>B.Sc. Physics is a 3 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha course details state 3 years. Shiksha lists PCM or PCB and at least 50% as a general reference.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>B.Sc. Physics career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Lab Technician</li><li>Physicist</li><li>Statistician</li><li>Research Associate</li><li>Lecturer or Teacher</li><li>Industrial Engineer</li></ul>",
+      "about_content": "<h2>B.Sc. Physics course overview</h2><p>B.Sc. Physics rewards curiosity, but the marks come from equations, lab habits and the ability to explain a result without hand-waving.</p><p>B.Sc. Physics is a 3 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha course details state 3 years. Shiksha lists PCM or PCB and at least 50% as a general reference.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>B.Sc. Physics career direction</h2><p>Re-derive one result each week and attach a simple units check; it catches errors a memorised formula will hide.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Lab Technician</li><li>Physicist</li><li>Statistician</li><li>Research Associate</li><li>Lecturer or Teacher</li><li>Industrial Engineer</li></ul>",
       "subjects_content": "<h2>B.Sc. Physics subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Physics</li><li>Mathematics</li><li>Scientific foundations</li><li>Laboratory methods</li><li>Data analysis</li><li>Research skills</li></ul>",
       "placements_content": "<h2>B.Sc. Physics placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>B.Sc. Physics admission and eligibility</h2><p>Class 12 with PCM or PCB as core subjects and at least 50% aggregate as a general Shiksha reference; institution and category rules can differ. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CUET</li><li>JEE Main</li><li>LPU NEST</li><li>Institution entrance exams</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>B.Sc. Physics admission and eligibility</h2><p>Check PCM or PCB eligibility, the admission route, laboratory access and college fee notice before selecting a B.Sc. Physics seat.</p><p>Class 12 with PCM or PCB as core subjects and at least 50% aggregate as a general Shiksha reference; institution and category rules can differ. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CUET</li><li>JEE Main</li><li>LPU NEST</li><li>Institution entrance exams</li></ul><p>Match the subject rule, inspect the entrance or merit route, and verify the college fee and laboratory details.</p><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>B.Sc. Physics fees</h2><p>Shiksha aggregate: INR 1,000 to INR 5 lakh across colleges; verify the selected institution's fee structure. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>B.Sc. Physics cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>B.Sc. Physics specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -804,7 +870,18 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "B.Sc. Physics rewards curiosity, but the marks come from equations, lab habits and the ability to explain a result without hand-waving.",
+        "application": "Check PCM or PCB eligibility, the admission route, laboratory access and college fee notice before selecting a B.Sc. Physics seat.",
+        "preparation": "Re-derive one result each week and attach a simple units check; it catches errors a memorised formula will hide.",
+        "faq_questions": [
+          "Which Class 12 subjects are accepted for B.Sc. Physics?",
+          "How should a student compare physics lab facilities?",
+          "What does a units check reveal in problem practice?",
+          "Which fee and admission notice controls the seat?"
+        ]
+      }
     },
     {
       "id": "9371b3b3-e110-4066-8cdf-e0f37a10552a",
@@ -864,11 +941,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>B.Com course overview</h2><p>B.Com is a 3 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha states that B.Com is usually 3 years. Shiksha states 10+2 is required and Commerce or Accountancy is preferred by some colleges.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>B.Com career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Accountant</li><li>Financial Analyst</li><li>Tax Consultant</li><li>Accounts Manager</li><li>Business Executive</li></ul>",
+      "about_content": "<h2>B.Com course overview</h2><p>B.Com becomes useful when accounting entries, business decisions and tax basics connect to work outside the classroom.</p><p>B.Com is a 3 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha states that B.Com is usually 3 years. Shiksha states 10+2 is required and Commerce or Accountancy is preferred by some colleges.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>B.Com career direction</h2><p>Practise one journal entry, one GST or ratio problem and one short business interpretation every study session.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Accountant</li><li>Financial Analyst</li><li>Tax Consultant</li><li>Accounts Manager</li><li>Business Executive</li></ul>",
       "subjects_content": "<h2>B.Com subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Accounting</li><li>Finance</li><li>Economics</li><li>Business management</li><li>Marketing</li><li>Entrepreneurship</li></ul>",
       "placements_content": "<h2>B.Com placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>B.Com admission and eligibility</h2><p>10+2 or equivalent. Shiksha says Commerce and Accountancy are preferred by many colleges, but the final subject rule is institution-specific. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CUET</li><li>AIMA UGAT</li><li>NPAT</li><li>SET</li><li>IPU CET</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>B.Com admission and eligibility</h2><p>Check the Class 12 subject rule, entrance test, semester fee and college's current admission notice before choosing a B.Com route.</p><p>10+2 or equivalent. Shiksha says Commerce and Accountancy are preferred by many colleges, but the final subject rule is institution-specific. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CUET</li><li>AIMA UGAT</li><li>NPAT</li><li>SET</li><li>IPU CET</li></ul><ol><li>Read the college eligibility and subject rule.</li><li>Confirm entrance or merit registration.</li><li>Compare the fee notice before accepting a seat.</li></ol><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>B.Com fees</h2><p>Shiksha reference ranges: government INR 3,000 to INR 2 lakh; private INR 20,000 to INR 15 lakh. College and mode change the total. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>B.Com cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>B.Com specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -921,7 +998,18 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "B.Com becomes useful when accounting entries, business decisions and tax basics connect to work outside the classroom.",
+        "application": "Check the Class 12 subject rule, entrance test, semester fee and college's current admission notice before choosing a B.Com route.",
+        "preparation": "Practise one journal entry, one GST or ratio problem and one short business interpretation every study session.",
+        "faq_questions": [
+          "Does this B.Com college require Commerce in Class 12?",
+          "Which entrance score is accepted for B.Com admission?",
+          "How can accounting practice stay connected to business?",
+          "Which semester fee items should be checked?"
+        ]
+      }
     },
     {
       "id": "5993af26-4962-4b4e-a87d-8d712e6c0cae",
@@ -984,11 +1072,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>B.Tech Mechanical course overview</h2><p>B.Tech Mechanical is a 4 years (8 semesters) programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha states 4 years and 8 semesters. Shiksha lists Class 12 PCM and a 50% to 60% general range, with institution-specific exceptions.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>B.Tech Mechanical career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Mechanical Design Engineer</li><li>Manufacturing Engineer</li><li>Product Engineer</li><li>Automotive Design Engineer</li><li>Power Plant Engineer</li><li>Aerospace Engineer</li></ul>",
+      "about_content": "<h2>B.Tech Mechanical course overview</h2><p>Mechanical engineering still rewards people who enjoy seeing how a machine fails, even when the brochure leads with placement numbers.</p><p>B.Tech Mechanical is a 4 years (8 semesters) programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha states 4 years and 8 semesters. Shiksha lists Class 12 PCM and a 50% to 60% general range, with institution-specific exceptions.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>B.Tech Mechanical career direction</h2><p>Draw a force diagram or thermodynamics cycle from memory, label every assumption and then solve one numerical problem against it.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>Mechanical Design Engineer</li><li>Manufacturing Engineer</li><li>Product Engineer</li><li>Automotive Design Engineer</li><li>Power Plant Engineer</li><li>Aerospace Engineer</li></ul>",
       "subjects_content": "<h2>B.Tech Mechanical subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Engineering physics</li><li>Engineering mathematics</li><li>Engineering graphics</li><li>Engineering mechanics</li><li>Basic electrical engineering</li><li>Thermodynamics</li></ul>",
       "placements_content": "<h2>B.Tech Mechanical placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>B.Tech Mechanical admission and eligibility</h2><p>Class 12 Science with PCM and generally 50% to 60% aggregate for many colleges; top institutions can set higher subject and entrance conditions. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>JEE Main</li><li>JEE Advanced</li><li>MHT CET</li><li>KCET</li><li>COMEDK UGET</li><li>BITSAT</li><li>VITEEE</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>B.Tech Mechanical admission and eligibility</h2><p>Compare PCM and entrance eligibility, workshop access, accreditation and the complete fee schedule before selecting a B.Tech Mechanical seat.</p><p>Class 12 Science with PCM and generally 50% to 60% aggregate for many colleges; top institutions can set higher subject and entrance conditions. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>JEE Main</li><li>JEE Advanced</li><li>MHT CET</li><li>KCET</li><li>COMEDK UGET</li><li>BITSAT</li><li>VITEEE</li></ul><p>Verify PCM and entrance conditions, review workshop and accreditation evidence, then follow the college counselling steps.</p><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>B.Tech Mechanical fees</h2><p>Shiksha average tuition reference: INR 3 lakh to INR 15 lakh; hostel, laboratory, examination and other charges may be separate. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>B.Tech Mechanical cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>B.Tech Mechanical specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -1041,7 +1129,18 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "Mechanical engineering still rewards people who enjoy seeing how a machine fails, even when the brochure leads with placement numbers.",
+        "application": "Compare PCM and entrance eligibility, workshop access, accreditation and the complete fee schedule before selecting a B.Tech Mechanical seat.",
+        "preparation": "Draw a force diagram or thermodynamics cycle from memory, label every assumption and then solve one numerical problem against it.",
+        "faq_questions": [
+          "Which entrance route applies to B.Tech Mechanical Engineering?",
+          "What workshop evidence should an applicant ask for?",
+          "How does a force diagram improve preparation?",
+          "Which fee charges sit outside mechanical tuition?"
+        ]
+      }
     },
     {
       "id": "451f7717-b4d9-4331-a3c8-e57db554a66a",
@@ -1101,11 +1200,11 @@
       "low_fee": 0,
       "high_fee": 0,
       "syllabus_pdf_url": "",
-      "about_content": "<h2>BBA course overview</h2><p>BBA is a 3 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha describes BBA as a 3-year undergraduate degree. Shiksha course listings use Class 12 and commonly show a 50% reference; college rules can differ.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
-      "scope_content": "<h2>BBA career direction</h2><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>HR Executive</li><li>Marketing Executive</li><li>Sales Executive</li><li>Business Analyst</li><li>Operations Associate</li></ul>",
+      "about_content": "<h2>BBA course overview</h2><p>BBA is not a shortcut to management; it is useful when the student learns to read numbers, customers and operations together.</p><p>BBA is a 3 years programme in the DekhoCampus catalogue. The values below are course-level orientation taken from the selected Shiksha source; they are not a substitute for the chosen college's current prospectus.</p><p><strong>Source boundary:</strong> Shiksha describes BBA as a 3-year undergraduate degree. Shiksha course listings use Class 12 and commonly show a 50% reference; college rules can differ.</p><h3>What to compare before applying</h3><ul><li>The exact college and academic year</li><li>The current admission route and subject requirements</li><li>The complete fee breakup, including non-tuition charges</li><li>The latest syllabus or curriculum version</li><li>The evidence behind placement or career claims</li></ul>",
+      "scope_content": "<h2>BBA career direction</h2><p>Time mental-maths drills beside a short business case, then explain the recommendation in three sentences without buzzwords.</p><p>Career outcomes depend on the institution, skills, internships, location and role. These role families are the ones listed or described by the selected source.</p><ul><li>HR Executive</li><li>Marketing Executive</li><li>Sales Executive</li><li>Business Analyst</li><li>Operations Associate</li></ul>",
       "subjects_content": "<h2>BBA subjects</h2><p>The reviewed source supports these course-level subject areas. Semester order and exact paper names remain institution-specific.</p><ul><li>Principles of management</li><li>Accounting</li><li>Marketing</li><li>Economics</li><li>Business law</li><li>Entrepreneurship</li></ul>",
       "placements_content": "<h2>BBA placements</h2><p>No college-specific placement figure was accepted in this batch. A course-level page should show verified college or department evidence instead of a national promise.</p>",
-      "admission_process": "<h2>BBA admission and eligibility</h2><p>Class 12 or equivalent. Shiksha course listings commonly show a 50% reference, but the selected college may set a different subject or score rule. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CUET</li><li>AIMA UGAT</li><li>SET</li><li>IPU CET</li><li>NPAT</li></ul><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
+      "admission_process": "<h2>BBA admission and eligibility</h2><p>Compare Class 12 eligibility, test or merit route, internship access and total fees before selecting a BBA programme.</p><p>Class 12 or equivalent. Shiksha course listings commonly show a 50% reference, but the selected college may set a different subject or score rule. No single national rule should be copied into every college page.</p><h3>Admission routes seen in the source</h3><ul><li>CUET</li><li>AIMA UGAT</li><li>SET</li><li>IPU CET</li><li>NPAT</li></ul><p>Check the Class 12 and test rules, compare the internship and fee evidence, and save the submitted admission record.</p><p>Use the selected college or university notification for the current form, cutoff, document and counselling rules.</p>",
       "fees_content": "<h2>BBA fees</h2><p>Shiksha reference range: INR 540 to INR 11.62 lakh across BBA offerings; mode and institution change the total. These are third-party aggregate references, not a guaranteed price. Confirm the final amount on the institution's current fee notice.</p><h3>Fee fields still needing college evidence</h3><ul><li>Tuition by year or semester</li><li>Hostel, mess and transport</li><li>Examination, laboratory or studio charges</li><li>Refundable deposits and scholarships</li></ul>",
       "cutoff_content": "<h2>BBA cutoff</h2><p>No national cutoff is published in the selected course-level source. Cutoffs must be attached to a specific college, year, category and admission route.</p>",
       "specialization_content": "<h2>BBA specialisations</h2><p>Only list a specialisation when the selected institution's current course record verifies it. No national specialisation list was copied into this batch.</p>",
@@ -1158,7 +1257,26 @@
         "current placement outcomes",
         "official institution website"
       ],
-      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending."
+      "source_policy": "Shiksha first; CollegeDekho, KollegeApply and Collegedunia only if a field is not found; unsupported fields remain pending.",
+      "content_variation": {
+        "opening": "BBA is not a shortcut to management; it is useful when the student learns to read numbers, customers and operations together.",
+        "application": "Compare Class 12 eligibility, test or merit route, internship access and total fees before selecting a BBA programme.",
+        "preparation": "Time mental-maths drills beside a short business case, then explain the recommendation in three sentences without buzzwords.",
+        "faq_questions": [
+          "Which admission route does this BBA programme use?",
+          "How should a student compare BBA internship claims?",
+          "What mental-maths practice helps with business tests?",
+          "Which fee terms should be clarified before joining?"
+        ]
+      }
     }
-  ]
+  ],
+  "variation_policy": "Batch variation is mandatory. Every item in a batch needs a different first sentence and a topic-specific consequence. Never copy a lead sentence across sibling records. Describe the application route in a record-specific form. Rotate paragraph, ordered list, checklist and short action plan formats, but keep the facts accurate. Preparation advice must come from the actual subject matter. Replace generic study slogans with a concrete task such as biology diagrams, timed quantitative sets, case-law reading or design observation. FAQ questions and answers must be unique across the batch. Ask about a decision that belongs to the individual exam or course, not a generic deadline question repeated everywhere. Never reuse these phrases: Roz thoda, same as above, use the official portal and current bulletin before payment. A template may control field shape, but it must not control wording, hook, FAQ phrasing, application explanation or preparation tip.",
+  "variation": {
+    "records": 10,
+    "unique_openings": 10,
+    "unique_applications": 10,
+    "unique_preparations": 10,
+    "unique_faq_questions": 40
+  }
 }
