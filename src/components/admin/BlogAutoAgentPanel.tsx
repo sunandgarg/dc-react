@@ -535,9 +535,9 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         <div>
           <Label className="text-xs">Word limit</Label>
           <div className="mt-1 flex flex-wrap gap-2">
-            {[0, 350, 900, 1200, 1500, 1800].map(limit => <Button key={limit} size="sm" variant={settings.word_limit === limit ? "default" : "outline"} onClick={() => updateSetting("word_limit", limit)}>{limit === 0 ? "Adaptive" : limit === 350 ? "350-400 words" : limit}</Button>)}
+            {[0, 350, 400, 900, 1200, 1500, 1800].map(limit => <Button key={limit} size="sm" variant={settings.word_limit === limit ? "default" : "outline"} onClick={() => updateSetting("word_limit", limit)}>{limit === 0 ? "Adaptive" : limit === 350 ? "350-400 words" : limit}</Button>)}
           </div>
-          <p className="mt-1 text-[10px] text-muted-foreground">Adaptive chooses length from search intent. The compact option keeps the article body at 350-400 words; FAQs stay in their separate FAQ section.</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Adaptive chooses length from search intent. Choose 400 for a compact article with a clearer target; the body stays at 350-400 words and FAQs stay in their separate FAQ section.</p>
         </div>
         {supportsGoogleTrendsSettings && <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 lg:col-span-3">
           <div className="flex flex-wrap items-center justify-between gap-3">

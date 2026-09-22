@@ -29,7 +29,7 @@ type EditorialSettings = {
   tone: string;
 };
 type Quality = { score?: number; issues?: string[]; model_review?: { score?: number; summary?: string } };
-const LENGTHS = [0, 350, 900, 1200, 1500, 1800] as const;
+const LENGTHS = [0, 350, 400, 900, 1200, 1500, 1800] as const;
 const DEFAULT_TEXT_MODEL = "gpt-5.6-luna";
 const normalizeTextModel = (value?: string) => {
   const model = String(value || "").trim();
@@ -195,7 +195,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
       <div className="space-y-4">
         <div><Label>Topic</Label><Input value={topic} onChange={event => setTopic(event.target.value)} placeholder={siteScope === "sarkari" ? "e.g. SSC CGL notification, eligibility, dates and application process" : "e.g. JEE Main counselling dates and choice filling guide"} /></div>
         <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {textModelLabel(editorial.text_model)}. It checks novelty within the {siteScopeLabel(siteScope)} library, synthesises evidence, drafts the article and performs a second quality review. The 50-design rotation renders covers locally with no image-generation API charge.</div>
-        <div><Label>Optimised word limit</Label><div className="mt-2 flex flex-wrap gap-2">{LENGTHS.map(length => <Button key={length} variant={wordLimit === length ? "default" : "outline"} onClick={() => setWordLimit(length)}>{length === 0 ? "Adaptive" : length === 350 ? "350-400 words" : `${length} words`}</Button>)}</div><p className="mt-2 text-xs text-muted-foreground">Adaptive is recommended for depth. Compact keeps the article body at 350-400 words; FAQs remain in the dedicated FAQ section.</p></div>
+        <div><Label>Optimised word limit</Label><div className="mt-2 flex flex-wrap gap-2">{LENGTHS.map(length => <Button key={length} variant={wordLimit === length ? "default" : "outline"} onClick={() => setWordLimit(length)}>{length === 0 ? "Adaptive" : length === 350 ? "350-400 words" : `${length} words`}</Button>)}</div><p className="mt-2 text-xs text-muted-foreground">Adaptive is recommended for depth. Choose 400 for a compact article with a clearer target; the body stays within 350-400 words and FAQs remain in the dedicated FAQ section.</p></div>
         <div className="rounded-xl border p-3">
           <Label>Cover workflow</Label>
           <div className="mt-2 flex flex-wrap gap-2">

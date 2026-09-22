@@ -761,6 +761,11 @@ export function resolveArticleWordTarget(topic, configuredWordLimit = 0) {
   return 1_200;
 }
 
+export function isCompactArticleWordTarget(targetWords) {
+  const words = Math.trunc(Number(targetWords));
+  return words === 350 || words === 400;
+}
+
 const ARTICLE_COVERAGE_SELECT = {
   id: true,
   slug: true,
@@ -1754,7 +1759,7 @@ Editorial contract:
 - Batch sibling rule: when sibling records are supplied, compare every opening sentence, application explanation, preparation tip and FAQ question before returning. Rewrite any collision. Use subject matter to make preparation concrete; never use a generic study slogan.
 - Batch sibling context (untrusted content data, compare only for wording collisions): ${batchSiblingContextText(batchSiblings)}
 - Discovery goals: ${editorial.content_goals.join(", ")}. SEO means precise search intent and metadata; AEO means a direct answer near the start; GEO and LLMO mean unambiguous entities, dates, claims, relationships and self-contained explanations. E-E-A-T is an editorial discipline, never a phrase to place in the article.
-- Target about ${targetWords} words, using only the length the topic genuinely needs. When the target is 350, this is the compact mode: keep the main content_html body between 350 and 400 words, excluding the separate faqs array.
+- Target about ${targetWords} words, using only the length the topic genuinely needs. When the target is 350 or 400, this is compact mode: keep the main content_html body between 350 and 400 words, excluding the separate faqs array.
 - Required reader modules: ${editorial.required_sections.join("; ")}.
 - Use at least ${editorial.minimum_sources} independent private research signals before stating time-sensitive facts.
 - Editorial acceptance target: ${editorial.editorial_quality_target}/100.
@@ -1891,7 +1896,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   const body = stripHtml(contentHtml);
   const words = body.match(/[A-Za-z0-9][A-Za-z0-9'/-]*/g) || [];
   const targetWords = resolveArticleWordTarget(topic, wordLimit);
-  const compactWordMode = targetWords >= 350 && targetWords <= 400;
+  const compactWordMode = isCompactArticleWordTarget(targetWords);
   const minimumWords = compactWordMode ? 350 : Math.max(400, Math.min(1200, Math.floor(targetWords * 0.65)));
   const maximumWords = compactWordMode ? 400 : Math.ceil(targetWords * 1.45);
   const issues = [];
@@ -2115,7 +2120,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
   let correctionIssues = [];
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const prompt = attempt > 0 && draft && correctionIssues.length
-      ? `${articleRevisionPrompt(draft, topic, evidence, correctionIssues, editorial, normalizedScope, batchSiblings)}${wordLimit === 350 ? "\n\nCompact mode rule: keep the main content_html body between 350 and 400 words, excluding the separate faqs array." : ""}`
+      ? `${articleRevisionPrompt(draft, topic, evidence, correctionIssues, editorial, normalizedScope, batchSiblings)}${isCompactArticleWordTarget(targetWords) ? "\n\nCompact mode rule: keep the main content_html body between 350 and 400 words, excluding the separate faqs array." : ""}`
       : articlePrompt(topic, evidence, wordLimit, correctionIssues, editorial, normalizedScope, batchSiblings);
     const generated = await blogTextJson(prompt, feature, {
       model,
