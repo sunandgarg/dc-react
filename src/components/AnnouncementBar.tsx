@@ -67,6 +67,43 @@ export function AnnouncementBar() {
     ? "shrink-0 bg-red-600 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm transition hover:bg-red-700 sm:px-4 sm:text-sm"
     : "flex h-8 w-8 shrink-0 items-center justify-center text-red-500 transition hover:translate-x-0.5 hover:text-red-400";
   const ctaContent = ctaText || <ArrowRight className="h-5 w-5" aria-hidden="true" />;
+  const announcementContent = (
+    <motion.div
+      key={activeAd.id}
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * 28 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -18 }}
+      transition={{ duration: transitionDuration, ease: "easeOut" }}
+      drag={ads.length > 1 ? "x" : false}
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.18}
+      dragMomentum={false}
+      onDragStart={() => { draggedRef.current = true; }}
+      onDragEnd={(_, info) => {
+        if (Math.abs(info.offset.x) >= 44 || Math.abs(info.velocity.x) >= 450) {
+          move(info.offset.x < 0 ? 1 : -1);
+        }
+        window.setTimeout(() => { draggedRef.current = false; }, 150);
+      }}
+      onClick={(event) => {
+        if (!draggedRef.current) return;
+        event.preventDefault();
+        event.stopPropagation();
+      }}
+      whileDrag={{ cursor: "grabbing" }}
+      className="flex min-w-0 touch-pan-y select-none items-center justify-center gap-2 cursor-grab sm:gap-3"
+    >
+      <div className="min-w-0">
+        <AnimatedWords text={activeAd.title} reduceMotion={Boolean(reduceMotion) || rotationSeconds < 1} />
+        {activeAd.subtitle && (
+          <p className="hidden truncate text-xs text-white/65 md:block">{activeAd.subtitle}</p>
+        )}
+      </div>
+      <span className={ctaClassName} aria-hidden={!ctaText}>
+        {ctaContent}
+      </span>
+    </motion.div>
+  );
   return (
     <section
       className="relative z-[72] h-11 min-h-11 border-b border-neutral-800 bg-black text-white"
@@ -76,57 +113,23 @@ export function AnnouncementBar() {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <div className="container flex h-11 min-h-11 items-center px-3 py-1">
-        <div
-          className="min-w-0 flex-1 overflow-hidden text-center"
-          aria-live="polite"
-          aria-roledescription="carousel"
-          onClickCapture={(event) => {
-            if (!draggedRef.current) return;
-            event.preventDefault();
-            event.stopPropagation();
-          }}
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={activeAd.id}
-              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * 28 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -18 }}
-              transition={{ duration: transitionDuration, ease: "easeOut" }}
-              drag={ads.length > 1 ? "x" : false}
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.18}
-              dragMomentum={false}
-              onDragStart={() => { draggedRef.current = true; }}
-              onDragEnd={(_, info) => {
-                if (Math.abs(info.offset.x) >= 44 || Math.abs(info.velocity.x) >= 450) {
-                  move(info.offset.x < 0 ? 1 : -1);
-                }
-                window.setTimeout(() => { draggedRef.current = false; }, 150);
-              }}
-              whileDrag={{ cursor: "grabbing" }}
-              className="flex min-w-0 touch-pan-y select-none items-center justify-center gap-2 cursor-grab sm:gap-3"
-            >
-              <div className="min-w-0">
-                <AnimatedWords text={activeAd.title} reduceMotion={Boolean(reduceMotion) || rotationSeconds < 1} />
-                {activeAd.subtitle && (
-                  <p className="hidden truncate text-xs text-white/65 md:block">{activeAd.subtitle}</p>
-                )}
-              </div>
-              {external ? (
-                <a href={activeAd.link_url} target="_blank" rel="noopener noreferrer" className={ctaClassName} aria-label={ctaText || `Open ${activeAd.title}`}>
-                  {ctaContent}
-                </a>
-              ) : (
-                <Link to={internalHref} className={ctaClassName} aria-label={ctaText || `Open ${activeAd.title}`}>
-                  {ctaContent}
-                </Link>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
+      {external ? (
+        <a href={activeAd.link_url} target="_blank" rel="noopener noreferrer" className="block h-11 min-h-11 w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-400" aria-label={`Open ${activeAd.title}`}>
+          <div className="container flex h-11 min-h-11 items-center px-3 py-1">
+            <div className="min-w-0 flex-1 overflow-hidden text-center" aria-live="polite" aria-roledescription="carousel">
+              <AnimatePresence mode="wait" initial={false}>{announcementContent}</AnimatePresence>
+            </div>
+          </div>
+        </a>
+      ) : (
+        <Link to={internalHref} className="block h-11 min-h-11 w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-400" aria-label={`Open ${activeAd.title}`}>
+          <div className="container flex h-11 min-h-11 items-center px-3 py-1">
+            <div className="min-w-0 flex-1 overflow-hidden text-center" aria-live="polite" aria-roledescription="carousel">
+              <AnimatePresence mode="wait" initial={false}>{announcementContent}</AnimatePresence>
+            </div>
+          </div>
+        </Link>
+      )}
     </section>
   );
 }

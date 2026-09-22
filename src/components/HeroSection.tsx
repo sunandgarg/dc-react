@@ -15,8 +15,6 @@ import dcLogo from "@/assets/dc-logo-small.webp";
 import catCollege from "@/assets/hero-colleges-attached.png";
 import catCourse from "@/assets/hero-courses-attached.png";
 import catExam from "@/assets/hero-exams-attached.png";
-import catApplication from "@/assets/hero-application-attached.png";
-import catReviews from "@/assets/hero-reviews-attached.png";
 import catNews from "@/assets/hero-news-attached.png";
 import { HeroCounsellingCard } from "@/components/HeroCounsellingCard";
 import { displayText } from "@/lib/displayText";
@@ -42,8 +40,6 @@ const heroTiles = [
   { label: "13,004+ Colleges", icon: catCollege, href: "/colleges", tone: "bg-rose-50 border-rose-100" },
   { label: "840+ Courses", icon: catCourse, href: "/courses", tone: "bg-sky-50 border-sky-100" },
   { label: "219+ Exams", icon: catExam, href: "/exams", tone: "bg-violet-50 border-violet-100" },
-  { label: "Application Form", icon: catApplication, href: "/colleges", tone: "bg-emerald-50 border-emerald-100" },
-  { label: "Review", icon: catReviews, href: "/news", tone: "bg-amber-50 border-amber-100" },
   { label: "News", icon: catNews, href: "/news", tone: "bg-cyan-50 border-cyan-100" },
 ] as const;
 
@@ -396,7 +392,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
               ))}
               </div>
 
-          <div className="mt-5 flex w-full min-w-0 max-w-full snap-x gap-3 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:grid sm:max-w-4xl sm:grid-cols-6 sm:gap-2 sm:overflow-visible sm:pb-0 sm:[scrollbar-width:auto] md:gap-3">
+          <div className="mt-5 flex w-full min-w-0 max-w-full snap-x gap-3 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:grid sm:max-w-4xl sm:grid-cols-4 sm:gap-2 sm:overflow-visible sm:pb-0 sm:[scrollbar-width:auto] md:gap-3">
             {heroTiles.map((item) => (
               <Link
                 key={item.label}

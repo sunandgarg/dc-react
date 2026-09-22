@@ -182,6 +182,13 @@ describe("Index page layout (static source assertions)", () => {
     expect(productionConfigSrc).toMatch(/\["apply now", "learn more"\]/);
   });
 
+  it("makes the complete announcement bar one link target", () => {
+    expect(announcementSrc).toMatch(/className="block h-11 min-h-11 w-full/);
+    expect(announcementSrc).toMatch(/aria-label=\{`Open \$\{activeAd\.title\}`\}/);
+    expect(announcementSrc).toMatch(/<span className=\{ctaClassName\}/);
+    expect(announcementSrc).not.toMatch(/<a href=\{activeAd\.link_url\}[\s\S]*<a href=\{activeAd\.link_url\}/);
+  });
+
   it("shows only Ad Manager announcements and refreshes managed content promptly", () => {
     expect(announcementSrc).not.toMatch(/DEFAULT_ANNOUNCEMENT|default-admissions-announcement/);
     expect(announcementSrc).toMatch(/const ads = configuredAds/);
@@ -275,8 +282,9 @@ describe("Index page layout (static source assertions)", () => {
     }
   });
 
-  it("does not render the six college, course, exam, application, review, and news cards", () => {
+  it("keeps the homepage hero shortcuts focused on college, course, exam, and news", () => {
     expect(heroSrc).not.toMatch(/useHeroCategories|quickCategories/);
+    expect(heroSrc).not.toMatch(/Application Form|catApplication|catReviews|\{ label: "Review"/);
     expect(footerSrc).not.toMatch(/GlobalDiscoveryBar/);
   });
 
