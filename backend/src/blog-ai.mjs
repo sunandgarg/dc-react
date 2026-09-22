@@ -9,7 +9,7 @@ import { queueIndexNowUrls } from "./indexnow.mjs";
 import { BATCH_CONTENT_VARIATION_POLICY, BATCH_CONTENT_VARIATION_TEXT } from "../../scripts/content-batch-policy.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
-const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5.6-luna";
+const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5.6-sol";
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const RECOMMENDED_DAILY_POSTS = 8;
 const MAX_POSTS_PER_RUN = 3;
@@ -19,7 +19,7 @@ const GEMINI_MAX_RETRIES = 4;
 const GEMINI_MAX_RETRY_DELAY_MS = 30_000;
 const MAX_COVER_SOURCE_BYTES = 20 * 1024 * 1024;
 const MAX_GEMINI_OUTPUT_TOKENS = 12_000;
-// Luna supports substantially larger outputs, but keep a conservative
+// Sol supports substantially larger outputs, but keep a conservative
 // application ceiling so long-form structured drafts cannot run unbounded.
 const MAX_OPENAI_OUTPUT_TOKENS = 48_000;
 const MAX_RESEARCH_SOURCES = 6;
@@ -63,6 +63,7 @@ const HUMAN_EDITORIAL_RULES_TEXT = `Use the ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY
 const BLOG_MODEL_SYSTEM_RULES = `Return valid JSON only. Write factual, original Indian editorial English using the DekhoCampus human editorial policy. Do not leak research URLs, citations, footnotes, private source metadata, competitor promotion, attribution phrases, quality scores or AI process language into publishable fields. Official authorities, universities, exam bodies and named institutions may be mentioned when the supplied evidence supports them; naming the real institution is required when it makes the rule clearer. Do not copy or spin another page. Never begin with prompt residue such as Answer first:, Answer:, Executive summary: or Here is the answer:. Never flatten a comparison matrix into a plain-text label stack. ${HUMAN_EDITORIAL_RULES_TEXT} Keep normal paragraphs concise and edited. The renderer requires semantic HTML, not Markdown.`;
 const SARKARI_ARTICLE_CATEGORIES = new Set(["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"]);
 const OPENAI_TEXT_PRICING_PER_MILLION = {
+  "gpt-5.6-sol": { input: 0.2, cachedInput: 0.02, output: 1.2 },
   "gpt-5.6-luna": { input: 0.2, cachedInput: 0.02, output: 1.2 },
   "gpt-5.5": { input: 5, cachedInput: 0.5, output: 30 },
   "gpt-5.4-mini": { input: 0.75, cachedInput: 0.075, output: 4.5 },
@@ -103,7 +104,9 @@ const cleanJson = (value) => String(value || "").replace(/^```json\s*|\s*```$/gi
 const slugify = (value) => String(value || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 100);
 const stripHtml = (value) => String(value || "").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 const LEGACY_GEMINI_MODELS = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
-const LEGACY_OPENAI_BLOG_MODELS = new Set(["gpt-5.5"]);
+const LEGACY_OPENAI_BLOG_MODELS = new Set(["gpt-5.6-luna"]);
+const OPENAI_BLOG_MODEL_ALIASES = new Map([["gpt-5.4", "gpt-5.4-mini"]]);
+const SUPPORTED_OPENAI_BLOG_MODELS = new Set(["gpt-5.6-sol", "gpt-5.5", "gpt-5.4-mini", "gpt-5-nano"]);
 const normalizeGeminiModel = (value) => {
   const model = String(value || "").trim();
   if (!model.startsWith("gemini-")) return DEFAULT_GEMINI_MODEL;
@@ -112,7 +115,12 @@ const normalizeGeminiModel = (value) => {
 export const normalizeBlogTextModel = (value) => {
   const model = String(value || "").trim();
   if (model.startsWith("gemini-")) return normalizeGeminiModel(model);
-  if (model.startsWith("gpt-")) return LEGACY_OPENAI_BLOG_MODELS.has(model) ? DEFAULT_OPENAI_TEXT_MODEL : model;
+  if (model.startsWith("gpt-")) {
+    const aliased = OPENAI_BLOG_MODEL_ALIASES.get(model) || model;
+    return LEGACY_OPENAI_BLOG_MODELS.has(aliased) || !SUPPORTED_OPENAI_BLOG_MODELS.has(aliased)
+      ? DEFAULT_OPENAI_TEXT_MODEL
+      : aliased;
+  }
   return DEFAULT_OPENAI_TEXT_MODEL;
 };
 export const blogTextProvider = (model) => normalizeBlogTextModel(model).startsWith("gemini-") ? "gemini" : "openai";

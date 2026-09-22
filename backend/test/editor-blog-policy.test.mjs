@@ -117,10 +117,10 @@ test("enforces conservative auto-blog cadence and volume limits", () => {
 test("production cadence is 48 gated posts per day with an explicit E-E-A-T contract", async () => {
   const productionSetup = await readFile(new URL("../scripts/configure-production-site-integrations.mjs", import.meta.url), "utf8");
   assert.match(productionSetup, /BLOG_EEAT_48_MIGRATION_KEY/);
-  assert.match(productionSetup, /BLOG_GPT_5_6_LUNA_EDITORIAL_MIGRATION_KEY/);
+  assert.match(productionSetup, /BLOG_GPT_5_6_SOL_EDITORIAL_MIGRATION_KEY/);
   assert.match(productionSetup, /BLOG_DEKHOCAMPUS_HUMAN_EDITORIAL_MIGRATION_KEY/);
   assert.match(productionSetup, /Direct, practical, opinionated and conversational Indian admissions guidance/);
-  assert.match(productionSetup, /text_model: "gpt-5\.6-luna"/);
+  assert.match(productionSetup, /text_model: "gpt-5\.6-sol"/);
   assert.match(productionSetup, /interval_minutes: 60/);
   assert.match(productionSetup, /posts_per_run: 2/);
   assert.match(productionSetup, /daily_post_cap: 48/);
@@ -220,10 +220,13 @@ test("normalizes legacy Gemini models and classifies quota errors", () => {
   assert.match(classified.message, /Enable billing/);
 });
 
-test("selects the quality-first OpenAI blog model and parses structured output", () => {
-  assert.equal(normalizeBlogTextModel(""), "gpt-5.6-luna");
-  assert.equal(normalizeBlogTextModel("gpt-5.5"), "gpt-5.6-luna");
-  assert.equal(normalizeBlogTextModel("gpt-5.6-luna"), "gpt-5.6-luna");
+test("selects the configured OpenAI blog models and parses structured output", () => {
+  assert.equal(normalizeBlogTextModel(""), "gpt-5.6-sol");
+  assert.equal(normalizeBlogTextModel("gpt-5.5"), "gpt-5.5");
+  assert.equal(normalizeBlogTextModel("gpt-5.4"), "gpt-5.4-mini");
+  assert.equal(normalizeBlogTextModel("gpt-5.4-mini"), "gpt-5.4-mini");
+  assert.equal(normalizeBlogTextModel("gpt-5.6-sol"), "gpt-5.6-sol");
+  assert.equal(normalizeBlogTextModel("gpt-5.6-luna"), "gpt-5.6-sol");
   assert.equal(normalizeBlogTextModel("gpt-5-nano"), "gpt-5-nano");
   assert.equal(blogTextProvider("gpt-5-nano"), "openai");
   assert.equal(blogTextProvider("gemini-3.6-flash"), "gemini");

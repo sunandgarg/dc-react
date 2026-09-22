@@ -30,12 +30,20 @@ type EditorialSettings = {
 };
 type Quality = { score?: number; issues?: string[]; model_review?: { score?: number; summary?: string } };
 const LENGTHS = [0, 350, 400, 900, 1200, 1500, 1800] as const;
-const DEFAULT_TEXT_MODEL = "gpt-5.6-luna";
+const DEFAULT_TEXT_MODEL = "gpt-5.6-sol";
+const BLOG_TEXT_MODELS = [
+  { value: "gpt-5.6-sol", label: "OpenAI GPT-5.6 Sol - default" },
+  { value: "gpt-5.5", label: "OpenAI GPT-5.5" },
+  { value: "gpt-5.4-mini", label: "OpenAI GPT-5.4 mini - balanced" },
+  { value: "gpt-5-nano", label: "OpenAI GPT-5 nano - economy" },
+  { value: "gemini-3.6-flash", label: "Gemini 3.6 Flash - alternative" },
+] as const;
+const BLOG_TEXT_MODEL_LABELS = Object.fromEntries(BLOG_TEXT_MODELS.map((item) => [item.value, item.label]));
 const normalizeTextModel = (value?: string) => {
   const model = String(value || "").trim();
-  return !model || model === "gpt-5.5" ? DEFAULT_TEXT_MODEL : model;
+  return !model || model === "gpt-5.6-luna" ? DEFAULT_TEXT_MODEL : model;
 };
-const textModelLabel = (model: string) => model === DEFAULT_TEXT_MODEL ? "OpenAI GPT-5.6 Luna" : model;
+const textModelLabel = (model: string) => BLOG_TEXT_MODEL_LABELS[model as keyof typeof BLOG_TEXT_MODEL_LABELS] || model;
 const DEFAULT_EDITORIAL_SETTINGS: EditorialSettings = {
   text_model: DEFAULT_TEXT_MODEL,
   word_limit: 0,
@@ -194,7 +202,9 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
       </DialogHeader>
       <div className="space-y-4">
         <div><Label>Topic</Label><Input value={topic} onChange={event => setTopic(event.target.value)} placeholder={siteScope === "sarkari" ? "e.g. SSC CGL notification, eligibility, dates and application process" : "e.g. JEE Main counselling dates and choice filling guide"} /></div>
-        <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {textModelLabel(editorial.text_model)}. It checks novelty within the {siteScopeLabel(siteScope)} library, synthesises evidence, drafts the article and performs a second quality review. The 50-design rotation renders covers locally with no image-generation API charge.</div>
+        <div className="rounded-lg border bg-muted/40 p-3 text-sm"><b>Editorial model:</b> {textModelLabel(editorial.text_model)}. It checks novelty within the {siteScopeLabel(siteScope)} library, synthesises evidence, drafts the article and performs a second quality review. The 50-design rotation renders covers locally with no image-generation API charge.
+          <div className="mt-3 max-w-sm"><Label htmlFor="blog-studio-text-model" className="text-xs">Writing model</Label><select id="blog-studio-text-model" aria-label="Blog Studio writing model" value={editorial.text_model} onChange={(event) => setEditorial({ ...editorial, text_model: event.target.value })} className="mt-1 h-9 w-full rounded-md border bg-background px-2 text-xs">{BLOG_TEXT_MODELS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
+        </div>
         <div><Label>Optimised word limit</Label><div className="mt-2 flex flex-wrap gap-2">{LENGTHS.map(length => <Button key={length} variant={wordLimit === length ? "default" : "outline"} onClick={() => setWordLimit(length)}>{length === 0 ? "Adaptive" : length === 350 ? "350-400 words" : `${length} words`}</Button>)}</div><p className="mt-2 text-xs text-muted-foreground">Adaptive is recommended for depth. Choose 400 for a compact article with a clearer target; the body stays within 350-400 words and FAQs remain in the dedicated FAQ section.</p></div>
         <div className="rounded-xl border p-3">
           <Label>Cover workflow</Label>

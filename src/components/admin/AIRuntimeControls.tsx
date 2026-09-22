@@ -44,9 +44,11 @@ const MODELS: Record<string, Array<{ value: string; label: string }>> = {
   ],
   openai: [
     { value: "gpt-4o-mini", label: "GPT-4o mini - low cost" },
-    { value: "gpt-5.6-luna", label: "GPT-5.6 Luna - high-volume" },
+    { value: "gpt-5.6-sol", label: "GPT-5.6 Sol - blog default" },
+    { value: "gpt-5.5", label: "GPT-5.5" },
+    { value: "gpt-5.4-mini", label: "GPT-5.4 mini - balanced" },
+    { value: "gpt-5.6-luna", label: "GPT-5.6 Luna - legacy" },
     { value: "gpt-5.6-terra", label: "GPT-5.6 Terra - balanced" },
-    { value: "gpt-5.6-sol", label: "GPT-5.6 Sol - flagship" },
     { value: "gpt-4.1", label: "GPT-4.1" },
     { value: "gpt-4.1-mini", label: "GPT-4.1 mini" },
     { value: "gpt-image-1", label: "GPT Image 1" },

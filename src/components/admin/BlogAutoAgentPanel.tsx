@@ -64,10 +64,10 @@ type GeneratedArticle = { id: string; title: string; slug: string; featured_imag
 type Author = { id: string; name: string; designation?: string; photo?: string };
 
 const DRAFT_KEY = "dc:admin:blog-agent:draft:v1";
-const DEFAULT_TEXT_MODEL = "gpt-5.6-luna";
+const DEFAULT_TEXT_MODEL = "gpt-5.6-sol";
 const normalizeTextModel = (value?: string) => {
   const model = String(value || "").trim();
-  return !model || model === "gpt-5.5" ? DEFAULT_TEXT_MODEL : model;
+  return !model || model === "gpt-5.6-luna" ? DEFAULT_TEXT_MODEL : model;
 };
 const DEFAULT_SETTINGS: Settings = {
   enabled: false,
@@ -517,7 +517,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         <div>
           <Label className="text-xs">Blog AI provider</Label>
           <div className="mt-1"><Button type="button" size="sm" variant="default" disabled>{settings.text_model.startsWith("gemini-") ? "Google Gemini" : "OpenAI"}</Button></div>
-          <p className="mt-1 text-[10px] text-muted-foreground">OpenAI GPT-5.6 Luna is the default blog-writing model.</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">OpenAI GPT-5.6 Sol is the default blog-writing model. GPT-5.5 and GPT-5.4 mini are selectable alternatives.</p>
           {supportsAdvancedSettings && (
             <select
               aria-label="Blog text model"
@@ -525,7 +525,8 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("text_model", event.target.value)}
               className="mt-2 h-9 w-full rounded-md border bg-background px-2 text-xs"
             >
-              <option value="gpt-5.6-luna">OpenAI GPT-5.6 Luna</option>
+              <option value="gpt-5.6-sol">OpenAI GPT-5.6 Sol - default</option>
+              <option value="gpt-5.5">OpenAI GPT-5.5</option>
               <option value="gpt-5.4-mini">OpenAI GPT-5.4 mini - balanced</option>
               <option value="gpt-5-nano">OpenAI GPT-5 nano - economy</option>
               <option value="gemini-3.6-flash">Gemini 3.6 Flash - alternative</option>
