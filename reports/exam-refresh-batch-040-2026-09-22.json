@@ -1,0 +1,1014 @@
+{
+  "batch": "exam-refresh-batch-040",
+  "checked_at": "2026-09-22T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten canonical rows after batches 001-039; duplicate, demo, discontinued and superseded rows excluded",
+  "policy": "Official authority sources only; unpublished 2027 dates remain pending; four verified internal links plus one official application link and one official notice link; existing slugs preserved; four visible FAQs; semantic HTML; no production database write.",
+  "excluded_related_sessions": [
+    "bihar-dece-le-old",
+    "bihar-bed-cet-lnmu",
+    "rajasthan-ptet-legacy"
+  ],
+  "updates": [
+    {
+      "id": "c6b82c7d-777b-4b40-8fa4-8fef78161fa3",
+      "old_slug": "bihar-dece-le",
+      "slug": "bihar-dece-le",
+      "name": "Bihar DECE (LE)",
+      "title": "Bihar DECE (LE) 2027: Dates, Eligibility & Pattern",
+      "full_name": "Bihar DECE (LE) 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Polytechnic/Lateral Entry",
+      "level": "Bihar diploma lateral-entry admission",
+      "mode": "BCECEB Diploma Entrance Competitive Examination (Lateral Entry) and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "BCECEB publishes the qualifying diploma or technical-certificate, branch, marks, category and document conditions in the current DECE (LE) prospectus.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Bihar Combined Entrance Competitive Examination Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Engineering mathematics and science",
+        "Branch-specific diploma fundamentals",
+        "Technical reasoning and problem solving",
+        "Rank card, choice filling and seat allotment"
+      ],
+      "description": "Bihar DECE (LE) 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Bihar DECE (LE) 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Bihar Combined Entrance Competitive Examination Board must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Engineering mathematics and science</li><li>Branch-specific diploma fundamentals</li><li>Technical reasoning and problem solving</li><li>Rank card, choice filling and seat allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar Combined Entrance Competitive Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Bihar Combined Entrance Competitive Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Bihar DECE (LE) 2027 at a glance</h2><p>Bihar DECE (LE) 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar Combined Entrance Competitive Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Bihar Combined Entrance Competitive Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Bihar DECE (LE) 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Bihar DECE (LE) 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Bihar DECE (LE) 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Bihar DECE (LE) 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Bihar DECE (LE) 2027",
+        "exam update",
+        "Polytechnic/Lateral Entry",
+        "2027"
+      ],
+      "website": "https://bcece.admissions.nic.in/",
+      "official_website": "https://bcece.admissions.nic.in/",
+      "registration_url": "https://bcece.admissions.nic.in/",
+      "data_source_urls": [
+        "https://bcece.admissions.nic.in/",
+        "https://bceceboard.bihar.gov.in/index.php"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://bcece.admissions.nic.in/",
+        "official_notification": "https://bceceboard.bihar.gov.in/index.php"
+      },
+      "faqs": [
+        {
+          "question": "When will Bihar DECE (LE) 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar Combined Entrance Competitive Examination Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Bihar DECE (LE) 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Bihar DECE (LE) 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Bihar DECE (LE) 2027?</h2><p>BCECEB publishes the qualifying diploma or technical-certificate, branch, marks, category and document conditions in the current DECE (LE) prospectus. The active 2027 notice will control the final answer.</p><ul><li>Engineering mathematics and science</li><li>Branch-specific diploma fundamentals</li></ul><h2>When are Bihar DECE (LE) 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar Combined Entrance Competitive Examination Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Bihar Combined Entrance Competitive Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Bihar Combined Entrance Competitive Examination Board must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> The BCECEB official portal lists DECE[LE] as a lateral-entry route and publishes its application, rank-card and counselling notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Engineering mathematics and science</li><li>Branch-specific diploma fundamentals</li><li>Technical reasoning and problem solving</li><li>Rank card, choice filling and seat allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://bcece.admissions.nic.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://bceceboard.bihar.gov.in/index.php\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Bihar DECE (LE) 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar Combined Entrance Competitive Examination Board posts the next notice.</p><h3>Where should I apply for Bihar DECE (LE) 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "00e7b320-2324-4314-9026-3a9cc51840eb",
+      "old_slug": "bihar-bed-cet",
+      "slug": "bihar-bed-cet",
+      "name": "Bihar B.Ed CET",
+      "title": "Bihar B.Ed CET 2027: Dates, Eligibility & Pattern",
+      "full_name": "Bihar B.Ed CET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Bihar two-year B.Ed and Shiksha Shastri admission",
+      "mode": "Bihar Common Entrance Test for B.Ed and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The Bihar CET-B.Ed prospectus sets the qualifying degree, marks, subject, category and document conditions for two-year B.Ed and Shiksha Shastri routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "General English or Hindi",
+        "Reasoning and teaching aptitude",
+        "General awareness",
+        "Merit, college preference and counselling"
+      ],
+      "description": "Bihar B.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Bihar B.Ed CET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>General English or Hindi</li><li>Reasoning and teaching aptitude</li><li>General awareness</li><li>Merit, college preference and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Bihar B.Ed CET 2027 at a glance</h2><p>Bihar B.Ed CET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Bihar B.Ed CET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Bihar B.Ed CET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Bihar B.Ed CET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Bihar B.Ed CET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Bihar B.Ed CET 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://biharcetbed-brabu.in/",
+      "official_website": "https://biharcetbed-brabu.in/",
+      "registration_url": "https://biharcetbed-brabu.in/",
+      "data_source_urls": [
+        "https://biharcetbed-brabu.in/",
+        "https://biharcetbed-brabu.in/notices"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://biharcetbed-brabu.in/",
+        "official_notification": "https://biharcetbed-brabu.in/notices"
+      },
+      "faqs": [
+        {
+          "question": "When will Bihar B.Ed CET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Bihar B.Ed CET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Bihar B.Ed CET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Bihar B.Ed CET 2027?</h2><p>The Bihar CET-B.Ed prospectus sets the qualifying degree, marks, subject, category and document conditions for two-year B.Ed and Shiksha Shastri routes. The active 2027 notice will control the final answer.</p><ul><li>General English or Hindi</li><li>Reasoning and teaching aptitude</li></ul><h2>When are Bihar B.Ed CET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official CET-B.Ed portal identifies the nodal university and publishes prospectus, counselling, verification and vacant-seat notices for participating Bihar universities.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>General English or Hindi</li><li>Reasoning and teaching aptitude</li><li>General awareness</li><li>Merit, college preference and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://biharcetbed-brabu.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://biharcetbed-brabu.in/notices\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Bihar B.Ed CET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Babasaheb Bhimrao Ambedkar Bihar University as Bihar CET-B.Ed nodal university posts the next notice.</p><h3>Where should I apply for Bihar B.Ed CET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "946786b8-3548-4155-84a9-b546c9323bcc",
+      "old_slug": "bihar-deled",
+      "slug": "bihar-deled",
+      "name": "Bihar D.El.Ed JEE",
+      "title": "Bihar D.El.Ed JEE 2027: Dates, Eligibility & Pattern",
+      "full_name": "Bihar D.El.Ed JEE 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Bihar Diploma in Elementary Education admission",
+      "mode": "Bihar School Examination Board D.El.Ed Joint Entrance Test and admission",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "BSEB publishes the Class 12, marks, category and document conditions for the two-year D.El.Ed route in the current joint-entrance notice.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Bihar School Examination Board"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Language proficiency",
+        "Mathematics",
+        "Science and social studies",
+        "Reasoning, score card and institute choice"
+      ],
+      "description": "Bihar D.El.Ed JEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Bihar D.El.Ed JEE 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Bihar School Examination Board must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Language proficiency</li><li>Mathematics</li><li>Science and social studies</li><li>Reasoning, score card and institute choice</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar School Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Bihar School Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Bihar D.El.Ed JEE 2027 at a glance</h2><p>Bihar D.El.Ed JEE 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar School Examination Board posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Bihar School Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Bihar D.El.Ed JEE 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Bihar D.El.Ed JEE 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Bihar D.El.Ed JEE 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Bihar D.El.Ed JEE 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Bihar D.El.Ed JEE 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://www.bsebdeled.com/",
+      "official_website": "https://www.bsebdeled.com/",
+      "registration_url": "https://www.bsebdeled.com/",
+      "data_source_urls": [
+        "https://www.bsebdeled.com/",
+        "https://formapi.bsebdeled.com/files/others/deled-form-2026-vigyapti.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.bsebdeled.com/",
+        "official_notification": "https://formapi.bsebdeled.com/files/others/deled-form-2026-vigyapti.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will Bihar D.El.Ed JEE 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar School Examination Board posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Bihar D.El.Ed JEE 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Bihar D.El.Ed JEE 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Bihar D.El.Ed JEE 2027?</h2><p>BSEB publishes the Class 12, marks, category and document conditions for the two-year D.El.Ed route in the current joint-entrance notice. The active 2027 notice will control the final answer.</p><ul><li>Language proficiency</li><li>Mathematics</li></ul><h2>When are Bihar D.El.Ed JEE 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar School Examination Board posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Bihar School Examination Board</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Bihar School Examination Board must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official BSEB D.El.Ed portal separates the joint entrance test from the later common application and recognised-institute admission process.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Language proficiency</li><li>Mathematics</li><li>Science and social studies</li><li>Reasoning, score card and institute choice</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.bsebdeled.com/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://formapi.bsebdeled.com/files/others/deled-form-2026-vigyapti.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Bihar D.El.Ed JEE 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Bihar School Examination Board posts the next notice.</p><h3>Where should I apply for Bihar D.El.Ed JEE 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "b88af491-fe21-42ea-92c4-313fd1c02a4d",
+      "old_slug": "rajasthan-ptet",
+      "slug": "rajasthan-ptet",
+      "name": "Rajasthan PTET",
+      "title": "Rajasthan PTET 2027: Dates, Eligibility & Pattern",
+      "full_name": "Rajasthan PTET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Education",
+      "level": "Rajasthan two-year B.Ed and four-year integrated teacher education admission",
+      "mode": "Vardhman Mahaveer Open University PTET and counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "PTET publishes separate qualifying-study, marks, category and document rules for the two-year B.Ed and four-year integrated teacher-education routes.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Vardhman Mahaveer Open University, Kota"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Mental ability",
+        "Teaching attitude and aptitude",
+        "General awareness",
+        "Language proficiency, score and college choice"
+      ],
+      "description": "Rajasthan PTET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "Rajasthan PTET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Vardhman Mahaveer Open University, Kota must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Mental ability</li><li>Teaching attitude and aptitude</li><li>General awareness</li><li>Language proficiency, score and college choice</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vardhman Mahaveer Open University, Kota posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vardhman Mahaveer Open University, Kota</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>Rajasthan PTET 2027 at a glance</h2><p>Rajasthan PTET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vardhman Mahaveer Open University, Kota posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Vardhman Mahaveer Open University, Kota</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "Rajasthan PTET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "Rajasthan PTET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check Rajasthan PTET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "Rajasthan PTET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "Rajasthan PTET 2027",
+        "exam update",
+        "Education",
+        "2027"
+      ],
+      "website": "https://www.vmou.ac.in/",
+      "official_website": "https://www.vmou.ac.in/",
+      "registration_url": "https://ptetvmoukota2026.in/",
+      "data_source_urls": [
+        "https://www.vmou.ac.in/",
+        "https://ptetvmoukota2026.in/PdFDocs/new_Guidelines%20PTET-2026.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://ptetvmoukota2026.in/",
+        "official_notification": "https://ptetvmoukota2026.in/PdFDocs/new_Guidelines%20PTET-2026.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will Rajasthan PTET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vardhman Mahaveer Open University, Kota posts the next notice."
+        },
+        {
+          "question": "Where should I apply for Rajasthan PTET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>Rajasthan PTET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for Rajasthan PTET 2027?</h2><p>PTET publishes separate qualifying-study, marks, category and document rules for the two-year B.Ed and four-year integrated teacher-education routes. The active 2027 notice will control the final answer.</p><ul><li>Mental ability</li><li>Teaching attitude and aptitude</li></ul><h2>When are Rajasthan PTET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vardhman Mahaveer Open University, Kota posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Vardhman Mahaveer Open University, Kota</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Vardhman Mahaveer Open University, Kota must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> VMOU's official site identifies PTET-2026 and links the detailed information used for the state teacher-education admission cycle.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Mental ability</li><li>Teaching attitude and aptitude</li><li>General awareness</li><li>Language proficiency, score and college choice</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://ptetvmoukota2026.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://ptetvmoukota2026.in/PdFDocs/new_Guidelines%20PTET-2026.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will Rajasthan PTET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Vardhman Mahaveer Open University, Kota posts the next notice.</p><h3>Where should I apply for Rajasthan PTET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "e204706f-d6f9-45d4-837c-0d431aa63580",
+      "old_slug": "pim-mat",
+      "slug": "pim-mat",
+      "name": "PIM-MAT",
+      "title": "PIM-MAT 2027: Dates, Eligibility & Pattern",
+      "full_name": "PIM-MAT 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Management",
+      "level": "R.A. Podar Institute of Management MBA admission",
+      "mode": "PIM-MAT and institute selection process",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "R.A. Podar Institute publishes the graduation, marks, category and document conditions for its MBA programmes in the current admission notice and brochure.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by R.A. Podar Institute of Management, University of Rajasthan"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Quantitative aptitude",
+        "Data interpretation and reasoning",
+        "English language",
+        "General awareness, group discussion and interview"
+      ],
+      "description": "PIM-MAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PIM-MAT 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>R.A. Podar Institute of Management, University of Rajasthan must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Quantitative aptitude</li><li>Data interpretation and reasoning</li><li>English language</li><li>General awareness, group discussion and interview</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until R.A. Podar Institute of Management, University of Rajasthan posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by R.A. Podar Institute of Management, University of Rajasthan</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PIM-MAT 2027 at a glance</h2><p>PIM-MAT 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until R.A. Podar Institute of Management, University of Rajasthan posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by R.A. Podar Institute of Management, University of Rajasthan</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PIM-MAT 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PIM-MAT 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PIM-MAT 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PIM-MAT 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PIM-MAT 2027",
+        "exam update",
+        "Management",
+        "2027"
+      ],
+      "website": "https://www.rapim.ac.in/",
+      "official_website": "https://www.rapim.ac.in/",
+      "registration_url": "https://www.rapim.ac.in/",
+      "data_source_urls": [
+        "https://www.rapim.ac.in/",
+        "https://www.rapim.ac.in/rapim_assets/PIM-MAT%20%28Admissin%202026-28%29-Final%2015.04.2026.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://www.rapim.ac.in/",
+        "official_notification": "https://www.rapim.ac.in/rapim_assets/PIM-MAT%20%28Admissin%202026-28%29-Final%2015.04.2026.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will PIM-MAT 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until R.A. Podar Institute of Management, University of Rajasthan posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PIM-MAT 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PIM-MAT 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PIM-MAT 2027?</h2><p>R.A. Podar Institute publishes the graduation, marks, category and document conditions for its MBA programmes in the current admission notice and brochure. The active 2027 notice will control the final answer.</p><ul><li>Quantitative aptitude</li><li>Data interpretation and reasoning</li></ul><h2>When are PIM-MAT 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until R.A. Podar Institute of Management, University of Rajasthan posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by R.A. Podar Institute of Management, University of Rajasthan</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>R.A. Podar Institute of Management, University of Rajasthan must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official RAPIM site lists PIM-MAT as the institute's admission route and publishes the programme brochure and application information.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Quantitative aptitude</li><li>Data interpretation and reasoning</li><li>English language</li><li>General awareness, group discussion and interview</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://www.rapim.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.rapim.ac.in/rapim_assets/PIM-MAT%20%28Admissin%202026-28%29-Final%2015.04.2026.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PIM-MAT 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until R.A. Podar Institute of Management, University of Rajasthan posts the next notice.</p><h3>Where should I apply for PIM-MAT 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "60f5229b-3f68-4782-9d01-45fa92e4c394",
+      "old_slug": "uratpg",
+      "slug": "uratpg",
+      "name": "URATPG",
+      "title": "URATPG 2027: Dates, Eligibility & Pattern",
+      "full_name": "URATPG 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Postgraduate/General",
+      "level": "University of Rajasthan postgraduate admission",
+      "mode": "University of Rajasthan Admission Test for Post Graduate courses",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The University of Rajasthan publishes programme-wise graduation, subject, marks, category and document conditions for URATPG in its admission portal and notices.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by University of Rajasthan"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "The selected postgraduate subject syllabus",
+        "Core undergraduate concepts",
+        "Reading and time management",
+        "Merit list, document checks and admission reporting"
+      ],
+      "description": "URATPG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "URATPG 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>University of Rajasthan must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>The selected postgraduate subject syllabus</li><li>Core undergraduate concepts</li><li>Reading and time management</li><li>Merit list, document checks and admission reporting</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until University of Rajasthan posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by University of Rajasthan</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>URATPG 2027 at a glance</h2><p>URATPG 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until University of Rajasthan posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by University of Rajasthan</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "URATPG 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "URATPG 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check URATPG 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "URATPG 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "URATPG 2027",
+        "exam update",
+        "Postgraduate/General",
+        "2027"
+      ],
+      "website": "https://admissions.uniraj.ac.in/",
+      "official_website": "https://admissions.uniraj.ac.in/",
+      "registration_url": "https://uniofraj.org/pg",
+      "data_source_urls": [
+        "https://admissions.uniraj.ac.in/",
+        "https://www.uniraj.ac.in/circular/circular/2204-27.03.2026.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://uniofraj.org/pg",
+        "official_notification": "https://www.uniraj.ac.in/circular/circular/2204-27.03.2026.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will URATPG 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until University of Rajasthan posts the next notice."
+        },
+        {
+          "question": "Where should I apply for URATPG 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>URATPG 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for URATPG 2027?</h2><p>The University of Rajasthan publishes programme-wise graduation, subject, marks, category and document conditions for URATPG in its admission portal and notices. The active 2027 notice will control the final answer.</p><ul><li>The selected postgraduate subject syllabus</li><li>Core undergraduate concepts</li></ul><h2>When are URATPG 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until University of Rajasthan posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by University of Rajasthan</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>University of Rajasthan must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> The university's official admission pages identify URATPG as the postgraduate admission route and separate application, subject and merit instructions from general university notices.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>The selected postgraduate subject syllabus</li><li>Core undergraduate concepts</li><li>Reading and time management</li><li>Merit list, document checks and admission reporting</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://uniofraj.org/pg\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.uniraj.ac.in/circular/circular/2204-27.03.2026.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will URATPG 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until University of Rajasthan posts the next notice.</p><h3>Where should I apply for URATPG 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "82d3f3f0-5780-44a8-b8db-adfa7b59fce3",
+      "old_slug": "ruhs-cuet",
+      "slug": "ruhs-cuet",
+      "name": "RUHS CUET",
+      "title": "RUHS CUET 2027: Dates, Eligibility & Pattern",
+      "full_name": "RUHS CUET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing/Allied Health",
+      "level": "Rajasthan University of Health Sciences undergraduate health-science admission",
+      "mode": "RUHS Common Undergraduate Entrance Examination and centralized admissions",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "RUHS publishes course-wise Class 12 subjects, marks, category, medical and document conditions in the centralized-admission prospectus.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Rajasthan University of Health Sciences"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Biology or mathematics where notified",
+        "Score, merit, choice filling and seat allotment"
+      ],
+      "description": "RUHS CUET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "RUHS CUET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Rajasthan University of Health Sciences must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology or mathematics where notified</li><li>Score, merit, choice filling and seat allotment</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan University of Health Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Rajasthan University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>RUHS CUET 2027 at a glance</h2><p>RUHS CUET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan University of Health Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Rajasthan University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "RUHS CUET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "RUHS CUET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check RUHS CUET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "RUHS CUET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "RUHS CUET 2027",
+        "exam update",
+        "Nursing/Allied Health",
+        "2027"
+      ],
+      "website": "https://admissions.ruhsraj.org/",
+      "official_website": "https://admissions.ruhsraj.org/",
+      "registration_url": "https://admissions.ruhsraj.org/",
+      "data_source_urls": [
+        "https://admissions.ruhsraj.org/",
+        "https://ruhs-pvt.blr1.digitaloceanspaces.com/newsDocs/newsDocs_1775030821.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://admissions.ruhsraj.org/",
+        "official_notification": "https://ruhs-pvt.blr1.digitaloceanspaces.com/newsDocs/newsDocs_1775030821.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will RUHS CUET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan University of Health Sciences posts the next notice."
+        },
+        {
+          "question": "Where should I apply for RUHS CUET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>RUHS CUET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for RUHS CUET 2027?</h2><p>RUHS publishes course-wise Class 12 subjects, marks, category, medical and document conditions in the centralized-admission prospectus. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are RUHS CUET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan University of Health Sciences posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Rajasthan University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Rajasthan University of Health Sciences must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official RUHS admissions portal labels CUET as the common undergraduate entrance examination and publishes programme-specific admission information there.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology or mathematics where notified</li><li>Score, merit, choice filling and seat allotment</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://admissions.ruhsraj.org/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://ruhs-pvt.blr1.digitaloceanspaces.com/newsDocs/newsDocs_1775030821.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will RUHS CUET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Rajasthan University of Health Sciences posts the next notice.</p><h3>Where should I apply for RUHS CUET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "f6edf6f8-1bbe-4c44-a5c4-28a3a3befd5f",
+      "old_slug": "ppmet",
+      "slug": "ppmet",
+      "name": "PPMET",
+      "title": "PPMET 2027: Dates, Eligibility & Pattern",
+      "full_name": "PPMET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing",
+      "level": "Punjab B.Sc. Nursing admission",
+      "mode": "Punjab Para Medical Entrance Test and BFUHS counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "The Punjab notification and BFUHS prospectus publish the Class 12 science subjects, marks, category and document conditions for B.Sc. Nursing admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Baba Farid University of Health Sciences"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Physics",
+        "Chemistry",
+        "Biology including botany and zoology",
+        "English, nursing aptitude, merit and counselling"
+      ],
+      "description": "PPMET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PPMET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Baba Farid University of Health Sciences must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology including botany and zoology</li><li>English, nursing aptitude, merit and counselling</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Baba Farid University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PPMET 2027 at a glance</h2><p>PPMET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Baba Farid University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PPMET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PPMET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PPMET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PPMET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PPMET 2027",
+        "exam update",
+        "Nursing",
+        "2027"
+      ],
+      "website": "https://bfuhs.ac.in/",
+      "official_website": "https://bfuhs.ac.in/",
+      "registration_url": "https://examination.bfuhsonline.ac.in/",
+      "data_source_urls": [
+        "https://bfuhs.ac.in/",
+        "https://bfuhs.ac.in/nursing/16-6-26/notification.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://examination.bfuhsonline.ac.in/",
+        "official_notification": "https://bfuhs.ac.in/nursing/16-6-26/notification.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will PPMET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PPMET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PPMET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PPMET 2027?</h2><p>The Punjab notification and BFUHS prospectus publish the Class 12 science subjects, marks, category and document conditions for B.Sc. Nursing admission. The active 2027 notice will control the final answer.</p><ul><li>Physics</li><li>Chemistry</li></ul><h2>When are PPMET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Baba Farid University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Baba Farid University of Health Sciences must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> The Punjab Government notification hosted by BFUHS assigns PPMET and counselling to Baba Farid University for the covered B.Sc. Nursing seats.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Physics</li><li>Chemistry</li><li>Biology including botany and zoology</li><li>English, nursing aptitude, merit and counselling</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://examination.bfuhsonline.ac.in/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://bfuhs.ac.in/nursing/16-6-26/notification.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PPMET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice.</p><h3>Where should I apply for PPMET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "050ac167-6af0-44bd-ae7a-5eb3a2f68848",
+      "old_slug": "ppbnet",
+      "slug": "ppbnet",
+      "name": "PPBNET",
+      "title": "PPBNET 2027: Dates, Eligibility & Pattern",
+      "full_name": "PPBNET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing",
+      "level": "Punjab Post Basic B.Sc. Nursing admission",
+      "mode": "Punjab Post Basic Nursing Entrance Test and BFUHS counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "BFUHS publishes nursing qualification, registration, experience where required, marks, category and document conditions in the current post-basic prospectus.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Baba Farid University of Health Sciences"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Nursing foundations",
+        "Medical-surgical and community health nursing",
+        "Child and mental-health nursing",
+        "Entrance merit, counselling and document verification"
+      ],
+      "description": "PPBNET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PPBNET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Baba Farid University of Health Sciences must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Nursing foundations</li><li>Medical-surgical and community health nursing</li><li>Child and mental-health nursing</li><li>Entrance merit, counselling and document verification</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Baba Farid University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PPBNET 2027 at a glance</h2><p>PPBNET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Baba Farid University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PPBNET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PPBNET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PPBNET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PPBNET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PPBNET 2027",
+        "exam update",
+        "Nursing",
+        "2027"
+      ],
+      "website": "https://bfuhs.smartpad.in/Registration/",
+      "official_website": "https://bfuhs.smartpad.in/Registration/",
+      "registration_url": "https://bfuhs.smartpad.in/Registration/",
+      "data_source_urls": [
+        "https://bfuhs.smartpad.in/Registration/",
+        "https://bfuhs.ac.in/"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://bfuhs.smartpad.in/Registration/",
+        "official_notification": "https://bfuhs.ac.in/"
+      },
+      "faqs": [
+        {
+          "question": "When will PPBNET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PPBNET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PPBNET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PPBNET 2027?</h2><p>BFUHS publishes nursing qualification, registration, experience where required, marks, category and document conditions in the current post-basic prospectus. The active 2027 notice will control the final answer.</p><ul><li>Nursing foundations</li><li>Medical-surgical and community health nursing</li></ul><h2>When are PPBNET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Baba Farid University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Baba Farid University of Health Sciences must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official BFUHS counselling portal lists the post-basic nursing admission route and directs applicants to the university's current notices and registration service.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Nursing foundations</li><li>Medical-surgical and community health nursing</li><li>Child and mental-health nursing</li><li>Entrance merit, counselling and document verification</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://bfuhs.smartpad.in/Registration/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://bfuhs.ac.in/\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PPBNET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice.</p><h3>Where should I apply for PPBNET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    },
+    {
+      "id": "ef75a6cb-d6b1-4d5e-80dd-754ac8bab898",
+      "old_slug": "pmnet",
+      "slug": "pmnet",
+      "name": "PMNET",
+      "title": "PMNET 2027: Dates, Eligibility & Pattern",
+      "full_name": "PMNET 2027: Dates, Eligibility & Pattern",
+      "status": "2027 official schedule not announced",
+      "exam_date": "Not announced",
+      "application_start_date": "See official calendar",
+      "application_end_date": "See official calendar",
+      "result_date": "See official calendar or pending",
+      "category": "Nursing/Postgraduate",
+      "level": "Punjab M.Sc. Nursing admission",
+      "mode": "Punjab M.Sc. Nursing Entrance Test and BFUHS counselling",
+      "frequency": "As notified by the authority for the admission or testing cycle",
+      "eligibility": "BFUHS publishes B.Sc. Nursing, registration, marks, experience where required, category and document conditions for M.Sc. Nursing admission.",
+      "important_dates": [
+        {
+          "event": "2027 notification",
+          "date": "Not announced by Baba Farid University of Health Sciences"
+        },
+        {
+          "event": "Application window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Examination or test window",
+          "date": "Not announced"
+        },
+        {
+          "event": "Result or counselling",
+          "date": "Not announced"
+        }
+      ],
+      "syllabus": [
+        "Nursing foundations and advanced practice",
+        "Research and statistics",
+        "Community and specialty nursing",
+        "Merit, counselling, verification and joining"
+      ],
+      "description": "PMNET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance.",
+      "hero_hook": "PMNET 2027: verify the official notice before you apply.",
+      "application_process": "<h2>Application process</h2><p>Use the official portal and current bulletin before entering payment or document details.</p><ol><li>Check the course or session route.</li><li>Register with a stable email and mobile number.</li><li>Match every field to your documents.</li><li>Save the submitted form and receipt.</li></ol>",
+      "exam_pattern": "<h2>Exam pattern</h2><p>Baba Farid University of Health Sciences must confirm the 2027 registration, test format, result and counselling calendar.</p><p>Use the latest official bulletin for the final pattern.</p>",
+      "preparation_tips": "<h2>Preparation that earns its place</h2><p>Turn the authority syllabus into a weekly checklist, practise in the notified mode and keep an error log. Roz thoda consistent practice beats a last-week sprint.</p><ul><li>Nursing foundations and advanced practice</li><li>Research and statistics</li><li>Community and specialty nursing</li><li>Merit, counselling, verification and joining</li></ul>",
+      "counselling_content": "<h2>After the test</h2><p>Follow the authority's official counselling, shortlist, interview, verification or joining instructions. A score alone does not create an offer.</p>",
+      "result_content": "<h2>Result and next step</h2><p>Download the result or scorecard only from the official portal, save a copy and complete the next notified action.</p>",
+      "dates_content": "<h2>2027 date status</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Baba Farid University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "summary_content": "<h2>PMNET 2027 at a glance</h2><p>PMNET 2027 guide with official date status, eligibility, syllabus, pattern, application steps, result and next-stage guidance. The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice.</p><ul><li><strong>2027 notification:</strong> Not announced by Baba Farid University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul>",
+      "page_summary": "PMNET 2027: eligibility, application, syllabus, pattern, official dates, result and next steps.",
+      "meta_title": "PMNET 2027: Dates, Eligibility & Pattern",
+      "meta_description": "Check PMNET 2027 eligibility, syllabus, application steps and official 2027 updates. Verify deadlines on the authority portal.",
+      "meta_keywords": "PMNET 2027, eligibility, application form, exam dates, syllabus, exam pattern, result, official website",
+      "tags": [
+        "PMNET 2027",
+        "exam update",
+        "Nursing/Postgraduate",
+        "2027"
+      ],
+      "website": "https://bfuhs.smartpad.in/Registration/",
+      "official_website": "https://bfuhs.smartpad.in/Registration/",
+      "registration_url": "https://bfuhs.smartpad.in/Registration/",
+      "data_source_urls": [
+        "https://bfuhs.smartpad.in/Registration/",
+        "https://www.bfuhs.smartpad.in/Registration/Pdf/Prospectus/Prosoectus%20Master%20of%20Science%20in%20Nursing%28M.Sc.Nursing%29.pdf"
+      ],
+      "data_verified_at": "2026-09-22T00:00:00+05:30",
+      "data_last_checked_at": "2026-09-22T00:00:00+05:30",
+      "data_clean_state": "verified_batch_040",
+      "internal_links": [
+        "/exams",
+        "/exams/top-entrance-exams-in-india",
+        "/courses",
+        "/colleges"
+      ],
+      "external_links": {
+        "apply": "https://bfuhs.smartpad.in/Registration/",
+        "official_notification": "https://www.bfuhs.smartpad.in/Registration/Pdf/Prospectus/Prosoectus%20Master%20of%20Science%20in%20Nursing%28M.Sc.Nursing%29.pdf"
+      },
+      "faqs": [
+        {
+          "question": "When will PMNET 2027 dates be released?",
+          "answer": "The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice."
+        },
+        {
+          "question": "Where should I apply for PMNET 2027?",
+          "answer": "Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal."
+        },
+        {
+          "question": "Can I use the previous cycle's pattern?",
+          "answer": "Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents."
+        },
+        {
+          "question": "Does a score guarantee admission?",
+          "answer": "No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome."
+        }
+      ],
+      "article_html": "<p>PMNET 2027 needs a source-first plan. Check the authority route, match the course or session you want, and save the official notice before you spend money or book travel.</p><h2>Who can apply for PMNET 2027?</h2><p>BFUHS publishes B.Sc. Nursing, registration, marks, experience where required, category and document conditions for M.Sc. Nursing admission. The active 2027 notice will control the final answer.</p><ul><li>Nursing foundations and advanced practice</li><li>Research and statistics</li></ul><h2>When are PMNET 2027 dates?</h2><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice. Do not plan around a coaching calendar, a recycled PDF or an unverified social post.</p><ul><li><strong>2027 notification:</strong> Not announced by Baba Farid University of Health Sciences</li><li><strong>Application window:</strong> Not announced</li><li><strong>Examination or test window:</strong> Not announced</li><li><strong>Result or counselling:</strong> Not announced</li></ul><h2>What is the current route?</h2><p>Baba Farid University of Health Sciences must confirm the 2027 registration, test format, result and counselling calendar.</p><p><strong>Authority fact:</strong> The official BFUHS M.Sc. Nursing prospectus states that PMNET and the university notices control the test, counselling and eligibility process.</p><h2>What should you study?</h2><p>Start with the subjects named by the authority, then practise in the notified mode. Keep one error log for concepts, time pressure and form mistakes; it is more useful than collecting ten generic timetables.</p><ul><li>Nursing foundations and advanced practice</li><li>Research and statistics</li><li>Community and specialty nursing</li><li>Merit, counselling, verification and joining</li></ul><h2>How do you apply without losing a week?</h2><p>Use the official portal, read the current bulletin before payment, and save the confirmation page. If a field does not match your certificate, stop and resolve it before submitting.</p><ol><li>Check the 2027 notice and course code.</li><li>Register with an email and mobile number you will keep.</li><li>Enter identity, academic and category details exactly as documented.</li><li>Upload the required files and pay only through the authorised gateway.</li><li>Download the confirmation, admit card and result when released.</li></ol><p><a href=\"https://bfuhs.smartpad.in/Registration/\" rel=\"noopener noreferrer\">Open the official application portal</a> · <a href=\"https://www.bfuhs.smartpad.in/Registration/Pdf/Prospectus/Prosoectus%20Master%20of%20Science%20in%20Nursing%28M.Sc.Nursing%29.pdf\" rel=\"noopener noreferrer\">Read the official notice or bulletin</a></p><h2>What happens after the score?</h2><p>A score, rank or submitted form is not an admission offer. Follow the authority's counselling, shortlist, interview, verification or joining instruction and keep the original documents ready.</p><h3>When will PMNET 2027 dates be released?</h3><p>The official source checked on 2026-09-22 had not published the complete 2027 schedule. Treat every date as pending until Baba Farid University of Health Sciences posts the next notice.</p><h3>Where should I apply for PMNET 2027?</h3><p>Use the official application link shown here. Do not pay an agent or trust a social-media deadline without checking the authority portal.</p><h3>Can I use the previous cycle's pattern?</h3><p>Use previous papers for practice, not as a promise. The latest bulletin controls subjects, timing, marking, accessibility and documents.</p><h3>Does a score guarantee admission?</h3><p>No. Merit, seat availability, category rules, counselling, document checks and the institute's final decision can still affect the outcome.</p><h2>Useful DekhoCampus links</h2><ul><li><a href=\"/exams\">All entrance exams</a></li><li><a href=\"/exams/top-entrance-exams-in-india\">Entrance exam guides</a></li><li><a href=\"/courses\">Courses and admissions</a></li><li><a href=\"/colleges\">Colleges and universities</a></li></ul>"
+    }
+  ]
+}
