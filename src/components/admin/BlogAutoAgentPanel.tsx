@@ -456,6 +456,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
           <div className="mt-3 flex flex-wrap gap-2">
             {[60, 120, 180, 360].map(minutes => <Button key={minutes} size="sm" variant={settings.interval_minutes === minutes ? "default" : "outline"} onClick={() => updateSetting("interval_minutes", minutes)}>{minutes < 60 ? `${minutes} min` : `${minutes / 60} hr`}</Button>)}
           </div>
+          <p className="mt-2 text-[10px] text-muted-foreground">Posting uses a small date-based minute variation, so hourly runs do not repeat the same clock minute every day.</p>
         </div>
         <div className="rounded-xl border p-3">
           <Label className="text-xs">Articles per run</Label>

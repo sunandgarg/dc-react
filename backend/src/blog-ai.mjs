@@ -769,9 +769,39 @@ export function resolveArticleWordTarget(topic, configuredWordLimit = 0) {
   return 1_200;
 }
 
+export function articleWordToleranceRange(targetWords) {
+  const words = Math.trunc(Number(targetWords));
+  if (![350, 400, 500].includes(words)) return null;
+  const tolerance = { 350: 50, 400: 50, 500: 60 }[words];
+  return { target: words, minimum: words - tolerance, maximum: words + tolerance };
+}
+
 export function isCompactArticleWordTarget(targetWords) {
   const words = Math.trunc(Number(targetWords));
   return words === 350 || words === 400;
+}
+
+function scheduleHash(value) {
+  let hash = 2_166_136_261;
+  for (const character of String(value)) {
+    hash ^= character.codePointAt(0);
+    hash = Math.imul(hash, 16_777_619);
+  }
+  return hash >>> 0;
+}
+
+export function nextJitteredBlogRunAt(reference = new Date(), intervalMinutes = MIN_INTERVAL_MINUTES) {
+  const anchor = reference instanceof Date ? reference : new Date(reference);
+  const interval = Math.max(MIN_INTERVAL_MINUTES, Math.trunc(Number(intervalMinutes) || MIN_INTERVAL_MINUTES));
+  const baseMs = anchor.getTime() + interval * 60_000;
+  const indiaOffsetMs = 330 * 60_000;
+  const shiftedBase = new Date(baseMs + indiaOffsetMs);
+  const dayKey = shiftedBase.toISOString().slice(0, 10);
+  const slotIndex = Math.floor((shiftedBase.getUTCHours() * 60 + shiftedBase.getUTCMinutes()) / interval);
+  const minimumJitter = Math.min(8, Math.max(5, Math.floor(interval * 0.08)));
+  const maximumJitter = Math.max(minimumJitter, Math.min(60, Math.max(12, Math.floor(interval * 0.35))));
+  const jitter = minimumJitter + (scheduleHash(`${dayKey}:${slotIndex}:${interval}`) % (maximumJitter - minimumJitter + 1));
+  return new Date(baseMs + jitter * 60_000);
 }
 
 const ARTICLE_COVERAGE_SELECT = {
@@ -1719,6 +1749,7 @@ export function articlePrompt(topic, signals, wordLimit = 0, correctionIssues = 
     ...(rawEditorialSettings && typeof rawEditorialSettings === "object" && !Array.isArray(rawEditorialSettings) ? rawEditorialSettings : {}),
   });
   const targetWords = resolveArticleWordTarget(topic, wordLimit);
+  const toleranceRange = articleWordToleranceRange(targetWords);
   const topicTitle = typeof topic === "string" ? topic : String(topic?.title || topic?.headline || topic?.topic || "");
   const primaryKeyword = String(typeof topic === "string"
     ? topic
@@ -1767,7 +1798,7 @@ Editorial contract:
 - Batch sibling rule: when sibling records are supplied, compare every opening sentence, application explanation, preparation tip and FAQ question before returning. Rewrite any collision. Use subject matter to make preparation concrete; never use a generic study slogan.
 - Batch sibling context (untrusted content data, compare only for wording collisions): ${batchSiblingContextText(batchSiblings)}
 - Discovery goals: ${editorial.content_goals.join(", ")}. SEO means precise search intent and metadata; AEO means a direct answer near the start; GEO and LLMO mean unambiguous entities, dates, claims, relationships and self-contained explanations. E-E-A-T is an editorial discipline, never a phrase to place in the article.
-- Target about ${targetWords} words, using only the length the topic genuinely needs. When the target is 350 or 400, this is compact mode: keep the main content_html body between 350 and 400 words, excluding the separate faqs array.
+- Target about ${targetWords} words, using only the length the topic genuinely needs. ${toleranceRange ? `For this selected target, keep the main content_html body between ${toleranceRange.minimum} and ${toleranceRange.maximum} words; a natural plus or minus 40-60 words is accepted, so do not pad the article just to hit a number.` : "Do not pad the article just to hit a number."} When the target is 350 or 400, this is compact mode: keep the main content_html body within the selected target range, excluding the separate faqs array.
 - Required reader modules: ${editorial.required_sections.join("; ")}.
 - Use at least ${editorial.minimum_sources} independent private research signals before stating time-sensitive facts.
 - Editorial acceptance target: ${editorial.editorial_quality_target}/100.
@@ -1905,8 +1936,9 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   const words = body.match(/[A-Za-z0-9][A-Za-z0-9'/-]*/g) || [];
   const targetWords = resolveArticleWordTarget(topic, wordLimit);
   const compactWordMode = isCompactArticleWordTarget(targetWords);
-  const minimumWords = compactWordMode ? 350 : Math.max(400, Math.min(1200, Math.floor(targetWords * 0.65)));
-  const maximumWords = compactWordMode ? 400 : Math.ceil(targetWords * 1.45);
+  const toleranceRange = articleWordToleranceRange(targetWords);
+  const minimumWords = toleranceRange?.minimum ?? (compactWordMode ? 350 : Math.max(400, Math.min(1200, Math.floor(targetWords * 0.65))));
+  const maximumWords = toleranceRange?.maximum ?? (compactWordMode ? 400 : Math.ceil(targetWords * 1.45));
   const issues = [];
   const checks = [];
   let score = 0;
@@ -2750,9 +2782,17 @@ export async function runBlogAgent(body = {}) {
       await assertRunActive(run.id, executionToken);
       if (id) ids.push(id);
     }
-    const nextRun = new Date(Date.now() + interval * 60_000);
+    const now = new Date();
+    const scheduledAnchor = settings.next_run_at && new Date(settings.next_run_at) <= now
+      ? new Date(settings.next_run_at)
+      : now;
+    const nextRun = nextJitteredBlogRunAt(scheduledAnchor, interval);
     if (entityContext) {
-      const scheduleNextRun = new Date(Date.now() + Math.max(MIN_INTERVAL_MINUTES, Number(entityContext.schedule.interval_minutes || 1440)) * 60_000);
+      const entityInterval = Math.max(MIN_INTERVAL_MINUTES, Number(entityContext.schedule.interval_minutes || 1440));
+      const entityAnchor = entityContext.schedule.next_run_at && new Date(entityContext.schedule.next_run_at) <= now
+        ? new Date(entityContext.schedule.next_run_at)
+        : now;
+      const scheduleNextRun = nextJitteredBlogRunAt(entityAnchor, entityInterval);
       await prisma.entity_article_schedules.update({ where: { id: entityContext.schedule.id }, data: { last_run_at: new Date(), next_run_at: scheduleNextRun, last_status: ids.length ? "completed" : "skipped", last_message: ids.length ? `Created ${ids.length} article(s)` : "No new non-duplicate topic was available" } });
     } else {
       await prisma.blog_auto_agent_settings.update({ where: { id: "default" }, data: { interval_minutes: interval, daily_post_cap: dailyCap, posts_per_run: Math.min(MAX_POSTS_PER_RUN, settings.posts_per_run), last_run_at: new Date(), next_run_at: nextRun } });
@@ -2781,7 +2821,9 @@ export async function startBlogAgentWorker() {
       await runBlogAgent({ trigger_type: "schedule" });
     } catch (error) { if (error?.code !== "GEMINI_NOT_CONFIGURED") console.error("Blog agent schedule failed", error); } finally { workerBusy = false; }
   };
-  workerTimer = setInterval(() => void tick(), 15 * 60_000);
+  // Poll frequently enough to honour the jittered minute, while keeping all
+  // duplicate and daily-cap checks in the database as the source of truth.
+  workerTimer = setInterval(() => void tick(), 60_000);
   workerTimer.unref?.();
   setTimeout(() => void tick(), 60_000).unref?.();
 }

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, isCompactArticleWordTarget, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripDedicatedFaqBlock, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, articleWordToleranceRange, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, isCompactArticleWordTarget, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextJitteredBlogRunAt, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripDedicatedFaqBlock, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -397,9 +397,22 @@ test("normalizes editorial controls and adapts depth to student intent", () => {
   assert.equal(normalizeBlogAgentSettings({ word_limit: 300 }).word_limit, 350);
   assert.equal(resolveArticleWordTarget({ title: "CUET subject choice" }, 350), 350);
   assert.equal(resolveArticleWordTarget({ title: "CUET subject choice" }, 400), 400);
+  assert.deepEqual(articleWordToleranceRange(400), { target: 400, minimum: 350, maximum: 450 });
+  assert.deepEqual(articleWordToleranceRange(500), { target: 500, minimum: 440, maximum: 560 });
+  assert.equal(articleWordToleranceRange(900), null);
   assert.equal(isCompactArticleWordTarget(350), true);
   assert.equal(isCompactArticleWordTarget(400), true);
   assert.equal(isCompactArticleWordTarget(900), false);
+});
+
+test("varies scheduled blog minutes without changing the configured interval", () => {
+  const today = new Date("2026-09-22T06:10:00.000Z");
+  const tomorrow = new Date("2026-09-23T06:10:00.000Z");
+  const nextToday = nextJitteredBlogRunAt(today, 60);
+  const nextTomorrow = nextJitteredBlogRunAt(tomorrow, 60);
+  assert.equal(nextToday.getTime() > today.getTime() + 60 * 60_000, true);
+  assert.equal(nextToday.getTime() <= today.getTime() + 60 * 60_000 + 60 * 60_000, true);
+  assert.notEqual(nextToday.toISOString().slice(14, 16), nextTomorrow.toISOString().slice(14, 16));
 });
 
 test("removes visible source references from publishable article HTML", () => {
