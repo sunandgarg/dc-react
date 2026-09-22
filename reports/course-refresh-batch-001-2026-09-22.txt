@@ -1,0 +1,244 @@
+COURSE REFRESH BATCH 001 - QUALITY REVIEW
+Checked: 2026-09-22T00:00:00+05:30 (Asia/Kolkata)
+
+Scope: first ten canonical course rows from the preserved course snapshot.
+Production database write: NO. This is a reviewable content patch.
+
+SOURCE POLICY
+1. Shiksha is checked first.
+2. If a field is missing, check CollegeDekho, KollegeApply, then Collegedunia.
+3. If none supports the field, leave it pending. Do not infer or average it.
+4. Third-party fee ranges are orientation only; institution fee notices control.
+
+QUALITY CHECKS
+- Existing slugs and IDs preserved.
+- Source URLs stored for every updated record.
+- No official institution website was invented.
+- College-specific fees, cutoffs, placement outcomes and syllabus versions remain explicitly unresolved.
+- Metadata title is at most 60 characters.
+- Metadata description is at most 155 characters.
+- No en dash or em dash added.
+- Fallback sources were not needed in this batch because Shiksha pages supplied the reviewed course-level fields.
+
+COURSE: B.Tech Computer Science
+SLUG: btech-computer-science
+CATEGORY: Engineering & Technology
+DURATION: 4 years (8 semesters)
+FEES: Shiksha aggregate: INR 2 lakh to INR 15 lakh for the course; college, branch and fee components vary.
+ELIGIBILITY: Class 12 with Physics and Mathematics plus the institution's other notified subjects. Shiksha lists 50% to 60% PCM for many private colleges and 75% PCM for government or top-tier routes; the selected college controls the final rule.
+ENTRANCE EXAMS: JEE Main, JEE Advanced, MHT CET, KCET, BITSAT, VITEEE
+CAREERS: Software Engineer, Computer Programmer, Data Scientist, Database Administrator, Embedded Systems Engineer
+SUBJECT AREAS: Programming and algorithms, Computer hardware and software, Networking systems, Data structures
+MODE: Full-time; institution-specific options may differ
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha course details state 4 years and 8 semesters.
+- Fees: Shiksha course details list INR 2 lakh to INR 15 lakh as an average course-fee range.
+- Eligibility: Shiksha describes Class 12 PCM and college-dependent percentage requirements.
+- Exams: Shiksha lists JEE Main, JEE Advanced, state exams and university exams.
+SOURCE URLS:
+- https://www.shiksha.com/engineering/btech-in-computer-science-engineering-chp
+- https://www.shiksha.com/engineering/btech-in-computer-science-engineering-admission-chp
+
+COURSE: B.Tech AI & ML
+SLUG: btech-ai-ml
+CATEGORY: Engineering
+DURATION: 4 years
+FEES: Not stated as one national fee on the reviewed Shiksha overview; keep fee institution-specific until a college-course row is verified.
+ELIGIBILITY: Class 12 with Physics, Chemistry and Mathematics is the general route described by Shiksha. Percentage, entrance test and subject combinations vary by institution.
+ENTRANCE EXAMS: JEE Main, JEE Advanced, State engineering entrance exams, University entrance exams
+CAREERS: AI Engineer, Machine Learning Engineer, Data Scientist, Research Scientist, Robotics Engineer
+SUBJECT AREAS: Computer Science foundations, Artificial intelligence principles, Programming, Machine learning, Data analytics, Cloud computing, Big data tools
+MODE: Full-time; institution-specific options may differ
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha states the BTech AI course is generally 4 years in India.
+- Fees: No single national fee was stated on the reviewed overview; the record therefore leaves fees institution-specific.
+- Eligibility: Shiksha states Class 12 with PCM and strong mathematics and science foundations.
+- Exams: Shiksha describes national, state and university-level entrance routes as college-dependent.
+SOURCE URLS:
+- https://www.shiksha.com/engineering/btech-in-artificial-intelligence-chp
+
+COURSE: MBBS
+SLUG: mbbs
+CATEGORY: Health & Allied Sciences
+DURATION: 5 years plus 6 months internship
+FEES: Shiksha overview: government INR 10,000 to INR 50,000 per year; private INR 3 lakh to INR 25 lakh per year. College and state fee rules vary.
+ELIGIBILITY: Class 12 Science with Physics, Chemistry and Biology or Biotechnology, practical subjects and the applicable age requirement; admission is through NEET as stated by Shiksha. Confirm the current regulator and counselling notice.
+ENTRANCE EXAMS: NEET UG
+CAREERS: MBBS Doctor, Medical Officer, General Physician, Paediatrician, Medical Surgeon
+SUBJECT AREAS: Anatomy, Physiology, Biochemistry, Pathology, Microbiology, Forensic Medicine, Community Medicine
+MODE: Full-time
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha lists 5 years plus a 6-month internship in the course details table and describes the course as 5.5 years overall.
+- Fees: Shiksha lists separate government and private annual fee ranges.
+- Eligibility: Shiksha lists Class 12 Science with Physics, Chemistry, Biology or Biotechnology and NEET.
+- Exams: Shiksha lists NEET as the entrance test.
+SOURCE URLS:
+- https://www.shiksha.com/mbbs-courses-chp
+- https://www.shiksha.com/mbbs-chp
+
+COURSE: MBA
+SLUG: mba
+CATEGORY: Management
+DURATION: Usually 2 years for a full-time MBA; executive, online and integrated formats differ.
+FEES: Shiksha examples and ranges vary widely: government programmes may start around INR 50,000, while private and top-tier programmes can run into several lakhs. Use the selected college fee table.
+ELIGIBILITY: A recognised bachelor's degree is the baseline route. Minimum marks and entrance requirements vary by institution and programme.
+ENTRANCE EXAMS: CAT, XAT, NMAT, CMAT, ATMA, TANCET
+CAREERS: Management Consultant, Project Manager, Business Development Manager, Product Manager, Human Resources Manager
+SUBJECT AREAS: Finance, Marketing, Operations, Human resources, Business strategy, Analytics
+MODE: Full-time, online, part-time and executive formats vary
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha describes a standard full-time MBA as 2 years and lists other formats separately.
+- Fees: Shiksha states that fees vary sharply by institution and format and provides government and private examples.
+- Eligibility: Shiksha states graduation is required; marks and test rules vary by college.
+- Exams: Shiksha lists CAT, XAT, NMAT, CMAT, ATMA and TANCET among common exams.
+SOURCE URLS:
+- https://www.shiksha.com/mba-masters-of-business-administration-chp
+- https://www.shiksha.com/business-management-studies/mba-general-management-chp
+
+COURSE: B.A. LL.B.
+SLUG: ba-llb
+CATEGORY: Law
+DURATION: 5 years
+FEES: Shiksha reference range: INR 3,600 to INR 80 lakh across colleges; the broad range must not replace the selected institution's fee schedule.
+ELIGIBILITY: Class 12 from a recognised board in any stream. Shiksha shows 50% in its FAQ and 55% in its summary table, so the exact minimum must be checked against the chosen college and category.
+ENTRANCE EXAMS: CLAT, CUET, MHCET Law, SLAT, AILET, KLEE
+CAREERS: Advocate, Legal Advisor, Solicitor, Legal Research Associate, Compliance Associate
+SUBJECT AREAS: Constitutional law, Legal reasoning, Case analysis, Research, Drafting, Professional ethics
+MODE: Full-time integrated undergraduate law programme
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha course details state 5 years.
+- Fees: Shiksha lists a very broad government and private fee range and warns that college fees differ.
+- Eligibility: Shiksha presents conflicting 50% and 55% summary values, so the conflict is retained rather than silently resolved.
+- Exams: Shiksha lists CLAT, CUET, MHCET Law, SLAT, AILET and other institution or state exams.
+SOURCE URLS:
+- https://www.shiksha.com/b-a-ll-b-chp
+- https://www.shiksha.com/b-a-ll-b-admission-chp
+
+COURSE: B.Des UX Design
+SLUG: bdes-ux-design
+CATEGORY: Design
+DURATION: 4 years
+FEES: Shiksha general B.Des range: INR 3,360 to INR 54 lakh. UX-specific fee is institution-specific and must be read from the selected college row.
+ELIGIBILITY: Class 12 with a minimum 50% aggregate is the general B.Des condition shown by Shiksha; entrance and portfolio rules vary by institution.
+ENTRANCE EXAMS: UCEED, NID DAT, NIFT Entrance Exam, NATA, Institution entrance exams
+CAREERS: UX Designer, UI Designer, Product Designer, Design Researcher, Interaction Designer
+SUBJECT AREAS: Design thinking, User research, Visual design, Information architecture, Prototyping
+MODE: Full-time; course structure varies by design school
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha B.Des overview states 4 years.
+- Fees: Shiksha gives a broad B.Des fee range and says fees vary by institution.
+- Eligibility: Shiksha lists Class 12 with a 50% aggregate as a general B.Des criterion.
+- Exams: Shiksha lists UCEED, NID DAT, NIFT and other design admission routes.
+SOURCE URLS:
+- https://www.shiksha.com/b-des-bachelor-of-design-chp
+- https://www.shiksha.com/design/ui-ux-chp
+
+COURSE: B.Sc. Physics
+SLUG: bsc-physics
+CATEGORY: Science & Interdisciplinary
+DURATION: 3 years
+FEES: Shiksha aggregate: INR 1,000 to INR 5 lakh across colleges; verify the selected institution's fee structure.
+ELIGIBILITY: Class 12 with PCM or PCB as core subjects and at least 50% aggregate as a general Shiksha reference; institution and category rules can differ.
+ENTRANCE EXAMS: CUET, JEE Main, LPU NEST, Institution entrance exams
+CAREERS: Lab Technician, Physicist, Statistician, Research Associate, Lecturer or Teacher, Industrial Engineer
+SUBJECT AREAS: Physics, Mathematics, Scientific foundations, Laboratory methods, Data analysis, Research skills
+MODE: Full-time; merit and entrance routes vary
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha course details state 3 years.
+- Fees: Shiksha lists INR 1,000 to INR 5 lakh as a broad fee range.
+- Eligibility: Shiksha lists PCM or PCB and at least 50% as a general reference.
+- Exams: Shiksha lists JEE Main, CUET, LPU NEST and other entrance routes.
+SOURCE URLS:
+- https://www.shiksha.com/science/bsc-physics-chp
+
+COURSE: B.Com
+SLUG: bcom
+CATEGORY: Management
+DURATION: 3 years
+FEES: Shiksha reference ranges: government INR 3,000 to INR 2 lakh; private INR 20,000 to INR 15 lakh. College and mode change the total.
+ELIGIBILITY: 10+2 or equivalent. Shiksha says Commerce and Accountancy are preferred by many colleges, but the final subject rule is institution-specific.
+ENTRANCE EXAMS: CUET, AIMA UGAT, NPAT, SET, IPU CET
+CAREERS: Accountant, Financial Analyst, Tax Consultant, Accounts Manager, Business Executive
+SUBJECT AREAS: Accounting, Finance, Economics, Business management, Marketing, Entrepreneurship
+MODE: Full-time, online and distance formats vary
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha states that B.Com is usually 3 years.
+- Fees: Shiksha lists separate government and private reference ranges and notes that values vary.
+- Eligibility: Shiksha states 10+2 is required and Commerce or Accountancy is preferred by some colleges.
+- Exams: Shiksha lists CUET, UGAT, NPAT, SET and IPU CET among admission routes.
+SOURCE URLS:
+- https://www.shiksha.com/b-com-chp
+- https://www.shiksha.com/b-com-courses-chp
+
+COURSE: B.Tech Mechanical
+SLUG: btech-mechanical
+CATEGORY: Engineering
+DURATION: 4 years (8 semesters)
+FEES: Shiksha average tuition reference: INR 3 lakh to INR 15 lakh; hostel, laboratory, examination and other charges may be separate.
+ELIGIBILITY: Class 12 Science with PCM and generally 50% to 60% aggregate for many colleges; top institutions can set higher subject and entrance conditions.
+ENTRANCE EXAMS: JEE Main, JEE Advanced, MHT CET, KCET, COMEDK UGET, BITSAT, VITEEE
+CAREERS: Mechanical Design Engineer, Manufacturing Engineer, Product Engineer, Automotive Design Engineer, Power Plant Engineer, Aerospace Engineer
+SUBJECT AREAS: Engineering physics, Engineering mathematics, Engineering graphics, Engineering mechanics, Basic electrical engineering, Thermodynamics
+MODE: Full-time; lateral entry and college routes vary
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha states 4 years and 8 semesters.
+- Fees: Shiksha states an average INR 3 lakh to INR 15 lakh tuition reference and lists additional charges.
+- Eligibility: Shiksha lists Class 12 PCM and a 50% to 60% general range, with institution-specific exceptions.
+- Exams: Shiksha lists national, state and university-level engineering exams.
+SOURCE URLS:
+- https://www.shiksha.com/engineering/btech-mechanical-engineering-chp
+- https://www.shiksha.com/engineering/btech-mechanical-engineering-admission-chp
+
+COURSE: BBA
+SLUG: bba
+CATEGORY: Management
+DURATION: 3 years
+FEES: Shiksha reference range: INR 540 to INR 11.62 lakh across BBA offerings; mode and institution change the total.
+ELIGIBILITY: Class 12 or equivalent. Shiksha course listings commonly show a 50% reference, but the selected college may set a different subject or score rule.
+ENTRANCE EXAMS: CUET, AIMA UGAT, SET, IPU CET, NPAT
+CAREERS: HR Executive, Marketing Executive, Sales Executive, Business Analyst, Operations Associate
+SUBJECT AREAS: Principles of management, Accounting, Marketing, Economics, Business law, Entrepreneurship
+MODE: Full-time, part-time, distance and online formats vary
+SOURCE PRIORITY USED: Shiksha
+DATA QUALITY SCORE: 85/100 (completeness, not a ranking guarantee)
+UNRESOLVED: college-specific fee breakup; college-specific eligibility and category relaxation; current syllabus PDF; current placement outcomes; official institution website
+FIELD EVIDENCE:
+- Duration: Shiksha describes BBA as a 3-year undergraduate degree.
+- Fees: Shiksha lists INR 540 to INR 11.62 lakh across BBA offerings.
+- Eligibility: Shiksha course listings use Class 12 and commonly show a 50% reference; college rules can differ.
+- Exams: Shiksha lists CUET, AIMA UGAT, SET, IPU CET and NPAT.
+SOURCE URLS:
+- https://www.shiksha.com/bba-bachelor-of-business-administration-chp
+- https://www.shiksha.com/bba-bachelor-of-business-administration-courses-chp
+
+REVIEW LIMITATIONS
+- The selected sources are third-party education portals, not the final authority for any institution.
+- The course rows are not imported into production by this batch.
+- Recheck every college-specific value against the current official prospectus before publishing.
