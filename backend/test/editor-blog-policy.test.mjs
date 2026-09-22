@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripDedicatedFaqBlock, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -365,6 +365,7 @@ test("builds a complete targeted revision prompt from editorial feedback", () =>
   assert.match(prompt, /Make the revision people-first/);
   assert.match(prompt, /never invent personal experience/i);
   assert.match(prompt, /all four E-E-A-T dimensions/);
+  assert.match(prompt, /Do not mirror their questions or answers in content_html/);
 });
 
 test("normalizes editorial controls and adapts depth to student intent", () => {
@@ -390,6 +391,8 @@ test("normalizes editorial controls and adapts depth to student intent", () => {
   assert.equal(resolveArticleWordTarget({ title: "JEE counselling and choice filling strategy" }, 0), 1500);
   assert.equal(resolveArticleWordTarget({ title: "BTech admission eligibility" }, 0), 1200);
   assert.equal(resolveArticleWordTarget({ title: "CUET subject choice" }, 450), 450);
+  assert.equal(normalizeBlogAgentSettings({ word_limit: 300 }).word_limit, 350);
+  assert.equal(resolveArticleWordTarget({ title: "CUET subject choice" }, 350), 350);
 });
 
 test("removes visible source references from publishable article HTML", () => {
@@ -398,6 +401,11 @@ test("removes visible source references from publishable article HTML", () => {
 
   const guarded = stripPublishedSourceReferences('<p>According to the authority, candidates should act now.</p><p>Shiksha reported another date.</p><p>Read <a href="https://dekhocampus.com/exams/cat">our CAT page</a> and <a href="https://example.com">another site</a>.</p>');
   assert.equal(guarded, '<p>the authority, candidates should act now.</p><p>Read <a href="/exams/cat">our CAT page</a> and another site.</p>');
+});
+
+test("keeps generated FAQ records out of article body copy", () => {
+  const cleaned = stripDedicatedFaqBlock('<h2>Decision guidance</h2><p>Make the choice carefully.</p><h2>Frequently asked questions</h2><h3>Who can apply?</h3><p>Eligible students can apply.</p>');
+  assert.equal(cleaned, '<h2>Decision guidance</h2><p>Make the choice carefully.</p>');
 });
 
 test("detects truncated Gemini JSON and bounds the recovery budget", () => {

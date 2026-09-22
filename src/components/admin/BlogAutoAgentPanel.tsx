@@ -84,7 +84,7 @@ const DEFAULT_SETTINGS: Settings = {
   audience: "Indian students and parents",
   tone: "Direct, practical, opinionated and conversational Indian admissions guidance for stressed students and parents",
   content_goals: ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"],
-  required_sections: ["Answer first", "Key facts", "Decision guidance", "FAQs"],
+  required_sections: ["Answer first"],
   minimum_sources: 2,
   editorial_quality_target: 90,
   human_review_required: false,
@@ -152,6 +152,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         setSettings({
           ...DEFAULT_SETTINGS,
           ...settingsData,
+          required_sections: [...new Set([...DEFAULT_SETTINGS.required_sections, ...(Array.isArray(settingsData.required_sections) ? settingsData.required_sections : [])])].filter((section) => !["key facts", "decision guidance", "faqs", "frequently asked questions"].includes(String(section).trim().toLowerCase())).slice(0, 12),
           model_provider: textModel.startsWith("gemini-") ? "gemini" : "openai",
           text_model: textModel,
           image_provider: "openai",
@@ -242,7 +243,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
       const dailyPostCap = Math.min(48, Math.max(1, Math.floor(Number(settings.daily_post_cap) || 8)));
       const intervalMinutes = Math.min(1440, Math.max(60, Math.floor(Number(settings.interval_minutes) || 180)));
       const postsPerRun = Math.min(3, Math.max(1, Math.floor(Number(settings.posts_per_run) || 1)));
-      const wordLimit = Number(settings.word_limit) === 0 ? 0 : Math.min(2200, Math.max(700, Math.floor(Number(settings.word_limit) || 0)));
+      const wordLimit = Number(settings.word_limit) === 0 ? 0 : Math.min(2200, Math.max(350, Math.floor(Number(settings.word_limit) || 0)));
       const minimumSources = Math.min(6, Math.max(2, Math.floor(Number(settings.minimum_sources) || 2)));
       const qualityTarget = Math.min(98, Math.max(75, Math.floor(Number(settings.editorial_quality_target) || 90)));
       const normalizedSettings = {
@@ -252,7 +253,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         daily_post_cap: dailyPostCap,
         word_limit: wordLimit,
         content_goals: [...DEFAULT_SETTINGS.content_goals],
-        required_sections: [...new Set([...DEFAULT_SETTINGS.required_sections, ...settings.required_sections])].slice(0, 12),
+        required_sections: [...new Set([...DEFAULT_SETTINGS.required_sections, ...settings.required_sections])].filter((section) => !["key facts", "decision guidance", "faqs", "frequently asked questions"].includes(section.trim().toLowerCase())).slice(0, 12),
         minimum_sources: minimumSources,
         editorial_quality_target: qualityTarget,
         model_provider: settings.text_model.startsWith("gemini-") ? "gemini" : "openai",
@@ -534,9 +535,9 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         <div>
           <Label className="text-xs">Word limit</Label>
           <div className="mt-1 flex flex-wrap gap-2">
-            {[0, 900, 1200, 1500, 1800].map(limit => <Button key={limit} size="sm" variant={settings.word_limit === limit ? "default" : "outline"} onClick={() => updateSetting("word_limit", limit)}>{limit === 0 ? "Adaptive" : limit}</Button>)}
+            {[0, 350, 900, 1200, 1500, 1800].map(limit => <Button key={limit} size="sm" variant={settings.word_limit === limit ? "default" : "outline"} onClick={() => updateSetting("word_limit", limit)}>{limit === 0 ? "Adaptive" : limit === 350 ? "350-400 words" : limit}</Button>)}
           </div>
-          <p className="mt-1 text-[10px] text-muted-foreground">Adaptive chooses length from the search intent instead of padding every topic.</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Adaptive chooses length from search intent. The compact option keeps the article body at 350-400 words; FAQs stay in their separate FAQ section.</p>
         </div>
         {supportsGoogleTrendsSettings && <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 lg:col-span-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -573,7 +574,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("required_sections", event.target.value.split(/\r?\n/).map((value) => value.trim()).filter(Boolean))}
               className="mt-1"
             />
-            <p className="mt-1 text-[10px] text-muted-foreground">The four core modules remain mandatory. Add extra sections here when a topic needs them.</p>
+            <p className="mt-1 text-[10px] text-muted-foreground">The answer-first opening remains mandatory. FAQs are stored separately, so do not add an FAQ heading here.</p>
           </div>
           <div className="space-y-3 rounded-xl border p-3">
             <div>
