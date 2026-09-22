@@ -17,14 +17,14 @@ export function HomeNewsSection() {
   if (!isLoading && items.length === 0) return null;
 
   return (
-    <section className="border-y border-border bg-muted/20 py-8" aria-labelledby="home-news-heading">
+    <section className="border-y border-border bg-muted/20 py-6 sm:py-8" aria-labelledby="home-news-heading">
       <div className="container">
-        <div className="mb-4 flex items-end justify-between gap-4">
-          <div>
+        <div className="mb-4 flex items-end justify-between gap-3">
+          <div className="min-w-0">
             <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-primary">News desk</p>
-            <h2 id="home-news-heading" className="mt-1 text-xl font-black tracking-tight text-foreground md:text-2xl">Exam and admission updates</h2>
+            <h2 id="home-news-heading" className="mt-1 text-lg font-black leading-tight tracking-tight text-foreground sm:text-xl md:text-2xl">Exam and admission updates</h2>
           </div>
-          <Link to="/news" className="flex min-h-10 shrink-0 items-center gap-1 rounded-lg px-2 text-xs font-bold text-primary hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="View all education news">
+          <Link to="/news" className="flex min-h-10 shrink-0 items-center gap-1 whitespace-nowrap rounded-lg px-1.5 text-xs font-bold text-primary hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:px-2" aria-label="View all education news">
             <span>All news</span><ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
@@ -36,12 +36,12 @@ export function HomeNewsSection() {
               <Link
                 key={article.id}
                 to={`/news/${article.slug}`}
-                className="group flex min-h-12 items-center gap-3 border-b border-border px-4 py-2.5 text-sm transition-colors last:border-0 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+                className="group flex min-h-12 items-center gap-2 border-b border-border px-3 py-2.5 text-sm transition-colors last:border-0 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:gap-3 sm:px-4"
               >
                 <span className="h-2 w-2 shrink-0 rounded-full bg-red-600" aria-hidden="true" />
-                <span className="w-16 shrink-0 text-[10px] font-black uppercase tracking-wide text-red-700 sm:w-20">{topic}</span>
-                {isArticlePublishedToday(article.created_at) && <LiveNewsBadge intensity="high" className="shrink-0" />}
-                <span className="min-w-0 flex-1 truncate font-semibold text-foreground transition-colors group-hover:text-primary">{article.title}</span>
+                <span className="w-[5.75rem] shrink-0 truncate whitespace-nowrap text-[10px] font-black uppercase tracking-[0.06em] text-red-700 sm:w-24">{topic}</span>
+                {isArticlePublishedToday(article.created_at) && <LiveNewsBadge intensity="low" className="shrink-0" />}
+                <span className="min-w-0 flex-1 truncate font-semibold text-foreground transition-colors group-hover:text-primary" title={article.title}>{article.title}</span>
                 <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
               </Link>
             ))}
