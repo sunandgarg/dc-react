@@ -459,6 +459,7 @@ function sitemapIndex(files: string[]) {
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
     `  <sitemap><loc>${escapeXml(`${BASE_URL}/news-sitemap.xml`)}</loc></sitemap>`,
+    `  <sitemap><loc>${escapeXml(`${BASE_URL}/sitemap-0.xml`)}</loc></sitemap>`,
     ...files.map((file) => `  <sitemap><loc>${escapeXml(`${BASE_URL}/${file}`)}</loc></sitemap>`),
     `</sitemapindex>`,
   ].join("\n");
@@ -542,6 +543,11 @@ function writeSitemaps(entries: SitemapEntry[], articles: any[]) {
   writeFileSync(resolve("dist/sitemap.xml"), index);
   writeFileSync(resolve("dist/sitemap-index.xml"), index);
   writeFileSync(resolve("dist/news-sitemap.xml"), news.xml);
+  writeFileSync(resolve("dist/sitemap-0.xml"), xmlFor(articles
+    .filter((article) => String(article.slug || "").trim())
+    .sort((left, right) => new Date(right.updated_at || right.created_at || 0).getTime() - new Date(left.updated_at || left.created_at || 0).getTime())
+    .slice(0, 1_000)
+    .map((article) => ({ path: `/news/${article.slug}`, lastmod: changed(article.updated_at || article.created_at) }))));
   writeFileSync(resolve("dist/news-feed.xml"), newsFeedXml(articles));
   return { files, newsCount: news.count };
 }

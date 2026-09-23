@@ -67,6 +67,7 @@ function edgeCacheTtl(request, pathname) {
   if (request.method !== "GET" || request.headers.has("authorization")) return 0;
   if (PUBLIC_STORAGE_PATH.test(pathname)) return 30 * 24 * 60 * 60;
   if (pathname === "/v1/functions/bootstrap") return 5 * 60;
+  if (pathname === "/news-sitemap.xml" || pathname === "/sitemap-0.xml") return 30;
   const restTable = pathname.match(/^\/v1\/rest\/([A-Za-z0-9_]+)$/)?.[1];
   if (restTable && CACHEABLE_PUBLIC_TABLES.has(restTable)) return 5 * 60;
   if (/^\/(?:news-(?:sitemap|feed)|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname) || pathname.startsWith("/sitemap-files/")) return 300;

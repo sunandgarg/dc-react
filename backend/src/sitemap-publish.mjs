@@ -14,6 +14,7 @@ const DB_QUERY_CONCURRENCY = 2;
 const OBJECT_IO_CONCURRENCY = 4;
 const NEWS_WINDOW_MS = 2 * 24 * 60 * 60 * 1000;
 const NEWS_SITEMAP_LIMIT = 1_000;
+const RECENT_ARTICLE_LIMIT = 1_000;
 const COLLEGE_FEE_RANGES = [
   "Less than 1 Lakh", "1 - 2 Lakh", "2 - 3 Lakh", "3 - 5 Lakh", "5 - 7 Lakh",
   "7 - 10 Lakh", "15 - 20 Lakh", "20 - 25 Lakh", "Above 25 Lakh",
@@ -284,6 +285,14 @@ function newsSitemapXml(entries) {
   ].join("\n");
 }
 
+function recentArticleEntries(articles) {
+  return articles
+    .filter((article) => String(article.slug || "").trim())
+    .sort((left, right) => new Date(right.updated_at || right.created_at || 0).getTime() - new Date(left.updated_at || left.created_at || 0).getTime())
+    .slice(0, RECENT_ARTICLE_LIMIT)
+    .map((article) => ({ path: `/news/${article.slug}`, lastmod: dateOnly(article.updated_at || article.created_at) }));
+}
+
 function stripMarkup(value) {
   return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -329,6 +338,7 @@ function sitemapIndex(generation, count) {
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     `  <sitemap><loc>${PUBLISH_TARGET}/news-sitemap.xml</loc></sitemap>`,
+    `  <sitemap><loc>${PUBLISH_TARGET}/sitemap-0.xml</loc></sitemap>`,
     ...Array.from({ length: count }, (_, index) => `  <sitemap><loc>${PUBLISH_TARGET}/sitemap-files/${generation}/sitemap-${index + 1}.xml</loc></sitemap>`),
     "</sitemapindex>",
   ].join("\n");
@@ -420,8 +430,38 @@ function publicKey(pathname) {
 
 export async function readPublishedSitemap(request, options = {}) {
   if (!["GET", "HEAD"].includes(request.method)) return null;
-  const key = publicKey(new URL(request.url).pathname);
+  const pathname = new URL(request.url).pathname;
+  const key = publicKey(pathname);
   if (!key) return null;
+  // These two small sitemaps read the published rows, so publishing an article
+  // does not have to wait for the next full S3 catalog rebuild. Keep a short
+  // edge TTL; crawler scheduling is still controlled by the search engine.
+  const liveClient = options.prismaClient || (!options.repository ? prisma : null);
+  if (liveClient && ["/news-sitemap.xml", "/sitemap-0.xml"].includes(pathname)) {
+    try {
+      const newsOnly = pathname === "/news-sitemap.xml";
+      const now = options.now || Date.now();
+      const articles = await liveClient.articles.findMany({
+        where: {
+          site_scope: "dekhocampus",
+          status: "Published",
+          is_active: true,
+          ...(newsOnly ? { created_at: { gte: new Date(now - NEWS_WINDOW_MS) } } : {}),
+        },
+        orderBy: newsOnly ? [{ created_at: "desc" }, { id: "desc" }] : [{ updated_at: "desc" }, { id: "desc" }],
+        take: newsOnly ? NEWS_SITEMAP_LIMIT : RECENT_ARTICLE_LIMIT,
+        select: { slug: true, title: true, created_at: true, updated_at: true },
+      });
+      const xml = newsOnly ? newsSitemapXml(newsSitemapEntries(articles, now)) : sitemapXml(recentArticleEntries(articles));
+      return new Response(request.method === "HEAD" ? null : xml, {
+        status: 200,
+        headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public,max-age=30,must-revalidate" },
+      });
+    } catch (error) {
+      console.error(`[sitemap] Live article sitemap failed: ${error instanceof Error ? error.message : String(error)}`);
+      return new Response("Live sitemap temporarily unavailable", { status: 503, headers: { "retry-after": "60", "cache-control": "no-store" } });
+    }
+  }
   const repository = options.repository || objectRepository();
   let object = await repository.get(key, { stream: true });
   if (!object && key.startsWith(`${SITEMAP_PREFIX}/generations/`)) {
@@ -786,6 +826,7 @@ export async function publishSitemap(request, options = {}) {
     for (let index = 0; index < entries.length; index += CHUNK_SIZE) chunks.push(entries.slice(index, index + CHUNK_SIZE));
     await boundedMap(chunks, OBJECT_IO_CONCURRENCY, (chunk, index) => repository.put(`${SITEMAP_PREFIX}/generations/${generation}/sitemap-${index + 1}.xml`, sitemapXml(chunk)));
     await repository.put(`${SITEMAP_PREFIX}/public/news-sitemap.xml`, newsSitemapXml(newsEntries));
+    await repository.put(`${SITEMAP_PREFIX}/public/sitemap-0.xml`, sitemapXml(recentArticleEntries(dynamicResult.articles || [])));
     await repository.put(`${SITEMAP_PREFIX}/public/news-feed.xml`, newsFeedXml(dynamicResult.articles || []), "application/rss+xml; charset=utf-8");
     const indexXml = sitemapIndex(generation, chunks.length);
     const manifest = JSON.stringify({ generation, url_count: entries.length, news_url_count: newsEntries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() });

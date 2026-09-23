@@ -151,6 +151,7 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.equal(result.sitemap_url, "https://dekhocampus.com/sitemap.xml");
   const index = repository.objects.get("system-sitemaps/public/sitemap.xml").body;
   assert.match(index, /https:\/\/dekhocampus\.com\/news-sitemap\.xml/);
+  assert.match(index, /https:\/\/dekhocampus\.com\/sitemap-0\.xml/);
   assert.match(index, new RegExp(`/sitemap-files/${result.generation}/sitemap-1\\.xml`));
   const chunk = repository.objects.get(`system-sitemaps/generations/${result.generation}/sitemap-1.xml`)?.body || "";
   assert.match(chunk, /\/colleges\/colleges-sample-101<\/loc>/);
@@ -186,6 +187,7 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.match(newsSitemap, /<news:name>DekhoCampus<\/news:name>/);
   assert.match(newsSitemap, /<news:title>Articles sample<\/news:title>/);
   assert.equal(result.news_url_count, 1);
+  assert.match(repository.objects.get("system-sitemaps/public/sitemap-0.xml")?.body || "", /\/news\/articles-sample<\/loc>/);
   assert.equal(result.news_feed_url, "https://dekhocampus.com/news-feed.xml");
   const newsFeed = repository.objects.get("system-sitemaps/public/news-feed.xml")?.body || "";
   assert.match(newsFeed, /<rss version="2\.0"/);
@@ -213,6 +215,36 @@ test("published Google News sitemap is served from the public sitemap store", as
   const response = await readPublishedSitemap(new Request("https://dekhocampus.com/news-sitemap.xml"), { repository });
   assert.equal(response.status, 200);
   assert.match(await response.text(), /sitemap-news/);
+});
+
+test("live article sitemaps reflect publication without a full catalog rebuild", async () => {
+  const now = new Date("2026-09-23T12:00:00Z").getTime();
+  const articles = [
+    { slug: "new-story", title: "New story", site_scope: "dekhocampus", status: "Published", is_active: true, created_at: new Date(now - 60_000), updated_at: new Date(now - 60_000) },
+    { slug: "older-draft-now-live", title: "Older draft now live", site_scope: "dekhocampus", status: "Published", is_active: true, created_at: new Date(now - 7 * 86_400_000), updated_at: new Date(now - 30_000) },
+    { slug: "private-draft", title: "Private draft", site_scope: "dekhocampus", status: "Draft", is_active: false, created_at: new Date(now - 60_000), updated_at: new Date(now - 60_000) },
+    { slug: "sarkari-story", title: "Sarkari story", site_scope: "sarkari", status: "Published", is_active: true, created_at: new Date(now - 60_000), updated_at: new Date(now - 60_000) },
+  ];
+  const prismaClient = { articles: { async findMany({ where, orderBy, take }) {
+    return articles
+      .filter((article) => article.site_scope === where.site_scope && article.status === where.status && article.is_active === where.is_active)
+      .filter((article) => !where.created_at || article.created_at >= where.created_at.gte)
+      .sort((left, right) => right[Object.keys(orderBy[0])[0]].getTime() - left[Object.keys(orderBy[0])[0]].getTime())
+      .slice(0, take);
+  } } };
+
+  const recent = await readPublishedSitemap(new Request("https://dekhocampus.com/sitemap-0.xml"), { prismaClient, now });
+  const recentXml = await recent.text();
+  assert.equal(recent.status, 200);
+  assert.match(recent.headers.get("cache-control"), /max-age=30/);
+  assert.match(recentXml, /\/news\/new-story<\/loc>/);
+  assert.match(recentXml, /\/news\/older-draft-now-live<\/loc>/);
+  assert.doesNotMatch(recentXml, /private-draft|sarkari-story/);
+
+  const news = await readPublishedSitemap(new Request("https://dekhocampus.com/news-sitemap.xml"), { prismaClient, now });
+  const newsXml = await news.text();
+  assert.match(newsXml, /\/news\/new-story<\/loc>/);
+  assert.doesNotMatch(newsXml, /older-draft-now-live|private-draft|sarkari-story/);
 });
 
 test("published RSS news feed is served from the public sitemap store", async () => {
