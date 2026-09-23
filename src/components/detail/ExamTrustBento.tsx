@@ -1,4 +1,5 @@
 import { Calendar, Users, Award, Clock } from "lucide-react";
+import { formatExamDate } from "@/lib/examDateDisplay";
 
 interface Props {
   exam: any;
@@ -9,7 +10,7 @@ interface Props {
  */
 export function ExamTrustBento({ exam }: Props) {
   const items = [
-    { icon: Calendar, label: "Exam Date", value: exam.exam_date || "TBA" },
+    { icon: Calendar, label: "Exam Date", value: formatExamDate(exam.exam_date) },
     { icon: Users, label: "Applicants", value: exam.applicants || "-" },
     { icon: Award, label: "Mode", value: exam.mode || "-" },
     { icon: Clock, label: "Duration", value: exam.duration || "-" },

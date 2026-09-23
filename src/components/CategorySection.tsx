@@ -11,6 +11,7 @@ import { useHomepageCategoryExams } from "@/hooks/useExamsData";
 
 import { useStreamCategories } from "@/hooks/useStreamCategories";
 import { displayRating } from "@/lib/ratings";
+import { formatExamDate } from "@/lib/examDateDisplay";
 
 const DEFAULT_CATEGORY = "Engineering";
 
@@ -240,7 +241,7 @@ export function CategorySection() {
                     <h4 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">{exam.short_name || exam.name}</h4>
                     <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
                       <Clock className="w-3 h-3" />
-                      <span className="truncate">{exam.exam_date || exam.application_start_date || "TBA"}</span>
+                      <span className="truncate">{formatExamDate(exam.exam_date || exam.application_start_date)}</span>
                       {exam.applicants && <><span>•</span><span className="truncate">{exam.applicants}</span></>}
                     </div>
                   </div>

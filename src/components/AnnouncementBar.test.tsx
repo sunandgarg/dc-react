@@ -57,16 +57,47 @@ describe("AnnouncementBar", () => {
       </MemoryRouter>,
     );
 
-    const surface = container.querySelector(".cursor-grab");
+    const surface = container.querySelector('a[aria-label="Open First announcement"]');
     expect(surface).toBeTruthy();
-    expect(screen.getByLabelText("First announcement")).toBeInTheDocument();
+    expect(surface).toHaveAttribute("draggable", "false");
+    expect(screen.getByLabelText("Open First announcement")).toBeInTheDocument();
 
     fireEvent.pointerDown(surface!, { pointerId: 1, pointerType: "touch", clientX: 220, clientY: 20 });
     fireEvent.pointerMove(surface!, { pointerId: 1, pointerType: "touch", clientX: 120, clientY: 23 });
     fireEvent.pointerUp(surface!, { pointerId: 1, pointerType: "touch", clientX: 120, clientY: 23 });
     fireEvent.click(surface!);
 
-    await waitFor(() => expect(screen.getByLabelText("Second announcement")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByLabelText("Open Second announcement")).toBeInTheDocument());
     expect(screen.getByTestId("location")).toHaveTextContent("/");
+  });
+
+  it("swipes from empty space in the full-width bar and still follows a normal click", async () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={["/"]}>
+        <AnnouncementBar />
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+
+    const firstLink = container.querySelector('a[aria-label="Open First announcement"]');
+    expect(firstLink).toBeTruthy();
+    fireEvent.pointerDown(firstLink!, { pointerId: 2, pointerType: "mouse", button: 0, clientX: 600, clientY: 20 });
+    fireEvent.pointerMove(firstLink!, { pointerId: 2, pointerType: "mouse", clientX: 480, clientY: 20 });
+    fireEvent.pointerUp(firstLink!, { pointerId: 2, pointerType: "mouse", clientX: 480, clientY: 20 });
+    fireEvent.click(firstLink!);
+
+    await waitFor(() => expect(screen.getByLabelText("Open Second announcement")).toBeInTheDocument());
+    expect(screen.getByTestId("location")).toHaveTextContent("/");
+  });
+
+  it("opens the announcement on an ordinary click", () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <AnnouncementBar />
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByLabelText("Open First announcement"));
+    expect(screen.getByTestId("location")).toHaveTextContent("/first");
   });
 });

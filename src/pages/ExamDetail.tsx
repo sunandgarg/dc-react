@@ -38,6 +38,7 @@ import { compactEntityLabel } from "@/lib/compactEntityLabel";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { resolveExamLogo, resolveExamNames } from "@/lib/examBranding";
 import { ExamLogo } from "@/components/ExamLogo";
+import { formatExamDate } from "@/lib/examDateDisplay";
 
 const EXAM_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "Overview" },
@@ -284,7 +285,7 @@ export default function ExamDetail() {
             {/* Quick Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { icon: Calendar, label: "Exam Date", value: exam.exam_date, color: "text-primary" },
+                { icon: Calendar, label: "Exam Date", value: formatExamDate(exam.exam_date), color: "text-primary" },
                 { icon: Users, label: "Applicants", value: exam.applicants, color: "text-accent" },
                 { icon: Award, label: "Mode", value: exam.mode, color: "text-golden" },
                 { icon: Clock, label: "Duration", value: exam.duration, color: "text-success" },
@@ -402,7 +403,7 @@ export default function ExamDetail() {
                       </div>
                       <span className="text-sm text-foreground font-medium">{d.event}</span>
                     </div>
-                    <span className="text-sm font-semibold text-primary">{d.date}</span>
+                    <span className="text-sm font-semibold text-primary">{formatExamDate(d.date)}</span>
                   </div>
                 ))}
               </div>

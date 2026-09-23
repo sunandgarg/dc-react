@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getInternalAdContext } from "@/components/GlobalInternalAds";
 import { useMatchingAds } from "@/hooks/useAds";
@@ -38,8 +38,6 @@ export function AnnouncementBar() {
     id: number;
     startX: number;
     startY: number;
-    lastX: number;
-    lastY: number;
   } | null>(null);
 
   const move = useCallback((delta: number) => {
@@ -49,7 +47,7 @@ export function AnnouncementBar() {
     setTimerRevision((revision) => revision + 1);
   }, [ads.length]);
 
-  const releasePointer = useCallback((event: ReactPointerEvent<HTMLDivElement>, cancelled = false) => {
+  const releasePointer = useCallback((event: ReactPointerEvent<HTMLAnchorElement>, cancelled = false) => {
     const gesture = pointerRef.current;
     if (!gesture || gesture.id !== event.pointerId) return;
     const deltaX = event.clientX - gesture.startX;
@@ -96,6 +94,37 @@ export function AnnouncementBar() {
     ? "shrink-0 bg-red-600 px-3 py-1.5 text-xs font-extrabold text-white shadow-sm transition hover:bg-red-700 sm:px-4 sm:text-sm"
     : "flex h-8 w-8 shrink-0 items-center justify-center text-red-500 transition hover:translate-x-0.5 hover:text-red-400";
   const ctaContent = ctaText || <ArrowRight className="h-5 w-5" aria-hidden="true" />;
+  // Keep the gesture on the full-width, stable link. The animated text is
+  // replaced on every slide, so pointer capture on it can lose the release.
+  const swipeHandlers = {
+    draggable: false,
+    onDragStart: (event: ReactMouseEvent<HTMLAnchorElement>) => event.preventDefault(),
+    onPointerDown: (event: ReactPointerEvent<HTMLAnchorElement>) => {
+      if (ads.length < 2 || (event.pointerType === "mouse" && event.button !== 0)) return;
+      draggedRef.current = false;
+      pointerRef.current = {
+        id: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+      };
+      setPaused(true);
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    },
+    onPointerMove: (event: ReactPointerEvent<HTMLAnchorElement>) => {
+      const gesture = pointerRef.current;
+      if (!gesture || gesture.id !== event.pointerId) return;
+      const deltaX = event.clientX - gesture.startX;
+      const deltaY = event.clientY - gesture.startY;
+      if (Math.abs(deltaX) >= 10 && Math.abs(deltaX) > Math.abs(deltaY)) draggedRef.current = true;
+    },
+    onPointerUp: (event: ReactPointerEvent<HTMLAnchorElement>) => releasePointer(event),
+    onPointerCancel: (event: ReactPointerEvent<HTMLAnchorElement>) => releasePointer(event, true),
+    onClickCapture: (event: ReactMouseEvent<HTMLAnchorElement>) => {
+      if (!draggedRef.current) return;
+      event.preventDefault();
+      event.stopPropagation();
+    },
+  };
   const announcementContent = (
     <motion.div
       key={activeAd.id}
@@ -103,37 +132,7 @@ export function AnnouncementBar() {
       animate={{ opacity: 1, x: 0 }}
       exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -18 }}
       transition={{ duration: transitionDuration, ease: "easeOut" }}
-      onPointerDown={(event) => {
-        if (ads.length < 2 || (event.pointerType === "mouse" && event.button !== 0)) return;
-        pointerRef.current = {
-          id: event.pointerId,
-          startX: event.clientX,
-          startY: event.clientY,
-          lastX: event.clientX,
-          lastY: event.clientY,
-        };
-        setPaused(true);
-        event.currentTarget.setPointerCapture?.(event.pointerId);
-      }}
-      onPointerMove={(event) => {
-        const gesture = pointerRef.current;
-        if (!gesture || gesture.id !== event.pointerId) return;
-        gesture.lastX = event.clientX;
-        gesture.lastY = event.clientY;
-        const deltaX = event.clientX - gesture.startX;
-        const deltaY = event.clientY - gesture.startY;
-        if (Math.abs(deltaX) >= 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
-          draggedRef.current = true;
-        }
-      }}
-      onPointerUp={(event) => releasePointer(event)}
-      onPointerCancel={(event) => releasePointer(event, true)}
-      onClick={(event) => {
-        if (!draggedRef.current) return;
-        event.preventDefault();
-        event.stopPropagation();
-      }}
-      className="flex min-w-0 cursor-grab touch-pan-y select-none items-center justify-center gap-2 active:cursor-grabbing sm:gap-3"
+      className="flex min-w-0 items-center justify-center gap-2 sm:gap-3"
     >
       <div className="min-w-0">
         <AnimatedWords text={activeAd.title} reduceMotion={Boolean(reduceMotion) || rotationSeconds < 1} />
@@ -156,7 +155,7 @@ export function AnnouncementBar() {
       onBlurCapture={() => setPaused(false)}
     >
       {external ? (
-        <a href={activeAd.link_url} target="_blank" rel="noopener noreferrer" className="block h-11 min-h-11 w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-400" aria-label={`Open ${activeAd.title}`}>
+        <a href={activeAd.link_url} target="_blank" rel="noopener noreferrer" {...swipeHandlers} className="block h-11 min-h-11 w-full cursor-grab touch-pan-y select-none active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-400" aria-label={`Open ${activeAd.title}`}>
           <div className="container flex h-11 min-h-11 items-center px-3 py-1">
             <div className="min-w-0 flex-1 overflow-hidden text-center" aria-live="polite" aria-roledescription="carousel">
               <AnimatePresence mode="wait" initial={false}>{announcementContent}</AnimatePresence>
@@ -164,7 +163,7 @@ export function AnnouncementBar() {
           </div>
         </a>
       ) : (
-        <Link to={internalHref} className="block h-11 min-h-11 w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-400" aria-label={`Open ${activeAd.title}`}>
+        <Link to={internalHref} {...swipeHandlers} className="block h-11 min-h-11 w-full cursor-grab touch-pan-y select-none active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-400" aria-label={`Open ${activeAd.title}`}>
           <div className="container flex h-11 min-h-11 items-center px-3 py-1">
             <div className="min-w-0 flex-1 overflow-hidden text-center" aria-live="polite" aria-roledescription="carousel">
               <AnimatePresence mode="wait" initial={false}>{announcementContent}</AnimatePresence>
