@@ -8772,6 +8772,14 @@
         "default": "",
         "foreignKey": null
       },
+      "conducting_authority": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "text",
+        "default": null,
+        "foreignKey": null
+      },
       "category": {
         "type": "String",
         "nullable": false,

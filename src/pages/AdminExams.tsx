@@ -42,7 +42,7 @@ const EXAM_TYPES = ["MCQ", "Subjective", "MCQ + Subjective", "Online", "Practica
 const APPLICATION_MODES = ["Online", "Offline", "Both"];
 
 const emptyExam: Partial<DbExam> = {
-  slug: "", name: "", full_name: "", category: "Engineering", level: "National", exam_date: "",
+  slug: "", name: "", full_name: "", conducting_authority: null, category: "Engineering", level: "National", exam_date: "",
   applicants: "", eligibility: "", mode: "Online (CBT)", description: "", important_dates: [],
   syllabus: [], top_colleges: [], image: "", registration_url: "", duration: "", exam_type: "",
   language: "English", frequency: "Once", application_mode: "Online", status: "Upcoming", is_active: true, ...({ priority: 50 } as any),
@@ -277,6 +277,16 @@ export default function AdminExams() {
                   <div className="sm:col-span-2 lg:col-span-3"><label className="text-xs font-medium text-muted-foreground">Official Website</label><Input value={(editing as any).official_website || editing.website || ""} onChange={(e) => { update("official_website" as any, e.target.value); update("website", e.target.value); }} placeholder="https://official-exam-domain.example/" className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Short Name</label><Input value={editing.short_name || ""} onChange={(e) => update("short_name", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
                   <div className="sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Full Name</label><Input value={editing.full_name || ""} onChange={(e) => update("full_name", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
+                  <div className="sm:col-span-2 lg:col-span-3">
+                    <label className="text-xs font-medium text-muted-foreground">Conducting Authority</label>
+                    <Input
+                      value={editing.conducting_authority || ""}
+                      onChange={(e) => update("conducting_authority", e.target.value.trimStart() || null)}
+                      placeholder="For example: National Testing Agency"
+                      className="rounded-lg h-9 text-sm"
+                    />
+                    <p className="mt-1 text-[10.5px] text-muted-foreground">Leave blank when the authority has not been verified. The public exam page will omit this field.</p>
+                  </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">Category</label>
                     <select value={editing.category || ""} onChange={(e) => update("category", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm h-9">

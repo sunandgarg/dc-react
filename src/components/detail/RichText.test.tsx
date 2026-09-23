@@ -69,4 +69,19 @@ describe("RichText", () => {
     const { container } = render(<RichText html={'<a href="javascript:alert(1)">Unsafe link</a>'} />);
     expect(container.querySelector("a")).not.toHaveAttribute("href");
   });
+
+  it("unwraps links cloned across article blocks by an unclosed legacy anchor", () => {
+    const { container } = render(
+      <RichText
+        html={'<p>Read the <a href="/news/valid">valid guide</a>.</p><p>He studied at <a href="/colleges/iit-delhi">IIT Delhi.</p><p>After graduating, he joined Microsoft.</p><h2>Career journey</h2><p>He later built his company.</p>'}
+      />,
+    );
+
+    expect(container.querySelector('a[href="/news/valid"]')?.textContent).toBe("valid guide");
+    const repairedLinks = container.querySelectorAll('a[href="/colleges/iit-delhi"]');
+    expect(repairedLinks).toHaveLength(1);
+    expect(repairedLinks[0].textContent).toBe("IIT Delhi.");
+    expect(screen.getByText("Career journey").closest("a")).toBeNull();
+    expect(screen.getByText("After graduating, he joined Microsoft.").closest("a")).toBeNull();
+  });
 });

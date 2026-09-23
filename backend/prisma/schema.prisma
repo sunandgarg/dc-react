@@ -1370,6 +1370,7 @@ model exams {
   slug                           String    @db.LongText
   name                           String    @db.LongText
   full_name                      String    @db.LongText
+  conducting_authority           String?   @db.LongText
   category                       String    @db.LongText
   level                          String    @db.LongText
   exam_date                      String    @db.LongText

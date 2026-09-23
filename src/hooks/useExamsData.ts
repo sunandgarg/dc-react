@@ -15,6 +15,7 @@ export type DbExam = {
   slug: string;
   name: string;
   full_name: string;
+  conducting_authority: string | null;
   category: string;
   level: string;
   exam_date: string;
@@ -238,6 +239,9 @@ export function useDbExam(slugOrSlugId: string | undefined) {
 function mapExam(row: any): DbExam {
   return {
     ...row,
+    conducting_authority: typeof row.conducting_authority === "string" && row.conducting_authority.trim()
+      ? row.conducting_authority.trim()
+      : null,
     important_dates: Array.isArray(row.important_dates) ? row.important_dates : JSON.parse(row.important_dates || "[]"),
     syllabus: parseStringList(row.syllabus),
     top_colleges: parseStringList(row.top_colleges),

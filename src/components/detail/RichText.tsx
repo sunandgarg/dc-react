@@ -30,13 +30,31 @@ const ALLOWED_TAGS = [
 const ALLOWED_ATTR = [
   "href","target","rel","title","alt","src","srcset","sizes","loading","decoding",
   "width","height","colspan","rowspan","scope","start","reversed","type",
-  "class","style","id","name","data-width","data-align",
+  "class","style","id","name","data-width","data-align","data-dc-unclosed-anchor",
 ];
 
 function postProcess(html: string): string {
   if (typeof window === "undefined") return html;
   const tpl = document.createElement("template");
   tpl.innerHTML = html;
+
+  // The HTML parser clones an unclosed anchor into each later text block.
+  // The pre-sanitization pass marks only the unmatched opening tag, so keep
+  // its first inline occurrence and unwrap parser-created spillover clones.
+  const unclosedAnchorGroups = new Map<string, HTMLAnchorElement[]>();
+  tpl.content.querySelectorAll<HTMLAnchorElement>("a[data-dc-unclosed-anchor]").forEach((link) => {
+    const marker = link.dataset.dcUnclosedAnchor || "";
+    if (!marker) return;
+    const links = unclosedAnchorGroups.get(marker) || [];
+    links.push(link);
+    unclosedAnchorGroups.set(marker, links);
+  });
+  unclosedAnchorGroups.forEach((links) => {
+    links.forEach((link, index) => {
+      link.removeAttribute("data-dc-unclosed-anchor");
+      if (index > 0) link.replaceWith(...Array.from(link.childNodes));
+    });
+  });
 
   // Tables → wrap in scroll container
   tpl.content.querySelectorAll("table").forEach((tbl) => {
@@ -125,10 +143,34 @@ function decodeLegacyHtml(value: string): string {
   return decoded;
 }
 
+/**
+ * Browser HTML parsing carries an unclosed anchor into later paragraphs and
+ * headings, cloning that href across the article. Mark only unmatched opening
+ * tags before DOMPurify parses the fragment so post-processing can preserve
+ * the first intended link and unwrap only its spillover clones.
+ */
+function markUnclosedAnchorTags(value: string): string {
+  const stack: Array<{ start: number; end: number }> = [];
+  const tokenPattern = /<a\b[^>]*>|<\/a\s*>/gi;
+  let match: RegExpExecArray | null;
+  while ((match = tokenPattern.exec(value))) {
+    if (/^<\/a/i.test(match[0])) stack.pop();
+    else stack.push({ start: match.index, end: tokenPattern.lastIndex });
+  }
+  if (!stack.length) return value;
+  let repaired = value;
+  stack.reverse().forEach(({ start, end }, index) => {
+    const tag = repaired.slice(start, end);
+    const markedTag = tag.replace(/>$/, ` data-dc-unclosed-anchor="${stack.length - index}">`);
+    repaired = `${repaired.slice(0, start)}${markedTag}${repaired.slice(end)}`;
+  });
+  return repaired;
+}
+
 export function RichText({ html, className }: RichTextProps) {
   const safe = useMemo(() => {
     if (!html) return "";
-    const trimmed = decodeLegacyHtml(html.trim());
+    const trimmed = markUnclosedAnchorTags(decodeLegacyHtml(html.trim()));
     if (!trimmed) return "";
     const looksLikeHtml = /<[a-z][\s\S]*>/i.test(trimmed);
     if (!looksLikeHtml) return "";

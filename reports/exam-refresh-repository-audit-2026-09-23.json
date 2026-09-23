@@ -1,0 +1,567 @@
+{
+  "audit_date": "2026-09-23",
+  "status": "not_production_ready",
+  "canonical_strategy": "docs/exam-content-strategy-2026.md",
+  "inventory": {
+    "batch_builders_expected": 41,
+    "json_reports": 41,
+    "markdown_reports_expected": 41,
+    "missing_batch_numbers": [],
+    "missing_artifacts": [],
+    "update_versions": 410,
+    "human_editorial_recheck_files": 2,
+    "human_editorial_recheck_versions": 11,
+    "total_artifact_versions": 421,
+    "unique_exam_slugs": 390,
+    "repeated_exam_slugs": 20,
+    "repeated_slug_details": [
+      {
+        "slug": "srmjeee",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "mat",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "cmat",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "ugc-net",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "nata",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "snap",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "comedk",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "wbjee",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "mht-cet",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "kcet",
+        "batches": [
+          2,
+          23
+        ]
+      },
+      {
+        "slug": "ts-eamcet",
+        "batches": [
+          3,
+          24
+        ]
+      },
+      {
+        "slug": "ipmat",
+        "batches": [
+          3,
+          24
+        ]
+      },
+      {
+        "slug": "icar-aieea",
+        "batches": [
+          3,
+          24
+        ]
+      },
+      {
+        "slug": "nift-entrance",
+        "batches": [
+          3,
+          24
+        ]
+      },
+      {
+        "slug": "nchmct-jee",
+        "batches": [
+          3,
+          24
+        ]
+      },
+      {
+        "slug": "bits-hd",
+        "batches": [
+          3,
+          24
+        ]
+      },
+      {
+        "slug": "cg-pat",
+        "batches": [
+          3,
+          24
+        ]
+      },
+      {
+        "slug": "gpat",
+        "batches": [
+          3,
+          24
+        ]
+      },
+      {
+        "slug": "iticat",
+        "batches": [
+          3,
+          24
+        ]
+      },
+      {
+        "slug": "jcece",
+        "batches": [
+          3,
+          24
+        ]
+      }
+    ],
+    "slugs_with_competing_batch_or_recheck_versions": 30,
+    "competing_artifact_details": [
+      {
+        "slug": "jee-main-2026",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-001-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "jee-advanced-2026",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "neet-ug-2026",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "cat",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "clat-2026",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "gate-2026",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "uceed-2026",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "cuet-2026",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "xat-2026",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "bitsat-2026",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-001-2026-09-21.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "srmjeee",
+        "versions": 3,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json",
+          "exam-human-editorial-recheck-002-2026-09-21.json"
+        ]
+      },
+      {
+        "slug": "mat",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "cmat",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "ugc-net",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "nata",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "snap",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "comedk",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "wbjee",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "mht-cet",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "kcet",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-002-2026-09-21.json",
+          "exam-refresh-batch-023-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "ts-eamcet",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "ipmat",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "icar-aieea",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "nift-entrance",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "nchmct-jee",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "bits-hd",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "cg-pat",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "gpat",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "iticat",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      },
+      {
+        "slug": "jcece",
+        "versions": 2,
+        "reports": [
+          "exam-refresh-batch-003-2026-09-21.json",
+          "exam-refresh-batch-024-2026-09-22.json"
+        ]
+      }
+    ],
+    "deduplication_plan": {
+      "canonical_groups": 15,
+      "proposed_soft_deletes": 17,
+      "production_write_performed": false
+    }
+  },
+  "snapshot_coverage": {
+    "snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+    "snapshot_rows": 506,
+    "active_snapshot_rows": 502,
+    "covered_unique_slugs": 390,
+    "uncovered_active_rows": 112,
+    "uncovered_active_slugs": [
+      "afcat",
+      "agniveervayu",
+      "amu-ba-llb",
+      "amu-bed",
+      "amu-mba",
+      "appsc-group-1",
+      "apset",
+      "atit",
+      "banaras-hindu-university-postgraduate-entrance-test",
+      "beee",
+      "bitsat-exam",
+      "bitsat-exam-2",
+      "bpsc-cce",
+      "ca-cpt",
+      "ca-final",
+      "ca-foundation",
+      "ca-intermediate",
+      "cma-final",
+      "cma-foundation",
+      "cma-intermediate",
+      "cmruat",
+      "cs-executive",
+      "cs-professional",
+      "cseet-icsi",
+      "ctet",
+      "dekho-sample-jee-main",
+      "du-jat",
+      "gpsc-class-1-2",
+      "guee",
+      "hp-set",
+      "hpsc-hcs",
+      "hssc-cet",
+      "ib-acio-executive",
+      "ibps-csa",
+      "ibps-po",
+      "ibps-rrb-office-assistant",
+      "ibps-rrb-officer-scale-i",
+      "ibps-so",
+      "icai-intt-at",
+      "icmai-cat-part-i",
+      "indian-army-agniveer-cee",
+      "indian-navy-agniveer-mr",
+      "indian-navy-agniveer-ssr",
+      "ipmat-indore",
+      "ipmat-rohtak",
+      "jee-mains-2",
+      "jemscn",
+      "jepbn",
+      "jmi-ba-llb",
+      "jmi-bed",
+      "jmi-mba",
+      "jmi-mca",
+      "jpsc-combined-civil-services",
+      "kerala-kas",
+      "kpsc-kas",
+      "ks-dat",
+      "kset",
+      "kvpy",
+      "law-faculty-admission-test",
+      "lic-aao",
+      "madhya-pradesh-pre-polytechnic-test",
+      "mah-bdesign-cet",
+      "mp-set",
+      "mppsc-state-service",
+      "mpsc-civil-services",
+      "mu-oet",
+      "nabard-development-assistant",
+      "nabard-grade-a",
+      "national-talent-search-examination",
+      "opsc-ocs",
+      "rajasthan-set",
+      "rbi-assistant",
+      "rbi-grade-b-depr",
+      "rbi-grade-b-dsim",
+      "rbi-grade-b-general",
+      "rpf-constable",
+      "rpf-si",
+      "rpsc-ras",
+      "rrb-alp",
+      "rrb-group-d-level-1",
+      "rrb-je",
+      "rrb-ntpc-graduate",
+      "rrb-ntpc-undergraduate",
+      "rrb-paramedical",
+      "rrb-technician",
+      "sbi-junior-associate",
+      "sebi-grade-a",
+      "ssc-cpo",
+      "ssc-gd-constable",
+      "ssc-je",
+      "ssc-jht",
+      "ssc-mts",
+      "ssc-selection-post-phase-14",
+      "ssc-stenographer",
+      "suat",
+      "ts-set",
+      "tspsc-group-1",
+      "ukpsc-pcs",
+      "uppsc-pcs",
+      "upsc-capf-ac",
+      "upsc-civil-services",
+      "upsc-cms",
+      "upsc-combined-geo-scientist",
+      "upsc-engineering-services",
+      "upsc-epfo",
+      "upsc-ies-iss",
+      "upsc-indian-forest-service",
+      "upsc-nda-na",
+      "wb-set",
+      "wbcs",
+      "wbjee-jeca",
+      "wbjee-jelet"
+    ],
+    "warning": "The snapshot is not the production database. Current live rows must be resolved again before any write."
+  },
+  "policy_coverage": {
+    "rows_with_final_content_variation": 10,
+    "rows_with_forbidden_repeated_phrase": 370,
+    "rows_without_article_html": 10,
+    "rows_without_four_faqs": 10,
+    "rows_with_faqs_repeated_in_body": 370,
+    "rows_without_two_sources": 2,
+    "rows_without_three_internal_links": 10,
+    "rows_with_raw_markdown": 0,
+    "application_reuse": {
+      "distinct_values": 47,
+      "records_in_duplicate_groups": 354,
+      "largest_group": 150
+    },
+    "preparation_reuse": {
+      "distinct_values": 194,
+      "records_in_duplicate_groups": 202,
+      "largest_group": 90
+    },
+    "faq_questions_total": 760,
+    "faq_questions_distinct": 396,
+    "faq_instances_in_duplicate_groups": 372,
+    "current_policy_rows": 10,
+    "current_policy_failures": []
+  },
+  "deployment": {
+    "production_database_write_exists": false,
+    "batch_reports_are_imported_by_deployment": false,
+    "blockers": [
+      "No checked-in production importer consumes the exam refresh reports.",
+      "Competing versions have no approved precedence manifest.",
+      "Most rows do not meet the final uniqueness and separate-FAQ policy.",
+      "Artifact-only fields do not map directly to the exams database schema.",
+      "The production row set differs from the old snapshot and requires a live preflight."
+    ]
+  }
+}

@@ -20,7 +20,9 @@
     "test:e2e": "playwright test",
     "prepare:upgrad-iit-iim-certificates": "node scripts/prepare-upgrad-iit-iim-certificates-4k.mjs",
     "check:typography": "node scripts/check-no-large-dashes.mjs",
-    "prebuild": "npm run check:typography",
+    "audit:exam-refresh": "node scripts/audit-exam-refresh-repository.mjs --write",
+    "verify:exam-refresh-policy": "node scripts/audit-exam-refresh-repository.mjs --strict-current",
+    "prebuild": "npm run check:typography && npm run verify:exam-refresh-policy",
     "postbuild": "tsx scripts/generate-sitemap.ts && tsx scripts/apply-site-metadata.ts",
     "deploy:prod": "bash scripts/deploy-prod.sh"
   },

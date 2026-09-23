@@ -167,6 +167,7 @@ export default function ExamDetail() {
   }
 
   const compactExamName = compactEntityLabel((exam as any).short_name || exam.name);
+  const conductingAuthority = exam.conducting_authority?.trim() || "";
   const syllabusItems = Array.isArray(exam.syllabus)
     ? exam.syllabus.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
     : [];
@@ -347,7 +348,7 @@ export default function ExamDetail() {
               <div className="grid sm:grid-cols-2 gap-3">
                 {[
                   { label: "Full Name", value: exam.full_name },
-                  { label: "Conducting Body", value: "NTA" },
+                  ...(conductingAuthority ? [{ label: "Conducting Authority", value: conductingAuthority }] : []),
                   { label: "Category", value: exam.category },
                   { label: "Level", value: exam.level },
                   { label: "Exam Type", value: exam.exam_type },
@@ -371,7 +372,7 @@ export default function ExamDetail() {
             <RichSection id="highlights" title={<>Key Highlights</>}>
               <div className="space-y-2">
                 {[
-                  `${exam.name} is conducted by NTA (National Testing Agency)`,
+                  ...(conductingAuthority ? [`${exam.name} is conducted by ${conductingAuthority}`] : []),
                   `Mode of exam: ${exam.mode}`,
                   `Exam duration: ${exam.duration}`,
                   `Available in ${exam.language}`,
@@ -587,7 +588,7 @@ export default function ExamDetail() {
                 fallback={buildDefaultFaqs("exam", {
                   name: exam.name,
                   exam_date: (exam as any).exam_date,
-                  conducting_body: (exam as any).conducting_body,
+                  conducting_authority: exam.conducting_authority,
                   eligibility: (exam as any).eligibility,
                 })}
               />

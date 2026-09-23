@@ -14,10 +14,15 @@ interface FaqEntity {
   duration?: string;
   eligibility?: string;
   exam_date?: string;
-  conducting_body?: string;
+  conducting_authority?: string | null;
 }
 
 export interface DefaultFaq { question: string; answer: string; }
+
+function hasConfirmedExamDate(value?: string) {
+  const date = value?.trim();
+  return Boolean(date && !/^(?:not announced|pending|tba|to be announced|see official)/i.test(date));
+}
 
 export function buildDefaultFaqs(type: FaqEntityType, e: FaqEntity): DefaultFaq[] {
   const n = e.name;
@@ -43,9 +48,10 @@ export function buildDefaultFaqs(type: FaqEntityType, e: FaqEntity): DefaultFaq[
     ];
   }
   // exam
+  const confirmedExamDate = hasConfirmedExamDate(e.exam_date) ? e.exam_date!.trim() : "";
   return [
-    { question: `When will ${n} be conducted?`, answer: `${e.exam_date ? `${n} is scheduled around ${e.exam_date}.` : `${n} dates are announced by ${e.conducting_body || "the conducting authority"} a few months before the exam.`} Always confirm on the official notification.` },
-    { question: `What is the eligibility criteria for ${n}?`, answer: `${e.eligibility ? `Eligibility for ${n}: ${e.eligibility}.` : `Eligibility for ${n} generally includes age, nationality and qualifying-degree requirements as defined by ${e.conducting_body || "the conducting authority"}.`}` },
+    { question: `When will ${n} be conducted?`, answer: `${confirmedExamDate ? `${n} is scheduled around ${confirmedExamDate}.` : `${n} dates are announced by ${e.conducting_authority || "the conducting authority"} a few months before the exam.`} Always confirm on the official notification.` },
+    { question: `What is the eligibility criteria for ${n}?`, answer: `${e.eligibility ? `Eligibility for ${n}: ${e.eligibility}.` : `Eligibility for ${n} generally includes age, nationality and qualifying-degree requirements as defined by ${e.conducting_authority || "the conducting authority"}.`}` },
     { question: `What is the syllabus and exam pattern for ${n}?`, answer: `The ${n} syllabus and pattern follow the latest official notification, with sectional cut-offs and a defined marking scheme. Prepare from updated NCERT/standard reference books and previous-year papers.` },
     { question: `What is a good score / rank in ${n} for top colleges?`, answer: `A competitive ${n} score is needed for top colleges - exact cut-offs vary year-to-year. Compare last 3 years' cut-offs on DekhoCampus before shortlisting.` },
     { question: `How can I apply for ${n}?`, answer: `Apply online on the official ${n} portal during the application window. Keep your photo, signature, ID proof and academic documents ready in the prescribed format.` },

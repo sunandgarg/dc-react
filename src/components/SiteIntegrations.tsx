@@ -1,7 +1,58 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { backendClient } from "@/integrations/backend/client";
 
+function copyEventElement(target: EventTarget | null) {
+  if (target instanceof Element) return target;
+  if (target instanceof Node) return target.parentElement;
+  return null;
+}
+
+export function isCopyAllowedTarget(target: EventTarget | null) {
+  return Boolean(copyEventElement(target)?.closest("input, textarea, select, [contenteditable='true'], [data-copy-allowed]"));
+}
+
+export function shouldBlockPublicCopy(pathname: string, target: EventTarget | null) {
+  return !pathname.startsWith("/admin") && !isCopyAllowedTarget(target);
+}
+
 export function SiteIntegrations() {
+  const { pathname } = useLocation();
+  const [copyProtectionEnabled, setCopyProtectionEnabled] = useState(false);
+
+  useEffect(() => {
+    const copyBlocked = copyProtectionEnabled && !pathname.startsWith("/admin");
+    document.body.classList.toggle("content-copy-protected", copyBlocked);
+
+    if (!copyProtectionEnabled) {
+      return () => document.body.classList.remove("content-copy-protected");
+    }
+
+    if (!document.getElementById("content-copy-protection-style")) {
+      const style = document.createElement("style");
+      style.id = "content-copy-protection-style";
+      style.textContent = `body.content-copy-protected, body.content-copy-protected main, body.content-copy-protected article, body.content-copy-protected section { -webkit-user-select: none; user-select: none; } body.content-copy-protected input, body.content-copy-protected textarea, body.content-copy-protected select, body.content-copy-protected [contenteditable="true"], body.content-copy-protected [data-copy-allowed] { -webkit-user-select: text; user-select: text; }`;
+      document.head.appendChild(style);
+    }
+
+    // Keep listeners installed while the setting is enabled. The live path
+    // check prevents a route-transition race between public and admin pages.
+    const block = (event: Event) => {
+      if (shouldBlockPublicCopy(window.location.pathname, event.target)) event.preventDefault();
+    };
+    document.addEventListener("copy", block);
+    document.addEventListener("cut", block);
+    document.addEventListener("contextmenu", block);
+    document.addEventListener("selectstart", block);
+    return () => {
+      document.body.classList.remove("content-copy-protected");
+      document.removeEventListener("copy", block);
+      document.removeEventListener("cut", block);
+      document.removeEventListener("contextmenu", block);
+      document.removeEventListener("selectstart", block);
+    };
+  }, [copyProtectionEnabled, pathname]);
+
   useEffect(() => {
     let cancelled = false;
     const cleanupFns: Array<() => void> = [];
@@ -10,6 +61,7 @@ export function SiteIntegrations() {
       if (cancelled || !data) return;
       const map: Record<string, string> = {};
       for (const r of data) if (r.enabled && r.value) map[r.key] = r.value;
+      setCopyProtectionEnabled(map.content_copy_protection === "copy_blocked");
 
       // Analytics pixels are non-critical. Start them after interaction, with a
       // fallback for visitors who stay on a static page.
@@ -46,30 +98,6 @@ export function SiteIntegrations() {
         s.id = id; s.text = code;
         document.head.appendChild(s);
       };
-      const isAdmin = window.location.pathname.startsWith("/admin");
-      const copyBlocked = !isAdmin && map.content_copy_protection === "copy_blocked";
-      document.body.classList.toggle("content-copy-protected", copyBlocked);
-      if (copyBlocked && !document.getElementById("content-copy-protection-style")) {
-        const style = document.createElement("style");
-        style.id = "content-copy-protection-style";
-        style.textContent = `body.content-copy-protected, body.content-copy-protected main, body.content-copy-protected article, body.content-copy-protected section { -webkit-user-select: none; user-select: none; } body.content-copy-protected input, body.content-copy-protected textarea, body.content-copy-protected select, body.content-copy-protected [contenteditable="true"] { -webkit-user-select: text; user-select: text; }`;
-        document.head.appendChild(style);
-      }
-      if (copyBlocked) {
-        const isEditable = (target: EventTarget | null) => target instanceof HTMLElement && !!target.closest("input, textarea, select, [contenteditable='true'], [data-copy-allowed]");
-        const block = (event: Event) => { if (!isEditable(event.target)) event.preventDefault(); };
-        document.addEventListener("copy", block);
-        document.addEventListener("cut", block);
-        document.addEventListener("contextmenu", block);
-        document.addEventListener("selectstart", block);
-        cleanupFns.push(() => {
-          document.removeEventListener("copy", block);
-          document.removeEventListener("cut", block);
-          document.removeEventListener("contextmenu", block);
-          document.removeEventListener("selectstart", block);
-        });
-      }
-
       const gtmContainerId = map.gtm_container_id || "GTM-5PF56SJF";
       const hasGtm = Boolean(gtmContainerId);
       // GA4 is intentionally managed by GTM. Only fall back to direct gtag
@@ -128,7 +156,7 @@ export function SiteIntegrations() {
         document.head.appendChild(s);
       }
     })();
-    return () => { cancelled = true; cleanupFns.forEach((fn) => fn()); document.body.classList.remove("content-copy-protected"); };
+    return () => { cancelled = true; cleanupFns.forEach((fn) => fn()); };
   }, []);
   return null;
 }

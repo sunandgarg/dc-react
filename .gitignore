@@ -20,6 +20,8 @@ supabase/.temp/
 reports/legacy-csv-mapped/
 reports/legacy-csv-*.json
 reports/legacy-asset-*.json
+.seo-cache/
+tmp/
 
 # Editor directories and files
 .vscode/*

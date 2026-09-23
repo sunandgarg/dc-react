@@ -47,6 +47,7 @@ const examCols: BulkColumn[] = [
   { key: "name", label: "Name", width: 200 },
   { key: "slug", label: "Slug", width: 180 },
   { key: "short_name", label: "Short", width: 110 },
+  { key: "conducting_authority", label: "Authority", width: 190, defaultVisible: false },
   { key: "category", label: "Category", width: 140 },
   { key: "level", label: "Level", type: "select", options: ["National","State","University","International"], width: 130 },
   { key: "mode", label: "Mode", width: 130, defaultVisible: false },

@@ -234,6 +234,15 @@ async function ensureHomepageExploreSchema(report) {
   }
 }
 
+async function ensureExamAuthoritySchema(report) {
+  if (await columnInfo("exams", "conducting_authority")) {
+    report.existing.push("exams.conducting_authority");
+    return;
+  }
+  await prisma.$executeRawUnsafe("ALTER TABLE `exams` ADD COLUMN `conducting_authority` LONGTEXT NULL AFTER `full_name`");
+  report.createdRuntimeColumns.push("exams.conducting_authority");
+}
+
 async function ensureCourseFeeGroupingSchema(report) {
   if (!await columnInfo("course_fees", "course_group")) {
     await prisma.$executeRawUnsafe("ALTER TABLE `course_fees` ADD COLUMN `course_group` VARCHAR(191) NULL AFTER `course_name`");
@@ -624,6 +633,7 @@ try {
   await ensureSiteIsolationSchema(report);
   await ensureArticleWriteLockSchema(report);
   await ensureIntentRuntimeSchema(report);
+  await ensureExamAuthoritySchema(report);
   await ensureHomepageExploreSchema(report);
   await ensureCourseFeeGroupingSchema(report);
   await ensureLeadAutomationAuditSchema(report);

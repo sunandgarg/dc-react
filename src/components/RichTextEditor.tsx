@@ -182,7 +182,10 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
     content: value || "",
     editorProps: {
       attributes: {
-        class: "prose prose-sm max-w-none focus:outline-none px-3 py-2 min-h-[120px]",
+        class: "prose prose-sm max-w-none focus:outline-none px-3 py-2 min-h-[120px] !select-text cursor-text",
+        "data-copy-allowed": "true",
+        role: "textbox",
+        "aria-multiline": "true",
       },
       handlePaste: (view, event) => {
         const files = Array.from(event.clipboardData?.files || []);
@@ -250,7 +253,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
               {!value?.trim() && <p className="text-xs text-muted-foreground italic">Nothing to preview yet.</p>}
             </div>
           ) : (
-            <div className="relative">
+            <div className="relative !select-text" data-copy-allowed="true">
               <EditorContent editor={editor} />
               {inlineUploads > 0 && (
                 <div className="absolute right-3 top-3 flex items-center gap-2 rounded-md border border-border bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm">
