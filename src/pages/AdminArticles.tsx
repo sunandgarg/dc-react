@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Search, Newspaper, Info, FileText, Settings, ExternalLink, HelpCircle, CheckSquare2, Square, Loader2, Eye, EyeOff, RotateCcw, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Newspaper, Info, FileText, Settings, ExternalLink, HelpCircle, CheckSquare2, Square, Loader2, Eye, EyeOff, RotateCcw, Download, WandSparkles, Workflow } from "lucide-react";
 import { toast } from "sonner";
 import { CSVTools } from "@/components/CSVTools";
 import { useAuth } from "@/hooks/useAuth";
@@ -112,6 +112,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const [bulkStatus, setBulkStatus] = useState("");
   const [bulkCategory, setBulkCategory] = useState("");
   const [bulkVertical, setBulkVertical] = useState("");
+  const [automationPanel, setAutomationPanel] = useState<"auto" | "entity" | null>(null);
 
   const normalizedSearch = normalizeAdminArticleSearch(deferredSearch);
   const filtered = useMemo(() => {
@@ -245,14 +246,58 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
       )}
       {isAdmin && <div className="mb-3 flex flex-wrap gap-2">
         <BlogStudioDialog siteScope={siteScope} initiallyOpen={studioMode} onSaved={() => { void refetchArticles(); }} />
+        {!isSarkari && (
+          <Button asChild variant="outline" className="gap-2 rounded-xl">
+            <Link to="/news" target="_blank" rel="noopener noreferrer">
+              <Newspaper className="h-4 w-4" /> View live News
+            </Link>
+          </Button>
+        )}
         <Button asChild variant="outline" className="gap-2 rounded-xl">
           <a href="/docs/dekhocampus-ai-blog-studio-rules-2026.pdf" download="dekhocampus-ai-blog-studio-rules-2026.pdf">
             <Download className="h-4 w-4" /> Download writer rules PDF
           </a>
         </Button>
       </div>}
-      {isAdmin && !isSarkari && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />}
-      {isAdmin && !isSarkari && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
+      {isAdmin && !isSarkari && (
+        <section className="mb-4 overflow-hidden rounded-2xl border bg-card shadow-sm" aria-label="Article automation tools">
+          <div className="flex flex-col gap-3 p-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0">
+              <h2 className="font-bold text-foreground">Article automation tools</h2>
+              <p className="text-xs text-muted-foreground">Open an AI workspace only when you need it. Keeping these panels closed makes the article list load much faster.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant={automationPanel === "auto" ? "default" : "outline"}
+                className="gap-2 rounded-xl"
+                aria-expanded={automationPanel === "auto"}
+                onClick={() => setAutomationPanel((current) => current === "auto" ? null : "auto")}
+              >
+                <Workflow className="h-4 w-4" /> Auto Blog Agent
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={automationPanel === "entity" ? "default" : "outline"}
+                className="gap-2 rounded-xl"
+                aria-expanded={automationPanel === "entity"}
+                onClick={() => setAutomationPanel((current) => current === "entity" ? null : "entity")}
+              >
+                <WandSparkles className="h-4 w-4" /> Entity Article Agent
+              </Button>
+            </div>
+          </div>
+          {automationPanel && (
+            <div className="border-t bg-muted/20 p-3 sm:p-4">
+              {automationPanel === "auto"
+                ? <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />
+                : <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
+            </div>
+          )}
+        </section>
+      )}
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

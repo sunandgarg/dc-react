@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -16,6 +16,12 @@ const QUICK_RESOURCES = [
 
 export default function StudyMaterial() {
   const { data: boards = [] } = useStudyBoards();
+  const [searchParams] = useSearchParams();
+  const selectedBoard = searchParams.get("board")?.trim() || "";
+  const visibleBoards = selectedBoard
+    ? (boards as any[]).filter((board) => String(board.slug).toLowerCase() === selectedBoard.toLowerCase())
+    : boards;
+  const selectedBoardName = (visibleBoards as any[])[0]?.name || selectedBoard;
 
   return (
     <div className="min-h-screen bg-background">
@@ -50,9 +56,10 @@ export default function StudyMaterial() {
               <h2 className="text-xl md:text-2xl font-bold text-foreground">Choose your board</h2>
               <p className="text-sm text-muted-foreground">Curriculum-specific notes & papers</p>
             </div>
+            {selectedBoard && <Link to="/study-material" className="text-sm font-semibold text-primary hover:underline">View all boards</Link>}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {(boards as any[]).map((b) => (
+            {(visibleBoards as any[]).map((b) => (
               <Link key={b.slug} to={`/study-material/class-10?board=${b.slug}`}
                 className="group bg-card border border-border rounded-2xl p-5 hover:shadow-lg hover:border-primary/40 hover:-translate-y-0.5 transition-all">
                 <div className="text-4xl mb-2">{b.icon_emoji}</div>
@@ -63,6 +70,12 @@ export default function StudyMaterial() {
                 </p>
               </Link>
             ))}
+            {selectedBoard && !(visibleBoards as any[]).length && (
+              <div className="sm:col-span-3 rounded-2xl border border-dashed p-8 text-center">
+                <p className="font-semibold text-foreground">This board is not available.</p>
+                <Link to="/study-material" className="mt-2 inline-block text-sm font-semibold text-primary hover:underline">Choose another board</Link>
+              </div>
+            )}
           </div>
         </section>
 
@@ -70,7 +83,7 @@ export default function StudyMaterial() {
         <section className="container pb-8">
           <div className="flex items-end justify-between mb-4">
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-foreground">Browse by class</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-foreground">Browse by class{selectedBoardName ? ` - ${selectedBoardName}` : ""}</h2>
               <p className="text-sm text-muted-foreground">Subjects, chapters & papers Class 8-12</p>
             </div>
           </div>
@@ -78,7 +91,7 @@ export default function StudyMaterial() {
             {CLASSES.map((c) => (
               <Link
                 key={c}
-                to={`/study-material/class-${c}`}
+                to={`/study-material/class-${c}${selectedBoard ? `?board=${encodeURIComponent(selectedBoard)}` : ""}`}
                 className="group relative bg-card border border-border rounded-2xl p-5 md:p-6 hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/40 transition-all"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">

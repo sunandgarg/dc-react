@@ -23,7 +23,7 @@ import { getCourseGroupSearchTerms, lastSelected, normalizeCourseGroup, readMult
 import { useSearchParams, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   courseStreams, courseCourseGroups, courseSpecializations,
-  courseModes, courseDurations,
+  courseModes, courseDurations, courseLevels,
 } from "@/data/indianLocations";
 
 const topSearches = ["B.Tech", "MBA", "MBBS", "B.Sc", "BBA", "MCA", "B.Com", "LLB"];
@@ -54,6 +54,7 @@ export default function AllCourses() {
     return readMultiParam(searchParams, "group", seoSlugFilters.group ? [normalizeCourseGroup(seoSlugFilters.group)] : []).map(normalizeCourseGroup);
   });
   const [selectedSpecializations, setSelectedSpecializations] = useState<string[]>(() => readMultiParam(searchParams, "specialization"));
+  const [selectedLevels, setSelectedLevels] = useState<string[]>(() => readMultiParam(searchParams, "level"));
   const [selectedModes, setSelectedModes] = useState<string[]>(() => readMultiParam(searchParams, "mode", seoSlugFilters.mode ? [seoSlugFilters.mode] : []));
   const [selectedDurations, setSelectedDurations] = useState<string[]>(() => readMultiParam(searchParams, "duration"));
 
@@ -69,11 +70,13 @@ export default function AllCourses() {
     const streams = readMultiParam(searchParams, "stream", seoSlugFilters.stream ? [seoSlugFilters.stream] : []);
     const groups = readMultiParam(searchParams, "group", seoSlugFilters.group ? [normalizeCourseGroup(seoSlugFilters.group)] : []).map(normalizeCourseGroup);
     const modes = readMultiParam(searchParams, "mode", seoSlugFilters.mode ? [seoSlugFilters.mode] : []);
+    const levels = readMultiParam(searchParams, "level");
     const specializations = readMultiParam(searchParams, "specialization");
     const durations = readMultiParam(searchParams, "duration");
     setSelectedStreams((prev) => (sameStringList(prev, streams) ? prev : streams));
     setSelectedCourseGroups((prev) => (sameStringList(prev, groups) ? prev : groups));
     setSelectedModes((prev) => (sameStringList(prev, modes) ? prev : modes));
+    setSelectedLevels((prev) => (sameStringList(prev, levels) ? prev : levels));
     setSelectedSpecializations((prev) => (sameStringList(prev, specializations) ? prev : specializations));
     setSelectedDurations((prev) => (sameStringList(prev, durations) ? prev : durations));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -94,9 +97,10 @@ export default function AllCourses() {
       const modes = uniqueValues(selectedModes.flatMap((mode) => mode === "Full Time" ? ["Full Time", "Full-Time"] : mode === "Part Time" ? ["Part Time", "Part-Time"] : [mode]));
       f.mode = modes.length === 1 ? modes[0] : modes;
     }
+    if (selectedLevels.length > 0) f.level = selectedLevels.length === 1 ? selectedLevels[0] : selectedLevels;
     if (selectedDurations.length > 0) f.duration = selectedDurations.length === 1 ? selectedDurations[0] : selectedDurations;
     return f;
-  }, [selectedStreams, selectedCourseGroups, selectedModes, selectedDurations]);
+  }, [selectedStreams, selectedCourseGroups, selectedModes, selectedLevels, selectedDurations]);
 
   const courseGroupSearch = useMemo(() => getCourseGroupSearchTerms(selectedCourseGroups), [selectedCourseGroups]);
 
@@ -120,6 +124,7 @@ export default function AllCourses() {
     && sameStringList(selectedStreams, seoSlugFilters.stream ? [seoSlugFilters.stream] : [])
     && sameStringList(selectedCourseGroups, seoSlugFilters.group ? [normalizeCourseGroup(seoSlugFilters.group)] : [])
     && sameStringList(selectedModes, seoSlugFilters.mode ? [seoSlugFilters.mode] : [])
+    && selectedLevels.length === 0
     && selectedSpecializations.length === 0
     && selectedDurations.length === 0;
 
@@ -134,6 +139,7 @@ export default function AllCourses() {
     writeMultiParam(params, "group", selectedCourseGroups);
     writeMultiParam(params, "specialization", selectedSpecializations);
     writeMultiParam(params, "mode", selectedModes);
+    writeMultiParam(params, "level", selectedLevels);
     writeMultiParam(params, "duration", selectedDurations);
     const newPath = params.toString() ? `/courses?${params.toString()}` : "/courses";
     const currentUrl = `${location.pathname}${location.search}`;
@@ -143,30 +149,32 @@ export default function AllCourses() {
     } else if (pendingListingUrlRef.current === newPath) {
       pendingListingUrlRef.current = null;
     }
-  }, [selectedStreams, selectedCourseGroups, selectedSpecializations, selectedModes, selectedDurations, seoLandingMatches, navigate, location.pathname, location.search]);
+  }, [selectedStreams, selectedCourseGroups, selectedSpecializations, selectedModes, selectedLevels, selectedDurations, seoLandingMatches, navigate, location.pathname, location.search]);
 
-  const activeFilters = uniqueValues([...selectedStreams, ...selectedCourseGroups, ...selectedSpecializations, ...selectedModes, ...selectedDurations]);
+  const activeFilters = uniqueValues([...selectedStreams, ...selectedCourseGroups, ...selectedSpecializations, ...selectedLevels, ...selectedModes, ...selectedDurations]);
 
   const filtered = useMemo(() => courses, [courses]);
 
-  const heading = useMemo(() => getCourseHeading({
+  const baseHeading = useMemo(() => getCourseHeading({
     courseGroup: selectedCourseGroups[0],
     stream: selectedStreams[0],
     mode: selectedModes[0],
     duration: selectedDurations[0],
   }), [selectedStreams, selectedCourseGroups, selectedModes, selectedDurations]);
+  const heading = selectedLevels[0] ? `${selectedLevels[0]} ${baseHeading}` : baseHeading;
 
   useSEO({ title: heading, description: `Browse ${heading.toLowerCase()} - eligibility, duration, fees, top colleges and career options.`, canonical: seoLandingMatches ? location.pathname : `/courses${searchParams.toString() ? `?${searchParams.toString()}` : ""}` });
 
   const clearAll = () => {
     setSelectedStreams([]); setSelectedCourseGroups([]);
-    setSelectedSpecializations([]); setSelectedModes([]); setSelectedDurations([]);
+    setSelectedSpecializations([]); setSelectedLevels([]); setSelectedModes([]); setSelectedDurations([]);
   };
 
   const removeFilter = (f: string) => {
     setSelectedStreams(prev => prev.filter(x => x !== f));
     setSelectedCourseGroups(prev => prev.filter(x => x !== f));
     setSelectedSpecializations(prev => prev.filter(x => x !== f));
+    setSelectedLevels(prev => prev.filter(x => x !== f));
     setSelectedModes(prev => prev.filter(x => x !== f));
     setSelectedDurations(prev => prev.filter(x => x !== f));
   };
@@ -175,6 +183,7 @@ export default function AllCourses() {
     { title: "Streams", items: courseStreams, selected: selectedStreams, onChange: (v: string[]) => setSelectedStreams(lastSelected(v)), singleSelect: true },
     { title: "Course Groups", items: courseCourseGroups, selected: selectedCourseGroups, onChange: (v: string[]) => setSelectedCourseGroups(lastSelected(uniqueValues(v.map(normalizeCourseGroup)))), singleSelect: true },
     { title: "Specializations", items: courseSpecializations, selected: selectedSpecializations, onChange: setSelectedSpecializations },
+    { title: "Course Level", items: courseLevels, selected: selectedLevels, onChange: (v: string[]) => setSelectedLevels(lastSelected(v)), singleSelect: true },
     { title: "Course Modes", items: courseModes, selected: selectedModes, onChange: setSelectedModes },
     { title: "Duration", items: courseDurations, selected: selectedDurations, onChange: setSelectedDurations },
   ];

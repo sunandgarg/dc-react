@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, GraduationCap, BookOpen, FileText, Briefcase, Stethoscope, Palette, CircleDot, Trophy, Scale, Award, NotebookPen, Newspaper } from "lucide-react";
+import { ChevronDown, GraduationCap, BookOpen, FileText, CircleDot, Award, NotebookPen, Newspaper } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
-import { STREAM_CATEGORIES } from "@/lib/streamCategories";
 
 interface Section {
   label: string;
@@ -28,14 +27,18 @@ function useMegaMenuData(enabled: boolean) {
   });
 }
 
-const STREAMS = [
-  { key: "Engineering", icon: FileText, exam: "JEE Main" },
-  { key: "Management", icon: Briefcase, exam: "CAT" },
-  { key: "Medical", icon: Stethoscope, exam: "NEET" },
-  { key: "Design", icon: Palette, exam: "NID" },
-  { key: "Law", icon: Scale, exam: "CLAT" },
-  { key: "Commerce", icon: Trophy, exam: "" },
-];
+const HEADER_STREAMS = ["Engineering", "Management", "Medical", "Science", "Design", "Law", "Arts & Humanities", "Education"];
+
+const listingHref = (pathname: string, key: string, values: string | string[]) => {
+  const params = new URLSearchParams();
+  const entries = Array.isArray(values) ? values : [values];
+  entries.forEach((value) => params.append(key, value));
+  return `${pathname}?${params.toString()}`;
+};
+
+const preloadNewsPage = () => {
+  void import("@/pages/News");
+};
 
 export function MegaMenu() {
   const [dataRequested, setDataRequested] = useState(false);
@@ -81,7 +84,6 @@ export function MegaMenu() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const byCat = (arr: any[], cat: string) => arr.filter((x: any) => (x.category || "").toLowerCase() === cat.toLowerCase());
   const byState = (arr: any[]) => {
     const m: Record<string, any[]> = {};
     arr.forEach((c) => { if (c.state) (m[c.state] ||= []).push(c); });
@@ -90,64 +92,20 @@ export function MegaMenu() {
   const states = byState(data?.colleges || []);
   const topStates = Object.entries(states).sort((a, b) => b[1].length - a[1].length).slice(0, 8);
 
-  const streamSection = (cat: string): Section => ({
-    label: cat,
-    columns: [
-      {
-        title: "Top Colleges",
-        items: byCat(data?.colleges || [], cat).slice(0, 7).map((c: any) => ({ label: c.name, href: `/colleges/${c.slug}` }))
-          .concat([{ label: `View all ${cat} colleges →`, href: `/colleges?stream=${encodeURIComponent(cat)}` }]),
-      },
-      {
-        title: "Popular Courses",
-        items: byCat(data?.courses || [], cat).slice(0, 7).map((c: any) => ({ label: c.name, href: `/courses/${c.slug}` }))
-          .concat([{ label: `View all ${cat} courses →`, href: `/courses?stream=${encodeURIComponent(cat)}` }]),
-      },
-      {
-        title: "Entrance Exams",
-        items: byCat(data?.exams || [], cat).slice(0, 6).map((e: any) => ({ label: e.name, href: `/exams/${e.slug}` }))
-          .concat([{ label: `All ${cat} exams →`, href: `/exams?category=${encodeURIComponent(cat)}` }]),
-      },
-    ],
-  });
-
-  // Build the Streams mega-menu by chunking 12 streams into 3 columns of 4
-  const streamCols = (() => {
-    const cols: { title: string; items: { label: string; href: string }[] }[] = [];
-    const chunkSize = Math.ceil(STREAM_CATEGORIES.length / 3);
-    for (let i = 0; i < STREAM_CATEGORIES.length; i += chunkSize) {
-      const chunk = STREAM_CATEGORIES.slice(i, i + chunkSize);
-      cols.push({
-        title: i === 0 ? "Popular Streams" : i === chunkSize ? "Professional" : "Emerging & More",
-        items: chunk.map((s) => ({ label: `${s.emoji} ${s.label}`, href: `/colleges?stream=${encodeURIComponent(s.id)}` })),
-      });
-    }
-    cols.push({
-      title: "Quick Browse",
-      items: [
-        { label: "All Colleges →", href: "/colleges" },
-        { label: "All Courses →", href: "/courses" },
-        { label: "All Exams →", href: "/exams" },
-        { label: "Scholarships →", href: "/scholarships" },
-      ],
-    });
-    return cols;
-  })();
-
   const sections: Section[] = [
     {
       label: "Colleges",
       href: "/colleges",
       columns: [
-        { title: "By Stream", items: (STREAM_CATEGORIES as readonly any[]).slice(0, 8).map((s: any) => ({ label: s.label, href: `/colleges?stream=${encodeURIComponent(s.id)}` })).concat([{ label: "All colleges →", href: "/colleges" }]) },
+        { title: "By Stream", items: HEADER_STREAMS.map((stream) => ({ label: stream, href: listingHref("/colleges", "stream", stream) })).concat([{ label: "All colleges →", href: "/colleges" }]) },
         { title: "By Type", items: [
-          { label: "Government Colleges", href: "/colleges?type=Government" },
-          { label: "Private Colleges", href: "/colleges?type=Private" },
-          { label: "Deemed Universities", href: "/colleges?type=Deemed" },
-          { label: "Autonomous", href: "/colleges?type=Autonomous" },
+          { label: "Government & Public", href: listingHref("/colleges", "type", ["Government", "Public", "Public Institute", "Public (Autonomous)", "Public Institute (Autonomous)", "State University", "State Agricultural University", "Open University"]) },
+          { label: "Private Colleges", href: listingHref("/colleges", "type", ["Private", "Private Institute", "Private University", "Private (Autonomous)", "Private Institute (Autonomous)"]) },
+          { label: "Deemed Universities", href: listingHref("/colleges", "type", ["Deemed", "Deemed University", "Deemed To Be University"]) },
+          { label: "Autonomous", href: listingHref("/colleges", "type", ["Private (Autonomous)", "Public (Autonomous)", "Autonomous University", "Private Institute (Autonomous)", "Public Institute (Autonomous)"]) },
         ] },
         { title: "Popular States", items: topStates.slice(0, 6).map(([st, list]) => ({ label: `${st} (${list.length})`, href: `/colleges?state=${encodeURIComponent(st)}` })).concat([{ label: "Browse all states →", href: "/colleges" }]) },
-        { title: "Top Ranked", items: (data?.colleges || []).slice(0, 5).map((c: any) => ({ label: c.name, href: `/colleges/${c.slug}` })).concat([{ label: "All rankings →", href: "/colleges?sort=rating" }]) },
+        { title: "Top Ranked", items: (data?.colleges || []).slice(0, 5).map((c: any) => ({ label: c.name, href: `/colleges/${c.slug}` })).concat([{ label: "Browse top colleges →", href: "/colleges" }]) },
       ],
     },
     {
@@ -157,14 +115,14 @@ export function MegaMenu() {
         { title: "By Level", items: [
           { label: "Undergraduate (UG)", href: "/courses?level=Undergraduate" },
           { label: "Postgraduate (PG)", href: "/courses?level=Postgraduate" },
-          { label: "Diploma", href: "/courses?level=Diploma" },
-          { label: "Doctorate (PhD)", href: "/courses?level=Doctorate" },
+          { label: "Certificate", href: "/courses?level=Certificate" },
+          { label: "Doctorate (PhD)", href: "/courses?level=Doctoral" },
         ] },
-        { title: "By Stream", items: (STREAM_CATEGORIES as readonly any[]).slice(0, 8).map((s: any) => ({ label: s.label, href: `/courses?stream=${encodeURIComponent(s.id)}` })) },
+        { title: "By Stream", items: HEADER_STREAMS.map((stream) => ({ label: stream, href: listingHref("/courses", "stream", stream) })) },
         { title: "By Mode", items: [
-          { label: "Full-Time", href: "/courses?mode=Full-Time" },
-          { label: "Part-Time", href: "/courses?mode=Part-Time" },
-          { label: "Online / Distance", href: "/courses?mode=Online" },
+          { label: "Full-Time", href: "/courses?mode=Full+Time" },
+          { label: "Online", href: "/courses?mode=Online" },
+          { label: "Self-Paced", href: "/courses?mode=Self-Paced" },
         ] },
         { title: "Popular", items: (data?.courses || []).slice(0, 6).map((c: any) => ({ label: c.name, href: `/courses/${c.slug}` })).concat([{ label: "All courses →", href: "/courses" }]) },
       ],
@@ -174,11 +132,12 @@ export function MegaMenu() {
       href: "/exams",
       columns: [
         { title: "Top Exams", items: (data?.exams || []).filter((e: any) => e.is_top_exam).slice(0, 7).map((e: any) => ({ label: e.name, href: `/exams/${e.slug}` })).concat([{ label: "All exams →", href: "/exams" }]) },
-        { title: "By Stream", items: STREAMS.filter((s) => s.exam).map((s) => ({ label: `${s.exam} (${s.key})`, href: `/exams?category=${encodeURIComponent(s.key)}` })) },
+        { title: "By Stream", items: HEADER_STREAMS.slice(0, 6).map((stream) => ({ label: stream, href: listingHref("/exams", "stream", stream) })) },
         { title: "By Level", items: [
-          { label: "National", href: "/exams?level=National" },
-          { label: "State", href: "/exams?level=State" },
-          { label: "University", href: "/exams?level=University" },
+          { label: "Undergraduate (UG)", href: "/exams?level=UG" },
+          { label: "Postgraduate (PG)", href: "/exams?level=PG" },
+          { label: "After Class 12", href: "/exams?level=12th" },
+          { label: "After Class 10", href: "/exams?level=10th" },
         ] },
       ],
     },
@@ -188,15 +147,13 @@ export function MegaMenu() {
       columns: [
         { title: "By Level", items: [
           { label: "Undergraduate (UG)", href: "/scholarships?level=UG" },
-          { label: "Postgraduate (PG)", href: "/scholarships?level=PG" },
-          { label: "School / Class 8-12", href: "/scholarships?level=School" },
           { label: "All scholarships →", href: "/scholarships" },
         ] },
         { title: "By Category", items: [
-          { label: "🏆 Merit-based", href: "/scholarships?category=Merit" },
-          { label: "💰 Need-based", href: "/scholarships?category=Need" },
+          { label: "🏆 Merit", href: "/scholarships?category=Merit" },
           { label: "🎯 Government", href: "/scholarships?category=Government" },
-          { label: "🌍 Study Abroad", href: "/scholarships?category=Abroad" },
+          { label: "🏢 Corporate", href: "/scholarships?category=Corporate" },
+          { label: "🤝 NGO", href: "/scholarships?category=NGO" },
         ] },
       ],
     },
@@ -209,7 +166,7 @@ export function MegaMenu() {
           { label: "CBSE", href: "/study-material?board=cbse" },
           { label: "ICSE", href: "/study-material?board=icse" },
           { label: "State Board", href: "/study-material?board=state" },
-          { label: "IB / IGCSE", href: "/study-material?board=ib" },
+          { label: "Bihar Board", href: "/study-material?board=bihar-board" },
           { label: "All boards →", href: "/study-material" },
         ] },
         { title: "Quick Picks", items: [
@@ -300,6 +257,9 @@ export function MegaMenu() {
             {!s.columns && s.href ? (
               <Link
                 to={s.href}
+                onPointerEnter={s.label === "News" ? preloadNewsPage : undefined}
+                onFocus={s.label === "News" ? preloadNewsPage : undefined}
+                onTouchStart={s.label === "News" ? preloadNewsPage : undefined}
                 className={`flex items-center gap-1 px-2.5 py-2 text-sm font-medium rounded-xl transition-colors text-foreground/80 hover:text-foreground hover:bg-secondary`}
               >
                 <Icon className="w-3.5 h-3.5" />

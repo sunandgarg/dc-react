@@ -37,6 +37,10 @@ const mobileNav = [
   ] },
 ];
 
+const preloadNewsPage = () => {
+  void import("@/pages/News");
+};
+
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -267,7 +271,12 @@ function MobileNavItem({ item, onNavigate }: { item: any; onNavigate: () => void
   const hasChildren = Array.isArray(item.children) && item.children.length > 0;
   if (!hasChildren) {
     return (
-      <Link to={item.href} onClick={onNavigate}
+      <Link
+        to={item.href}
+        onClick={onNavigate}
+        onPointerEnter={item.href === "/news" ? preloadNewsPage : undefined}
+        onFocus={item.href === "/news" ? preloadNewsPage : undefined}
+        onTouchStart={item.href === "/news" ? preloadNewsPage : undefined}
         className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary rounded-xl transition-colors">
         <span>{item.label}</span>
       </Link>

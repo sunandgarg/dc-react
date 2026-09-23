@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getInternalAdContext } from "@/components/GlobalInternalAds";
 import { useMatchingAds } from "@/hooks/useAds";
@@ -34,6 +34,13 @@ export function AnnouncementBar() {
   const [paused, setPaused] = useState(false);
   const [timerRevision, setTimerRevision] = useState(0);
   const draggedRef = useRef(false);
+  const pointerRef = useRef<{
+    id: number;
+    startX: number;
+    startY: number;
+    lastX: number;
+    lastY: number;
+  } | null>(null);
 
   const move = useCallback((delta: number) => {
     if (ads.length < 2) return;
@@ -41,6 +48,28 @@ export function AnnouncementBar() {
     setActiveIndex((index) => circularAnnouncementIndex(index, delta, ads.length));
     setTimerRevision((revision) => revision + 1);
   }, [ads.length]);
+
+  const releasePointer = useCallback((event: ReactPointerEvent<HTMLDivElement>, cancelled = false) => {
+    const gesture = pointerRef.current;
+    if (!gesture || gesture.id !== event.pointerId) return;
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
+    const horizontalSwipe = !cancelled && Math.abs(deltaX) >= 42 && Math.abs(deltaX) > Math.abs(deltaY) * 1.15;
+
+    try {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture can already be released when the browser cancels a gesture.
+    }
+    pointerRef.current = null;
+    setPaused(false);
+
+    if (horizontalSwipe) {
+      draggedRef.current = true;
+      move(deltaX < 0 ? 1 : -1);
+    }
+    window.setTimeout(() => { draggedRef.current = false; }, 220);
+  }, [move]);
 
   useEffect(() => {
     setActiveIndex((index) => Math.min(index, Math.max(ads.length - 1, 0)));
@@ -74,24 +103,37 @@ export function AnnouncementBar() {
       animate={{ opacity: 1, x: 0 }}
       exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -18 }}
       transition={{ duration: transitionDuration, ease: "easeOut" }}
-      drag={ads.length > 1 ? "x" : false}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.18}
-      dragMomentum={false}
-      onDragStart={() => { draggedRef.current = true; }}
-      onDragEnd={(_, info) => {
-        if (Math.abs(info.offset.x) >= 44 || Math.abs(info.velocity.x) >= 450) {
-          move(info.offset.x < 0 ? 1 : -1);
-        }
-        window.setTimeout(() => { draggedRef.current = false; }, 150);
+      onPointerDown={(event) => {
+        if (ads.length < 2 || (event.pointerType === "mouse" && event.button !== 0)) return;
+        pointerRef.current = {
+          id: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          lastX: event.clientX,
+          lastY: event.clientY,
+        };
+        setPaused(true);
+        event.currentTarget.setPointerCapture?.(event.pointerId);
       }}
+      onPointerMove={(event) => {
+        const gesture = pointerRef.current;
+        if (!gesture || gesture.id !== event.pointerId) return;
+        gesture.lastX = event.clientX;
+        gesture.lastY = event.clientY;
+        const deltaX = event.clientX - gesture.startX;
+        const deltaY = event.clientY - gesture.startY;
+        if (Math.abs(deltaX) >= 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          draggedRef.current = true;
+        }
+      }}
+      onPointerUp={(event) => releasePointer(event)}
+      onPointerCancel={(event) => releasePointer(event, true)}
       onClick={(event) => {
         if (!draggedRef.current) return;
         event.preventDefault();
         event.stopPropagation();
       }}
-      whileDrag={{ cursor: "grabbing" }}
-      className="flex min-w-0 touch-pan-y select-none items-center justify-center gap-2 cursor-grab sm:gap-3"
+      className="flex min-w-0 cursor-grab touch-pan-y select-none items-center justify-center gap-2 active:cursor-grabbing sm:gap-3"
     >
       <div className="min-w-0">
         <AnimatedWords text={activeAd.title} reduceMotion={Boolean(reduceMotion) || rotationSeconds < 1} />

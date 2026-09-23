@@ -148,7 +148,9 @@ export const courseSpecializations = [
   "Pharmacy", "Nursing & Midwifery", "Public Health & Management",
 ];
 
-export const courseModes = ["Full Time", "Part Time", "Online", "Distance"];
+export const courseModes = ["Full Time", "Online", "Self-Paced"];
+
+export const courseLevels = ["Undergraduate", "Postgraduate", "Certificate", "Doctoral"];
 
 export const courseDurations = [
   "6 Months", "1 Year", "2 Years", "3 Years", "4 Years", "5 Years",
