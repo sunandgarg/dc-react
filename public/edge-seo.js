@@ -106,6 +106,11 @@ function isPublicPath(pathname) {
 
 function isIndexableQuery(url, pathname) {
   if (!url.search) return true;
+  if (pathname === "/news") {
+    const keys = [...url.searchParams.keys()];
+    const page = url.searchParams.get("page") || "";
+    return keys.length === 1 && keys[0] === "page" && /^(?:[2-9]|[1-9]\d{1,2})$/.test(page);
+  }
   const allowed = LISTING_QUERY_KEYS[pathname];
   if (!allowed) return false;
   const keys = [...url.searchParams.keys()];
@@ -130,12 +135,31 @@ export function edgeSeoFor(input) {
     };
   }
 
-  const metadata = STATIC_METADATA.get(pathname) || (LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname));
+  const metadata = pathname === "/news"
+    ? {
+      title: `Latest Education News${url.searchParams.has("page") ? ` - Page ${url.searchParams.get("page")}` : ""} | DekhoCampus`,
+      description: "Read the latest verified exam, admission, college and education updates for students in India.",
+    }
+    : STATIC_METADATA.get(pathname) || (LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname));
   return { ...metadata, canonical, indexable, notFound: !privatePath && !publicPath };
 }
 
 function escapeHtml(value) {
   return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+export function newsListingEdgeSeo(articles, url, page = 1, hasNextPage = false) {
+  const metadata = edgeSeoFor(url);
+  const items = articles
+    .filter((article) => article?.slug && article?.title)
+    .map((article) => `<li><a href="/news/${encodeURIComponent(article.slug)}">${escapeHtml(article.title)}</a></li>`)
+    .join("");
+  const previous = page > 1 ? `<a href="${page === 2 ? "/news" : `/news?page=${page - 1}`}">Newer articles</a>` : "";
+  const next = hasNextPage ? `<a href="/news?page=${page + 1}">Older articles</a>` : "";
+  return {
+    ...metadata,
+    prerenderHtml: `<main data-dc-edge-prerender style="max-width:1000px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.6;color:#111827"><h1>Latest education news${page > 1 ? ` - Page ${page}` : ""}</h1><p>Exam, admission and college updates for students in India.</p><ul>${items}</ul><nav aria-label="News pages">${previous}${previous && next ? " | " : ""}${next}</nav></main>`,
+  };
 }
 
 function replaceOrInsert(html, pattern, replacement) {
@@ -411,7 +435,9 @@ export function applyEdgeSeo(html, metadata) {
     output = output.replace(/<\/head>/i, `    <script type="application/ld+json" data-dc-edge-schema>${json}</script>\n  </head>`);
   }
   if (metadata.prerenderHtml) {
-    output = output.replace(/(<div\s+id=["']root["']\s*>)/i, `$1${metadata.prerenderHtml}`);
+    // The static first-paint shell belongs to the homepage, not to article or archive HTML.
+    output = output.replace(/<div id="dc-first-paint-shell" hidden>[\s\S]*?<\/main>\s*<\/div>/i, "");
+    output = output.replace(/(<div\s+id=["']root["']\s*>)/i, (_, rootStart) => `${rootStart}${metadata.prerenderHtml}`);
   }
   return output;
 }

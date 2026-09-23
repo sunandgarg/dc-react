@@ -1,4 +1,4 @@
-import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor, entityEdgeSeo } from "./edge-seo.js";
+import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor, entityEdgeSeo, newsListingEdgeSeo } from "./edge-seo.js";
 
 const API_ORIGIN = "https://aws-origin.dekhocampus.com";
 
@@ -132,6 +132,31 @@ async function serveAsset(request, env) {
     const headers = new Headers(response.headers);
     headers.delete("content-length");
     let metadata = edgeSeoFor(url);
+    if (/^\/news\/?$/.test(url.pathname) && metadata.indexable) {
+      const page = Number(url.searchParams.get("page") || 1);
+      const query = new URLSearchParams({
+        select: "slug,title,created_at",
+        site_scope: "eq.dekhocampus",
+        status: "eq.Published",
+        is_active: "eq.true",
+        order: "created_at.desc",
+        offset: String((page - 1) * 12),
+        limit: "13",
+      });
+      try {
+        const articlesResponse = await fetch(`${API_ORIGIN}/v1/rest/articles?${query}`, {
+          headers: { accept: "application/json" },
+          cf: { cacheEverything: true, cacheTtl: 300 },
+        });
+        if (!articlesResponse.ok) throw new Error(`Articles API returned ${articlesResponse.status}`);
+        const payload = await articlesResponse.json();
+        const articles = Array.isArray(payload) ? payload : payload?.data || [];
+        if (page > 1 && articles.length === 0) metadata = { ...metadata, indexable: false, notFound: true };
+        else metadata = newsListingEdgeSeo(articles.slice(0, 12), url, page, articles.length > 12);
+      } catch (error) {
+        console.error(JSON.stringify({ event: "news_listing_prerender_failed", message: error instanceof Error ? error.message : String(error) }));
+      }
+    }
     const articleMatch = url.pathname.match(/^\/news\/([^/]+)\/?$/);
     if (articleMatch && articleMatch[1] !== "tag") {
       const query = new URLSearchParams({

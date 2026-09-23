@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor, entityEdgeSeo } from "../../public/edge-seo.js";
+import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor, entityEdgeSeo, newsListingEdgeSeo } from "../../public/edge-seo.js";
 
 describe("Cloudflare edge SEO", () => {
   it("serves self-canonical metadata for an indexable college filter", () => {
@@ -38,6 +38,27 @@ describe("Cloudflare edge SEO", () => {
     expect(output).toContain("Admission Update 2026 | Education News | DekhoCampus");
     expect(output).toContain('rel="canonical" href="https://dekhocampus.com/news/admission-update-2026"');
     expect(output).not.toContain("<title>Home</title>");
+  });
+
+  it("makes news archive pages self-canonical and keeps other news queries out of the index", () => {
+    expect(edgeSeoFor("https://dekhocampus.com/news?page=2").canonical).toBe("https://dekhocampus.com/news?page=2");
+    expect(edgeSeoFor("https://dekhocampus.com/news?page=2").indexable).toBe(true);
+    expect(edgeSeoFor("https://dekhocampus.com/news?page=1").indexable).toBe(false);
+    expect(edgeSeoFor("https://dekhocampus.com/news?search=jee").indexable).toBe(false);
+  });
+
+  it("puts crawlable news links in the first response without the homepage shell", () => {
+    const metadata = newsListingEdgeSeo([
+      { slug: "jee-main-2027", title: "JEE Main 2027 <Update>" },
+    ], new URL("https://dekhocampus.com/news?page=2"), 2, true);
+    const html = '<html><head><title>Home</title></head><body><div id="root"><div id="dc-first-paint-shell" hidden><header></header><main><h1>Discover Your Ideal Path</h1></main></div></div></body></html>';
+    const output = applyEdgeSeo(html, metadata);
+    expect(output).toContain('<a href="/news/jee-main-2027">JEE Main 2027 &lt;Update&gt;</a>');
+    expect(output).toContain('<a href="/news">Newer articles</a>');
+    expect(output).toContain('<a href="/news?page=3">Older articles</a>');
+    expect(output).toContain('rel="canonical" href="https://dekhocampus.com/news?page=2"');
+    expect(output).not.toContain("Discover Your Ideal Path");
+    expect((output.match(/<h1\b/g) || []).length).toBe(1);
   });
 
   it("prerenders published article content and NewsArticle schema", () => {
