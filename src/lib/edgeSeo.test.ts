@@ -87,6 +87,23 @@ describe("Cloudflare edge SEO", () => {
     expect(output).not.toContain("javascript:");
   });
 
+  it("keeps a single H1 and matches the author profile, publication time and verified CBSE links", () => {
+    const metadata = articleEdgeSeo({
+      title: "CBSE Sample Papers 2027 Released for Class 10, 12: Download SQP",
+      content: "<h1>Repeat headline</h1><h2>Click here to Download SQPs</h2><p>Check the official papers.</p>",
+      author: "DekhoCampus Editorial",
+      resolved_author: { name: "Meenakshi Iyer", slug: "meenakshi-iyer" },
+      created_at: "2026-09-23T12:34:00.000Z",
+    }, new URL("https://dekhocampus.com/news/cbse-sample-papers-2027"));
+    const output = applyEdgeSeo('<html><head><title>Home</title></head><body><div id="root"></div></body></html>', metadata);
+    expect((output.match(/<h1\b/g) || []).length).toBe(1);
+    expect(output).toContain('href="/author/meenakshi-iyer"');
+    expect(output).toContain('datetime="2026-09-23T12:34:00.000Z"');
+    expect(output).toContain('href="https://cbseacademic.nic.in/SQP_CLASSX_2026-27.html"');
+    expect(output).toContain('href="https://cbseacademic.nic.in/SQP_CLASSXII_2026-27.html"');
+    expect(output).toContain('"@type":"Person","name":"Meenakshi Iyer","url":"https://dekhocampus.com/author/meenakshi-iyer"');
+  });
+
   it("prerenders canonical college images and entity schema for crawlers", () => {
     const metadata = entityEdgeSeo({
       name: "Lovely Professional University",

@@ -1,19 +1,12 @@
 import type { HTMLAttributes } from "react";
 
-const INDIA_TIME_ZONE = "Asia/Kolkata";
-const dayFormatter = new Intl.DateTimeFormat("en-IN", {
-  timeZone: INDIA_TIME_ZONE,
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
-/** Returns true when an article was published on the current India calendar day. */
+/** Keep recent-news badges visible across midnight, but never on stale stories. */
 export function isArticlePublishedToday(createdAt: string | Date | null | undefined, now: Date = new Date()) {
   if (!createdAt) return false;
   const published = new Date(createdAt);
   if (Number.isNaN(published.getTime())) return false;
-  return dayFormatter.format(published) === dayFormatter.format(now);
+  const age = now.getTime() - published.getTime();
+  return age >= 0 && age < 24 * 60 * 60 * 1000;
 }
 
 interface LiveNewsBadgeProps extends HTMLAttributes<HTMLSpanElement> {
@@ -26,7 +19,7 @@ export function LiveNewsBadge({ intensity = "low", className = "", ...props }: L
     <span
       {...props}
       role="status"
-      aria-label="Live news published today"
+      aria-label="Recent news published within the last 24 hours"
       className={`inline-flex items-center gap-1.5 rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.08em] text-white shadow-sm ${className}`}
     >
       <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden="true">

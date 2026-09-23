@@ -181,14 +181,33 @@ function articlePrerenderBlocks(value) {
   const pattern = /<(h2|h3|p|li)\b[^>]*>([\s\S]*?)<\/\1>/gi;
   let match;
   while ((match = pattern.exec(safe)) && blocks.length < 80) {
-    const text = articlePlainText(match[2]);
+    const links = [];
+    const withLinkTokens = match[2].replace(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_, href, label) => {
+      try {
+        const parsed = new URL(href, SITE_URL);
+        if (!/^https?:$/.test(parsed.protocol)) return label;
+        const token = `DCLINKTOKEN${links.length}END`;
+        links.push({ token, href: parsed.href, label: articlePlainText(label) });
+        return token;
+      } catch { return label; }
+    });
+    const text = articlePlainText(withLinkTokens);
     if (!text) continue;
     const tag = match[1].toLowerCase() === "li" ? "p" : match[1].toLowerCase();
-    blocks.push(`<${tag}>${escapeHtml(text)}</${tag}>`);
+    let safeText = escapeHtml(text);
+    for (const link of links) safeText = safeText.replace(link.token, `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`);
+    blocks.push(`<${tag}>${safeText}</${tag}>`);
   }
   if (blocks.length) return blocks.join("");
   const fallback = articlePlainText(safe);
   return fallback ? `<p>${escapeHtml(fallback)}</p>` : "";
+}
+
+function addCbseSamplePaperLinks(title, content) {
+  if (!/CBSE Sample Papers 2027/i.test(String(title || "")) || /SQP_CLASSX(?:II)?_2026-27\.html/i.test(String(content || ""))) return content;
+  const links = '<p>Download the official <a href="https://cbseacademic.nic.in/SQP_CLASSX_2026-27.html">CBSE Class 10 sample papers and marking schemes</a> or the <a href="https://cbseacademic.nic.in/SQP_CLASSXII_2026-27.html">CBSE Class 12 sample papers and marking schemes</a>. Choose your subject on the CBSE page.</p>';
+  const heading = /(<h[2-4]\b[^>]*>\s*Click here to Download SQPs\s*<\/h[2-4]>)/i;
+  return heading.test(content) ? content.replace(heading, `$1${links}`) : `${links}${content}`;
 }
 
 function absoluteMediaUrl(value) {
@@ -349,6 +368,13 @@ export function articleEdgeSeo(article, url) {
   const imageAlt = String(article.title || title);
   const publishedAt = article.published_at || article.created_at;
   const modifiedAt = article.updated_at || publishedAt;
+  const authorName = String(article.resolved_author?.name || article.author || "DekhoCampus Editorial");
+  const authorSlug = String(article.resolved_author?.slug || "");
+  const authorIsOrganization = /dekhocampus/i.test(authorName);
+  const author = { "@type": authorIsOrganization ? "Organization" : "Person", name: authorName, ...(authorSlug ? { url: `${SITE_URL}/author/${encodeURIComponent(authorSlug)}` } : authorIsOrganization ? { url: `${SITE_URL}/about-us` } : {}) };
+  const publicationLabel = publishedAt && Number.isFinite(new Date(publishedAt).getTime())
+    ? new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }).format(new Date(publishedAt))
+    : "";
   return {
     canonical,
     description,
@@ -394,13 +420,13 @@ export function articleEdgeSeo(article, url) {
           ...(image ? { image: [image] } : {}),
           ...(publishedAt ? { datePublished: publishedAt } : {}),
           ...(modifiedAt ? { dateModified: modifiedAt } : {}),
-          author: { "@type": "Organization", name: article.author || "DekhoCampus Editorial", url: `${SITE_URL}/about-us` },
+          author,
           publisher: { "@id": `${SITE_URL}/#organization` },
           mainEntityOfPage: { "@id": `${canonical}#webpage` },
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(article.title || title)}</h1>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(article.content)}</article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(article.title || title)}</h1><p>By ${authorSlug ? `<a href="/author/${encodeURIComponent(authorSlug)}">${escapeHtml(authorName)}</a>` : escapeHtml(authorName)}${publicationLabel ? ` · <time datetime="${escapeHtml(publishedAt)}">${escapeHtml(publicationLabel)} IST</time>` : ""}</p>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(addCbseSamplePaperLinks(article.title, article.content))}</article>`,
   };
 }
 

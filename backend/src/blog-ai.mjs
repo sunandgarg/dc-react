@@ -62,7 +62,7 @@ export const DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY = Object.freeze({
   ],
 });
 const HUMAN_EDITORIAL_RULES_TEXT = `Use the ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.persona} persona for ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.audience}. Voice: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.voice}. ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.formatting} Pacing: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.pacing}. Syntax: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.syntax} Structure: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.structure}. Semantic structure: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.semantic_structure} Information gain: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.information_gain} Vocabulary: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.vocabulary} Anti-symmetry: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.anti_symmetry} Batch variation: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.batch_variation} Start with a topic-specific hook that gives the reader the useful consequence immediately, never with a prompt label. Use contractions, direct reader address and occasional rhetorical questions when they sound natural. Do not invent personal experience, credentials, quotes or outcomes, and do not introduce spelling mistakes or claim the copy is undetectable. Avoid raw Markdown headings, fenced code, Markdown bullets, Markdown tables, bold or italic markers. The page renderer still needs semantic HTML for its existing SEO and accessibility contract. Never publish any banned wording from this list: ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.join(", ")}.`;
-const BLOG_MODEL_SYSTEM_RULES = `Return valid JSON only. Write factual, original Indian editorial English using the DekhoCampus human editorial policy. Do not leak research URLs, citations, footnotes, private source metadata, competitor promotion, attribution phrases, quality scores or AI process language into publishable fields. Official authorities, universities, exam bodies and named institutions may be mentioned when the supplied evidence supports them; naming the real institution is required when it makes the rule clearer. Do not copy or spin another page. Never begin with prompt residue such as Answer first:, Answer:, Executive summary: or Here is the answer:. Never flatten a comparison matrix into a plain-text label stack. ${HUMAN_EDITORIAL_RULES_TEXT} Keep normal paragraphs concise and edited. The renderer requires semantic HTML, not Markdown.`;
+const BLOG_MODEL_SYSTEM_RULES = `Return valid JSON only. Write factual, original Indian editorial English using the DekhoCampus human editorial policy. Do not leak unapproved research URLs, citations, footnotes, private source metadata, competitor promotion, quality scores or AI process language into publishable fields. The only permitted external anchors are exact, fetched official URLs explicitly allowed in the task prompt; link them in the relevant paragraph, never in a boilerplate sources block. Official authorities, universities, exam bodies and named institutions may be mentioned when the supplied evidence supports them; naming the real institution is required when it makes the rule clearer. Do not copy or spin another page. Never begin with prompt residue such as Answer first:, Answer:, Executive summary: or Here is the answer:. Never flatten a comparison matrix into a plain-text label stack. ${HUMAN_EDITORIAL_RULES_TEXT} Keep normal paragraphs concise and edited. The renderer requires semantic HTML, not Markdown.`;
 const SARKARI_ARTICLE_CATEGORIES = new Set(["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"]);
 const OPENAI_TEXT_PRICING_PER_MILLION = {
   "gpt-6-sol": { input: 2, cachedInput: 0.2, output: 10 },
@@ -239,7 +239,29 @@ const stripPublishedAttributionPhrases = (value) => String(value || "")
   .replace(/\breports? (?:say|says|suggest|suggests|indicate|indicates)\b[:,]?\s*/gi, "")
   .replace(/\b(?:information|data) (?:from|published by)\b\s*/gi, "");
 
-export const stripPublishedSourceReferences = (value) => stripPublishedAttributionPhrases(String(value || "")
+export function verifiedOfficialExternalLinks(signals = []) {
+  return [...new Set((Array.isArray(signals) ? signals : []).flatMap((signal) => {
+    try {
+      const url = new URL(String(signal.url || ""));
+      if (url.protocol !== "https:" || url.username || url.password) return [];
+      const officialType = /^(official|government|regulator|university)$/i.test(String(signal?.source_type || ""));
+      const officialHost = /(?:\.gov\.in|\.nic\.in|\.ac\.in)$/i.test(url.hostname);
+      if (!officialType && !officialHost) return [];
+      return [url.href];
+    } catch { return []; }
+  }))].slice(0, 4);
+}
+
+export const stripPublishedSourceReferences = (value, allowedOfficialUrls = []) => {
+  const allowed = new Set(allowedOfficialUrls);
+  const retained = [];
+  const marked = String(value || "").replace(/<a\b[^>]*href=["'](https?:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (full, href) => {
+    if (!allowed.has(href)) return full;
+    const token = `DCVERIFIEDOFFICIALLINK${retained.length}END`;
+    retained.push({ token, full });
+    return token;
+  });
+  let cleaned = stripPublishedAttributionPhrases(marked
   .replace(/<h[1-6][^>]*>\s*(?:sources?|references?|citations?|bibliography|credits?)[\s\S]*$/i, "")
   .replace(/<(p|li)[^>]*>(?:(?!<\/\1>)[\s\S])*(?:college\s*dunia|college\s*dekho|shiksha|careers\s*360|kollege\s*apply|get\s*my\s*uni|pagal\s*guy|sarvgyan)(?:(?!<\/\1>)[\s\S])*<\/\1>/gi, "")
   .replace(/href=(["'])https?:\/\/(?:www\.)?dekhocampus\.com(\/[^"']*)\1/gi, 'href="$2"')
@@ -249,6 +271,9 @@ export const stripPublishedSourceReferences = (value) => stripPublishedAttributi
   .replace(/\s*\((?:source|citation|reference)\s*:[^)]+\)/gi, "")
   .replace(/[\u2013\u2014]/g, "-")
 ).replace(/\s{2,}/g, " ").trim();
+  for (const { token, full } of retained) cleaned = cleaned.replace(token, full);
+  return cleaned;
+};
 
 // FAQ records are persisted separately and rendered by the article FAQ
 // component. Remove a model-created FAQ block before it can become duplicate
@@ -1801,6 +1826,7 @@ export function articlePrompt(topic, signals, wordLimit = 0, correctionIssues = 
     ? topic.search_intent
     : "Informational").trim();
   const verifiedInternalLinks = verifiedInternalLinksForTopic(topic, normalizedScope);
+  const verifiedExternalLinks = verifiedOfficialExternalLinks(signals);
   const topicBrief = typeof topic === "string"
     ? { title: topic, primary_keyword: primaryKeyword, secondary_keywords: secondaryKeywords, search_intent: searchIntent }
     : {
@@ -1842,13 +1868,14 @@ Editorial contract:
 - Scope requirements: ${scopeRules}
 ${correction}
 
-Private fact-checking context: ${JSON.stringify(signals)}. Synthesize facts and add original decision value. Never copy, lightly rewrite, spin, or preserve the structure of one source. Do not leak research URLs, citations, footnotes, reference lists, bibliographies, research notes or attribution phrases such as "according to", "as reported by", or "sources suggest" into a publishable field. You may and should name an official authority, university, exam body or institution when the supplied evidence supports the name and it makes the reader's decision clearer. Do not promote a competitor or name a research publisher merely to decorate the copy.
+Private fact-checking context: ${JSON.stringify(signals)}. Synthesize facts and add original decision value. Never copy, lightly rewrite, spin, or preserve the structure of one source. Do not leak unapproved research URLs, footnotes, reference lists, bibliographies or research notes into a publishable field. You may and should name an official authority, university, exam body or institution when the supplied evidence supports the name and it makes the reader's decision clearer. Do not promote a competitor or name a research publisher merely to decorate the copy.
 
 People-first trust contract:
 - WHO: write for the stated student and parent audience under the real configured byline; never invent credentials, interviews, personal use, first-hand testing or lived experience.
 - HOW: use the private research only to verify claims, distinguish confirmed facts from interpretation, and make time-sensitive uncertainty explicit.
 - WHY: help the reader make a safer education decision or complete a concrete next step, not merely attract search visits or restate another page.
 - Add substantial topic-specific value through comparison, calculation, chronology, eligibility interpretation, document planning, mistake prevention or decision guidance. If the evidence cannot support a useful claim, omit it.
+- For a news update, state the precise confirmed change, which official body issued it, whom it affects and one useful consequence or verification detail missing from a generic rewrite. If the fetched evidence cannot establish those facts, do not frame the article as breaking news.
 
 E-E-A-T execution:
 - Experience: include practical student scenarios, consequences, checklists or decision steps supported by the evidence, but never pretend the author personally experienced them.
@@ -1883,7 +1910,8 @@ Search and page structure:
 - Front-load the primary keyword in meta_title, keep it within the first 100 words, use the exact phrase naturally in exactly 1-2 H2 headings, and use it naturally 3-5 times across the article body. Integrate secondary keywords only where they help the reader. Never keyword-stuff or damage clarity to hit a count.
 - Use descriptive H2/H3 headings, bullets where useful, and at least one genuine comparison or summary table with labelled headers when a table improves the decision. Never turn table headings and cells into a plain-text stack. The table must condense a useful decision, not repeat nearby prose.
 - Add information competitors often omit: evidence-supported specifics, realistic practical examples and concrete actions. Every example must be plausible and must not be presented as personal experience.
-- Verified internal-link context: ${JSON.stringify(verifiedInternalLinks)}. Include at least one of these links naturally in content_html using a descriptive anchor and its exact relative path. Use up to four only when they genuinely help the reader. Never invent a path and never add an external link.
+- Verified internal-link context: ${JSON.stringify(verifiedInternalLinks)}. Add one to four distinct, relevant internal links naturally in content_html using descriptive anchors and exact relative paths. Vary the count and destinations by topic rather than always using the same navigation link. Never invent a path.
+- Verified official external-link context: ${JSON.stringify(verifiedExternalLinks)}. If a fetched official URL directly supports a claim or reader action, add one to four relevant contextual anchors using only exact URLs from this list. If this list is empty or none of its pages matches the topic, add no external link and do not guess one. Never link to a competitor, RSS feed or generic research signal. Do not append a generic source list.
 - The page UI supplies the real author or reviewer and Last updated date. Do not invent a byline, credential, correction history or editorial-process note inside content_html.
 
 Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}. Return strict JSON with clean semantic HTML in content_html, not Markdown, because the page renderer supplies the H1 and renders the body HTML. Write a complete, specific, accurate title of roughly 55-85 characters preserving the key exam, institution, authority, date or outcome. Write a click-worthy meta_title of no more than 60 characters with the primary keyword front-loaded, and a benefit-led meta_description of no more than 155 characters. Set hero_hook exactly equal to title. Open with a concise 2-3 sentence answer that identifies the entity, current consequence and next useful action. Answer one identifiable search intent and deliver the unique value through evidence-backed comparison, calculation, timeline, checklist, interpretation or decision guidance beyond a rewritten announcement. Build topic-specific sections instead of a reusable template. Every section must help the reader decide, act, avoid a mistake or understand a concrete consequence.
@@ -1925,7 +1953,7 @@ export function normalizeGeneratedFaqs(value) {
   }).slice(0, 10);
 }
 
-export function normalizeGeneratedArticlePayload(value = {}) {
+export function normalizeGeneratedArticlePayload(value = {}, allowedOfficialUrls = []) {
   const wrappers = [value, value?.article, value?.result?.article, value?.result, value?.data]
     .filter((candidate) => candidate && typeof candidate === "object" && !Array.isArray(candidate));
   const completeness = (candidate) => {
@@ -1942,7 +1970,7 @@ export function normalizeGeneratedArticlePayload(value = {}) {
     ...source,
     title: stripPublishedPlainText(source.title || source.headline || ""),
     description: stripPublishedPlainText(source.description || source.summary || ""),
-    content_html: stripDedicatedFaqBlock(stripPublishedSourceReferences(source.content_html || source.content || source.body_html || source.html || "")),
+    content_html: stripDedicatedFaqBlock(stripPublishedSourceReferences(source.content_html || source.content || source.body_html || source.html || "", allowedOfficialUrls)),
     meta_title: stripPublishedPlainText(source.meta_title || source.seo_title || ""),
     meta_description: stripPublishedPlainText(source.meta_description || source.seo_description || ""),
     meta_keywords: stripPublishedPlainText(source.meta_keywords || source.keywords || ""),
@@ -2003,8 +2031,11 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   const hasFlattenedTableCopy = containsFlattenedTableCopy(body, contentHtml);
   const hasFormulaicOutline = hasFormulaicSectionSequence(headings);
   const verificationMentions = body.match(GENERIC_VERIFICATION_PATTERN) || [];
-  const evidenceSpecificity = hasEvidenceSpecificity(body, editorial.evidenceSignals || []);
+  const evidenceSpecificity = hasEvidenceSpecificity(body, rawEditorialSettings.evidenceSignals || []);
   const internalLinks = [...contentHtml.matchAll(/<a\b[^>]*href=["'](\/(?!\/)(?:news|exams|courses|colleges|scholarships|study-material)(?:[/?#][^"']*)?)["']/gi)];
+  const officialUrls = new Set(verifiedOfficialExternalLinks(rawEditorialSettings.evidenceSignals || []));
+  const externalLinks = [...contentHtml.matchAll(/<a\b[^>]*href=["'](https?:\/\/[^"']+)["']/gi)].map((match) => match[1]);
+  const unsafeExternalLinks = externalLinks.filter((url) => !officialUrls.has(url));
 
   check("Specific title", titleLength >= 45 && titleLength <= 95 && !/\.\.\.|complete guide|everything you need to know/i.test(String(draft?.title || "")), 5, "title must be specific, complete and 45-95 characters");
   check("Search metadata", metaTitleLength >= 35 && metaTitleLength <= 60 && metaDescriptionLength >= 100 && metaDescriptionLength <= 155, 8, "meta title must be 35-60 characters and meta description must be 100-155 characters");
@@ -2013,6 +2044,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   check("Descriptive structure", headings.length >= 3, 7, "article needs at least three descriptive H2/H3 sections");
   check("Scannable evidence", /<(?:ul|ol)\b/i.test(contentHtml), 2, "article needs at least one useful bullet or numbered list");
   check("Verified internal linking", internalLinks.length >= 1, 3, "article needs at least one verified DekhoCampus internal link", true);
+  check("Relevant link limits", internalLinks.length <= 4 && externalLinks.length <= 4 && unsafeExternalLinks.length === 0, 2, "use at most four distinct internal and four exact verified official external links; never invent an external URL", true);
   check("Decision table", /<table\b/i.test(contentHtml) && /<th\b/i.test(contentHtml), 3, "article needs at least one comparison or summary table with labelled headers", true);
   const missingSections = editorial.required_sections.filter((section) => {
     const normalizedSection = normalizeArticleTitle(section);
@@ -2044,7 +2076,8 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   }
   check("Intent and entity focus", topicFocused, 10, "article does not stay focused on the requested subject", true);
   check("Single page H1", !/<h1\b/i.test(contentHtml), 0, "content_html contains an H1 even though the page title is already the H1", true);
-  check("No published research leakage", !/https?:\/\/|\bwww\.|<h[2-4][^>]*>\s*(?:sources?|references?|citations?|bibliography|credits?)/i.test(contentHtml), 5, "published content contains a source URL or source section", true);
+  const withoutAllowedAnchors = contentHtml.replace(/<a\b[^>]*href=["']https?:\/\/[^"']+["'][^>]*>[\s\S]*?<\/a>/gi, "");
+  check("No published research leakage", !/https?:\/\/|\bwww\.|<h[2-4][^>]*>\s*(?:sources?|references?|citations?|bibliography|credits?)/i.test(withoutAllowedAnchors), 5, "published content contains a bare research URL or source section", true);
   check("No competitor or attribution leakage", !PUBLISHED_COMPETITOR_PATTERN.test(publishedText) && !PUBLISHED_ATTRIBUTION_PATTERN.test(publishedText), 0, "published content contains a competitor name or source-attribution phrase", true);
   check("No long dash characters", !/[\u2013\u2014]/.test(publishedText), 0, "published content contains an em dash or en dash", true);
   check("No raw Markdown syntax", !MARKDOWN_ARTIFACT_PATTERN.test(contentHtml), 2, "content_html contains Markdown markers; use semantic HTML only", true);
@@ -2131,7 +2164,7 @@ Draft: ${JSON.stringify({ title: draft.title, description: draft.description, me
 
 Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, answer-first usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ isolation. Apply a people-first trust review and score all four E-E-A-T dimensions: Experience through useful evidence-backed scenarios or actions without fabricated first-hand claims; Expertise through accurate explanation and reasoning; Authoritativeness through correct identification of responsible entities and rules; and Trust through consistency, uncertainty disclosure and safe verification guidance. The article must clearly serve the intended reader, add substantial topic-specific value, distinguish verified facts from interpretation, avoid fabricated experience or expertise, and exist to help a decision or action rather than merely capture search traffic. Confirm that the first 2-3 sentences answer the intent directly, each prose-led main H2 has a concise direct answer in its first paragraph where appropriate, useful facts or steps use semantic lists, the primary topic phrase appears naturally near the start and in 1-2 useful H2 headings, the meta title is no longer than 60 characters, the meta description is no longer than 155 characters, and the body contains a genuine comparison or summary table. Treat an evidence-backed data point, named authority fact or clearly labelled expert interpretation as information gain; reject invented surveys, benchmarks, quotes or statistics. Confirm FAQs are distinct records in the faqs array and are not duplicated in content_html.
 
-Also score the internal human editorial rubric exactly as follows: natural sentence variation 20, specific useful information 20, non-repetitive language 15, logical human flow 15, appropriate Indian context 10, balanced non-promotional tone 10, and evidence of careful editing 10. Expect deliberate rhythm changes, including occasional 3-6 word sentences alongside nuanced multi-clause sentences, active voice, natural contractions and contextual transitions. Reject competitor promotion or private-source attribution, citations, references, footnotes, external links, attribution phrases, em dash, en dash, AI-process wording, invented byline, duplicated H1, repeated fact, or paragraph that reads like an unedited template. Official authorities, universities and exam bodies should be named when supported by the private evidence; hiding every rule behind "a university may" is a specificity failure. Reject an opening that literally starts with "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Reject a flattened plain-text comparison matrix, especially a run of labels such as Student profile, Target courses, Risk to check and Safer approach. Reject a mechanically repeated section order such as Executive summary, Key facts, Conceptual rationale, Step-by-step guide, Risk matrix, Red flags and FAQs when the topic does not require it. Check that repeated official-verification advice has been consolidated rather than restated under every heading, and prefer named, evidence-supported examples when they genuinely clarify the decision. Reject these words and phrases in publishable copy: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly and in summary. Normal prose paragraphs should usually contain two to four sentences. Do not reveal this scoring rubric in the article.
+Also score the internal human editorial rubric exactly as follows: natural sentence variation 20, specific useful information 20, non-repetitive language 15, logical human flow 15, appropriate Indian context 10, balanced non-promotional tone 10, and evidence of careful editing 10. Expect deliberate rhythm changes, including occasional 3-6 word sentences alongside nuanced multi-clause sentences, active voice, natural contractions and contextual transitions. Reject competitor promotion or private-source attribution, citations, references, footnotes, unverified external links, attribution phrases, em dash, en dash, AI-process wording, invented byline, duplicated H1, repeated fact, or paragraph that reads like an unedited template. Allow only contextual official links whose exact URL appears in the fetched official evidence; do not require an external link when the evidence offers none. Official authorities, universities and exam bodies should be named when supported by the private evidence; hiding every rule behind "a university may" is a specificity failure. Reject an opening that literally starts with "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Reject a flattened plain-text comparison matrix, especially a run of labels such as Student profile, Target courses, Risk to check and Safer approach. Reject a mechanically repeated section order such as Executive summary, Key facts, Conceptual rationale, Step-by-step guide, Risk matrix, Red flags and FAQs when the topic does not require it. Check that repeated official-verification advice has been consolidated rather than restated under every heading, and prefer named, evidence-supported examples when they genuinely clarify the decision. Reject these words and phrases in publishable copy: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly and in summary. Normal prose paragraphs should usually contain two to four sentences. Do not reveal this scoring rubric in the article.
 Reject raw Markdown syntax, including hash headings, fenced code, Markdown bullets, numbered markers, pipe tables and bold or italic markers. Require a genuinely human cadence with at least one short punchy sentence and one longer explanatory sentence, but do not reward spelling mistakes or fake slang. Apply the full DekhoCampus banned lexicon from the human editorial policy, not only the short legacy list.
 
 Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. Mark publishable false only for a material factual, safety, intent, completeness or reader-action defect. Optional polish must not block publication; an article scoring 85-89 can be publishable when it is accurate, complete and useful. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`;
@@ -2156,6 +2189,7 @@ function articleRevisionPromptBase(draft, topic, signals, correctionIssues = [],
   const profile = articleSiteProfile(normalizedScope);
   const editorial = normalizeBlogAgentSettings({ audience: profile.audience, ...rawEditorialSettings });
   const verifiedInternalLinks = verifiedInternalLinksForTopic(topic, normalizedScope);
+  const verifiedExternalLinks = verifiedOfficialExternalLinks(signals);
   const feedback = correctionIssues
     .map((issue) => stripHtml(issue).trim())
     .filter(Boolean)
@@ -2172,9 +2206,10 @@ Review corrections: ${JSON.stringify(feedback)}
 Private fact-checking context: ${JSON.stringify(signals)}
 Existing draft: ${JSON.stringify({ title: draft?.title, slug: draft?.slug, description: draft?.description, content_html: draft?.content_html, meta_title: draft?.meta_title, meta_description: draft?.meta_description, meta_keywords: draft?.meta_keywords, tags: draft?.tags, category: draft?.category, hero_hook: draft?.hero_hook, faqs: draft?.faqs })}
 
-Verified internal-link context: ${JSON.stringify(verifiedInternalLinks)}. Keep or add at least one natural internal link in content_html using an exact relative path from this list and descriptive anchor text. Never invent a path or add an external link.
+Verified internal-link context: ${JSON.stringify(verifiedInternalLinks)}. Keep or add one to four distinct, relevant internal links in content_html using exact relative paths and descriptive anchors. Vary the count by topic. Never invent a path.
+Verified official external-link context: ${JSON.stringify(verifiedExternalLinks)}. Use one to four exact URLs from this list as contextual external anchors only if the fetched pages directly support the claim or reader action. If none fits, add no external link; never invent one or link a competitor. No generic sources block.
 
-Return the complete replacement {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}, not a patch. Return strict JSON with semantic HTML in content_html, not Markdown. Preserve the article's exact search intent and answer it directly in the first 2-3 sentences. Make the revision people-first and satisfy all four E-E-A-T dimensions: add evidence-backed practical experience without claiming personal experience, demonstrate expertise through accurate explanation, establish authoritativeness by naming the responsible entity and separating rules from interpretation, and preserve trust through consistent facts, uncertainty disclosure and safe verification guidance. Never invent personal experience, expertise, interviews or testing. For any time-sensitive detail not established by the private context, remove unsupported certainty, state what the reader must verify on the relevant official authority portal, and do not invent a date, option, process or URL. Front-load the primary topic phrase in a click-worthy meta_title of no more than 60 characters; keep meta_description benefit-led and no more than 155 characters. Keep the primary topic phrase within the first 100 words, use it naturally in exactly 1-2 H2 headings and 3-5 times in the article body without keyword stuffing. Use the hybrid AEO/GEO structure: write real questions or decisions as semantic H2 headings, put a concise 40-60 word direct answer in the first paragraph under each prose-led main H2 when appropriate, and use semantic UL/OL lists for genuine statistics, steps or features. Include useful bullets and at least one genuine comparison or summary table with a thead, labelled th cells, tbody rows and real td values when a table helps; never paste table labels and cells as a plain-text stack. Add one evidence-backed data point, named authority fact or clearly labelled expert interpretation only when the private evidence supports it; never invent a survey, benchmark, quote or statistic. Keep 4-8 distinct FAQs in the faqs array only. Do not mirror their questions or answers in content_html because the page renders FAQs in a separate dedicated section. The page title is already the single H1, so use only H2/H3 in content_html. Keep normal paragraphs to two to four sentences and vary paragraph length. Use natural Indian English, active voice, contractions where natural, contextual transitions and deliberately varied rhythm, including occasional 3-6 word sentences alongside nuanced multi-clause sentences. Do not start with "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Do not force an Executive summary, Key facts, Conceptual rationale, Step-by-step guide, Risk matrix, Red flags, FAQs sequence; choose a topic-native structure and consolidate repeated official-verification advice. Add named, evidence-supported examples when they genuinely improve the reader's decision. Never use delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly or in summary. Remove repetitive or formulaic wording. Do not leak research URLs, citations, footnotes, attribution phrases, research notes, quality scores, AI comments or review feedback into any publishable field. Official authorities, universities and exam bodies may be named when supported by the private context. Never use an em dash or en dash.`;
+Return the complete replacement {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}, not a patch. Return strict JSON with semantic HTML in content_html, not Markdown. Preserve the article's exact search intent and answer it directly in the first 2-3 sentences. Make the revision people-first and satisfy all four E-E-A-T dimensions: add evidence-backed practical experience without claiming personal experience, demonstrate expertise through accurate explanation, establish authoritativeness by naming the responsible entity and separating rules from interpretation, and preserve trust through consistent facts, uncertainty disclosure and safe verification guidance. Never invent personal experience, expertise, interviews or testing. For any time-sensitive detail not established by the private context, remove unsupported certainty, state what the reader must verify on the relevant official authority portal, and do not invent a date, option, process or URL. Front-load the primary topic phrase in a click-worthy meta_title of no more than 60 characters; keep meta_description benefit-led and no more than 155 characters. Keep the primary topic phrase within the first 100 words, use it naturally in exactly 1-2 H2 headings and 3-5 times in the article body without keyword stuffing. Use the hybrid AEO/GEO structure: write real questions or decisions as semantic H2 headings, put a concise 40-60 word direct answer in the first paragraph under each prose-led main H2 when appropriate, and use semantic UL/OL lists for genuine statistics, steps or features. Include useful bullets and at least one genuine comparison or summary table with a thead, labelled th cells, tbody rows and real td values when a table helps; never paste table labels and cells as a plain-text stack. Add one evidence-backed data point, named authority fact or clearly labelled expert interpretation only when the private evidence supports it; never invent a survey, benchmark, quote or statistic. Keep 4-8 distinct FAQs in the faqs array only. Do not mirror their questions or answers in content_html because the page renders FAQs in a separate dedicated section. The page title is already the single H1, so use only H2/H3 in content_html. Keep normal paragraphs to two to four sentences and vary paragraph length. Use natural Indian English, active voice, contractions where natural, contextual transitions and deliberately varied rhythm, including occasional 3-6 word sentences alongside nuanced multi-clause sentences. Do not start with "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Do not force an Executive summary, Key facts, Conceptual rationale, Step-by-step guide, Risk matrix, Red flags, FAQs sequence; choose a topic-native structure and consolidate repeated official-verification advice. Add named, evidence-supported examples when they genuinely improve the reader's decision. Never use delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly or in summary. Remove repetitive or formulaic wording. Do not leak unapproved research URLs, citations, footnotes, research notes, quality scores, AI comments or review feedback into any publishable field. Official authorities, universities and exam bodies may be named when supported by the private context; exact fetched official URLs may be contextual anchors. Never use an em dash or en dash.`;
 }
 
 export function articleRevisionPrompt(draft, topic, signals, correctionIssues = [], rawEditorialSettings = {}, requestedSiteScope = "dekhocampus", batchSiblings = []) {
@@ -2214,14 +2249,15 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
     });
     model = generated.model;
     textProvider = generated.provider;
-    const generatedArticle = normalizeGeneratedArticlePayload(generated.result);
+    const officialUrls = verifiedOfficialExternalLinks(evidence);
+    const generatedArticle = normalizeGeneratedArticlePayload(generated.result, officialUrls);
     const title = stripPublishedPlainText(requiredTitle || generatedArticle.title || fallbackTitle);
     const slug = slugify(requiredTitle || generatedArticle.slug || generatedArticle.title || fallbackTitle);
     draft = {
       ...generatedArticle,
       title,
       slug,
-      content_html: ensureArticleInternalLink(stripCompetitorCredits(generatedArticle.content_html), topic, normalizedScope),
+      content_html: ensureArticleInternalLink(stripCompetitorCredits(generatedArticle.content_html, officialUrls), topic, normalizedScope),
       tags: Array.isArray(generatedArticle.tags) ? generatedArticle.tags : [],
       hero_hook: title,
       faqs: normalizeGeneratedFaqs(generatedArticle.faqs),
@@ -2291,12 +2327,12 @@ export async function handleBlogAiSettings(request, userId) {
   return { success: true };
 }
 
-function normalizeStudioDraft(value = {}, defaultCategory = "Education") {
+function normalizeStudioDraft(value = {}, defaultCategory = "Education", allowedOfficialUrls = []) {
   return {
     title: stripHtml(value.title).trim().slice(0, 300),
     slug: slugify(value.slug || value.title),
     description: stripHtml(value.description).trim().slice(0, 1_000),
-    content_html: stripDedicatedFaqBlock(stripCompetitorCredits(value.content_html || value.content)),
+    content_html: stripDedicatedFaqBlock(stripCompetitorCredits(value.content_html || value.content, allowedOfficialUrls)),
     meta_title: stripHtml(value.meta_title || value.title).trim().slice(0, 300),
     meta_description: stripHtml(value.meta_description || value.description).trim().slice(0, 1_000),
     meta_keywords: stripHtml(value.meta_keywords).trim().slice(0, 2_000),
@@ -2319,7 +2355,9 @@ async function publishBlogStudioDraft(body, userId) {
     ...(scopedSettings || fallbackSettings || {}),
     ...(siteScope === "sarkari" && !scopedSettings ? { audience: profile.audience } : {}),
   });
-  const draft = normalizeStudioDraft(body.draft, profile.defaultCategory);
+  const researchSources = normalizeStringList(body.research_sources, [], MAX_RESEARCH_SOURCES);
+  const evidenceUrls = researchSources.map((url) => ({ url, source_type: "research" }));
+  const draft = normalizeStudioDraft(body.draft, profile.defaultCategory, verifiedOfficialExternalLinks(evidenceUrls));
   if (siteScope === "sarkari" && !SARKARI_ARTICLE_CATEGORIES.has(draft.category)) draft.category = profile.defaultCategory;
   if (!draft.title || !draft.slug || !draft.content_html) {
     throw Object.assign(new Error("Title, slug and article content are required"), { status: 400, code: "ARTICLE_FIELDS_REQUIRED" });
@@ -2334,15 +2372,14 @@ async function publishBlogStudioDraft(body, userId) {
     const conflict = semantic.rejected[0] || {};
     throw Object.assign(new Error(`This draft overlaps existing coverage${conflict.conflicts_with ? `: ${conflict.conflicts_with}` : ""}`), { status: 409, code: "SEMANTIC_DUPLICATE_ARTICLE" });
   }
-  const deterministicQuality = assessGeneratedArticle(draft, draft, saved.word_limit, saved);
+  const deterministicQuality = assessGeneratedArticle(draft, draft, saved.word_limit, { ...saved, evidenceSignals: evidenceUrls });
   if (!deterministicQuality.passed) {
     throw Object.assign(new Error(`Article no longer meets the publishing quality gate: ${deterministicQuality.issues.join("; ")}`), { status: 422, code: "ARTICLE_QUALITY_GATE_FAILED" });
   }
-  const researchSources = normalizeStringList(body.research_sources, [], MAX_RESEARCH_SOURCES);
   const modelReview = await reviewGeneratedDraft(
     draft,
     draft,
-    researchSources.map((url) => ({ url, source_type: "research" })),
+    evidenceUrls,
     saved,
     saved.text_model,
     "blog-studio",
@@ -2369,6 +2406,7 @@ async function publishBlogStudioDraft(body, userId) {
   const uniqueLinks = links.filter((link, index) => links.findIndex((candidate) => (
     candidate.entity_type === link.entity_type && candidate.entity_slug === link.entity_slug
   )) === index);
+  const aiEditor = siteScope === "dekhocampus" ? await geethikaEditorialAuthor() : null;
   const article = await withArticleWriteLock(async (tx) => {
     await assertArticleTopicsAvailable([draft], { client: tx, siteScope });
     const created = await tx.articles.create({ data: {
@@ -2381,7 +2419,8 @@ async function publishBlogStudioDraft(body, userId) {
       content: draft.content_html,
       vertical: siteScope === "sarkari" ? "Government Jobs" : draft.vertical,
       category: draft.category,
-      author: siteScope === "sarkari" ? "Sarkari DekhoCampus Desk" : "DekhoCampus Editorial",
+      author: aiEditor?.name || "Sarkari DekhoCampus Desk",
+      author_id: aiEditor?.id || null,
       featured_image: draft.featured_image,
       source_logo: draft.source_logo || null,
       views: 0,
@@ -2547,6 +2586,15 @@ async function uniqueAutoArticleSlug(tx, siteScope, requestedSlug, reference = n
   throw new Error("Could not allocate a unique article slug");
 }
 
+async function geethikaEditorialAuthor(client = prisma) {
+  const author = await client.authors.findFirst({
+    where: { name: "Geethika Reddy", is_active: true },
+    select: { id: true, name: true },
+  });
+  if (!author) throw new Error("Geethika Reddy's active author profile is required for AI-blog publication");
+  return author;
+}
+
 async function saveGeneratedArticle(topic, settings, signals, entityContext = null, existingCoverage = null, coverageWindow = null) {
   const editorial = normalizeBlogAgentSettings(settings);
   const siteScope = "dekhocampus";
@@ -2581,23 +2629,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
   if (findDuplicateArticleTopic(draft, existing)) return null;
   const shouldReview = editorial.human_review_required || editorial.publish_status === "Draft";
   const status = shouldReview ? "Draft" : "Published";
-  const selectedAuthors = editorial.author_ids.length
-    ? await prisma.authors.findMany({
-      where: { id: { in: editorial.author_ids }, is_active: true },
-      select: { id: true, name: true },
-    })
-    : [];
-  const orderedAuthors = editorial.author_ids.flatMap((id) => {
-    const author = selectedAuthors.find((candidate) => candidate.id === id);
-    return author ? [author] : [];
-  });
-  let selectedAuthor = null;
-  let nextAuthorIndex = editorial.last_author_index || 0;
-  if (editorial.author_mode === "single") selectedAuthor = orderedAuthors[0] || null;
-  if (editorial.author_mode === "round_robin" && orderedAuthors.length) {
-    nextAuthorIndex = (Math.max(-1, Number(editorial.last_author_index) || -1) + 1) % orderedAuthors.length;
-    selectedAuthor = orderedAuthors[nextAuthorIndex];
-  }
+  const selectedAuthor = await geethikaEditorialAuthor();
   let article;
   try {
     article = await withArticleWriteLock(async (tx) => {
@@ -2613,9 +2645,6 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
       if (schedule) {
         await tx.article_links.create({ data: { id: randomUUID(), article_id: created.id, entity_type: schedule.entity_type.replace(/s$/, ""), entity_slug: schedule.entity_slug } });
         await tx.entity_article_publications.create({ data: { id: randomUUID(), schedule_id: schedule.id, article_id: created.id, entity_type: schedule.entity_type, entity_slug: schedule.entity_slug, topic_kind: "researched_update", generated_for_date: new Date() } });
-      }
-      if (editorial.author_mode === "round_robin" && selectedAuthor) {
-        await tx.blog_auto_agent_settings.update({ where: { id: "default" }, data: { last_author_index: nextAuthorIndex } }).catch(() => null);
       }
       return created;
     }, siteScope);

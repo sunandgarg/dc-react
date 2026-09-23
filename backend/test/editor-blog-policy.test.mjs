@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
+import { verifiedOfficialExternalLinks } from "../src/blog-ai.mjs";
 import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_BLOG_ANALYSIS_MODEL, DEFAULT_BLOG_WRITING_MODEL, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, articleWordToleranceRange, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, ensureArticleInternalLink, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, isCompactArticleWordTarget, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextJitteredBlogRunAt, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripDedicatedFaqBlock, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema, verifiedInternalLinksForTopic } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
@@ -150,7 +151,7 @@ test("production cadence is 48 gated posts per day with an explicit E-E-A-T cont
   assert.match(prompt, /natural Indian English/i);
   assert.match(prompt, /Do not put an H1 inside content_html/);
   assert.match(prompt, /Privately score natural sentence variation/);
-  assert.match(prompt, /Do not leak research URLs, citations, footnotes/);
+  assert.match(prompt, /Do not leak unapproved research URLs, footnotes/);
   assert.match(prompt, /veteran niche education journalist and senior SEO content strategist/i);
   assert.match(prompt, /first 2-3 sentences/i);
   assert.match(prompt, /Never begin the article with prompt residue/i);
@@ -223,13 +224,27 @@ test("AI articles receive a verified, topic-relevant internal link", () => {
   const prompt = articlePrompt("JEE Main 2027 counselling", [], 400, [], {});
   assert.match(prompt, /Verified internal-link context/);
   assert.match(prompt, /"path":"\/exams"/);
-  assert.match(prompt, /Include at least one of these links naturally/i);
+  assert.match(prompt, /Add one to four distinct, relevant internal links naturally/i);
+  assert.match(prompt, /Verified official external-link context/);
 });
 
 test("AI Blog Studio can select every saved competitor source", async () => {
   const panel = await readFile(new URL("../../src/components/admin/BlogAutoAgentPanel.tsx", import.meta.url), "utf8");
   assert.match(panel, /Select all competitors/);
   assert.match(panel, /source\.source_type === "competitor" \? \{ \.\.\.source, is_active: true \}/);
+});
+
+test("AI articles retain exact fetched official links but discard unverified external links", () => {
+  const official = "https://cbseacademic.nic.in/SQP_CLASSX_2026-27.html";
+  const signals = [
+    { source_type: "official", url: official },
+    { source_type: "competitor_gap", url: "https://example.com/article" },
+  ];
+  assert.deepEqual(verifiedOfficialExternalLinks(signals), [official]);
+  const input = `<p>Use <a href="${official}">CBSE Class 10 papers</a> and <a href="https://example.com/article">a copied guide</a>.</p>`;
+  const cleaned = stripPublishedSourceReferences(input, verifiedOfficialExternalLinks(signals));
+  assert.match(cleaned, /href="https:\/\/cbseacademic\.nic\.in/);
+  assert.doesNotMatch(cleaned, /example\.com/);
 });
 
 test("normalizes legacy Gemini models and classifies quota errors", () => {

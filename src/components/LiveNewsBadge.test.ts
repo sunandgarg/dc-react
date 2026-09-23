@@ -2,11 +2,14 @@ import { describe, expect, it } from "vitest";
 import { isArticlePublishedToday } from "./LiveNewsBadge";
 
 describe("isArticlePublishedToday", () => {
-  it("uses the India calendar day at midnight boundaries", () => {
+  it("uses a rolling 24-hour window across midnight", () => {
     const now = new Date("2026-09-22T00:00:00.000Z");
 
     expect(isArticlePublishedToday("2026-09-21T18:31:00.000Z", now)).toBe(true);
-    expect(isArticlePublishedToday("2026-09-21T18:29:00.000Z", now)).toBe(false);
+    expect(isArticlePublishedToday("2026-09-21T18:29:00.000Z", now)).toBe(true);
+    expect(isArticlePublishedToday("2026-09-21T00:00:01.000Z", now)).toBe(true);
+    expect(isArticlePublishedToday("2026-09-21T00:00:00.000Z", now)).toBe(false);
+    expect(isArticlePublishedToday("2026-09-22T00:01:00.000Z", now)).toBe(false);
   });
 
   it("rejects missing and invalid dates", () => {

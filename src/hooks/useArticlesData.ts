@@ -18,6 +18,7 @@ export type DbArticle = {
   vertical: string;
   category: string;
   author: string;
+  author_id?: string | null;
   featured_image: string;
   source_logo?: string | null;
   views: number;

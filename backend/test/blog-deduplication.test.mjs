@@ -216,7 +216,7 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
     faqs: [],
   }, "CAT 2026 preparation", 1200);
   assert.equal(bad.passed, false);
-  assert.ok(bad.issues.some((issue) => issue.includes("source URL")));
+  assert.ok(bad.issues.some((issue) => issue.includes("research URL")));
 
   const leaked = assessGeneratedArticle({
     title: "CAT 2026 Preparation Plan for Working Graduates",

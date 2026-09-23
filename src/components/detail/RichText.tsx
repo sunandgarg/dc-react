@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 interface RichTextProps {
   html?: string | null;
   className?: string;
+  demoteH1?: boolean;
 }
 
 /**
@@ -167,7 +168,7 @@ function markUnclosedAnchorTags(value: string): string {
   return repaired;
 }
 
-export function RichText({ html, className }: RichTextProps) {
+export function RichText({ html, className, demoteH1 = false }: RichTextProps) {
   const safe = useMemo(() => {
     if (!html) return "";
     const trimmed = markUnclosedAnchorTags(decodeLegacyHtml(html.trim()));
@@ -180,8 +181,10 @@ export function RichText({ html, className }: RichTextProps) {
       FORBID_ATTR: ["onerror","onclick","onload","onmouseover","onfocus","onblur"],
       ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|[#./])/i,
     });
-    return postProcess(cleaned);
-  }, [html]);
+    if (!demoteH1) return postProcess(cleaned);
+    const singleHeadlineBody = cleaned.replace(/<h1(\s[^>]*)?>/gi, "<h2$1>").replace(/<\/h1\s*>/gi, "</h2>");
+    return postProcess(singleHeadlineBody);
+  }, [html, demoteH1]);
 
   if (!html) return null;
   const trimmed = decodeLegacyHtml(html.trim());

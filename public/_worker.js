@@ -161,7 +161,7 @@ async function serveAsset(request, env) {
     const articleMatch = url.pathname.match(/^\/news\/([^/]+)\/?$/);
     if (articleMatch && articleMatch[1] !== "tag") {
       const query = new URLSearchParams({
-        select: "status,title,slug,description,content,author,featured_image,meta_title,meta_description,created_at,updated_at",
+        select: "status,title,slug,description,content,author,author_id,featured_image,meta_title,meta_description,created_at,updated_at",
         slug: `eq.${decodeURIComponent(articleMatch[1])}`,
         status: "eq.Published",
         is_active: "eq.true",
@@ -173,6 +173,19 @@ async function serveAsset(request, env) {
       });
       const payload = articleResponse.ok ? await articleResponse.json().catch(() => []) : [];
       const article = Array.isArray(payload) ? payload[0] : payload?.data?.[0];
+      if (article?.author_id) {
+        const authorQuery = new URLSearchParams({ select: "name,slug", id: `eq.${article.author_id}`, limit: "1" });
+        try {
+          const authorResponse = await fetch(`${API_ORIGIN}/v1/rest/authors?${authorQuery}`, {
+            headers: { accept: "application/json" },
+            cf: { cacheEverything: true, cacheTtl: 300 },
+          });
+          const authorPayload = authorResponse.ok ? await authorResponse.json() : [];
+          article.resolved_author = Array.isArray(authorPayload) ? authorPayload[0] : authorPayload?.data?.[0];
+        } catch (error) {
+          console.error(JSON.stringify({ event: "article_author_lookup_failed", message: error instanceof Error ? error.message : String(error) }));
+        }
+      }
       metadata = article
         ? articleEdgeSeo(article, url)
         : { ...metadata, indexable: false, notFound: true };

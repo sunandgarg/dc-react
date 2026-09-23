@@ -28,6 +28,9 @@ import { containsRichArticleHtml, stripVisibleArticleSources } from "@/lib/artic
 import { buildExamHref } from "@/lib/entityUrls";
 import { InstitutionLogo } from "@/components/InstitutionLogo";
 import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
+import { backendClient } from "@/integrations/backend/client";
+import { useQuery } from "@tanstack/react-query";
+import { addCbseSamplePaperLinks } from "@/lib/cbseSamplePaperLinks";
 
 // Heavy below-the-fold components - lazy loaded for faster initial paint
 const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(m => ({ default: m.AlsoCheckSection })), "AlsoCheckSection");
@@ -109,6 +112,7 @@ function ArticleMarkdown({ content }: { content: string }) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          h1: ({ children }) => <h2>{children}</h2>,
           h2: ({ children, ...props }) => <h2 id={slugifyHeading(String(children))} {...props}>{children}</h2>,
           h3: ({ children, ...props }) => <h3 id={slugifyHeading(String(children))} {...props}>{children}</h3>,
           table: ({ children, ...props }) => <div className="table-wrap"><table {...props}>{children}</table></div>,
@@ -158,6 +162,16 @@ export default function ArticleDetail() {
   const needsRedirect = !!(rawSlug && cleanSlug && cleanSlug !== rawSlug && cleanSlug !== decoded);
 
   const { data: dbArticle, isLoading: dbLoading } = useDbArticle(cleanSlug || rawSlug);
+  const { data: resolvedAuthor } = useQuery({
+    queryKey: ["article-author", dbArticle?.author_id],
+    enabled: !!dbArticle?.author_id,
+    queryFn: async () => {
+      const { data, error } = await backendClient.from("authors").select("name,slug").eq("id", dbArticle!.author_id!).maybeSingle();
+      if (error) throw error;
+      return data as { name: string; slug: string } | null;
+    },
+    staleTime: 5 * 60_000,
+  });
   const { data: sidebarArticles = [] } = useArticleSidebarArticles(60);
   const { data: importantExams = [] } = useImportantExams(6);
   const staticArticle = staticArticles.find((a) => a.slug === (cleanSlug || rawSlug));
@@ -170,12 +184,12 @@ export default function ArticleDetail() {
         slug: normalizeSlug(dbArticle.slug),
         title: dbArticle.title,
         excerpt: (dbArticle.description || "").replace(/<[^>]+>/g, " ").slice(0, 240) || text.slice(0, 240),
-        content: stripVisibleArticleSources(dbArticle.content || dbArticle.description || ""),
+        content: addCbseSamplePaperLinks(dbArticle.title, stripVisibleArticleSources(dbArticle.content || dbArticle.description || "")),
         category: dbArticle.category || "General",
         image: dbArticle.featured_image || "/placeholder.svg",
         readTime: `${mins} min read`,
         author: dbArticle.author || "DekhoCampus",
-        publishedAt: new Date(dbArticle.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+        publishedAt: new Date(dbArticle.created_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }),
         views: (dbArticle as any).views ?? 0,
         tags: dbArticle.tags || [],
         author_id: (dbArticle as any).author_id as string | undefined,
@@ -245,7 +259,7 @@ export default function ArticleDetail() {
           image: article.image ? [absoluteCanonical(article.image)] : undefined,
           datePublished: dbArticle?.created_at || undefined,
           dateModified: dbArticle?.updated_at || dbArticle?.created_at || undefined,
-          author: { "@type": article.author?.toLowerCase().includes("dekhocampus") ? "Organization" : "Person", name: article.author || "DekhoCampus" },
+          author: { "@type": (resolvedAuthor?.name || article.author)?.toLowerCase().includes("dekhocampus") ? "Organization" : "Person", name: resolvedAuthor?.name || article.author || "DekhoCampus", ...(resolvedAuthor?.slug ? { url: absoluteSiteUrl(`/author/${resolvedAuthor.slug}`) } : {}) },
           publisher: { "@id": organizationId },
           mainEntityOfPage: { "@id": `${articleCanonical}#webpage` },
           articleSection: article.category || undefined,
@@ -579,12 +593,15 @@ export default function ArticleDetail() {
               </figure>
 
               <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-2">
                 <Link
                   to={`/news?category=${encodeURIComponent(article.category)}`}
                   className="inline-flex items-center rounded-full border border-primary/15 bg-primary/5 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.18em] text-primary"
                 >
                   {article.category}
                 </Link>
+                {dbArticle?.created_at && isArticlePublishedToday(dbArticle.created_at) && <LiveNewsBadge />}
+                </div>
                 {article.sourceLogo && (
                   <InstitutionLogo
                     src={article.sourceLogo}
@@ -605,9 +622,12 @@ export default function ArticleDetail() {
                 </p>
               )}
 
-              <div className="mt-5 flex items-center gap-3 pb-5 mb-6 border-b border-border">
+              <div className="mt-5 flex flex-wrap items-center gap-3 pb-5 mb-6 border-b border-border">
                 {article.author_id ? (
-                  <AuthorByline authorId={article.author_id} fallbackName={article.author} />
+                  <div className="flex min-w-0 flex-1 flex-col gap-1">
+                    <AuthorByline authorId={article.author_id} fallbackName={article.author} />
+                    {dbArticle?.created_at && <time dateTime={dbArticle.created_at} className="text-xs text-muted-foreground">Published {article.publishedAt} IST</time>}
+                  </div>
                 ) : (
                   <>
                     <div className="w-11 h-11 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center ring-2 ring-background shadow-sm shrink-0">
@@ -616,7 +636,7 @@ export default function ArticleDetail() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-foreground truncate">{article.author}</p>
                       <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-muted-foreground">
-                        <Calendar className="w-3 h-3" /><span>{article.publishedAt}</span>
+                        <Calendar className="w-3 h-3" />{dbArticle?.created_at ? <time dateTime={dbArticle.created_at}>{article.publishedAt} IST</time> : <span>{article.publishedAt}</span>}
                         <span>•</span>
                         <Clock className="w-3 h-3" /><span>{article.readTime}</span>
                         {article.views > 0 && (<><span>•</span><Eye className="w-3 h-3" /><span>{article.views >= 1000 ? `${(article.views / 1000).toFixed(1)}K` : article.views}</span></>)}
@@ -645,11 +665,6 @@ export default function ArticleDetail() {
                 </button>
               </div>
 
-              {/* Lead form ABOVE content - light/compact, less intrusive on mobile */}
-              <div className="my-3 sm:my-4 opacity-95">
-                <LeadCaptureForm variant="inline" title="Get free expert counselling" subtitle="Talk to an advisor - pick the right college in minutes." source={`article_top_${article.slug}`} />
-              </div>
-
               {/* Body - explicitly left-aligned, tightened 2026 scale */}
               <div className="space-y-5">
                 {articleUsesRichHtml ? (
@@ -658,7 +673,7 @@ export default function ArticleDetail() {
                       {displayContentSegments.map((seg, i) => (
                         <Fragment key={`${seg.type}-${i}`}>
                           {seg.type === "html" ? (
-                            <RichText html={seg.value} className="article-prose article-prose--news max-w-none" />
+                            <RichText html={seg.value} demoteH1 className="article-prose article-prose--news max-w-none" />
                           ) : (
                             <DocumentViewer title={seg.title} images={seg.images} />
                           )}
@@ -670,7 +685,7 @@ export default function ArticleDetail() {
                     </>
                   ) : (
                     <>
-                      <RichText html={htmlContent} className="article-prose article-prose--news max-w-none" />
+                      <RichText html={htmlContent} demoteH1 className="article-prose article-prose--news max-w-none" />
                       <ArticleLeaderboardAd position="middle" />
                     </>
                   )
@@ -692,11 +707,6 @@ export default function ArticleDetail() {
               {article.tags.length > 0 && (
                 <ArticleTagCloud tags={article.tags} />
               )}
-
-              {/* Banner lead form before recommendations */}
-              <div className="mt-8">
-                <LeadCaptureForm variant="banner" title="📞 Need Admission Help?" subtitle="Connect with a counsellor in under 24 hours." source={`article_pre_recos_${article.slug}`} />
-              </div>
 
               {/* Linked entities & study material from article_links */}
               <DeferUntilVisible minHeight={160}>
@@ -722,10 +732,6 @@ export default function ArticleDetail() {
                 </section>
               )}
 
-              {/* Final inline lead capture below recos */}
-              <div className="mt-8">
-                <LeadCaptureForm variant="inline" title="🚀 Ready to take the next step?" subtitle="Free counselling • No spam • Reply within 24 hours." source={`article_bottom_${article.slug}`} />
-              </div>
             </article>
 
             <aside className="hidden space-y-5 lg:col-span-4 lg:block">
