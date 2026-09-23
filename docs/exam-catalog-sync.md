@@ -24,7 +24,7 @@ The public Exams page sends scalar equality for category and JSON overlap filter
 
 ## Logo policy
 
-The five supplied AWS logo references are assigned to their exact exams. Any other approved theme logo under `sanitized/bottom-12-v1` is retained. Every remaining exam receives a 1080 by 950 WebP at quality 95 under `admin-uploads/exam-logos-v2`.
+The five supplied AWS logo references are assigned to their exact exams. Any other approved theme logo under `sanitized/bottom-12-v1` is retained. Every remaining exam receives a 1080 by 950 WebP at quality 95 under the current versioned `admin-uploads/exam-logos-v3` prefix. The renderer uses the source catalog's original mark where one is available and a readable Latin monogram where it is not; it never invents an official seal.
 
 When an existing official exam mark is available, it is placed inside the established two-colour circle treatment. When it is unavailable or unreadable, the renderer creates a clean exam-name monogram rather than inventing an official seal. Every generated object is read back through Sharp and must report WebP, 1080 pixels wide and 950 pixels high before its database URL is saved.
 

@@ -73,8 +73,13 @@ jobs:
       - name: Verify published frontend and AWS API
         run: |
           for attempt in $(seq 1 90); do
-            HTML=$(curl --fail --silent --show-error --max-time 20 \
-              https://dekhocampus-aws-candidate.pages.dev/ || true)
+            HTML=""
+            if ! HTML=$(curl --fail --silent --show-error \
+              --connect-timeout 10 --max-time 60 \
+              https://dekhocampus-aws-candidate.pages.dev/); then
+              echo "Cloudflare candidate was not ready on attempt $attempt; retrying."
+              HTML=""
+            fi
             if grep -Fq "/assets/$EXPECTED_ASSET" <<<"$HTML"; then break; fi
             [ "$attempt" -eq 90 ] && { echo "Cloudflare did not publish $EXPECTED_ASSET" >&2; exit 1; }
             sleep 10

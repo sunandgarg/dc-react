@@ -21,6 +21,7 @@ export const EXAM_LISTING_COURSE_GROUPS = [
 
 export const EXAM_LISTING_EDUCATION_LEVELS = ["UG", "PG", "12th", "10th"];
 export const EXAM_FILTER_VERSION = 1;
+export const EXAM_LOGO_THEME_PREFIX = "exam-logos-v3";
 
 export const APPROVED_EXAM_THEME_LOGOS = Object.freeze({
   "anu-pgcet": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/a2/a22b1056cbdbf8a7819dd93e08966da59edef387ad8c9c2fb56a9c9e9c66a6aa.webp",
@@ -201,7 +202,7 @@ function wrapLogoText(value) {
 }
 
 export function isThemedExamLogo(url) {
-  return /\/exam-logos-v2\/[^/?]+\.webp(?:$|\?)/i.test(String(url || ""))
+  return /\/exam-logos-v3\/[^/?]+\.webp(?:$|\?)/i.test(String(url || ""))
     || /\/sanitized\/bottom-12-v1\//i.test(String(url || ""));
 }
 
@@ -214,9 +215,9 @@ export async function renderExamThemeLogo(exam, sourceBuffer) {
   const shell = Buffer.from(`
     <svg width="1080" height="950" viewBox="0 0 1080 950" xmlns="http://www.w3.org/2000/svg">
       <rect width="1080" height="950" fill="#ffffff"/>
-      <path d="M 77 950 A 463 463 0 0 1 1003 950" fill="none" stroke="${bottomColor}" stroke-width="29"/>
-      <path d="M 77 950 A 463 463 0 0 1 1003 950" fill="none" stroke="${topColor}" stroke-width="29" stroke-dasharray="728 728" stroke-dashoffset="728"/>
-      ${sourceBuffer ? "" : `<text x="540" y="445" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="132" font-weight="800" fill="${topColor}">${escapeSvg(initials)}</text>`}
+      <path d="M 40 540 A 500 500 0 0 1 1040 540" fill="none" stroke="${topColor}" stroke-width="29"/>
+      <path d="M 1040 540 A 500 500 0 0 1 40 540" fill="none" stroke="${bottomColor}" stroke-width="29"/>
+      ${sourceBuffer ? "" : `<text x="540" y="430" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="132" font-weight="800" fill="${topColor}">${escapeSvg(initials)}</text>`}
       ${lines.map((line, index) => `<text x="540" y="${790 + index * 75}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="800" fill="#111827">${escapeSvg(line)}</text>`).join("")}
     </svg>`);
   const base = sharp(shell);
@@ -230,6 +231,6 @@ export async function renderExamThemeLogo(exam, sourceBuffer) {
   return base.composite([{
     input: source,
     left: Math.round((1080 - (metadata.width || 430)) / 2),
-    top: Math.round(402 - (metadata.height || 360) / 2),
+    top: Math.round(370 - (metadata.height || 360) / 2),
   }]).webp({ quality: 95, smartSubsample: true }).toBuffer();
 }

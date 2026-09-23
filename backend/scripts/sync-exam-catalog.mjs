@@ -8,6 +8,7 @@ import sharp from "sharp";
 import {
   APPROVED_EXAM_THEME_LOGOS,
   EXAM_FILTER_VERSION,
+  EXAM_LOGO_THEME_PREFIX,
   classifyExamFilters,
   isThemedExamLogo,
   loadCanonicalExamCatalog,
@@ -25,7 +26,7 @@ const repositoryRoot = fileURLToPath(new URL("../../", import.meta.url));
 const prisma = new PrismaClient();
 const startedAt = new Date();
 const runId = startedAt.toISOString().replaceAll(":", "-").replaceAll(".", "-");
-const themePrefix = "exam-logos-v2";
+const themePrefix = EXAM_LOGO_THEME_PREFIX;
 
 const model = Prisma.dmmf.datamodel.models.find((candidate) => candidate.name === "exams");
 if (!model) throw new Error("Prisma exams model metadata is unavailable");
@@ -104,6 +105,7 @@ async function main() {
 
   const current = await prisma.exams.findMany();
   const currentBySlug = new Map(current.map((row) => [row.slug, row]));
+  const canonicalBySlug = new Map(catalog.map((row) => [row.slug, row]));
   const canonicalSlugs = new Set(catalog.map((row) => row.slug));
   const missing = catalog.filter((row) => !currentBySlug.has(row.slug));
   const restore = catalog.filter((row) => currentBySlug.has(row.slug) && currentBySlug.get(row.slug).is_active === false);
@@ -180,7 +182,7 @@ async function main() {
         report.applied.logos_retained += 1;
         continue;
       }
-      const source = await downloadLogo(row.logo);
+      const source = await downloadLogo(canonicalBySlug.get(row.slug)?.logo);
       if (source.reason) report.logo_fallbacks.push({ slug: row.slug, reason: source.reason });
       try {
         const image = await renderExamThemeLogo(row, source.buffer);
