@@ -159,12 +159,13 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
     index % 12 === 11 ? "CAT preparation decision practice review." : `specific${paragraphIndex}-${index} guidance`
   )).join(" ")}</p>`).join("");
   const decisionTable = "<table><thead><tr><th>Study block</th><th>Decision</th></tr></thead><tbody><tr><td>Practice</td><td>Protect a fixed slot</td></tr></tbody></table>";
+  const internalLink = '<p><a href="/exams">Compare entrance exams</a> before fixing the weekly plan.</p>';
   const good = assessGeneratedArticle({
     title: "CAT 2026 Preparation Plan for Working Graduates",
     description: "A practical CAT 2026 plan that helps working graduates divide practice, review errors and protect mock-test time each week.",
     meta_title: "CAT 2026 Preparation Plan for Working Graduates",
     meta_description: "Build a realistic CAT 2026 study plan around a full-time job, weekly mock analysis, focused revision blocks and measurable improvement priorities.",
-    content_html: `<h2>Answer first</h2><p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul>${decisionTable}<h2>Decision guidance</h2><p>Track decisions and revise the plan.</p>`,
+    content_html: `<h2>Answer first</h2><p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul>${decisionTable}<h2>Decision guidance</h2><p>Track decisions and revise the plan.</p>${internalLink}`,
     faqs: [1, 2, 3, 4].map((number) => ({ question: `Question ${number}?`, answer: `Useful answer ${number}.` })),
   }, "CAT 2026 preparation plan for working graduates", 1200);
   assert.equal(good.passed, true, good.issues.join("; "));
@@ -175,7 +176,7 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
       description: "A practical CAT 2026 plan that helps working graduates divide practice, review errors and protect mock-test time each week.",
       meta_title: "CAT 2026 Preparation Plan for Working Graduates",
       meta_description: "Build a realistic CAT 2026 study plan around a full-time job, weekly mock analysis, focused revision blocks and measurable improvement priorities.",
-      content_html: `<p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul>${decisionTable}<h2>Decision guidance</h2><p>Track decisions and revise the plan.</p>`,
+      content_html: `<p>Working graduates can make CAT 2026 preparation sustainable by protecting fixed practice and review blocks.</p>${usefulParagraph}<h2>Key facts</h2><ul><li>Practise</li><li>Review</li></ul>${decisionTable}<h2>Decision guidance</h2><p>Track decisions and revise the plan.</p>${internalLink}`,
       faqs: [1, 2, 3, 4].map((number) => ({ question: `Question ${number}?`, answer: `Useful answer ${number}.` })),
     },
   }, "CAT 2026 preparation plan for working graduates", 1200);
@@ -230,13 +231,13 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
 });
 
 test("compact article mode enforces the 350-400 word body range", () => {
-  const compactParagraphs = Array.from({ length: 3 }, (_, paragraphIndex) => `<p>${Array.from({ length: 100 }, (_, index) => index % 18 === 0 ? "CAT 2027 preparation" : `decision${paragraphIndex}-${index}`).join(" ")}</p>`).join("");
+  const compactParagraphs = Array.from({ length: 3 }, (_, paragraphIndex) => `<p>${Array.from({ length: 95 }, (_, index) => index % 18 === 0 ? "CAT 2027 preparation" : `decision${paragraphIndex}-${index}`).join(" ")}</p>`).join("");
   const compact = assessGeneratedArticle({
     title: "CAT 2027 Preparation Plan for Working Graduates",
     description: "A focused CAT 2027 preparation plan for working graduates who need a realistic weekly routine, mock review and clear next steps.",
     meta_title: "CAT 2027 Preparation Plan for Graduates",
     meta_description: "Build a practical CAT 2027 preparation routine with weekly practice, mock review and time-saving decisions for working graduates.",
-    content_html: `<h2>Answer first</h2><p>CAT 2027 preparation works for working graduates when the weekly plan protects practice time and honest mock review.</p>${compactParagraphs}<h2>What to protect each week</h2><ul><li>Practice</li><li>Review</li></ul><table><thead><tr><th>Block</th><th>Action</th></tr></thead><tbody><tr><td>Mock</td><td>Review errors</td></tr></tbody></table><h2>When the plan needs changing</h2><p>Short. Change one decision after each mock, then keep the rest of the routine steady so improvement has a fair chance to show.</p>`,
+    content_html: `<h2>Answer first</h2><p>CAT 2027 preparation works for working graduates when the weekly plan protects practice time and honest mock review.</p>${compactParagraphs}<h2>What to protect each week</h2><ul><li>Practice</li><li>Review</li></ul><table><thead><tr><th>Block</th><th>Action</th></tr></thead><tbody><tr><td>Mock</td><td>Review errors</td></tr></tbody></table><h2>When the plan needs changing</h2><p>Short. Change one decision after each mock, then keep the rest of the routine steady so improvement has a fair chance to show.</p><p><a href="/exams">Compare entrance exams</a> before changing the plan.</p>`,
     faqs: [1, 2, 3, 4].map((number) => ({ question: `Who should use plan ${number}?`, answer: `Working graduates can use this plan ${number}.` })),
   }, "CAT 2027 preparation plan for working graduates", 350);
   assert.equal(compact.passed, true, compact.issues.join("; "));

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_BLOG_ANALYSIS_MODEL, DEFAULT_BLOG_WRITING_MODEL, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, articleWordToleranceRange, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, isCompactArticleWordTarget, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextJitteredBlogRunAt, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripDedicatedFaqBlock, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_BLOG_ANALYSIS_MODEL, DEFAULT_BLOG_WRITING_MODEL, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, articleWordToleranceRange, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, ensureArticleInternalLink, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, isCompactArticleWordTarget, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextJitteredBlogRunAt, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripDedicatedFaqBlock, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema, verifiedInternalLinksForTopic } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -199,6 +199,31 @@ test("DekhoCampus human editorial policy is present without breaking the HTML co
   assert.match(prompt, /semantic HTML/i);
   assert.match(prompt, /holistic development/i);
   assert.match(prompt, /street-smart college admissions expert/i);
+});
+
+test("AI articles receive a verified, topic-relevant internal link", () => {
+  assert.deepEqual(verifiedInternalLinksForTopic("JEE Main 2027 result and counselling")[0], {
+    pattern: /\b(?:exam|jee|neet|cat|cet|admit card|answer key|result|counselling)\b/i,
+    label: "compare entrance exams",
+    path: "/exams",
+  });
+  assert.deepEqual(verifiedInternalLinksForTopic("BTech colleges and admission")[0].path, "/colleges");
+  assert.deepEqual(verifiedInternalLinksForTopic("unrelated education update")[0], {
+    label: "read more education updates",
+    path: "/news",
+  });
+
+  const linked = ensureArticleInternalLink("<p>Check your result carefully.</p>", "JEE Main 2027 result");
+  assert.match(linked, /href="\/exams"/);
+  assert.match(linked, /compare entrance exams/i);
+
+  const existing = '<p>Use the <a href="/colleges">college finder</a> today.</p>';
+  assert.equal(ensureArticleInternalLink(existing, "college admission"), existing);
+
+  const prompt = articlePrompt("JEE Main 2027 counselling", [], 400, [], {});
+  assert.match(prompt, /Verified internal-link context/);
+  assert.match(prompt, /"path":"\/exams"/);
+  assert.match(prompt, /Include at least one of these links naturally/i);
 });
 
 test("AI Blog Studio can select every saved competitor source", async () => {

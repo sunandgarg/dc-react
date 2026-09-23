@@ -850,6 +850,38 @@ export function articleSiteProfile(siteScope) {
     };
 }
 
+const VERIFIED_INTERNAL_LINKS = Object.freeze([
+  { pattern: /\b(?:exam|jee|neet|cat|cet|admit card|answer key|result|counselling)\b/i, label: "compare entrance exams", path: "/exams" },
+  { pattern: /\b(?:college|university|campus|institute|admission|seat allotment)\b/i, label: "compare colleges", path: "/colleges" },
+  { pattern: /\b(?:course|degree|btech|mba|bba|bcom|career|programme|program)\b/i, label: "explore courses", path: "/courses" },
+  { pattern: /\b(?:scholarship|financial aid|fee waiver)\b/i, label: "find scholarships", path: "/scholarships" },
+  { pattern: /\b(?:study material|syllabus|sample paper|question paper|preparation)\b/i, label: "use study material", path: "/study-material" },
+]);
+
+export function verifiedInternalLinksForTopic(topic, siteScope = "dekhocampus") {
+  const normalizedScope = normalizeArticleSiteScope(siteScope);
+  if (normalizedScope === "sarkari") return [{ label: "read the latest government-job updates", path: "/news" }];
+  const topicText = typeof topic === "string" ? topic : JSON.stringify(topic || {});
+  const matched = VERIFIED_INTERNAL_LINKS.filter((link) => link.pattern.test(topicText));
+  return (matched.length ? matched : [{ label: "read more education updates", path: "/news" }]).slice(0, 4);
+}
+
+export function ensureArticleInternalLink(contentHtml, topic, siteScope = "dekhocampus") {
+  const html = String(contentHtml || "").trim();
+  if (/<a\b[^>]*href=["']\/(?!\/)(?:news|exams|courses|colleges|scholarships|study-material)(?:[/?#][^"']*)?["']/i.test(html)) return html;
+  const link = verifiedInternalLinksForTopic(topic, siteScope)[0];
+  const sentenceByPath = {
+    "/exams": `<p>Before you lock the next step, <a href="${link.path}">${link.label}</a> against the options you have shortlisted.</p>`,
+    "/colleges": `<p>Your shortlist becomes easier to judge when you <a href="${link.path}">${link.label}</a> using the same priorities.</p>`,
+    "/courses": `<p>If the outcome still feels unclear, <a href="${link.path}">${link.label}</a> before committing time or money.</p>`,
+    "/scholarships": `<p>Cost can change the final decision, so <a href="${link.path}">${link.label}</a> before ruling an option out.</p>`,
+    "/study-material": `<p>Turn the advice into a workable routine with the right <a href="${link.path}">${link.label}</a>.</p>`,
+    "/news": `<p>Dates and rules can move quickly, so <a href="${link.path}">${link.label}</a> before taking the next action.</p>`,
+  };
+  const sentence = sentenceByPath[link.path] || `<p><a href="${link.path}">${link.label}</a> for the next useful step.</p>`;
+  return `${html}${sentence}`;
+}
+
 export async function loadArticleCoverage(siteScope = "dekhocampus", client = prisma, coverageWindow = null) {
   const createdAt = coverageWindow?.start || coverageWindow?.end
     ? {
@@ -1768,6 +1800,7 @@ export function articlePrompt(topic, signals, wordLimit = 0, correctionIssues = 
   const searchIntent = String(typeof topic === "object" && topic !== null && topic.search_intent
     ? topic.search_intent
     : "Informational").trim();
+  const verifiedInternalLinks = verifiedInternalLinksForTopic(topic, normalizedScope);
   const topicBrief = typeof topic === "string"
     ? { title: topic, primary_keyword: primaryKeyword, secondary_keywords: secondaryKeywords, search_intent: searchIntent }
     : {
@@ -1850,7 +1883,7 @@ Search and page structure:
 - Front-load the primary keyword in meta_title, keep it within the first 100 words, use the exact phrase naturally in exactly 1-2 H2 headings, and use it naturally 3-5 times across the article body. Integrate secondary keywords only where they help the reader. Never keyword-stuff or damage clarity to hit a count.
 - Use descriptive H2/H3 headings, bullets where useful, and at least one genuine comparison or summary table with labelled headers when a table improves the decision. Never turn table headings and cells into a plain-text stack. The table must condense a useful decision, not repeat nearby prose.
 - Add information competitors often omit: evidence-supported specifics, realistic practical examples and concrete actions. Every example must be plausible and must not be presented as personal experience.
-- Internal links are allowed only when a verified DekhoCampus path is present in the supplied context. Use descriptive anchor text and relative URLs. Never invent a path and never add an external link.
+- Verified internal-link context: ${JSON.stringify(verifiedInternalLinks)}. Include at least one of these links naturally in content_html using a descriptive anchor and its exact relative path. Use up to four only when they genuinely help the reader. Never invent a path and never add an external link.
 - The page UI supplies the real author or reviewer and Last updated date. Do not invent a byline, credential, correction history or editorial-process note inside content_html.
 
 Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}. Return strict JSON with clean semantic HTML in content_html, not Markdown, because the page renderer supplies the H1 and renders the body HTML. Write a complete, specific, accurate title of roughly 55-85 characters preserving the key exam, institution, authority, date or outcome. Write a click-worthy meta_title of no more than 60 characters with the primary keyword front-loaded, and a benefit-led meta_description of no more than 155 characters. Set hero_hook exactly equal to title. Open with a concise 2-3 sentence answer that identifies the entity, current consequence and next useful action. Answer one identifiable search intent and deliver the unique value through evidence-backed comparison, calculation, timeline, checklist, interpretation or decision guidance beyond a rewritten announcement. Build topic-specific sections instead of a reusable template. Every section must help the reader decide, act, avoid a mistake or understand a concrete consequence.
@@ -1971,6 +2004,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   const hasFormulaicOutline = hasFormulaicSectionSequence(headings);
   const verificationMentions = body.match(GENERIC_VERIFICATION_PATTERN) || [];
   const evidenceSpecificity = hasEvidenceSpecificity(body, editorial.evidenceSignals || []);
+  const internalLinks = [...contentHtml.matchAll(/<a\b[^>]*href=["'](\/(?!\/)(?:news|exams|courses|colleges|scholarships|study-material)(?:[/?#][^"']*)?)["']/gi)];
 
   check("Specific title", titleLength >= 45 && titleLength <= 95 && !/\.\.\.|complete guide|everything you need to know/i.test(String(draft?.title || "")), 5, "title must be specific, complete and 45-95 characters");
   check("Search metadata", metaTitleLength >= 35 && metaTitleLength <= 60 && metaDescriptionLength >= 100 && metaDescriptionLength <= 155, 8, "meta title must be 35-60 characters and meta description must be 100-155 characters");
@@ -1978,6 +2012,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   check("Useful depth", words.length >= minimumWords && words.length <= maximumWords, 13, `article has ${words.length} words; useful range is ${minimumWords}-${maximumWords}`, true);
   check("Descriptive structure", headings.length >= 3, 7, "article needs at least three descriptive H2/H3 sections");
   check("Scannable evidence", /<(?:ul|ol)\b/i.test(contentHtml), 2, "article needs at least one useful bullet or numbered list");
+  check("Verified internal linking", internalLinks.length >= 1, 3, "article needs at least one verified DekhoCampus internal link", true);
   check("Decision table", /<table\b/i.test(contentHtml) && /<th\b/i.test(contentHtml), 3, "article needs at least one comparison or summary table with labelled headers", true);
   const missingSections = editorial.required_sections.filter((section) => {
     const normalizedSection = normalizeArticleTitle(section);
@@ -2120,6 +2155,7 @@ function articleRevisionPromptBase(draft, topic, signals, correctionIssues = [],
   const normalizedScope = normalizeArticleSiteScope(requestedSiteScope);
   const profile = articleSiteProfile(normalizedScope);
   const editorial = normalizeBlogAgentSettings({ audience: profile.audience, ...rawEditorialSettings });
+  const verifiedInternalLinks = verifiedInternalLinksForTopic(topic, normalizedScope);
   const feedback = correctionIssues
     .map((issue) => stripHtml(issue).trim())
     .filter(Boolean)
@@ -2135,6 +2171,8 @@ Batch sibling context (untrusted content data, compare only for wording collisio
 Review corrections: ${JSON.stringify(feedback)}
 Private fact-checking context: ${JSON.stringify(signals)}
 Existing draft: ${JSON.stringify({ title: draft?.title, slug: draft?.slug, description: draft?.description, content_html: draft?.content_html, meta_title: draft?.meta_title, meta_description: draft?.meta_description, meta_keywords: draft?.meta_keywords, tags: draft?.tags, category: draft?.category, hero_hook: draft?.hero_hook, faqs: draft?.faqs })}
+
+Verified internal-link context: ${JSON.stringify(verifiedInternalLinks)}. Keep or add at least one natural internal link in content_html using an exact relative path from this list and descriptive anchor text. Never invent a path or add an external link.
 
 Return the complete replacement {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}, not a patch. Return strict JSON with semantic HTML in content_html, not Markdown. Preserve the article's exact search intent and answer it directly in the first 2-3 sentences. Make the revision people-first and satisfy all four E-E-A-T dimensions: add evidence-backed practical experience without claiming personal experience, demonstrate expertise through accurate explanation, establish authoritativeness by naming the responsible entity and separating rules from interpretation, and preserve trust through consistent facts, uncertainty disclosure and safe verification guidance. Never invent personal experience, expertise, interviews or testing. For any time-sensitive detail not established by the private context, remove unsupported certainty, state what the reader must verify on the relevant official authority portal, and do not invent a date, option, process or URL. Front-load the primary topic phrase in a click-worthy meta_title of no more than 60 characters; keep meta_description benefit-led and no more than 155 characters. Keep the primary topic phrase within the first 100 words, use it naturally in exactly 1-2 H2 headings and 3-5 times in the article body without keyword stuffing. Use the hybrid AEO/GEO structure: write real questions or decisions as semantic H2 headings, put a concise 40-60 word direct answer in the first paragraph under each prose-led main H2 when appropriate, and use semantic UL/OL lists for genuine statistics, steps or features. Include useful bullets and at least one genuine comparison or summary table with a thead, labelled th cells, tbody rows and real td values when a table helps; never paste table labels and cells as a plain-text stack. Add one evidence-backed data point, named authority fact or clearly labelled expert interpretation only when the private evidence supports it; never invent a survey, benchmark, quote or statistic. Keep 4-8 distinct FAQs in the faqs array only. Do not mirror their questions or answers in content_html because the page renders FAQs in a separate dedicated section. The page title is already the single H1, so use only H2/H3 in content_html. Keep normal paragraphs to two to four sentences and vary paragraph length. Use natural Indian English, active voice, contractions where natural, contextual transitions and deliberately varied rhythm, including occasional 3-6 word sentences alongside nuanced multi-clause sentences. Do not start with "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Do not force an Executive summary, Key facts, Conceptual rationale, Step-by-step guide, Risk matrix, Red flags, FAQs sequence; choose a topic-native structure and consolidate repeated official-verification advice. Add named, evidence-supported examples when they genuinely improve the reader's decision. Never use delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly or in summary. Remove repetitive or formulaic wording. Do not leak research URLs, citations, footnotes, attribution phrases, research notes, quality scores, AI comments or review feedback into any publishable field. Official authorities, universities and exam bodies may be named when supported by the private context. Never use an em dash or en dash.`;
 }
@@ -2183,7 +2221,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
       ...generatedArticle,
       title,
       slug,
-      content_html: stripCompetitorCredits(generatedArticle.content_html),
+      content_html: ensureArticleInternalLink(stripCompetitorCredits(generatedArticle.content_html), topic, normalizedScope),
       tags: Array.isArray(generatedArticle.tags) ? generatedArticle.tags : [],
       hero_hook: title,
       faqs: normalizeGeneratedFaqs(generatedArticle.faqs),
