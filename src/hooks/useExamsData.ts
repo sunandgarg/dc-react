@@ -30,6 +30,11 @@ export type DbExam = {
   registration_url: string;
   duration: string;
   exam_type: string;
+  listing_category: string;
+  exam_streams: string[];
+  course_groups: string[];
+  education_levels: string[];
+  exam_filter_version: number;
   language: string;
   frequency: string;
   application_mode: string;
@@ -92,7 +97,8 @@ export function useDbExams() {
         .eq("is_active", true)
         .order("priority", { ascending: true, nullsFirst: false })
         .order("updated_at", { ascending: false, nullsFirst: false })
-        .order("name");
+        .order("name")
+        .limit(1000);
       if (error) throw error;
       return (data ?? []).map(mapExam);
     },
@@ -203,7 +209,8 @@ export function useAllDbExams() {
         .select("*")
         .order("priority", { ascending: true, nullsFirst: false })
         .order("updated_at", { ascending: false, nullsFirst: false })
-        .order("name");
+        .order("name")
+        .limit(1000);
       if (error) throw error;
       return (data ?? []).map(mapExam);
     },
@@ -245,6 +252,11 @@ function mapExam(row: any): DbExam {
     important_dates: Array.isArray(row.important_dates) ? row.important_dates : JSON.parse(row.important_dates || "[]"),
     syllabus: parseStringList(row.syllabus),
     top_colleges: parseStringList(row.top_colleges),
+    exam_streams: parseStringList(row.exam_streams),
+    course_groups: parseStringList(row.course_groups),
+    education_levels: parseStringList(row.education_levels),
+    listing_category: row.listing_category || "Entrance",
+    exam_filter_version: Number(row.exam_filter_version || 0),
     question_papers: Array.isArray(row.question_papers) ? row.question_papers : JSON.parse(row.question_papers || "[]"),
     brochure_url: row.brochure_url ?? "",
   };
@@ -306,6 +318,7 @@ export function useSaveExam() {
     },
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["db-exams"] });
+      qc.invalidateQueries({ queryKey: ["db-exams-all"] });
       qc.invalidateQueries({ queryKey: ["homepage-category-exams"] });
       toast.success(result.pendingReview ? "Exam draft submitted for admin review." : "Exam saved!");
     },
@@ -322,6 +335,7 @@ export function useDeleteExam() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["db-exams"] });
+      qc.invalidateQueries({ queryKey: ["db-exams-all"] });
       toast.success("Exam deleted!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),

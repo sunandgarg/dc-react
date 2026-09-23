@@ -87,6 +87,11 @@ on:
         required: false
         default: false
         type: boolean
+      sync_exam_catalog:
+        description: Restore the canonical 400+ exam catalog, backfill public filters and standardize exam logos
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -678,6 +683,20 @@ jobs:
             fi
             sleep 2
           done
+          REMOTE
+
+      - name: Sync canonical exam catalog, filters and themed logos
+        if: ${{ inputs.sync_exam_catalog }}
+        run: |
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=240 \
+            -i /tmp/tempkey "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
+          set -euo pipefail
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app
+          npm --prefix backend run sync:exam-catalog -- --apply --logos --assert-complete
           REMOTE
 
       - name: Generate static sitemap seed and site metadata

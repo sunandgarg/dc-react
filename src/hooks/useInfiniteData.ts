@@ -25,6 +25,8 @@ interface InfiniteConfig {
   search?: string;
   searchFields?: string[];
   searchGroups?: SearchGroup[];
+  /** Request an exact server count for the current filtered result set. */
+  includeCount?: boolean;
   enabled?: boolean;
 }
 
@@ -40,6 +42,7 @@ export function useInfiniteData({
   search,
   searchFields = ["name"],
   searchGroups = [],
+  includeCount = false,
   enabled = true,
 }: InfiniteConfig) {
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -55,11 +58,12 @@ export function useInfiniteData({
       search ?? "",
       JSON.stringify(searchGroups),
       JSON.stringify(extraOrders),
+      includeCount,
     ],
     queryFn: async ({ pageParam = 0 }) => {
       let q: any = backendClient
         .from(table)
-        .select("*")
+        .select("*", includeCount ? { count: "exact" } : {})
         .eq("is_active", true)
         .order(orderBy, { ascending, nullsFirst });
       for (const o of extraOrders) {
@@ -97,12 +101,13 @@ export function useInfiniteData({
         if (orClause) q = q.or(orClause);
       }
 
-      const { data, error } = await q;
+      const { data, error, count } = await q;
       if (error) throw error;
-      return { items: data ?? [], offset: pageParam };
+      return { items: data ?? [], offset: pageParam, totalCount: count };
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
+      if (typeof lastPage.totalCount === "number" && lastPage.offset + lastPage.items.length >= lastPage.totalCount) return undefined;
       if (lastPage.items.length < BATCH_SIZE) return undefined;
       return lastPage.offset + BATCH_SIZE;
     },
@@ -131,9 +136,11 @@ export function useInfiniteData({
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const items = query.data?.pages.flatMap(p => p.items) ?? [];
+  const totalCount = query.data?.pages[0]?.totalCount ?? items.length;
 
   return {
     items,
+    totalCount,
     sentinelRef,
     isLoading: query.isLoading,
     isFetchingMore: query.isFetchingNextPage,

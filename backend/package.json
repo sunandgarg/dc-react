@@ -32,7 +32,8 @@
     "media:build-carousel-content-aliases": "node scripts/build-college-carousel-content-alias-manifest.mjs",
     "media:audit-original": "node scripts/audit-original-college-media-state.mjs",
     "media:report-live-legacy": "node scripts/report-live-legacy-college-media.mjs",
-    "media:retire-college-webp": "node scripts/retire-superseded-college-webp.mjs"
+    "media:retire-college-webp": "node scripts/retire-superseded-college-webp.mjs",
+    "sync:exam-catalog": "node scripts/sync-exam-catalog.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.887.0",

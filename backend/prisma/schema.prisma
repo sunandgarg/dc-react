@@ -1423,6 +1423,11 @@ model exams {
   brochure_url                   String    @db.LongText
   how_to_apply_video_url         String?   @db.LongText
   categories                     Json
+  listing_category               String    @default("Entrance") @db.VarChar(32)
+  exam_streams                   Json      @default("[]")
+  course_groups                  Json      @default("[]")
+  education_levels               Json      @default("[]")
+  exam_filter_version            Int       @default(0)
   priority                       Int       @default(50)
   author_id                      String?   @db.Char(36)
   page_summary                   String?   @db.LongText
@@ -1442,6 +1447,7 @@ model exams {
   explore_by_category_checked_at DateTime? @db.DateTime(3)
 
   @@index([show_in_explore_by_category, explore_by_category_checked_at], map: "ix_exams_homepage_explore")
+  @@index([listing_category, exam_filter_version], map: "ix_exams_listing_filters")
   @@map("exams")
 }
 

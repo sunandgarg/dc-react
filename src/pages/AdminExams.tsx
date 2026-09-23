@@ -32,6 +32,7 @@ import { AdminPageSizePicker } from "@/components/admin/AdminPageSizePicker";
 import { useDraftState } from "@/hooks/useDraftState";
 import { OfficialDataFillButton } from "@/components/admin/OfficialDataFillButton";
 import { syncAutoSlug } from "@/lib/slugify";
+import { examCategories, examCourseGroups, examLevels, examStreams } from "@/data/indianLocations";
 
 const CATEGORIES = EXAM_CATEGORIES;
 const LEVELS = EXAM_LEVELS;
@@ -53,7 +54,27 @@ const emptyExam: Partial<DbExam> = {
   gender_wise: "", result_content: "", cast_wise_fee: "", dates_content: "",
   meta_title: "", meta_description: "", meta_keywords: "",
   question_papers: [], brochure_url: "", youtube_video_url: "", how_to_apply_video_url: "",
+  listing_category: "Entrance", exam_streams: ["General"], course_groups: ["Multiple Courses"],
+  education_levels: ["UG", "PG"], exam_filter_version: 1,
 };
+
+function ListingFacetPicker({ label, options, value, onChange }: { label: string; options: string[]; value: string[]; onChange: (value: string[]) => void }) {
+  const selected = new Set(value || []);
+  return (
+    <div>
+      <label className="text-xs font-medium text-muted-foreground">{label}</label>
+      <div className="mt-1 flex flex-wrap gap-1.5 rounded-lg border border-border bg-muted/20 p-2">
+        {options.map((option) => {
+          const active = selected.has(option);
+          return <button key={option} type="button" onClick={() => onChange(active ? value.filter((item) => item !== option) : [...value, option])}
+            className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary/50"}`}>
+            {option}
+          </button>;
+        })}
+      </div>
+    </div>
+  );
+}
 
 function ImportantDatesEditor({ dates, onChange }: { dates: ExamImportantDate[]; onChange: (d: ExamImportantDate[]) => void }) {
   const [event, setEvent] = useState("");
@@ -110,15 +131,17 @@ export default function AdminExams() {
     const open = all.filter((e) => e.status === "Applications Open").length;
     const upcoming = all.filter((e) => e.status === "Upcoming").length;
     const closed = all.filter((e) => e.status === "Applications Closed" || e.status === "Exam Over").length;
+    const missingFilters = all.filter((e) => !e.listing_category || !e.exam_streams?.length || !e.course_groups?.length || !e.education_levels?.length).length;
     const cats = all.reduce<Record<string, number>>((m, e) => { m[e.category] = (m[e.category] || 0) + 1; return m; }, {});
     const topCat = Object.entries(cats).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "-";
-    return { total: all.length, open, upcoming, closed, topCat };
+    return { total: all.length, open, upcoming, closed, topCat, missingFilters };
   }, [exams]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return (exams ?? []).filter((e) => {
-      if (statusFilter !== "all" && e.status !== statusFilter) return false;
+      if (statusFilter === "__missing_filters" && e.listing_category && e.exam_streams?.length && e.course_groups?.length && e.education_levels?.length) return false;
+      if (statusFilter !== "all" && statusFilter !== "__missing_filters" && e.status !== statusFilter) return false;
       if (!q) return true;
       return e.name.toLowerCase().includes(q)
         || e.slug.toLowerCase().includes(q)
@@ -130,7 +153,10 @@ export default function AdminExams() {
 
   const handleSave = () => {
     if (!editing?.slug || !editing?.name) { toast.error("Slug and Name required"); return; }
-    saveExam.mutate(editing as any, { onSuccess: () => setEditing(null) });
+    if (!editing.listing_category || !editing.exam_streams?.length || !editing.course_groups?.length || !editing.education_levels?.length) {
+      toast.error("Complete every public listing filter before saving"); return;
+    }
+    saveExam.mutate({ ...editing, exam_filter_version: 1 } as any, { onSuccess: () => setEditing(null) });
   };
 
   const update = (field: string, value: any) => setEditing((prev) => {
@@ -164,7 +190,7 @@ export default function AdminExams() {
           table="exams"
           filename="exams.csv"
           columns="*"
-          typeHints={{ priority: "number", is_active: "boolean", show_in_explore_by_category: "boolean", is_top_exam: "boolean", negative_marking: "boolean", top_colleges: "array", syllabus: "array" }}
+          typeHints={{ priority: "number", is_active: "boolean", show_in_explore_by_category: "boolean", is_top_exam: "boolean", negative_marking: "boolean", top_colleges: "array", syllabus: "array", exam_streams: "array", course_groups: "array", education_levels: "array" }}
         />
       </div>}
 
@@ -184,6 +210,7 @@ export default function AdminExams() {
             { key: "slug", label: "Slug", width: 180 },
             { key: "category", label: "Category", width: 120 },
             { key: "level", label: "Level", width: 120 },
+            { key: "listing_category", label: "Public Filter", width: 130 },
             { key: "exam_date", label: "Exam Date", width: 140 },
             { key: "priority", label: "Priority", type: "number", width: 90 },
             { key: "status", label: "Status", width: 140 },
@@ -202,6 +229,7 @@ export default function AdminExams() {
           { label: "Upcoming", value: "Upcoming", count: stats.upcoming },
           { label: "Apps Closed", value: "Applications Closed" },
           { label: "Exam Over", value: "Exam Over" },
+          { label: "Missing Filters", value: "__missing_filters", count: stats.missingFilters },
         ]}
       />
 
@@ -223,6 +251,7 @@ export default function AdminExams() {
                   <span className="font-semibold text-foreground text-sm">{e.name}</span>
                   <Badge variant="outline" className="text-[10px]">{compactDisplayText(e.category, "General", 28)}</Badge>
                   <Badge variant="outline" className="text-[10px]">{compactDisplayText(e.level, "Exam", 28)}</Badge>
+                  <Badge variant="outline" className="text-[10px]">{compactDisplayText(e.listing_category, "Unclassified", 28)}</Badge>
                   <Badge variant={e.status === "Applications Open" ? "default" : "secondary"} className="text-[10px]">{e.status}</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground truncate">{e.full_name} • {e.exam_date}</p>
@@ -333,6 +362,21 @@ export default function AdminExams() {
                   <textarea value={editing.description || ""} onChange={(e) => update("description", e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none" />
                 </div>
                 <MultiCategoryPicker value={(editing as any).categories || []} onChange={(v) => update("categories" as any, v)} primary={editing.category} />
+                <div className="rounded-xl border border-primary/20 bg-primary/[0.03] p-3 space-y-3">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Public exam listing filters</p>
+                    <p className="text-[10.5px] text-muted-foreground">These dedicated fields power the Category, Stream, Course Group and Level filters on the public Exams page. They do not replace the legacy editorial category fields above.</p>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Category of Exams</label>
+                    <select value={editing.listing_category || "Entrance"} onChange={(e) => update("listing_category", e.target.value)} className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-card text-sm h-9">
+                      {examCategories.map((item) => <option key={item}>{item}</option>)}
+                    </select>
+                  </div>
+                  <ListingFacetPicker label="Streams of Exams" options={examStreams} value={editing.exam_streams || []} onChange={(value) => update("exam_streams", value)} />
+                  <ListingFacetPicker label="Course Groups" options={examCourseGroups} value={editing.course_groups || []} onChange={(value) => update("course_groups", value)} />
+                  <ListingFacetPicker label="Level of Exams" options={examLevels} value={editing.education_levels || []} onChange={(value) => update("education_levels", value)} />
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">Listing Priority (1-100)</label>

@@ -243,6 +243,33 @@ async function ensureExamAuthoritySchema(report) {
   report.createdRuntimeColumns.push("exams.conducting_authority");
 }
 
+async function ensureExamListingFilterSchema(report) {
+  if (!await columnInfo("exams", "listing_category")) {
+    await prisma.$executeRawUnsafe("ALTER TABLE `exams` ADD COLUMN `listing_category` VARCHAR(32) NOT NULL DEFAULT 'Entrance' AFTER `categories`");
+    report.createdRuntimeColumns.push("exams.listing_category");
+  }
+  const jsonColumns = ["exam_streams", "course_groups", "education_levels"];
+  let previousColumn = "listing_category";
+  for (const column of jsonColumns) {
+    if (!await columnInfo("exams", column)) {
+      await prisma.$executeRawUnsafe(`ALTER TABLE \`exams\` ADD COLUMN ${quote(column)} JSON NULL AFTER ${quote(previousColumn)}`);
+      await prisma.$executeRawUnsafe(`UPDATE \`exams\` SET ${quote(column)} = JSON_ARRAY() WHERE ${quote(column)} IS NULL`);
+      await prisma.$executeRawUnsafe(`ALTER TABLE \`exams\` MODIFY COLUMN ${quote(column)} JSON NOT NULL`);
+      report.createdRuntimeColumns.push(`exams.${column}`);
+    }
+    previousColumn = column;
+  }
+  if (!await columnInfo("exams", "exam_filter_version")) {
+    await prisma.$executeRawUnsafe("ALTER TABLE `exams` ADD COLUMN `exam_filter_version` INT NOT NULL DEFAULT 0 AFTER `education_levels`");
+    report.createdRuntimeColumns.push("exams.exam_filter_version");
+  }
+  const indexName = "ix_exams_listing_filters";
+  if (!await indexExists("exams", indexName)) {
+    await prisma.$executeRawUnsafe(`CREATE INDEX ${quote(indexName)} ON \`exams\` (\`listing_category\`, \`exam_filter_version\`)`);
+    report.createdReferenceIndexes.push(indexName);
+  }
+}
+
 async function ensureCourseFeeGroupingSchema(report) {
   if (!await columnInfo("course_fees", "course_group")) {
     await prisma.$executeRawUnsafe("ALTER TABLE `course_fees` ADD COLUMN `course_group` VARCHAR(191) NULL AFTER `course_name`");
@@ -634,6 +661,7 @@ try {
   await ensureArticleWriteLockSchema(report);
   await ensureIntentRuntimeSchema(report);
   await ensureExamAuthoritySchema(report);
+  await ensureExamListingFilterSchema(report);
   await ensureHomepageExploreSchema(report);
   await ensureCourseFeeGroupingSchema(report);
   await ensureLeadAutomationAuditSchema(report);

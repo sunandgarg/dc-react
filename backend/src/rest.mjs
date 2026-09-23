@@ -397,6 +397,7 @@ function filterSql(table, rawColumn, expression, params) {
   }
   if (["cs", "cd", "ov"].includes(operator)) {
     params.push(rawValue);
+    if (operator === "ov") return wrap(`JSON_OVERLAPS(${sqlColumn}, ?)`);
     return wrap(operator === "cd" ? `JSON_CONTAINS(?, ${sqlColumn})` : `JSON_CONTAINS(${sqlColumn}, ?)`);
   }
   const sqlOperator = { eq: "=", neq: "!=", gt: ">", gte: ">=", lt: "<", lte: "<=" }[operator];

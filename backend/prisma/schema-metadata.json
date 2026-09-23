@@ -9196,6 +9196,46 @@
         "default": null,
         "foreignKey": null
       },
+      "listing_category": {
+        "type": "String",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "text",
+        "default": "Entrance",
+        "foreignKey": null
+      },
+      "exam_streams": {
+        "type": "Json",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "text[]",
+        "default": [],
+        "foreignKey": null
+      },
+      "course_groups": {
+        "type": "Json",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "text[]",
+        "default": [],
+        "foreignKey": null
+      },
+      "education_levels": {
+        "type": "Json",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "text[]",
+        "default": [],
+        "foreignKey": null
+      },
+      "exam_filter_version": {
+        "type": "Int",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "integer",
+        "default": 0,
+        "foreignKey": null
+      },
       "priority": {
         "type": "Int",
         "nullable": false,

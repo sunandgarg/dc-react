@@ -104,12 +104,16 @@ export const examCategories = [
 export const examStreams = [
   "Engineering", "Medical", "Law", "Management", "Design", "Science",
   "Arts", "Hotel Management", "Nursing", "IT and Software",
-  "Architecture", "Aviation", "Education",
+  "Architecture", "Aviation", "Education", "Agriculture", "Pharmacy",
+  "Commerce", "Defence", "Banking", "Railways", "Government", "General",
 ];
 
 export const examCourseGroups = [
-  "B.E. / B.Tech", "MBA/PGDM", "LL.B.", "M.E./M.Tech", "PGPM",
-  "MBA", "MBBS", "MD", "A.M.E.",
+  "B.E. / B.Tech", "MBA/PGDM", "LL.B.", "M.E./M.Tech", "MBBS", "MD/MS",
+  "B.Des", "M.Des", "B.Arch", "B.Pharm", "M.Pharm", "B.Sc.", "M.Sc.",
+  "B.Ed", "M.Ed", "BCA", "MCA", "BBA/BMS", "Diploma/Polytechnic", "Ph.D.",
+  "D.El.Ed", "Nursing", "Law PG", "Agriculture", "Government Recruitment",
+  "School Board", "Multiple Courses",
 ];
 
 export const examLevels = ["UG", "PG", "12th", "10th"];

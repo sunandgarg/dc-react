@@ -19,7 +19,7 @@ import { getExamHeading, examSeoRoutes } from "@/lib/seoSlugs";
 import { useSEO } from "@/hooks/useSEO";
 import { parseExamSlug } from "@/lib/seoSlugRoutes";
 import { useCanonical } from "@/hooks/useCanonical";
-import { getCourseGroupSearchTerms, lastSelected, normalizeCollegeCourseGroup, readMultiParam, resolveFacetCategories, sameStringList, uniqueValues, writeMultiParam } from "@/lib/listingFilters";
+import { lastSelected, normalizeCollegeCourseGroup, readMultiParam, sameStringList, uniqueValues, writeMultiParam } from "@/lib/listingFilters";
 import { useSearchParams, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   examCategories, examStreams, examCourseGroups, examLevels,
@@ -85,16 +85,11 @@ export default function AllExams() {
 
   const dbFilters = useMemo(() => {
     const f: Record<string, string | string[] | undefined> = {};
-    const categories = resolveFacetCategories(selectedStreams, selectedCourseGroups);
-    if (categories.length > 0) f.category = categories.length === 1 ? categories[0] : categories;
-    if (selectedCategories.length > 0) f.exam_type = selectedCategories.length === 1 ? selectedCategories[0] : selectedCategories;
-    if (selectedLevels.length > 0) f.level = selectedLevels.length === 1 ? selectedLevels[0] : selectedLevels;
+    if (selectedCategories.length > 0) f.listing_category = selectedCategories[0];
     return f;
-  }, [selectedStreams, selectedCourseGroups, selectedCategories, selectedLevels]);
+  }, [selectedCategories]);
 
-  const courseGroupSearch = useMemo(() => getCourseGroupSearchTerms(selectedCourseGroups), [selectedCourseGroups]);
-
-  const { items: exams, sentinelRef, isLoading, isFetchingMore, hasMore, error: examsError } = useInfiniteData({
+  const { items: exams, totalCount, sentinelRef, isLoading, isFetchingMore, hasMore, error: examsError } = useInfiniteData({
     table: "exams",
     queryKey: ["infinite-exams"],
     orderBy: "priority",
@@ -104,9 +99,14 @@ export default function AllExams() {
       { column: "name", ascending: true },
     ],
     filters: dbFilters,
+    arrayFilters: {
+      exam_streams: selectedStreams,
+      course_groups: selectedCourseGroups,
+      education_levels: selectedLevels,
+    },
     search: debouncedSearch || undefined,
-    searchGroups: courseGroupSearch.length > 0 ? [{ terms: courseGroupSearch, fields: ["name", "full_name", "category", "exam_type"] }] : [],
     searchFields: ["name", "short_name", "full_name", "slug", "category", "exam_type", "level"],
+    includeCount: true,
   });
 
   const seoLandingMatches = isSeoLandingPath
@@ -182,7 +182,7 @@ export default function AllExams() {
         <PageBreadcrumb items={[{ label: "Exams" }]} />
         <header className="mb-4">
           <h1 className="text-xl md:text-2xl font-bold text-primary mb-1">{heading}</h1>
-          <p className="text-sm text-muted-foreground">Complete guide to {filtered.length}+ entrance exams - dates, eligibility, syllabus & preparation tips</p>
+          <p className="text-sm text-muted-foreground">Complete guide to {totalCount} exams - dates, eligibility, syllabus & preparation tips</p>
         </header>
 
         <AlsoCheckSection variant="strip" className="mb-4" />
