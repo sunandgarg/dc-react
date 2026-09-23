@@ -36,7 +36,8 @@ import { ExamDecisionRail } from "@/components/detail/ExamDecisionRail";
 import { trackEvent } from "@/lib/analytics";
 import { compactEntityLabel } from "@/lib/compactEntityLabel";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
-import { resolveExamLogo } from "@/lib/examBranding";
+import { resolveExamLogo, resolveExamNames } from "@/lib/examBranding";
+import { ExamLogo } from "@/components/ExamLogo";
 
 const EXAM_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "Overview" },
@@ -168,7 +169,7 @@ export default function ExamDetail() {
   }
 
   const compactExamName = compactEntityLabel((exam as any).short_name || exam.name);
-  const examLogo = resolveExamLogo(exam as any);
+  const { shortName, fullName } = resolveExamNames(exam);
   const conductingAuthority = exam.conducting_authority?.trim() || "";
   const syllabusItems = Array.isArray(exam.syllabus)
     ? exam.syllabus.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
@@ -223,35 +224,15 @@ export default function ExamDetail() {
         <div className="bg-card rounded-2xl border border-border overflow-hidden mb-0">
           <div className="p-4 md:p-6">
             <div className="mb-4 flex justify-center md:justify-start">
-              <div
-                className="h-24 w-24 rounded-full bg-[conic-gradient(from_35deg,hsl(var(--primary)),hsl(var(--accent)),hsl(var(--golden)),hsl(var(--primary)))] p-[4px] shadow-md md:h-28 md:w-28"
-                aria-label={`${exam.name} official logo`}
-              >
-                <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-card p-3">
-                  {examLogo ? (
-                    <img
-                      src={examLogo}
-                      alt={`${exam.name} official logo`}
-                      width="112"
-                      height="112"
-                      loading="eager"
-                      decoding="async"
-                      {...{ fetchpriority: "high" }}
-                      className="h-full w-full object-contain"
-                    />
-                  ) : (
-                    <Award className="h-10 w-10 text-primary" aria-hidden="true" />
-                  )}
-                </div>
-              </div>
+              <ExamLogo exam={exam} className="h-24 w-24 md:h-28 md:w-28" eager />
             </div>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.category}</Badge>
               <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.level}</Badge>
               <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.status}</Badge>
             </div>
-            <h1 data-h className="text-xl md:text-2xl font-bold text-foreground mb-1">{exam.name} {new Date().getFullYear()}</h1>
-            <p className="text-sm text-muted-foreground mb-2">{exam.full_name}</p>
+            <h1 data-h className="text-xl md:text-2xl font-bold text-foreground mb-1 break-words">{shortName}</h1>
+            {fullName && <p className="text-sm leading-relaxed text-muted-foreground mb-2">{fullName}</p>}
 
             <div className="mb-3"><AuthorByline authorId={(exam as any).author_id} /></div>
             <div className="flex items-center gap-2 flex-wrap">

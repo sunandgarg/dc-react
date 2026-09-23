@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
-import { Calendar, ArrowRight, Trophy } from "lucide-react";
+import { ArrowRight, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { useDbExams } from "@/hooks/useExamsData";
+import { ExamLogo } from "@/components/ExamLogo";
+import { resolveExamNames } from "@/lib/examBranding";
 
 export function UpcomingExams() {
   const { data: allExams } = useDbExams();
@@ -59,18 +61,12 @@ export function UpcomingExams() {
                 className="group block bg-card rounded-2xl border border-border p-4 hover:shadow-md hover:border-primary/20 transition-all"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
-                    {exam.logo || exam.image ? (
-                      <img src={exam.logo || exam.image} alt={`${exam.short_name || exam.name} logo`} className="entity-logo-safe w-full h-full rounded-xl" />
-                    ) : (
-                      <Calendar className="w-5 h-5 text-primary" />
-                    )}
-                  </div>
+                  <ExamLogo exam={exam} className="h-12 w-12" />
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-foreground text-sm group-hover:text-primary transition-colors line-clamp-1">
-                      {exam.short_name || exam.name}
+                    <h3 className="font-bold text-foreground text-sm group-hover:text-primary transition-colors break-words">
+                      {resolveExamNames(exam).shortName}
                     </h3>
-                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{exam.full_name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{resolveExamNames(exam).fullName}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <Badge variant="outline" className="text-[10px] px-1.5 py-0">{exam.category}</Badge>
                       <Badge variant="outline" className="text-[10px] px-1.5 py-0">{exam.level}</Badge>

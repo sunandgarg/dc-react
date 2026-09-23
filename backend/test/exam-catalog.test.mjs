@@ -6,7 +6,6 @@ import {
   EXAM_FILTER_VERSION,
   classifyExamFilters,
   loadCanonicalExamCatalog,
-  renderExamThemeLogo,
   validateExamFilters,
 } from "../src/exam-catalog.mjs";
 
@@ -62,10 +61,33 @@ test("exam filter columns and runtime migration stay in schema parity", () => {
   assert.match(restSource, /JSON_OVERLAPS\(\$\{sqlColumn\}, \?\)/);
 });
 
-test("generated exam logos use the approved 1080 by 950 WebP canvas", async () => {
-  const buffer = await renderExamThemeLogo({ slug: "sample-exam", name: "Sample Exam", short_name: "SAMPLE" }, null);
-  const metadata = await sharp(buffer).metadata();
-  assert.equal(metadata.format, "webp");
-  assert.equal(metadata.width, 1080);
-  assert.equal(metadata.height, 950);
+test("every exam has an audited identity, with no generated ring logos or hidden omissions", async () => {
+  const { catalog } = await loadCanonicalExamCatalog(repositoryRoot);
+  const identities = JSON.parse(await readFile(new URL("../../shared/exam-identities.json", import.meta.url), "utf8"));
+  const audit = JSON.parse(await readFile(new URL("../../reports/exam-official-logo-audit.json", import.meta.url), "utf8"));
+  assert.deepEqual(Object.keys(identities).sort(), catalog.map((row) => row.slug).sort());
+  const unresolved = [];
+  const checkedAssets = new Set();
+  for (const exam of catalog) {
+    const identity = identities[exam.slug];
+    assert.ok(identity.short_name && identity.full_name, exam.slug);
+    assert.doesNotMatch(identity.full_name, /20\d{2}\s*[:|]|dates.*eligibility/i, exam.slug);
+    assert.doesNotMatch(identity.logo, /exam-logos-v[123]/, exam.slug);
+    if (identity.logo_status === "unresolved") {
+      assert.equal(identity.logo, "", exam.slug);
+      assert.ok(identity.review_note, exam.slug);
+      unresolved.push(exam.slug);
+    } else {
+      assert.ok(identity.source_url, exam.slug);
+      if (identity.logo_status === "official_source_reviewed") assert.ok(identity.source_page, exam.slug);
+      if (identity.logo.startsWith("/exam-logos/") && !checkedAssets.has(identity.logo)) {
+        const metadata = await sharp(await readFile(new URL(`../../public${identity.logo}`, import.meta.url))).metadata();
+        assert.equal(metadata.format, "webp", exam.slug);
+        assert.ok(metadata.width > 0 && metadata.height > 0 && Math.max(metadata.width, metadata.height) <= 700, exam.slug);
+        checkedAssets.add(identity.logo);
+      }
+    }
+  }
+  assert.deepEqual(unresolved.sort(), audit.unresolved.map((row) => row.slug).sort());
+  assert.equal(Object.values(audit.counts).reduce((sum, value) => sum + value, 0), catalog.length);
 });

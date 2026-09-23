@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import type { DbExam } from "@/hooks/useExamsData";
 import { PriorityBadge } from "@/components/PriorityBadge";
 import { buildExamHref } from "@/lib/entityUrls";
-import { compactDisplayText, displayText } from "@/lib/displayText";
+import { compactDisplayText } from "@/lib/displayText";
+import { resolveExamNames } from "@/lib/examBranding";
+import { ExamLogo } from "@/components/ExamLogo";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { useState } from "react";
 
@@ -27,8 +29,7 @@ export function ExamCard({ exam, index }: ExamCardProps) {
   const importantDates = Array.isArray(exam.important_dates)
     ? (exam.important_dates as { event: string; date: string }[])
     : [];
-  const examName = displayText(exam.name, "Exam");
-  const fullName = displayText(exam.full_name);
+  const { shortName: examName, fullName } = resolveExamNames(exam);
   const category = compactDisplayText(exam.category, "General", 28);
   const level = compactDisplayText(exam.level, "Exam", 22);
   const duration = compactDisplayText(exam.duration, "-", 18);
@@ -48,35 +49,24 @@ export function ExamCard({ exam, index }: ExamCardProps) {
         "bg-card border-border"
       }`}>
         {/* Header - clickable image + name */}
-        <div className="flex items-start gap-4 mb-4">
-          <Link to={buildExamHref(exam)} className="w-14 h-14 rounded-xl flex-shrink-0 overflow-hidden block bg-muted group">
-            {exam.logo || exam.image ? (
-              <img
-                src={exam.logo || exam.image}
-                alt={`${examName} logo`}
-                className="w-full h-full bg-card p-1 object-contain group-hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-              />
-            ) : (
-              <div className="w-full h-full gradient-primary flex items-center justify-center">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-            )}
+        <div className="flex items-start gap-3 mb-3">
+          <Link to={buildExamHref(exam)} className="shrink-0" aria-label={`View ${examName}`}>
+            <ExamLogo exam={exam} className="h-14 w-14" />
           </Link>
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <Link to={buildExamHref(exam)} className="block group min-w-0">
-                <h2 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{examName}</h2>
-                {fullName && fullName !== examName && <p className="text-sm text-muted-foreground line-clamp-1">{fullName}</p>}
-              </Link>
-              <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                <Badge className={`text-xs border ${statusColors[exam.status] || ""}`}>
-                  {exam.status}
-                </Badge>
-                <PriorityBadge priority={(exam as any).priority} />
-              </div>
-            </div>
+            <Link to={buildExamHref(exam)} className="block group">
+              <h2 className="text-lg leading-snug font-bold text-foreground group-hover:text-primary transition-colors break-words">{examName}</h2>
+              {fullName && <p className="mt-1 text-sm leading-relaxed text-muted-foreground break-words">{fullName}</p>}
+            </Link>
           </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {exam.status && !/^(draft|published)$/i.test(exam.status) && (
+            <Badge className={`max-w-full whitespace-normal text-left text-xs border ${statusColors[exam.status] || "bg-primary/10 text-primary border-primary/20"}`}>
+              {exam.status}
+            </Badge>
+          )}
+          <PriorityBadge priority={(exam as any).priority} />
         </div>
 
         {/* Category & Level */}
@@ -125,9 +115,9 @@ export function ExamCard({ exam, index }: ExamCardProps) {
             <h3 className="text-sm font-semibold text-foreground mb-2">Important Dates</h3>
             <div className="space-y-1.5">
               {importantDates.slice(0, 4).map((d, i) => (
-                <div key={i} className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{d.event}:</span>
-                  <span className={`font-medium ${i >= 2 ? "text-destructive" : "text-foreground"}`}>
+                <div key={i} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-3 text-xs leading-relaxed">
+                  <span className="text-muted-foreground break-words">{d.event}:</span>
+                  <span className={`font-medium break-words ${i >= 2 ? "text-destructive" : "text-foreground"}`}>
                     {d.date}
                   </span>
                 </div>

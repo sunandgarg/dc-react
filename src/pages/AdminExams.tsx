@@ -8,6 +8,8 @@ import { useAllDbExams, useSaveExam, useDeleteExam, type DbExam, type ExamImport
 import { AdminFormSection } from "@/components/AdminFormSection";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { compactDisplayText } from "@/lib/displayText";
+import { resolveExamNames } from "@/lib/examBranding";
+import { ExamLogo } from "@/components/ExamLogo";
 import { PageSummaryField } from "@/components/admin/PageSummaryField";
 import { ArrayFieldEditor } from "@/components/ArrayFieldEditor";
 import { EntitySlugMultiSearch } from "@/components/admin/EntitySlugMultiSearch";
@@ -246,15 +248,17 @@ export default function AdminExams() {
           </div>
           {visible.map((e) => (
             <div key={e.id} className="bg-card rounded-xl border border-border p-4 flex items-center gap-4">
+              <ExamLogo exam={e} className="h-10 w-10" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-semibold text-foreground text-sm">{e.name}</span>
+                  <span className="font-semibold text-foreground text-sm">{resolveExamNames(e).shortName}</span>
                   <Badge variant="outline" className="text-[10px]">{compactDisplayText(e.category, "General", 28)}</Badge>
                   <Badge variant="outline" className="text-[10px]">{compactDisplayText(e.level, "Exam", 28)}</Badge>
                   <Badge variant="outline" className="text-[10px]">{compactDisplayText(e.listing_category, "Unclassified", 28)}</Badge>
                   <Badge variant={e.status === "Applications Open" ? "default" : "secondary"} className="text-[10px]">{e.status}</Badge>
                 </div>
-                <p className="text-xs text-muted-foreground truncate">{e.full_name} • {e.exam_date}</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{resolveExamNames(e).fullName}</p>
+                <p className="text-xs text-muted-foreground mt-1">{e.exam_date}</p>
               </div>
               <div className="flex gap-1">
                 <a href={`/exams/${e.slug}`} target="_blank" rel="noreferrer"><Button variant="ghost" size="icon" className="w-8 h-8" title="Open public page"><ExternalLink className="w-3.5 h-3.5" /></Button></a>

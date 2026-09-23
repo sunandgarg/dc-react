@@ -3,16 +3,13 @@
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { readFile } from "node:fs/promises";
 import { Prisma, PrismaClient } from "@prisma/client";
 import sharp from "sharp";
 import {
-  APPROVED_EXAM_THEME_LOGOS,
   EXAM_FILTER_VERSION,
-  EXAM_LOGO_THEME_PREFIX,
   classifyExamFilters,
-  isThemedExamLogo,
   loadCanonicalExamCatalog,
-  renderExamThemeLogo,
   validateExamFilters,
 } from "../src/exam-catalog.mjs";
 import { uploadStorageObject } from "../src/storage.mjs";
@@ -26,7 +23,7 @@ const repositoryRoot = fileURLToPath(new URL("../../", import.meta.url));
 const prisma = new PrismaClient();
 const startedAt = new Date();
 const runId = startedAt.toISOString().replaceAll(":", "-").replaceAll(".", "-");
-const themePrefix = EXAM_LOGO_THEME_PREFIX;
+const officialLogoPrefix = "exam-logos-official-v1";
 
 const model = Prisma.dmmf.datamodel.models.find((candidate) => candidate.name === "exams");
 if (!model) throw new Error("Prisma exams model metadata is unavailable");
@@ -66,22 +63,8 @@ function createPayload(source, shortId) {
     id: randomUUID(),
     short_id: shortId,
     is_active: true,
-    ...(APPROVED_EXAM_THEME_LOGOS[source.slug] ? { logo: APPROVED_EXAM_THEME_LOGOS[source.slug] } : {}),
     ...classifyExamFilters(source),
   };
-}
-
-async function downloadLogo(url) {
-  if (!/^https?:\/\//i.test(String(url || ""))) return { buffer: null, reason: "missing_or_non_http_source" };
-  try {
-    const response = await fetch(url, { signal: AbortSignal.timeout(20_000), headers: { "user-agent": "DekhoCampus-Exam-Logo-Migration/1.0" } });
-    if (!response.ok) return { buffer: null, reason: `source_http_${response.status}` };
-    const buffer = Buffer.from(await response.arrayBuffer());
-    if (!buffer.length) return { buffer: null, reason: "empty_source" };
-    return { buffer, reason: null };
-  } catch (error) {
-    return { buffer: null, reason: `source_fetch_failed:${error.message}` };
-  }
 }
 
 async function uploadReport(report) {
@@ -95,6 +78,17 @@ async function uploadReport(report) {
 
 async function main() {
   const { catalog, deletedSlugs, refreshReports } = await loadCanonicalExamCatalog(repositoryRoot);
+  const identities = JSON.parse(await readFile(path.join(repositoryRoot, "shared/exam-identities.json"), "utf8"));
+  for (const exam of catalog) {
+    const identity = identities[exam.slug];
+    if (!identity?.short_name || !identity?.full_name) throw new Error(`Missing reviewed exam identity: ${exam.slug}`);
+    if (identity.logo && !identity.source_url) throw new Error(`Missing logo provenance: ${exam.slug}`);
+  }
+  // Fail before any database write when the caller requested complete logo coverage.
+  const unresolvedSources = catalog.filter((exam) => !identities[exam.slug].logo).map((exam) => exam.slug);
+  if (buildLogos && assertComplete && unresolvedSources.length) {
+    throw new Error(`Official logos remain unresolved (${unresolvedSources.length}): ${unresolvedSources.join(", ")}. See reports/exam-official-logo-audit.json; no rows changed.`);
+  }
   const retiredLegacySlugs = [...new Set([...deletedSlugs, "ceed-legacy-5c6ea222", "aiims-pg"])];
   if (catalog.length < 400) throw new Error(`Canonical catalog safety gate failed: expected 400+ exams, found ${catalog.length}`);
   const invalidFilters = catalog.flatMap((exam) => {
@@ -105,7 +99,6 @@ async function main() {
 
   const current = await prisma.exams.findMany();
   const currentBySlug = new Map(current.map((row) => [row.slug, row]));
-  const canonicalBySlug = new Map(catalog.map((row) => [row.slug, row]));
   const canonicalSlugs = new Set(catalog.map((row) => row.slug));
   const missing = catalog.filter((row) => !currentBySlug.has(row.slug));
   const restore = catalog.filter((row) => currentBySlug.has(row.slug) && currentBySlug.get(row.slug).is_active === false);
@@ -131,8 +124,8 @@ async function main() {
       filter_rows: catalog.length,
       logo_rows: buildLogos ? catalog.length : 0,
     },
-    applied: { inserted: 0, restored: 0, duplicates_deactivated: 0, filters_updated: 0, logos_generated: 0, logos_retained: 0 },
-    logo_fallbacks: [],
+    applied: { inserted: 0, restored: 0, duplicates_deactivated: 0, filters_updated: 0, logos_updated: 0, logos_retained: 0 },
+    unresolved_logos: [],
     errors: [],
   };
 
@@ -164,7 +157,8 @@ async function main() {
       data: {
         ...filters,
         is_active: true,
-        ...(APPROVED_EXAM_THEME_LOGOS[exam.slug] ? { logo: APPROVED_EXAM_THEME_LOGOS[exam.slug] } : {}),
+        short_name: identities[exam.slug].short_name,
+        full_name: identities[exam.slug].full_name,
       },
     });
     report.applied.filters_updated += result.count;
@@ -176,23 +170,38 @@ async function main() {
   }
 
   if (buildLogos) {
+    const uploadedAssets = new Map();
     const rows = await prisma.exams.findMany({ where: { is_active: true, slug: { in: [...canonicalSlugs] } }, orderBy: { name: "asc" } });
     for (const [index, row] of rows.entries()) {
-      if (isThemedExamLogo(row.logo)) {
-        report.applied.logos_retained += 1;
-        continue;
-      }
-      const source = await downloadLogo(canonicalBySlug.get(row.slug)?.logo);
-      if (source.reason) report.logo_fallbacks.push({ slug: row.slug, reason: source.reason });
+      const identity = identities[row.slug];
       try {
-        const image = await renderExamThemeLogo(row, source.buffer);
-        const metadata = await sharp(image).metadata();
-        if (metadata.format !== "webp" || metadata.width !== 1080 || metadata.height !== 950) {
-          throw new Error(`unexpected output ${metadata.format} ${metadata.width}x${metadata.height}`);
+        if (!identity.logo) {
+          report.unresolved_logos.push({ slug: row.slug, reason: "official_source_unresolved" });
+          if (/\/exam-logos-v[123]\//.test(row.logo || "")) {
+            await prisma.exams.update({ where: { id: row.id }, data: { logo: "" } });
+          }
+          continue;
         }
-        const uploaded = await uploadStorageObject("admin-uploads", `${themePrefix}/${row.slug}.webp`, image, "image/webp", { upsert: true });
-        await prisma.exams.update({ where: { id: row.id }, data: { logo: uploaded.publicUrl } });
-        report.applied.logos_generated += 1;
+        let logo = identity.logo;
+        if (/^\/exam-logos\/official-v1\/[a-f0-9]{24}\.webp$/.test(logo)) {
+          if (!uploadedAssets.has(logo)) {
+            const image = await readFile(path.join(repositoryRoot, "public", logo));
+            const metadata = await sharp(image).metadata();
+            if (metadata.format !== "webp" || !metadata.width || !metadata.height || Math.max(metadata.width, metadata.height) > 700) {
+              throw new Error(`Invalid reviewed logo: ${logo}`);
+            }
+            const uploaded = await uploadStorageObject("admin-uploads", `${officialLogoPrefix}/${path.basename(logo)}`, image, "image/webp", { upsert: true });
+            uploadedAssets.set(logo, uploaded.publicUrl);
+          }
+          logo = uploadedAssets.get(logo);
+        } else if (!/^https:\/\/aws-origin\.dekhocampus\.com\/storage\/v1\/object\/public\/legacy-public-assets\//.test(logo)) {
+          throw new Error(`Logo is outside the reviewed asset inventory: ${row.slug}`);
+        }
+        if (row.logo === logo) report.applied.logos_retained += 1;
+        else {
+          await prisma.exams.update({ where: { id: row.id }, data: { logo } });
+          report.applied.logos_updated += 1;
+        }
       } catch (error) {
         report.errors.push({ phase: "logo", slug: row.slug, error: error.message });
       }
@@ -207,7 +216,7 @@ async function main() {
     || !Array.isArray(row.exam_streams) || row.exam_streams.length === 0
     || !Array.isArray(row.course_groups) || row.course_groups.length === 0
     || !Array.isArray(row.education_levels) || row.education_levels.length === 0);
-  const incompleteLogos = buildLogos ? canonicalFinal.filter((row) => !isThemedExamLogo(row.logo)) : [];
+  const incompleteLogos = buildLogos ? canonicalFinal.filter((row) => !identities[row.slug]?.logo || !row.logo || /\/exam-logos-v[123]\//.test(row.logo)) : [];
   report.after = {
     active_rows: finalRows.length,
     canonical_active: canonicalFinal.length,

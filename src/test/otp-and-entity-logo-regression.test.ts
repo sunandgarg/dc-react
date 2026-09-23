@@ -49,8 +49,9 @@ describe("OTP latency and entity logo regressions", () => {
     expect(collegeDetail).toContain("src={c.logo || c.image}");
     expect(collegeDetail).toContain("aspect-square");
     expect(collegeDetail).toContain("object-contain");
-    expect(examCard).toContain("src={exam.logo || exam.image}");
-    expect(examCard).toContain("object-contain");
+    expect(examCard).toContain("<ExamLogo exam={exam}");
+    expect(read("src/components/ExamLogo.tsx")).toContain("object-contain");
+    expect(examCard).not.toContain("exam.logo || exam.image");
   });
 
   it("keeps logo padding independent from the surrounding card width", () => {

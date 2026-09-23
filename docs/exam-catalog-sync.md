@@ -24,12 +24,18 @@ The public Exams page sends scalar equality for category and JSON overlap filter
 
 ## Logo policy
 
-The five supplied AWS logo references are assigned to their exact exams. Any other approved theme logo under `sanitized/bottom-12-v1` is retained. Every remaining exam receives a 1080 by 950 WebP at quality 95 under the current versioned `admin-uploads/exam-logos-v3` prefix. The renderer uses the source catalog's original mark where one is available and a readable Latin monogram where it is not; it never invents an official seal.
+The latest request supersedes the earlier ring design. Cards show the short name followed by the expanded exam name. The logo component uses the reviewed exam/institution/authority mark with no added decorative ring, image cropping, or background-photo fallback. Long status labels occupy a separate row so they cannot squeeze the name out of view. Refresh-report SEO titles do not overwrite the expanded name.
 
-When an existing official exam mark is available, it is placed inside the established two-colour circle treatment. When it is unavailable or unreadable, the renderer creates a clean exam-name monogram rather than inventing an official seal. Every generated object is read back through Sharp and must report WebP, 1080 pixels wide and 950 pixels high before its database URL is saved.
+`shared/exam-identities.json` records all 485 identities, source URLs, source pages and unresolved-review notes. There are 424 records with visually reviewed official-source marks, 51 retained existing catalog marks, and 10 explicitly unresolved sources. The retained catalog marks have not been newly certified as official. Do not invent seals or assume one campus's logo represents a joint examination.
+
+Official marks are stored in `public/exam-logos/official-v1` as content-hashed WebP files, quality 95 and a maximum 600-pixel dimension, without synthetic enlargement. White official wordmarks use a dark background for contrast. The frontend serves these first-party assets immediately for missing or obsolete generated ring logos. Existing valid custom logos remain unchanged. The obsolete ring generator has been removed.
+
+Run `node scripts/audit-exam-identities.mjs` to validate catalog coverage, source fields, file hashes and dimensions. Use `--write` to rebuild the CSV/Markdown audit reports or `--require-complete` to fail on any unresolved source. Source discovery/contact-sheet scripts prepare candidates only; they never approve or publish a logo automatically. Every replacement must be visually checked against the official page before its inventory entry is changed.
 
 ## Safe production execution
 
-The sync is intentionally opt-in. Run the AWS production workflow with `sync_exam_catalog=true`. Before changing rows, the job uploads a complete database-row backup to `system-backups/exam-catalog/<run>/exams-before.json`. It then restores missing canonical rows, writes all filters, deactivates only the approved legacy rows, creates themed logos, and uploads a final machine-readable report.
+The sync is intentionally opt-in. **Do not enable `sync_exam_catalog` while the 10 source gaps remain.** The full sync (`--apply --logos --assert-complete`) fails before any database write if a reviewed logo is missing. The frontend can be deployed independently: names and reviewed marks are resolved in all public/admin exam components without rewriting production content.
 
-The job fails if the final active catalog is below 400, if any of the 485 canonical exams is absent, if any filter group is empty, if a logo is outside the approved theme, or if any generation or upload fails.
+Once source coverage is complete, run the AWS production workflow with `sync_exam_catalog=true`. Before changing rows, it uploads a complete row backup to `system-backups/exam-catalog/<run>/exams-before.json`. It restores missing canonical rows, writes names/filters, deactivates only approved legacy rows, copies the reviewed WebP assets to `admin-uploads/exam-logos-official-v1`, and uploads a final report. No AI-generated or monogram replacements are made.
+
+The job fails if a canonical exam is absent, any filter group is empty, any logo remains incomplete, or an upload/validation fails. Reports distinguish updated and retained logos. No logo object is deleted by this migration; the before-image supports rollback.

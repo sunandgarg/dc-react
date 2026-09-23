@@ -1,6 +1,5 @@
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
-import sharp from "sharp";
 
 export const EXAM_LISTING_CATEGORIES = ["Entrance", "Board", "Sarkari", "Study Abroad"];
 
@@ -21,15 +20,6 @@ export const EXAM_LISTING_COURSE_GROUPS = [
 
 export const EXAM_LISTING_EDUCATION_LEVELS = ["UG", "PG", "12th", "10th"];
 export const EXAM_FILTER_VERSION = 1;
-export const EXAM_LOGO_THEME_PREFIX = "exam-logos-v3";
-
-export const APPROVED_EXAM_THEME_LOGOS = Object.freeze({
-  "anu-pgcet": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/a2/a22b1056cbdbf8a7819dd93e08966da59edef387ad8c9c2fb56a9c9e9c66a6aa.webp",
-  afcat: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/73/7316ee188718c21dbc07a28620ec53b92088a19e1a8f780514acf0d8c9619485.webp",
-  apset: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/15/15295360a1f4df5c2bbb679f3ee2d40a70471f66b8b37319c915092392f39a5b.webp",
-  bitsat: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/43/437df8f07a2deafb67860e7c61aaa179b109733d086b18cde1939d60e409da80.webp",
-  clat: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/f1/f1a1cb32f8fd70ef8c9fe8f533ee7649acfcc3280e2a107a88647e2451d3847f.webp",
-});
 
 const unique = (values) => [...new Set(values.filter(Boolean))];
 const has = (text, expression) => expression.test(text);
@@ -160,77 +150,17 @@ export async function loadCanonicalExamCatalog(repositoryRoot) {
       const current = rows.get(slug) || rows.get(update.slug);
       if (!current) continue;
       const merged = { ...current, ...update, slug: update.slug || current.slug };
+      // Editorial titles belong in metadata; preserve the actual expanded exam name.
+      if (/\b20\d{2}\s*[:|]|\b(?:dates?.*eligibility|eligibility.*pattern)\b/i.test(update.full_name || "")) {
+        merged.full_name = current.full_name;
+      }
       rows.delete(slug);
       rows.set(merged.slug, merged);
     }
   }
-  const catalog = [...rows.values()].sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  const catalog = [...rows.values()].map((row) => ({
+    ...row,
+    full_name: String(row.full_name || row.name).replace(/\s+20\d{2}(?:-\d{2,4})?$/, "").trim(),
+  })).sort((a, b) => String(a.name).localeCompare(String(b.name)));
   return { catalog, deletedSlugs: [...deletedSlugs], refreshReports };
-}
-
-const logoThemes = [
-  ["#111827", "#ec4899"], ["#8a5b12", "#d9a441"], ["#a61b1b", "#15803d"],
-  ["#b91c1c", "#1e3a8a"], ["#111827", "#4338ca"], ["#0f766e", "#f97316"],
-  ["#7c2d12", "#2563eb"], ["#581c87", "#0891b2"],
-];
-
-const escapeSvg = (value) => String(value || "")
-  .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-  .replaceAll('"', "&quot;").replaceAll("'", "&apos;");
-
-function hashText(value) {
-  let hash = 2166136261;
-  for (const char of String(value)) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
-  return hash >>> 0;
-}
-
-function displayExamName(exam) {
-  const source = String(exam.short_name || exam.name || "Exam").trim();
-  return source.length <= 24 ? source : source.split(/\s+/).slice(0, 5).join(" ").slice(0, 32);
-}
-
-function wrapLogoText(value) {
-  const words = value.split(/\s+/).filter(Boolean);
-  if (value.length <= 15) return [value];
-  const lines = [""];
-  for (const word of words) {
-    const current = lines.at(-1);
-    if (current && `${current} ${word}`.length > 18 && lines.length < 2) lines.push(word);
-    else lines[lines.length - 1] = current ? `${current} ${word}` : word;
-  }
-  return lines;
-}
-
-export function isThemedExamLogo(url) {
-  return /\/exam-logos-v3\/[^/?]+\.webp(?:$|\?)/i.test(String(url || ""))
-    || /\/sanitized\/bottom-12-v1\//i.test(String(url || ""));
-}
-
-export async function renderExamThemeLogo(exam, sourceBuffer) {
-  const name = displayExamName(exam);
-  const initials = name.split(/\s+/).slice(0, 4).map((word) => word[0]).join("").toUpperCase().slice(0, 5) || "EXAM";
-  const [topColor, bottomColor] = logoThemes[hashText(exam.slug || name) % logoThemes.length];
-  const lines = wrapLogoText(name);
-  const fontSize = lines.join("").length > 26 ? 56 : lines.join("").length > 17 ? 66 : 78;
-  const shell = Buffer.from(`
-    <svg width="1080" height="950" viewBox="0 0 1080 950" xmlns="http://www.w3.org/2000/svg">
-      <rect width="1080" height="950" fill="#ffffff"/>
-      <path d="M 40 540 A 500 500 0 0 1 1040 540" fill="none" stroke="${topColor}" stroke-width="29"/>
-      <path d="M 1040 540 A 500 500 0 0 1 40 540" fill="none" stroke="${bottomColor}" stroke-width="29"/>
-      ${sourceBuffer ? "" : `<text x="540" y="430" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="132" font-weight="800" fill="${topColor}">${escapeSvg(initials)}</text>`}
-      ${lines.map((line, index) => `<text x="540" y="${790 + index * 75}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="800" fill="#111827">${escapeSvg(line)}</text>`).join("")}
-    </svg>`);
-  const base = sharp(shell);
-  if (!sourceBuffer) return base.webp({ quality: 95, smartSubsample: true }).toBuffer();
-  const source = await sharp(sourceBuffer, { failOn: "none" })
-    .resize(430, 360, { fit: "inside", withoutEnlargement: false })
-    .flatten({ background: "#ffffff" })
-    .png()
-    .toBuffer();
-  const metadata = await sharp(source).metadata();
-  return base.composite([{
-    input: source,
-    left: Math.round((1080 - (metadata.width || 430)) / 2),
-    top: Math.round(370 - (metadata.height || 360) / 2),
-  }]).webp({ quality: 95, smartSubsample: true }).toBuffer();
 }

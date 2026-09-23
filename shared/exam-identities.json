@@ -1,0 +1,3892 @@
+{
+  "abvmu-cahet": {
+    "short_name": "CAHET",
+    "full_name": "Common Allied Healthcare Entrance Test",
+    "logo": "/exam-logos/official-v1/7974ac35d33421f299270a95.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.abvmuup.edu.in/assets/images/emblem-dark.png",
+    "source_page": "https://www.abvmuup.edu.in/admission-paramedical.php"
+  },
+  "abvmu-cnet": {
+    "short_name": "CNET",
+    "full_name": "Common Nursing Entrance Test",
+    "logo": "/exam-logos/official-v1/7974ac35d33421f299270a95.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.abvmuup.edu.in/assets/images/emblem-dark.png",
+    "source_page": "https://www.abvmuup.edu.in/admission-paramedical.php"
+  },
+  "anu-pgcet": {
+    "short_name": "ANU PGCET",
+    "full_name": "Acharya Nagarjuna University Post Graduate Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/a2/a22b1056cbdbf8a7819dd93e08966da59edef387ad8c9c2fb56a9c9e9c66a6aa.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/a2/a22b1056cbdbf8a7819dd93e08966da59edef387ad8c9c2fb56a9c9e9c66a6aa.webp",
+    "source_page": ""
+  },
+  "iai-acet": {
+    "short_name": "IAI ACET",
+    "full_name": "Actuarial Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4036574d0e9b60410a880e7e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://actuariesindia.org/themes/iai/images/logo.png",
+    "source_page": "https://actuariesindia.org/acet"
+  },
+  "aeee": {
+    "short_name": "AEEE",
+    "full_name": "Amrita Entrance Examination - Engineering (AEEE)",
+    "logo": "/exam-logos/official-v1/3498f605b727cbdfb79fbe0a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://webfiles.amrita.edu/2024/04/ZvmNQEuB-amrita-vishwa-vidyapeetham-university-logo-white-version.svg",
+    "source_page": "https://aeee.amrita.edu/"
+  },
+  "afcat": {
+    "short_name": "AFCAT",
+    "full_name": "Air Force Common Admission Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/73/7316ee188718c21dbc07a28620ec53b92088a19e1a8f780514acf0d8c9619485.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/73/7316ee188718c21dbc07a28620ec53b92088a19e1a8f780514acf0d8c9619485.webp",
+    "source_page": ""
+  },
+  "agniveervayu": {
+    "short_name": "Agniveervayu",
+    "full_name": "Indian Air Force Agniveervayu Selection Test",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "Official recruitment site returned HTTP 503; alternate Indian Air Force host timed out. No verified downloadable mark."
+  },
+  "ap-agricet": {
+    "short_name": "AGRICET",
+    "full_name": "ANGRAU Agriculture Common Entrance Test",
+    "logo": "/exam-logos/official-v1/21dc29c965e8bd7f4a9acc75.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://angrauagricet.aptonline.in/images/ANGRAU.jpg",
+    "source_page": "https://angrauagricet.aptonline.in/AGRICET/AGRICET_HomePage"
+  },
+  "aiapget": {
+    "short_name": "AIAPGET",
+    "full_name": "All India Ayush Post Graduate Entrance Test",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "aibe": {
+    "short_name": "AIBE",
+    "full_name": "All India Bar Examination XXI",
+    "logo": "/exam-logos/official-v1/d3b71c381647517054985df3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.allindiabarexamination.com/images/logo-2.png",
+    "source_page": "https://www.allindiabarexamination.com/"
+  },
+  "aiims-bsc-nursing": {
+    "short_name": "AIIMS B.Sc. Nursing",
+    "full_name": "AIIMS B.Sc. (Hons.) Nursing Entrance Examination",
+    "logo": "/exam-logos/official-v1/f9b12d45fa2829cd8282bff2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://aiimsexams.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Faiims_logo.37b13df2.webp&w=256&q=75",
+    "source_page": "https://aiimsexams.ac.in/"
+  },
+  "aiims-bsc-nursing-post-basic": {
+    "short_name": "AIIMS Post-Basic Nursing",
+    "full_name": "AIIMS B.Sc. Nursing Post-Basic Entrance Examination",
+    "logo": "/exam-logos/official-v1/f9b12d45fa2829cd8282bff2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://aiimsexams.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Faiims_logo.37b13df2.webp&w=256&q=75",
+    "source_page": "https://aiimsexams.ac.in/"
+  },
+  "aiims-bsc-paramedical": {
+    "short_name": "AIIMS B.Sc. Paramedical",
+    "full_name": "AIIMS B.Sc. Allied and Health Care / Paramedical Entrance Examination",
+    "logo": "/exam-logos/official-v1/f9b12d45fa2829cd8282bff2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://aiimsexams.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Faiims_logo.37b13df2.webp&w=256&q=75",
+    "source_page": "https://aiimsexams.ac.in/"
+  },
+  "aiims-msc-nursing": {
+    "short_name": "AIIMS M.Sc. Nursing",
+    "full_name": "AIIMS Master of Science Nursing Entrance Examination",
+    "logo": "/exam-logos/official-v1/f9b12d45fa2829cd8282bff2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://aiimsexams.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Faiims_logo.37b13df2.webp&w=256&q=75",
+    "source_page": "https://aiimsexams.ac.in/"
+  },
+  "ailet": {
+    "short_name": "AILET",
+    "full_name": "All India Law Entrance Test",
+    "logo": "/exam-logos/official-v1/b11ab4a1df56336b391defca.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nludelhi.ac.in/wp-content/uploads/2024/04/NLUD-Big-Logo.png",
+    "source_page": "https://nludelhi.ac.in/"
+  },
+  "aima-ugat": {
+    "short_name": "AIMA UGAT",
+    "full_name": "AIMA Under Graduate Aptitude Test",
+    "logo": "/exam-logos/official-v1/8b2c277b0c1419494158d6da.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.aima.in/img/logo.png",
+    "source_page": "https://www.aima.in/content/testing-and-assessment/ugat/information-to-candidates-for-ugat"
+  },
+  "air-force-common-admission-test": {
+    "short_name": "AFCAT",
+    "full_name": "Air Force Common Admission Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/73/7316ee188718c21dbc07a28620ec53b92088a19e1a8f780514acf0d8c9619485.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/73/7316ee188718c21dbc07a28620ec53b92088a19e1a8f780514acf0d8c9619485.webp",
+    "source_page": ""
+  },
+  "amecet": {
+    "short_name": "AMECET",
+    "full_name": "Aircraft Maintenance Engineering Common Entrance Test",
+    "logo": "/exam-logos/official-v1/b9d2d6b412cfed840e2e51e7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.amecet.in/images/logo.png",
+    "source_page": "https://www.amecet.in/"
+  },
+  "amulee": {
+    "short_name": "AMULEE",
+    "full_name": "Aligarh Muslim University Law Entrance Exam",
+    "logo": "/exam-logos/official-v1/f7d913d8033f60645940d53c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.amucontrollerexams.com/images/logo_nav.png",
+    "source_page": "https://www.amucontrollerexams.com/"
+  },
+  "aieed": {
+    "short_name": "AIEED",
+    "full_name": "All India Entrance Examination for Design",
+    "logo": "/exam-logos/official-v1/67df086253828e8d5b581275.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.aieed.com/images/arch-logo-2026.png",
+    "source_page": "https://www.aieed.com/"
+  },
+  "allahabad-university-pgat": {
+    "short_name": "Allahabad University PGAT",
+    "full_name": "Allahabad University Post Graduate Admission Test",
+    "logo": "/exam-logos/official-v1/c7da75d98df1dfb220401961.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.allduniv.ac.in/assets/frontend/img/home/au_logo.png",
+    "source_page": "https://www.allduniv.ac.in/p/714/studentResult"
+  },
+  "act": {
+    "short_name": "ACT",
+    "full_name": "American College Testing",
+    "logo": "/exam-logos/official-v1/d75071641448d928d70829b6.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.act.org/etc/designs/act/clientlibs/act-base/img/logo-act-blue-300.png",
+    "source_page": "https://www.act.org/content/act/en/products-and-services/the-act/registration/test-dates.html"
+  },
+  "amity-jee": {
+    "short_name": "AMITY JEE",
+    "full_name": "AMITY JEE",
+    "logo": "/exam-logos/official-v1/d42ef28e2a5f52fa92b3a44c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.amity.edu/images/logo.png",
+    "source_page": "https://www.amity.edu/amityjee"
+  },
+  "amu-ba-llb": {
+    "short_name": "AMU B.A. LL.B.",
+    "full_name": "Aligarh Muslim University B.A. LL.B. Admission Test",
+    "logo": "/exam-logos/official-v1/f7d913d8033f60645940d53c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.amucontrollerexams.com/images/logo_nav.png",
+    "source_page": "https://www.amucontrollerexams.com/"
+  },
+  "amu-bed": {
+    "short_name": "AMU B.Ed",
+    "full_name": "Aligarh Muslim University Bachelor of Education Admission Test",
+    "logo": "/exam-logos/official-v1/f7d913d8033f60645940d53c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.amucontrollerexams.com/images/logo_nav.png",
+    "source_page": "https://www.amucontrollerexams.com/"
+  },
+  "amu-mba": {
+    "short_name": "AMU MBA",
+    "full_name": "Aligarh Muslim University MBA Admission Test",
+    "logo": "/exam-logos/official-v1/f7d913d8033f60645940d53c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.amucontrollerexams.com/images/logo_nav.png",
+    "source_page": "https://www.amucontrollerexams.com/"
+  },
+  "amueee": {
+    "short_name": "AMUEEE",
+    "full_name": "Aligarh Muslim University Engineering Entrance Examination",
+    "logo": "/exam-logos/official-v1/f7d913d8033f60645940d53c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.amucontrollerexams.com/images/logo_nav.png",
+    "source_page": "https://www.amucontrollerexams.com/"
+  },
+  "ap-adcet": {
+    "short_name": "AP ADCET",
+    "full_name": "Andhra Pradesh Art and Design Common Entrance Test",
+    "logo": "/exam-logos/official-v1/9b1a2a49e097bdf6a0a92727.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/APSCHE/images/ApscheLogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ADCET/"
+  },
+  "ap-rcet": {
+    "short_name": "AP RCET",
+    "full_name": "Andhra Pradesh Research Common Entrance Test",
+    "logo": "/exam-logos/official-v1/9b1a2a49e097bdf6a0a92727.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/APSCHE/images/ApscheLogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ADCET/"
+  },
+  "aprjc": {
+    "short_name": "APRJC",
+    "full_name": "Andhra Pradesh Residential Junior College Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/24/2480759f16ea521616760ee5824fbbe2810cfc15dba4e14f72e0bf2914733ecb.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/24/2480759f16ea521616760ee5824fbbe2810cfc15dba4e14f72e0bf2914733ecb.webp",
+    "source_page": ""
+  },
+  "aprdc": {
+    "short_name": "APRDC",
+    "full_name": "Andhra Pradesh Road Development Corporation",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/59/5950448493702d01e5df1055d65e5c0797fd86ee2967ad8025ae4d52f43f434d.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/59/5950448493702d01e5df1055d65e5c0797fd86ee2967ad8025ae4d52f43f434d.webp",
+    "source_page": ""
+  },
+  "andhra-pradesh-state-eligibility-test": {
+    "short_name": "APSET",
+    "full_name": "Andhra Pradesh State Eligibility Test",
+    "logo": "/exam-logos/official-v1/e6a640aa7125cb1d2894af34.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.apset.net.in/_next/image?url=%2Fimages%2Fap-logo.png&w=128&q=75",
+    "source_page": "https://www.apset.net.in/"
+  },
+  "aucet": {
+    "short_name": "AUCET",
+    "full_name": "Andhra University Common Entrance Test",
+    "logo": "/exam-logos/official-v1/0f657a3c8a2deaee5d61d791.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://audoa.andhrauniversity.edu.in/images/AULogo.png",
+    "source_page": "https://audoa.andhrauniversity.edu.in/"
+  },
+  "ap-deecet": {
+    "short_name": "AP DEECET",
+    "full_name": "Andhra Pradesh Diploma in Elementary Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/a3bb7f3781b17551aa202f6a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://apdeecet.apcfss.in/img/deptlogo.png",
+    "source_page": "https://apdeecet.apcfss.in/"
+  },
+  "ap-eamcet": {
+    "short_name": "AP EAPCET",
+    "full_name": "Andhra Pradesh Engineering, Agriculture and Pharmacy Common Entrance Test",
+    "logo": "/exam-logos/official-v1/9b1a2a49e097bdf6a0a92727.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/APSCHE/images/ApscheLogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ADCET/"
+  },
+  "ap-ecet": {
+    "short_name": "AP ECET",
+    "full_name": "Andhra Pradesh Engineering Common Entrance Test",
+    "logo": "/exam-logos/official-v1/74e1ff7a3ac188fb34375b80.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/ECET/images/APECET2026_JNTUA_LOGO.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ECET/ECET/ECET_HomePage"
+  },
+  "ap-edcet": {
+    "short_name": "AP EDCET",
+    "full_name": "Andhra Pradesh Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4a61c4c6df6dcd9b2c78c75a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/ECET/images/APSCHELogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ECET/ECET/ECET_HomePage"
+  },
+  "ap-icet": {
+    "short_name": "AP ICET",
+    "full_name": "Andhra Pradesh Integrated Common Entrance Test",
+    "logo": "/exam-logos/official-v1/9b1a2a49e097bdf6a0a92727.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/APSCHE/images/ApscheLogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ADCET/"
+  },
+  "ap-lawcet": {
+    "short_name": "AP LAWCET",
+    "full_name": "Andhra Pradesh Law Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4a61c4c6df6dcd9b2c78c75a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/ECET/images/APSCHELogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ECET/ECET/ECET_HomePage"
+  },
+  "ap-pecet": {
+    "short_name": "AP PECET",
+    "full_name": "Andhra Pradesh Physical Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/9b1a2a49e097bdf6a0a92727.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/APSCHE/images/ApscheLogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ADCET/"
+  },
+  "ap-pgcet": {
+    "short_name": "AP PGCET",
+    "full_name": "Andhra Pradesh Post Graduate Common Entrance Tests",
+    "logo": "/exam-logos/official-v1/9b1a2a49e097bdf6a0a92727.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/APSCHE/images/ApscheLogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ADCET/"
+  },
+  "ap-pgecet": {
+    "short_name": "AP PGECET",
+    "full_name": "Andhra Pradesh Post Graduate Engineering Common Entrance Test",
+    "logo": "/exam-logos/official-v1/9b1a2a49e097bdf6a0a92727.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/APSCHE/images/ApscheLogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ADCET/"
+  },
+  "ap-pglcet": {
+    "short_name": "AP PGLCET",
+    "full_name": "Andhra Pradesh Post Graduate Law Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4a61c4c6df6dcd9b2c78c75a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cets.apsche.ap.gov.in/ECET/images/APSCHELogoNew.png",
+    "source_page": "https://cets.apsche.ap.gov.in/ECET/ECET/ECET_HomePage"
+  },
+  "ap-polycet": {
+    "short_name": "AP POLYCET",
+    "full_name": "Andhra Pradesh Polytechnic Common Entrance Test",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "Catalog host did not resolve and alternate AP POLYCET host returned HTTP 503. Official exam-specific mark remains unverified."
+  },
+  "appsc-group-1": {
+    "short_name": "APPSC Group I",
+    "full_name": "Andhra Pradesh Public Service Commission Group-I Services Examination",
+    "logo": "/exam-logos/official-v1/942b689911f09730fce17f79.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://psc.ap.gov.in/images/logonew.png",
+    "source_page": "https://psc.ap.gov.in/"
+  },
+  "apset": {
+    "short_name": "APSET",
+    "full_name": "Andhra Pradesh State Eligibility Test",
+    "logo": "/exam-logos/official-v1/e6a640aa7125cb1d2894af34.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.apset.net.in/_next/image?url=%2Fimages%2Fap-logo.png&w=128&q=75",
+    "source_page": "https://www.apset.net.in/"
+  },
+  "aifd-wat": {
+    "short_name": "AIFD WAT",
+    "full_name": "Army Institute of Fashion & Design Written Admission Test",
+    "logo": "/exam-logos/official-v1/43ead7c02d6286d757435a15.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.aifd.edu.in/img/army-fashion-design-logo.svg",
+    "source_page": "https://www.aifd.edu.in/"
+  },
+  "ail-let": {
+    "short_name": "AIL LET",
+    "full_name": "Army Institute of Law Entrance Test",
+    "logo": "/exam-logos/official-v1/720199def465dd1e6a813b81.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.ail.ac.in/img/logo1.png",
+    "source_page": "https://www.ail.ac.in/"
+  },
+  "assam-cee": {
+    "short_name": "Assam CEE",
+    "full_name": "Assam Combined Entrance Examination",
+    "logo": "/exam-logos/official-v1/e06ef5951dbe52cb9a127fbc.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://astu.ac.in/wp-content/uploads/logo.png",
+    "source_page": "https://astu.ac.in/?page_id=40085"
+  },
+  "assam-jlee": {
+    "short_name": "JLEE",
+    "full_name": "Assam Joint Lateral Entry Examination",
+    "logo": "/exam-logos/official-v1/e06ef5951dbe52cb9a127fbc.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://astu.ac.in/wp-content/uploads/logo.png",
+    "source_page": "https://astu.ac.in/?page_id=40085"
+  },
+  "assam-jmee": {
+    "short_name": "JMEE",
+    "full_name": "Assam Joint MCA Entrance Examination",
+    "logo": "/exam-logos/official-v1/e06ef5951dbe52cb9a127fbc.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://astu.ac.in/wp-content/uploads/logo.png",
+    "source_page": "https://astu.ac.in/?page_id=40085"
+  },
+  "assam-pat": {
+    "short_name": "Assam PAT",
+    "full_name": "Assam PAT",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/ce/ce5ba6dfdfdb3e730c06b300008a96a0f5770fa9134e3b9b50c08e2a37029a58.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/ce/ce5ba6dfdfdb3e730c06b300008a96a0f5770fa9134e3b9b50c08e2a37029a58.webp",
+    "source_page": ""
+  },
+  "atit": {
+    "short_name": "ATIT",
+    "full_name": "Admission Test for IcfaiTech",
+    "logo": "/exam-logos/official-v1/705477457c0bb385b18cced1.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.ifheindia.org/assets/img/Logo.svg",
+    "source_page": "https://www.ifheindia.org/icfaitech"
+  },
+  "atma": {
+    "short_name": "ATMA",
+    "full_name": "AIMS Test for Management Admissions",
+    "logo": "/exam-logos/official-v1/f0dddbdb30f1ce28a17dad8b.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.atmaaims.com/assets_n/images/logo/logo-dark-2.png",
+    "source_page": "https://www.atmaaims.com/"
+  },
+  "bbau": {
+    "short_name": "BBAU",
+    "full_name": "Babasaheb Bhimrao Ambedkar University",
+    "logo": "/exam-logos/official-v1/6709b116d39f43481a735ef8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://bbau.ac.in/bbau/bbauLogo.png",
+    "source_page": "https://bbau.ac.in/admissionsug2026.aspx"
+  },
+  "du-llb": {
+    "short_name": "DU LLB",
+    "full_name": "Bachelor of Legislative Law or Legum Baccalaureus",
+    "logo": "/exam-logos/official-v1/fb0ba290ceac9d949ad13e89.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://lawfaculty.du.ac.in/userfiles/images/2law-faculty-logo.png",
+    "source_page": "https://lawfaculty.du.ac.in/Admission/Admission-2026-27"
+  },
+  "bhu-pet": {
+    "short_name": "BHU PET",
+    "full_name": "Banaras Hindu University Postgraduate Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/d4/d46fc98ee89f5d830fc17e41eb07cd9758c440e7bcbc827708ef148bc0cc8995.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/d4/d46fc98ee89f5d830fc17e41eb07cd9758c440e7bcbc827708ef148bc0cc8995.webp",
+    "source_page": ""
+  },
+  "bhu-uet": {
+    "short_name": "BHU UET",
+    "full_name": "Banaras Hindu University Undergraduate Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/c8/c8d499aba823381c72bb43df928c0b08ab4809163c81d3e1520be4d01fd828a6.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/c8/c8d499aba823381c72bb43df928c0b08ab4809163c81d3e1520be4d01fd828a6.webp",
+    "source_page": ""
+  },
+  "buat": {
+    "short_name": "BUAT",
+    "full_name": "Banasthali University Aptitude Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/1b/1baf880000c4ce8da2d79f7178460188833ee16d2b6b010fa0d3756f83b048f7.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/1b/1baf880000c4ce8da2d79f7178460188833ee16d2b6b010fa0d3756f83b048f7.webp",
+    "source_page": ""
+  },
+  "banda-university-of-agriculture-and-technology": {
+    "short_name": "BUAT",
+    "full_name": "Banda University of Agriculture and Technology",
+    "logo": "/exam-logos/official-v1/0e5ef90a054449519d456bb0.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.upcatetexam.org/images/logo.png",
+    "source_page": "https://www.upcatetexam.org/"
+  },
+  "bcece": {
+    "short_name": "BCECE",
+    "full_name": "Bihar Combined Entrance Competitive Examination",
+    "logo": "/exam-logos/official-v1/5381dd9ddc7a01c8b0667fef.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3b5c01503041b70d41d80e3dbe31bbd8c/uploads/2022/03/2022031474.png",
+    "source_page": "https://bcece.admissions.nic.in/"
+  },
+  "beee": {
+    "short_name": "BEEE",
+    "full_name": "Bharath Engineering Entrance Examination",
+    "logo": "/exam-logos/official-v1/bc9ddf6be2164b18f5127aa6.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.bharathuniv.ac.in/images/logo.svg",
+    "source_page": "https://www.bharathuniv.ac.in/"
+  },
+  "bet-biotechnology": {
+    "short_name": "BET",
+    "full_name": "Biotechnology Eligibility Test",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "bharati-vidyapeeth-common-entrance-test": {
+    "short_name": "BVP CET",
+    "full_name": "Bharati Vidyapeeth Common Entrance Test",
+    "logo": "/exam-logos/official-v1/6d2380baa1565df137ffc5a3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://bvducet.bharatividyapeeth.edu/index_2026_files/images/main/CET_Logo_2026.png",
+    "source_page": "https://bvducet.bharatividyapeeth.edu/"
+  },
+  "bihar-bed-cet": {
+    "short_name": "Bihar B.Ed CET",
+    "full_name": "Bihar Bachelor of Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/d9a29f48302cd9d4a5b8b934.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://d16rxdsdysn1nu.cloudfront.net/ums/tenants/logos/g0xFjve1rgozwpdydF7skfkRfVLasBA9CBSTAUWN.png",
+    "source_page": "https://biharcetbed-brabu.in/"
+  },
+  "bihar-deled": {
+    "short_name": "Bihar D.El.Ed",
+    "full_name": "Bihar Diploma in Elementary Education Joint Entrance Examination",
+    "logo": "/exam-logos/official-v1/4cf73e8d5a6d5c6de5575d32.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.bsebdeled.com/images/biharBoard.png",
+    "source_page": "https://www.bsebdeled.com/"
+  },
+  "bihar-dcece": {
+    "short_name": "DCECE",
+    "full_name": "Diploma Certificate Entrance Competitive Examination",
+    "logo": "/exam-logos/official-v1/5381dd9ddc7a01c8b0667fef.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3b5c01503041b70d41d80e3dbe31bbd8c/uploads/2022/03/2022031474.png",
+    "source_page": "https://bcece.admissions.nic.in/"
+  },
+  "bihar-dece-le": {
+    "short_name": "DECE (LE)",
+    "full_name": "Diploma Entrance Competitive Examination Lateral Entry",
+    "logo": "/exam-logos/official-v1/5381dd9ddc7a01c8b0667fef.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3b5c01503041b70d41d80e3dbe31bbd8c/uploads/2022/03/2022031474.png",
+    "source_page": "https://bcece.admissions.nic.in/"
+  },
+  "bihar-iticat": {
+    "short_name": "ITICAT",
+    "full_name": "Industrial Training Institute Competitive Admission Test",
+    "logo": "/exam-logos/official-v1/5381dd9ddc7a01c8b0667fef.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3b5c01503041b70d41d80e3dbe31bbd8c/uploads/2022/03/2022031474.png",
+    "source_page": "https://bcece.admissions.nic.in/"
+  },
+  "bitsat-exam": {
+    "short_name": "BITSAT - Session 1",
+    "full_name": "Birla Institute of Technology and Science Admission Test - Session 1",
+    "logo": "/exam-logos/official-v1/91c9c64e7f0ca133fe777af7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.bits-pilani.ac.in/wp-content/uploads/bits-pillani-white-2.webp",
+    "source_page": "https://www.bits-pilani.ac.in/"
+  },
+  "bitsat-exam-2": {
+    "short_name": "BITSAT - Session 2",
+    "full_name": "Birla Institute of Technology and Science Admission Test - Session 2",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/43/437df8f07a2deafb67860e7c61aaa179b109733d086b18cde1939d60e409da80.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/43/437df8f07a2deafb67860e7c61aaa179b109733d086b18cde1939d60e409da80.webp",
+    "source_page": ""
+  },
+  "bits-hd": {
+    "short_name": "BITS HD",
+    "full_name": "BITS Higher Degree Admission Test (BITS HD)",
+    "logo": "/exam-logos/official-v1/91c9c64e7f0ca133fe777af7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.bits-pilani.ac.in/wp-content/uploads/bits-pillani-white-2.webp",
+    "source_page": "https://www.bits-pilani.ac.in/"
+  },
+  "bitsat": {
+    "short_name": "BITSAT",
+    "full_name": "BITS Admission Test",
+    "logo": "/exam-logos/official-v1/91c9c64e7f0ca133fe777af7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.bits-pilani.ac.in/wp-content/uploads/bits-pillani-white-2.webp",
+    "source_page": "https://www.bits-pilani.ac.in/"
+  },
+  "bpsc-cce": {
+    "short_name": "BPSC CCE",
+    "full_name": "Bihar Public Service Commission Combined Competitive Examination",
+    "logo": "/exam-logos/official-v1/685a1a7b3919999130826ce0.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://bpsc.bihar.gov.in/wp-content/uploads/2025/01/cropped-QT3Rx6On_400x400.png",
+    "source_page": "https://bpsc.bihar.gov.in/"
+  },
+  "bvp-cet": {
+    "short_name": "BVP CET",
+    "full_name": "Bharati Vidyapeeth Common Entrance Test",
+    "logo": "/exam-logos/official-v1/6d2380baa1565df137ffc5a3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://bvducet.bharatividyapeeth.edu/index_2026_files/images/main/CET_Logo_2026.png",
+    "source_page": "https://bvducet.bharatividyapeeth.edu/"
+  },
+  "ca-final": {
+    "short_name": "CA Final",
+    "full_name": "Chartered Accountants Final Examination",
+    "logo": "/exam-logos/official-v1/649fbabed304fc3696925969.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pqc.icaiexam.icai.org/images/logo.png",
+    "source_page": "https://pqc.icaiexam.icai.org/"
+  },
+  "ca-foundation": {
+    "short_name": "CA Foundation",
+    "full_name": "Chartered Accountants Foundation Examination",
+    "logo": "/exam-logos/official-v1/649fbabed304fc3696925969.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pqc.icaiexam.icai.org/images/logo.png",
+    "source_page": "https://pqc.icaiexam.icai.org/"
+  },
+  "ca-intermediate": {
+    "short_name": "CA Intermediate",
+    "full_name": "Chartered Accountants Intermediate Examination",
+    "logo": "/exam-logos/official-v1/649fbabed304fc3696925969.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pqc.icaiexam.icai.org/images/logo.png",
+    "source_page": "https://pqc.icaiexam.icai.org/"
+  },
+  "common-admission-test": {
+    "short_name": "CAT",
+    "full_name": "Common Admission Test",
+    "logo": "/exam-logos/official-v1/2307187e9f1f69c09e88adae.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://iimcat.ac.in/per/g06/pub/32842/ASM/WebPortal/1/images/CAT_2026_Image.png",
+    "source_page": "https://iimcat.ac.in/"
+  },
+  "CEED": {
+    "short_name": "CEED",
+    "full_name": "Common Entrance Examination for Design (CEED)",
+    "logo": "/exam-logos/official-v1/9f454a73d02b9777482daf5a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.ceed.iitb.ac.in/2026/img/institute/logo_iitb.png",
+    "source_page": "https://www.ceed.iitb.ac.in/2026/"
+  },
+  "ceeta-pg": {
+    "short_name": "CEETA-PG",
+    "full_name": "Common Engineering Entrance Test and Admissions - Postgraduate",
+    "logo": "/exam-logos/official-v1/ba534cd54a4aeb457bcee736.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.annauniv.edu/images/ANNAUNIVERSITYLOGO.png",
+    "source_page": "https://www.annauniv.edu/"
+  },
+  "cuet": {
+    "short_name": "CUET",
+    "full_name": "Central Universities Common Entrance Test",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "cg-pat": {
+    "short_name": "CG PAT",
+    "full_name": "Chhattisgarh Professional Examination Board Pre-Agriculture Test (CG PAT)",
+    "logo": "/exam-logos/official-v1/d1f2517a0d30c12e1629e02d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://vyapamcg.cgstate.gov.in/public/wp-content/themes/cgv/assets/img/vyapamlogo_0.png",
+    "source_page": "https://vyapamcg.cgstate.gov.in/"
+  },
+  "cg-pet": {
+    "short_name": "CG PET",
+    "full_name": "Chhattisgarh Pre Engineering Test",
+    "logo": "/exam-logos/official-v1/d1f2517a0d30c12e1629e02d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://vyapamcg.cgstate.gov.in/public/wp-content/themes/cgv/assets/img/vyapamlogo_0.png",
+    "source_page": "https://vyapamcg.cgstate.gov.in/"
+  },
+  "cg-ppht": {
+    "short_name": "CG PPHT",
+    "full_name": "Chhattisgarh Pre Pharmacy Test",
+    "logo": "/exam-logos/official-v1/d1f2517a0d30c12e1629e02d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://vyapamcg.cgstate.gov.in/public/wp-content/themes/cgv/assets/img/vyapamlogo_0.png",
+    "source_page": "https://vyapamcg.cgstate.gov.in/"
+  },
+  "cg-ppt": {
+    "short_name": "CG PPT",
+    "full_name": "Chhattisgarh Pre Polytechnic Test",
+    "logo": "/exam-logos/official-v1/d1f2517a0d30c12e1629e02d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://vyapamcg.cgstate.gov.in/public/wp-content/themes/cgv/assets/img/vyapamlogo_0.png",
+    "source_page": "https://vyapamcg.cgstate.gov.in/"
+  },
+  "cg-pre-bed": {
+    "short_name": "CG Pre B.Ed",
+    "full_name": "Chhattisgarh Pre Bachelor of Education Entrance Examination",
+    "logo": "/exam-logos/official-v1/d1f2517a0d30c12e1629e02d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://vyapamcg.cgstate.gov.in/public/wp-content/themes/cgv/assets/img/vyapamlogo_0.png",
+    "source_page": "https://vyapamcg.cgstate.gov.in/"
+  },
+  "cg-pre-deled": {
+    "short_name": "CG Pre D.El.Ed",
+    "full_name": "Chhattisgarh Pre Diploma in Elementary Education Entrance Examination",
+    "logo": "/exam-logos/official-v1/d1f2517a0d30c12e1629e02d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://vyapamcg.cgstate.gov.in/public/wp-content/themes/cgv/assets/img/vyapamlogo_0.png",
+    "source_page": "https://vyapamcg.cgstate.gov.in/"
+  },
+  "ca-cpt": {
+    "short_name": "CA CPT",
+    "full_name": "Chartered Accountant Common Proficiency Test",
+    "logo": "/exam-logos/official-v1/649fbabed304fc3696925969.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pqc.icaiexam.icai.org/images/logo.png",
+    "source_page": "https://pqc.icaiexam.icai.org/"
+  },
+  "chhattisgarh-pre-master-of-computer-applications": {
+    "short_name": "CG Pre MCA",
+    "full_name": "Chhattisgarh Pre Master of Computer Applications Entrance Examination",
+    "logo": "/exam-logos/official-v1/d1f2517a0d30c12e1629e02d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://vyapamcg.cgstate.gov.in/public/wp-content/themes/cgv/assets/img/vyapamlogo_0.png",
+    "source_page": "https://vyapamcg.cgstate.gov.in/"
+  },
+  "cg-pvpt": {
+    "short_name": "CG PVPT",
+    "full_name": "Chhattisgarh Pre Veterinary and Polytechnic Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/02/02d795cf673bed9c1893637e39fd754dcc8e6c5871a244bad37882b71a29068d.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/02/02d795cf673bed9c1893637e39fd754dcc8e6c5871a244bad37882b71a29068d.webp",
+    "source_page": ""
+  },
+  "cg-pb-b-sc-exam": {
+    "short_name": "CG PB B.SC EXAM",
+    "full_name": "Chhattisgarh Professional Examination Board Exam",
+    "logo": "/exam-logos/official-v1/d1f2517a0d30c12e1629e02d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://vyapamcg.cgstate.gov.in/public/wp-content/themes/cgv/assets/img/vyapamlogo_0.png",
+    "source_page": "https://vyapamcg.cgstate.gov.in/"
+  },
+  "christ-entrance-test": {
+    "short_name": "CHRIST ET",
+    "full_name": "CHRIST University Entrance Test",
+    "logo": "/exam-logos/official-v1/66de07d171870c82f8ef7d9a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://christuniversity.in/images/logo.png",
+    "source_page": "https://christuniversity.in/admission/ugpg-selection-process-dates-2026"
+  },
+  "culee": {
+    "short_name": "CULEE",
+    "full_name": "Christ University Law Entrance Examination (CULEE)",
+    "logo": "/exam-logos/official-v1/66de07d171870c82f8ef7d9a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://christuniversity.in/images/logo.png",
+    "source_page": "https://christuniversity.in/admission/ugpg-selection-process-dates-2026"
+  },
+  "clat": {
+    "short_name": "CLAT",
+    "full_name": "Common Law Admission Test",
+    "logo": "/exam-logos/official-v1/af02e9822662cab790236390.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://clat2027.consortiumofnlus.ac.in/images/consortium_logo.png",
+    "source_page": "https://clat2027.consortiumofnlus.ac.in/clat-2027/"
+  },
+  "cma-final": {
+    "short_name": "CMA Final",
+    "full_name": "Cost and Management Accountancy Final Examination",
+    "logo": "/exam-logos/official-v1/b36767e465c7eb57d33a23b5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://dwpivt501gtb6.cloudfront.net/upload/images/4a60e0c8-5035-4a7f-98d5-a308dcb183fc.svg",
+    "source_page": "https://icmai.in/ClntStudents/UpdateandAnnouncements"
+  },
+  "cma-foundation": {
+    "short_name": "CMA Foundation",
+    "full_name": "Cost and Management Accountancy Foundation Examination",
+    "logo": "/exam-logos/official-v1/b36767e465c7eb57d33a23b5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://dwpivt501gtb6.cloudfront.net/upload/images/4a60e0c8-5035-4a7f-98d5-a308dcb183fc.svg",
+    "source_page": "https://icmai.in/ClntStudents/UpdateandAnnouncements"
+  },
+  "cma-intermediate": {
+    "short_name": "CMA Intermediate",
+    "full_name": "Cost and Management Accountancy Intermediate Examination",
+    "logo": "/exam-logos/official-v1/b36767e465c7eb57d33a23b5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://dwpivt501gtb6.cloudfront.net/upload/images/4a60e0c8-5035-4a7f-98d5-a308dcb183fc.svg",
+    "source_page": "https://icmai.in/ClntStudents/UpdateandAnnouncements"
+  },
+  "cmat": {
+    "short_name": "CMAT",
+    "full_name": "Common Management Admission Test (CMAT)",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "cmi-entrance": {
+    "short_name": "CMI Entrance Exam",
+    "full_name": "Chennai Mathematical Institute Entrance Examination",
+    "logo": "/exam-logos/official-v1/9177eecf088d56805807afac.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.cmi.ac.in/pix/cmi-header.png",
+    "source_page": "https://www.cmi.ac.in/admissions/"
+  },
+  "cmruat": {
+    "short_name": "CMRUAT",
+    "full_name": "CMR University Admission Test",
+    "logo": "/exam-logos/official-v1/195f05e24a243556e29b8ccc.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cmr.edu.in/wp-content/uploads/2026/03/CMR-NAAC-LOGO-small.png",
+    "source_page": "https://www.cmr.edu.in/"
+  },
+  "tnpsc-ces": {
+    "short_name": "TNPSC CES",
+    "full_name": "Combined Engineering Services Examination",
+    "logo": "/exam-logos/official-v1/20bccd993c9904b728049791.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.tnpsc.gov.in/English/images/TNPSC-logo.jpg",
+    "source_page": "https://www.tnpsc.gov.in/"
+  },
+  "cpnet-ug": {
+    "short_name": "CPNET UG",
+    "full_name": "Combined Pharamcy and Nursing Entrance Exam",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/73/7381275d0f10b11cd96de2d3b84db1907b8f964308b79bd6605c64deb259b413.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/73/7381275d0f10b11cd96de2d3b84db1907b8f964308b79bd6605c64deb259b413.webp",
+    "source_page": ""
+  },
+  "comedk": {
+    "short_name": "COMEDK UGET",
+    "full_name": "Consortium of Medical, Engineering and Dental Colleges of Karnataka Undergraduate Entrance Test",
+    "logo": "/exam-logos/official-v1/b389f3d095c2202e7f15fe26.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.comedk.org/assets/images/logo.jpg",
+    "source_page": "https://comedk.org/about-uget-and-notification-2026"
+  },
+  "cee-ampai-wb": {
+    "short_name": "CEE AMPAI WB",
+    "full_name": "Common Entrance Examination Association of Minority Professional Academic Institutes WB",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/d3/d31b398881d1561bdbe82c1b130c364094bfe53b36a446f9ba131f44ce65998a.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/d3/d31b398881d1561bdbe82c1b130c364094bfe53b36a446f9ba131f44ce65998a.webp",
+    "source_page": ""
+  },
+  "csir-ugc-net": {
+    "short_name": "CSIR UGC NET",
+    "full_name": "Council of Scientific and Industrial Research National Eligibility Test",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "cs-executive": {
+    "short_name": "CS Executive",
+    "full_name": "Company Secretary Executive Programme Examination",
+    "logo": "/exam-logos/official-v1/115cec1b7e0e6a7c0cb8c513.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.icsi.edu/logo_full.png",
+    "source_page": "https://www.icsi.edu/"
+  },
+  "cs-professional": {
+    "short_name": "CS Professional",
+    "full_name": "Company Secretary Professional Programme Examination",
+    "logo": "/exam-logos/official-v1/115cec1b7e0e6a7c0cb8c513.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.icsi.edu/logo_full.png",
+    "source_page": "https://www.icsi.edu/"
+  },
+  "cseet-icsi": {
+    "short_name": "CSEET",
+    "full_name": "Company Secretary Executive Entrance Test",
+    "logo": "/exam-logos/official-v1/115cec1b7e0e6a7c0cb8c513.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.icsi.edu/logo_full.png",
+    "source_page": "https://www.icsi.edu/"
+  },
+  "ctet": {
+    "short_name": "CTET",
+    "full_name": "Central Teacher Eligibility Test",
+    "logo": "/exam-logos/official-v1/77b9d5c97540c0cb626e8fe6.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2023/03/2023032156.png",
+    "source_page": "https://ctet.nic.in/"
+  },
+  "cucet-chandigarh": {
+    "short_name": "CUCET",
+    "full_name": "Chandigarh University Common Entrance Test",
+    "logo": "/exam-logos/official-v1/9e4363e145f4696d21687755.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cucet.cuchd.in/chandigarhuniversityadmissions/assets/img/cucet-logo.webp",
+    "source_page": "https://cucet.cuchd.in/chandigarhuniversityadmissions/index.aspx"
+  },
+  "cuee": {
+    "short_name": "CUEE",
+    "full_name": "Centurion University Entrance Examination",
+    "logo": "/exam-logos/official-v1/a5c1d639dfb3e1f823027b6e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cutm.ac.in/wp-content/themes/centurion/images/logo.svg",
+    "source_page": "https://cutm.ac.in/admission-process/"
+  },
+  "cuet-2026": {
+    "short_name": "CUET UG",
+    "full_name": "Common University Entrance Test (UG)",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "cuet-pg": {
+    "short_name": "CUET PG",
+    "full_name": "Common University Entrance Test (Postgraduate)",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "cusat-cat": {
+    "short_name": "CUSAT CAT",
+    "full_name": "Cochin University of Science and Technology Common Admission Test",
+    "logo": "/exam-logos/official-v1/3ab3bd2515bd8743b6c11c5e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.cusat.ac.in/imageweb/cusatgeorgiafont.png",
+    "source_page": "https://admissions.cusat.ac.in/"
+  },
+  "duet": {
+    "short_name": "DUET",
+    "full_name": "Delhi University Entrance Test",
+    "logo": "/exam-logos/official-v1/a0a76d637f00587bc9492e36.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admission.uod.ac.in/userfiles/images/logo_du.png",
+    "source_page": "https://admission.uod.ac.in/"
+  },
+  "du-jat": {
+    "short_name": "DU JAT",
+    "full_name": "Delhi University Joint Admission Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/64/64716a7fae1d8a5bac8cb8a88b70f2d7fcccf9329da525c94cb7392f8686f92e.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/64/64716a7fae1d8a5bac8cb8a88b70f2d7fcccf9329da525c94cb7392f8686f92e.webp",
+    "source_page": ""
+  },
+  "dnb-pdcet": {
+    "short_name": "DNB PDCET",
+    "full_name": "Diplomate of National Board Post Diploma Centralized Entrance Test",
+    "logo": "/exam-logos/official-v1/32397b7a8d5ea2f2b9c04e3f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://natboard.edu.in/tasveer/nbenewlogo.png",
+    "source_page": "https://natboard.edu.in/viewnbeexam?exam=pdcet"
+  },
+  "dr-b-r-ambedkar-open-university": {
+    "short_name": "BRAOU",
+    "full_name": "Dr. B.R.Ambedkar Open University",
+    "logo": "/exam-logos/official-v1/a8ad3e0ef4bbad10c5ec8eed.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.braouonline.in/Images/BRAOU_NEWLOGO.png",
+    "source_page": "https://www.braouonline.in/MISC/UGPGProspectus.aspx"
+  },
+  "dsat": {
+    "short_name": "DSAT",
+    "full_name": "Dayananda Sagar Admission Test",
+    "logo": "/exam-logos/official-v1/982a4ba07e2cef32102188b6.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.dsu.edu.in/templates/sj_university2/images/styling/default/logo.png",
+    "source_page": "https://www.dsu.edu.in/admission"
+  },
+  "fddi-aist": {
+    "short_name": "FDDI AIST",
+    "full_name": "Footwear Design and Development Institute All India Selection Test",
+    "logo": "/exam-logos/official-v1/e9b80142ca591d20dfa10819.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://fddiindia.com/img/logo-FDDI2026.png",
+    "source_page": "https://fddiindia.com/admission-process"
+  },
+  "fet-nbems": {
+    "short_name": "FET",
+    "full_name": "Fellowship Entrance Test",
+    "logo": "/exam-logos/official-v1/32397b7a8d5ea2f2b9c04e3f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://natboard.edu.in/tasveer/nbenewlogo.png",
+    "source_page": "https://natboard.edu.in/viewnbeexam?exam=pdcet"
+  },
+  "ftii-jet": {
+    "short_name": "FTII JET",
+    "full_name": "Film and Television Institute of India Joint Entrance Examination",
+    "logo": "/exam-logos/official-v1/7ed753c1d5849393df8d2133.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ftii.ac.in/api/serve/2026/03/20/logo_for_website_final_jpg_1774010867_702441be.jpeg",
+    "source_page": "https://ftii.ac.in/admission"
+  },
+  "fmge": {
+    "short_name": "FMGE",
+    "full_name": "Foreign Medical Graduate Examination",
+    "logo": "/exam-logos/official-v1/32397b7a8d5ea2f2b9c04e3f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://natboard.edu.in/tasveer/nbenewlogo.png",
+    "source_page": "https://natboard.edu.in/viewnbeexam?exam=pdcet"
+  },
+  "galgotias-engineering-entrance-exam": {
+    "short_name": "GEEE",
+    "full_name": "Galgotias Engineering Entrance Examination (GEEE)",
+    "logo": "/exam-logos/official-v1/21b0fad269835b8d04cd0972.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.galgotiasuniversity.edu.in/public/uploads/media/6nEZgXfZAHbEKIvU1aAKQW4DT3BzKust4penCoJZ.png",
+    "source_page": "https://www.galgotiasuniversity.edu.in/"
+  },
+  "gat-b": {
+    "short_name": "GAT-B",
+    "full_name": "Graduate Aptitude Test - Biotechnology",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "gate": {
+    "short_name": "GATE",
+    "full_name": "Graduate Aptitude Test in Engineering",
+    "logo": "/exam-logos/official-v1/5dd717c50f7b0c96668a1036.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://gate2027.iitm.ac.in/static/img/logos/GATE27_logo.svg",
+    "source_page": "https://gate2027.iitm.ac.in/"
+  },
+  "gbpuat-entrance": {
+    "short_name": "GBPUAT Entrance",
+    "full_name": "Govind Ballabh Pant University of Agriculture and Technology Entrance Examination",
+    "logo": "/exam-logos/official-v1/7843b30590e714f69148a976.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.gbpuat.ac.in/logo_src.png",
+    "source_page": "https://www.gbpuat.ac.in/"
+  },
+  "gitam-admission-test": {
+    "short_name": "GITAM GAT",
+    "full_name": "GITAM Admission Test (GAT)",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/62/62cc1ec756db6fa84a460bf97910e047d99da4d70b812aac98fdfafbf6a3ff79.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/62/62cc1ec756db6fa84a460bf97910e047d99da4d70b812aac98fdfafbf6a3ff79.webp",
+    "source_page": ""
+  },
+  "gitam-gat": {
+    "short_name": "GAT",
+    "full_name": "GITAM Admission Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/62/62cc1ec756db6fa84a460bf97910e047d99da4d70b812aac98fdfafbf6a3ff79.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/62/62cc1ec756db6fa84a460bf97910e047d99da4d70b812aac98fdfafbf6a3ff79.webp",
+    "source_page": ""
+  },
+  "gsat": {
+    "short_name": "GSAT",
+    "full_name": "GITAM Science Admission Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/68/68a2de6118d0064d1b35fd562e184b6d4b010220ec7aceee3b3d7f003e393ee7.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/68/68a2de6118d0064d1b35fd562e184b6d4b010220ec7aceee3b3d7f003e393ee7.webp",
+    "source_page": ""
+  },
+  "gcet": {
+    "short_name": "GCET (Goa CET )",
+    "full_name": "Goa Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/f2/f2ef3e2513d737eb16376a10a9ea5eb4bc4bb1b0e44312096c6a877a4d6f98fe.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/f2/f2ef3e2513d737eb16376a10a9ea5eb4bc4bb1b0e44312096c6a877a4d6f98fe.webp",
+    "source_page": ""
+  },
+  "gbpuat": {
+    "short_name": "GBPUAT",
+    "full_name": "Govind Ballabh Pant University of Agriculture and Technology",
+    "logo": "/exam-logos/official-v1/7843b30590e714f69148a976.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.gbpuat.ac.in/logo_src.png",
+    "source_page": "https://www.gbpuat.ac.in/"
+  },
+  "gpat": {
+    "short_name": "GPAT",
+    "full_name": "Graduate Pharmacy Aptitude Test (GPAT)",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "gpsc-class-1-2": {
+    "short_name": "GPSC Class 1-2",
+    "full_name": "Gujarat Administrative Service Class-I and Gujarat Civil Services Class-I & II Competitive Examination",
+    "logo": "/exam-logos/official-v1/c4bd9f8554eb665cea91aec5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://gpsc.gujarat.gov.in/images/Logo-GPSC.png",
+    "source_page": "https://gpsc.gujarat.gov.in/"
+  },
+  "graduate-management-admission-test": {
+    "short_name": "GMAT",
+    "full_name": "Graduate Management Admission Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/62/6227292e39e110dbbad14adaf9f05ba8f0c06fbe836aae82a99196d1cffb2236.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/62/6227292e39e110dbbad14adaf9f05ba8f0c06fbe836aae82a99196d1cffb2236.webp",
+    "source_page": ""
+  },
+  "gre": {
+    "short_name": "GRE",
+    "full_name": "Graduate Record Examinations",
+    "logo": "/exam-logos/official-v1/bf164cb2f5870238acb13823.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.ets.org/content/dam/ets-org/Rebrand/Logos/GRE_purple_RGB.svg",
+    "source_page": "https://www.ets.org/gre/test-takers/general-test/about.html"
+  },
+  "guee": {
+    "short_name": "GUEE",
+    "full_name": "Galgotias University Entrance Examination",
+    "logo": "/exam-logos/official-v1/21b0fad269835b8d04cd0972.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.galgotiasuniversity.edu.in/public/uploads/media/6nEZgXfZAHbEKIvU1aAKQW4DT3BzKust4penCoJZ.png",
+    "source_page": "https://www.galgotiasuniversity.edu.in/"
+  },
+  "gset": {
+    "short_name": "GSET",
+    "full_name": "Gujarat State Eligibility Test",
+    "logo": "/exam-logos/official-v1/43ce0e42f21db16e6809a0c8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.gujaratset.ac.in/assets/images/skybluegset.png",
+    "source_page": "https://www.gujaratset.ac.in/"
+  },
+  "gujcet": {
+    "short_name": "GUJCET",
+    "full_name": "Gujarat Common Entrance Test",
+    "logo": "/exam-logos/official-v1/8bb49f8ba87559d93fa099e5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.gseb.org/assets/images/gseb-english-logo.png",
+    "source_page": "https://www.gseb.org/"
+  },
+  "gndu-gmet": {
+    "short_name": "GNDU GMET",
+    "full_name": "Guru Nanak Dev University Management Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/eb/ebdf13b4f69480e0f9d2e55667484730eec9b85a60927213c5c40865d7d6ac5f.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/eb/ebdf13b4f69480e0f9d2e55667484730eec9b85a60927213c5c40865d7d6ac5f.webp",
+    "source_page": ""
+  },
+  "haryana-lateral-entry-entrance-test": {
+    "short_name": "Haryana LEET",
+    "full_name": "Haryana Lateral Entry Entrance Test (LEET)",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/19/1913a66f971a6415b7bb64cb408a567ba1b53a4c30c366783c9166a9f22cdc83.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/19/1913a66f971a6415b7bb64cb408a567ba1b53a4c30c366783c9166a9f22cdc83.webp",
+    "source_page": ""
+  },
+  "hp-b-sc-nursing-exam": {
+    "short_name": "HP B.SC NURSING EXAM",
+    "full_name": "Himachal Pradesh Bachelor of Science in Nursing Entrance Test",
+    "logo": "/exam-logos/official-v1/94a06ea3e55eaa5375456694.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://amruhp.ac.in/wp-content/uploads/2020/06/AMRU-Logo-New.jpg",
+    "source_page": "https://amruhp.ac.in/"
+  },
+  "himachal-pradesh-polytechnic-admission-test": {
+    "short_name": "HP PAT",
+    "full_name": "Himachal Pradesh Polytechnic Admission Test",
+    "logo": "/exam-logos/official-v1/0ee415300fdccddcf768a8c7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.hptechboard.com/images/logo.png",
+    "source_page": "https://www.hptechboard.com/"
+  },
+  "hpu-mat": {
+    "short_name": "HPU MAT",
+    "full_name": "Himachal Pradesh University Management Aptitude Test",
+    "logo": "/exam-logos/official-v1/b05a19230531fd4046d60f4e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.hpuniv.ac.in/images/hpu_logo.svg",
+    "source_page": "https://www.hpuniv.ac.in/university-detail/management-studies-0/management-aptitude-test"
+  },
+  "hitseee": {
+    "short_name": "HITSEEE",
+    "full_name": "Hindustan Institute of Technology and Science Engineering Entrance Examination",
+    "logo": "/exam-logos/official-v1/cf30a007fad4edc0f880a99a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://hindustanuniv.ac.in/assets/image/new-logo.svg",
+    "source_page": "https://hindustanuniv.ac.in/admissions-eligibility/"
+  },
+  "ap-horticet": {
+    "short_name": "HORTICET",
+    "full_name": "Dr YSR Horticultural University Horticulture Common Entrance Test",
+    "logo": "/exam-logos/official-v1/38de076598f25781c79433e4.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://drysrhu.ap.gov.in/assets/images/ap-logo_official.png",
+    "source_page": "https://drysrhu.ap.gov.in/"
+  },
+  "hp-leet": {
+    "short_name": "HP LEET",
+    "full_name": "Himachal Pradesh Lateral Entry Entrance Test",
+    "logo": "/exam-logos/official-v1/0ee415300fdccddcf768a8c7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.hptechboard.com/images/logo.png",
+    "source_page": "https://www.hptechboard.com/"
+  },
+  "hp-pat": {
+    "short_name": "HP PAT",
+    "full_name": "Himachal Pradesh Polytechnic Admission Test",
+    "logo": "/exam-logos/official-v1/0ee415300fdccddcf768a8c7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.hptechboard.com/images/logo.png",
+    "source_page": "https://www.hptechboard.com/"
+  },
+  "hp-set": {
+    "short_name": "HP SET",
+    "full_name": "Himachal Pradesh State Eligibility Test",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "HPPSC official site requires unsafe legacy TLS renegotiation; HTTP retry timed out. No security downgrade used."
+  },
+  "hpcet": {
+    "short_name": "HPCET",
+    "full_name": "Himachal Pradesh Common Entrance Test",
+    "logo": "/exam-logos/official-v1/e379e733fb7f4dbf9b5d063c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.himtu.ac.in/themes/custom/university_theme/hptulogo.svg",
+    "source_page": "https://www.himtu.ac.in/"
+  },
+  "hpsc-hcs": {
+    "short_name": "HPSC HCS",
+    "full_name": "Haryana Civil Services (Executive Branch) and Allied Services Examination",
+    "logo": "/exam-logos/official-v1/6fa60278d81105e4e2e6a66b.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://hpsc.gov.in/portals/0/logo_2_0_0_1.png",
+    "source_page": "https://hpsc.gov.in/"
+  },
+  "hssc-cet": {
+    "short_name": "HSSC CET",
+    "full_name": "Haryana Staff Selection Commission Common Eligibility Test",
+    "logo": "/exam-logos/official-v1/c5dff0f2ae667bf105fc7e86.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://hssc.gov.in/images/logo.png",
+    "source_page": "https://hssc.gov.in/"
+  },
+  "ib-acio-executive": {
+    "short_name": "IB ACIO-II/Executive",
+    "full_name": "Intelligence Bureau Assistant Central Intelligence Officer Grade-II/Executive Examination",
+    "logo": "/exam-logos/official-v1/50a836c0ddeee59b69a2c75f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.mha.gov.in/themes/custom/mhanew/images/emblem-dark.png",
+    "source_page": "https://www.mha.gov.in/"
+  },
+  "ibps-csa": {
+    "short_name": "IBPS CSA",
+    "full_name": "IBPS Common Recruitment Process for Customer Service Associates",
+    "logo": "/exam-logos/official-v1/726bb8d844cfe9fb83a01aa8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://capp.ibps.in/assets/images/logos/logo.png",
+    "source_page": "https://capp.ibps.in/"
+  },
+  "ibps-po": {
+    "short_name": "IBPS PO/MT XVI",
+    "full_name": "IBPS Common Recruitment Process for Probationary Officers / Management Trainees XVI",
+    "logo": "/exam-logos/official-v1/726bb8d844cfe9fb83a01aa8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://capp.ibps.in/assets/images/logos/logo.png",
+    "source_page": "https://capp.ibps.in/"
+  },
+  "ibps-cwe-rrb": {
+    "short_name": "IBPS CWE RRB",
+    "full_name": "IBPS Regional Rural Banks Common Written Test",
+    "logo": "/exam-logos/official-v1/726bb8d844cfe9fb83a01aa8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://capp.ibps.in/assets/images/logos/logo.png",
+    "source_page": "https://capp.ibps.in/"
+  },
+  "ibps-rrb-office-assistant": {
+    "short_name": "IBPS RRB Office Assistant",
+    "full_name": "IBPS CRP RRB Office Assistants (Multipurpose)",
+    "logo": "/exam-logos/official-v1/726bb8d844cfe9fb83a01aa8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://capp.ibps.in/assets/images/logos/logo.png",
+    "source_page": "https://capp.ibps.in/"
+  },
+  "ibps-rrb-officer-scale-i": {
+    "short_name": "IBPS RRB Officer Scale I",
+    "full_name": "IBPS CRP RRB Officer Scale I",
+    "logo": "/exam-logos/official-v1/726bb8d844cfe9fb83a01aa8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://capp.ibps.in/assets/images/logos/logo.png",
+    "source_page": "https://capp.ibps.in/"
+  },
+  "ibps-so": {
+    "short_name": "IBPS Specialist Officer XVI",
+    "full_name": "IBPS Common Recruitment Process for Specialist Officers XVI",
+    "logo": "/exam-logos/official-v1/726bb8d844cfe9fb83a01aa8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://capp.ibps.in/assets/images/logos/logo.png",
+    "source_page": "https://capp.ibps.in/"
+  },
+  "ibsat": {
+    "short_name": "IBSAT",
+    "full_name": "ICFAI Business School Aptitude Test",
+    "logo": "/exam-logos/official-v1/e376f8e4b81b2c6d7f1c6df4.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.ibsindia.org/wp-content/uploads/2017/08/ibs_logo.png",
+    "source_page": "https://www.ibsindia.org/"
+  },
+  "icai-intt-at": {
+    "short_name": "INTT-AT",
+    "full_name": "ICAI International Taxation Assessment Test",
+    "logo": "/exam-logos/official-v1/649fbabed304fc3696925969.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pqc.icaiexam.icai.org/images/logo.png",
+    "source_page": "https://pqc.icaiexam.icai.org/"
+  },
+  "icar-aice-jrf-srf-phd": {
+    "short_name": "ICAR AICE-JRF/SRF",
+    "full_name": "ICAR All India Competitive Examination for JRF/SRF (Ph.D.)",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "icar-aieea-pg": {
+    "short_name": "ICAR AIEEA PG",
+    "full_name": "ICAR All India Entrance Examination for Admission - Postgraduate",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "icmai-cat-part-i": {
+    "short_name": "CAT Part I",
+    "full_name": "Certificate in Accounting Technicians Course Part I Examination",
+    "logo": "/exam-logos/official-v1/b36767e465c7eb57d33a23b5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://dwpivt501gtb6.cloudfront.net/upload/images/4a60e0c8-5035-4a7f-98d5-a308dcb183fc.svg",
+    "source_page": "https://icmai.in/ClntStudents/UpdateandAnnouncements"
+  },
+  "ignou-bed-entrance": {
+    "short_name": "IGNOU B.Ed",
+    "full_name": "Indira Gandhi National Open University B.Ed Entrance Test",
+    "logo": "/exam-logos/official-v1/4fbb89660ef3569c6dd16fa9.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ignou-bed.samarth.edu.in/assets/f2c8eb3e/site_files/ignou_logo.png",
+    "source_page": "https://ignou-bed.samarth.edu.in/index.php"
+  },
+  "ignou-openmat-entrance-exam": {
+    "short_name": "IGNOU OPENMAT",
+    "full_name": "IGNOU OPENMAT Entrance Exam",
+    "logo": "/exam-logos/official-v1/4fbb89660ef3569c6dd16fa9.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ignou-bed.samarth.edu.in/assets/f2c8eb3e/site_files/ignou_logo.png",
+    "source_page": "https://ignou-bed.samarth.edu.in/index.php"
+  },
+  "iiith-leee": {
+    "short_name": "LEEE",
+    "full_name": "IIIT Hyderabad Lateral Entry Entrance Examination",
+    "logo": "/exam-logos/official-v1/3063ea03ccbe3497cb843f86.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pdm.iiit.ac.in/wp-content/themes/pdm/assets/img/iiit-logo.png",
+    "source_page": "https://pdm.iiit.ac.in/admissions/"
+  },
+  "iiith-pgee": {
+    "short_name": "PGEE",
+    "full_name": "IIIT Hyderabad Postgraduate Entrance Examination",
+    "logo": "/exam-logos/official-v1/3063ea03ccbe3497cb843f86.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pdm.iiit.ac.in/wp-content/themes/pdm/assets/img/iiit-logo.png",
+    "source_page": "https://pdm.iiit.ac.in/admissions/"
+  },
+  "iiith-ugee": {
+    "short_name": "UGEE",
+    "full_name": "IIIT Hyderabad Undergraduate Entrance Examination",
+    "logo": "/exam-logos/official-v1/3063ea03ccbe3497cb843f86.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pdm.iiit.ac.in/wp-content/themes/pdm/assets/img/iiit-logo.png",
+    "source_page": "https://pdm.iiit.ac.in/admissions/"
+  },
+  "ipmat-rohtak": {
+    "short_name": "IPM AT Rohtak",
+    "full_name": "IIM Rohtak Integrated Programme in Management Aptitude Test",
+    "logo": "/exam-logos/official-v1/4d0d046c1b9674a2d620a206.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://iimrohtak.ac.in/assets/images/iimrlogo3.png",
+    "source_page": "https://iimrohtak.ac.in/"
+  },
+  "iiser-iat": {
+    "short_name": "IAT",
+    "full_name": "IISER Aptitude Test",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "Current official admissions header is text-only. No common IAT mark verified; a single IISER campus crest would misrepresent the joint exam."
+  },
+  "iit-jam": {
+    "short_name": "JAM",
+    "full_name": "Joint Admission Test for Masters",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/71/71ebd95df6ee76ae6db4c6f3ab69f1c9e89067d6775250659ca8fd24fd6ee035.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/71/71ebd95df6ee76ae6db4c6f3ab69f1c9e89067d6775250659ca8fd24fd6ee035.webp",
+    "source_page": ""
+  },
+  "imu-cet": {
+    "short_name": "IMU CET",
+    "full_name": "Indian Maritime University Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/67/674713e5cfe3e1b4bd70c3713a06a143022316eb8502e17525df31cf66ada625.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/67/674713e5cfe3e1b4bd70c3713a06a143022316eb8502e17525df31cf66ada625.webp",
+    "source_page": ""
+  },
+  "indian-army-agniveer-cee": {
+    "short_name": "Indian Army Agniveer CEE",
+    "full_name": "Indian Army Online Common Entrance Examination for Agniveer Recruitment",
+    "logo": "/exam-logos/official-v1/e4bf5aef8311fbf81a48150f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.joinindianarmy.nic.in/writereaddata/Portal/Images/logo.png",
+    "source_page": "https://www.joinindianarmy.nic.in/"
+  },
+  "icar-aieea": {
+    "short_name": "ICAR AIEEA",
+    "full_name": "ICAR All India Entrance Examination for Admission (AIEEA-PG)",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "iiad": {
+    "short_name": "IIAD",
+    "full_name": "Indian Institute of Art and Design",
+    "logo": "/exam-logos/official-v1/c52c82f0c9c7d5feda7cccee.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.iiad.edu.in/wp-content/themes/iiad/asset/logo/iiad-logo.webp",
+    "source_page": "https://www.iiad.edu.in/"
+  },
+  "iift": {
+    "short_name": "IIFT",
+    "full_name": "Indian Institute of Foreign Trade",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/62/62bb282338b8014c395b4c27de416f81c8d0fb7d2ef5baa23b67f433e5130e6f.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/62/62bb282338b8014c395b4c27de416f81c8d0fb7d2ef5baa23b67f433e5130e6f.webp",
+    "source_page": ""
+  },
+  "iimc-entrance-exam": {
+    "short_name": "IIMC Entrance Exam",
+    "full_name": "Indian Institute of Mass Communication's Entrance Exam",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/3a/3a0e5f1d043d26ef030a39a78426f359979b9e7ee7d272a9946c56a4e2e4db20.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/3a/3a0e5f1d043d26ef030a39a78426f359979b9e7ee7d272a9946c56a4e2e4db20.webp",
+    "source_page": ""
+  },
+  "imucet": {
+    "short_name": "IMU CET",
+    "full_name": "Indian Maritime University Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/67/674713e5cfe3e1b4bd70c3713a06a143022316eb8502e17525df31cf66ada625.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/67/674713e5cfe3e1b4bd70c3713a06a143022316eb8502e17525df31cf66ada625.webp",
+    "source_page": ""
+  },
+  "indian-navy-agniveer-mr": {
+    "short_name": "Indian Navy Agniveer MR",
+    "full_name": "Indian Navy Agniveer Matric Recruit Selection",
+    "logo": "/exam-logos/official-v1/9d2997cae7ea437ade4cf1d1.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.joinindiannavy.gov.in/images/octaginal-crest.png",
+    "source_page": "https://www.joinindiannavy.gov.in/"
+  },
+  "indian-navy-agniveer-ssr": {
+    "short_name": "Indian Navy Agniveer SSR",
+    "full_name": "Indian Navy Agniveer Senior Secondary Recruit Selection",
+    "logo": "/exam-logos/official-v1/9d2997cae7ea437ade4cf1d1.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.joinindiannavy.gov.in/images/octaginal-crest.png",
+    "source_page": "https://www.joinindiannavy.gov.in/"
+  },
+  "indira-gandhi-rashtriya-uran-akademi-igrua": {
+    "short_name": "IGRUA",
+    "full_name": "Indira Gandhi Rashtriya Uran Akademi (IGRUA)",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/89/891d270ac954d1882bc6a5a066ca22cfe36da29ad87fb5ede7f274e588b6acd6.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/89/891d270ac954d1882bc6a5a066ca22cfe36da29ad87fb5ede7f274e588b6acd6.webp",
+    "source_page": ""
+  },
+  "iilet": {
+    "short_name": "IILET",
+    "full_name": "Indore Institute of Law Entrance Test",
+    "logo": "/exam-logos/official-v1/0fb2a208f5b642d5737df44b.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://indoreinstituteoflaw.org/wp-content/uploads/2023/11/IIL_Logo.png",
+    "source_page": "https://indoreinstituteoflaw.org/admission-process/"
+  },
+  "indraprastha-university-common-entrance-test": {
+    "short_name": "IPU CET",
+    "full_name": "Indraprastha University Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/e4/e462e45b84168ddd4b1d3373287b12e25dca0642d9d53f06c522b9b333ddf38f.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/e4/e462e45b84168ddd4b1d3373287b12e25dca0642d9d53f06c522b9b333ddf38f.webp",
+    "source_page": ""
+  },
+  "iticat": {
+    "short_name": "ITICAT",
+    "full_name": "Bihar Industrial Training Institute Competitive Admission Test (ITICAT)",
+    "logo": "/exam-logos/official-v1/5381dd9ddc7a01c8b0667fef.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3b5c01503041b70d41d80e3dbe31bbd8c/uploads/2022/03/2022031474.png",
+    "source_page": "https://bcece.admissions.nic.in/"
+  },
+  "ini-cet": {
+    "short_name": "INI-CET",
+    "full_name": "Institute of National Importance Combined Entrance Test",
+    "logo": "/exam-logos/official-v1/f9b12d45fa2829cd8282bff2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://aiimsexams.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Faiims_logo.37b13df2.webp&w=256&q=75",
+    "source_page": "https://aiimsexams.ac.in/"
+  },
+  "ini-ss": {
+    "short_name": "INI-SS",
+    "full_name": "Institute of National Importance Super-Speciality Entrance Test",
+    "logo": "/exam-logos/official-v1/f9b12d45fa2829cd8282bff2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://aiimsexams.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Faiims_logo.37b13df2.webp&w=256&q=75",
+    "source_page": "https://aiimsexams.ac.in/"
+  },
+  "iemjee": {
+    "short_name": "IEMJEE",
+    "full_name": "Insitute of Engineering and Management Joint Entrance Exam",
+    "logo": "/exam-logos/official-v1/27c462899ec54684301d394d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exam.iem.edu.in/assets/img/IEM_Logo.png",
+    "source_page": "https://exam.iem.edu.in/"
+  },
+  "institute-of-banking-personnel-selection-clerk": {
+    "short_name": "IBPS Clerk",
+    "full_name": "Institute of Banking Personnel Selection-Clerk",
+    "logo": "/exam-logos/official-v1/726bb8d844cfe9fb83a01aa8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://capp.ibps.in/assets/images/logos/logo.png",
+    "source_page": "https://capp.ibps.in/"
+  },
+  "itm-nest": {
+    "short_name": "ITM NEST",
+    "full_name": "Institute of Technology and Management National Entrance and Scholarship Test",
+    "logo": "/exam-logos/official-v1/a2302e7416cb3afad77c648c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://resources.itmuniversity.ac.in/assets/images/companylogo/Logo_2.png",
+    "source_page": "https://www.itmuniversity.ac.in/"
+  },
+  "ipmat": {
+    "short_name": "IPMAT",
+    "full_name": "Integrated Programme in Management Aptitude Test (IPMAT)",
+    "logo": "/exam-logos/official-v1/9676ad0d2eaa3dbc6ac2e5f1.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://iimidr.ac.in/wp-content/uploads/2024/09/iimi-logo-web1.png",
+    "source_page": "https://iimidr.ac.in/programmes/academic-programmes/five-year-integrated-programme-in-management-ipm/ipm-admissions-details/"
+  },
+  "ipmat-indore": {
+    "short_name": "IPM AT Indore",
+    "full_name": "Integrated Programme in Management Aptitude Test - IIM Indore",
+    "logo": "/exam-logos/official-v1/9676ad0d2eaa3dbc6ac2e5f1.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://iimidr.ac.in/wp-content/uploads/2024/09/iimi-logo-web1.png",
+    "source_page": "https://iimidr.ac.in/programmes/academic-programmes/five-year-integrated-programme-in-management-ipm/ipm-admissions-details/"
+  },
+  "ipu-cet": {
+    "short_name": "IPU CET",
+    "full_name": "Guru Gobind Singh Indraprastha University Common Entrance Test",
+    "logo": "/exam-logos/official-v1/793b36b0759fbee98705a258.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.ipu.ac.in/style/head_foot_img/220px-usemGuru_Gobind_Singh_Indraprastha_University12.png",
+    "source_page": "https://www.ipu.ac.in/adm2026/adm2026main.php"
+  },
+  "irmasat": {
+    "short_name": "IRMASAT",
+    "full_name": "IRMA Social Awareness Test",
+    "logo": "/exam-logos/official-v1/f66158f9da255070005b8da1.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.irma.ac.in/images/logo.png",
+    "source_page": "https://admissions.irma.ac.in/admission/mba/admission-notice"
+  },
+  "isi-admission-test": {
+    "short_name": "ISI Admission Test",
+    "full_name": "Indian Statistical Institute Admission Test",
+    "logo": "/exam-logos/official-v1/3eddd4a582ef68be4c7b6643.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.isical.ac.in/isical_web/images/logo.png",
+    "source_page": "https://www.isical.ac.in/"
+  },
+  "jain-jet": {
+    "short_name": "JET",
+    "full_name": "JAIN Entrance Test",
+    "logo": "/exam-logos/official-v1/2c42facc1cf033c7569f2ac4.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.jainuniversity.ac.in/jain/home/assets/images/ju-white-logo.png",
+    "source_page": "https://www.jainuniversity.ac.in/"
+  },
+  "jmiee": {
+    "short_name": "JMIEE",
+    "full_name": "Jamia Millia Islamia University Entrance entrance examination",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/f9/f9c5a8de2e2f8aed36495df27a7ebd3d23d9c66d94000c2fdc7d4382d7c075b6.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/f9/f9c5a8de2e2f8aed36495df27a7ebd3d23d9c66d94000c2fdc7d4382d7c075b6.webp",
+    "source_page": ""
+  },
+  "jkpet": {
+    "short_name": "JKPET",
+    "full_name": "Jammu and Kashmir Polytechnic Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/07/073425a64165315ce12fdbb4cf94031e83fe4e7d0d59b45190914a27a1230115.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/07/073425a64165315ce12fdbb4cf94031e83fe4e7d0d59b45190914a27a1230115.webp",
+    "source_page": ""
+  },
+  "jipmer-pg": {
+    "short_name": "JIPMER PG",
+    "full_name": "Jawaharlal Institute of Postgraduate Medical Education & Research (MD MS)",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/c6/c6b475278c654d8efcffa647464c0b222864fcebfbad93a1c3b66ee49e8ede11.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/c6/c6b475278c654d8efcffa647464c0b222864fcebfbad93a1c3b66ee49e8ede11.webp",
+    "source_page": ""
+  },
+  "jawaharlal-nehru-university-combined-entrance-examination-for-biotechnology": {
+    "short_name": "JNU CEEB",
+    "full_name": "Jawaharlal Nehru University Combined Entrance Examination for Biotechnology",
+    "logo": "/exam-logos/official-v1/7722150eeadc05d0350e831d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jnu.ac.in/sites/default/files/logo_0.png",
+    "source_page": "https://jnu.ac.in/admissions"
+  },
+  "jcece-agriculture": {
+    "short_name": "JCECE",
+    "full_name": "Jharkhand Combined Entrance Competitive Examination for Agriculture and Allied Courses",
+    "logo": "/exam-logos/official-v1/342cf40b5b4ddfabc74b2d1c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jceceb.jharkhand.gov.in/assets/img/jcecebLogo.png",
+    "source_page": "https://jceceb.jharkhand.gov.in/"
+  },
+  "wbjee-jeca": {
+    "short_name": "JECA",
+    "full_name": "Joint Entrance for Computer Applications",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "jee-advanced": {
+    "short_name": "JEE Advanced",
+    "full_name": "Joint Entrance Examination (Advanced)",
+    "logo": "/exam-logos/official-v1/b5a3ce3b78d5276f323522b7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jeeadv.ac.in/images/logo2026.png",
+    "source_page": "https://jeeadv.ac.in/"
+  },
+  "jee-mains": {
+    "short_name": "JEE Main",
+    "full_name": "Joint Entrance Examination (Main)",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "jeecup": {
+    "short_name": "JEECUP",
+    "full_name": "Uttar Pradesh Joint Entrance Examination (Polytechnic)",
+    "logo": "/exam-logos/official-v1/cd2c14c6f2736af0b2038279.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s325db67c5657914454081c6a18e93d6dd/uploads/2022/01/2022012945.png",
+    "source_page": "https://jeecup.admissions.nic.in/"
+  },
+  "wbjee-jelet": {
+    "short_name": "JELET",
+    "full_name": "Joint Entrance for Lateral Entry",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "jemas-pg": {
+    "short_name": "JEMAS(PG)",
+    "full_name": "Joint Entrance for Medical and Allied Sciences Postgraduate Courses",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "jemscn": {
+    "short_name": "JEMScN",
+    "full_name": "Joint Entrance for Master of Science Nursing",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "jenpas-ug": {
+    "short_name": "JENPAS UG",
+    "full_name": "Joint Entrance Test for Nursing, Paramedical and Allied Sciences Undergraduate Courses",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "jepbn": {
+    "short_name": "JEPBN",
+    "full_name": "Joint Entrance for Post Basic Nursing",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "jest": {
+    "short_name": "JEST",
+    "full_name": "Joint Entrance Screening Test",
+    "logo": "/exam-logos/official-v1/da83265677e132848a8650e3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.jest.org.in/sites/default/files/logo_jest2026_web2.svg",
+    "source_page": "https://www.jest.org.in/"
+  },
+  "jharkhand-bed-entrance": {
+    "short_name": "Jharkhand B.Ed",
+    "full_name": "Jharkhand B.Ed Combined Entrance Competitive Examination",
+    "logo": "/exam-logos/official-v1/342cf40b5b4ddfabc74b2d1c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jceceb.jharkhand.gov.in/assets/img/jcecebLogo.png",
+    "source_page": "https://jceceb.jharkhand.gov.in/"
+  },
+  "jharkhand-bped-entrance": {
+    "short_name": "Jharkhand B.P.Ed",
+    "full_name": "Jharkhand B.P.Ed Combined Entrance Competitive Examination",
+    "logo": "/exam-logos/official-v1/342cf40b5b4ddfabc74b2d1c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jceceb.jharkhand.gov.in/assets/img/jcecebLogo.png",
+    "source_page": "https://jceceb.jharkhand.gov.in/"
+  },
+  "jcece": {
+    "short_name": "JCECE",
+    "full_name": "Jharkhand Combined Entrance Competitive Examination (JCECE)",
+    "logo": "/exam-logos/official-v1/342cf40b5b4ddfabc74b2d1c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jceceb.jharkhand.gov.in/assets/img/jcecebLogo.png",
+    "source_page": "https://jceceb.jharkhand.gov.in/"
+  },
+  "jharkhand-diploma-le": {
+    "short_name": "Jharkhand Diploma LE",
+    "full_name": "Jharkhand Diploma Entrance Competitive Examination (Lateral Entry)",
+    "logo": "/exam-logos/official-v1/342cf40b5b4ddfabc74b2d1c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jceceb.jharkhand.gov.in/assets/img/jcecebLogo.png",
+    "source_page": "https://jceceb.jharkhand.gov.in/"
+  },
+  "jharkhand-engineering-le": {
+    "short_name": "Jharkhand Engineering LE",
+    "full_name": "Jharkhand Engineering Entrance Competitive Examination (Lateral Entry)",
+    "logo": "/exam-logos/official-v1/342cf40b5b4ddfabc74b2d1c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jceceb.jharkhand.gov.in/assets/img/jcecebLogo.png",
+    "source_page": "https://jceceb.jharkhand.gov.in/"
+  },
+  "jharkhand-med-entrance": {
+    "short_name": "Jharkhand M.Ed",
+    "full_name": "Jharkhand M.Ed Combined Entrance Competitive Examination",
+    "logo": "/exam-logos/official-v1/342cf40b5b4ddfabc74b2d1c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jceceb.jharkhand.gov.in/assets/img/jcecebLogo.png",
+    "source_page": "https://jceceb.jharkhand.gov.in/"
+  },
+  "jharkhand-pece": {
+    "short_name": "PECE",
+    "full_name": "Jharkhand Polytechnic Entrance Competitive Examination",
+    "logo": "/exam-logos/official-v1/342cf40b5b4ddfabc74b2d1c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jceceb.jharkhand.gov.in/assets/img/jcecebLogo.png",
+    "source_page": "https://jceceb.jharkhand.gov.in/"
+  },
+  "jipmat": {
+    "short_name": "JIPMAT",
+    "full_name": "Joint Integrated Programme in Management Admission Test",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "jkcet": {
+    "short_name": "JKCET",
+    "full_name": "Jammu and Kashmir Common Entrance Test",
+    "logo": "/exam-logos/official-v1/8d665f84d7d9a1fa9744acc7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jkbopee.gov.in/imgn/jkbopee.jpg",
+    "source_page": "https://www.jkbopee.gov.in/"
+  },
+  "jmi-ba-llb": {
+    "short_name": "JMI B.A. LL.B.",
+    "full_name": "Jamia Millia Islamia B.A. LL.B. Entrance Examination",
+    "logo": "/exam-logos/official-v1/3e3988765d21f67b15999317.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jmi.ac.in/assets/images/logo/logo.svg",
+    "source_page": "https://admission.jmi.ac.in/"
+  },
+  "jmi-bed": {
+    "short_name": "JMI B.Ed",
+    "full_name": "Jamia Millia Islamia Bachelor of Education Entrance Examination",
+    "logo": "/exam-logos/official-v1/3e3988765d21f67b15999317.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jmi.ac.in/assets/images/logo/logo.svg",
+    "source_page": "https://admission.jmi.ac.in/"
+  },
+  "jmi-mba": {
+    "short_name": "JMI MBA",
+    "full_name": "Jamia Millia Islamia Master of Business Administration Entrance Examination",
+    "logo": "/exam-logos/official-v1/3e3988765d21f67b15999317.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jmi.ac.in/assets/images/logo/logo.svg",
+    "source_page": "https://admission.jmi.ac.in/"
+  },
+  "jmi-mca": {
+    "short_name": "JMI MCA",
+    "full_name": "Jamia Millia Islamia Master of Computer Applications Entrance Examination",
+    "logo": "/exam-logos/official-v1/3e3988765d21f67b15999317.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jmi.ac.in/assets/images/logo/logo.svg",
+    "source_page": "https://admission.jmi.ac.in/"
+  },
+  "joint-admission-test-for-masters": {
+    "short_name": "IIT JAM",
+    "full_name": "Joint Admission Test for Masters",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/71/71ebd95df6ee76ae6db4c6f3ab69f1c9e89067d6775250659ca8fd24fd6ee035.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/71/71ebd95df6ee76ae6db4c6f3ab69f1c9e89067d6775250659ca8fd24fd6ee035.webp",
+    "source_page": ""
+  },
+  "csir-ugc-net-june-2026": {
+    "short_name": "CSIR-UGC NET",
+    "full_name": "Joint CSIR-University Grants Commission National Eligibility Test - June",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "jexpo": {
+    "short_name": "JEXPO",
+    "full_name": "Joint Entrance Exam for Polytechnics",
+    "logo": "/exam-logos/official-v1/a8d4a144026c67e886db2a7c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://webscte.co.in/assets/image/logo.png",
+    "source_page": "https://webscte.co.in/"
+  },
+  "jee-mains-2": {
+    "short_name": "JEE-Mains - Session 2",
+    "full_name": "Joint Entrance Examination (Mains) - Session 2",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/80/80f5c6347d7794221f803a436d8fa1699ca04017928282e284dcb819c5340f83.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/80/80f5c6347d7794221f803a436d8fa1699ca04017928282e284dcb819c5340f83.webp",
+    "source_page": ""
+  },
+  "wb-jemat": {
+    "short_name": "WB JEMAT",
+    "full_name": "Joint Entrance Management Aptitude Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/c9/c9ee018dec7fa9ba6c1dfef265c04ad0a28f13521b15c1520544bc82f002b552.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/c9/c9ee018dec7fa9ba6c1dfef265c04ad0a28f13521b15c1520544bc82f002b552.webp",
+    "source_page": ""
+  },
+  "jset": {
+    "short_name": "JSET",
+    "full_name": "Joint Entrance Screening Test",
+    "logo": "/exam-logos/official-v1/da83265677e132848a8650e3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.jest.org.in/sites/default/files/logo_jest2026_web2.svg",
+    "source_page": "https://www.jest.org.in/"
+  },
+  "joint-integrated-programme-in-management-admission-test": {
+    "short_name": "JIPMAT",
+    "full_name": "Joint Integrated Programme in Management Admission Test",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "jpsc-combined-civil-services": {
+    "short_name": "JPSC Combined Civil Services",
+    "full_name": "Jharkhand Combined Civil Services Examination",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "Official image path returned a loading animation, not the commission logo; rejected during visual review."
+  },
+  "kalinga-institute-of-industrial-technology-entrance-exam": {
+    "short_name": "KIITEE",
+    "full_name": "Kalinga Institute of Industrial Technology Entrance Exam",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/f7/f74193858641247900e3a3879e9ee63c526714903f3e374e744b759304e1081a.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/f7/f74193858641247900e3a3879e9ee63c526714903f3e374e744b759304e1081a.webp",
+    "source_page": ""
+  },
+  "karnataka-dcet": {
+    "short_name": "DCET",
+    "full_name": "Karnataka Diploma Common Entrance Test",
+    "logo": "/exam-logos/official-v1/6c147de399c18b27191d67bd.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetonline.karnataka.gov.in/kea/assets/logos/kealogo.png",
+    "source_page": "https://cetonline.karnataka.gov.in/kea/"
+  },
+  "kmat": {
+    "short_name": "KMAT",
+    "full_name": "Karnataka Management Aptitude Test",
+    "logo": "/exam-logos/official-v1/20200f0837fbdedb999b97a4.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.kmatindia.com/img/logo.jpg",
+    "source_page": "https://www.kmatindia.com/"
+  },
+  "karnataka-pgcet": {
+    "short_name": "Karnataka PGCET",
+    "full_name": "Karnataka Post Graduate Common Entrance Test",
+    "logo": "/exam-logos/official-v1/6c147de399c18b27191d67bd.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetonline.karnataka.gov.in/kea/assets/logos/kealogo.png",
+    "source_page": "https://cetonline.karnataka.gov.in/kea/"
+  },
+  "karnataka-state-eligibility-test": {
+    "short_name": "KSET",
+    "full_name": "Karnataka State Eligibility Test",
+    "logo": "/exam-logos/official-v1/6c147de399c18b27191d67bd.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetonline.karnataka.gov.in/kea/assets/logos/kealogo.png",
+    "source_page": "https://cetonline.karnataka.gov.in/kea/"
+  },
+  "kcet": {
+    "short_name": "KCET",
+    "full_name": "Karnataka Common Entrance Test (KCET)",
+    "logo": "/exam-logos/official-v1/6c147de399c18b27191d67bd.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetonline.karnataka.gov.in/kea/assets/logos/kealogo.png",
+    "source_page": "https://cetonline.karnataka.gov.in/kea/"
+  },
+  "keam": {
+    "short_name": "KEAM",
+    "full_name": "Kerala Engineering, Architecture and Medical Entrance Examination (KEAM)",
+    "logo": "/exam-logos/official-v1/0f8f26e1cb8c2bb94a84bbf7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cee.kerala.gov.in/cee/img/gov_png.png",
+    "source_page": "https://cee.kerala.gov.in/pgnonline2026/"
+  },
+  "kerala-kas": {
+    "short_name": "Kerala KAS",
+    "full_name": "Kerala Administrative Service Examination",
+    "logo": "/exam-logos/official-v1/33c24ed9f93018c92574e17d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.keralapsc.gov.in/sites/default/files/logo-kpsc.png",
+    "source_page": "https://www.keralapsc.gov.in/kerala-administrative-service"
+  },
+  "klee": {
+    "short_name": "KLEE",
+    "full_name": "Kerala Law Entrance Exam",
+    "logo": "/exam-logos/official-v1/0f8f26e1cb8c2bb94a84bbf7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cee.kerala.gov.in/cee/img/gov_png.png",
+    "source_page": "https://cee.kerala.gov.in/pgnonline2026/"
+  },
+  "kerala-llm": {
+    "short_name": "Kerala LL.M",
+    "full_name": "Kerala LL.M Entrance Examination",
+    "logo": "/exam-logos/official-v1/0f8f26e1cb8c2bb94a84bbf7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cee.kerala.gov.in/cee/img/gov_png.png",
+    "source_page": "https://cee.kerala.gov.in/pgnonline2026/"
+  },
+  "kerala-pg-nursing": {
+    "short_name": "Kerala PG Nursing",
+    "full_name": "Kerala Post Graduate Degree in Nursing Entrance Examination",
+    "logo": "/exam-logos/official-v1/0f8f26e1cb8c2bb94a84bbf7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cee.kerala.gov.in/cee/img/gov_png.png",
+    "source_page": "https://cee.kerala.gov.in/pgnonline2026/"
+  },
+  "kerala-set": {
+    "short_name": "Kerala SET",
+    "full_name": "Kerala State Eligibility Test",
+    "logo": "/exam-logos/official-v1/79fd28c0292ee803300b49eb.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://lbscentre.kerala.gov.in/images/logo.png",
+    "source_page": "https://lbscentre.kerala.gov.in/"
+  },
+  "kiitee": {
+    "short_name": "KIITEE",
+    "full_name": "Kalinga Institute of Industrial Technology Entrance Examination",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/f7/f74193858641247900e3a3879e9ee63c526714903f3e374e744b759304e1081a.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/f7/f74193858641247900e3a3879e9ee63c526714903f3e374e744b759304e1081a.webp",
+    "source_page": ""
+  },
+  "kvpy": {
+    "short_name": "KVPY",
+    "full_name": "Kishore Vaigyanik Protsahan Yojana",
+    "logo": "/exam-logos/official-v1/9960d280babaa575563474a0.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.iisc.ac.in/wp-content/uploads/2016/06/logo-iisc.png",
+    "source_page": "https://iisc.ac.in/"
+  },
+  "klee-3-year-llb": {
+    "short_name": "KLEE 3-Year LL.B.",
+    "full_name": "Kerala Law Entrance Examination for Three-Year LL.B.",
+    "logo": "/exam-logos/official-v1/0f8f26e1cb8c2bb94a84bbf7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cee.kerala.gov.in/cee/img/gov_png.png",
+    "source_page": "https://cee.kerala.gov.in/pgnonline2026/"
+  },
+  "klee-5-year-llb": {
+    "short_name": "KLEE 5-Year LL.B.",
+    "full_name": "Kerala Law Entrance Examination for Integrated Five-Year LL.B.",
+    "logo": "/exam-logos/official-v1/0f8f26e1cb8c2bb94a84bbf7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cee.kerala.gov.in/cee/img/gov_png.png",
+    "source_page": "https://cee.kerala.gov.in/pgnonline2026/"
+  },
+  "kleee": {
+    "short_name": "KLEEE",
+    "full_name": "KL Engineering Entrance Examination",
+    "logo": "/exam-logos/official-v1/76e664dc476dcad3b33206f4.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.kluniversity.in/img/KLU-Hedder-main.jpg",
+    "source_page": "https://www.kluniversity.in/"
+  },
+  "kmat-karnataka": {
+    "short_name": "KMAT Karnataka",
+    "full_name": "Karnataka Management Aptitude Test",
+    "logo": "/exam-logos/official-v1/20200f0837fbdedb999b97a4.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.kmatindia.com/img/logo.jpg",
+    "source_page": "https://www.kmatindia.com/"
+  },
+  "kmat-kerala": {
+    "short_name": "KMAT Kerala",
+    "full_name": "Kerala Management Aptitude Test",
+    "logo": "/exam-logos/official-v1/0f8f26e1cb8c2bb94a84bbf7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cee.kerala.gov.in/cee/img/gov_png.png",
+    "source_page": "https://cee.kerala.gov.in/pgnonline2026/"
+  },
+  "kpsc-kas": {
+    "short_name": "KPSC KAS",
+    "full_name": "Karnataka Administrative Service / Gazetted Probationers Examination",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "Official KPSC host returned malformed HTTP headers; HTTP retry timed out. No alternative official mark verified."
+  },
+  "ks-dat": {
+    "short_name": "KS-DAT",
+    "full_name": "Kerala State Design Aptitude Test",
+    "logo": "/exam-logos/official-v1/79fd28c0292ee803300b49eb.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://lbsapplications.kerala.gov.in/ksdat2026/images/logo.png",
+    "source_page": "https://lbsapplications.kerala.gov.in/ksdat2026/"
+  },
+  "kset": {
+    "short_name": "KSET",
+    "full_name": "Karnataka State Eligibility Test",
+    "logo": "/exam-logos/official-v1/6c147de399c18b27191d67bd.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetonline.karnataka.gov.in/kea/assets/logos/kealogo.png",
+    "source_page": "https://cetonline.karnataka.gov.in/kea/"
+  },
+  "kuat-entrance-exam": {
+    "short_name": "KUAT",
+    "full_name": "KUAT Entrance Exam",
+    "logo": "/exam-logos/official-v1/ac513f8f3dec0b069902c44d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://karnavatiuniversity.edu.in/wp-content/uploads/2025/12/KU-X-NAAC-A-Logo_Web-01.webp",
+    "source_page": "https://karnavatiuniversity.edu.in/application/"
+  },
+  "law-faculty-admission-test": {
+    "short_name": "LFAT",
+    "full_name": "Law Faculty Admission Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/74/74cf14db114badb83b75fe4c2af9d880d5dea82fdae3de638960bfd934f83c62.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/74/74cf14db114badb83b75fe4c2af9d880d5dea82fdae3de638960bfd934f83c62.webp",
+    "source_page": ""
+  },
+  "lsat": {
+    "short_name": "LSAT",
+    "full_name": "Law School Admission Test",
+    "logo": "/exam-logos/official-v1/fc40a6f1e7f5e49b5c25156a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.lsac.org/themes/custom/lsac/images/logo.png",
+    "source_page": "https://www.lsac.org/lsat"
+  },
+  "lic-aao": {
+    "short_name": "LIC AAO",
+    "full_name": "LIC Assistant Administrative Officer Recruitment Examination",
+    "logo": "/exam-logos/official-v1/aa60838c1fef267390c23aff.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://licindia.in/documents/d/guest/lic_log_updated",
+    "source_page": "https://licindia.in/"
+  },
+  "lpunest": {
+    "short_name": "LPUNEST",
+    "full_name": "Lovely Professional University National Entrance and Scholarship Test",
+    "logo": "/exam-logos/official-v1/83ffd6cbec4c0bbe93b916ce.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.lpu.in/images/logo/LPU-logo-dark.svg",
+    "source_page": "https://www.lpu.in/nest/"
+  },
+  "lucknow-university-enterence-exam": {
+    "short_name": "Lucknow University Entrance Exam",
+    "full_name": "LUCKNOW UNIVERSITY ENTERENCE EXAM",
+    "logo": "/exam-logos/official-v1/00664c4b2390af69f516e0a1.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.lkouniv.ac.in/images/footlogo.png",
+    "source_page": "https://www.lkouniv.ac.in/"
+  },
+  "madhya-pradesh-pre-polytechnic-test": {
+    "short_name": "MP PPT",
+    "full_name": "Madhya Pradesh Pre Polytechnic Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/6c/6c3ab5a21fc4e53c4f6f8138d459a39d20730b8f84e9aa4924def8565c95bbba.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/6c/6c3ab5a21fc4e53c4f6f8138d459a39d20730b8f84e9aa4924def8565c95bbba.webp",
+    "source_page": ""
+  },
+  "madhya-pradesh-public-service-commission": {
+    "short_name": "MPPSC",
+    "full_name": "Madhya Pradesh Public Service Commission",
+    "logo": "/exam-logos/official-v1/170bfba1cf929b63da1182ab.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://mppsc.mp.gov.in//assets/img/logo.png",
+    "source_page": "https://mppsc.mp.gov.in/"
+  },
+  "mah-aac-cet": {
+    "short_name": "MAH AAC CET",
+    "full_name": "Maharashtra Applied Arts and Crafts Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-bdesign-cet": {
+    "short_name": "MAH B.Design CET",
+    "full_name": "Maharashtra Bachelor of Design Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-bed-cet": {
+    "short_name": "MAH B.Ed CET",
+    "full_name": "Maharashtra Bachelor of Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-bed-med-integrated-cet": {
+    "short_name": "MAH B.Ed-M.Ed CET",
+    "full_name": "Maharashtra B.Ed-M.Ed Integrated Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-bped-cet": {
+    "short_name": "MAH B.P.Ed CET",
+    "full_name": "Maharashtra Bachelor of Physical Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-bba-bca-bms-bbm-cet": {
+    "short_name": "MAH BBA/BCA/BMS/BBM CET",
+    "full_name": "Maharashtra Common Entrance Test for BBA, BCA, BMS, BBM and BHMCT Routes",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-llb-3-year-cet": {
+    "short_name": "MAH LL.B. 3-Year CET",
+    "full_name": "Maharashtra Common Entrance Test for 3-Year LL.B.",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-llb-5-year-cet": {
+    "short_name": "MAH LL.B. 5-Year CET",
+    "full_name": "Maharashtra Common Entrance Test for 5-Year LL.B.",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-med-cet": {
+    "short_name": "MAH M.Ed CET",
+    "full_name": "Maharashtra Master of Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-mhmct-cet": {
+    "short_name": "MAH M.HMCT CET",
+    "full_name": "Maharashtra Master of Hotel Management and Catering Technology Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-mped-cet": {
+    "short_name": "MAH M.P.Ed CET",
+    "full_name": "Maharashtra Master of Physical Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-mba-mms-cet": {
+    "short_name": "MAH MBA/MMS CET",
+    "full_name": "Maharashtra MBA/MMS Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-mca-cet": {
+    "short_name": "MAH MCA CET",
+    "full_name": "Maharashtra MCA Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mah-b-hmct-cet": {
+    "short_name": "MAH B.HMCT CET",
+    "full_name": "Maharashtra Bachelor of Hotel Management and Catering Technology Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "maharashtra-common-entrance-test": {
+    "short_name": "MHT CET",
+    "full_name": "Maharashtra Common Entrance Test",
+    "logo": "/exam-logos/official-v1/ff8c39332384bba34a1cd05a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png.webp",
+    "source_page": "https://cetcell.mahacet.org/cms-notices/"
+  },
+  "mah-mba-cet": {
+    "short_name": "MAH MBA CET",
+    "full_name": "Maharashtra Common Entrance Test for MBA/MMS",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mcaer-pgcat": {
+    "short_name": "MCAER PGCAT",
+    "full_name": "Maharashtra Council of Agriculture Education and Research Post-Graduate Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/ca/ca5ec08311e330e70382cd2c6c97e7a06a31d1f0d993ef5fc931066dec811e8d.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/ca/ca5ec08311e330e70382cd2c6c97e7a06a31d1f0d993ef5fc931066dec811e8d.webp",
+    "source_page": ""
+  },
+  "mdu-cee": {
+    "short_name": "MDU CEE",
+    "full_name": "Maharshi Dayanand University Common Entrance Exam",
+    "logo": "/exam-logos/official-v1/c134ec5ffe3a3f197336f784.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://mdu.ac.in/Imgs/logo%20colored%20transparent244x221.png",
+    "source_page": "https://mdu.ac.in/"
+  },
+  "mrnat": {
+    "short_name": "MRNAT",
+    "full_name": "Manav Rachna National Aptitude Test",
+    "logo": "/exam-logos/official-v1/efe58c982db681c565a4ba20.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://manavrachna.edu.in/assets/images/MR-logo.png",
+    "source_page": "https://manavrachna.edu.in/mru/admissions"
+  },
+  "mu-oet": {
+    "short_name": "MU OET",
+    "full_name": "Manipal University Online Entrance Test",
+    "logo": "/exam-logos/official-v1/c0a66fdc484286c11e3091f2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.manipal.edu/content/dam/manipal/mu/mcops-manipal/Images_new/MAHE_Color.svg",
+    "source_page": "https://www.manipal.edu/mu/admission/indian-students/online-entrance-exam-overview/overview.html"
+  },
+  "mat": {
+    "short_name": "MAT",
+    "full_name": "Management Aptitude Test (MAT)",
+    "logo": "/exam-logos/official-v1/8b2c277b0c1419494158d6da.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.aima.in/img/logo.png",
+    "source_page": "https://www.aima.in/content/testing-and-assessment/ugat/information-to-candidates-for-ugat"
+  },
+  "met": {
+    "short_name": "MET",
+    "full_name": "Manipal Entrance Test",
+    "logo": "/exam-logos/official-v1/c0a66fdc484286c11e3091f2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.manipal.edu/content/dam/manipal/mu/mcops-manipal/Images_new/MAHE_Color.svg",
+    "source_page": "https://www.manipal.edu/mu/admission/indian-students/online-entrance-exam-overview/overview.html"
+  },
+  "mh-nursing-cet": {
+    "short_name": "MH Nursing CET",
+    "full_name": "Maharashtra Nursing Common Entrance Test",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "mh-set": {
+    "short_name": "MH-SET",
+    "full_name": "Maharashtra State Eligibility Test",
+    "logo": "/exam-logos/official-v1/1572a3e8da792004fdd8b3c6.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://setexam.unipune.ac.in/Images/Univ_New_Logo.JPG",
+    "source_page": "https://setexam.unipune.ac.in/"
+  },
+  "mht-cet": {
+    "short_name": "MHT CET",
+    "full_name": "Maharashtra Common Entrance Test (MHT CET)",
+    "logo": "/exam-logos/official-v1/87259f471cf3e25a8bf0251f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2025/01/Seal_of_Maharashtra.svg.png-removebg-preview.png",
+    "source_page": "https://cetcell.mahacet.org/"
+  },
+  "micat": {
+    "short_name": "MICAT",
+    "full_name": "MICA Admission Test (MICAT)",
+    "logo": "/exam-logos/official-v1/2bb6c23c0b78a31b939927bc.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.mica.ac.in/wp-content/uploads/2025/03/MICA-LOGO-1.svg",
+    "source_page": "https://www.mica.ac.in/admissions/"
+  },
+  "mitid-dat": {
+    "short_name": "MITID DAT",
+    "full_name": "MIT Institute of Design Design Aptitude Test",
+    "logo": "/exam-logos/official-v1/53db38aed564bd48f5d5afc2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.mitid.edu.in/wp-content/uploads/2021/09/logo_27_10_2025.jpg",
+    "source_page": "https://www.mitid.edu.in/important-dates/"
+  },
+  "mp-addet": {
+    "short_name": "ADDET",
+    "full_name": "Madhya Pradesh Animal Husbandry and Dairy Technology Diploma Entrance Test",
+    "logo": "/exam-logos/official-v1/c5f14969a77bf2db06608175.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://esb.mp.gov.in/new_look_images/new_logo.jpg",
+    "source_page": "https://esb.mp.gov.in/header.html"
+  },
+  "mp-pat": {
+    "short_name": "MP PAT",
+    "full_name": "Madhya Pradesh Pre-Agriculture Test",
+    "logo": "/exam-logos/official-v1/c5f14969a77bf2db06608175.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://esb.mp.gov.in/new_look_images/new_logo.jpg",
+    "source_page": "https://esb.mp.gov.in/header.html"
+  },
+  "mp-pnst": {
+    "short_name": "MP PNST",
+    "full_name": "Madhya Pradesh Pre-Nursing Selection Test",
+    "logo": "/exam-logos/official-v1/c5f14969a77bf2db06608175.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://esb.mp.gov.in/new_look_images/new_logo.jpg",
+    "source_page": "https://esb.mp.gov.in/header.html"
+  },
+  "mp-set": {
+    "short_name": "MP SET",
+    "full_name": "Madhya Pradesh State Eligibility Test",
+    "logo": "/exam-logos/official-v1/170bfba1cf929b63da1182ab.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://mppsc.mp.gov.in//assets/img/logo.png",
+    "source_page": "https://mppsc.mp.gov.in/"
+  },
+  "mppsc-state-service": {
+    "short_name": "MPPSC State Service Examination",
+    "full_name": "Madhya Pradesh Public Service Commission State Service Examination",
+    "logo": "/exam-logos/official-v1/170bfba1cf929b63da1182ab.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://mppsc.mp.gov.in//assets/img/logo.png",
+    "source_page": "https://mppsc.mp.gov.in/"
+  },
+  "mpsc-civil-services": {
+    "short_name": "MPSC Civil Services",
+    "full_name": "Maharashtra Civil Services Gazetted Group A & Group B Examination",
+    "logo": "/exam-logos/official-v1/bced53246c38baa9e5c17933.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://mpsc.gov.in/static/media/logo.7a984172.png",
+    "source_page": "https://mpsc.gov.in/"
+  },
+  "mucmet": {
+    "short_name": "MUCMET",
+    "full_name": "Mumbai University Common Management Entrance Test",
+    "logo": "/exam-logos/official-v1/9d931a9aa11114f91f9d245a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://mu.ac.in/images/logo-gold.png",
+    "source_page": "https://mu.ac.in/"
+  },
+  "nabard-development-assistant": {
+    "short_name": "NABARD Development Assistant",
+    "full_name": "NABARD Development Assistant / Development Assistant Hindi Recruitment Examination",
+    "logo": "/exam-logos/official-v1/e970cd42d3715e4371e0c11b.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.nabard.org/images/NABARD-logo.png",
+    "source_page": "https://www.nabard.org/careers-notices1.aspx?cid=693&id=26"
+  },
+  "nabard-grade-a": {
+    "short_name": "NABARD Grade A",
+    "full_name": "NABARD Assistant Manager Grade A Recruitment Examination",
+    "logo": "/exam-logos/official-v1/4823ba6f22e02f71b8887848.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.nabard.org/Hindi/images/nabard-hindi-logo.png",
+    "source_page": "https://www.nabard.org/"
+  },
+  "nata": {
+    "short_name": "NATA",
+    "full_name": "National Aptitude Test in Architecture (NATA)",
+    "logo": "/exam-logos/official-v1/2f839b4a216ade2bcb03f0af.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.nata.in/assets/img/natablack.png",
+    "source_page": "https://www.nata.in/"
+  },
+  "nchmct-jee": {
+    "short_name": "NCHMCT JEE",
+    "full_name": "National Council for Hotel Management Joint Entrance Examination (NCHM JEE)",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "uspc-nda-and-na": {
+    "short_name": "USPC NDA & NA",
+    "full_name": "National Defence Academy and Naval Academy Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "nhtet": {
+    "short_name": "NHTET",
+    "full_name": "National Hospitality Teachers Eligibility Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/85/858a66501787fecab78945f7c1d4c2701fbd9828fd7b057b84788d5d4d0cf3b0.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/85/858a66501787fecab78945f7c1d4c2701fbd9828fd7b057b84788d5d4d0cf3b0.webp",
+    "source_page": ""
+  },
+  "nrti-aat": {
+    "short_name": "NRTI AAT",
+    "full_name": "National Rail and Transportation Institute",
+    "logo": "/exam-logos/official-v1/b5fda207e712709cb1214e2d.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://gsv.ac.in/themes/demo/assets/images/gs/footer-logo.png",
+    "source_page": "https://gsv.ac.in/entrance-test/"
+  },
+  "national-talent-search-examination": {
+    "short_name": "NTSE",
+    "full_name": "National Talent Search Examination",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/e1/e162495b5537c2bf3a2e5c06398dc1f4d86ef18840552010095ff6eadf88cf5a.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/e1/e162495b5537c2bf3a2e5c06398dc1f4d86ef18840552010095ff6eadf88cf5a.webp",
+    "source_page": ""
+  },
+  "ncet": {
+    "short_name": "NCET",
+    "full_name": "National Common Entrance Test",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "nchm-jee": {
+    "short_name": "NCHM JEE",
+    "full_name": "National Council for Hotel Management Joint Entrance Examination",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "neet-mds": {
+    "short_name": "NEET MDS",
+    "full_name": "National Eligibility cum Entrance Test for Master of Dental Surgery (NEET MDS)",
+    "logo": "/exam-logos/official-v1/32397b7a8d5ea2f2b9c04e3f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://natboard.edu.in/tasveer/nbenewlogo.png",
+    "source_page": "https://natboard.edu.in/viewnbeexam?exam=pdcet"
+  },
+  "neet-pg": {
+    "short_name": "NEET PG",
+    "full_name": "National Eligibility cum Entrance Test for Postgraduate Medical Courses",
+    "logo": "/exam-logos/official-v1/32397b7a8d5ea2f2b9c04e3f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://natboard.edu.in/tasveer/nbenewlogo.png",
+    "source_page": "https://natboard.edu.in/viewnbeexam?exam=pdcet"
+  },
+  "neet-ss": {
+    "short_name": "NEET SS",
+    "full_name": "National Eligibility cum Entrance Test for Super Speciality (NEET SS)",
+    "logo": "/exam-logos/official-v1/32397b7a8d5ea2f2b9c04e3f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://natboard.edu.in/tasveer/nbenewlogo.png",
+    "source_page": "https://natboard.edu.in/viewnbeexam?exam=pdcet"
+  },
+  "national-eligibility-cum-entrance-test-neet": {
+    "short_name": "NEET UG",
+    "full_name": "National Eligibility cum Entrance Test (Undergraduate)",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "nest": {
+    "short_name": "NEST",
+    "full_name": "National Entrance Screening Test",
+    "logo": "/exam-logos/official-v1/faac8a49c5631386eaa66f27.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.nestexam.in/assets/img/nest-logo-sml.png",
+    "source_page": "https://www.nestexam.in/"
+  },
+  "nid-dat": {
+    "short_name": "NID DAT",
+    "full_name": "National Institute of Design Design Aptitude Test",
+    "logo": "/exam-logos/official-v1/5adbdbe59f2b2594ec02b158.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.nid.edu/NIDA2027/images/nid-logo.png",
+    "source_page": "https://admissions.nid.edu/"
+  },
+  "nift-entrance": {
+    "short_name": "NIFT",
+    "full_name": "National Institute of Fashion Technology Entrance Examination (NIFTEE)",
+    "logo": "/exam-logos/official-v1/20b435c02c9c013ff2507548.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.nift.ac.in/themes/nift/images/logo-main.png",
+    "source_page": "https://www.nift.ac.in/admissions"
+  },
+  "nift-ee": {
+    "short_name": "NIFT EE",
+    "full_name": "NIFT Entrance Exam",
+    "logo": "/exam-logos/official-v1/20b435c02c9c013ff2507548.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.nift.ac.in/themes/nift/images/logo-main.png",
+    "source_page": "https://www.nift.ac.in/admissions"
+  },
+  "niftee": {
+    "short_name": "NIFTEE",
+    "full_name": "National Institute of Fashion Technology Entrance Examination",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "nimcet": {
+    "short_name": "NIMCET",
+    "full_name": "NIT MCA Common Entrance Test",
+    "logo": "/exam-logos/official-v1/8b3f84e1a26ffb08d6650bb7.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s33e6260b81898beacda3d16db379ed329/uploads/2025/03/2025031961.png",
+    "source_page": "https://nimcet.admissions.nic.in/"
+  },
+  "niper-jee": {
+    "short_name": "NIPER JEE",
+    "full_name": "NIPER Joint Entrance Examination",
+    "logo": "/exam-logos/official-v1/93245567ff67f13f7687ea47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.niper.gov.in/themes/custom/niper/images/logo.jpg",
+    "source_page": "https://www.niper.gov.in/"
+  },
+  "nmat": {
+    "short_name": "NMAT",
+    "full_name": "NMAT by GMAC",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "Official MBA.com page blocked automated retrieval. Alternate GMAC paths returned 404; no exam-specific mark verified."
+  },
+  "nmims-cet": {
+    "short_name": "NMIMS CET",
+    "full_name": "NMIMS Common Entrance Test",
+    "logo": "/exam-logos/official-v1/0b433c3fea2d61c61ee1b09b.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ncet.nmims.edu/images/2026/logo-nmims.webp",
+    "source_page": "https://ncet.nmims.edu/"
+  },
+  "nmims-nlat": {
+    "short_name": "NLAT",
+    "full_name": "NMIMS National Law Aptitude Test",
+    "logo": "/exam-logos/official-v1/0b433c3fea2d61c61ee1b09b.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ncet.nmims.edu/images/2026/logo-nmims.webp",
+    "source_page": "https://ncet.nmims.edu/"
+  },
+  "nmims-npat": {
+    "short_name": "NPAT",
+    "full_name": "NMIMS National Test for Programs After Twelfth",
+    "logo": "/exam-logos/official-v1/0b433c3fea2d61c61ee1b09b.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://npat.nmims.edu/images/logo-nmims.webp",
+    "source_page": "https://npat.nmims.edu/"
+  },
+  "ntet": {
+    "short_name": "NTET",
+    "full_name": "National Teachers' Eligibility Test",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "odisha-bed-entrance": {
+    "short_name": "Odisha B.Ed",
+    "full_name": "Odisha Bachelor of Education Entrance Examination",
+    "logo": "/exam-logos/official-v1/c04749d4da081e4b2340a484.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://te.samsodisha.gov.in/teimages/sams-logo2.png",
+    "source_page": "https://te.samsodisha.gov.in/"
+  },
+  "odisha-bhed-entrance": {
+    "short_name": "Odisha B.H.Ed",
+    "full_name": "Odisha Bachelor of Hindi Education Entrance Test",
+    "logo": "/exam-logos/official-v1/c04749d4da081e4b2340a484.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://te.samsodisha.gov.in/teimages/sams-logo2.png",
+    "source_page": "https://te.samsodisha.gov.in/"
+  },
+  "odisha-cpet": {
+    "short_name": "Odisha CPET",
+    "full_name": "Odisha Common Post Graduate Entrance Test",
+    "logo": "/exam-logos/official-v1/c04749d4da081e4b2340a484.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pg.samsodisha.gov.in/pgimages/sams-logo2.png",
+    "source_page": "https://pg.samsodisha.gov.in/"
+  },
+  "odisha-med-entrance": {
+    "short_name": "Odisha M.Ed",
+    "full_name": "Odisha Master of Education Entrance Test",
+    "logo": "/exam-logos/official-v1/c04749d4da081e4b2340a484.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://te.samsodisha.gov.in/teimages/sams-logo2.png",
+    "source_page": "https://te.samsodisha.gov.in/"
+  },
+  "odisha-public-service-commission-civil-service": {
+    "short_name": "OPSC Civil Service Exam",
+    "full_name": "Odisha Public Service Commission Civil Service",
+    "logo": "/exam-logos/official-v1/dae0296d0adda2d5f613b045.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://opsc.gov.in/images/govtlogo-trans_opsc.PNG",
+    "source_page": "https://opsc.gov.in/Public/OPSC/Default.aspx"
+  },
+  "ojee": {
+    "short_name": "OJEE",
+    "full_name": "Odisha Joint Entrance Examination (OJEE)",
+    "logo": "/exam-logos/official-v1/03558cf7fddd4aa7235282d1.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s36832a7b24bc06775d02b7406880b93fc/uploads/2022/01/2022013156.png",
+    "source_page": "https://ojee.nic.in/"
+  },
+  "opsc-ocs": {
+    "short_name": "OPSC OCS",
+    "full_name": "Odisha Civil Services Examination",
+    "logo": "/exam-logos/official-v1/dae0296d0adda2d5f613b045.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://opsc.gov.in/images/govtlogo-trans_opsc.PNG",
+    "source_page": "https://opsc.gov.in/Public/OPSC/Default.aspx"
+  },
+  "ouat-entrance": {
+    "short_name": "OUAT Entrance",
+    "full_name": "Odisha University of Agriculture and Technology Common Entrance Examination",
+    "logo": "/exam-logos/official-v1/cf950c4c4ebc1dea33428cb5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ouat.ac.in/wp-content/uploads/2023/08/OUAT-Kalinga-logo-design-final-png-1.png",
+    "source_page": "https://ouat.ac.in/"
+  },
+  "pafee": {
+    "short_name": "PAFEE",
+    "full_name": "PAF Entrance Exam",
+    "logo": "/exam-logos/official-v1/9f550914bc23dbd49a29edd5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.pearlacademy.com/assets/images/Pearl-white-logo.png",
+    "source_page": "https://www.pearlacademy.com/admissions/entrance-exam"
+  },
+  "puthat": {
+    "short_name": "PUTHAT",
+    "full_name": "Panjab University Tourism & Hospitality Aptitude Test",
+    "logo": "/exam-logos/official-v1/6dd53d89acb4e870013a8fc8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.puchd.ac.in/asset/pu-logo.png",
+    "source_page": "https://www.puchd.ac.in/"
+  },
+  "patna-university-cet": {
+    "short_name": "PATNA UNIVERSITY CET",
+    "full_name": "Patna University Common Entrance Test",
+    "logo": "/exam-logos/official-v1/f11575d4205a8ef066d290ff.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pup.ac.in/images/PatnaUniversityLogo.png",
+    "source_page": "https://pup.ac.in/AdmissionPortal2026.aspx"
+  },
+  "pau-aat": {
+    "short_name": "PAU AAT",
+    "full_name": "Punjab Agricultural University Agriculture Aptitude Test",
+    "logo": "/exam-logos/official-v1/cc895bb575eda24b44027525.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pau.edu/images/logos/pau.png",
+    "source_page": "https://pau.edu/index.php?DO=viewBannerDetail&_act=manageBanner&intID=7301"
+  },
+  "pau-cet": {
+    "short_name": "PAU CET",
+    "full_name": "Punjab Agricultural University Common Entrance Test",
+    "logo": "/exam-logos/official-v1/cc895bb575eda24b44027525.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pau.edu/images/logos/pau.png",
+    "source_page": "https://pau.edu/index.php?DO=viewBannerDetail&_act=manageBanner&intID=7301"
+  },
+  "pearl-academy-entrance": {
+    "short_name": "Pearl Entrance",
+    "full_name": "Pearl Academy Entrance Examination",
+    "logo": "/exam-logos/official-v1/70ba0798c5b803256d261efa.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.pearlacademy.com/assets/images/pearl_academy_logo_white.svg",
+    "source_page": "https://admissions.pearlacademy.com/studentportal/sturegistration.aspx"
+  },
+  "pearson-test-of-english": {
+    "short_name": "PTE ACADEMIC",
+    "full_name": "Pearson Test of English",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/ce/cee6191e8e8ab150132c531e25eece9534619179e973f69ac577495024ba6a66.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/ce/cee6191e8e8ab150132c531e25eece9534619179e973f69ac577495024ba6a66.webp",
+    "source_page": ""
+  },
+  "pessat": {
+    "short_name": "PESSAT",
+    "full_name": "Peoples Education Society Scholastic Aptitude Test",
+    "logo": "/exam-logos/official-v1/fe73d84ac78e1003deb4d679.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pes.edu/wp-content/uploads/2025/06/PESU-new-logo.png",
+    "source_page": "https://pes.edu/admissions/"
+  },
+  "pim-mat": {
+    "short_name": "PIM-MAT",
+    "full_name": "R.A. Podar Institute of Management Management Aptitude Test",
+    "logo": "/exam-logos/official-v1/3d5a648faae1a5b799453241.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.rapim.ac.in/rapim_assets/logo.png",
+    "source_page": "https://www.rapim.ac.in/"
+  },
+  "pmnet": {
+    "short_name": "PMNET",
+    "full_name": "Punjab Master of Science Nursing Entrance Test",
+    "logo": "/exam-logos/official-v1/70c9ee47d7d51882a38b3bcf.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://bfuhs.smartpad.in/Registration/images/logobfhs.jfif",
+    "source_page": "https://bfuhs.smartpad.in/Registration/"
+  },
+  "jharkhand-pcece": {
+    "short_name": "Jharkhand PCECE",
+    "full_name": "Polytechnic Entrance Competitive Examination",
+    "logo": "/exam-logos/official-v1/342cf40b5b4ddfabc74b2d1c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jceceb.jharkhand.gov.in/assets/img/jcecebLogo.png",
+    "source_page": "https://jceceb.jharkhand.gov.in/"
+  },
+  "ppbnet": {
+    "short_name": "PPBNET",
+    "full_name": "Punjab Post Basic Nursing Entrance Test",
+    "logo": "/exam-logos/official-v1/70c9ee47d7d51882a38b3bcf.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://bfuhs.smartpad.in/Registration/images/logobfhs.jfif",
+    "source_page": "https://bfuhs.smartpad.in/Registration/"
+  },
+  "ppmet": {
+    "short_name": "PPMET",
+    "full_name": "Punjab Para Medical Entrance Test",
+    "logo": "/exam-logos/official-v1/09c7a106b66b500519c36ebb.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://bfuhs.ac.in/images/logo1.jpg",
+    "source_page": "https://bfuhs.ac.in/"
+  },
+  "presidency-university-master-degree-entrance-test": {
+    "short_name": "PUMDET",
+    "full_name": "Presidency University Master Degree Entrance Test",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "pu-cet-pg": {
+    "short_name": "PU CET PG",
+    "full_name": "Panjab University Common Entrance Test (Postgraduate)",
+    "logo": "/exam-logos/official-v1/6dd53d89acb4e870013a8fc8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.puchd.ac.in/asset/pu-logo.png",
+    "source_page": "https://www.puchd.ac.in/"
+  },
+  "pu-cet-ug": {
+    "short_name": "PU CET UG",
+    "full_name": "Panjab University Common Entrance Test Undergraduate",
+    "logo": "/exam-logos/official-v1/6dd53d89acb4e870013a8fc8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.puchd.ac.in/asset/pu-logo.png",
+    "source_page": "https://www.puchd.ac.in/"
+  },
+  "pu-pglaw": {
+    "short_name": "PU LL.B.",
+    "full_name": "Panjab University Three-Year LL.B. Entrance Examination",
+    "logo": "/exam-logos/official-v1/6dd53d89acb4e870013a8fc8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.puchd.ac.in/asset/pu-logo.png",
+    "source_page": "https://www.puchd.ac.in/"
+  },
+  "pu-met": {
+    "short_name": "PU MET",
+    "full_name": "Panjab University Management Entrance Test",
+    "logo": "/exam-logos/official-v1/6dd53d89acb4e870013a8fc8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.puchd.ac.in/asset/pu-logo.png",
+    "source_page": "https://www.puchd.ac.in/"
+  },
+  "pu-uglaw": {
+    "short_name": "PU UGLAW",
+    "full_name": "Panjab University Undergraduate Law Entrance Examination",
+    "logo": "/exam-logos/official-v1/6dd53d89acb4e870013a8fc8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.puchd.ac.in/asset/pu-logo.png",
+    "source_page": "https://www.puchd.ac.in/"
+  },
+  "pubdet": {
+    "short_name": "PUBDET",
+    "full_name": "Presidency University Bachelor Degree Entrance Test",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "puleet": {
+    "short_name": "PULEET",
+    "full_name": "Panjab University Lateral Engineering Entrance Test",
+    "logo": "/exam-logos/official-v1/6dd53d89acb4e870013a8fc8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.puchd.ac.in/asset/pu-logo.png",
+    "source_page": "https://www.puchd.ac.in/"
+  },
+  "pumdet": {
+    "short_name": "PUMDET",
+    "full_name": "Presidency University Master Degree Entrance Test",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "punjab-bed-cet": {
+    "short_name": "Punjab B.Ed CET",
+    "full_name": "Punjab Bachelor of Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/eb4227a7c957855d88c98e34.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://pbbed2026.learnpunjabi.org/img/logo561x126.png",
+    "source_page": "https://pbbed2026.learnpunjabi.org/"
+  },
+  "rajasthan-jet": {
+    "short_name": "Rajasthan JET",
+    "full_name": "Rajasthan Joint Entrance Test for Agriculture",
+    "logo": "/exam-logos/official-v1/10b96bfafe1bf64fe5afc660.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://jetskrau2026.com/images/skraub.png",
+    "source_page": "https://jetskrau2026.com/"
+  },
+  "rajasthan-pre-deled": {
+    "short_name": "Pre D.El.Ed",
+    "full_name": "Rajasthan Pre Diploma in Elementary Education Entrance Examination (BSTC)",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "Catalog URL is an informational/ad-supported site, not a verified authority source. Official portal did not expose a verified logo. Do not source a mark from the catalog URL."
+  },
+  "rajasthan-ptet": {
+    "short_name": "PTET",
+    "full_name": "Rajasthan Pre-Teacher Education Test",
+    "logo": "/exam-logos/official-v1/9b80b7f7eab4eaf104dd6cbc.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.vmou.ac.in/sites/default/files/inline-images/logofinal-naac.png",
+    "source_page": "https://www.vmou.ac.in/"
+  },
+  "rajasthan-set": {
+    "short_name": "Rajasthan SET",
+    "full_name": "Rajasthan State Eligibility Test",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "Catalog recruitment host has a hostname/certificate mismatch. The reachable state recruitment portal does not establish the SET conducting authority's logo."
+  },
+  "rulet-exam": {
+    "short_name": "RULET EXAM",
+    "full_name": "Rajasthan University Law Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/4a/4a5c350ef7de6b403e3e9797682b18676896caa584a235f1e23ecfd06ca33aa3.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/4a/4a5c350ef7de6b403e3e9797682b18676896caa584a235f1e23ecfd06ca33aa3.webp",
+    "source_page": ""
+  },
+  "rupgcet": {
+    "short_name": "RUPGCET",
+    "full_name": "Rayalaseema University Postgraduate Common Entrance Test",
+    "logo": "/exam-logos/official-v1/233119f801f4f550d3f92493.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.rayalaseemauniversity.ac.in/images/logo.png",
+    "source_page": "https://www.rayalaseemauniversity.ac.in/index.php"
+  },
+  "rbi-assistant": {
+    "short_name": "RBI Assistant",
+    "full_name": "Reserve Bank of India Assistant Recruitment Examination",
+    "logo": "/exam-logos/official-v1/2b27db18dbb31a0dc0a92c34.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.rbi.org.in/images/rbi-company-logo.jpg",
+    "source_page": "https://www.rbi.org.in/"
+  },
+  "rbi-grade-b-depr": {
+    "short_name": "RBI Grade B DEPR",
+    "full_name": "RBI Officers in Grade B (DR) DEPR Examination",
+    "logo": "/exam-logos/official-v1/2b27db18dbb31a0dc0a92c34.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.rbi.org.in/images/rbi-company-logo.jpg",
+    "source_page": "https://www.rbi.org.in/"
+  },
+  "rbi-grade-b-dsim": {
+    "short_name": "RBI Grade B DSIM",
+    "full_name": "RBI Officers in Grade B (DR) DSIM Examination",
+    "logo": "/exam-logos/official-v1/2b27db18dbb31a0dc0a92c34.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.rbi.org.in/images/rbi-company-logo.jpg",
+    "source_page": "https://www.rbi.org.in/"
+  },
+  "rbi-grade-b-general": {
+    "short_name": "RBI Grade B General",
+    "full_name": "RBI Officers in Grade B (DR) General Examination",
+    "logo": "/exam-logos/official-v1/2b27db18dbb31a0dc0a92c34.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.rbi.org.in/images/rbi-company-logo.jpg",
+    "source_page": "https://www.rbi.org.in/"
+  },
+  "reva-cet": {
+    "short_name": "REVA CET",
+    "full_name": "REVA Common Entrance Test",
+    "logo": "/exam-logos/official-v1/c96f1f8539aa62bb3518a97e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://files.reva.ac.in/uploads/logo/1637126493_30dc6528e6d454555baf.svg",
+    "source_page": "https://www.reva.edu.in/"
+  },
+  "rpf-constable": {
+    "short_name": "RPF Constable",
+    "full_name": "Railway Protection Force Constable (Executive) Recruitment Examination",
+    "logo": "/exam-logos/official-v1/63174eb18aaca4d4b136730e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rrb.indianrailways.gov.in/chandigarh/image/1783689877849Logo_18th.jpg/Logo",
+    "source_page": "https://rrbcdg.gov.in/"
+  },
+  "rpf-si": {
+    "short_name": "RPF Sub-Inspector",
+    "full_name": "Railway Protection Force Sub-Inspector (Executive) Recruitment Examination",
+    "logo": "/exam-logos/official-v1/63174eb18aaca4d4b136730e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rrb.indianrailways.gov.in/chandigarh/image/1783689877849Logo_18th.jpg/Logo",
+    "source_page": "https://rrbcdg.gov.in/"
+  },
+  "rpsc-ras": {
+    "short_name": "RPSC RAS",
+    "full_name": "Rajasthan State and Subordinate Services Combined Competitive Examination",
+    "logo": "/exam-logos/official-v1/58bb50101238a8c928bb1275.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rpsc.rajasthan.gov.in/Images/RPSC_Logo.png",
+    "source_page": "https://rpsc.rajasthan.gov.in/"
+  },
+  "rrb-alp": {
+    "short_name": "RRB ALP",
+    "full_name": "Assistant Loco Pilot Recruitment Examination",
+    "logo": "/exam-logos/official-v1/63174eb18aaca4d4b136730e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rrb.indianrailways.gov.in/chandigarh/image/1783689877849Logo_18th.jpg/Logo",
+    "source_page": "https://rrbcdg.gov.in/"
+  },
+  "rrb-group-d-level-1": {
+    "short_name": "RRB Group D Level 1",
+    "full_name": "Railway Level-1 Recruitment Examination",
+    "logo": "/exam-logos/official-v1/63174eb18aaca4d4b136730e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rrb.indianrailways.gov.in/chandigarh/image/1783689877849Logo_18th.jpg/Logo",
+    "source_page": "https://rrbcdg.gov.in/"
+  },
+  "rrb-je": {
+    "short_name": "RRB JE",
+    "full_name": "Junior Engineer / DMS / CMA Recruitment Examination",
+    "logo": "/exam-logos/official-v1/63174eb18aaca4d4b136730e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rrb.indianrailways.gov.in/chandigarh/image/1783689877849Logo_18th.jpg/Logo",
+    "source_page": "https://rrbcdg.gov.in/"
+  },
+  "rrb-ntpc-graduate": {
+    "short_name": "RRB NTPC Graduate",
+    "full_name": "Non-Technical Popular Categories Graduate Level",
+    "logo": "/exam-logos/official-v1/63174eb18aaca4d4b136730e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rrb.indianrailways.gov.in/chandigarh/image/1783689877849Logo_18th.jpg/Logo",
+    "source_page": "https://rrbcdg.gov.in/"
+  },
+  "rrb-ntpc-undergraduate": {
+    "short_name": "RRB NTPC Undergraduate",
+    "full_name": "Non-Technical Popular Categories Undergraduate Level",
+    "logo": "/exam-logos/official-v1/63174eb18aaca4d4b136730e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rrb.indianrailways.gov.in/chandigarh/image/1783689877849Logo_18th.jpg/Logo",
+    "source_page": "https://rrbcdg.gov.in/"
+  },
+  "rrb-paramedical": {
+    "short_name": "RRB Paramedical",
+    "full_name": "Railway Paramedical Categories Recruitment Examination",
+    "logo": "/exam-logos/official-v1/63174eb18aaca4d4b136730e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rrb.indianrailways.gov.in/chandigarh/image/1783689877849Logo_18th.jpg/Logo",
+    "source_page": "https://rrbcdg.gov.in/"
+  },
+  "rrb-technician": {
+    "short_name": "RRB Technician",
+    "full_name": "Railway Technician Recruitment Examination",
+    "logo": "/exam-logos/official-v1/63174eb18aaca4d4b136730e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://rrb.indianrailways.gov.in/chandigarh/image/1783689877849Logo_18th.jpg/Logo",
+    "source_page": "https://rrbcdg.gov.in/"
+  },
+  "ruhs-cuet": {
+    "short_name": "RUHS CUET",
+    "full_name": "Rajasthan University of Health Sciences Common Undergraduate Entrance Test",
+    "logo": "/exam-logos/official-v1/7b6604e959f69d69cdb25108.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.ruhsraj.org/public/images/RUHS_Logo.png",
+    "source_page": "https://admissions.ruhsraj.org/"
+  },
+  "rulet": {
+    "short_name": "RULET",
+    "full_name": "Rajasthan University Law Entrance Test",
+    "logo": "/exam-logos/official-v1/f1bff05a145ae3eb3eddd7bc.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.univraj.org/assets/logo-EIvoSnRk.png",
+    "source_page": "https://admissions.univraj.org/"
+  },
+  "saeee": {
+    "short_name": "SAEEE",
+    "full_name": "Sathyabama All India Entrance Examination",
+    "logo": "/exam-logos/official-v1/6c7b47ab62266c3cdbd38201.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://saeee2026.sathyabama.ac.in/wp-content/uploads/2025/10/sathyabama_header-logo-A.jpg",
+    "source_page": "https://saeee2026.sathyabama.ac.in/"
+  },
+  "sbi-clerk": {
+    "short_name": "SBI Clerk",
+    "full_name": "State Bank of India Junior Associate (SBI Clerk) Recruitment",
+    "logo": "/exam-logos/official-v1/3e0f11b88924f99e71aecd48.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://sbi.bank.in/documents/77530/47790899/sbi_logo.png/40d694e0-816a-7252-7138-8e876086d679?t=1735641421830",
+    "source_page": "https://sbi.bank.in/en/web/careers"
+  },
+  "sbi-junior-associate": {
+    "short_name": "SBI Clerk / JA",
+    "full_name": "SBI Junior Associate Customer Support & Sales Recruitment Examination",
+    "logo": "/exam-logos/official-v1/3e0f11b88924f99e71aecd48.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://sbi.bank.in/documents/77530/47790899/sbi_logo.png/40d694e0-816a-7252-7138-8e876086d679?t=1735641421830",
+    "source_page": "https://sbi.co.in/web/careers"
+  },
+  "sbi-po": {
+    "short_name": "SBI PO",
+    "full_name": "State Bank of India Probationary Officer Recruitment Examination",
+    "logo": "/exam-logos/official-v1/3e0f11b88924f99e71aecd48.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://sbi.bank.in/documents/77530/47790899/sbi_logo.png/40d694e0-816a-7252-7138-8e876086d679?t=1735641421830",
+    "source_page": "https://sbi.bank.in/en/web/careers"
+  },
+  "sebi-grade-a": {
+    "short_name": "SEBI Grade A",
+    "full_name": "SEBI Officer Grade A Assistant Manager Examination",
+    "logo": "/exam-logos/official-v1/63415fc9c0862e6d1ca3300e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.sebi.gov.in/images/sebi-logo.png",
+    "source_page": "https://www.sebi.gov.in/"
+  },
+  "seed": {
+    "short_name": "SEED",
+    "full_name": "Symbiosis Entrance Exam for Design",
+    "logo": "/exam-logos/official-v1/0a0157b78b43b1638a4376f4.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://sid.edu.in/assets/images/home/logo.webp",
+    "source_page": "https://sid.edu.in/programmes-offered/admission-process"
+  },
+  "set": {
+    "short_name": "SET",
+    "full_name": "Symbiosis Entrance Test",
+    "logo": "/exam-logos/official-v1/af5e6547f049324cb14a1ff5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://d107tqdgn7te45.cloudfront.net/assets/images/svg/logo.svg",
+    "source_page": "https://www.set-test.org/"
+  },
+  "smit-online-test": {
+    "short_name": "SMIT Online Test",
+    "full_name": "Sikkim Manipal Institute of Technology Online Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/85/85261db95bef0fb271e4213a63c80681b50f3ecdaba4f9d0bde670ba2ae4dee1.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/85/85261db95bef0fb271e4213a63c80681b50f3ecdaba4f9d0bde670ba2ae4dee1.webp",
+    "source_page": ""
+  },
+  "saat": {
+    "short_name": "SAAT",
+    "full_name": "Siksha 'O' Anusandhan Admission Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/91/91e152c390f03ea135bf3e122b2457d294cc250acb04c081b846507da674d17e.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/91/91e152c390f03ea135bf3e122b2457d294cc250acb04c081b846507da674d17e.webp",
+    "source_page": ""
+  },
+  "siteee": {
+    "short_name": "SITEEE",
+    "full_name": "Symbiosis Institute of Technology Engineering Entrance Examination",
+    "logo": "/exam-logos/official-v1/af5e6547f049324cb14a1ff5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://d107tqdgn7te45.cloudfront.net/assets/images/svg/logo.svg",
+    "source_page": "https://www.set-test.org/"
+  },
+  "skuast-j-cet": {
+    "short_name": "SKUAST-J CET",
+    "full_name": "Sher-e-Kashmir University of Agricultural Sciences and Technology of Jammu Common Entrance Test",
+    "logo": "/exam-logos/official-v1/94634f871320129fb20f834e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://skuastjammu.ac.in/newsite/image/SKUAST-J_logo.png",
+    "source_page": "https://skuastjammu.ac.in/newsite/admission.php"
+  },
+  "skuast-k-uet": {
+    "short_name": "SKUAST-K UET",
+    "full_name": "Sher-e-Kashmir University of Agricultural Sciences and Technology of Kashmir University Entrance Test",
+    "logo": "/exam-logos/official-v1/7a9474b0244dd24066d2d1ad.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://skuastkashmir.in/IUMS/logo.png",
+    "source_page": "https://skuastkashmir.in/IUMS/applicant/"
+  },
+  "slat": {
+    "short_name": "SLAT",
+    "full_name": "Symbiosis Law Admission Test",
+    "logo": "/exam-logos/official-v1/6f75a363e945f67a083df7d6.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.slat-test.org/images/banner/figma/sls-logo-pune.png?v=2",
+    "source_page": "https://www.slat-test.org/"
+  },
+  "snap": {
+    "short_name": "SNAP",
+    "full_name": "Symbiosis National Aptitude Test (SNAP)",
+    "logo": "/exam-logos/official-v1/e93c6e8a771dd700e17c1176.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.snaptest.org/images/header/snap-logo.webp",
+    "source_page": "https://www.snaptest.org/"
+  },
+  "sri-venkateswara-university-common-entrance-test": {
+    "short_name": "SVUCET",
+    "full_name": "Sri Venkateswara University Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/cc/cc73b8b5b55362bfe24c69a04e1ef1f67aa90d40344b1a35365e82413131487a.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/cc/cc73b8b5b55362bfe24c69a04e1ef1f67aa90d40344b1a35365e82413131487a.webp",
+    "source_page": ""
+  },
+  "spmhcat": {
+    "short_name": "SPMHCAT",
+    "full_name": "SRM University Haryana Common Aptitude Test",
+    "logo": "/exam-logos/official-v1/cc6a9d8f6506cb3a9f81b284.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdn.npfs.co/uploads/template/190/7122/publish/images/srm-logo-white.webp?1767010191",
+    "source_page": "https://admissions.srmuniversity.ac.in/"
+  },
+  "srmjeee": {
+    "short_name": "SRMJEEE",
+    "full_name": "SRM Joint Engineering Entrance Examination (UG)",
+    "logo": "/exam-logos/official-v1/225848626a4b45fb2fbdda49.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.srmist.edu.in/srmistonline/resources/Image/srmist.png",
+    "source_page": "https://admissions.srmist.edu.in/srmistonline/"
+  },
+  "srmjeem": {
+    "short_name": "SRMJEEM",
+    "full_name": "SRM Joint Entrance Examination for Management",
+    "logo": "/exam-logos/official-v1/225848626a4b45fb2fbdda49.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.srmist.edu.in/srmistonline/resources/Image/srmist.png",
+    "source_page": "https://admissions.srmist.edu.in/srmistonline/"
+  },
+  "ssc-cgl": {
+    "short_name": "SSC CGL",
+    "full_name": "Combined Graduate Level Examination",
+    "logo": "/exam-logos/official-v1/1a955776af0eb7bd07d56b47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ssc.gov.in/assets/sscLogo.webp",
+    "source_page": "https://ssc.gov.in/"
+  },
+  "ssc-chsl": {
+    "short_name": "SSC CHSL",
+    "full_name": "Staff Selection Commission Combined Higher Secondary Level Examination",
+    "logo": "/exam-logos/official-v1/1a955776af0eb7bd07d56b47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ssc.gov.in/assets/sscLogo.webp",
+    "source_page": "https://ssc.gov.in/"
+  },
+  "ssc-jht": {
+    "short_name": "SSC Combined Hindi Translators",
+    "full_name": "Combined Hindi Translators Examination",
+    "logo": "/exam-logos/official-v1/1a955776af0eb7bd07d56b47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ssc.gov.in/assets/sscLogo.webp",
+    "source_page": "https://ssc.gov.in/"
+  },
+  "ssc-cpo": {
+    "short_name": "SSC CPO",
+    "full_name": "Sub-Inspector in Delhi Police and Central Armed Police Forces Examination",
+    "logo": "/exam-logos/official-v1/1a955776af0eb7bd07d56b47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ssc.gov.in/assets/sscLogo.webp",
+    "source_page": "https://ssc.gov.in/"
+  },
+  "ssc-gd-constable": {
+    "short_name": "SSC GD Constable",
+    "full_name": "Constable GD in CAPFs, NIA, SSF and Rifleman GD in Assam Rifles Examination",
+    "logo": "/exam-logos/official-v1/1a955776af0eb7bd07d56b47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ssc.gov.in/assets/sscLogo.webp",
+    "source_page": "https://ssc.gov.in/"
+  },
+  "ssc-je": {
+    "short_name": "SSC JE",
+    "full_name": "Junior Engineer (Civil, Mechanical & Electrical) Examination",
+    "logo": "/exam-logos/official-v1/1a955776af0eb7bd07d56b47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ssc.gov.in/assets/sscLogo.webp",
+    "source_page": "https://ssc.gov.in/"
+  },
+  "ssc-mts": {
+    "short_name": "SSC MTS & Havaldar",
+    "full_name": "Multi-Tasking Staff and Havaldar Examination",
+    "logo": "/exam-logos/official-v1/1a955776af0eb7bd07d56b47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ssc.gov.in/assets/sscLogo.webp",
+    "source_page": "https://ssc.gov.in/"
+  },
+  "ssc-selection-post-phase-14": {
+    "short_name": "SSC Selection Post Phase XIV",
+    "full_name": "Selection Post Examination Phase XIV",
+    "logo": "/exam-logos/official-v1/1a955776af0eb7bd07d56b47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ssc.gov.in/assets/sscLogo.webp",
+    "source_page": "https://ssc.gov.in/"
+  },
+  "ssc-stenographer": {
+    "short_name": "SSC Stenographer",
+    "full_name": "Stenographer Grade C & D Examination",
+    "logo": "/exam-logos/official-v1/1a955776af0eb7bd07d56b47.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://ssc.gov.in/assets/sscLogo.webp",
+    "source_page": "https://ssc.gov.in/"
+  },
+  "suat": {
+    "short_name": "SUAT",
+    "full_name": "Sharda University Admission Test",
+    "logo": "/exam-logos/official-v1/f48107dd295e5732ed687d1e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://suat.sharda.ac.in/assets/images/logo.png",
+    "source_page": "https://suat.sharda.ac.in/"
+  },
+  "tancet": {
+    "short_name": "TANCET",
+    "full_name": "Tamil Nadu Common Entrance Test",
+    "logo": "/exam-logos/official-v1/ba534cd54a4aeb457bcee736.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.annauniv.edu/images/ANNAUNIVERSITYLOGO.png",
+    "source_page": "https://www.annauniv.edu/"
+  },
+  "telangana-state-agriculture-common-entrance-test": {
+    "short_name": "TS AGRICET",
+    "full_name": "Telangana State Agriculture Common Entrance Test",
+    "logo": "/exam-logos/official-v1/21dc29c965e8bd7f4a9acc75.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://angrauagricet.aptonline.in/images/ANGRAU.jpg",
+    "source_page": "https://angrauagricet.aptonline.in/AGRICET/AGRICET_HomePage"
+  },
+  "ts-cpget": {
+    "short_name": "TS CPGET",
+    "full_name": "Telangana State Common Post Graduate Entrance Tests (TS CPGET)",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/01/01eed61e879f47f4df9400fdb720e5b4205fb06f156254e4fdb697177ee7ceeb.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/01/01eed61e879f47f4df9400fdb720e5b4205fb06f156254e4fdb697177ee7ceeb.webp",
+    "source_page": ""
+  },
+  "ts-eamcet": {
+    "short_name": "TS EAMCET",
+    "full_name": "Telangana State Engineering, Agriculture and Pharmacy Common Entrance Test (TG EAPCET)",
+    "logo": "/exam-logos/official-v1/4fbcff9e5e9ecdad30f77638.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgecet.nic.in/images/tsche_logo.jpg",
+    "source_page": "https://tgecet.nic.in/default.aspx"
+  },
+  "telangana-state-engineering-common-entrance-test": {
+    "short_name": "TS ECET",
+    "full_name": "Telangana State Engineering Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/7b/7bb78d45a88497815d2e114e88a75d9b92d05798c0fc2b34d5d76ca00447a701.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/7b/7bb78d45a88497815d2e114e88a75d9b92d05798c0fc2b34d5d76ca00447a701.webp",
+    "source_page": ""
+  },
+  "ts-icet": {
+    "short_name": "TS ICET",
+    "full_name": "Telangana State Integrated Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/09/09776418e4dbaf060d581d265fec0ebe3a440b5f84315ed35319a2c756e9711d.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/09/09776418e4dbaf060d581d265fec0ebe3a440b5f84315ed35319a2c756e9711d.webp",
+    "source_page": ""
+  },
+  "ts-law-cet": {
+    "short_name": "TS LAWCET",
+    "full_name": "Telangana State Law Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/7e/7e7ce25f4cb4abb5edc28bd9efba0a78db313a9a97ebba7b3f05e31e5f263e5d.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/7e/7e7ce25f4cb4abb5edc28bd9efba0a78db313a9a97ebba7b3f05e31e5f263e5d.webp",
+    "source_page": ""
+  },
+  "telangana-state-polytechnic-common-entrance-test": {
+    "short_name": "TS POLYCET",
+    "full_name": "Telangana State Polytechnic Common Entrance Test",
+    "logo": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/b3/b36191799891596d914dba9f1b45d56176bc9f9464b3bfdd66d0fa4ca3099397.webp",
+    "logo_status": "existing_catalog_mark",
+    "source_url": "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/b3/b36191799891596d914dba9f1b45d56176bc9f9464b3bfdd66d0fa4ca3099397.webp",
+    "source_page": ""
+  },
+  "tg-cpget": {
+    "short_name": "TG CPGET",
+    "full_name": "Telangana Common Post Graduate Entrance Tests",
+    "logo": "/exam-logos/official-v1/4fbcff9e5e9ecdad30f77638.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgecet.nic.in/images/tsche_logo.jpg",
+    "source_page": "https://tgecet.nic.in/default.aspx"
+  },
+  "tg-deecet": {
+    "short_name": "TG DEECET",
+    "full_name": "Telangana Diploma in Elementary Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/054320df2a99b50e9ed162ca.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://deecet.cdse.telangana.gov.in/images/TG_Deecet_2024_old.png",
+    "source_page": "https://deecet.cdse.telangana.gov.in/"
+  },
+  "tg-eapcet": {
+    "short_name": "TG EAPCET",
+    "full_name": "Telangana Engineering, Agriculture and Pharmacy Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4fbcff9e5e9ecdad30f77638.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgecet.nic.in/images/tsche_logo.jpg",
+    "source_page": "https://tgecet.nic.in/default.aspx"
+  },
+  "tg-ecet": {
+    "short_name": "TG ECET",
+    "full_name": "Telangana Engineering Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4fbcff9e5e9ecdad30f77638.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgecet.nic.in/images/tsche_logo.jpg",
+    "source_page": "https://tgecet.nic.in/default.aspx"
+  },
+  "tg-edcet": {
+    "short_name": "TG EDCET",
+    "full_name": "Telangana Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4fbcff9e5e9ecdad30f77638.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgecet.nic.in/images/tsche_logo.jpg",
+    "source_page": "https://tgecet.nic.in/default.aspx"
+  },
+  "tg-icet": {
+    "short_name": "TG ICET",
+    "full_name": "Telangana Integrated Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4fbcff9e5e9ecdad30f77638.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgecet.nic.in/images/tsche_logo.jpg",
+    "source_page": "https://tgecet.nic.in/default.aspx"
+  },
+  "tg-lawcet": {
+    "short_name": "TG LAWCET",
+    "full_name": "Telangana Law Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4e4f2de119204fa192d49272.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://lawcet.tgche.ac.in/images/tg_lawcet_2026.jpg",
+    "source_page": "https://lawcet.tgche.ac.in/"
+  },
+  "tg-pecet": {
+    "short_name": "TG PECET",
+    "full_name": "Telangana Physical Education Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4fbcff9e5e9ecdad30f77638.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgecet.nic.in/images/tsche_logo.jpg",
+    "source_page": "https://tgecet.nic.in/default.aspx"
+  },
+  "tg-pgecet": {
+    "short_name": "TG PGECET",
+    "full_name": "Telangana Post Graduate Engineering Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4fbcff9e5e9ecdad30f77638.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgecet.nic.in/images/tsche_logo.jpg",
+    "source_page": "https://tgecet.nic.in/default.aspx"
+  },
+  "tg-pglcet": {
+    "short_name": "TG PGLCET",
+    "full_name": "Telangana Post Graduate Law Common Entrance Test",
+    "logo": "/exam-logos/official-v1/4fbcff9e5e9ecdad30f77638.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgecet.nic.in/images/tsche_logo.jpg",
+    "source_page": "https://tgecet.nic.in/default.aspx"
+  },
+  "tg-polycet": {
+    "short_name": "TG POLYCET",
+    "full_name": "Telangana Polytechnic Common Entrance Test",
+    "logo": "/exam-logos/official-v1/68fb0f51dd5d28f9834c54da.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tgpolycet.nic.in/images/tslogo.png",
+    "source_page": "https://tgpolycet.nic.in/default.aspx"
+  },
+  "tifr-gs": {
+    "short_name": "TIFR GS",
+    "full_name": "Tata Institute of Fundamental Research Graduate School Admission Test",
+    "logo": "/exam-logos/official-v1/5c83533028db5b5d68b193c0.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.tifr.res.in/academics/images/TIFR_Logo_White.png",
+    "source_page": "https://www.tifr.res.in/academics/gs_admissions.php"
+  },
+  "tjee": {
+    "short_name": "TJEE",
+    "full_name": "Tripura Joint Entrance Examination",
+    "logo": "/exam-logos/official-v1/9cedb888b884e2ced233d872.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tbjee.tripura.gov.in/sites/default/files/Untitled%20design%20%2823%29.png",
+    "source_page": "https://tbjee.tripura.gov.in/"
+  },
+  "tn-set": {
+    "short_name": "TN SET",
+    "full_name": "Tamil Nadu State Eligibility Test",
+    "logo": "/exam-logos/official-v1/cad8c1094786a788fa607b52.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://trb.tn.gov.in/images/logo2.png",
+    "source_page": "https://trb.tn.gov.in/"
+  },
+  "tripura-jee": {
+    "short_name": "Tripura JEE",
+    "full_name": "Tripura Board of Joint Entrance Examination",
+    "logo": "/exam-logos/official-v1/9cedb888b884e2ced233d872.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://tbjee.tripura.gov.in/sites/default/files/Untitled%20design%20%2823%29.png",
+    "source_page": "https://tbjee.tripura.gov.in/"
+  },
+  "ts-set": {
+    "short_name": "TS SET",
+    "full_name": "Telangana State Eligibility Test",
+    "logo": "/exam-logos/official-v1/4b383808c61aca94cfc7006b.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://telanganaset.org/img/ts-logo.png",
+    "source_page": "https://telanganaset.org/"
+  },
+  "tspsc-group-1": {
+    "short_name": "TSPSC Group I",
+    "full_name": "Telangana Public Service Commission Group-I Services Examination",
+    "logo": "/exam-logos/official-v1/b3f8eab2cc7b68914852de45.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.tgpsc.gov.in/img/tspsc-logo-min.png",
+    "source_page": "https://www.tgpsc.gov.in/"
+  },
+  "uceed": {
+    "short_name": "UCEED",
+    "full_name": "Undergraduate Common Entrance Examination for Design (UCEED)",
+    "logo": "/exam-logos/official-v1/9f454a73d02b9777482daf5a.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.ceed.iitb.ac.in/2026/img/institute/logo_iitb.png",
+    "source_page": "https://www.ceed.iitb.ac.in/2026/"
+  },
+  "ugc-net": {
+    "short_name": "UGC NET",
+    "full_name": "University Grants Commission National Eligibility Test",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "ugc-net-june-2026": {
+    "short_name": "UGC NET",
+    "full_name": "University Grants Commission National Eligibility Test - June",
+    "logo": "/exam-logos/official-v1/79ccf53f16e85a28a9b90286.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://nta.ac.in/img/NTA_logo.png",
+    "source_page": "https://nta.ac.in/cuetexam"
+  },
+  "uid-dat": {
+    "short_name": "UID DAT",
+    "full_name": "Unitedworld Institute of Design Design Aptitude Test",
+    "logo": "/exam-logos/official-v1/ef246edab80f05a163c16bc2.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://uid.edu.in/wp-content/uploads/2024/02/uid-logo.webp",
+    "source_page": "https://uid.edu.in/admission/"
+  },
+  "ukpsc-pcs": {
+    "short_name": "UKPSC PCS",
+    "full_name": "Uttarakhand Combined State Civil / Upper Subordinate Services Examination",
+    "logo": "/exam-logos/official-v1/12e96f3eb8359c3ea9a3412e.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://psc.uk.gov.in/public/uploads/1662015859.jpeg",
+    "source_page": "https://psc.uk.gov.in/"
+  },
+  "ulsat": {
+    "short_name": "ULSAT",
+    "full_name": "UPES Legal Studies Aptitude Test",
+    "logo": "/exam-logos/official-v1/9cb70a1af271ab738a8f7bd8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.upes.ac.in/assets/images/UPES-logo.svg",
+    "source_page": "https://www.upes.ac.in/admissions/admission-alerts/ulsat"
+  },
+  "uni-gauge": {
+    "short_name": "Uni-GAUGE",
+    "full_name": "Uni-GAUGE Engineering Entrance Examination",
+    "logo": "/exam-logos/official-v1/8748e71cfbb567c32db2ea9f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.unigauge.com/wp-content/uploads/2021/10/Logo.png",
+    "source_page": "https://www.unigauge.com/"
+  },
+  "university-of-petroleum-and-energy-studies-engineering-aptitude-test": {
+    "short_name": "UPESEAT",
+    "full_name": "University of Petroleum & Energy Studies Engineering Aptitude Test",
+    "logo": "/exam-logos/official-v1/9cb70a1af271ab738a8f7bd8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.upes.ac.in/assets/images/UPES-logo.svg",
+    "source_page": "https://www.upes.ac.in/admissions/admission-alerts/ulsat"
+  },
+  "up-bed-jee": {
+    "short_name": "UP B.Ed JEE",
+    "full_name": "Uttar Pradesh Bachelor of Education Joint Entrance Examination",
+    "logo": "/exam-logos/official-v1/6e32c7669772c58925b9fbc4.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://bujhansi.ac.in/media/vxpmr0jz/newcolor.png",
+    "source_page": "https://bujhansi.ac.in/upbedjee.html"
+  },
+  "upcatet": {
+    "short_name": "UPCATET",
+    "full_name": "Uttar Pradesh Combined Agriculture and Technology Entrance Test",
+    "logo": "/exam-logos/official-v1/0e5ef90a054449519d456bb0.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.upcatetexam.org/images/logo.png",
+    "source_page": "https://www.upcatetexam.org/"
+  },
+  "upes-dat": {
+    "short_name": "UPES DAT",
+    "full_name": "UPES Design Aptitude Test",
+    "logo": "/exam-logos/official-v1/9cb70a1af271ab738a8f7bd8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.upes.ac.in/assets/images/UPES-logo.svg",
+    "source_page": "https://www.upes.ac.in/admissions/admission-alerts/ulsat"
+  },
+  "upes-met": {
+    "short_name": "UPES MET",
+    "full_name": "UPES Management Entrance Test",
+    "logo": "/exam-logos/official-v1/9cb70a1af271ab738a8f7bd8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.upes.ac.in/assets/images/UPES-logo.svg",
+    "source_page": "https://www.upes.ac.in/admissions/admission-alerts/ulsat"
+  },
+  "upeseat": {
+    "short_name": "UPESEAT",
+    "full_name": "UPES Engineering Aptitude Test",
+    "logo": "/exam-logos/official-v1/9cb70a1af271ab738a8f7bd8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.upes.ac.in/assets/images/UPES-logo.svg",
+    "source_page": "https://www.upes.ac.in/admissions/admission-alerts/ulsat"
+  },
+  "upesmet": {
+    "short_name": "UPESMET",
+    "full_name": "UPES Management Entrance Test",
+    "logo": "/exam-logos/official-v1/9cb70a1af271ab738a8f7bd8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admission.upes.ac.in/assets/images/UPES-logo.svg",
+    "source_page": "https://admission.upes.ac.in/login"
+  },
+  "uppsc-pcs": {
+    "short_name": "UPPSC PCS",
+    "full_name": "Uttar Pradesh Combined State / Upper Subordinate Services Examination",
+    "logo": "/exam-logos/official-v1/920e35abe9d840e72bb78554.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://uppsc.up.nic.in/Assets/image/theme/psc_sierra.png",
+    "source_page": "https://uppsc.up.nic.in/"
+  },
+  "upsc-capf-ac": {
+    "short_name": "CAPF AC",
+    "full_name": "Central Armed Police Forces Assistant Commandants Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-cds": {
+    "short_name": "CDS",
+    "full_name": "Combined Defence Services Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-civil-services": {
+    "short_name": "UPSC CSE",
+    "full_name": "Union Public Service Commission Civil Services Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-cms": {
+    "short_name": "CMS",
+    "full_name": "Combined Medical Services Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-combined-geo-scientist": {
+    "short_name": "Geo-Scientist",
+    "full_name": "Combined Geo-Scientist Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-ese": {
+    "short_name": "UPSC ESE",
+    "full_name": "UPSC Engineering Services Exam",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-engineering-services": {
+    "short_name": "UPSC ESE",
+    "full_name": "Engineering Services Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-epfo": {
+    "short_name": "UPSC EPFO",
+    "full_name": "UPSC EPFO EO/AO and APFC Recruitment Test",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-ies-iss": {
+    "short_name": "IES/ISS",
+    "full_name": "Indian Economic Service - Indian Statistical Service Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-ifs": {
+    "short_name": "UPSC IFS",
+    "full_name": "UPSC Indian Forest Service",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-indian-forest-service": {
+    "short_name": "UPSC IFoS",
+    "full_name": "Indian Forest Service Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "upsc-nda-na": {
+    "short_name": "NDA & NA",
+    "full_name": "National Defence Academy and Naval Academy Examination",
+    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
+    "source_page": "https://exams.nta.nic.in/aiapget/"
+  },
+  "uratpg": {
+    "short_name": "URATPG",
+    "full_name": "University of Rajasthan Admission Test for Postgraduate Programmes",
+    "logo": "/exam-logos/official-v1/f1bff05a145ae3eb3eddd7bc.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.univraj.org/assets/logo-EIvoSnRk.png",
+    "source_page": "https://admissions.univraj.org/"
+  },
+  "uttar-pradesh-combined-agriculture-and-technology-entrance-test": {
+    "short_name": "UPCATET",
+    "full_name": "Uttar Pradesh Combined Agriculture and Technology Entrance Test",
+    "logo": "/exam-logos/official-v1/0e5ef90a054449519d456bb0.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.upcatetexam.org/images/logo.png",
+    "source_page": "https://www.upcatetexam.org/"
+  },
+  "uttarakhand-jeep": {
+    "short_name": "Uttarakhand JEEP",
+    "full_name": "Uttarakhand Joint Entrance Examination Polytechnics",
+    "logo": "/exam-logos/official-v1/9457655a1870eeefbfadae23.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.ubterjeep.co.in/Images/Logoubte.jpg",
+    "source_page": "https://www.ubterjeep.co.in/Default.aspx"
+  },
+  "vtueee": {
+    "short_name": "VTUEEE",
+    "full_name": "Vel Tech Undergraduate Engineering Entrance Examination",
+    "logo": "/exam-logos/official-v1/b1d86fa8cb81583802a55829.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.veltech.edu.in/wp-content/uploads/2026/01/veltech-logo-.png",
+    "source_page": "https://www.veltech.edu.in/"
+  },
+  "vitmee": {
+    "short_name": "VITMEE",
+    "full_name": "Vellore Institute of Technology Masters Entrance Examination",
+    "logo": "/exam-logos/official-v1/016b47ced32722042938bc0f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/assets/img/vit-logo.webp",
+    "source_page": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/"
+  },
+  "vitbee": {
+    "short_name": "VITBEE",
+    "full_name": "VIT Business School Entrance Exam",
+    "logo": "/exam-logos/official-v1/016b47ced32722042938bc0f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/assets/img/vit-logo.webp",
+    "source_page": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/"
+  },
+  "viteee": {
+    "short_name": "VITEEE",
+    "full_name": "VIT Engineering Entrance Examination (VITEEE)",
+    "logo": "/exam-logos/official-v1/016b47ced32722042938bc0f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/assets/img/vit-logo.webp",
+    "source_page": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/"
+  },
+  "vitmee-mdes": {
+    "short_name": "VITMEE M.Des",
+    "full_name": "VIT Master's Entrance Examination for M.Des",
+    "logo": "/exam-logos/official-v1/016b47ced32722042938bc0f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/assets/img/vit-logo.webp",
+    "source_page": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/"
+  },
+  "vitmee-msc": {
+    "short_name": "VITMEE M.Sc.",
+    "full_name": "VIT Master's Entrance Examination for M.Sc. AI & ML / Data Science",
+    "logo": "/exam-logos/official-v1/016b47ced32722042938bc0f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/assets/img/vit-logo.webp",
+    "source_page": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/"
+  },
+  "vitmee-mtech": {
+    "short_name": "VITMEE M.Tech",
+    "full_name": "VIT Master's Entrance Examination for M.Tech",
+    "logo": "/exam-logos/official-v1/016b47ced32722042938bc0f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/assets/img/vit-logo.webp",
+    "source_page": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/"
+  },
+  "vitmee-mca": {
+    "short_name": "VITMEE MCA",
+    "full_name": "VIT Master's Entrance Examination for MCA",
+    "logo": "/exam-logos/official-v1/016b47ced32722042938bc0f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/assets/img/vit-logo.webp",
+    "source_page": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/"
+  },
+  "vitree": {
+    "short_name": "VITREE",
+    "full_name": "VIT Research Entrance Examination",
+    "logo": "/exam-logos/official-v1/016b47ced32722042938bc0f.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/assets/img/vit-logo.webp",
+    "source_page": "https://admissions.vit.ac.in/vitmee-m-des-2026-applications/"
+  },
+  "vmou-met": {
+    "short_name": "VMOU MET",
+    "full_name": "Vardhman Mahaveer Open University Management Entrance Test (VMOU MET)",
+    "logo": "/exam-logos/official-v1/9b80b7f7eab4eaf104dd6cbc.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.vmou.ac.in/sites/default/files/inline-images/logofinal-naac.png",
+    "source_page": "https://www.vmou.ac.in/"
+  },
+  "vocational-lateral-entry-test": {
+    "short_name": "VOCLET",
+    "full_name": "Vocational Lateral Entry Test",
+    "logo": "/exam-logos/official-v1/a8d4a144026c67e886db2a7c.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://webscte.co.in/assets/image/logo.png",
+    "source_page": "https://webscte.co.in/"
+  },
+  "vsat": {
+    "short_name": "VSAT",
+    "full_name": "Vignan's Scholastic Aptitude Test",
+    "logo": "/exam-logos/official-v1/5fd82254600a0893c52834b8.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://vignan.ac.in/newvignan/assets/images/Logo%20with%20Deemed.svg",
+    "source_page": "https://vignan.ac.in/newvignan/"
+  },
+  "wb-anm-gnm": {
+    "short_name": "ANM & GNM",
+    "full_name": "West Bengal ANM(R) & GNM Common Entrance Test",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "wb-set": {
+    "short_name": "WB SET",
+    "full_name": "West Bengal State Eligibility Test",
+    "logo": "/exam-logos/official-v1/96a8cd419d5f1f7392a773ea.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://wbcsc.org.in/wbcsc/Images/banner.jpg",
+    "source_page": "https://wbcsc.org.in/wbcsc/SET.aspx"
+  },
+  "wbcs": {
+    "short_name": "WBCS",
+    "full_name": "West Bengal Civil Service (Executive) etc. Examination",
+    "logo": "",
+    "logo_status": "unresolved",
+    "source_url": "",
+    "source_page": "",
+    "review_note": "Official WBPSC host requires unsafe legacy TLS renegotiation. No security downgrade used and no verified alternative asset found."
+  },
+  "wbjee": {
+    "short_name": "WBJEE",
+    "full_name": "West Bengal Joint Entrance Examination",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "wb-anm-and-gnm": {
+    "short_name": "WB ANM & GNM",
+    "full_name": "West Bengal (Auxiliary Nursing and Midwifery) & (General Nursing and Midwifery)",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "west-bengal-joint-entrance-exam-for-computer-application": {
+    "short_name": "WB JECA",
+    "full_name": "West Bengal Joint Entrance Exam for Computer Application",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "west-bengal-joint-entrance-exam-for-post-basic-nursing": {
+    "short_name": "WB JEPBN",
+    "full_name": "West Bengal Joint Entrance Exam for Post Basic Nursing",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "wb-jehom": {
+    "short_name": "WB JEHOM",
+    "full_name": "West Bengal Joint Entrance for Hospitality Management",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "west-bengal-joint-entrance-for-mater-of-science-nursing": {
+    "short_name": "WB JEMSCN",
+    "full_name": "West Bengal Joint Entrance for Mater of Science Nursing",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "wb-jelet": {
+    "short_name": "WB JELET",
+    "full_name": "West Bengal Joint Entrance Lateral Engineering Test",
+    "logo": "/exam-logos/official-v1/79bea5608067e790c3a8d0f3.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://cdnbbsr.s3waas.gov.in/s3d2a27e83d429f0dcae6b937cf440aeb1/uploads/2022/02/2022021879.jpg",
+    "source_page": "https://wbjeeb.nic.in/"
+  },
+  "xat": {
+    "short_name": "XAT",
+    "full_name": "Xavier Aptitude Test",
+    "logo": "/exam-logos/official-v1/e362111f676ac0bc28b7e7ce.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://xatonline.in//assets/images/logo.webp",
+    "source_page": "https://xatonline.in/"
+  },
+  "xgmt": {
+    "short_name": "XGMT",
+    "full_name": "Xavier General Management Aptitude Test",
+    "logo": "/exam-logos/official-v1/dbfa1aa6eb27d3128d6656b5.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://xim.edu.in/wp-content/uploads/2021/06/xim-university-logo-1.png",
+    "source_page": "https://xim.edu.in/"
+  },
+  "xic-oet": {
+    "short_name": "XIC OET",
+    "full_name": "Xavier Institute of Communications' Online Entrance Test",
+    "logo": "/exam-logos/official-v1/0e208c1c3599d27133fd4042.webp",
+    "logo_status": "official_source_reviewed",
+    "source_url": "https://www.xaviercomm.org/images/logo-xavier-institute-mob.png",
+    "source_page": "https://www.xaviercomm.org/admissions/admissions.htm"
+  }
+}

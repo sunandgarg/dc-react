@@ -3,9 +3,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
-  APPROVED_EXAM_THEME_LOGOS,
   classifyExamFilters,
-  isThemedExamLogo,
   loadCanonicalExamCatalog,
 } from "../backend/src/exam-catalog.mjs";
 
@@ -17,17 +15,19 @@ const live = livePath ? JSON.parse(await readFile(livePath, "utf8")) : [];
 const liveBySlug = new Map(live.map((row) => [row.slug, row]));
 const { catalog, deletedSlugs, refreshReports } = await loadCanonicalExamCatalog(root);
 const canonicalSlugs = new Set(catalog.map((row) => row.slug));
+const identities = JSON.parse(await readFile(path.join(root, "shared/exam-identities.json"), "utf8"));
 
 const records = catalog.map((exam) => {
   const liveRow = liveBySlug.get(exam.slug);
-  const chosenLogo = APPROVED_EXAM_THEME_LOGOS[exam.slug] || liveRow?.logo || exam.logo || "";
+  const identity = identities[exam.slug];
+  const chosenLogo = identity?.logo || "";
   return {
     slug: exam.slug,
     name: exam.name,
     production_state: liveRow ? (liveRow.is_active === false ? "inactive" : "active") : "missing",
     ...classifyExamFilters(exam),
     current_logo: chosenLogo,
-    logo_action: isThemedExamLogo(chosenLogo) ? "retain_approved_theme" : "generate_1080x950_webp",
+    logo_action: identity?.logo_status || "unresolved",
   };
 });
 
@@ -41,8 +41,9 @@ const summary = {
   approved_duplicate_slugs: deletedSlugs,
   extra_production_slugs: extraProductionSlugs,
   refresh_reports_applied: refreshReports.length,
-  logo_retain_count: records.filter((row) => row.logo_action === "retain_approved_theme").length,
-  logo_generate_count: records.filter((row) => row.logo_action === "generate_1080x950_webp").length,
+  logo_official_count: records.filter((row) => row.logo_action === "official_source_reviewed").length,
+  logo_retained_count: records.filter((row) => row.logo_action === "existing_catalog_mark").length,
+  logo_unresolved_count: records.filter((row) => row.logo_action === "unresolved").length,
   filter_rows_with_empty_values: records.filter((row) => !row.listing_category || !row.exam_streams.length || !row.course_groups.length || !row.education_levels.length).length,
 };
 

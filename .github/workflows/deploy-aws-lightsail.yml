@@ -685,7 +685,7 @@ jobs:
           done
           REMOTE
 
-      - name: Sync canonical exam catalog, filters and themed logos
+      - name: Sync canonical exam catalog, filters and reviewed official logos
         if: ${{ inputs.sync_exam_catalog }}
         run: |
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \

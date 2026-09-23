@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-09-23T15:17:57.730Z",
+  "total": 485,
+  "counts": {
+    "official_source_reviewed": 424,
+    "existing_catalog_mark": 51,
+    "unresolved": 10
+  },
+  "assets": 195,
+  "unresolved": [
+    {
+      "slug": "agniveervayu",
+      "full_name": "Indian Air Force Agniveervayu Selection Test",
+      "website": "https://agnipathvayu.cdac.in/",
+      "reason": "Official recruitment site returned HTTP 503; alternate Indian Air Force host timed out. No verified downloadable mark."
+    },
+    {
+      "slug": "ap-polycet",
+      "full_name": "Andhra Pradesh Polytechnic Common Entrance Test",
+      "website": "https://polycetap.nic.in/",
+      "reason": "Catalog host did not resolve and alternate AP POLYCET host returned HTTP 503. Official exam-specific mark remains unverified."
+    },
+    {
+      "slug": "hp-set",
+      "full_name": "Himachal Pradesh State Eligibility Test",
+      "website": "https://hppsc.hp.gov.in/",
+      "reason": "HPPSC official site requires unsafe legacy TLS renegotiation; HTTP retry timed out. No security downgrade used."
+    },
+    {
+      "slug": "iiser-iat",
+      "full_name": "IISER Aptitude Test",
+      "website": "https://web.iiseradmission.in/",
+      "reason": "Current official admissions header is text-only. No common IAT mark verified; a single IISER campus crest would misrepresent the joint exam."
+    },
+    {
+      "slug": "jpsc-combined-civil-services",
+      "full_name": "Jharkhand Combined Civil Services Examination",
+      "website": "https://www.jpsc.gov.in/",
+      "reason": "Official image path returned a loading animation, not the commission logo; rejected during visual review."
+    },
+    {
+      "slug": "kpsc-kas",
+      "full_name": "Karnataka Administrative Service / Gazetted Probationers Examination",
+      "website": "https://kpsc.kar.nic.in/",
+      "reason": "Official KPSC host returned malformed HTTP headers; HTTP retry timed out. No alternative official mark verified."
+    },
+    {
+      "slug": "nmat",
+      "full_name": "NMAT by GMAC",
+      "website": "https://www.mba.com/exams/nmat",
+      "reason": "Official MBA.com page blocked automated retrieval. Alternate GMAC paths returned 404; no exam-specific mark verified."
+    },
+    {
+      "slug": "rajasthan-pre-deled",
+      "full_name": "Rajasthan Pre Diploma in Elementary Education Entrance Examination (BSTC)",
+      "website": "https://predeled.e-raj.in/",
+      "reason": "Catalog URL is an informational/ad-supported site, not a verified authority source. Official portal did not expose a verified logo. Do not source a mark from the catalog URL."
+    },
+    {
+      "slug": "rajasthan-set",
+      "full_name": "Rajasthan State Eligibility Test",
+      "website": "https://www.recruitment.rajasthan.gov.in/",
+      "reason": "Catalog recruitment host has a hostname/certificate mismatch. The reachable state recruitment portal does not establish the SET conducting authority's logo."
+    },
+    {
+      "slug": "wbcs",
+      "full_name": "West Bengal Civil Service (Executive) etc. Examination",
+      "website": "https://psc.wb.gov.in/",
+      "reason": "Official WBPSC host requires unsafe legacy TLS renegotiation. No security downgrade used and no verified alternative asset found."
+    }
+  ]
+}

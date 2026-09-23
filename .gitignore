@@ -22,6 +22,7 @@ reports/legacy-csv-*.json
 reports/legacy-asset-*.json
 .seo-cache/
 tmp/
+.tmp/exam-official-logos/
 
 # Editor directories and files
 .vscode/*

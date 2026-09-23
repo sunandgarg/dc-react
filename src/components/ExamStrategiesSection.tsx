@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
@@ -8,6 +8,7 @@ import {
   TimerReset, Zap, Flame, CircleDot, Rocket, ArrowRight, Trophy
 } from "lucide-react";
 import { findStrategyByKey } from "@/lib/examStrategies";
+import { ExamLogo } from "@/components/ExamLogo";
 
 type Strategy = { key: string; label: string; icon: any; tone: string };
 
@@ -32,56 +33,6 @@ const STRATEGIES: Strategy[] = [
   { key: "5-min",             label: "5 Min",              icon: Flame,        tone: "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/30 dark:text-rose-300 dark:border-rose-900" },
   { key: "last-2-min",        label: "Last 2 Min",         icon: Rocket,       tone: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900" },
 ];
-
-function ExamLogo({
-  name,
-  shortName,
-  logo,
-  image,
-}: {
-  name: string;
-  shortName?: string | null;
-  logo?: string | null;
-  image?: string | null;
-}) {
-  const sources = useMemo(
-    () => [logo, image].filter((source, index, all): source is string =>
-      Boolean(source?.trim()) && all.indexOf(source) === index
-    ),
-    [logo, image],
-  );
-  const [sourceIndex, setSourceIndex] = useState(0);
-
-  useEffect(() => setSourceIndex(0), [logo, image]);
-
-  const source = sources[sourceIndex];
-  const initials = (shortName || name)
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 3)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
-
-  return (
-    <div className="relative w-11 h-11 shrink-0 overflow-hidden rounded-xl border border-border bg-primary/10">
-      <span className="absolute inset-0 flex items-center justify-center px-1 text-center text-[10px] font-extrabold text-primary">
-        {initials || <CircleDot className="w-5 h-5" />}
-      </span>
-      {source && (
-        <img
-          key={source}
-          src={source}
-          alt={`${name} logo`}
-          className="entity-logo-safe absolute inset-0 h-full w-full rounded-xl"
-          loading="lazy"
-          decoding="async"
-          onError={() => setSourceIndex((current) => current + 1)}
-        />
-      )}
-    </div>
-  );
-}
 
 function useTopExams() {
   return useQuery({
@@ -141,12 +92,7 @@ export function ExamStrategiesSection() {
           >
             <Link to={exam ? `/exams/${exam.slug}` : "#"} className="flex items-center gap-3 p-4 border-b border-border hover:bg-muted/40 transition-colors">
               {exam ? (
-                <ExamLogo
-                  name={exam.name}
-                  shortName={exam.short_name}
-                  logo={exam.logo}
-                  image={exam.image}
-                />
+                <ExamLogo exam={exam} className="h-11 w-11" />
               ) : (
                 <div className="w-11 h-11 shrink-0 rounded-xl bg-muted animate-pulse" />
               )}
