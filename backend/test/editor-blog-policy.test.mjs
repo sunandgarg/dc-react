@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, articleWordToleranceRange, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, isCompactArticleWordTarget, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextJitteredBlogRunAt, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripDedicatedFaqBlock, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
+import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_BLOG_ANALYSIS_MODEL, DEFAULT_BLOG_WRITING_MODEL, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, articleWordToleranceRange, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, isCompactArticleWordTarget, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextJitteredBlogRunAt, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripDedicatedFaqBlock, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema } from "../src/blog-ai.mjs";
 import { forceDraftPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
@@ -221,16 +221,31 @@ test("normalizes legacy Gemini models and classifies quota errors", () => {
 });
 
 test("selects the configured OpenAI blog models and parses structured output", () => {
-  assert.equal(normalizeBlogTextModel(""), "gpt-5.6-sol");
+  assert.equal(DEFAULT_BLOG_ANALYSIS_MODEL, "gpt-6-luna");
+  assert.equal(DEFAULT_BLOG_WRITING_MODEL, "gpt-6-sol");
+  assert.equal(normalizeBlogTextModel(""), "gpt-6-sol");
   assert.equal(normalizeBlogTextModel("gpt-5.5"), "gpt-5.5");
   assert.equal(normalizeBlogTextModel("gpt-5.4"), "gpt-5.4-mini");
   assert.equal(normalizeBlogTextModel("gpt-5.4-mini"), "gpt-5.4-mini");
-  assert.equal(normalizeBlogTextModel("gpt-5.6-sol"), "gpt-5.6-sol");
-  assert.equal(normalizeBlogTextModel("gpt-5.6-luna"), "gpt-5.6-sol");
+  assert.equal(normalizeBlogTextModel("gpt-6-sol"), "gpt-6-sol");
+  assert.equal(normalizeBlogTextModel("gpt-6-luna"), "gpt-6-luna");
+  assert.equal(normalizeBlogTextModel("gpt-5.6-sol"), "gpt-6-sol");
+  assert.equal(normalizeBlogTextModel("gpt-5.6-luna"), "gpt-6-sol");
   assert.equal(normalizeBlogTextModel("gpt-5-nano"), "gpt-5-nano");
   assert.equal(blogTextProvider("gpt-5-nano"), "openai");
   assert.equal(blogTextProvider("gemini-3.6-flash"), "gemini");
   assert.deepEqual(parseOpenAiJsonPayload({ choices: [{ message: { content: '{"title":"Natural draft"}' } }] }), { title: "Natural draft" });
+});
+
+test("routes blog analysis to Luna while keeping article generation on the writing model", async () => {
+  const source = await readFile(new URL("../src/blog-ai.mjs", import.meta.url), "utf8");
+  const noveltySource = source.slice(source.indexOf("async function filterSemanticallyNovelTopics"), source.indexOf("async function assertAiEnabled"));
+  const reviewSource = source.slice(source.indexOf("async function reviewGeneratedDraft"), source.indexOf("function articleRevisionPromptBase"));
+  const draftSource = source.slice(source.indexOf("async function generateDraft"), source.indexOf("export async function handleBlogAiSettings"));
+  assert.match(noveltySource, /model: DEFAULT_BLOG_ANALYSIS_MODEL/);
+  assert.match(reviewSource, /model: DEFAULT_BLOG_ANALYSIS_MODEL/);
+  assert.match(draftSource, /let model = requestedModel \|\| editorial\.text_model/);
+  assert.match(source, /propose \$\{suggestionCount\}[\s\S]*?model: DEFAULT_BLOG_ANALYSIS_MODEL/);
 });
 
 test("converts provider-neutral schemas into strict OpenAI structured output", () => {

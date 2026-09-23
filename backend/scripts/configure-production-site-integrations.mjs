@@ -13,6 +13,7 @@ const integrations = [
 ];
 const BLOG_EDITORIAL_POLICY_MIGRATION_KEY = "blog_editorial_policy_v2";
 const BLOG_GPT_5_6_SOL_EDITORIAL_MIGRATION_KEY = "blog_gpt_5_6_sol_editorial_policy_v1";
+const BLOG_GPT_6_SPLIT_MODEL_MIGRATION_KEY = "blog_gpt_6_luna_analysis_sol_writing_v1";
 const BLOG_DEKHOCAMPUS_HUMAN_EDITORIAL_MIGRATION_KEY = "blog_dekhocampus_human_editorial_policy_v1";
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
@@ -40,6 +41,9 @@ try {
   let solBlogSettingsUpdated = 0;
   let solProviderSettingsUpdated = 0;
   let solRuntimeControlsUpdated = 0;
+  let gpt6SplitSettingsUpdated = 0;
+  let gpt6SplitProviderSettingsUpdated = 0;
+  let gpt6SplitRuntimeControlsUpdated = 0;
   let providerSettingsUpdated = 0;
   let runtimeControlsUpdated = 0;
   let entitySchedulesUpdated = 0;
@@ -130,6 +134,36 @@ try {
           model: "gpt-5.6-sol",
           source_privacy: "strict",
           human_editorial_score_minimum: 70,
+          applied_at: new Date().toISOString(),
+        }),
+      },
+    });
+  }
+  const gpt6SplitMigration = await prisma.app_settings.findUnique({ where: { key: BLOG_GPT_6_SPLIT_MODEL_MIGRATION_KEY } });
+  if (!gpt6SplitMigration) {
+    const blogSettings = await prisma.blog_auto_agent_settings.updateMany({
+      data: { model_provider: "openai", text_model: "gpt-6-sol", updated_at: new Date() },
+    });
+    if (!blogSettings.count) throw new Error("Auto Blog Agent settings are missing");
+    gpt6SplitSettingsUpdated = blogSettings.count;
+
+    const providerSettings = await prisma.blog_ai_provider_settings.updateMany({
+      data: { text_model: "gpt-6-sol", updated_at: new Date() },
+    });
+    gpt6SplitProviderSettingsUpdated = providerSettings.count;
+
+    const runtimeControls = await prisma.ai_runtime_controls.updateMany({
+      where: { feature: { in: ["blog-studio", "blog-agent"] } },
+      data: { provider: "openai", model: "gpt-6-sol", updated_at: new Date() },
+    });
+    gpt6SplitRuntimeControlsUpdated = runtimeControls.count;
+
+    await prisma.app_settings.create({
+      data: {
+        key: BLOG_GPT_6_SPLIT_MODEL_MIGRATION_KEY,
+        value: JSON.stringify({
+          analysis_model: "gpt-6-luna",
+          writing_model: "gpt-6-sol",
           applied_at: new Date().toISOString(),
         }),
       },
@@ -493,6 +527,12 @@ try {
     blog_gpt_5_6_sol_settings_updated: solBlogSettingsUpdated,
     blog_gpt_5_6_sol_provider_settings_updated: solProviderSettingsUpdated,
     blog_gpt_5_6_sol_runtime_controls_updated: solRuntimeControlsUpdated,
+    blog_gpt_6_split_model_migrated: Boolean(gpt6SplitMigration) || gpt6SplitSettingsUpdated > 0,
+    blog_gpt_6_analysis_model: "gpt-6-luna",
+    blog_gpt_6_writing_model: "gpt-6-sol",
+    blog_gpt_6_settings_updated: gpt6SplitSettingsUpdated,
+    blog_gpt_6_provider_settings_updated: gpt6SplitProviderSettingsUpdated,
+    blog_gpt_6_runtime_controls_updated: gpt6SplitRuntimeControlsUpdated,
     blog_cover_settings_updated: blogSettingsUpdated,
     low_cost_image_quality_updated: providerSettingsUpdated,
     openai_blog_runtime_controls_updated: runtimeControlsUpdated,

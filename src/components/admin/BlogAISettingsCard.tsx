@@ -8,9 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-type State = { text_model: string; text_provider?: "openai" | "gemini"; image_model: string; image_quality: "low" | "medium" | "high"; gemini_key_set: boolean; openai_key_set: boolean };
-const DEFAULT_TEXT_MODEL = "gpt-5.6-sol";
-const LEGACY_TEXT_MODELS = new Set(["gpt-5.6-luna", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
+type State = { analysis_model?: string; text_model: string; text_provider?: "openai" | "gemini"; image_model: string; image_quality: "low" | "medium" | "high"; gemini_key_set: boolean; openai_key_set: boolean };
+const DEFAULT_TEXT_MODEL = "gpt-6-sol";
+const LEGACY_TEXT_MODELS = new Set(["gpt-5.6-sol", "gpt-5.6-luna", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
 const normalizeTextModel = (value?: string) => {
   const model = String(value || "").trim();
   if (LEGACY_TEXT_MODELS.has(model)) return DEFAULT_TEXT_MODEL;
@@ -18,10 +18,10 @@ const normalizeTextModel = (value?: string) => {
   if (!model.startsWith("gemini-")) return DEFAULT_TEXT_MODEL;
   return model;
 };
-const defaults: State = { text_model: DEFAULT_TEXT_MODEL, image_model: "gpt-image-1", image_quality: "low", gemini_key_set: false, openai_key_set: false };
+const defaults: State = { analysis_model: "gpt-6-luna", text_model: DEFAULT_TEXT_MODEL, image_model: "gpt-image-1", image_quality: "low", gemini_key_set: false, openai_key_set: false };
 
 const TEXT_MODELS = [
-  { value: "gpt-5.6-sol", label: "OpenAI GPT-5.6 Sol - default" },
+  { value: "gpt-6-sol", label: "OpenAI GPT-6 Sol - default writer" },
   { value: "gpt-5.5", label: "OpenAI GPT-5.5" },
   { value: "gpt-5.4-mini", label: "OpenAI GPT-5.4 mini - balanced" },
   { value: "gpt-5-nano", label: "OpenAI GPT-5 nano - economy" },
@@ -52,16 +52,16 @@ export function BlogAISettingsCard() {
   };
 
   return <div className="mb-6 rounded-2xl border border-orange-200 bg-orange-50/40 p-5 dark:border-orange-900 dark:bg-orange-950/10">
-    <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="flex items-center gap-2 font-semibold"><Newspaper className="h-5 w-5 text-orange-500" /> Blog AI providers</h2><p className="mt-1 text-sm text-muted-foreground">OpenAI GPT-5.6 Sol is the default for topic review, research synthesis and publication-ready article drafting. GPT-5.5 and GPT-5.4 mini are available when you need a different writing profile. GPT Image remains optional because saved-template covers need no image-generation call. Keys are write-only and are never returned to the browser.</p></div><div className="flex gap-2"><Badge variant={settings.gemini_key_set ? "default" : "destructive"}>Gemini {settings.gemini_key_set ? "ready" : "missing"}</Badge><Badge variant={settings.openai_key_set ? "default" : "destructive"}>OpenAI {settings.openai_key_set ? "ready" : "missing"}</Badge></div></div>
+    <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="flex items-center gap-2 font-semibold"><Newspaper className="h-5 w-5 text-orange-500" /> Blog AI providers</h2><p className="mt-1 text-sm text-muted-foreground">GPT-6 Luna analyses research, checks topic novelty and reviews quality. GPT-6 Sol writes and revises the publication-ready article. GPT-5.5 and GPT-5.4 mini remain available as writing alternatives. GPT Image remains optional because saved-template covers need no image-generation call.</p></div><div className="flex gap-2"><Badge variant={settings.gemini_key_set ? "default" : "destructive"}>Gemini {settings.gemini_key_set ? "ready" : "missing"}</Badge><Badge variant={settings.openai_key_set ? "default" : "destructive"}>OpenAI {settings.openai_key_set ? "ready" : "missing"}</Badge></div></div>
     <div className="mt-4 grid gap-4 md:grid-cols-2">
       <div className="space-y-3">
         <Label className="flex items-center gap-2"><Newspaper className="h-4 w-4" /> Google Gemini API key</Label>
         <Input type="password" autoComplete="new-password" value={geminiKey} onChange={event => setGeminiKey(event.target.value)} placeholder={settings.gemini_key_set ? "Leave blank to keep current key" : "Paste the Gemini API key"} />
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2"><Label>Text provider</Label><Select value={settings.text_model.startsWith("gemini-") ? "gemini" : "openai"} disabled><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="openai">OpenAI</SelectItem><SelectItem value="gemini">Google Gemini</SelectItem></SelectContent></Select></div>
-          <div className="space-y-2"><Label>Default text model</Label><Select value={settings.text_model} onValueChange={(value) => setSettings({ ...settings, text_model: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{TEXT_MODELS.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+          <div className="space-y-2"><Label>Writing model</Label><Select value={settings.text_model} onValueChange={(value) => setSettings({ ...settings, text_model: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{TEXT_MODELS.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent></Select></div>
         </div>
-        <p className="text-xs text-muted-foreground">The selected text model powers Blog Studio, Auto Blog Agent and article generation. Gemini remains available for non-blog data cleanup.</p>
+        <p className="text-xs text-muted-foreground">Analysis model: GPT-6 Luna (fixed). The selected writing model powers Blog Studio and Auto Blog Agent drafts and rewrites.</p>
       </div>
       <div className="space-y-3"><Label className="flex items-center gap-2"><Image className="h-4 w-4" /> OpenAI API key</Label><Input type="password" autoComplete="new-password" value={openaiKey} onChange={event => setOpenaiKey(event.target.value)} placeholder={settings.openai_key_set ? "Leave blank to keep current key" : "Paste a new OpenAI key"} /><div className="grid grid-cols-[1fr_auto] gap-2"><div><Label>Image model</Label><Input value={settings.image_model} onChange={event => setSettings({ ...settings, image_model: event.target.value })} /></div><div><Label>Quality</Label><select value={settings.image_quality} onChange={event => setSettings({ ...settings, image_quality: event.target.value as State["image_quality"] })} className="mt-0 h-10 rounded-md border bg-background px-3"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div></div>
     </div>

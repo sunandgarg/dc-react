@@ -9,7 +9,9 @@ import { queueIndexNowUrls } from "./indexnow.mjs";
 import { BATCH_CONTENT_VARIATION_POLICY, BATCH_CONTENT_VARIATION_TEXT } from "../../scripts/content-batch-policy.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
-const DEFAULT_OPENAI_TEXT_MODEL = "gpt-5.6-sol";
+export const DEFAULT_BLOG_ANALYSIS_MODEL = "gpt-6-luna";
+export const DEFAULT_BLOG_WRITING_MODEL = "gpt-6-sol";
+const DEFAULT_OPENAI_TEXT_MODEL = DEFAULT_BLOG_WRITING_MODEL;
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const RECOMMENDED_DAILY_POSTS = 8;
 const MAX_POSTS_PER_RUN = 3;
@@ -63,6 +65,8 @@ const HUMAN_EDITORIAL_RULES_TEXT = `Use the ${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY
 const BLOG_MODEL_SYSTEM_RULES = `Return valid JSON only. Write factual, original Indian editorial English using the DekhoCampus human editorial policy. Do not leak research URLs, citations, footnotes, private source metadata, competitor promotion, attribution phrases, quality scores or AI process language into publishable fields. Official authorities, universities, exam bodies and named institutions may be mentioned when the supplied evidence supports them; naming the real institution is required when it makes the rule clearer. Do not copy or spin another page. Never begin with prompt residue such as Answer first:, Answer:, Executive summary: or Here is the answer:. Never flatten a comparison matrix into a plain-text label stack. ${HUMAN_EDITORIAL_RULES_TEXT} Keep normal paragraphs concise and edited. The renderer requires semantic HTML, not Markdown.`;
 const SARKARI_ARTICLE_CATEGORIES = new Set(["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"]);
 const OPENAI_TEXT_PRICING_PER_MILLION = {
+  "gpt-6-sol": { input: 2, cachedInput: 0.2, output: 10 },
+  "gpt-6-luna": { input: 0.1, cachedInput: 0.01, output: 0.5 },
   "gpt-5.6-sol": { input: 0.2, cachedInput: 0.02, output: 1.2 },
   "gpt-5.6-luna": { input: 0.2, cachedInput: 0.02, output: 1.2 },
   "gpt-5.5": { input: 5, cachedInput: 0.5, output: 30 },
@@ -104,9 +108,9 @@ const cleanJson = (value) => String(value || "").replace(/^```json\s*|\s*```$/gi
 const slugify = (value) => String(value || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 100);
 const stripHtml = (value) => String(value || "").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 const LEGACY_GEMINI_MODELS = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
-const LEGACY_OPENAI_BLOG_MODELS = new Set(["gpt-5.6-luna"]);
+const LEGACY_OPENAI_BLOG_MODELS = new Set(["gpt-5.6-sol", "gpt-5.6-luna"]);
 const OPENAI_BLOG_MODEL_ALIASES = new Map([["gpt-5.4", "gpt-5.4-mini"]]);
-const SUPPORTED_OPENAI_BLOG_MODELS = new Set(["gpt-5.6-sol", "gpt-5.5", "gpt-5.4-mini", "gpt-5-nano"]);
+const SUPPORTED_OPENAI_BLOG_MODELS = new Set(["gpt-6-sol", "gpt-6-luna", "gpt-5.5", "gpt-5.4-mini", "gpt-5-nano"]);
 const normalizeGeminiModel = (value) => {
   const model = String(value || "").trim();
   if (!model.startsWith("gemini-")) return DEFAULT_GEMINI_MODEL;
@@ -1421,7 +1425,7 @@ const TOPIC_NOVELTY_SCHEMA = {
   required: ["verdicts"],
 };
 
-async function filterSemanticallyNovelTopics(candidates, existing, model, feature = "blog-agent", siteScope = "dekhocampus") {
+async function filterSemanticallyNovelTopics(candidates, existing, _writingModel, feature = "blog-agent", siteScope = "dekhocampus") {
   if (!candidates.length || !existing.length) return { accepted: candidates, rejected: [], model: null };
   const normalizedScope = normalizeArticleSiteScope(siteScope);
   const profile = articleSiteProfile(normalizedScope);
@@ -1443,7 +1447,7 @@ async function filterSemanticallyNovelTopics(candidates, existing, model, featur
     })),
   }));
   const generated = await blogTextJson(`Act as ${profile.brand}'s independent topic editor. Decide whether each proposed article is materially new compared with its closest existing coverage: ${JSON.stringify(comparisons)}. Treat the same primary entity, time period, reader search intent, decision or outcome as a duplicate even when the headline, synonyms, word order, format or minor angle changes. A checklist, guide, explainer, update or strategy is not new when it answers the same practical question. Allow a topic only when it serves a genuinely different intent or supplies a distinct, evidence-backed outcome. Return one verdict for every candidate_index. Set confidence from 0 to 1 and name the conflicting existing title when duplicate.`, feature, {
-    model,
+    model: DEFAULT_BLOG_ANALYSIS_MODEL,
     reasoningEffort: "low",
     thinkingLevel: "low",
     maxOutputTokens: 3_000,
@@ -2078,7 +2082,7 @@ export function independentArticleReviewThreshold(targetScore = 90) {
   return Math.min(85, Math.max(75, Math.trunc(Number(targetScore) || 90)));
 }
 
-async function reviewGeneratedDraft(draft, topic, signals, editorial, model, feature, siteScope = "dekhocampus") {
+async function reviewGeneratedDraft(draft, topic, signals, editorial, _writingModel, feature, siteScope = "dekhocampus") {
   const normalizedScope = normalizeArticleSiteScope(siteScope);
   const profile = articleSiteProfile(normalizedScope);
   const independentReviewThreshold = independentArticleReviewThreshold(editorial.editorial_quality_target);
@@ -2097,7 +2101,7 @@ Reject raw Markdown syntax, including hash headings, fenced code, Markdown bulle
 
 Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. Mark publishable false only for a material factual, safety, intent, completeness or reader-action defect. Optional polish must not block publication; an article scoring 85-89 can be publishable when it is accurate, complete and useful. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`;
   const generated = await blogTextJson(reviewPrompt, feature, {
-    model,
+    model: DEFAULT_BLOG_ANALYSIS_MODEL,
     reasoningEffort: "low",
     thinkingLevel: "low",
     maxOutputTokens: 2_500,
@@ -2193,7 +2197,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
       correctionIssues = deterministic.issues;
       continue;
     }
-    const modelReview = await reviewGeneratedDraft(draft, topic, evidence, editorial, model || editorial.text_model, feature, normalizedScope);
+    const modelReview = await reviewGeneratedDraft(draft, topic, evidence, editorial, DEFAULT_BLOG_ANALYSIS_MODEL, feature, normalizedScope);
     quality = {
       ...deterministic,
       score: Math.min(deterministic.score, modelReview.score),
@@ -2225,7 +2229,7 @@ export async function handleBlogAiSettings(request, userId) {
   const config = await aiConfig();
   if (request.method === "GET") {
     const row = await prisma.blog_ai_provider_settings.findUnique({ where: { id: "default" } }).catch(() => null);
-    return { text_model: row?.text_model || config.textModel, text_provider: blogTextProvider(row?.text_model || config.textModel), image_model: row?.image_model || config.imageModel, image_quality: row?.image_quality || config.imageQuality, gemini_key_set: Boolean(config.geminiKey), openai_key_set: Boolean(config.openaiKey), updated_at: row?.updated_at || null };
+    return { analysis_model: DEFAULT_BLOG_ANALYSIS_MODEL, text_model: normalizeBlogTextModel(row?.text_model || config.textModel), text_provider: blogTextProvider(row?.text_model || config.textModel), image_model: row?.image_model || config.imageModel, image_quality: row?.image_quality || config.imageQuality, gemini_key_set: Boolean(config.geminiKey), openai_key_set: Boolean(config.openaiKey), updated_at: row?.updated_at || null };
   }
   const body = await request.json().catch(() => ({}));
   const requestedTextModel = String(body.text_model || DEFAULT_OPENAI_TEXT_MODEL);
@@ -2429,6 +2433,8 @@ export async function handleBlogStudio(request, userId = null) {
   return {
     draft: { ...generated.draft, source_logo: contextLogo?.url || "" },
     model_used: `${generated.textProvider}:${generated.model}`,
+    analysis_model_used: semantic.model || `openai:${DEFAULT_BLOG_ANALYSIS_MODEL}`,
+    writing_model_used: `${generated.textProvider}:${generated.model}`,
     image_model_used: coverDiagnostics.sourceMode === "generated" ? "openai" : coverDiagnostics.sourceMode || "none",
     cover_diagnostics: coverDiagnostics,
     quality: generated.quality,
@@ -2720,7 +2726,7 @@ export async function runBlogAgent(body = {}) {
         : "";
       const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
       const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} ${trendInstruction} Follow this discovery order: inspect Sarvgyan coverage gaps first, then Shiksha coverage gaps, then compare the full DekhoCampus fingerprint list. Existing DekhoCampus subject + intent fingerprints: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Competitors are discovery inputs only: never copy, cite, link, name, credit, paraphrase closely or preserve their structure. Verify dates, eligibility, fees, results and deadlines against official or primary evidence in the signals. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic on the same India calendar day. A subject covered on an earlier day is eligible only when a new dated development or materially different student decision exists. Each proposal needs one primary entity, one precise search intent, a non-empty unique value, a concrete impact reason and a dated or evergreen evidence signal. Each title must be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation. Keep every non-title field concise, no more than 35 words, and return no more than six tags. Never truncate a title for cover artwork.`, "blog-agent", {
-        model: settings.text_model,
+        model: DEFAULT_BLOG_ANALYSIS_MODEL,
         reasoningEffort: "none",
         thinkingLevel: "low",
         maxOutputTokens: 4_000,
@@ -2762,7 +2768,7 @@ export async function runBlogAgent(body = {}) {
         }
         locallyNovel.push(topic);
       }
-      const semantic = await filterSemanticallyNovelTopics(locallyNovel, comparedCoverage, settings.text_model, "blog-agent");
+      const semantic = await filterSemanticallyNovelTopics(locallyNovel, comparedCoverage, DEFAULT_BLOG_ANALYSIS_MODEL, "blog-agent");
       rejected.push(...semantic.rejected);
       const rankedTopics = trendPostsDue
         ? [...semantic.accepted].sort((left, right) => Number(right.trend_based === true) - Number(left.trend_based === true))
@@ -2799,7 +2805,7 @@ export async function runBlogAgent(body = {}) {
     }
     const actionLabel = settings.human_review_required || settings.publish_status === "Draft" ? "Created for review" : "Published";
     await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { status: "completed", progress: 100, current_step: "Completed", completed_steps: topics.length * 2 + 1, finished_at: new Date(), created_article_ids: ids, message: `${actionLabel} ${ids.length} article(s); ${rejected.length} duplicate topic(s) rejected` } });
-    return { success: true, created_article_ids: ids, topics, duplicate_topics_rejected: rejected, next_run_at: nextRun, run_id: run.id, schedule_id: entityContext?.schedule.id || null };
+    return { success: true, created_article_ids: ids, topics, duplicate_topics_rejected: rejected, analysis_model_used: `openai:${DEFAULT_BLOG_ANALYSIS_MODEL}`, writing_model_used: `${blogTextProvider(settings.text_model)}:${normalizeBlogTextModel(settings.text_model)}`, next_run_at: nextRun, run_id: run.id, schedule_id: entityContext?.schedule.id || null };
   } catch (error) {
     if (error?.code === "BLOG_RUN_CONTROLLED") return { success: true, run_id: run.id, status: error.status, message: error.message };
     await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { status: "failed", progress: 100, current_step: "Failed", finished_at: new Date(), message: String(error?.message || error).slice(0, 2000) } });
