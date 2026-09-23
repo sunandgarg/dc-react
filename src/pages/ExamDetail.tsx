@@ -36,6 +36,7 @@ import { ExamDecisionRail } from "@/components/detail/ExamDecisionRail";
 import { trackEvent } from "@/lib/analytics";
 import { compactEntityLabel } from "@/lib/compactEntityLabel";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
+import { resolveExamLogo } from "@/lib/examBranding";
 
 const EXAM_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "Overview" },
@@ -106,14 +107,14 @@ export default function ExamDetail() {
     ) : undefined,
     keywords: exam?.meta_keywords || undefined,
     canonical: exam ? `${buildExamHref(exam as any)}${strategy ? `/${strategy.slug}` : detailTab ? `/${detailTab.id}` : ""}` : undefined,
-    ogImage: exam?.image || undefined,
+    ogImage: exam ? (resolveExamLogo(exam as any) || undefined) : undefined,
     jsonLd: exam ? {
       "@context": "https://schema.org",
       "@type": "WebPage",
       name: exam.full_name || exam.name,
       description: (exam as any).page_summary || exam.description || undefined,
       url: absoluteSiteUrl(`${buildExamHref(exam as any)}${strategy ? `/${strategy.slug}` : detailTab ? `/${detailTab.id}` : ""}`),
-      primaryImageOfPage: exam.image ? { "@type": "ImageObject", url: absoluteCanonical(exam.image), contentUrl: absoluteCanonical(exam.image), caption: `${exam.name} exam` } : undefined,
+      primaryImageOfPage: resolveExamLogo(exam as any) ? { "@type": "ImageObject", url: absoluteCanonical(resolveExamLogo(exam as any)), contentUrl: absoluteCanonical(resolveExamLogo(exam as any)), caption: `${exam.name} official logo` } : undefined,
       about: {
         "@type": "Thing",
         name: exam.full_name || exam.name,
@@ -167,6 +168,7 @@ export default function ExamDetail() {
   }
 
   const compactExamName = compactEntityLabel((exam as any).short_name || exam.name);
+  const examLogo = resolveExamLogo(exam as any);
   const conductingAuthority = exam.conducting_authority?.trim() || "";
   const syllabusItems = Array.isArray(exam.syllabus)
     ? exam.syllabus.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
@@ -219,16 +221,30 @@ export default function ExamDetail() {
         )}
         {/* Hero Card */}
         <div className="bg-card rounded-2xl border border-border overflow-hidden mb-0">
-          <div className="relative">
-            <img src={exam.image} alt={`${exam.name} exam`} width="1600" height="560" loading="eager" decoding="async" {...{ fetchpriority: "high" }} className="w-full h-48 md:h-56 object-cover object-center" />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
-            {(exam as any).logo && (
-              <div className="absolute left-4 -bottom-6 md:left-6 md:-bottom-8 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-card border border-border shadow-md p-1.5 flex items-center justify-center overflow-hidden">
-                <img src={(exam as any).logo} alt={`${exam.name} logo`} className="entity-logo-safe w-full h-full rounded-xl" />
+          <div className="p-4 md:p-6">
+            <div className="mb-4 flex justify-center md:justify-start">
+              <div
+                className="h-24 w-24 rounded-full bg-[conic-gradient(from_35deg,hsl(var(--primary)),hsl(var(--accent)),hsl(var(--golden)),hsl(var(--primary)))] p-[4px] shadow-md md:h-28 md:w-28"
+                aria-label={`${exam.name} official logo`}
+              >
+                <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-card p-3">
+                  {examLogo ? (
+                    <img
+                      src={examLogo}
+                      alt={`${exam.name} official logo`}
+                      width="112"
+                      height="112"
+                      loading="eager"
+                      decoding="async"
+                      {...{ fetchpriority: "high" }}
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <Award className="h-10 w-10 text-primary" aria-hidden="true" />
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-          <div className={`p-4 md:p-6 ${(exam as any).logo ? "pt-10 md:pt-12" : ""}`}>
+            </div>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.category}</Badge>
               <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.level}</Badge>
@@ -570,7 +586,7 @@ export default function ExamDetail() {
               <LinkedColleges by="exam" slug={exam.slug} fallbackNames={exam.top_colleges || []} />
               <div className="mt-5">
                 <PartnerCollegeStrip
-                  title={`Partner colleges for ${exam.short_name || exam.name}`}
+                  title="Partner Colleges"
                   subtitle="Partner colleges to shortlist while preparing for this exam."
                   limit={6}
                 />

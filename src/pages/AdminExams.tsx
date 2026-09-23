@@ -353,8 +353,10 @@ export default function AdminExams() {
                       {FREQUENCIES.map((f) => <option key={f}>{f}</option>)}
                     </select>
                   </div>
-                  <div className="sm:col-span-1"><UploadOrUrlField label="Logo" value={editing.logo || ""} onChange={(v) => update("logo", v)} kind="image" preset="logo" folder="exam-logos" /></div>
-                  <div className="sm:col-span-1"><UploadOrUrlField label="Featured Image" value={editing.image || ""} onChange={(v) => update("image", v)} kind="image" preset="examMain" folder="exam-images" /></div>
+                  <div className="sm:col-span-2">
+                    <UploadOrUrlField label="Official Exam Logo (shown inside the themed ring)" value={editing.logo || ""} onChange={(v) => update("logo", v)} kind="image" preset="logo" folder="exam-logos" />
+                    <p className="mt-1 text-[10.5px] text-muted-foreground">Use the official authority or exam logo with a transparent or plain background. Public exam pages no longer display a separate featured background image.</p>
+                  </div>
                   <div><label className="text-xs font-medium text-muted-foreground">Website</label><Input value={editing.website || ""} onChange={(e) => update("website", e.target.value)} placeholder="https://..." className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Registration URL</label><Input value={editing.registration_url || ""} onChange={(e) => update("registration_url", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
                 </div>
