@@ -23,7 +23,7 @@
     "audit:exam-refresh": "node scripts/audit-exam-refresh-repository.mjs --write",
     "verify:exam-refresh-policy": "node scripts/audit-exam-refresh-repository.mjs --strict-current",
     "prebuild": "npm run check:typography && npm run verify:exam-refresh-policy",
-    "postbuild": "tsx scripts/generate-sitemap.ts && tsx scripts/apply-site-metadata.ts",
+    "postbuild": "node --import tsx scripts/generate-sitemap.ts && node --import tsx scripts/apply-site-metadata.ts",
     "deploy:prod": "bash scripts/deploy-prod.sh"
   },
   "dependencies": {

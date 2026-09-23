@@ -14,15 +14,18 @@ function replaceAll(input: string, pairs: Array<[string | RegExp, string]>) {
 function updateIndexHtml() {
   const html = readFileSync(indexPath, "utf8");
   const next = replaceAll(html, [
-    [/https:\/\/ui\.dekhocampus\.com\/?/g, SITE_URL],
-    [/https:\/\/www\.dekhocampus\.com\/?/g, SITE_URL],
-    [/https:\/\/dekhocampus\.com\/?/g, SITE_URL],
+    // Replace only legacy origins. Consuming the optional trailing slash
+    // corrupts absolute paths such as dekhocampus.com/news-feed.xml.
+    [/https:\/\/(?:ui|www)\.dekhocampus\.com(?=\/|["'\s<]|$)/g, SITE_URL],
     [/"url":\s*"https:\/\/[^"]+"/g, `"url": "${SITE_URL}"`],
     [/"logo":\s*"https:\/\/[^"]+\/logo\.png"/g, `"logo": "${absoluteSiteUrl(SITE_CONFIG.logoPath)}"`],
     [/"target":\s*"https:\/\/[^"]+\{search_term_string\}"/g, `"target": "${absoluteSiteUrl(`${SITE_CONFIG.searchPath}?q={search_term_string}`)}"`],
     [new RegExp(`${SITE_URL.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}og-image\\.jpg`, "g"), absoluteSiteUrl(SITE_CONFIG.ogImagePath)],
     [new RegExp(`${SITE_URL.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}logo\\.png`, "g"), absoluteSiteUrl(SITE_CONFIG.logoPath)],
   ]);
+  if (!next.includes(`href="${absoluteSiteUrl("/news-feed.xml")}"`)) {
+    throw new Error("The RSS discovery link must point to the canonical news feed");
+  }
   writeFileSync(indexPath, next);
 }
 
@@ -87,6 +90,7 @@ Allow: /
 Sitemap: ${absoluteSiteUrl("/sitemap.xml")}
 Sitemap: ${absoluteSiteUrl("/sitemap-index.xml")}
 Sitemap: ${absoluteSiteUrl("/news-sitemap.xml")}
+Sitemap: ${absoluteSiteUrl("/sitemap-0.xml")}
 `;
   writeFileSync(robotsPath, content);
 }
