@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, Loader2, Phone, Mail, MapPin, Calendar, Shield, X, Pencil, Trash2 } from "lucide-react";
+import { Search, Loader2, Phone, Mail, MapPin, Calendar, Shield, X, Pencil, Trash2, LogIn, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { AppRole } from "@/lib/rbac";
@@ -31,6 +31,7 @@ export default function AdminUsers() {
   const [deletingUser, setDeletingUser] = useState<any | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [roleBusy, setRoleBusy] = useState("");
+  const [viewingUser, setViewingUser] = useState<any | null>(null);
   const qc = useQueryClient();
   const { isAdmin, user } = useAuth();
 
@@ -143,6 +144,20 @@ export default function AdminUsers() {
     },
   });
 
+  const { data: accessDetails, isLoading: accessLoading } = useQuery({
+    queryKey: ["admin-user-access", viewingUser?.user_id],
+    enabled: isAdmin && Boolean(viewingUser?.user_id),
+    queryFn: async () => {
+      const [permissions, author] = await Promise.all([
+        backendClient.from("user_permissions").select("resource,can_view,can_create,can_edit,can_publish,can_delete").eq("user_id", viewingUser.user_id),
+        backendClient.from("authors").select("id,slug,name").eq("user_id", viewingUser.user_id).maybeSingle(),
+      ]);
+      if (permissions.error) throw permissions.error;
+      if (author.error) throw author.error;
+      return { permissions: permissions.data || [], author: author.data };
+    },
+  });
+
   const filtered = users.filter((u: any) => {
     if (!search) return true;
     const s = search.toLowerCase();
@@ -244,6 +259,9 @@ export default function AdminUsers() {
                     </div>
                     {isAdmin && (
                       <div className="flex items-center gap-1 border-l border-border pl-2">
+                        <Button type="button" size="icon" variant="outline" className="h-8 w-8" title="Open user profile and access (read-only)" aria-label={`View profile and access for ${u.display_name || u.phone || "user"}`} onClick={() => setViewingUser(u)}>
+                          <LogIn className="h-4 w-4" />
+                        </Button>
                         <Button type="button" size="icon" variant="ghost" className="h-8 w-8" title="Edit user" aria-label={`Edit ${u.display_name || u.phone || "user"}`} onClick={() => openEditUser(u)}>
                           <Pencil className="h-3.5 w-3.5" />
                         </Button>
@@ -290,6 +308,36 @@ export default function AdminUsers() {
               Save changes
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(viewingUser)} onOpenChange={(open) => { if (!open) setViewingUser(null); }}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{viewingUser?.display_name || viewingUser?.phone || "User profile"}</DialogTitle>
+            <DialogDescription>Read-only account and access view. This does not sign you in as this user.</DialogDescription>
+          </DialogHeader>
+          {viewingUser && <div className="space-y-4 text-sm">
+            <div className="grid gap-2 rounded-xl border p-4 sm:grid-cols-2">
+              <p><span className="text-muted-foreground">User ID:</span> <span className="break-all font-mono text-xs">{viewingUser.user_id}</span></p>
+              <p><span className="text-muted-foreground">Login:</span> {viewingUser.loginSource}</p>
+              <p><span className="text-muted-foreground">Phone:</span> {viewingUser.phone || "Not provided"}</p>
+              <p><span className="text-muted-foreground">Email:</span> {viewingUser.email && !isSyntheticPhoneEmail(viewingUser.email) ? viewingUser.email : "Not provided"}</p>
+              <p><span className="text-muted-foreground">Location:</span> {[viewingUser.city, viewingUser.state].filter(Boolean).join(", ") || "Not provided"}</p>
+              <p><span className="text-muted-foreground">Joined:</span> {viewingUser.created_at ? new Date(viewingUser.created_at).toLocaleString("en-IN") : "Unknown"}</p>
+            </div>
+            <div><p className="mb-2 font-semibold">Roles</p><div className="flex flex-wrap gap-2">{viewingUser.roles.length ? viewingUser.roles.map((role: string) => <Badge key={role} variant="secondary">{role}</Badge>) : <span className="text-muted-foreground">Standard user</span>}</div></div>
+            {accessLoading ? <p className="text-muted-foreground">Loading access…</p> : <>
+              {accessDetails?.author && <a href={`/author/${accessDetails.author.slug}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary underline">Open public author profile <ExternalLink className="h-3 w-3" /></a>}
+              <div><p className="mb-2 font-semibold">Explicit permissions</p>
+                {accessDetails?.permissions.length ? <div className="space-y-2">{accessDetails.permissions.map((permission: any, index: number) => <div key={`${permission.resource}-${index}`} className="rounded-lg border px-3 py-2">
+                  <span className="font-medium">{permission.resource}</span>
+                  <span className="ml-2 text-xs text-muted-foreground">{[permission.can_view && "view", permission.can_create && "create", permission.can_edit && "edit", permission.can_publish && "publish", permission.can_delete && "delete"].filter(Boolean).join(", ") || "none"}</span>
+                </div>)}</div> : <p className="text-muted-foreground">No explicit permissions. Role-based access may still apply.</p>}
+              </div>
+              {viewingUser.roles.includes("content_writer") && <p className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs">Content Writer: create-only editorial access and own short-link submissions. Article, college, course and exam edits or deletions are blocked. Publishing requires approval unless the individual writer setting is enabled.</p>}
+            </>}
+          </div>}
         </DialogContent>
       </Dialog>
 

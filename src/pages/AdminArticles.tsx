@@ -133,7 +133,8 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     setPageSize(next);
   };
 
-  const { can, isAdmin } = useAuth();
+  const { can, isAdmin, roles } = useAuth();
+  const isWriter = !isAdmin && roles.includes("content_writer");
   const canPublish = isAdmin || can("articles", "publish");
   const canCreate = isAdmin || can("articles", "create");
   const canEdit = isAdmin || can("articles", "edit");
@@ -458,7 +459,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                     </select>
                     {!isSarkari && <Link to="/admin/article-categories" className="text-[10px] text-primary hover:underline">+ Manage categories</Link>}
                   </div>
-                  <div><label className="text-xs font-medium text-muted-foreground">Author (legacy text)</label><Input value={editing.author || ""} onChange={(e) => update("author", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
+                  {!isWriter && <div><label className="text-xs font-medium text-muted-foreground">Author (legacy text)</label><Input value={editing.author || ""} onChange={(e) => update("author", e.target.value)} className="rounded-lg h-9 text-sm" /></div>}
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">{isSarkari ? "Department / Area" : "Vertical"}</label>
                     <select value={editing.vertical || ""} onChange={(e) => update("vertical", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm h-9">
@@ -466,7 +467,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                       {verticalOptions.map((vertical) => <option key={vertical} value={vertical}>{vertical}</option>)}
                     </select>
                   </div>
-                  <div><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>
+                  {isWriter ? <p className="text-xs text-muted-foreground">Your own writer profile is attached automatically when you submit.</p> : <div><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>}
                   <div><label className="text-xs font-medium text-muted-foreground">Title *</label><Input value={editing.title || ""} onChange={(e) => update("title", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="my-article-slug" className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Views</label><Input type="number" value={editing.views ?? 0} onChange={(e) => update("views", parseInt(e.target.value) || 0)} className="rounded-lg h-9 text-sm" /></div>

@@ -65,7 +65,8 @@ const emptyCollege: Partial<DbCollege> = {
 export default function AdminColleges() {
   const saveCollege = useSaveCollege();
   const deleteCollege = useDeleteCollege();
-  const { can, isAdmin } = useAuth();
+  const { can, isAdmin, roles } = useAuth();
+  const isWriter = !isAdmin && roles.includes("content_writer");
   const canPublish = isAdmin || can("colleges", "publish");
   const canCreate = isAdmin || can("colleges", "create");
   const canEdit = isAdmin || can("colleges", "edit");
@@ -498,7 +499,7 @@ export default function AdminColleges() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-3 max-w-md"><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>
+                {isWriter ? <p className="mt-3 text-xs text-muted-foreground">Your own writer profile is attached automatically.</p> : <div className="mt-3 max-w-md"><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>}
                 <div className="mt-3"><FeaturedRankPicker value={(editing as any).featured_rank} onChange={(v) => update("featured_rank" as any, v)} label="Featured slot in college listings" maxSlots={5} /></div>
               </AdminFormSection>
               <AdminFormSection title="Location" icon={<MapPin className="w-4 h-4 text-primary" />}>

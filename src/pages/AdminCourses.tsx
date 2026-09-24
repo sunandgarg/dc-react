@@ -59,7 +59,8 @@ export default function AdminCourses() {
   const { data: courses, isLoading } = useAllDbCourses();
   const saveCourse = useSaveCourse();
   const deleteCourse = useDeleteCourse();
-  const { can, isAdmin } = useAuth();
+  const { can, isAdmin, roles } = useAuth();
+  const isWriter = !isAdmin && roles.includes("content_writer");
   const canPublish = isAdmin || can("courses", "publish");
   const canCreate = isAdmin || can("courses", "create");
   const canEdit = isAdmin || can("courses", "edit");
@@ -337,7 +338,7 @@ export default function AdminCourses() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-3 max-w-md"><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>
+                {isWriter ? <p className="mt-3 text-xs text-muted-foreground">Your own writer profile is attached automatically.</p> : <div className="mt-3 max-w-md"><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>}
               </AdminFormSection>
               <AdminFormSection title="Fee Structure" icon={<DollarSign className="w-4 h-4 text-primary" />} defaultOpen={false}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

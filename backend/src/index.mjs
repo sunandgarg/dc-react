@@ -10,6 +10,8 @@ import { handleContentReviews } from "./content-review.mjs";
 import { handleAiGenerate, handleArticleCover, handleBlogAiSettings, handleBlogStudio, runBlogAgent } from "./blog-ai.mjs";
 import { handleDataCleaner } from "./data-cleaner.mjs";
 import { canContentEditorAccess, canContentHeadAccess, canContentWriterAccess } from "./editor-access.mjs";
+import { ensureWriterAuthorProfile, handleWriterProfile, stampWriterByline } from "./writer-profile.mjs";
+import { createWriterShortLink } from "./writer-links.mjs";
 import { storageConfig } from "./storage.mjs";
 import { publishSitemap, readPublishedSitemap } from "./sitemap-publish.mjs";
 import { handleClarityExport } from "./clarity-export.mjs";
@@ -61,7 +63,7 @@ const PUBLIC_INTENT_MAX_DISTINCT_SUBJECTS = 10;
 const SAVE_LEAD_MAX_BYTES = 64 * 1024;
 
 async function queuePublishedArticleWrite(request, result) {
-  if (!request || !["POST", "PUT", "PATCH", "DELETE"].includes(request.method) || result.status < 200 || result.status >= 300) return;
+  if (!request || !["POST", "PUT", "PATCH", "DELETE"].includes(request.method) || result.status === 202 || result.status < 200 || result.status >= 300) return;
   const input = await request.json().catch(() => null);
   const inputRows = (Array.isArray(input) ? input : [input]).filter((row) => row && typeof row === "object");
   const resultRows = (Array.isArray(result.body) ? result.body : [result.body]).filter((row) => row && typeof row === "object");
@@ -364,13 +366,28 @@ async function authorizeRest(table, request) {
       }
       const rows = await prisma.$queryRawUnsafe(
         "SELECT `can_publish` FROM `user_permissions` WHERE `user_id` = ? AND `resource` = ? AND `can_create` = 1 LIMIT 1",
-        identity.id, table,
+        identity.id, table === "url_mappings" ? "articles" : table,
       );
       if (!rows.length) throw new HttpError(403, "WRITER_PERMISSION_MISSING", "Writer access has not been activated for this content type");
       const directPublish = Boolean(rows[0].can_publish);
+      let writerRequest = request;
+      if (table === "url_mappings") {
+        const input = await request.clone().json().catch(() => null);
+        const row = createWriterShortLink(input, identity.id);
+        const headers = new Headers(request.headers);
+        headers.set("content-type", "application/json");
+        writerRequest = new Request(request.url, { method: request.method, headers, body: JSON.stringify(row) });
+      } else {
+        const author = await ensureWriterAuthorProfile(prisma, identity.id);
+        const input = await request.clone().json().catch(() => null);
+        const row = stampWriterByline(table, input, author, identity.id);
+        const headers = new Headers(request.headers);
+        headers.set("content-type", "application/json");
+        writerRequest = new Request(request.url, { method: request.method, headers, body: JSON.stringify(row) });
+      }
       return {
-        request: await validateSiteScopeWriteRequest(table, request),
-        actorUserId: identity.id,
+        request: await validateSiteScopeWriteRequest(table, writerRequest),
+        actorUserId: directPublish ? null : identity.id,
         stageReview: !directPublish,
         forceDraft: false,
         publishOnApproval: !directPublish,
@@ -787,7 +804,19 @@ export async function handleRequest(request) {
       if (functionMatch[1] === "content-reviews") {
         const identity = await resolveIdentity(request);
         if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
-        return json(200, await handleContentReviews(request, identity.id), requestId, request, { "cache-control": "private, no-store" });
+        const result = await handleContentReviews(request, identity.id);
+        if (result.published_article_url) queueIndexNowUrls([result.published_article_url]);
+        return json(200, result, requestId, request, { "cache-control": "private, no-store" });
+      }
+      if (functionMatch[1] === "writer-profile") {
+        const identity = await resolveIdentity(request);
+        if (!identity) throw new HttpError(401, "AUTH_REQUIRED", "A valid user session is required");
+        const roles = await prisma.$queryRawUnsafe(
+          "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content_writer' LIMIT 1",
+          identity.id,
+        );
+        if (!roles.length) throw new HttpError(403, "WRITER_ROLE_REQUIRED", "A content writer account is required");
+        return json(200, await handleWriterProfile(request, identity.id, prisma), requestId, request, { "cache-control": "private, no-store" });
       }
       if (functionMatch[1] === "admin-users") {
         const identity = await resolveIdentity(request);

@@ -38,7 +38,8 @@ export function ProtectedRoute({ children, requireAdmin = false, module }: Prote
     (isContentHead
       ? CONTENT_HEAD_PATHS.has(location.pathname) && Boolean(module && canAccess(module))
       : isContentWriter
-        ? ["/admin/articles", "/admin/colleges", "/admin/courses", "/admin/exams"].includes(location.pathname) && Boolean(module && canAccess(module))
+        ? ["/admin/writer-profile", "/admin/writer-links"].includes(location.pathname)
+          || (["/admin/articles", "/admin/colleges", "/admin/courses", "/admin/exams"].includes(location.pathname) && Boolean(module && canAccess(module)))
       : (module ? canAccess(module) : !requireAdmin));
 
   if ((requireAdmin || module) && !allowed) {

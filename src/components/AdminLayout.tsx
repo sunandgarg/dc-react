@@ -25,6 +25,8 @@ const groups: NavGroup[] = [
       { label: "Applications", href: "/admin/applications", icon: ClipboardList, module: "applications" },
       { label: "Lead Push", href: "/admin/lead-push", icon: Network },
       { label: "URL Short", href: "/admin/url-shortener", icon: Link2 },
+      { label: "My Writer Profile", href: "/admin/writer-profile", icon: UserCircle },
+      { label: "Create Link", href: "/admin/writer-links", icon: Link2 },
       { label: "Users & Roles", href: "/admin/users", icon: UserCircle, module: "users" },
       { label: "Reviews Moderation", href: "/admin/reviews", icon: Star },
       { label: "Referrals", href: "/admin/referrals", icon: Star, module: "referrals" },
@@ -171,7 +173,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       return it.href === "/admin/leads" || it.href.startsWith("/admin/lead-push") || it.href === "/admin";
     }
     if (isContentHead) return CONTENT_HEAD_PATHS.has(it.href) && Boolean(it.module && canAccess(it.module));
-    if (isContentWriter) return ["/admin/articles", "/admin/colleges", "/admin/courses", "/admin/exams"].includes(it.href);
+    if (isContentWriter) return ["/admin/articles", "/admin/colleges", "/admin/courses", "/admin/exams", "/admin/writer-profile", "/admin/writer-links"].includes(it.href);
+    if (["/admin/writer-profile", "/admin/writer-links"].includes(it.href)) return false;
     if (isRestrictedModuleUser) return Boolean(it.module && canAccess(it.module));
     return !it.module || isAdmin || canAccess(it.module);
   }, [isAdmin, isLeadPushOnly, isContentHead, isContentWriter, isRestrictedModuleUser, canAccess]);

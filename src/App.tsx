@@ -27,6 +27,8 @@ const CookieConsent = lazyRetry(() => import("@/components/CookieConsent").then(
 const DeploymentUpdateCoordinator = lazyRetry(() => import("@/components/DeploymentUpdateCoordinator").then((module) => ({ default: module.DeploymentUpdateCoordinator })), "DeploymentUpdateCoordinator");
 const WhatsAppButton = lazyRetry(() => import("@/components/WhatsAppButton").then((module) => ({ default: module.WhatsAppButton })), "WhatsAppButton");
 const PreferredSourceNudge = lazyRetry(() => import("@/components/PreferredSourceNudge").then((module) => ({ default: module.PreferredSourceNudge })), "PreferredSourceNudge");
+const WriterProfile = lazyRetry(() => import("@/pages/WriterProfile"), "WriterProfile");
+const WriterLinks = lazyRetry(() => import("@/pages/WriterLinks"), "WriterLinks");
 const SiteIntegrations = lazyRetry(() => import("@/components/SiteIntegrations").then((module) => ({ default: module.SiteIntegrations })), "SiteIntegrations");
 const AdsenseLoader = lazyRetry(() => import("@/components/ads/AdsenseLoader").then((module) => ({ default: module.AdsenseLoader })), "AdsenseLoader");
 const IntentTrackingProvider = lazyRetry(() => import("@/components/IntentTrackingProvider").then((module) => ({ default: module.IntentTrackingProvider })), "IntentTrackingProvider");
@@ -397,6 +399,8 @@ const App = () => (
               <Route path="/admin/lead-push-legacy/manage" element={<ProtectedRoute requireAdmin><AdminLeadPush /></ProtectedRoute>} />
               <Route path="/admin/url-shortener" element={<ProtectedRoute requireAdmin><AdminUrlShortener /></ProtectedRoute>} />
               <Route path="/admin/url-shortener/:tab" element={<ProtectedRoute requireAdmin><AdminUrlShortener /></ProtectedRoute>} />
+              <Route path="/admin/writer-profile" element={<ProtectedRoute requireAdmin><WriterProfile /></ProtectedRoute>} />
+              <Route path="/admin/writer-links" element={<ProtectedRoute requireAdmin><WriterLinks /></ProtectedRoute>} />
               <Route path="/admin/articles" element={<ProtectedRoute module="articles"><AdminArticles /></ProtectedRoute>} />
               <Route path="/admin/media" element={<ProtectedRoute module="media"><AdminMedia /></ProtectedRoute>} />
               <Route path="/admin/sarkari/articles" element={<ProtectedRoute module="articles"><AdminArticles siteScope="sarkari" /></ProtectedRoute>} />

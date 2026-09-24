@@ -13,6 +13,7 @@ const REVIEWED_TABLES = new Set([
   "study_board_links", "study_boards", "study_chapters", "study_resources",
   "study_subjects", "study_toppers", "faqs", "popular_places",
   "program_categories", "programs", "promoted_programs", "stream_categories",
+  "url_mappings",
 ]);
 const IGNORED_FIELDS = new Set(["updated_at"]);
 
@@ -226,6 +227,7 @@ export async function handleContentReviews(request, reviewerId) {
     }
     const status = body.status;
     const reviewId = String(body.id || "");
+    let publishedArticleUrl = null;
     await withArticleWriteLock(async (tx) => {
       const rows = await tx.$queryRawUnsafe("SELECT * FROM `content_change_reviews` WHERE `id` = ? FOR UPDATE", reviewId);
       const review = rows[0];
@@ -253,13 +255,19 @@ export async function handleContentReviews(request, reviewerId) {
           });
         }
         await applyApprovedReview(tx, review);
+        if (review.entity_type === "articles") {
+          const after = parseReviewJson(review.after_json, {});
+          if (after.site_scope === "dekhocampus" && after.status === "Published" && after.is_active !== false && after.slug) {
+            publishedArticleUrl = `https://dekhocampus.com/news/${after.slug}`;
+          }
+        }
       }
       await tx.$executeRawUnsafe(
         "UPDATE `content_change_reviews` SET `status` = ?, `reviewed_by` = ?, `review_notes` = ?, `reviewed_at` = ? WHERE `id` = ?",
         status, reviewerId, String(body.review_notes || "").slice(0, 4000) || null, new Date(), reviewId,
       );
     });
-    return { success: true, applied: status === "approved" };
+    return { success: true, applied: status === "approved", published_article_url: publishedArticleUrl };
   }
   throw Object.assign(new Error("Method not allowed"), { status: 405, code: "METHOD_NOT_ALLOWED" });
 }

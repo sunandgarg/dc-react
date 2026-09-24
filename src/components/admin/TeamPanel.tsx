@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shield, Mail, Phone, EyeOff, Eye, X, CheckCircle2, Clock } from "lucide-react";
+import { Shield, Mail, Phone, EyeOff, Eye, X, CheckCircle2, Clock, LogIn } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { AddTeamMemberDialog } from "./AddTeamMemberDialog";
 
@@ -20,6 +22,7 @@ const ROLE_LABEL: Record<string, string> = {
 
 export function TeamPanel() {
   const qc = useQueryClient();
+  const [viewingInvite, setViewingInvite] = useState<any | null>(null);
   const { data: invites = [], isLoading } = useQuery({
     queryKey: ["team_invites"],
     queryFn: async () => {
@@ -90,7 +93,7 @@ export function TeamPanel() {
               <div>
                 <div className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Active ({accepted.length})</div>
                 <div className="grid gap-2">
-                  {accepted.map((i: any) => <Row key={i.id} invite={i} onRevoke={() => revoke(i.id)} onSetWriterPublish={(value) => setWriterPublish(i.id, value)} />)}
+                  {accepted.map((i: any) => <Row key={i.id} invite={i} onInspect={() => setViewingInvite(i)} onRevoke={() => revoke(i.id)} onSetWriterPublish={(value) => setWriterPublish(i.id, value)} />)}
                 </div>
               </div>
             )}
@@ -98,7 +101,7 @@ export function TeamPanel() {
               <div>
                 <div className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Pending sign-in ({pending.length})</div>
                 <div className="grid gap-2">
-                  {pending.map((i: any) => <Row key={i.id} invite={i} onRevoke={() => revoke(i.id)} onSetWriterPublish={(value) => setWriterPublish(i.id, value)} />)}
+                  {pending.map((i: any) => <Row key={i.id} invite={i} onInspect={() => setViewingInvite(i)} onRevoke={() => revoke(i.id)} onSetWriterPublish={(value) => setWriterPublish(i.id, value)} />)}
                 </div>
               </div>
             )}
@@ -107,19 +110,39 @@ export function TeamPanel() {
                 <div className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Revoked</div>
                 <div className="grid gap-2">
                   {invites.filter((i: any) => i.status === "revoked").map((i: any) => (
-                    <Row key={i.id} invite={i} onReactivate={() => reactivate(i.id)} />
+                    <Row key={i.id} invite={i} onInspect={() => setViewingInvite(i)} onReactivate={() => reactivate(i.id)} />
                   ))}
                 </div>
               </div>
             )}
           </div>
         )}
+        <Dialog open={Boolean(viewingInvite)} onOpenChange={(open) => { if (!open) setViewingInvite(null); }}>
+          <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
+            <DialogHeader>
+              <DialogTitle>{viewingInvite?.display_name || viewingInvite?.phone || viewingInvite?.email || "Team access"}</DialogTitle>
+              <DialogDescription>Read-only access inspection. This does not sign you in as the teammate.</DialogDescription>
+            </DialogHeader>
+            {viewingInvite && <div className="space-y-3 text-sm">
+              <p><span className="text-muted-foreground">Status:</span> {viewingInvite.status === "pending" ? "Awaiting first sign-in" : viewingInvite.status}</p>
+              <p><span className="text-muted-foreground">Role:</span> {ROLE_LABEL[viewingInvite.role] || viewingInvite.role}</p>
+              <p><span className="text-muted-foreground">Phone:</span> {viewingInvite.phone || "Not provided"}</p>
+              <p><span className="text-muted-foreground">Email:</span> {viewingInvite.email || "Not provided"}</p>
+              {viewingInvite.accepted_user_id && <p><span className="text-muted-foreground">Linked user ID:</span> <span className="break-all font-mono text-xs">{viewingInvite.accepted_user_id}</span></p>}
+              {viewingInvite.status === "pending" && <p className="rounded-lg bg-muted p-3 text-xs">The account profile does not exist yet. The listed permissions activate when this phone or email signs in.</p>}
+              <div><p className="mb-2 font-semibold">Configured permissions</p><div className="space-y-2">{(viewingInvite.permissions || []).map((permission: any, index: number) => <div key={`${permission.resource}-${index}`} className="rounded-lg border px-3 py-2">
+                <span className="font-medium">{permission.resource}</span><span className="ml-2 text-xs text-muted-foreground">{[permission.can_view && "view", permission.can_create && "create", permission.can_edit && "edit", permission.can_publish && "publish", permission.can_delete && "delete"].filter(Boolean).join(", ") || "none"}</span>
+              </div>)}</div></div>
+              {viewingInvite.role === "content_writer" && <p className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs">Also includes creating short links for review and editing only their own public writer profile. Existing content and links cannot be edited or deleted.</p>}
+            </div>}
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
 }
 
-function Row({ invite, onRevoke, onReactivate, onSetWriterPublish }: { invite: any; onRevoke?: () => void; onReactivate?: () => void; onSetWriterPublish?: (value: boolean) => void }) {
+function Row({ invite, onInspect, onRevoke, onReactivate, onSetWriterPublish }: { invite: any; onInspect?: () => void; onRevoke?: () => void; onReactivate?: () => void; onSetWriterPublish?: (value: boolean) => void }) {
   const directPublish = Array.isArray(invite.permissions) && invite.permissions.some((permission: any) => permission?.can_publish === true);
   return (
     <div className="border border-border rounded-lg p-3 flex items-center justify-between flex-wrap gap-2">
@@ -138,6 +161,7 @@ function Row({ invite, onRevoke, onReactivate, onSetWriterPublish }: { invite: a
         {invite.status === "revoked" && <Badge variant="destructive" className="text-[10px]">Revoked</Badge>}
       </div>
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        {onInspect && <Button size="icon" variant="outline" className="h-7 w-7" title="View profile and access (read-only)" aria-label={`View access for ${invite.display_name || invite.phone || invite.email || "teammate"}`} onClick={onInspect}><LogIn className="h-3.5 w-3.5" /></Button>}
         {invite.role === "content_writer" && invite.status !== "revoked" && onSetWriterPublish && (
           <Button size="sm" variant="outline" className="h-7 text-[10px]" onClick={() => onSetWriterPublish(!directPublish)}>
             {directPublish ? "Direct publish: On" : "Approval required: On"}

@@ -16,7 +16,7 @@ const ROLES: { value: AppRole; label: string; desc: string }[] = [
   { value: "manager", label: "Manager", desc: "Most modules, no destructive deletes" },
   { value: "content_head", label: "Content Head", desc: "Publish articles, colleges, courses, and exams" },
   { value: "content", label: "Content Editor", desc: "All content tools; changes require admin review" },
-  { value: "content_writer", label: "Content Writer", desc: "Create articles, exams, colleges and courses; approval required by default" },
+  { value: "content_writer", label: "Content Writer", desc: "Create articles, exams, colleges, courses and links; own profile; approval required" },
   { value: "editor", label: "Editor", desc: "Content modules only" },
   { value: "contributor", label: "Contributor", desc: "Add & edit own articles only" },
   { value: "lead_push", label: "Lead Push Only", desc: "Sees only Lead Push + All Leads" },
