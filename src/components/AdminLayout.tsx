@@ -164,15 +164,17 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
   // Lead-Push-Only teammates see only Lead Push + All Leads (no other nav items).
   const isLeadPushOnly = !isAdmin && roles.includes("lead_push") && roles.length === 1;
   const isContentHead = !isAdmin && roles.includes("content_head");
+  const isContentWriter = !isAdmin && roles.includes("content_writer");
   const isRestrictedModuleUser = !isAdmin && !isLeadPushOnly;
   const visible = useCallback((it: NavItem) => {
     if (isLeadPushOnly) {
       return it.href === "/admin/leads" || it.href.startsWith("/admin/lead-push") || it.href === "/admin";
     }
     if (isContentHead) return CONTENT_HEAD_PATHS.has(it.href) && Boolean(it.module && canAccess(it.module));
+    if (isContentWriter) return ["/admin/articles", "/admin/colleges", "/admin/courses", "/admin/exams"].includes(it.href);
     if (isRestrictedModuleUser) return Boolean(it.module && canAccess(it.module));
     return !it.module || isAdmin || canAccess(it.module);
-  }, [isAdmin, isLeadPushOnly, isContentHead, isRestrictedModuleUser, canAccess]);
+  }, [isAdmin, isLeadPushOnly, isContentHead, isContentWriter, isRestrictedModuleUser, canAccess]);
   const qc = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {

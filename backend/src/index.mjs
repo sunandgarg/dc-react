@@ -9,7 +9,7 @@ import { integrationStatus } from "./integration-status.mjs";
 import { handleContentReviews } from "./content-review.mjs";
 import { handleAiGenerate, handleArticleCover, handleBlogAiSettings, handleBlogStudio, runBlogAgent } from "./blog-ai.mjs";
 import { handleDataCleaner } from "./data-cleaner.mjs";
-import { canContentEditorAccess, canContentHeadAccess } from "./editor-access.mjs";
+import { canContentEditorAccess, canContentHeadAccess, canContentWriterAccess } from "./editor-access.mjs";
 import { storageConfig } from "./storage.mjs";
 import { publishSitemap, readPublishedSitemap } from "./sitemap-publish.mjs";
 import { handleClarityExport } from "./clarity-export.mjs";
@@ -344,6 +344,38 @@ async function authorizeRest(table, request) {
     const action = request.method === "POST"
       ? (String(request.headers.get("prefer") || "").includes("resolution=merge-duplicates") ? "edit" : "create")
       : request.method === "PATCH" ? "edit" : request.method === "DELETE" ? "delete" : "view";
+    const writerRoles = await prisma.$queryRawUnsafe(
+      "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content_writer' LIMIT 1",
+      identity.id,
+    );
+    if (writerRoles.length) {
+      if (!canContentWriterAccess(table, action)) {
+        throw new HttpError(403, "WRITER_CREATE_ONLY", "Content writers can only create new articles, colleges, courses and exams");
+      }
+      if (table === "articles" && siteScopeForRequest(request) !== "dekhocampus") {
+        throw new HttpError(403, "WRITER_SITE_SCOPE", "This writer account is limited to DekhoCampus articles");
+      }
+      if (table === "articles") {
+        const input = await request.clone().json().catch(() => ({}));
+        const entries = Array.isArray(input) ? input : [input];
+        if (entries.some((entry) => entry?.site_scope && entry.site_scope !== "dekhocampus")) {
+          throw new HttpError(403, "WRITER_SITE_SCOPE", "This writer account is limited to DekhoCampus articles");
+        }
+      }
+      const rows = await prisma.$queryRawUnsafe(
+        "SELECT `can_publish` FROM `user_permissions` WHERE `user_id` = ? AND `resource` = ? AND `can_create` = 1 LIMIT 1",
+        identity.id, table,
+      );
+      if (!rows.length) throw new HttpError(403, "WRITER_PERMISSION_MISSING", "Writer access has not been activated for this content type");
+      const directPublish = Boolean(rows[0].can_publish);
+      return {
+        request: await validateSiteScopeWriteRequest(table, request),
+        actorUserId: identity.id,
+        stageReview: !directPublish,
+        forceDraft: false,
+        publishOnApproval: !directPublish,
+      };
+    }
     const editorialRoles = await prisma.$queryRawUnsafe(
       "SELECT `role` FROM `user_roles` WHERE `user_id` = ? AND `role` IN ('content_head','content')",
       identity.id,

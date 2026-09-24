@@ -520,7 +520,7 @@ export default function AdminExams() {
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-xl">Cancel</Button>
                 {(canPublish || hasEditingChanges) && <Button onClick={handleSave} disabled={saveExam.isPending || !hasEditingChanges} className="rounded-xl">
-                  {saveExam.isPending ? "Saving..." : canPublish ? "Save Exam" : "Save as draft"}
+                  {saveExam.isPending ? "Saving..." : canPublish ? "Save Exam" : "Submit for approval"}
                 </Button>}
               </div>
             </div>

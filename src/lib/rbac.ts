@@ -1,5 +1,5 @@
 // Centralized RBAC capability matrix
-export type AppRole = "admin" | "manager" | "content_head" | "content" | "editor" | "contributor" | "lead_push" | "user";
+export type AppRole = "admin" | "manager" | "content_head" | "content" | "content_writer" | "editor" | "contributor" | "lead_push" | "user";
 export type Module =
   | "articles" | "colleges" | "courses" | "exams" | "study_material"
   | "leads" | "users" | "integrations" | "backup" | "ads" | "banners"
@@ -56,6 +56,9 @@ export const CAPABILITIES: Matrix = {
     jobs: NO_DELETE,
     media: NO_DELETE,
   },
+  content_writer: {
+    articles: CREATE_ONLY, colleges: CREATE_ONLY, courses: CREATE_ONLY, exams: CREATE_ONLY,
+  },
   editor: {
     articles: NO_DELETE, colleges: CREATE_ONLY, courses: VIEW, exams: VIEW,
     study_material: NO_DELETE, content: NO_DELETE, faculty: NO_DELETE, cat_universe: NO_DELETE,
@@ -70,7 +73,7 @@ export const CAPABILITIES: Matrix = {
 };
 
 export function highestRole(roles: AppRole[]): AppRole {
-  const order: AppRole[] = ["admin", "manager", "content_head", "content", "editor", "contributor", "lead_push", "user"];
+  const order: AppRole[] = ["admin", "manager", "content_head", "content", "content_writer", "editor", "contributor", "lead_push", "user"];
   return order.find(r => roles.includes(r)) ?? "user";
 }
 

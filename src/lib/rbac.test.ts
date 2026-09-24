@@ -43,6 +43,18 @@ describe("RBAC capability matrix", () => {
     expect(can(roles, "leads", "view")).toBe(false);
   });
 
+  it("content writer can create four content types but cannot change existing records", () => {
+    const roles: AppRole[] = ["content_writer"];
+    for (const module of ["articles", "colleges", "courses", "exams"] as const) {
+      expect(can(roles, module, "create")).toBe(true);
+      expect(can(roles, module, "view")).toBe(true);
+      expect(can(roles, module, "edit")).toBe(false);
+      expect(can(roles, module, "delete")).toBe(false);
+      expect(can(roles, module, "publish")).toBe(false);
+    }
+    expect(can(roles, "leads", "view")).toBe(false);
+  });
+
   it("editor has scoped access", () => {
     const roles: AppRole[] = ["editor"];
     expect(can(roles, "articles", "edit")).toBe(true);

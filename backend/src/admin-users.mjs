@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "./db.mjs";
+import { CONTENT_WRITER_RESOURCES, contentWriterPermissions } from "./editor-access.mjs";
 
-export const ASSIGNABLE_USER_ROLES = new Set(["admin", "manager", "content_head", "content", "editor", "contributor"]);
+export const ASSIGNABLE_USER_ROLES = new Set(["admin", "manager", "content_head", "content", "content_writer", "editor", "contributor"]);
 
 const PRIVATE_USER_REFERENCES = [
   ["custom_domains", "user_id"],
@@ -154,10 +155,65 @@ export async function setAdminUserRole(database, actorUserId, input) {
     if (enabled) {
       const existing = await tx.user_roles.findFirst({ where: { user_id: userId, role } });
       if (!existing) await tx.user_roles.create({ data: { id: randomUUID(), user_id: userId, role } });
+      if (role === "content_writer") {
+        await tx.user_permissions.deleteMany({ where: { user_id: userId, resource: { in: [...CONTENT_WRITER_RESOURCES] } } });
+        for (const permission of contentWriterPermissions(false)) {
+          await tx.user_permissions.create({ data: {
+            id: randomUUID(), user_id: userId, module: permission.resource, action: "view",
+            allow: true, scope: "all", ...permission,
+          } });
+        }
+      }
     } else {
       await tx.user_roles.deleteMany({ where: { user_id: userId, role } });
+      if (role === "content_writer") {
+        await tx.user_permissions.deleteMany({ where: { user_id: userId, resource: { in: [...CONTENT_WRITER_RESOURCES] } } });
+      }
     }
     return { success: true, user_id: userId, role, enabled };
+  });
+}
+
+export async function setContentWriterPublish(database, input) {
+  const inviteId = String(input.invite_id || "").trim();
+  if (!inviteId || typeof input.direct_publish !== "boolean") {
+    throw httpError(400, "INVALID_WRITER_SETTING", "Select a writer and publishing mode");
+  }
+  return database.$transaction(async (tx) => {
+    const invite = await tx.team_invites.findUnique({ where: { id: inviteId } });
+    if (!invite || invite.role !== "content_writer" || !["pending", "accepted"].includes(invite.status)) {
+      throw httpError(404, "WRITER_INVITE_NOT_FOUND", "Active content writer invite not found");
+    }
+    await tx.team_invites.update({
+      where: { id: inviteId },
+      data: { permissions: contentWriterPermissions(input.direct_publish), updated_at: new Date() },
+    });
+    if (invite.accepted_user_id) {
+      const role = await tx.user_roles.findFirst({
+        where: { user_id: invite.accepted_user_id, role: "content_writer" },
+      });
+      if (!role) throw httpError(409, "WRITER_ROLE_MISSING", "Writer account needs its role restored before updating publishing access");
+      await tx.user_permissions.updateMany({
+        where: { user_id: invite.accepted_user_id, resource: { in: [...CONTENT_WRITER_RESOURCES] } },
+        data: { can_publish: input.direct_publish, can_edit: false, can_delete: false, updated_at: new Date() },
+      });
+    }
+    return { success: true, invite_id: inviteId, direct_publish: input.direct_publish };
+  });
+}
+
+export async function revokeContentWriter(database, input) {
+  const inviteId = String(input.invite_id || "").trim();
+  if (!inviteId) throw httpError(400, "INVALID_WRITER_INVITE", "Select a writer");
+  return database.$transaction(async (tx) => {
+    const invite = await tx.team_invites.findUnique({ where: { id: inviteId } });
+    if (!invite || invite.role !== "content_writer") throw httpError(404, "WRITER_INVITE_NOT_FOUND", "Content writer invite not found");
+    await tx.team_invites.update({ where: { id: inviteId }, data: { status: "revoked", updated_at: new Date() } });
+    if (invite.accepted_user_id) {
+      await tx.user_roles.deleteMany({ where: { user_id: invite.accepted_user_id, role: "content_writer" } });
+      await tx.user_permissions.deleteMany({ where: { user_id: invite.accepted_user_id, resource: { in: [...CONTENT_WRITER_RESOURCES] } } });
+    }
+    return { success: true, invite_id: inviteId };
   });
 }
 
@@ -197,6 +253,8 @@ export async function handleAdminUsers(request, actorUserId, database = prisma) 
   const body = await request.json().catch(() => ({}));
   if (body.action === "update") return updateAdminUser(database, actorUserId, body);
   if (body.action === "set_role") return setAdminUserRole(database, actorUserId, body);
+  if (body.action === "set_writer_publish") return setContentWriterPublish(database, body);
+  if (body.action === "revoke_writer") return revokeContentWriter(database, body);
   if (body.action === "delete") return deleteAdminUser(database, actorUserId, body);
   throw httpError(400, "INVALID_ADMIN_USER_ACTION", "Choose update, set_role, or delete");
 }

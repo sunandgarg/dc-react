@@ -19,7 +19,7 @@ import { DEFAULT_SITE_SCOPE } from "@/lib/siteScope";
 import { normalizeIndianMobile } from "@/lib/phone";
 
 import { CSVTools } from "@/components/CSVTools";
-const ASSIGNABLE_ROLES: AppRole[] = ["admin", "manager", "content_head", "content", "editor", "contributor"];
+const ASSIGNABLE_ROLES: AppRole[] = ["admin", "manager", "content_head", "content", "content_writer", "editor", "contributor"];
 
 export default function AdminUsers() {
   const [search, setSearch] = useState("");
@@ -225,7 +225,9 @@ export default function AdminUsers() {
                             );
                           })}
                         </div>
-                        <PermissionEditor userId={u.user_id} />
+                        {u.roles.includes("content_writer")
+                          ? <p className="text-xs text-muted-foreground">Content writers are create-only. Set draft approval or direct publishing in Team Dekhocampus above.</p>
+                          : <PermissionEditor userId={u.user_id} />}
                       </div>
                     )}
                   </div>

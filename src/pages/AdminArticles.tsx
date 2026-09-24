@@ -447,7 +447,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                       ))}
                     </select>
                     {!canPublish && (
-                      <p className="text-[10px] text-muted-foreground mt-0.5">You can save drafts. A manager can publish.</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">New submissions go to Content Review. An admin can approve them for publication.</p>
                     )}
                   </div>
                   <div>
@@ -604,7 +604,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               <div className="ml-auto flex items-center gap-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-lg">Cancel</Button>
                 <Button onClick={handleSave} disabled={saveArticle.isPending} className="rounded-lg">
-                  {saveArticle.isPending ? "Saving..." : canPublish ? "Save Article" : "Save as draft"}
+                  {saveArticle.isPending ? "Saving..." : canPublish ? "Save Article" : "Submit for approval"}
                 </Button>
               </div>
             </div>

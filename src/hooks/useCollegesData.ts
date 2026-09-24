@@ -541,7 +541,7 @@ export function useSaveCollege() {
         const k = q.queryKey?.[0];
         return typeof k === "string" && (k.startsWith("db-college") || k.startsWith("admin-colleges") || k.startsWith("infinite-college") || k === "featured-colleges" || k.startsWith("homepage-category-colleges"));
       }});
-      toast.success(result.pendingReview ? "College draft submitted for admin review." : "College saved!");
+      toast.success(result.pendingReview ? "College submitted for admin review." : "College saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });

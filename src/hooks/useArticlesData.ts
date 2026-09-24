@@ -199,7 +199,7 @@ export function useSaveArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["db-articles", siteScope] });
       qc.invalidateQueries({ queryKey: ["db-articles-admin", siteScope] });
-      toast.success(result.pendingReview ? "Article draft submitted for admin review." : "Article saved!");
+      toast.success(result.pendingReview ? "Article submitted for admin review." : "Article saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });

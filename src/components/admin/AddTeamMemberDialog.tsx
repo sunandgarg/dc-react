@@ -16,6 +16,7 @@ const ROLES: { value: AppRole; label: string; desc: string }[] = [
   { value: "manager", label: "Manager", desc: "Most modules, no destructive deletes" },
   { value: "content_head", label: "Content Head", desc: "Publish articles, colleges, courses, and exams" },
   { value: "content", label: "Content Editor", desc: "All content tools; changes require admin review" },
+  { value: "content_writer", label: "Content Writer", desc: "Create articles, exams, colleges and courses; approval required by default" },
   { value: "editor", label: "Editor", desc: "Content modules only" },
   { value: "contributor", label: "Contributor", desc: "Add & edit own articles only" },
   { value: "lead_push", label: "Lead Push Only", desc: "Sees only Lead Push + All Leads" },
@@ -44,6 +45,7 @@ export function AddTeamMemberDialog({ onSaved }: { onSaved?: () => void }) {
   const [name, setName] = useState("");
   const [role, setRole] = useState<AppRole>("lead_push");
   const [maskLeads, setMaskLeads] = useState(true);
+  const [directPublish, setDirectPublish] = useState(false);
   const [perms, setPerms] = useState<Record<string, PermRow>>({});
   const [busy, setBusy] = useState(false);
 
@@ -59,7 +61,7 @@ export function AddTeamMemberDialog({ onSaved }: { onSaved?: () => void }) {
   };
 
   const reset = () => {
-    setEmail(""); setPhone(""); setName(""); setRole("lead_push"); setMaskLeads(true); setPerms({});
+    setEmail(""); setPhone(""); setName(""); setRole("lead_push"); setMaskLeads(true); setDirectPublish(false); setPerms({});
   };
 
   const submit = async () => {
@@ -76,7 +78,12 @@ export function AddTeamMemberDialog({ onSaved }: { onSaved?: () => void }) {
       display_name: name || null,
       role,
       mask_leads: maskLeads,
-      permissions: Object.values(perms),
+      permissions: role === "content_writer"
+        ? ["articles", "colleges", "courses", "exams"].map((resource) => ({
+            resource, can_view: true, can_create: true, can_edit: false,
+            can_delete: false, can_publish: directPublish,
+          }))
+        : Object.values(perms),
     });
     setBusy(false);
     if (error) return toast.error(error.message);
@@ -136,7 +143,15 @@ export function AddTeamMemberDialog({ onSaved }: { onSaved?: () => void }) {
             <Switch checked={maskLeads} onCheckedChange={setMaskLeads} />
           </div>
 
-          <div>
+          {role === "content_writer" ? (
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <div>
+                <div className="text-sm font-medium">Publish without approval</div>
+                <p className="text-xs text-muted-foreground">Off: each new item goes to Content Review. On: new items may go live immediately. Editing and deletion stay blocked.</p>
+              </div>
+              <Switch checked={directPublish} onCheckedChange={setDirectPublish} aria-label="Publish without approval" />
+            </div>
+          ) : <div>
             <div className="text-sm font-medium mb-1">Custom module permissions (optional)</div>
             <p className="text-xs text-muted-foreground mb-2">Fine-grained access on top of the role. Leave blank to use the role's defaults.</p>
             <div className="border rounded-lg overflow-auto max-h-[280px]">
@@ -169,7 +184,7 @@ export function AddTeamMemberDialog({ onSaved }: { onSaved?: () => void }) {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div>}
         </div>
 
         <DialogFooter>

@@ -29,6 +29,7 @@ export function ProtectedRoute({ children, requireAdmin = false, module }: Prote
   // Lead-Push-Only role: allow Lead Push routes + All Leads regardless of `requireAdmin`
   const isLeadPushUser = roles.includes("lead_push");
   const isContentHead = roles.includes("content_head");
+  const isContentWriter = roles.includes("content_writer");
   const onLeadPushArea =
     location.pathname.startsWith("/admin/lead-push") || location.pathname.startsWith("/admin/leads");
   const allowed =
@@ -36,6 +37,8 @@ export function ProtectedRoute({ children, requireAdmin = false, module }: Prote
     (isLeadPushUser && onLeadPushArea) ||
     (isContentHead
       ? CONTENT_HEAD_PATHS.has(location.pathname) && Boolean(module && canAccess(module))
+      : isContentWriter
+        ? ["/admin/articles", "/admin/colleges", "/admin/courses", "/admin/exams"].includes(location.pathname) && Boolean(module && canAccess(module))
       : (module ? canAccess(module) : !requireAdmin));
 
   if ((requireAdmin || module) && !allowed) {

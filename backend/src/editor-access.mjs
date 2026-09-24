@@ -3,6 +3,7 @@ import { prisma } from "./db.mjs";
 
 export const CONTENT_HEAD_PHONE = "8810323087";
 export const CONTENT_HEAD_RESOURCES = new Set(["articles", "colleges", "courses", "exams"]);
+export const CONTENT_WRITER_RESOURCES = CONTENT_HEAD_RESOURCES;
 
 export const CONTENT_EDITOR_RESOURCES = new Set([
   "articles", "article_categories", "article_links", "authors",
@@ -33,6 +34,17 @@ export function canContentEditorAccess(resource, action) {
 export function canContentHeadAccess(resource, action) {
   return CONTENT_HEAD_RESOURCES.has(String(resource || ""))
     && ["view", "create", "edit"].includes(String(action || ""));
+}
+
+export function canContentWriterAccess(resource, action) {
+  return CONTENT_WRITER_RESOURCES.has(String(resource || "")) && action === "create";
+}
+
+export function contentWriterPermissions(directPublish = false) {
+  return [...CONTENT_WRITER_RESOURCES].map((resource) => ({
+    resource, can_view: true, can_create: true, can_edit: false,
+    can_delete: false, can_publish: Boolean(directPublish),
+  }));
 }
 
 async function replaceContentHeadAccess(tx, userId) {
@@ -66,6 +78,19 @@ export async function acceptPendingTeamInvite(user) {
   await prisma.$transaction(async (tx) => {
     if (invite.role === "content_head") {
       await replaceContentHeadAccess(tx, user.id);
+    } else if (invite.role === "content_writer") {
+      // An invite may be edited or imported. Never trust its arbitrary permission rows.
+      const requested = Array.isArray(invite.permissions) ? invite.permissions : [];
+      const direct = requested.some((permission) => CONTENT_WRITER_RESOURCES.has(permission?.resource) && permission?.can_publish === true);
+      await tx.user_roles.deleteMany({ where: { user_id: user.id, role: "content_writer" } });
+      await tx.user_permissions.deleteMany({ where: { user_id: user.id, resource: { in: [...CONTENT_WRITER_RESOURCES] } } });
+      await tx.user_roles.create({ data: { id: randomUUID(), user_id: user.id, role: "content_writer" } });
+      for (const permission of contentWriterPermissions(direct)) {
+        await tx.user_permissions.create({ data: {
+          id: randomUUID(), user_id: user.id, module: permission.resource, action: "view",
+          allow: true, scope: "all", ...permission,
+        } });
+      }
     } else {
       const existingRole = await tx.user_roles.findFirst({ where: { user_id: user.id, role: invite.role } });
       if (!existingRole) await tx.user_roles.create({ data: { id: randomUUID(), user_id: user.id, role: invite.role } });

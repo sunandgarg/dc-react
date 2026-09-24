@@ -129,6 +129,17 @@ export function forceDraftPayload(table, input) {
   return row;
 }
 
+export function publishReviewedWriterPayload(table, input) {
+  const row = { ...input };
+  const fields = schemaMetadata[table]?.fields || {};
+  if (fields.is_active) row.is_active = true;
+  if (fields.is_published) row.is_published = true;
+  if (fields.published) row.published = true;
+  if (["articles", "colleges", "courses"].includes(table) && fields.status) row.status = "Published";
+  if (fields.published_at && !row.published_at) row.published_at = new Date().toISOString();
+  return row;
+}
+
 export function nextShortIdValue(table, currentMax) {
   const start = SHORT_ID_STARTS[table];
   if (!start) return undefined;
@@ -684,7 +695,11 @@ async function handlePost(table, request, url, context) {
   }
   if (table === "intent_events") sourceRows = await prepareIntentEvents(sourceRows, context.siteScope);
   else if (table === "user_events") sourceRows = stampTrackingSiteScope(sourceRows, context.siteScope);
-  const rows = context.forceDraft ? sourceRows.map((row) => forceDraftPayload(table, row)) : sourceRows;
+  const rows = context.forceDraft
+    ? sourceRows.map((row) => forceDraftPayload(table, row))
+    : context.publishOnApproval
+      ? sourceRows.map((row) => publishReviewedWriterPayload(table, row))
+      : sourceRows;
   const prefer = String(request.headers.get("prefer") || "");
   const merge = prefer.includes("resolution=merge-duplicates");
   const requestedConflictColumns = url.searchParams.get("on_conflict") || "";

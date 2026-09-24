@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CONTENT_HEAD_RESOURCES, canContentEditorAccess, canContentHeadAccess, isContentHeadPhone } from "../src/editor-access.mjs";
+import { CONTENT_HEAD_RESOURCES, CONTENT_WRITER_RESOURCES, canContentEditorAccess, canContentHeadAccess, canContentWriterAccess, contentWriterPermissions, isContentHeadPhone } from "../src/editor-access.mjs";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import { verifiedOfficialExternalLinks } from "../src/blog-ai.mjs";
 import { BLOG_COVER_TEMPLATE_COUNT, BLOG_COVER_TITLE_MAX_CHARACTERS, DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY, DEFAULT_BLOG_ANALYSIS_MODEL, DEFAULT_BLOG_WRITING_MODEL, DEFAULT_EDITORIAL_TONE, articlePrompt, articleRevisionPrompt, articleWordToleranceRange, blogCoverRotationObjectPath, blogCoverRotationTemplateKey, blogLimits, blogTextProvider, createLocalEditorialCover, createReusableBlogCoverTemplate, editorialFrameOverlay, editorialFrameTextRasterOverlays, ensureArticleInternalLink, formatBlogCoverTitle, geminiQuotaHelpers, independentArticleReviewThreshold, inferContextLogoName, isCompactArticleWordTarget, layoutTemplateCoverTitle, nextBlogCoverRotationIndex, nextGeminiOutputBudget, nextJitteredBlogRunAt, nextOpenAiOutputBudget, normalizeArticleReviewResult, normalizeBlogAgentSettings, normalizeBlogCoverOptions, normalizeBlogTextModel, normalizeGeneratedArticlePayload, normalizeGeneratedFaqs, parseGeminiJsonPayload, parseOpenAiJsonPayload, renderBlogCover, resolveArticleWordTarget, resolveBlogMediaSource, resolveContextualBlogLogo, resolveOpenAiArticleOutputBudget, selectBlogCoverTemplate, stripDedicatedFaqBlock, stripPublishedSourceReferences, templateCoverTitleOverlay, templateCoverTitleRasterOverlay, toOpenAiJsonSchema, verifiedInternalLinksForTopic } from "../src/blog-ai.mjs";
-import { forceDraftPayload } from "../src/rest.mjs";
+import { forceDraftPayload, publishReviewedWriterPayload } from "../src/rest.mjs";
 import { accessTokenIsCurrent, authSecurityInternals, verifyLeadOtpProof } from "../src/auth.mjs";
 
 test("recognizes only the managed Content Head phone", () => {
@@ -54,6 +54,21 @@ test("Content Head can publish only the four requested modules", () => {
   assert.equal(canContentHeadAccess("articles", "delete"), false);
   assert.equal(canContentHeadAccess("course_fees", "edit"), false);
   assert.equal(canContentHeadAccess("leads", "view"), false);
+});
+
+test("Content Writer has create-only access and approval by default", () => {
+  assert.deepEqual([...CONTENT_WRITER_RESOURCES].sort(), ["articles", "colleges", "courses", "exams"]);
+  for (const resource of CONTENT_WRITER_RESOURCES) {
+    assert.equal(canContentWriterAccess(resource, "create"), true);
+    for (const action of ["view", "edit", "delete", "publish"]) {
+      assert.equal(canContentWriterAccess(resource, action), false);
+    }
+  }
+  assert.equal(canContentWriterAccess("leads", "create"), false);
+  assert.equal(contentWriterPermissions().every((permission) => permission.can_create && !permission.can_publish && !permission.can_edit && !permission.can_delete), true);
+  assert.equal(contentWriterPermissions(true).every((permission) => permission.can_publish && !permission.can_edit && !permission.can_delete), true);
+  assert.equal(publishReviewedWriterPayload("articles", { status: "Draft", is_active: false }).status, "Published");
+  assert.equal(publishReviewedWriterPayload("exams", { status: "Upcoming", is_active: false }).is_active, true);
 });
 
 test("Content Head sessions and article edits preserve browser independence", async () => {

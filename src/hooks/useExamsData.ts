@@ -320,7 +320,7 @@ export function useSaveExam() {
       qc.invalidateQueries({ queryKey: ["db-exams"] });
       qc.invalidateQueries({ queryKey: ["db-exams-all"] });
       qc.invalidateQueries({ queryKey: ["homepage-category-exams"] });
-      toast.success(result.pendingReview ? "Exam draft submitted for admin review." : "Exam saved!");
+      toast.success(result.pendingReview ? "Exam submitted for admin review." : "Exam saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });

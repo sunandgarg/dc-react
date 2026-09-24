@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { normalizeAdminUserEmail, normalizeAdminUserPhone, setAdminUserRole } from "../src/admin-users.mjs";
+import { normalizeAdminUserEmail, normalizeAdminUserPhone, setAdminUserRole, setContentWriterPublish } from "../src/admin-users.mjs";
 
 test("administrator user edits normalize login identities", () => {
   assert.equal(normalizeAdminUserEmail("  Writer@Example.COM "), "writer@example.com");
@@ -35,4 +35,24 @@ test("role grants are idempotent and never create duplicate rows", async () => {
 
   assert.equal(result.enabled, true);
   assert.equal(creates, 0);
+});
+
+test("writer publishing switch changes only publishing and never edit or delete", async () => {
+  let invitePermissions;
+  let applied;
+  const tx = {
+    team_invites: {
+      findUnique: async () => ({ id: "invite-1", role: "content_writer", status: "accepted", accepted_user_id: "writer-1" }),
+      update: async ({ data }) => { invitePermissions = data.permissions; },
+    },
+    user_roles: { findFirst: async () => ({ id: "role-1" }) },
+    user_permissions: { updateMany: async ({ where, data }) => { applied = { where, data }; } },
+  };
+  const database = { $transaction: async (callback) => callback(tx) };
+  await setContentWriterPublish(database, { invite_id: "invite-1", direct_publish: true });
+  assert.equal(invitePermissions.length, 4);
+  assert.equal(invitePermissions.every((permission) => permission.can_publish && !permission.can_edit && !permission.can_delete), true);
+  assert.equal(applied.data.can_publish, true);
+  assert.equal(applied.data.can_edit, false);
+  assert.equal(applied.data.can_delete, false);
 });

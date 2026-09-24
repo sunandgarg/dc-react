@@ -12,6 +12,7 @@ const ROLE_LABEL: Record<string, string> = {
   manager: "Manager",
   content_head: "Content Head",
   content: "Content Editor",
+  content_writer: "Content Writer",
   editor: "Editor",
   contributor: "Contributor",
   lead_push: "Lead Push Only",
@@ -33,12 +34,21 @@ export function TeamPanel() {
 
   const revoke = async (id: string) => {
     if (!confirm("Revoke this team member? They will lose admin-panel access on next login.")) return;
-    const { error } = await (backendClient as any)
-      .from("team_invites")
-      .update({ status: "revoked" })
-      .eq("id", id);
+    const invite = invites.find((item: any) => item.id === id);
+    const { error } = invite?.role === "content_writer"
+      ? await backendClient.functions.invoke("admin-users", { method: "POST", body: { action: "revoke_writer", invite_id: id } })
+      : await (backendClient as any).from("team_invites").update({ status: "revoked" }).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Revoked");
+    qc.invalidateQueries({ queryKey: ["team_invites"] });
+  };
+
+  const setWriterPublish = async (id: string, directPublish: boolean) => {
+    const { error } = await backendClient.functions.invoke("admin-users", {
+      method: "POST", body: { action: "set_writer_publish", invite_id: id, direct_publish: directPublish },
+    });
+    if (error) return toast.error(error.message);
+    toast.success(directPublish ? "Direct publishing enabled. Writer should sign in again to refresh the editor." : "Approval required for new submissions.");
     qc.invalidateQueries({ queryKey: ["team_invites"] });
   };
 
@@ -80,7 +90,7 @@ export function TeamPanel() {
               <div>
                 <div className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Active ({accepted.length})</div>
                 <div className="grid gap-2">
-                  {accepted.map((i: any) => <Row key={i.id} invite={i} onRevoke={() => revoke(i.id)} />)}
+                  {accepted.map((i: any) => <Row key={i.id} invite={i} onRevoke={() => revoke(i.id)} onSetWriterPublish={(value) => setWriterPublish(i.id, value)} />)}
                 </div>
               </div>
             )}
@@ -88,7 +98,7 @@ export function TeamPanel() {
               <div>
                 <div className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Pending sign-in ({pending.length})</div>
                 <div className="grid gap-2">
-                  {pending.map((i: any) => <Row key={i.id} invite={i} onRevoke={() => revoke(i.id)} />)}
+                  {pending.map((i: any) => <Row key={i.id} invite={i} onRevoke={() => revoke(i.id)} onSetWriterPublish={(value) => setWriterPublish(i.id, value)} />)}
                 </div>
               </div>
             )}
@@ -109,7 +119,8 @@ export function TeamPanel() {
   );
 }
 
-function Row({ invite, onRevoke, onReactivate }: { invite: any; onRevoke?: () => void; onReactivate?: () => void }) {
+function Row({ invite, onRevoke, onReactivate, onSetWriterPublish }: { invite: any; onRevoke?: () => void; onReactivate?: () => void; onSetWriterPublish?: (value: boolean) => void }) {
+  const directPublish = Array.isArray(invite.permissions) && invite.permissions.some((permission: any) => permission?.can_publish === true);
   return (
     <div className="border border-border rounded-lg p-3 flex items-center justify-between flex-wrap gap-2">
       <div className="flex items-center gap-3 min-w-0">
@@ -127,6 +138,11 @@ function Row({ invite, onRevoke, onReactivate }: { invite: any; onRevoke?: () =>
         {invite.status === "revoked" && <Badge variant="destructive" className="text-[10px]">Revoked</Badge>}
       </div>
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        {invite.role === "content_writer" && invite.status !== "revoked" && onSetWriterPublish && (
+          <Button size="sm" variant="outline" className="h-7 text-[10px]" onClick={() => onSetWriterPublish(!directPublish)}>
+            {directPublish ? "Direct publish: On" : "Approval required: On"}
+          </Button>
+        )}
         {invite.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3" />{invite.email}</span>}
         {invite.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{invite.phone}</span>}
         {invite.permissions?.length > 0 && <span>+{invite.permissions.length} custom perms</span>}

@@ -144,7 +144,7 @@ export default function AdminCourses() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={(e) => { setSearch(e.target.value); setVisibleCount(50); }} placeholder="Search courses by name, slug or full name..." className="pl-10 rounded-xl h-10" />
         </div>
-        {canCreate && <Button onClick={() => openEditor(emptyCourse)} className="rounded-xl gap-2">
+        {canCreate && <Button onClick={() => openEditor({ ...emptyCourse, status: canPublish ? "Published" : "Draft" })} className="rounded-xl gap-2">
           <Plus className="w-4 h-4" /> Add Course
         </Button>}
         {isAdmin && <BulkEditToggle
@@ -419,7 +419,7 @@ export default function AdminCourses() {
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-xl">Cancel</Button>
                 {(canPublish || hasEditingChanges) && <Button onClick={handleSave} disabled={saveCourse.isPending || !hasEditingChanges} className="rounded-xl">
-                  {saveCourse.isPending ? "Saving..." : canPublish ? "Save Course" : "Save as draft"}
+                  {saveCourse.isPending ? "Saving..." : canPublish ? "Save Course" : "Submit for approval"}
                 </Button>}
               </div>
             </div>

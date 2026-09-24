@@ -225,7 +225,7 @@ export function useSaveCourse() {
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["db-courses"] });
       qc.invalidateQueries({ queryKey: ["homepage-category-courses"] });
-      toast.success(result.pendingReview ? "Course draft submitted for admin review." : "Course saved!");
+      toast.success(result.pendingReview ? "Course submitted for admin review." : "Course saved!");
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });

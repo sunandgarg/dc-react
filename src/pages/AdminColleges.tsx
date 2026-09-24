@@ -114,7 +114,7 @@ export default function AdminColleges() {
   };
 
   const openNewEditor = () => {
-    const value = { ...emptyCollege };
+    const value = { ...emptyCollege, status: canPublish ? "Published" : "Draft" };
     setEditingBaseline(JSON.stringify(value));
     setEditing(value);
   };
@@ -803,7 +803,7 @@ export default function AdminColleges() {
               <div className="sticky bottom-0 z-20 -mx-1 flex justify-end gap-2 border-t border-border bg-background/95 px-1 py-3 backdrop-blur">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-xl">Cancel</Button>
                 {(canPublish || hasEditingChanges) && <Button onClick={handleSave} disabled={saveCollege.isPending || !hasEditingChanges} className="rounded-xl">
-                  {saveCollege.isPending ? "Saving..." : canPublish ? "Save College" : "Save as draft"}
+                  {saveCollege.isPending ? "Saving..." : canPublish ? "Save College" : "Submit for approval"}
                 </Button>}
               </div>
             </div>

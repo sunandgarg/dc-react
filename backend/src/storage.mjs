@@ -182,6 +182,16 @@ async function authorizeStorage(request, route) {
   }
   const isUpload = ["POST", "PUT"].includes(request.method) && route.modifier === null;
   const contentType = String(request.headers.get("content-type") || "").split(";", 1)[0].trim().toLowerCase();
+  const writerRole = await prisma.$queryRawUnsafe(
+    "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content_writer' LIMIT 1",
+    identity.id,
+  );
+  if (writerRole.length && route.bucket === ADMIN_UPLOAD_BUCKET) {
+    const newUpload = request.method === "POST" && isUpload && request.headers.get("x-upsert") !== "true";
+    const readMedia = request.method === "POST" && ["list", "sign"].includes(route.modifier);
+    if ((newUpload && allowedUploadTypes.has(contentType)) || readMedia) return;
+    throw Object.assign(new Error("Content writers can upload new media, but cannot replace or delete existing files"), { status: 403, code: "WRITER_MEDIA_CREATE_ONLY" });
+  }
   if (route.bucket === ADMIN_UPLOAD_BUCKET && await canManageWebsiteMedia(identity.id)) {
     if (isUpload && !allowedUploadTypes.has(contentType)) {
       throw Object.assign(new Error("This file type is not allowed for website media"), { status: 415, code: "STORAGE_TYPE_NOT_ALLOWED" });
