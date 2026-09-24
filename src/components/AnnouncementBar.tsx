@@ -52,9 +52,8 @@ export function AnnouncementBar() {
   }, [ads.length]);
 
   const releasePointer = useCallback((event: ReactPointerEvent<HTMLAnchorElement>, cancelled = false) => {
-    if (touchHandledRef.current && event.pointerType === "touch") {
+    if (event.pointerType === "touch" && (touchHandledRef.current || touchStartRef.current)) {
       pointerRef.current = null;
-      setPaused(false);
       return;
     }
     const gesture = pointerRef.current;
@@ -154,7 +153,7 @@ export function AnnouncementBar() {
       move(deltaX < 0 ? 1 : -1);
       window.setTimeout(() => { draggedRef.current = false; touchHandledRef.current = false; }, 300);
     },
-    onTouchCancel: () => { touchStartRef.current = null; setPaused(false); },
+    onTouchCancel: () => { touchStartRef.current = null; pointerRef.current = null; setPaused(false); },
     onClickCapture: (event: ReactMouseEvent<HTMLAnchorElement>) => {
       if (!draggedRef.current) return;
       event.preventDefault();

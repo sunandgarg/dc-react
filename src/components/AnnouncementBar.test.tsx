@@ -109,7 +109,9 @@ describe("AnnouncementBar", () => {
       </MemoryRouter>,
     );
     const firstLink = container.querySelector('a[aria-label="Open First announcement"]');
+    fireEvent.pointerDown(firstLink!, { pointerId: 3, pointerType: "touch", clientX: 220, clientY: 20 });
     fireEvent.touchStart(firstLink!, { touches: [{ clientX: 220, clientY: 20 }] });
+    fireEvent.pointerUp(firstLink!, { pointerId: 3, pointerType: "touch", clientX: 100, clientY: 22 });
     fireEvent.touchEnd(firstLink!, { changedTouches: [{ clientX: 100, clientY: 22 }] });
     fireEvent.click(firstLink!);
     await waitFor(() => expect(screen.getByLabelText("Open Second announcement")).toBeInTheDocument());
