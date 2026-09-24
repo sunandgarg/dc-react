@@ -115,7 +115,12 @@ function ArticleMarkdown({ content }: { content: string }) {
           h1: ({ children }) => <h2>{children}</h2>,
           h2: ({ children, ...props }) => <h2 id={slugifyHeading(String(children))} {...props}>{children}</h2>,
           h3: ({ children, ...props }) => <h3 id={slugifyHeading(String(children))} {...props}>{children}</h3>,
-          table: ({ children, ...props }) => <div className="table-wrap"><table {...props}>{children}</table></div>,
+          table: ({ children, ...props }) => (
+            <div className="table-wrap" role="region" tabIndex={0} aria-label="Scrollable article table" data-scrollable-table="true">
+              <span className="article-table-scroll-hint" aria-hidden="true">Swipe to see all columns →</span>
+              <table {...props}>{children}</table>
+            </div>
+          ),
         }}
       >{content}</ReactMarkdown>
     </div>
@@ -392,12 +397,11 @@ export default function ArticleDetail() {
   const contentSegments = useMemo(() => {
     const c = article?.content || "";
     if (!articleUsesRichHtml) return null;
-    let html = c.replace(/<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi, (_full, lvl, attrs, inner) => {
+    const html = c.replace(/<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi, (_full, lvl, attrs, inner) => {
       const text = inner.replace(/<[^>]+>/g, "").trim();
       const id = slugifyHeading(text);
       return `<h${lvl}${attrs} id="${id}">${inner}</h${lvl}>`;
     });
-    html = html.replace(/<table(\s[^>]*)?>([\s\S]*?)<\/table>/gi, (m) => `<div class="table-wrap">${m}</div>`);
     // Parse out doc-viewer blocks
     const segs: Array<{ type: "html"; value: string } | { type: "doc"; title: string; images: string[] }> = [];
     const re = /<div\s+class="doc-viewer"([^>]*)>([\s\S]*?)<\/div>/gi;

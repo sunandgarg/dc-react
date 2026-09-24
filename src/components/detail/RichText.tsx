@@ -57,17 +57,29 @@ function postProcess(html: string): string {
     });
   });
 
-  // Tables → wrap in scroll container
+  // Reuse an authored table wrapper when present; nested scroll regions make
+  // horizontal swipes unreliable on phones.
   tpl.content.querySelectorAll("table").forEach((tbl) => {
-    if (tbl.parentElement?.classList.contains("rt-table-wrap")) return;
-    const wrap = document.createElement("div");
-    wrap.className = "rt-table-wrap";
+    const existingWrap = tbl.parentElement?.matches(".rt-table-wrap, .table-wrap, .tableWrapper, figure.table")
+      ? tbl.parentElement as HTMLElement
+      : null;
+    const wrap = existingWrap || document.createElement("div");
+    if (!existingWrap) {
+      wrap.className = "rt-table-wrap";
+      tbl.parentNode?.insertBefore(wrap, tbl);
+      wrap.appendChild(tbl);
+    }
     wrap.setAttribute("role", "region");
     wrap.tabIndex = 0;
-    wrap.setAttribute("aria-label", "Scrollable table");
+    wrap.setAttribute("aria-label", "Scrollable article table");
     wrap.setAttribute("data-scrollable-table", "true");
-    tbl.parentNode?.insertBefore(wrap, tbl);
-    wrap.appendChild(tbl);
+    if (!wrap.querySelector(".article-table-scroll-hint")) {
+      const hint = document.createElement("span");
+      hint.className = "article-table-scroll-hint";
+      hint.setAttribute("aria-hidden", "true");
+      hint.textContent = "Swipe to see all columns →";
+      wrap.insertBefore(hint, tbl);
+    }
   });
 
   // Links open external in new tab safely

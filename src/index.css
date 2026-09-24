@@ -820,6 +820,7 @@
 @layer components {
   .article-prose { overflow-wrap: anywhere; }
   .article-prose .table-wrap,
+  .article-prose .rt-table-wrap,
   .article-prose figure.table,
   .article-prose .tableWrapper {
     width: 100%;
@@ -840,7 +841,8 @@
   .article-prose thead th,
   .article-prose tbody td {
     white-space: normal;
-    word-break: break-word;
+    word-break: normal;
+    overflow-wrap: break-word;
   }
   @media (max-width: 640px) {
     .article-prose table { font-size: 0.82rem; }
@@ -977,6 +979,62 @@
     border-radius: 1rem;
     border: 1px solid hsl(var(--border));
     box-shadow: 0 10px 30px hsl(215 35% 12% / 0.06);
+  }
+
+  .article-prose--news .rt-table-wrap {
+    margin: 1.6rem 0;
+    border-radius: 1rem;
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 10px 30px hsl(215 35% 12% / 0.06);
+  }
+
+  .article-prose--news .article-table-scroll-hint { display: none; }
+
+  @media (max-width: 640px) {
+    .article-prose--news .table-wrap,
+    .article-prose--news .rt-table-wrap {
+      width: 100%;
+      max-width: 100%;
+      margin-inline: 0;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-x pan-y;
+    }
+
+    .article-prose--news .table-wrap table,
+    .article-prose--news .rt-table-wrap table {
+      width: 100%;
+      min-width: 42rem;
+      max-width: none;
+      table-layout: auto;
+      margin: 0;
+      font-size: 0.875rem;
+    }
+
+    .article-prose--news table th,
+    .article-prose--news table td {
+      min-width: 13rem;
+      overflow-wrap: break-word;
+      word-break: normal;
+      padding: 0.65rem 0.75rem;
+    }
+
+    .article-prose--news table th { font-size: 0.875rem; }
+
+    .article-prose--news table th:first-child,
+    .article-prose--news table td:first-child { min-width: 8.5rem; }
+
+    .article-prose--news .article-table-scroll-hint {
+      display: block;
+      width: max-content;
+      margin: 0;
+      padding: 0.55rem 0.75rem 0.25rem;
+      color: hsl(var(--muted-foreground));
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
   }
 
   @media (max-width: 640px) {

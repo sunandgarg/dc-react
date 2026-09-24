@@ -10,6 +10,15 @@ describe("RichText", () => {
     expect(screen.getByText("Syllabus intro")).toBeInTheDocument();
     expect(screen.getByText("Topic")).toBeInTheDocument();
     expect(container.querySelector(".rt-table-wrap > table")).not.toBeNull();
+    expect(container.querySelector(".rt-table-wrap")).toHaveAttribute("aria-label", "Scrollable article table");
+    expect(container.querySelector(".rt-table-wrap .article-table-scroll-hint")).toHaveTextContent("Swipe to see all columns");
+  });
+
+  it("reuses an existing table wrapper instead of nesting scroll regions", () => {
+    const { container } = render(<RichText html={'<div class="table-wrap"><table><tbody><tr><td>Eligibility</td></tr></tbody></table></div>'} />);
+    expect(container.querySelectorAll(".table-wrap, .rt-table-wrap")).toHaveLength(1);
+    expect(container.querySelector(".table-wrap")).toHaveAttribute("data-scrollable-table", "true");
+    expect(container.querySelector(".table-wrap > table")).not.toBeNull();
   });
 
   it("renders non-HTML text as readable text instead of injecting markup", () => {
