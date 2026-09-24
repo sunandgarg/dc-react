@@ -5,7 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { hydrateBootstrap } from "@/lib/bootstrap";
 import { Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { backendClient } from "@/integrations/backend/client";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { HomeMobileBottomNav } from "@/components/HomeMobileBottomNav";
@@ -84,6 +85,28 @@ function RouteSeoPolicy() {
     }
   }, [pathname]);
   return null;
+}
+
+function ImpersonationBanner() {
+  const { session } = useAuth();
+  const delegated = session?.impersonation;
+  const returnToAdmin = async () => {
+    await backendClient.auth.stopImpersonation();
+    window.location.assign("/admin/users");
+  };
+
+  useEffect(() => {
+    if (!delegated) return;
+    const remaining = Math.max(0, delegated.expires_at * 1000 - Date.now());
+    const timer = window.setTimeout(() => { void returnToAdmin(); }, remaining);
+    return () => window.clearTimeout(timer);
+  }, [delegated?.session_id, delegated?.expires_at]);
+
+  if (!delegated) return null;
+  return <div role="status" className="fixed inset-x-0 bottom-0 z-[200] flex items-center justify-between gap-3 border-t border-amber-300 bg-amber-100 px-4 py-3 text-sm text-amber-950 shadow-lg">
+    <span><strong>Viewing as {session.user.user_metadata?.display_name || session.user.phone || session.user.email || "another user"}.</strong> Your admin login is preserved in this browser. Actions here use this user's permissions and are audited. Session ends after 15 minutes.</span>
+    <button type="button" onClick={() => { void returnToAdmin(); }} className="shrink-0 rounded-lg bg-amber-950 px-4 py-2 font-semibold text-white hover:bg-amber-900">Return to admin</button>
+  </div>;
 }
 
 function DeferredGlobalUi() {
@@ -321,6 +344,7 @@ const App = () => (
 
     <AuthProvider>
       <AdminActionGuard />
+      <ImpersonationBanner />
       <CompareProvider>
         <TooltipProvider>
           <Toaster />

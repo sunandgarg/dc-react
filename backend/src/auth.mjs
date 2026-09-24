@@ -4,6 +4,7 @@ import { acceptPendingTeamInvite, ensureContentHeadAccess } from "./editor-acces
 
 const ACCESS_TTL_SECONDS = Number(process.env.AUTH_ACCESS_TTL_SECONDS || 3600);
 const REFRESH_TTL_SECONDS = Number(process.env.AUTH_REFRESH_TTL_SECONDS || 60 * 60 * 24 * 180);
+const IMPERSONATION_TTL_SECONDS = 15 * 60;
 const OWNER_ADMIN_PHONES = new Set(["8700602524", "9990109393"]);
 
 export function isOwnerAdminPhone(phone) {
@@ -87,13 +88,52 @@ export function accessTokenIsCurrent(userRow, payload) {
   return Number.isFinite(issuedAt) && issuedAt > revokedAfter;
 }
 
-async function userFromRequest(request) {
+async function userFromRequest(request, database = prisma) {
   const value = request.headers.get("authorization") || "";
   const token = value.toLowerCase().startsWith("bearer ") ? value.slice(7).trim() : "";
   const payload = verifyAccessToken(token);
   if (!payload) return null;
-  const user = await prisma.app_auth_users.findUnique({ where: { id: payload.sub } });
+  if (payload.session === "impersonation") {
+    if (!payload.admin_id || !payload.impersonation_id || payload.admin_id === payload.sub) return null;
+    const session = await database.app_settings.findUnique({ where: { key: `admin-impersonation:${payload.impersonation_id}` } });
+    let state;
+    try { state = JSON.parse(session?.value || "null"); } catch { return null; }
+    if (!state || state.revoked || state.admin_id !== payload.admin_id || state.target_user_id !== payload.sub || state.expires_at !== payload.exp) return null;
+    const admin = await database.app_auth_users.findUnique({ where: { id: payload.admin_id } });
+    if (!admin || !accessTokenIsCurrent(admin, payload)) return null;
+    const role = await database.user_roles.findFirst({ where: { user_id: admin.id, role: "admin" } });
+    if (!role) return null;
+  } else if (payload.admin_id || payload.impersonation_id || payload.session) {
+    return null;
+  }
+  const user = await database.app_auth_users.findUnique({ where: { id: payload.sub } });
   return user && accessTokenIsCurrent(user, payload) ? user : null;
+}
+
+function impersonationFromRequest(request) {
+  const authorization = request.headers.get("authorization") || "";
+  const token = authorization.toLowerCase().startsWith("bearer ") ? authorization.slice(7).trim() : "";
+  const payload = verifyAccessToken(token);
+  return payload?.session === "impersonation" ? payload : null;
+}
+
+async function recordImpersonationEvent(database, payload, eventType, request) {
+  await database.system_logs.create({ data: {
+    id: randomUUID(), function_name: "admin_impersonation", level: "security", flow: eventType,
+    method: request.method, message: new URL(request.url).pathname,
+    request_id: payload.impersonation_id,
+    context: { target_user_id: payload.sub, admin_user_id: payload.admin_id, user_agent: String(request.headers.get("user-agent") || "").slice(0, 500) },
+  } });
+}
+
+export async function auditImpersonatedWrite(request, database = prisma) {
+  if (["GET", "HEAD", "OPTIONS"].includes(request.method)) return;
+  const payload = impersonationFromRequest(request);
+  if (!payload) return;
+  if (!await userFromRequest(request, database)) return;
+  const path = new URL(request.url).pathname;
+  if (path === "/auth/v1/impersonate/stop" || path === "/v1/rest/user_events" || path === "/v1/rest/intent_events") return;
+  await recordImpersonationEvent(database, payload, "admin_impersonation_write", request);
 }
 
 function providerConfig(value) {
@@ -178,9 +218,60 @@ async function sendFast2SmsOtp(phone, otp) {
   return true;
 }
 
-export async function resolveNativeIdentity(request) {
-  const user = await userFromRequest(request);
-  return user ? authUser(user) : null;
+export async function resolveNativeIdentity(request, database = prisma) {
+  const user = await userFromRequest(request, database);
+  if (!user) return null;
+  const identity = authUser(user);
+  const delegated = impersonationFromRequest(request);
+  return delegated ? { ...identity, impersonation: { admin_user_id: delegated.admin_id, session_id: delegated.impersonation_id, expires_at: delegated.exp } } : identity;
+}
+
+export async function startAdminImpersonation(request, database = prisma) {
+  const admin = await userFromRequest(request, database);
+  const current = impersonationFromRequest(request);
+  if (!admin || current) throw Object.assign(new Error("Sign in with your own administrator account first"), { status: 403, code: "ADMIN_SESSION_REQUIRED" });
+  const role = await database.user_roles.findFirst({ where: { user_id: admin.id, role: "admin" } });
+  if (!role) throw Object.assign(new Error("Administrator access is required"), { status: 403, code: "ADMIN_REQUIRED" });
+  const body = await request.json().catch(() => ({}));
+  const targetId = String(body.user_id || "").trim();
+  if (!/^[0-9a-f-]{36}$/i.test(targetId) || targetId === admin.id) {
+    throw Object.assign(new Error("Select another valid user account"), { status: 400, code: "INVALID_TARGET" });
+  }
+  const target = await database.app_auth_users.findUnique({ where: { id: targetId } });
+  if (!target) throw Object.assign(new Error("This user has no login account to open"), { status: 404, code: "TARGET_AUTH_NOT_FOUND" });
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    sub: target.id, admin_id: admin.id, impersonation_id: randomUUID(),
+    session: "impersonation", aud: "authenticated", role: "authenticated", iat: now,
+    exp: now + IMPERSONATION_TTL_SECONDS,
+  };
+  await database.$transaction(async (tx) => {
+    await tx.app_settings.create({ data: {
+      key: `admin-impersonation:${payload.impersonation_id}`,
+      value: JSON.stringify({ admin_id: admin.id, target_user_id: target.id, expires_at: payload.exp, revoked: false }),
+    } });
+    await recordImpersonationEvent(tx, payload, "started", request);
+  });
+  return {
+    access_token: signJwt(payload), token_type: "bearer", expires_at: payload.exp,
+    expires_in: IMPERSONATION_TTL_SECONDS, user: authUser(target),
+    impersonation: { admin_user_id: admin.id, session_id: payload.impersonation_id, expires_at: payload.exp },
+  };
+}
+
+export async function stopAdminImpersonation(request, database = prisma) {
+  const delegated = impersonationFromRequest(request);
+  if (!delegated || !await userFromRequest(request, database)) {
+    throw Object.assign(new Error("No active view-as session"), { status: 401, code: "IMPERSONATION_REQUIRED" });
+  }
+  await database.$transaction(async (tx) => {
+    await tx.app_settings.update({
+      where: { key: `admin-impersonation:${delegated.impersonation_id}` },
+      data: { value: JSON.stringify({ admin_id: delegated.admin_id, target_user_id: delegated.sub, expires_at: delegated.exp, revoked: true }) },
+    });
+    await recordImpersonationEvent(tx, delegated, "stopped", request);
+  });
+  return { success: true };
 }
 
 function normalizedOtpPhone(value) {
@@ -282,7 +373,16 @@ export async function handleAuth(request) {
   if (url.pathname === "/auth/v1/user" && request.method === "GET") {
     const user = await userFromRequest(request);
     if (!user) return { status: 401, body: { code: "bad_jwt", msg: "Invalid session" } };
-    return { status: 200, body: authUser(user) };
+    const delegated = impersonationFromRequest(request);
+    return { status: 200, body: delegated
+      ? { ...authUser(user), impersonation: { admin_user_id: delegated.admin_id, session_id: delegated.impersonation_id, expires_at: delegated.exp } }
+      : authUser(user) };
+  }
+  if (url.pathname === "/auth/v1/impersonate" && request.method === "POST") {
+    return { status: 200, body: await startAdminImpersonation(request) };
+  }
+  if (url.pathname === "/auth/v1/impersonate/stop" && request.method === "POST") {
+    return { status: 200, body: await stopAdminImpersonation(request) };
   }
   if (url.pathname === "/auth/v1/logout" && request.method === "POST") {
     const body = await request.json().catch(() => ({}));

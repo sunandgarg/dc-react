@@ -13,15 +13,17 @@ export type BackendUser = {
   user_metadata?: Record<string, unknown>;
   created_at?: string;
   updated_at?: string;
+  impersonation?: { admin_user_id: string; session_id: string; expires_at: number };
 };
 
 export type BackendSession = {
   access_token: string;
-  refresh_token: string;
+  refresh_token?: string;
   token_type?: string;
   expires_in?: number;
   expires_at?: number;
   user: BackendUser;
+  impersonation?: { admin_user_id: string; session_id: string; expires_at: number };
 };
 
 export type User = BackendUser;
@@ -37,6 +39,7 @@ type ClientResult<T = unknown> = {
 };
 
 const SESSION_KEY = "dc-auth-session";
+const IMPERSONATION_KEY = "dc-admin-impersonation-session";
 const resolvedApiUrl = apiBaseUrl();
 const mediaBaseUrl = String(import.meta.env.VITE_MEDIA_BASE_URL || "/storage/v1/object/public").replace(/\/$/, "");
 const authListeners = new Set<(event: string, session: BackendSession | null) => void>();
@@ -49,13 +52,19 @@ function storageAvailable() {
 
 function isSession(value: unknown): value is BackendSession {
   const row = value as Partial<BackendSession> | null;
-  return Boolean(row?.access_token && row?.refresh_token && row?.user?.id);
+  return Boolean(row?.access_token && (row?.refresh_token || row?.impersonation) && row?.user?.id);
 }
 
 function readStoredSession() {
   if (memorySession !== undefined) return memorySession;
   memorySession = null;
   if (!storageAvailable()) return memorySession;
+  try {
+    const delegated = JSON.parse(sessionStorage.getItem(IMPERSONATION_KEY) || "null");
+    if (isSession(delegated) && delegated.impersonation) return (memorySession = delegated);
+  } catch {
+    sessionStorage.removeItem(IMPERSONATION_KEY);
+  }
   try {
     const current = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
     if (isSession(current)) return (memorySession = current);
@@ -140,6 +149,13 @@ async function activeSession() {
   const session = readStoredSession();
   if (!session) return null;
   if (!session.expires_at || session.expires_at > Math.floor(Date.now() / 1000) + 30) return session;
+  if (session.impersonation) {
+    sessionStorage.removeItem(IMPERSONATION_KEY);
+    memorySession = undefined;
+    const original = readStoredSession();
+    notifyAuth(original ? "SIGNED_IN" : "SIGNED_OUT", original);
+    return original;
+  }
   return refreshSession(session);
 }
 
@@ -342,6 +358,10 @@ const auth = {
   },
   async signOut() {
     const session = readStoredSession();
+    if (session?.impersonation) {
+      await auth.stopImpersonation();
+      return { error: null };
+    }
     if (session?.access_token) await fetch(`${resolvedApiUrl}/auth/v1/logout`, {
       method: "POST",
       headers: { authorization: `Bearer ${session.access_token}`, "content-type": "application/json" },
@@ -350,6 +370,37 @@ const auth = {
     saveSession(null);
     notifyAuth("SIGNED_OUT", null);
     return { error: null };
+  },
+  async startImpersonation(userId: string) {
+    const original = await activeSession();
+    if (!original?.access_token || original.impersonation) return { data: null, error: makeError({ code: "ADMIN_SESSION_REQUIRED", message: "Return to your admin account before switching users" }) };
+    try {
+      const response = await fetch(`${resolvedApiUrl}/auth/v1/impersonate`, {
+        method: "POST", headers: { authorization: `Bearer ${original.access_token}`, "content-type": "application/json" },
+        body: JSON.stringify({ user_id: userId }),
+      });
+      const payload = await parseResponse(response);
+      if (!response.ok || !isSession(payload) || !payload.impersonation) return { data: null, error: makeError(payload, response) };
+      sessionStorage.setItem(IMPERSONATION_KEY, JSON.stringify(payload));
+      memorySession = payload;
+      notifyAuth("SIGNED_IN", payload);
+      return { data: { session: payload }, error: null };
+    } catch (cause) {
+      return { data: null, error: cause instanceof Error ? cause as ClientError : makeError({ message: String(cause) }) };
+    }
+  },
+  async stopImpersonation() {
+    const session = readStoredSession();
+    if (session?.impersonation) {
+      await fetch(`${resolvedApiUrl}/auth/v1/impersonate/stop`, {
+        method: "POST", headers: { authorization: `Bearer ${session.access_token}` },
+      }).catch(() => null);
+    }
+    sessionStorage.removeItem(IMPERSONATION_KEY);
+    memorySession = undefined;
+    const original = await activeSession();
+    notifyAuth(original ? "SIGNED_IN" : "SIGNED_OUT", original);
+    return { data: { session: original }, error: null };
   },
   async signInWithOAuth({ provider, options }: { provider: string; options?: { redirectTo?: string } }) {
     const settings = await requestJson(`${resolvedApiUrl}/auth/v1/settings`);

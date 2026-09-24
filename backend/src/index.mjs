@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { handleRest, handleRpc } from "./rest.mjs";
 import { prisma } from "./db.mjs";
-import { handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp, verifyLeadOtpProof } from "./auth.mjs";
+import { auditImpersonatedWrite, handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp, verifyLeadOtpProof } from "./auth.mjs";
 import { handleStorage } from "./storage.mjs";
 import { enqueueLeadAutomation, wakeLeadOutboxWorker } from "./lead-outbox.mjs";
 import { dispatchLead, previewLeadAutomation } from "./lead-automation.mjs";
@@ -666,6 +666,7 @@ export async function handleRequest(request) {
   }
 
   try {
+    await auditImpersonatedWrite(request);
     if (url.pathname === "/v1/functions/sarkari-home-feed") {
       if (!["GET", "HEAD"].includes(request.method)) {
         return json(405, { code: "METHOD_NOT_ALLOWED", message: "Use GET or HEAD for the Sarkari homepage feed", requestId }, requestId, request, {
@@ -731,7 +732,7 @@ export async function handleRequest(request) {
     const sitemapResponse = await readPublishedSitemap(request);
     if (sitemapResponse) return sitemapResponse;
     const authResult = await handleAuth(request);
-    if (authResult) return json(authResult.status, authResult.body, requestId, request);
+    if (authResult) return json(authResult.status, authResult.body, requestId, request, { "cache-control": "private, no-store" });
     const storageResult = await handleStorage(request);
     if (storageResult instanceof Response) {
       const headers = new Headers(storageResult.headers);

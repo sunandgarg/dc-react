@@ -20,7 +20,7 @@ const ROLE_LABEL: Record<string, string> = {
   lead_push: "Lead Push Only",
 };
 
-export function TeamPanel() {
+export function TeamPanel({ onOpenAsUser }: { onOpenAsUser?: (invite: any) => void }) {
   const qc = useQueryClient();
   const [viewingInvite, setViewingInvite] = useState<any | null>(null);
   const { data: invites = [], isLoading } = useQuery({
@@ -93,7 +93,7 @@ export function TeamPanel() {
               <div>
                 <div className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Active ({accepted.length})</div>
                 <div className="grid gap-2">
-                  {accepted.map((i: any) => <Row key={i.id} invite={i} onInspect={() => setViewingInvite(i)} onRevoke={() => revoke(i.id)} onSetWriterPublish={(value) => setWriterPublish(i.id, value)} />)}
+                  {accepted.map((i: any) => <Row key={i.id} invite={i} onInspect={() => setViewingInvite(i)} onOpenAsUser={onOpenAsUser && i.accepted_user_id ? () => onOpenAsUser(i) : undefined} onRevoke={() => revoke(i.id)} onSetWriterPublish={(value) => setWriterPublish(i.id, value)} />)}
                 </div>
               </div>
             )}
@@ -142,7 +142,7 @@ export function TeamPanel() {
   );
 }
 
-function Row({ invite, onInspect, onRevoke, onReactivate, onSetWriterPublish }: { invite: any; onInspect?: () => void; onRevoke?: () => void; onReactivate?: () => void; onSetWriterPublish?: (value: boolean) => void }) {
+function Row({ invite, onInspect, onOpenAsUser, onRevoke, onReactivate, onSetWriterPublish }: { invite: any; onInspect?: () => void; onOpenAsUser?: () => void; onRevoke?: () => void; onReactivate?: () => void; onSetWriterPublish?: (value: boolean) => void }) {
   const directPublish = Array.isArray(invite.permissions) && invite.permissions.some((permission: any) => permission?.can_publish === true);
   return (
     <div className="border border-border rounded-lg p-3 flex items-center justify-between flex-wrap gap-2">
@@ -161,7 +161,8 @@ function Row({ invite, onInspect, onRevoke, onReactivate, onSetWriterPublish }: 
         {invite.status === "revoked" && <Badge variant="destructive" className="text-[10px]">Revoked</Badge>}
       </div>
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
-        {onInspect && <Button size="icon" variant="outline" className="h-7 w-7" title="View profile and access (read-only)" aria-label={`View access for ${invite.display_name || invite.phone || invite.email || "teammate"}`} onClick={onInspect}><LogIn className="h-3.5 w-3.5" /></Button>}
+        {onOpenAsUser && <Button size="icon" variant="outline" className="h-7 w-7" title="Open this account for testing" aria-label={`Open account as ${invite.display_name || invite.phone || invite.email || "teammate"}`} onClick={onOpenAsUser}><LogIn className="h-3.5 w-3.5" /></Button>}
+        {onInspect && <Button size="icon" variant="ghost" className="h-7 w-7" title="View profile and access (read-only)" aria-label={`View access for ${invite.display_name || invite.phone || invite.email || "teammate"}`} onClick={onInspect}><Eye className="h-3.5 w-3.5" /></Button>}
         {invite.role === "content_writer" && invite.status !== "revoked" && onSetWriterPublish && (
           <Button size="sm" variant="outline" className="h-7 text-[10px]" onClick={() => onSetWriterPublish(!directPublish)}>
             {directPublish ? "Direct publish: On" : "Approval required: On"}

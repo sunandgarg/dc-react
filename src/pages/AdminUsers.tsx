@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, Loader2, Phone, Mail, MapPin, Calendar, Shield, X, Pencil, Trash2, LogIn, ExternalLink } from "lucide-react";
+import { Search, Loader2, Phone, Mail, MapPin, Calendar, Shield, X, Pencil, Trash2, LogIn, ExternalLink, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { AppRole } from "@/lib/rbac";
@@ -32,6 +32,8 @@ export default function AdminUsers() {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [roleBusy, setRoleBusy] = useState("");
   const [viewingUser, setViewingUser] = useState<any | null>(null);
+  const [openingUser, setOpeningUser] = useState<any | null>(null);
+  const [openingBusy, setOpeningBusy] = useState(false);
   const qc = useQueryClient();
   const { isAdmin, user } = useAuth();
 
@@ -99,6 +101,21 @@ export default function AdminUsers() {
       toast.error(error?.message || "Could not update the role");
     } finally {
       setRoleBusy("");
+    }
+  };
+
+  const openAsUser = async () => {
+    if (!openingUser) return;
+    setOpeningBusy(true);
+    try {
+      const { error } = await backendClient.auth.startImpersonation(openingUser.user_id);
+      if (error) throw error;
+      const nextPath = openingUser.roles.includes("content_writer") || openingUser.roles.includes("content_head")
+        ? "/admin/articles" : openingUser.roles.includes("admin") ? "/admin" : "/dashboard";
+      window.location.assign(nextPath);
+    } catch (error: any) {
+      toast.error(error?.message || "Could not open this user account");
+      setOpeningBusy(false);
     }
   };
 
@@ -174,7 +191,11 @@ export default function AdminUsers() {
         <CSVTools table="profiles" filename="profiles.csv" columns="*" upsertKey="user_id" />
       </div>
 
-      {isAdmin && <TeamPanel />}
+      {isAdmin && <TeamPanel onOpenAsUser={(invite) => setOpeningUser({
+        user_id: invite.accepted_user_id,
+        display_name: invite.display_name || invite.phone || invite.email,
+        roles: [invite.role],
+      })} />}
       <div className="mb-2"><h2 className="text-lg font-bold">All Users</h2><p className="text-xs text-muted-foreground">Everyone who signed up on dekhocampus. Team members appear above.</p></div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         <Card><CardContent className="p-4">
@@ -259,8 +280,11 @@ export default function AdminUsers() {
                     </div>
                     {isAdmin && (
                       <div className="flex items-center gap-1 border-l border-border pl-2">
-                        <Button type="button" size="icon" variant="outline" className="h-8 w-8" title="Open user profile and access (read-only)" aria-label={`View profile and access for ${u.display_name || u.phone || "user"}`} onClick={() => setViewingUser(u)}>
+                        <Button type="button" size="icon" variant="outline" className="h-8 w-8" title="Open this account for testing" aria-label={`Open account as ${u.display_name || u.phone || "user"}`} disabled={u.user_id === user?.id} onClick={() => setOpeningUser(u)}>
                           <LogIn className="h-4 w-4" />
+                        </Button>
+                        <Button type="button" size="icon" variant="ghost" className="h-8 w-8" title="View profile and access (read-only)" aria-label={`View profile and access for ${u.display_name || u.phone || "user"}`} onClick={() => setViewingUser(u)}>
+                          <Eye className="h-4 w-4" />
                         </Button>
                         <Button type="button" size="icon" variant="ghost" className="h-8 w-8" title="Edit user" aria-label={`Edit ${u.display_name || u.phone || "user"}`} onClick={() => openEditUser(u)}>
                           <Pencil className="h-3.5 w-3.5" />
@@ -338,6 +362,22 @@ export default function AdminUsers() {
               {viewingUser.roles.includes("content_writer") && <p className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs">Content Writer: create-only editorial access and own short-link submissions. Article, college, course and exam edits or deletions are blocked. Publishing requires approval unless the individual writer setting is enabled.</p>}
             </>}
           </div>}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(openingUser)} onOpenChange={(open) => { if (!open && !openingBusy) setOpeningUser(null); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Open {openingUser?.display_name || openingUser?.phone || "this user"}'s account?</DialogTitle>
+            <DialogDescription>You will see the site with this user's permissions for up to 15 minutes. Your admin login stays available for a one-click return. Any changes made during testing affect the real account and are recorded.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" disabled={openingBusy} onClick={() => setOpeningUser(null)}>Cancel</Button>
+            <Button type="button" disabled={openingBusy} onClick={openAsUser}>
+              {openingBusy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Open account
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
