@@ -138,7 +138,7 @@ export default function AdminUsers() {
         ...p,
         roles: rolesMap.get(p.user_id) || [],
         leadCount: p.phone ? (leadCountByPhone.get(p.phone) || 0) : 0,
-        loginSource: isSyntheticPhoneEmail(p.email) ? "Mobile OTP" : (p.email ? "Google / Email" : "Unknown"),
+        loginSource: p.phone && (!p.email || isSyntheticPhoneEmail(p.email)) ? "Mobile OTP" : (p.email ? "Google / Email" : "Unknown"),
         applicationCount: appsByUser.get(p.user_id) || 0,
       }));
     },
