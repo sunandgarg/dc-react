@@ -9,8 +9,8 @@ import { queueIndexNowUrls } from "./indexnow.mjs";
 import { BATCH_CONTENT_VARIATION_POLICY, BATCH_CONTENT_VARIATION_TEXT } from "../../scripts/content-batch-policy.mjs";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
-export const DEFAULT_BLOG_ANALYSIS_MODEL = "gpt-6-luna";
-export const DEFAULT_BLOG_WRITING_MODEL = "gpt-6-sol";
+export const DEFAULT_BLOG_ANALYSIS_MODEL = "gpt-5.6-luna";
+export const DEFAULT_BLOG_WRITING_MODEL = "gpt-5.6-luna";
 const DEFAULT_OPENAI_TEXT_MODEL = DEFAULT_BLOG_WRITING_MODEL;
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-1";
 const RECOMMENDED_DAILY_POSTS = 8;
@@ -108,9 +108,10 @@ const cleanJson = (value) => String(value || "").replace(/^```json\s*|\s*```$/gi
 const slugify = (value) => String(value || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 100);
 const stripHtml = (value) => String(value || "").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 const LEGACY_GEMINI_MODELS = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro", "gemini-3.5-flash"]);
-const LEGACY_OPENAI_BLOG_MODELS = new Set(["gpt-5.6-sol", "gpt-5.6-luna"]);
+const LEGACY_OPENAI_BLOG_MODELS = new Set(["gpt-5.6-sol"]);
+const PREVIOUS_BLOG_DEFAULTS = ["gpt-5.6-sol", "gpt-6-sol"];
 const OPENAI_BLOG_MODEL_ALIASES = new Map([["gpt-5.4", "gpt-5.4-mini"]]);
-const SUPPORTED_OPENAI_BLOG_MODELS = new Set(["gpt-6-sol", "gpt-6-luna", "gpt-5.5", "gpt-5.4-mini", "gpt-5-nano"]);
+const SUPPORTED_OPENAI_BLOG_MODELS = new Set(["gpt-5.6-luna", "gpt-6-sol", "gpt-6-luna", "gpt-5.5", "gpt-5.4-mini", "gpt-5-nano"]);
 const normalizeGeminiModel = (value) => {
   const model = String(value || "").trim();
   if (!model.startsWith("gemini-")) return DEFAULT_GEMINI_MODEL;
@@ -1252,7 +1253,7 @@ async function provider(name) {
 
 export async function ensureSupportedAiModels() {
   const legacyModels = [...LEGACY_GEMINI_MODELS];
-  const legacyOpenAiBlogModels = [...LEGACY_OPENAI_BLOG_MODELS];
+  const legacyOpenAiBlogModels = PREVIOUS_BLOG_DEFAULTS;
   await Promise.all([
     prisma.ai_providers.updateMany({
       where: { provider_name: "gemini", default_model: { in: legacyModels } },

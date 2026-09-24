@@ -20,6 +20,7 @@ import { consumePublicWriteLimit } from "./public-write-rate-limit.mjs";
 import { handleAdminUsers } from "./admin-users.mjs";
 import { consumeSarkariHomeFeedReadLimit, loadSarkariHomeFeed } from "./sarkari-home-feed.mjs";
 import { queueIndexNowUrls } from "./indexnow.mjs";
+import { counselorSse, generateCounselorReply } from "./ai-counselor.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -710,6 +711,14 @@ export async function handleRequest(request) {
     }
     const functionMatch = url.pathname.match(/^\/v1\/functions\/([A-Za-z0-9_-]+)$/);
     if (functionMatch) {
+      if (functionMatch[1] === "ai-counselor") {
+        if (request.method !== "POST") throw new HttpError(405, "METHOD_NOT_ALLOWED", "Use POST for Diya AI");
+        const input = await readRateLimitedPublicJson(request, "ai-counselor", 32 * 1024);
+        const answer = await generateCounselorReply(input);
+        return new Response(counselorSse(answer), {
+          headers: { ...corsHeaders(request), "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff", "x-request-id": requestId },
+        });
+      }
       if (functionMatch[1] === "send-otp") return json(200, await sendPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(), requestId, request, { "cache-control": "public, max-age=30, stale-while-revalidate=60" });

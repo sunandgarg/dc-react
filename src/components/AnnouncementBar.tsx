@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type TouchEvent as ReactTouchEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getInternalAdContext } from "@/components/GlobalInternalAds";
 import { useMatchingAds } from "@/hooks/useAds";
@@ -32,8 +32,11 @@ export function AnnouncementBar() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
+  const [manualHold, setManualHold] = useState(false);
   const [timerRevision, setTimerRevision] = useState(0);
   const draggedRef = useRef(false);
+  const touchHandledRef = useRef(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const pointerRef = useRef<{
     id: number;
     startX: number;
@@ -45,9 +48,15 @@ export function AnnouncementBar() {
     setDirection(delta >= 0 ? 1 : -1);
     setActiveIndex((index) => circularAnnouncementIndex(index, delta, ads.length));
     setTimerRevision((revision) => revision + 1);
+    setManualHold(true);
   }, [ads.length]);
 
   const releasePointer = useCallback((event: ReactPointerEvent<HTMLAnchorElement>, cancelled = false) => {
+    if (touchHandledRef.current && event.pointerType === "touch") {
+      pointerRef.current = null;
+      setPaused(false);
+      return;
+    }
     const gesture = pointerRef.current;
     if (!gesture || gesture.id !== event.pointerId) return;
     const deltaX = event.clientX - gesture.startX;
@@ -74,7 +83,7 @@ export function AnnouncementBar() {
   }, [ads.length]);
 
   useEffect(() => {
-    if (paused || ads.length < 2) return;
+    if (paused || manualHold || ads.length < 2) return;
     const timer = window.setInterval(
       () => {
         setDirection(1);
@@ -83,7 +92,13 @@ export function AnnouncementBar() {
       rotationSeconds * 1000,
     );
     return () => window.clearInterval(timer);
-  }, [ads.length, paused, rotationSeconds, timerRevision]);
+  }, [ads.length, paused, manualHold, rotationSeconds, timerRevision]);
+
+  useEffect(() => {
+    if (!manualHold) return;
+    const timer = window.setTimeout(() => setManualHold(false), 6_000);
+    return () => window.clearTimeout(timer);
+  }, [manualHold, timerRevision]);
 
   if (!context.isPublic || isLoading || ads.length === 0) return null;
   const activeAd = ads[activeIndex] || ads[0];
@@ -119,6 +134,27 @@ export function AnnouncementBar() {
     },
     onPointerUp: (event: ReactPointerEvent<HTMLAnchorElement>) => releasePointer(event),
     onPointerCancel: (event: ReactPointerEvent<HTMLAnchorElement>) => releasePointer(event, true),
+    onTouchStart: (event: ReactTouchEvent<HTMLAnchorElement>) => {
+      if (ads.length < 2 || event.touches.length !== 1) return;
+      touchHandledRef.current = false;
+      touchStartRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      setPaused(true);
+    },
+    onTouchEnd: (event: ReactTouchEvent<HTMLAnchorElement>) => {
+      const start = touchStartRef.current;
+      touchStartRef.current = null;
+      setPaused(false);
+      if (!start || event.changedTouches.length !== 1) return;
+      const deltaX = event.changedTouches[0].clientX - start.x;
+      const deltaY = event.changedTouches[0].clientY - start.y;
+      if (Math.abs(deltaX) < 42 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) return;
+      touchHandledRef.current = true;
+      draggedRef.current = true;
+      pointerRef.current = null;
+      move(deltaX < 0 ? 1 : -1);
+      window.setTimeout(() => { draggedRef.current = false; touchHandledRef.current = false; }, 300);
+    },
+    onTouchCancel: () => { touchStartRef.current = null; setPaused(false); },
     onClickCapture: (event: ReactMouseEvent<HTMLAnchorElement>) => {
       if (!draggedRef.current) return;
       event.preventDefault();

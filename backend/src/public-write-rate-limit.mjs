@@ -2,6 +2,7 @@ const WINDOW_MS = 60_000;
 const MAX_BUCKETS = 50_000;
 const GLOBAL_UNITS_PER_MINUTE = 600;
 const TABLE_UNITS_PER_MINUTE = new Map([
+  ["ai-counselor", 6],
   ["save-lead", 20],
   ["intent_events", 60],
   ["user_events", 300],

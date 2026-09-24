@@ -109,10 +109,10 @@ All routes use **lazy loading** via \`React.lazy()\` for optimal bundle splittin
 2. \`AILeadForm\` modal captures name, course, state, city
 3. Lead saved to \`leads\` table via the native \`save-lead\` Node handler
 4. \`AIChatFullScreen\` opens with context-aware greeting
-5. User query sent to the \`ai-counselor\` Node handler (pending native port)
-6. The configured provider supplies the AI response
-7. Response streamed back via **Server-Sent Events (SSE)**
-8. Frontend parses SSE chunks and renders markdown in real-time
+5. User query sent to the \`ai-counselor\` Node handler
+6. Gemini 3.1 Flash-Lite supplies the AI response from a server-side key
+7. Response returned via **Server-Sent Events (SSE)**
+8. Frontend parses the SSE reply and renders markdown
 
 **System Prompt:** The AI acts as "DekhoCampus Educational AI" with expertise in Indian education, progressive lead collection, and soft CTAs for counseling.
 

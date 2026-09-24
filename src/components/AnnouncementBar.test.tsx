@@ -100,4 +100,23 @@ describe("AnnouncementBar", () => {
     fireEvent.click(screen.getByLabelText("Open First announcement"));
     expect(screen.getByTestId("location")).toHaveTextContent("/first");
   });
+
+  it("supports native mobile touch swipes in both directions", async () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={["/"]}>
+        <AnnouncementBar />
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    const firstLink = container.querySelector('a[aria-label="Open First announcement"]');
+    fireEvent.touchStart(firstLink!, { touches: [{ clientX: 220, clientY: 20 }] });
+    fireEvent.touchEnd(firstLink!, { changedTouches: [{ clientX: 100, clientY: 22 }] });
+    fireEvent.click(firstLink!);
+    await waitFor(() => expect(screen.getByLabelText("Open Second announcement")).toBeInTheDocument());
+    expect(screen.getByTestId("location")).toHaveTextContent("/");
+    const secondLink = screen.getByLabelText("Open Second announcement");
+    fireEvent.touchStart(secondLink, { touches: [{ clientX: 100, clientY: 20 }] });
+    fireEvent.touchEnd(secondLink, { changedTouches: [{ clientX: 220, clientY: 22 }] });
+    await waitFor(() => expect(screen.getByLabelText("Open First announcement")).toBeInTheDocument());
+  });
 });

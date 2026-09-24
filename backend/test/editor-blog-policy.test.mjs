@@ -261,16 +261,16 @@ test("normalizes legacy Gemini models and classifies quota errors", () => {
 });
 
 test("selects the configured OpenAI blog models and parses structured output", () => {
-  assert.equal(DEFAULT_BLOG_ANALYSIS_MODEL, "gpt-6-luna");
-  assert.equal(DEFAULT_BLOG_WRITING_MODEL, "gpt-6-sol");
-  assert.equal(normalizeBlogTextModel(""), "gpt-6-sol");
+  assert.equal(DEFAULT_BLOG_ANALYSIS_MODEL, "gpt-5.6-luna");
+  assert.equal(DEFAULT_BLOG_WRITING_MODEL, "gpt-5.6-luna");
+  assert.equal(normalizeBlogTextModel(""), "gpt-5.6-luna");
   assert.equal(normalizeBlogTextModel("gpt-5.5"), "gpt-5.5");
   assert.equal(normalizeBlogTextModel("gpt-5.4"), "gpt-5.4-mini");
   assert.equal(normalizeBlogTextModel("gpt-5.4-mini"), "gpt-5.4-mini");
   assert.equal(normalizeBlogTextModel("gpt-6-sol"), "gpt-6-sol");
   assert.equal(normalizeBlogTextModel("gpt-6-luna"), "gpt-6-luna");
-  assert.equal(normalizeBlogTextModel("gpt-5.6-sol"), "gpt-6-sol");
-  assert.equal(normalizeBlogTextModel("gpt-5.6-luna"), "gpt-6-sol");
+  assert.equal(normalizeBlogTextModel("gpt-5.6-sol"), "gpt-5.6-luna");
+  assert.equal(normalizeBlogTextModel("gpt-5.6-luna"), "gpt-5.6-luna");
   assert.equal(normalizeBlogTextModel("gpt-5-nano"), "gpt-5-nano");
   assert.equal(blogTextProvider("gpt-5-nano"), "openai");
   assert.equal(blogTextProvider("gemini-3.6-flash"), "gemini");
