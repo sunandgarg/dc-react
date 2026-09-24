@@ -207,7 +207,8 @@ test("editorial quality gate accepts useful structured copy and rejects thin sou
     evidenceSignals: [{ name: "Delhi University admissions", signal: "The official rule names Delhi University as the responsible institution." }],
   });
   assert.equal(missingSpecificity.passed, false);
-  assert.ok(missingSpecificity.issues.some((issue) => issue.includes("supported named authority")));
+  assert.ok(missingSpecificity.issues.some((issue) => issue.includes("internal link")));
+  assert.ok(!missingSpecificity.issues.some((issue) => issue.includes("supported named authority")));
 
   const bad = assessGeneratedArticle({
     title: "CAT update",
