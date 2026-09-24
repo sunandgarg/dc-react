@@ -18,15 +18,21 @@ const browser = await chromium.launch({ headless: true });
 const checks = [];
 async function navigateForApp(page, url) {
   let lastError;
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  for (let attempt = 1; attempt <= 6; attempt += 1) {
     try {
       // A SPA can render its route while a third-party or analytics resource
       // keeps the load event open. The committed response plus the entity
       // marker is the meaningful production check here.
-      return await page.goto(url, { waitUntil: "commit", timeout: 60_000 });
+      const response = await page.goto(url, { waitUntil: "commit", timeout: 60_000 });
+      if (response && [404, 502, 503, 504].includes(response.status()) && attempt < 6) {
+        console.warn(`${new URL(url).pathname} returned HTTP ${response.status()} on attempt ${attempt}; retrying the same live route`);
+        await page.waitForTimeout(Math.min(8_000, 1_000 * 2 ** (attempt - 1)));
+        continue;
+      }
+      return response;
     } catch (error) {
       lastError = error;
-      if (attempt < 2) await page.waitForTimeout(2_000);
+      if (attempt < 6) await page.waitForTimeout(2_000);
     }
   }
   throw lastError;
