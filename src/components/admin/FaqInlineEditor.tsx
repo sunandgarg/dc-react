@@ -14,6 +14,7 @@ interface Props {
   itemName?: string;
   /** Prevents child rows from being created before the parent exists. */
   persisted?: boolean;
+  allowDelete?: boolean;
 }
 
 interface FaqRow {
@@ -30,7 +31,7 @@ const PAGE_TO_TYPE: Partial<Record<Props["page"], FaqEntityType>> = {
   colleges: "college", courses: "course", exams: "exam",
 };
 
-export function FaqInlineEditor({ page, itemSlug, itemName, persisted = true }: Props) {
+export function FaqInlineEditor({ page, itemSlug, itemName, persisted = true, allowDelete = true }: Props) {
   const [rows, setRows] = useState<any[]>([]);
   const [draft, setDraft] = useState<FaqRow | null>(null);
   const [loading, setLoading] = useState(false);
@@ -80,7 +81,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName, persisted = true }: 
       : await backendClient.from("faqs").insert(payload);
     if (error) {
       const msg = error.message.includes("row-level security")
-        ? "Permission denied. You must be signed in as an admin to edit FAQs."
+        ? "Permission denied. This account needs FAQ editing access."
         : error.message;
       toast.error(msg); return;
     }
@@ -201,7 +202,7 @@ export function FaqInlineEditor({ page, itemSlug, itemName, persisted = true }: 
                 <Button type="button" size="icon" variant="ghost" className="h-7 w-7" disabled={i === 0} onClick={() => move(i, -1)}><ArrowUp className="w-3 h-3" /></Button>
                 <Button type="button" size="icon" variant="ghost" className="h-7 w-7" disabled={i === rows.length - 1} onClick={() => move(i, 1)}><ArrowDown className="w-3 h-3" /></Button>
                 <Button type="button" size="icon" variant="ghost" className="h-7 w-7" onClick={() => setDraft({ id: r.id, question: r.question, answer: r.answer, display_order: r.display_order, is_active: r.is_active })}><Pencil className="w-3 h-3" /></Button>
-                <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => remove(r.id)}><Trash2 className="w-3 h-3" /></Button>
+                {allowDelete && <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => remove(r.id)}><Trash2 className="w-3 h-3" /></Button>}
               </div>
             </div>
           ))}

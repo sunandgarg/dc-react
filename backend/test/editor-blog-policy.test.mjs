@@ -45,12 +45,15 @@ test("content role covers editorial resources without destructive access", () =>
   assert.equal(canContentEditorAccess("leads", "view"), false);
 });
 
-test("Content Head can publish only the four requested modules", () => {
-  assert.deepEqual([...CONTENT_HEAD_RESOURCES].sort(), ["articles", "colleges", "courses", "exams"]);
+test("Content Head can edit articles and their FAQs without deleting", () => {
+  assert.deepEqual([...CONTENT_HEAD_RESOURCES].sort(), ["articles", "colleges", "courses", "exams", "faqs"]);
   assert.equal(canContentHeadAccess("articles", "create"), true);
   assert.equal(canContentHeadAccess("colleges", "edit"), true);
   assert.equal(canContentHeadAccess("courses", "view"), true);
   assert.equal(canContentHeadAccess("exams", "create"), true);
+  assert.equal(canContentHeadAccess("faqs", "create"), true);
+  assert.equal(canContentHeadAccess("faqs", "edit"), true);
+  assert.equal(canContentHeadAccess("faqs", "delete"), false);
   assert.equal(canContentHeadAccess("articles", "delete"), false);
   assert.equal(canContentHeadAccess("course_fees", "edit"), false);
   assert.equal(canContentHeadAccess("leads", "view"), false);
@@ -83,6 +86,16 @@ test("Content Head sessions and article edits preserve browser independence", as
   assert.match(clientSource, /body: JSON\.stringify\(\{ refresh_token: session\.refresh_token \}\)/);
   assert.match(editorSource, /can_delete: false, can_publish: true/);
   assert.doesNotMatch(editorSource, /7428966263/);
+});
+
+test("Content Head can reopen private article drafts while public reads remain published-only", async () => {
+  const apiSource = await readFile(new URL("../src/index.mjs", import.meta.url), "utf8");
+  const editorSource = await readFile(new URL("../../src/pages/AdminArticles.tsx", import.meta.url), "utf8");
+  assert.match(apiSource, /identity && table === "articles"[\s\S]*?role` = 'content_head'[\s\S]*?return \{ request, actorUserId: identity\.id \}/);
+  assert.match(apiSource, /table === "articles" \? enforcePublicArticlePolicy\(request\) : request/);
+  assert.match(editorSource, /is_active: false, status: "Draft"/);
+  assert.match(editorSource, /Save draft to add FAQs/);
+  assert.match(editorSource, /setSearch\(normalizedSlug\)/);
 });
 
 test("non-publishing editors are forced into draft state by the server", () => {

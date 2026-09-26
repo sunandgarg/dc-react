@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "./db.mjs";
 
 export const CONTENT_HEAD_PHONE = "8810323087";
-export const CONTENT_HEAD_RESOURCES = new Set(["articles", "colleges", "courses", "exams"]);
-export const CONTENT_WRITER_RESOURCES = CONTENT_HEAD_RESOURCES;
+export const CONTENT_HEAD_RESOURCES = new Set(["articles", "colleges", "courses", "exams", "faqs"]);
+export const CONTENT_WRITER_RESOURCES = new Set(["articles", "colleges", "courses", "exams"]);
 export const CONTENT_WRITER_LINK_RESOURCE = "url_mappings";
 
 export const CONTENT_EDITOR_RESOURCES = new Set([

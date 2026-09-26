@@ -45,6 +45,7 @@ export const CAPABILITIES: Matrix = {
     colleges: REVIEW_AND_PUBLISH,
     courses: REVIEW_AND_PUBLISH,
     exams: REVIEW_AND_PUBLISH,
+    faqs: NO_DELETE,
     media: NO_DELETE,
   },
   content: {

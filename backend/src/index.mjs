@@ -304,6 +304,13 @@ async function authorizeRest(table, request) {
   if (["GET", "HEAD"].includes(request.method) && publicReadTables.has(table)) {
     const identity = bearerToken(request) ? await resolveIdentity(request) : null;
     if (identity && await isAdmin(identity.id)) return { request, actorUserId: identity.id };
+    if (identity && table === "articles") {
+      const contentHeadRoles = await prisma.$queryRawUnsafe(
+        "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content_head' LIMIT 1",
+        identity.id,
+      );
+      if (contentHeadRoles.length) return { request, actorUserId: identity.id };
+    }
     const publicRequest = table === "articles" ? enforcePublicArticlePolicy(request) : request;
     const safeSelection = publicReadSelections.get(table);
     if (!safeSelection) return { request: publicRequest, actorUserId: null, publicAccess: true };

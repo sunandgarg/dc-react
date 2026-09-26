@@ -66,7 +66,7 @@ function useArticleCategories(enabled = true) {
 const emptyArticle: Partial<DbArticle> = {
   slug: "", title: "", description: "", content: "", vertical: "", category: "", author: "",
   featured_image: "", source_logo: "", views: 0, tags: [], meta_title: "", meta_description: "", meta_keywords: "",
-  is_active: true, status: "Draft",
+  is_active: false, status: "Draft",
 };
 
 const normalizeAdminArticleSearch = (value: unknown) =>
@@ -191,7 +191,10 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
       toast.error("Featured slot must be empty or between #1 and #4.");
       return;
     }
-    const { featured_rank: _omit, ...payload } = { ...editing, slug: normalizedSlug } as any;
+    const { featured_rank: _omit, ...payload } = {
+      ...editing, slug: normalizedSlug,
+      is_active: editing.status === "Published" ? true : false,
+    } as any;
     if (isSarkari) {
       payload.site_scope = "sarkari";
       payload.vertical = payload.vertical || "Government Jobs";
@@ -206,6 +209,10 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           if (error) toast.error(`Featured: ${error.message}`);
         }
         setEditing(null);
+        if (payload.status === "Draft" && !result.pendingReview) {
+          setSearch(normalizedSlug);
+          setPage(1);
+        }
       },
     });
   };
@@ -216,7 +223,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     const validationError = validateArticleSave({ ...editing, slug: normalizedSlug, status: "Draft" }, canPublish);
     if (validationError) { toast.error(validationError); return; }
 
-    const { featured_rank: _omit, ...payload } = { ...editing, slug: normalizedSlug, status: "Draft", site_scope: siteScope } as any;
+    const { featured_rank: _omit, ...payload } = { ...editing, slug: normalizedSlug, status: "Draft", is_active: false, site_scope: siteScope } as any;
     saveArticle.mutate(payload, {
       onSuccess: (result) => {
         if (result.pendingReview || !result.article?.id) {
@@ -233,6 +240,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     if (!prev) return prev;
     const next = { ...prev, [field]: value };
     if (field === "title" && !(prev as any).id) next.slug = syncAutoSlug(prev.slug, prev.title, value);
+    if (field === "status") next.is_active = value === "Published";
     return next;
   });
 
@@ -266,7 +274,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search articles..." className="pl-10 rounded-xl h-10" />
         </div>
-        {canCreate && <Button onClick={() => setEditing({ ...emptyArticle, site_scope: siteScope, vertical: isSarkari ? "Government Jobs" : "", category: isSarkari ? "Latest Jobs" : "", author: isSarkari ? "Sarkari DekhoCampus Desk" : "", status: canPublish ? "Published" : "Draft" })} className="rounded-xl gap-2">
+        {canCreate && <Button onClick={() => setEditing({ ...emptyArticle, site_scope: siteScope, vertical: isSarkari ? "Government Jobs" : "", category: isSarkari ? "Latest Jobs" : "", author: isSarkari ? "Sarkari DekhoCampus Desk" : "" })} className="rounded-xl gap-2">
           <Plus className="w-4 h-4" /> Add {isSarkari ? "Sarkari Article" : "Article"}
         </Button>}
         {isAdmin && <BulkEditToggle
@@ -548,7 +556,12 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
               {/* ── FAQs ── */}
               <AdminFormSection title="FAQs (shown on article page)" icon={<HelpCircle className="w-4 h-4 text-primary" />} defaultOpen={false}>
-                <FaqInlineEditor page={isSarkari ? "sarkari_articles" : "articles"} itemSlug={editing.slug || ""} itemName={editing.title} persisted={Boolean(editing.id)} />
+                {!editing.id && (
+                  <Button type="button" size="sm" variant="outline" className="mb-3 rounded-lg" disabled={!editing.title || !editing.slug || saveArticle.isPending} onClick={saveDraftToEnableTagging}>
+                    {saveArticle.isPending ? "Saving..." : "Save draft to add FAQs"}
+                  </Button>
+                )}
+                <FaqInlineEditor page={isSarkari ? "sarkari_articles" : "articles"} itemSlug={editing.slug || ""} itemName={editing.title} persisted={Boolean(editing.id)} allowDelete={isAdmin} />
               </AdminFormSection>
 
               {/* ── SEO ── */}
@@ -605,7 +618,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               <div className="ml-auto flex items-center gap-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-lg">Cancel</Button>
                 <Button onClick={handleSave} disabled={saveArticle.isPending} className="rounded-lg">
-                  {saveArticle.isPending ? "Saving..." : canPublish ? "Save Article" : "Submit for approval"}
+                  {saveArticle.isPending ? "Saving..." : editing.status === "Draft" && canPublish ? "Save Draft" : canPublish ? "Save Article" : "Submit for approval"}
                 </Button>
               </div>
             </div>
