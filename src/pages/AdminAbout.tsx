@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Plus, Trash2, Save } from "lucide-react";
+import { ExternalLink, Plus, Trash2, Save } from "lucide-react";
 import { UploadOrUrlField } from "@/components/UploadOrUrlField";
 
 import { CSVTools } from "@/components/CSVTools";
@@ -54,16 +54,8 @@ function PageEditor() {
         preset="heroBanner"
         maxSizeMb={5}
       />
-      {F("mission", "Mission", "textarea")}
-      {F("vision", "Vision", "textarea")}
+      <p className="text-sm text-muted-foreground">The mission, vision and logo panel are part of the About page design. The fields shown here are the content this editor can update.</p>
       {F("story", "Our Story", "textarea")}
-      <UploadOrUrlField
-        label="Story Image"
-        value={page.story_image || ""}
-        onChange={(story_image) => setPage({ ...page, story_image })}
-        folder="about"
-        maxSizeMb={5}
-      />
       {F("cta_title", "CTA Title")}
       {F("cta_subtitle", "CTA Subtitle", "textarea")}
       {F("meta_title", "SEO Meta Title")}
@@ -154,6 +146,14 @@ export default function AdminAbout() {
     <AdminLayout title="About Us">
       <div className="mb-4">
         <CSVTools table="about_page" filename="about_page.csv" columns="*" upsertKey="id" />
+      </div>
+
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-4">
+        <div>
+          <p className="text-sm text-muted-foreground">Edit the content here, save it, then preview the About page in a new tab.</p>
+          {typeof window !== "undefined" && /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname) && <p className="mt-1 text-sm font-medium text-amber-700">Local preview uses production content. Saving in this editor changes the live content database.</p>}
+        </div>
+        <Button asChild variant="outline"><a href="/about-us" target="_blank" rel="noopener noreferrer">Preview About page <ExternalLink className="ml-2 h-4 w-4" /></a></Button>
       </div>
 
       <Tabs defaultValue="page">
