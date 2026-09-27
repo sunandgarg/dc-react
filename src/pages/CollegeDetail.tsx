@@ -50,7 +50,7 @@ import { formatFeePeriod, formatFeeRange, formatIndianFee, groupCollegeFees, gro
 import { STUDENT_RATING_FALLBACK } from "@/lib/ratings";
 
 const COLLEGE_SECTIONS: ScrollSection[] = [
-  { id: "overview", label: "College Info" },
+  { id: "overview", label: "Overview" },
   { id: "highlights", label: "Highlights" },
   { id: "courses", label: "Courses & Fees" },
   { id: "admissions", label: "Admissions" },
@@ -286,7 +286,7 @@ export default function CollegeDetail() {
           </DialogContent>
         </Dialog>
 
-        <ScrollSpy sections={availableSections} baseUrl={`/colleges/${slug}`} updateUrlOnScroll className="mb-6 -mx-4 px-4 md:mx-0 md:px-0 rounded-none md:rounded-xl" />
+        <ScrollSpy sections={availableSections} baseUrl={`/colleges/${slug}`} updateUrlOnScroll className="mb-6 -mx-3 px-3 md:mx-0 md:px-0 rounded-none md:rounded-xl" />
 
         <div className="mb-6">
           <WhatsNewSection entityName={college.short_name || college.name} entityType="college" entitySlug={college.slug} category={college.category} />

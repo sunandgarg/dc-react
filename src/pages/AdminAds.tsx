@@ -31,6 +31,7 @@ import { CSVTools } from "@/components/CSVTools";
 import { useDraftState } from "@/hooks/useDraftState";
 import { resetBootstrap } from "@/lib/bootstrap";
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
+import { HeaderPromotionCard } from "@/components/MegaMenu";
 import {
   DEFAULT_ANNOUNCEMENT_ROTATION_SECONDS,
   MAX_ANNOUNCEMENT_ROTATION_SECONDS,
@@ -61,6 +62,10 @@ const PAGE_OPTIONS = [
 ] as const;
 
 const ITEM_PAGE_OPTIONS = PAGE_OPTIONS.filter((page) => ["colleges", "courses", "exams", "articles"].includes(page.value));
+const HEADER_MENU_OPTIONS = [
+  ...PAGE_OPTIONS.filter((page) => ["colleges", "courses", "exams", "scholarships"].includes(page.value)),
+  { value: "more", label: "More Menu" },
+];
 
 const LOOK_OPTIONS = [
   { value: "announcement", emoji: "AD", label: "Announcement Bar", help: "A compact rotating offer above the main navigation", size: "Text-led responsive strip" },
@@ -71,6 +76,7 @@ const LOOK_OPTIONS = [
 ] as const;
 
 const PLACEMENT_OPTIONS = [
+  { value: "header-menu", label: "Header Menu - Right Card" },
   { value: "announcement-bar", label: "Above Main Navigation" },
   { value: "leaderboard", label: "Top of Page (strip)" },
   { value: "mid-page", label: "Middle of Page" },
@@ -175,6 +181,10 @@ export default function AdminAds() {
   // ── Actions ──
 
   const openCreate = () => { setForm(emptyForm); setEditingId(null); setErrors({}); setShowForm(true); };
+  const openHeaderPromotion = () => {
+    setForm({ ...emptyForm, variant: "vertical", position: "header-menu" });
+    setEditingId(null); setErrors({}); setShowForm(true);
+  };
   const openAnnouncement = () => {
     setForm({
       ...emptyForm,
@@ -326,6 +336,9 @@ export default function AdminAds() {
   });
 
   const whereText = () => {
+    if (form.position === "header-menu") return form.target_type === "page"
+      ? `This promotion appears inside the ${form.target_page || "selected"} header menu on every page.`
+      : "This promotion appears in the header menu's right-hand card, and below the menu links on mobile. Page targeting selects which menu uses it.";
     if (form.target_type === "universal") return "This ad will show in the selected position on every public page.";
     const cityText = targetCities.length ? `${targetCities.length} selected ${targetCities.length === 1 ? "city" : "cities"}` : "";
     if (form.target_type === "page" && form.target_page && (form.target_state || cityText))
@@ -374,6 +387,10 @@ export default function AdminAds() {
             <Plus className="h-4 w-4" /> New announcement
           </Button>
         </div>
+      </section>
+      <section className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+        <div><p className="text-sm font-bold text-slate-900">Header menu promotions</p><p className="mt-1 text-sm text-slate-600">Add an image, message and button to the right of your dropdowns. Choose a menu, or use one promotion across all menus.</p></div>
+        <Button variant="outline" onClick={openHeaderPromotion} className="gap-2 bg-white"><Plus className="h-4 w-4" />New menu promotion</Button>
       </section>
       <div className="mb-4">
         <CSVTools table="ads" filename="ads.csv" columns="*" upsertKey="id" />
@@ -470,7 +487,7 @@ export default function AdminAds() {
             {/* STEP 2 */}
             <Section step={2} title="Who should see this ad?">
               <div className="grid sm:grid-cols-2 gap-3 mb-4">
-                {AUDIENCE_OPTIONS.map((opt) => (
+                {AUDIENCE_OPTIONS.filter((opt) => form.position !== "header-menu" || opt.value !== "item").map((opt) => (
                   <button
                     key={opt.value}
                     onClick={() => setForm({ ...form, target_type: opt.value, target_page: "", target_item_slug: "", target_state: "", target_cities: [] })}
@@ -478,19 +495,19 @@ export default function AdminAds() {
                   >
                     <div className="flex items-center gap-2 font-medium text-sm">
                       <span className="text-lg">{opt.emoji}</span>
-                      {opt.label}
+                      {form.position === "header-menu" && opt.value === "page" ? "Show in a Specific Menu" : opt.label}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">{opt.help}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{form.position === "header-menu" && opt.value === "page" ? "Select Colleges, Courses, Exams, Scholarships or More." : opt.help}</p>
                   </button>
                 ))}
               </div>
 
               {(form.target_type === "page" || form.target_type === "item") && (
-                <Field label="Which page?" error={errors.target_page}>
+                <Field label={form.position === "header-menu" ? "Which header menu?" : "Which page?"} error={errors.target_page}>
                   <Select value={form.target_page} onValueChange={(v) => { setForm({ ...form, target_page: v, target_item_slug: "" }); setErrors({ ...errors, target_page: "" }); }}>
                     <SelectTrigger className={`rounded-xl ${errors.target_page ? "border-destructive" : ""}`}><SelectValue placeholder="Choose a page..." /></SelectTrigger>
                     <SelectContent>
-                      {(form.target_type === "item" ? ITEM_PAGE_OPTIONS : PAGE_OPTIONS).map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+                      {(form.position === "header-menu" ? HEADER_MENU_OPTIONS : form.target_type === "item" ? ITEM_PAGE_OPTIONS : PAGE_OPTIONS).map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </Field>
@@ -561,15 +578,15 @@ export default function AdminAds() {
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Where on the page?" hint="Which section of the page should this ad appear in">
-                    <Select value={form.position} onValueChange={(v) => setForm({ ...form, position: v })}>
+                    <Select value={form.position} onValueChange={(v) => setForm({ ...form, position: v, ...(v === "header-menu" ? { variant: "vertical", target_type: "universal", target_page: "", target_item_slug: "" } : {}) })}>
                       <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {PLACEMENT_OPTIONS.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </Field>
-                  <Field label="Color Theme" hint="Background color if no image is used">
-                    <Select value={form.bg_gradient} onValueChange={(v) => setForm({ ...form, bg_gradient: v })}>
+                  <Field label="Color Theme" hint={form.position === "header-menu" ? "Header promotions use the site's light orange theme. The image is shown above the text." : "Background color if no image is used"}>
+                    <Select disabled={form.position === "header-menu"} value={form.bg_gradient} onValueChange={(v) => setForm({ ...form, bg_gradient: v })}>
                       <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {COLOR_OPTIONS.map((c) => (
@@ -723,6 +740,10 @@ function Field({ label, error, hint, children }: { label: string; error?: string
 function AdPreview({ form }: { form: AdForm }) {
   const { title, subtitle, cta_text, bg_gradient, variant, image_url } = form;
   const t = title || "Your Ad Title";
+
+  if (form.position === "header-menu") return <div className="pointer-events-none mx-auto max-w-[280px]">
+    <HeaderPromotionCard title={t} subtitle={subtitle} image={image_url} cta={cta_text || "Explore"} href={form.link_url || "#"} sponsored />
+  </div>;
 
   const bgStyle = image_url
     ? { backgroundImage: `url(${image_url})`, backgroundSize: "cover", backgroundPosition: "center" }

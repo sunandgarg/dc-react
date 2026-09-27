@@ -374,7 +374,7 @@ export default function CourseDetail() {
           <CourseAIInsight course={course} />
         </div>
 
-        <ScrollSpy sections={COURSE_SECTIONS} baseUrl={buildCourseHref(course as any)} updateUrlOnScroll className="mt-6 mb-6 -mx-4 px-4 md:mx-0 md:px-0 rounded-none md:rounded-xl" />
+        <ScrollSpy sections={COURSE_SECTIONS} baseUrl={buildCourseHref(course as any)} updateUrlOnScroll className="mt-6 mb-6 -mx-3 px-3 md:mx-0 md:px-0 rounded-none md:rounded-xl" />
 
         <div className="mb-6">
           <WhatsNewSection

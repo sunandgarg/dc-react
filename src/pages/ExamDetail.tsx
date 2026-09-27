@@ -263,7 +263,7 @@ export default function ExamDetail() {
           <ExamAIInsight exam={exam} />
         </div>
 
-        <ScrollSpy sections={EXAM_SECTIONS} baseUrl={buildExamHref(exam as any)} updateUrlOnScroll className="mt-6 mb-6 -mx-4 px-4 md:mx-0 md:px-0 rounded-none md:rounded-xl" />
+        <ScrollSpy sections={EXAM_SECTIONS} baseUrl={buildExamHref(exam as any)} updateUrlOnScroll className="mt-6 mb-6 -mx-3 px-3 md:mx-0 md:px-0 rounded-none md:rounded-xl" />
 
         <div className="mb-6">
           <WhatsNewSection entityName={exam.name} entityType="exam" entitySlug={exam.slug} category={exam.category} />

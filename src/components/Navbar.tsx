@@ -1,54 +1,35 @@
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, ChevronDown, User, CircleDot, Shield, LogOut, Home, Gift, FileText, Settings, BookOpen } from "lucide-react";
+import { Menu, X, ChevronDown, User, Shield, LogOut, Home, Gift, FileText, Settings } from "lucide-react";
 import logo from "@/assets/dekhocampus-logo-small.webp";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { MegaMenu } from "@/components/MegaMenu";
+import { MegaMenu, MobileMegaMenu } from "@/components/MegaMenu";
 import { GlobalSearchBar } from "@/components/GlobalSearchBar";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 
-const mobileNav = [
-  { label: "Colleges", href: "/colleges" },
-  { label: "Courses", href: "/courses" },
-  { label: "Exams", href: "/exams" },
-  { label: "Scholarships", href: "/scholarships" },
-  { label: "Vacancies", href: "/vacancies" },
-  { label: "News", href: "/news" },
-  { label: "Study Material", href: "/study-material", children: [
-    { label: "College Study Material", href: "/college-study-material" },
-    { label: "Class 12", href: "/study-material/class-12" },
-    { label: "Class 11", href: "/study-material/class-11" },
-    { label: "Class 10", href: "/study-material/class-10" },
-    { label: "Class 9",  href: "/study-material/class-9"  },
-    { label: "Class 8",  href: "/study-material/class-8"  },
-  ] },
-  { label: "CAT Universe", href: "/cat-universe", children: [
-    { label: "Free CAT 2026 Kit", href: "/cat-universe/cat-2026-preparation-kit" },
-    { label: "AI Interview Practice", href: "/cat-universe/ai-interview-practice" },
-    { label: "AI CAT Coach", href: "/cat-universe/ai-coach" },
-    { label: "CAT Score Calculator", href: "/cat-universe/cat-score-calculator" },
-    { label: "IIM Call Predictor", href: "/cat-universe/iim-call-predictor" },
-    { label: "XAT Score Calculator", href: "/cat-universe/xat-score-calculator" },
-    { label: "Previous Year CAT Papers", href: "/cat-universe/cat-previous-year-papers" },
-    { label: "CAT College Cut-offs", href: "/cat-universe/cat-based-college-cutoffs" },
-    { label: "Explore CAT Universe", href: "/cat-universe" },
-  ] },
-];
-
-const preloadNewsPage = () => {
-  void import("@/pages/News");
-};
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { user, isAdmin, canAccess, signOut, isLoading } = useAuth();
+  const { user, isAdmin, canAccess, signOut } = useAuth();
   const { data: profile } = useUserProfile();
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsUserMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { setIsMobileMenuOpen(false); setIsUserMenuOpen(false); }
+    };
+    document.addEventListener("keydown", escape);
+    return () => document.removeEventListener("keydown", escape);
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -61,11 +42,8 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const displayName = profile?.name?.trim()
-    || user?.user_metadata?.display_name
-    || user?.user_metadata?.full_name
-    || user?.email?.split("@")[0]
-    || "User";
+  const displayName = [profile?.name, user?.user_metadata?.display_name, user?.user_metadata?.full_name, user?.email?.split("@")[0]]
+    .find((value): value is string => typeof value === "string" && Boolean(value.trim()))?.trim() || "User";
   const initial = displayName.charAt(0).toUpperCase();
   const hasContentAdminAccess = isAdmin || ["colleges", "courses", "exams", "articles"].some((module) => canAccess(module as any));
   const adminHref = isAdmin ? "/admin" : "/admin/colleges";
@@ -80,17 +58,17 @@ export function Navbar() {
 
   return (
     <>
-    <header className="sticky top-0 z-[70] isolate w-full">
+    <header id="site-header" className={`sticky top-0 isolate w-full has-[[data-menu][aria-expanded=true]]:z-[130] ${isMobileMenuOpen ? "z-[130]" : "z-[70]"}`}>
       <AnnouncementBar />
       <nav className="border-b border-border bg-white/[0.98]">
-        <div className="container flex items-center justify-between h-14 md:h-16 lg:h-18">
-          <Link to="/" className="flex items-center" aria-label="DekhoCampus Home">
-            <img src={logo} alt="DekhoCampus" className="h-9 md:h-10" />
+        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-3 px-4 md:px-8 xl:h-[72px]">
+          <Link to="/" className="flex shrink-0 items-center" aria-label="DekhoCampus Home">
+            <img src={logo} alt="DekhoCampus" className="h-auto w-[145px] 2xl:w-[170px]" />
           </Link>
 
           <MegaMenu />
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             {hasContentAdminAccess && (
               <Button asChild variant="outline" size="sm" className="hidden md:flex gap-2 rounded-xl border-amber-200 text-amber-600 hover:bg-amber-50">
                 <Link to={adminHref}>
@@ -104,12 +82,14 @@ export function Navbar() {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-secondary transition-colors"
+                  aria-label="Open account menu"
+                  aria-expanded={isUserMenuOpen}
+                  className="hidden md:flex items-center gap-2 px-2 py-2 rounded-xl hover:bg-secondary transition-colors"
                 >
                   <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
                     {initial}
                   </div>
-                  <span className="text-sm font-medium text-foreground max-w-24 truncate">{displayName}</span>
+                  <span className="hidden 2xl:block text-sm font-medium text-foreground max-w-24 truncate">{displayName}</span>
                   <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 </button>
 
@@ -165,7 +145,7 @@ export function Navbar() {
                     Sign In
                   </Link>
                 </Button>
-                <Button asChild className="hidden md:flex gradient-primary btn-glow rounded-xl text-primary-foreground">
+                <Button asChild className="hidden md:flex rounded-md bg-primary text-primary-foreground">
                   <Link to="/auth">
                     Get Started
                   </Link>
@@ -174,7 +154,7 @@ export function Navbar() {
             )}
 
             {!user && (
-              <Button asChild variant="ghost" size="icon" className="lg:hidden focus-ring">
+              <Button asChild variant="ghost" size="icon" className="md:hidden focus-ring">
                 <Link to="/auth" aria-label="Sign in">
                   <User className="w-5 h-5" />
                 </Link>
@@ -184,9 +164,10 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden focus-ring"
+              className="xl:hidden focus-ring"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation-panel"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -195,11 +176,9 @@ export function Navbar() {
         </div>
 
         {isMobileMenuOpen && (
-            <div className="lg:hidden border-t border-border">
-              <div className="container py-4 space-y-1 bg-card max-h-[80vh] overflow-y-auto">
-                {mobileNav.map((item: any) => (
-                  <MobileNavItem key={item.label} item={item} onNavigate={() => setIsMobileMenuOpen(false)} />
-                ))}
+            <div id="mobile-navigation-panel" className="xl:hidden border-t border-border">
+              <div className="container py-4 space-y-1 bg-card max-h-[calc(100dvh-120px)] overflow-y-auto overscroll-contain">
+                <MobileMegaMenu onNavigate={() => setIsMobileMenuOpen(false)} />
 
                 {user && (
                   <Link
@@ -263,46 +242,5 @@ export function Navbar() {
       </div>
     )}
     </>
-  );
-}
-
-function MobileNavItem({ item, onNavigate }: { item: any; onNavigate: () => void }) {
-  const [open, setOpen] = useState(false);
-  const hasChildren = Array.isArray(item.children) && item.children.length > 0;
-  if (!hasChildren) {
-    return (
-      <Link
-        to={item.href}
-        onClick={onNavigate}
-        onPointerEnter={item.href === "/news" ? preloadNewsPage : undefined}
-        onFocus={item.href === "/news" ? preloadNewsPage : undefined}
-        onTouchStart={item.href === "/news" ? preloadNewsPage : undefined}
-        className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary rounded-xl transition-colors">
-        <span>{item.label}</span>
-      </Link>
-    );
-  }
-  return (
-    <div className="rounded-xl overflow-hidden">
-      <button onClick={() => setOpen(o => !o)}
-        className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary rounded-xl transition-colors">
-        <span>{item.label}</span>
-        <ChevronDown className={`w-4 h-4 transition ${open ? "rotate-180" : ""}`} />
-      </button>
-      {open && (
-        <div className="pl-4 pb-2 space-y-1">
-          <Link to={item.href} onClick={onNavigate}
-            className="block px-4 py-2 text-xs font-semibold text-primary hover:bg-primary/10 rounded-lg">
-            View all →
-          </Link>
-          {item.children.map((c: any) => (
-            <Link key={c.label} to={c.href} onClick={onNavigate}
-              className="block px-4 py-2 text-sm text-foreground/80 hover:bg-secondary rounded-lg">
-              {c.label}
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
   );
 }

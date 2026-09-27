@@ -18,10 +18,29 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
   const { tab } = useParams<{ tab?: string }>();
   const initialTab = tab || sections[0]?.id || "";
   const [activeId, setActiveId] = useState(initialTab);
+  const [headerHeight, setHeaderHeight] = useState(56);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const navRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const isUserClick = useRef(false);
   const lastUserScrollAt = useRef(0);
+
+  useEffect(() => {
+    const header = document.getElementById("site-header");
+    if (!header) return;
+    const measure = () => setHeaderHeight(Math.ceil(header.getBoundingClientRect().height));
+    measure();
+    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    observer?.observe(header);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  const scrollOffset = useCallback(() =>
+    (document.getElementById("site-header")?.getBoundingClientRect().height || headerHeight)
+    + (navRef.current?.getBoundingClientRect().height || 52) + 12, [headerHeight]);
 
   const updateUrl = useCallback((id: string) => {
     if (!baseUrl || !id) return;
@@ -54,7 +73,7 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
       if (cancelled) return;
       const el = document.getElementById(initial);
       if (el) {
-        const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - 150);
+        const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - scrollOffset());
         window.scrollTo({ top: y, behavior: "smooth" });
       }
     }, 300);
@@ -89,7 +108,7 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
           .map(({ id }) => document.getElementById(id))
           .filter((el): el is HTMLElement => !!el)
           .map((el) => ({ id: el.id, top: el.getBoundingClientRect().top }))
-          .filter((item) => item.top <= 180)
+          .filter((item) => item.top <= scrollOffset() + 16)
           .sort((a, b) => b.top - a.top);
         const newId = visible[0]?.id || entries.find((e) => e.isIntersecting)?.target.id;
         if (newId) {
@@ -100,7 +119,7 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
           if (updateUrlOnScroll) updateUrl(newId);
         }
       },
-      { rootMargin: "-80px 0px -60% 0px", threshold: 0.05 }
+      { rootMargin: `-${Math.ceil(scrollOffset())}px 0px -60% 0px`, threshold: 0.05 }
     );
 
     sections.forEach(({ id }) => {
@@ -109,7 +128,7 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
     });
 
     return () => observerRef.current?.disconnect();
-  }, [sections, updateUrl, updateUrlOnScroll]);
+  }, [sections, updateUrl, updateUrlOnScroll, scrollOffset]);
 
   const scrollTo = useCallback((id: string) => {
     isUserClick.current = true;
@@ -120,13 +139,13 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
     
     const el = document.getElementById(id);
     if (el) {
-      const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - 150);
+      const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - scrollOffset());
       window.scrollTo({ top: y, behavior: "smooth" });
     }
     setTimeout(() => {
       isUserClick.current = false;
     }, 1200);
-  }, [updateUrl]);
+  }, [updateUrl, scrollOffset]);
 
   // Auto-scroll active tab into view in nav bar
   useEffect(() => {
@@ -142,29 +161,33 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
   }, [activeId]);
 
   return (
-    <div
+    <nav
       ref={navRef}
+      aria-label="Page sections"
+      style={{ top: headerHeight }}
       className={cn(
-        "sticky top-14 md:top-16 z-30 bg-background/95 backdrop-blur-md border-b border-border",
-        "flex overflow-x-auto scrollbar-hide gap-0.5 px-1 py-2",
+        "sticky z-30 flex overflow-x-auto overscroll-x-contain whitespace-nowrap border-b border-[#d2ddf5] bg-[#e9f1ff] scrollbar-hide",
+        "gap-1 px-1",
         className
       )}
     >
       {sections.map(({ id, label }) => (
         <button
           key={id}
+          type="button"
           data-id={id}
           onClick={() => scrollTo(id)}
+          aria-current={activeId === id ? "location" : undefined}
           className={cn(
-            "whitespace-nowrap px-4 py-2.5 rounded-lg text-sm md:text-base font-semibold transition-all shrink-0",
+            "shrink-0 border-b-[3px] px-4 pb-2.5 pt-3 text-sm font-medium transition-colors md:text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary",
             activeId === id
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              ? "border-primary text-[#17233d]"
+              : "border-transparent text-[#647da8] hover:text-[#17233d]"
           )}
         >
           {label}
         </button>
       ))}
-    </div>
+    </nav>
   );
 }
