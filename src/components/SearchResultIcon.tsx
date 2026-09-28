@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BookOpen, BriefcaseBusiness, FileText, GraduationCap } from "lucide-react";
 import type { DirectorySearchResult } from "@/lib/directorySearch";
+import { ExamLogo } from "@/components/ExamLogo";
 
 const icons = {
   College: GraduationCap,
@@ -11,15 +12,20 @@ const icons = {
 
 type SearchResultIconProps = {
   type: DirectorySearchResult["entity_type"];
+  slug?: string;
   imageUrl?: string;
   alt?: string;
   className?: string;
 };
 
-export function SearchResultIcon({ type, imageUrl, alt, className = "h-10 w-10" }: SearchResultIconProps) {
+export function SearchResultIcon({ type, slug, imageUrl, alt, className = "h-10 w-10" }: SearchResultIconProps) {
   const Icon = icons[type];
   const normalizedImageUrl = imageUrl?.trim() || "";
   const [failedImageUrl, setFailedImageUrl] = useState("");
+
+  if (type === "Exam") {
+    return <ExamLogo exam={{ slug, logo: imageUrl, name: alt?.replace(/\s+logo$/i, "") || "Exam" }} className={className} eager />;
+  }
 
   return (
     <span className={`flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-primary/10 bg-primary/10 text-primary ${className}`}>

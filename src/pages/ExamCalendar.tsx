@@ -1,4 +1,4 @@
-import { Fragment as FragmentWithKey, useEffect, useMemo, useState } from "react";
+import { Fragment as FragmentWithKey, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { currentYear } from "@/lib/currentYear";
+import { ExamLogo } from "@/components/ExamLogo";
 
 type ExamRow = {
   slug: string;
@@ -39,39 +40,7 @@ function parseDate(d: string | null | undefined): Date | null {
 }
 
 function ExamCalendarLogo({ exam }: { exam: ExamRow }) {
-  const sources = useMemo(
-    () => [exam.logo, exam.image].filter((source, index, all): source is string => Boolean(source?.trim()) && all.indexOf(source) === index),
-    [exam.logo, exam.image],
-  );
-  const [sourceIndex, setSourceIndex] = useState(0);
-
-  useEffect(() => setSourceIndex(0), [exam.slug, exam.logo, exam.image]);
-
-  const initials = (exam.short_name || exam.name)
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 3)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
-  const source = sources[sourceIndex];
-
-  return (
-    <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white shadow-sm">
-      <span className="px-1 text-center text-[10px] font-black text-primary">{initials || <Calendar className="h-5 w-5" />}</span>
-      {source && (
-        <img
-          key={source}
-          src={source}
-          alt={`${exam.name} logo`}
-          className="entity-logo-safe absolute inset-0 h-full w-full rounded-xl"
-          loading="lazy"
-          decoding="async"
-          onError={() => setSourceIndex((current) => current + 1)}
-        />
-      )}
-    </div>
-  );
+  return <ExamLogo exam={exam} className="h-12 w-12 border border-border p-1" />;
 }
 
 export default function ExamCalendar() {

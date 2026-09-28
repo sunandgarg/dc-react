@@ -122,6 +122,7 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
                   className="flex min-h-16 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50">
                   <SearchResultIcon
                     type={result.entity_type}
+                    slug={result.slug}
                     imageUrl={result.logo_url || result.image_url}
                     alt={`${displayText(result.name, result.entity_type)} logo`}
                   />

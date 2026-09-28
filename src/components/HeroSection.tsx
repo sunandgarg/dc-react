@@ -318,6 +318,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
                         >
                           <SearchResultIcon
                             type={item.type}
+                            slug={item.slug}
                             imageUrl={item.logo || item.image}
                             alt={`${displayText(item.name, item.type)} logo`}
                           />

@@ -2,6 +2,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { apiBaseUrl } from "@/lib/backendMode";
 import { compactDisplayText } from "@/lib/displayText";
 import { buildIlikeOr, buildSearchVariants, rankDirectoryResult } from "@/lib/fuzzySearch";
+import { resolveExamLogo } from "@/lib/examBranding";
 
 export type DirectorySearchResult = {
   entity_type: "College" | "Course" | "Exam" | "Career";
@@ -21,6 +22,8 @@ const inFlight = new Map<string, Promise<DirectorySearchResult[]>>();
 export function resolveDirectoryMediaUrl(value: unknown) {
   const path = String(value || "").trim();
   if (!path || /^(?:https?:|data:|blob:)/i.test(path)) return path;
+  // Reviewed exam marks are frontend assets, not AWS storage object keys.
+  if (path.startsWith("/exam-logos/")) return path;
 
   const apiBase = apiBaseUrl();
   const normalizedPath = path.replace(/^\/+/, "");
@@ -33,13 +36,17 @@ export function resolveDirectoryMediaUrl(value: unknown) {
 function normalizeResult(row: Record<string, unknown>): DirectorySearchResult | null {
   const entityType = String(row.entity_type || "");
   if (!["College", "Course", "Exam", "Career"].includes(entityType) || !row.slug) return null;
+  const examLogo = entityType === "Exam"
+    ? resolveDirectoryMediaUrl(resolveExamLogo({ slug: String(row.slug), logo: String(row.logo_url || "") }))
+    : "";
   return {
     entity_type: entityType as DirectorySearchResult["entity_type"],
     name: compactDisplayText(row.name, `Untitled ${entityType.toLowerCase()}`, 90),
     slug: String(row.slug),
     subtitle: compactDisplayText(row.subtitle || "", "", 60),
-    image_url: resolveDirectoryMediaUrl(row.image_url),
-    logo_url: resolveDirectoryMediaUrl(row.logo_url),
+    // Do not reintroduce a generated ring or banner as a missing exam logo.
+    image_url: entityType === "Exam" ? examLogo : resolveDirectoryMediaUrl(row.image_url),
+    logo_url: entityType === "Exam" ? examLogo : resolveDirectoryMediaUrl(row.logo_url),
     score: Number(row.score || 0),
   };
 }
