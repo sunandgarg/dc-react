@@ -52,6 +52,15 @@ export function stripVisibleArticleSources(value?: string | null) {
     .replace(new RegExp(`<li[^>]*>(?:(?!<\\/li>)[\\s\\S])*(?:${competitor})(?:(?!<\\/li>)[\\s\\S])*<\\/li>\\s*`, "gi"), "")
     .replace(new RegExp(`(?:^|\\n)\\s*(?:[-*]\\s*)?(?:\\*\\*)?[^\\n]*(?:${competitor})[^\\n]*(?:\\*\\*)?\\s*(?=\\n|$)`, "gim"), "");
 
+  // Preserve deliberately authored lead links through legacy URL stripping.
+  // The public RichText renderer still sanitizes their HTML and href protocols.
+  const leadLinks: string[] = [];
+  output = output.replace(/<a\b(?=[^>]*\bdata-lead-capture=["']true["'])[^>]*>[\s\S]*?<\/a>/gi, (link) => {
+    const token = `\uE000DCLEADLINK${leadLinks.length}\uE001`;
+    leadLinks.push(link);
+    return token;
+  });
+
   // Keep verified first-party navigation, but never expose third-party links or
   // attribution language in public article copy.
   output = output
@@ -65,5 +74,5 @@ export function stripVisibleArticleSources(value?: string | null) {
     .replace(/\bsources? (?:say|says|suggest|suggests|indicate|indicates)\b[:,]?\s*/gi, "")
     .replace(/[\u2013\u2014]/g, "-");
 
-  return output.trim();
+  return output.replace(/\uE000DCLEADLINK(\d+)\uE001/g, (token, index) => leadLinks[Number(index)] || token).trim();
 }

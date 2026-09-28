@@ -19,10 +19,10 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
   const initialTab = tab || sections[0]?.id || "";
   const [activeId, setActiveId] = useState(initialTab);
   const [headerHeight, setHeaderHeight] = useState(56);
-  const observerRef = useRef<IntersectionObserver | null>(null);
   const navRef = useRef<HTMLElement>(null);
-  const isUserClick = useRef(false);
-  const lastUserScrollAt = useRef(0);
+  const activeIdRef = useRef(initialTab);
+  const lastRouteTabRef = useRef<string | undefined>(tab);
+  const sectionsKey = sections.map(({ id }) => id).join("|");
 
   useEffect(() => {
     const header = document.getElementById("site-header");
@@ -50,9 +50,16 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
     }
   }, [baseUrl]);
 
+  // `sections` is often rebuilt by the detail page while its data loads. Only
+  // honour a real route change here; resetting on every rebuilt array made the
+  // active tab jump back to Overview during normal scrolling.
   useEffect(() => {
-    setActiveId(tab || sections[0]?.id || "");
-  }, [tab, sections]);
+    if (tab === lastRouteTabRef.current) return;
+    lastRouteTabRef.current = tab;
+    const nextId = tab || sections[0]?.id || "";
+    activeIdRef.current = nextId;
+    setActiveId(nextId);
+  }, [tab, sectionsKey, sections]);
 
   // Scroll to the initial tab route ONCE on mount, with header-safe offset.
   // Cancel if the user starts scrolling before the timer fires, otherwise the
@@ -86,71 +93,73 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const markUserScroll = () => {
-      lastUserScrollAt.current = Date.now();
-    };
-    window.addEventListener("wheel", markUserScroll, { passive: true });
-    window.addEventListener("touchmove", markUserScroll, { passive: true });
-    window.addEventListener("keydown", markUserScroll);
-    return () => {
-      window.removeEventListener("wheel", markUserScroll);
-      window.removeEventListener("touchmove", markUserScroll);
-      window.removeEventListener("keydown", markUserScroll);
-    };
-  }, []);
+  const setActiveSection = useCallback((id: string, replaceUrl = updateUrlOnScroll) => {
+    if (!id || activeIdRef.current === id) return;
+    activeIdRef.current = id;
+    setActiveId(id);
+    if (replaceUrl) updateUrl(id);
+  }, [updateUrl, updateUrlOnScroll]);
+
+  // IntersectionObserver only reports when an intersection boundary changes.
+  // That leaves stale tabs after reverse scrolls, layout shifts and long
+  // sections. Measure every animation frame requested by a scroll instead, so
+  // the tab always reflects the section immediately below the sticky bars.
+  const syncActiveSection = useCallback(() => {
+    const marker = scrollOffset() + 16;
+    const positioned = sections
+      .map(({ id }) => {
+        const element = document.getElementById(id);
+        return element ? { id, top: element.getBoundingClientRect().top } : null;
+      })
+      .filter((item): item is { id: string; top: number } => item !== null);
+
+    if (!positioned.length) return;
+    const passed = positioned
+      .filter(({ top }) => top <= marker)
+      .sort((a, b) => b.top - a.top);
+    setActiveSection(passed[0]?.id || positioned[0].id);
+  }, [scrollOffset, sections, setActiveSection]);
 
   useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (isUserClick.current) return;
-        const visible = sections
-          .map(({ id }) => document.getElementById(id))
-          .filter((el): el is HTMLElement => !!el)
-          .map((el) => ({ id: el.id, top: el.getBoundingClientRect().top }))
-          .filter((item) => item.top <= scrollOffset() + 16)
-          .sort((a, b) => b.top - a.top);
-        const newId = visible[0]?.id || entries.find((e) => e.isIntersecting)?.target.id;
-        if (newId) {
-          setActiveId(newId);
-          // Keep scrollspy visual-only during passive scrolling. Updating the
-          // browser path automatically made detail pages look like they were
-          // refreshing themselves.
-          if (updateUrlOnScroll) updateUrl(newId);
-        }
-      },
-      { rootMargin: `-${Math.ceil(scrollOffset())}px 0px -60% 0px`, threshold: 0.05 }
-    );
+    let frame: number | null = null;
+    const requestSync = () => {
+      if (frame !== null) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = null;
+        syncActiveSection();
+      });
+    };
 
+    requestSync();
+    window.addEventListener("scroll", requestSync, { passive: true });
+    window.addEventListener("resize", requestSync);
+    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(requestSync) : null;
     sections.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) observerRef.current?.observe(el);
+      const element = document.getElementById(id);
+      if (element) observer?.observe(element);
     });
-
-    return () => observerRef.current?.disconnect();
-  }, [sections, updateUrl, updateUrlOnScroll, scrollOffset]);
+    return () => {
+      window.removeEventListener("scroll", requestSync);
+      window.removeEventListener("resize", requestSync);
+      observer?.disconnect();
+      if (frame !== null) window.cancelAnimationFrame(frame);
+    };
+  }, [sectionsKey, sections, syncActiveSection]);
 
   const scrollTo = useCallback((id: string) => {
-    isUserClick.current = true;
-    setActiveId(id);
-    
-    // Only explicit user clicks update the URL.
+    setActiveSection(id, false);
     updateUrl(id);
-    
     const el = document.getElementById(id);
     if (el) {
       const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - scrollOffset());
       window.scrollTo({ top: y, behavior: "smooth" });
     }
-    setTimeout(() => {
-      isUserClick.current = false;
-    }, 1200);
-  }, [updateUrl, scrollOffset]);
+  }, [setActiveSection, updateUrl, scrollOffset]);
 
-  // Auto-scroll active tab into view in nav bar
+  // Keep the selected tab in view as the reader moves through sections. This
+  // is particularly important on mobile, where the tabs overflow horizontally.
   useEffect(() => {
     if (!navRef.current) return;
-    if (Date.now() - lastUserScrollAt.current < 250) return;
     const activeBtn = navRef.current.querySelector(`[data-id="${activeId}"]`);
     if (activeBtn) {
       const nav = navRef.current;

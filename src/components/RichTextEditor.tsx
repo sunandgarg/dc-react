@@ -1,7 +1,7 @@
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
-import Link from "@tiptap/extension-link";
+import { LeadCaptureLink } from "@/components/admin/LeadCaptureLink";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Table } from "@tiptap/extension-table";
@@ -35,6 +35,7 @@ interface RichTextEditorProps {
   placeholder?: string;
   bare?: boolean;
   autoGrow?: boolean;
+  allowLeadLinks?: boolean;
 }
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
@@ -93,30 +94,34 @@ export function normalizeEditorLinkUrl(value: string) {
   return "";
 }
 
-export function applyEditorLink(editor: Editor, value: string, displayText: string, selection?: EditorLinkSelection | null) {
+export function applyEditorLink(editor: Editor, value: string, displayText: string, selection?: EditorLinkSelection | null, leadCapture = false) {
   const docEnd = editor.state.doc.content.size;
   if (selection && selection.from >= 0 && selection.to <= docEnd && selection.from <= selection.to) {
     editor.commands.setTextSelection(selection);
   }
   const href = normalizeEditorLinkUrl(value);
   if (!href) return editor.chain().focus().extendMarkRange("link").unsetLink().run();
+  const attrs = { href, leadCapture };
+  if (editor.state.selection.empty && editor.isActive("link")) {
+    return editor.chain().focus().extendMarkRange("link").setMark("link", attrs).run();
+  }
   if (editor.state.selection.empty) {
     const text = displayText.trim();
     if (!text) return false;
     return editor.chain().focus().insertContent({
       type: "text",
       text,
-      marks: [{ type: "link", attrs: { href } }],
+      marks: [{ type: "link", attrs }],
     }).run();
   }
-  return editor.chain().focus().extendMarkRange("link").setLink({ href }).run();
+  return editor.chain().focus().extendMarkRange("link").setMark("link", attrs).run();
 }
 
 /**
  * TipTap-based WYSIWYG editor. Outputs HTML. Renders bold as bold, headings as headings,
  * tables as tables in real-time. Toolbar mirrors the requested layout.
  */
-export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, bare = false, autoGrow = false }: RichTextEditorProps) {
+export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, bare = false, autoGrow = false, allowLeadLinks = false }: RichTextEditorProps) {
   const [fullscreen, setFullscreen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [inlineUploads, setInlineUploads] = useState(0);
@@ -170,7 +175,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
       FontSize,
       Color,
       Highlight.configure({ multicolor: true }),
-      Link.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
+      LeadCaptureLink.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
       ResizableImage.configure({ HTMLAttributes: { class: "rounded-lg max-w-full my-2" } }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Placeholder.configure({ placeholder: placeholder || "Start typing…" }),
@@ -183,7 +188,6 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
     editorProps: {
       attributes: {
         class: "prose prose-sm max-w-none focus:outline-none px-3 py-2 min-h-[120px] !select-text cursor-text",
-        "data-copy-allowed": "true",
         role: "textbox",
         "aria-multiline": "true",
       },
@@ -242,7 +246,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
     <div ref={wrapperRef} className={fullscreen ? "fixed inset-0 z-[100] bg-background p-4 flex flex-col" : ""}>
       {label && !bare && <label className="text-xs font-medium text-muted-foreground">{label}</label>}
       <div className={`mt-1 overflow-hidden rounded-lg border border-border bg-card focus-within:ring-2 focus-within:ring-ring/40 ${fullscreen ? "flex-1 flex flex-col" : ""}`}>
-        <Toolbar editor={editor} fullscreen={fullscreen} setFullscreen={setFullscreen} previewMode={previewMode} setPreviewMode={setPreviewMode} />
+        <Toolbar editor={editor} fullscreen={fullscreen} setFullscreen={setFullscreen} previewMode={previewMode} setPreviewMode={setPreviewMode} allowLeadLinks={allowLeadLinks} />
         <div
           className={fullscreen ? "flex-1 overflow-y-auto" : autoGrow ? "min-h-[320px]" : "overflow-y-auto"}
           style={!fullscreen && !autoGrow ? { maxHeight: `${Math.max(rows, 4) * 32 + 60}px` } : undefined}
@@ -253,7 +257,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
               {!value?.trim() && <p className="text-xs text-muted-foreground italic">Nothing to preview yet.</p>}
             </div>
           ) : (
-            <div className="relative !select-text" data-copy-allowed="true">
+            <div className="relative !select-text">
               <EditorContent editor={editor} />
               {inlineUploads > 0 && (
                 <div className="absolute right-3 top-3 flex items-center gap-2 rounded-md border border-border bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm">
@@ -269,7 +273,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
   );
 }
 
-function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMode }: { editor: Editor; fullscreen: boolean; setFullscreen: (v: boolean) => void; previewMode: boolean; setPreviewMode: (v: boolean) => void }) {
+function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMode, allowLeadLinks }: { editor: Editor; fullscreen: boolean; setFullscreen: (v: boolean) => void; previewMode: boolean; setPreviewMode: (v: boolean) => void; allowLeadLinks: boolean }) {
   const [tableOpen, setTableOpen] = useState(false);
   const [docDialog, setDocDialog] = useState(false);
   const [docTitle, setDocTitle] = useState("");
@@ -279,6 +283,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   const [imageDialog, setImageDialog] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [linkText, setLinkText] = useState("");
+  const [linkLeadCapture, setLinkLeadCapture] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
   const [imgAlt, setImgAlt] = useState("");
   const [imgWidth, setImgWidth] = useState(100);
@@ -325,12 +330,13 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
     linkSelectionRef.current = { from, to };
     const selectedText = empty ? "" : editor.state.doc.textBetween(from, to, " ");
     setLinkUrl(previous || "https://");
+    setLinkLeadCapture(editor.getAttributes("link").leadCapture === true);
     setLinkText(selectedText);
     setLinkDialog(true);
   };
 
   const applyLink = () => {
-    applyEditorLink(editor, linkUrl, linkText, linkSelectionRef.current);
+    applyEditorLink(editor, linkUrl, linkText, linkSelectionRef.current, linkLeadCapture);
     linkSelectionRef.current = null;
     setLinkDialog(false);
   };
@@ -519,6 +525,10 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
               <input value={linkText} onChange={e => setLinkText(e.target.value)} placeholder="Click here" className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm" />
             </div>
           )}
+          {allowLeadLinks && <label className="flex items-start gap-2 text-sm">
+            <input type="checkbox" checked={linkLeadCapture} onChange={(event) => setLinkLeadCapture(event.target.checked)} className="mt-1" />
+            <span>Show a small lead form before opening this link<span className="mt-1 block text-xs text-muted-foreground">Collect name, mobile and email. Works with internal and external web links.</span></span>
+          </label>}
           <div className="flex justify-end gap-2 pt-1">
             <button type="button" onClick={() => setLinkDialog(false)} className="px-3 py-1.5 rounded-lg text-sm hover:bg-muted">Cancel</button>
             <button type="button" onClick={applyLink} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm">Insert</button>

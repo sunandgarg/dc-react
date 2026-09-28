@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { useSEO } from "@/hooks/useSEO";
 import { DocumentViewer } from "@/components/detail/DocumentViewer";
 import { RichText } from "@/components/detail/RichText";
+import { ArticleLeadLinks } from "@/components/ArticleLeadLinks";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { lazyRetry } from "@/lib/lazyRetry";
 import { containsRichArticleHtml, stripVisibleArticleSources } from "@/lib/articleContentSanitizer";
@@ -616,7 +617,7 @@ export default function ArticleDetail() {
                 )}
               </div>
 
-              <h1 className="mt-4 max-w-5xl text-[22px] sm:text-[32px] lg:text-[38px] xl:text-[42px] font-extrabold text-foreground leading-[1.1] break-words text-balance">
+              <h1 className="mt-4 max-w-5xl text-[22px] sm:text-[32px] lg:text-[38px] font-extrabold text-foreground leading-[1.1] break-words text-balance">
                 {article.title}
               </h1>
 
@@ -670,7 +671,7 @@ export default function ArticleDetail() {
               </div>
 
               {/* Body - explicitly left-aligned, tightened 2026 scale */}
-              <div className="space-y-5">
+              <ArticleLeadLinks key={article.slug} articleSlug={article.slug}>
                 {articleUsesRichHtml ? (
                   displayContentSegments ? (
                     <>
@@ -700,7 +701,7 @@ export default function ArticleDetail() {
                     <ArticleMarkdown content={markdownContentParts[1]} />
                   </>
                 )}
-              </div>
+              </ArticleLeadLinks>
 
               {/* Mid-content lead capture - lighter spacing */}
               <div className="my-5 sm:my-7">

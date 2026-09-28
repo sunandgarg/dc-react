@@ -882,8 +882,8 @@
   .article-prose--news li,
   .article-prose--news blockquote {
     font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1rem, 0.95rem + 0.35vw, 1.14rem);
-    line-height: 1.9;
+    font-size: clamp(1rem, 0.95rem + 0.2vw, 1.075rem);
+    line-height: 1.7;
     letter-spacing: 0.002em;
   }
 
@@ -1042,7 +1042,7 @@
     .article-prose--news li,
     .article-prose--news blockquote {
       font-size: 1rem;
-      line-height: 1.82;
+      line-height: 1.7;
     }
 
     .article-prose--news h2 {

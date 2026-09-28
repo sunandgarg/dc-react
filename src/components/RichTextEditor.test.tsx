@@ -140,13 +140,11 @@ describe("RichTextEditor links", () => {
 });
 
 describe("RichTextEditor text interaction", () => {
-  it("marks the editable surface as selectable even when public copy protection was previously active", async () => {
+  it("keeps the editable surface selectable", async () => {
     const { container } = render(<RichTextEditor value="<p>Select and edit this copy.</p>" onChange={() => undefined} />);
     const editable = container.querySelector<HTMLElement>(".ProseMirror");
 
     expect(editable).toHaveAttribute("contenteditable", "true");
-    expect(editable).toHaveAttribute("data-copy-allowed", "true");
     expect(editable?.className).toContain("!select-text");
-    expect(editable?.closest("[data-copy-allowed='true']")).not.toBeNull();
   });
 });

@@ -31,7 +31,7 @@ const ALLOWED_TAGS = [
 const ALLOWED_ATTR = [
   "href","target","rel","title","alt","src","srcset","sizes","loading","decoding",
   "width","height","colspan","rowspan","scope","start","reversed","type",
-  "class","style","id","name","data-width","data-align","data-dc-unclosed-anchor",
+  "class","style","id","name","data-width","data-align","data-dc-unclosed-anchor","data-lead-capture",
 ];
 
 function postProcess(html: string): string {

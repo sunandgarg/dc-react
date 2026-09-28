@@ -337,6 +337,7 @@ async function authorizeRest(table, request) {
     actorUserId: null,
     siteScope: siteScopeForRequest(request),
     allowManualArticleTopicDuplicate: table === "articles",
+    allowArticleFaqDelete: table === "articles",
   };
   const ownerColumn = ownedTables.get(table);
   if (request.method === "DELETE" && !ownerColumn) {

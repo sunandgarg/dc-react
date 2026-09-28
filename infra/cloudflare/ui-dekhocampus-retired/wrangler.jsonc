@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../node_modules/wrangler/config-schema.json",
+  "name": "ui-dekhocampus-retired-redirect",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-25",
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "ui.dekhocampus.com/*",
+      "zone_name": "dekhocampus.com"
+    }
+  ]
+}

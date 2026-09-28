@@ -30,7 +30,8 @@ import { AuthorPicker } from "@/components/admin/AuthorPicker";
 import { BulkEditToggle } from "@/components/admin/BulkEditToggle";
 import { FeaturedRankPicker } from "@/components/admin/FeaturedRankPicker";
 import { FeaturedRankPanel } from "@/components/admin/FeaturedRankPanel";
-import { FaqInlineEditor } from "@/components/admin/FaqInlineEditor";
+import { ArticleFaqEditor } from "@/components/admin/ArticleFaqEditor";
+import { validateArticleFaqs, type ArticleFaqDraft } from "@/lib/articleFaqs";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { Link } from "react-router-dom";
@@ -40,6 +41,7 @@ import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 import { normalizeArticleSlug, validateArticleSave } from "@/lib/articleEditor";
 import { NumberedPagination } from "@/components/NumberedPagination";
 import { ArticleScorePanel } from "@/components/admin/ArticleScorePanel";
+import { articleCreatedSince, sortArticleAuthors, type ArticleAuthorOption } from "@/lib/adminArticleFilters";
 
 const STATUSES = ["Draft", "Published"];
 const VERTICALS = ["Engineering", "Medical", "Management", "Law", "Design", "Science", "General"];
@@ -63,10 +65,11 @@ function useArticleCategories(enabled = true) {
   });
 }
 
-const emptyArticle: Partial<DbArticle> = {
+type ArticleDraft = Partial<DbArticle> & { faqs?: ArticleFaqDraft[] };
+const emptyArticle: ArticleDraft = {
   slug: "", title: "", description: "", content: "", vertical: "", category: "", author: "",
   featured_image: "", source_logo: "", views: 0, tags: [], meta_title: "", meta_description: "", meta_keywords: "",
-  is_active: false, status: "Draft",
+  is_active: false, status: "Draft", faqs: [],
 };
 
 const normalizeAdminArticleSearch = (value: unknown) =>
@@ -96,17 +99,50 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const isSarkari = siteScope === "sarkari";
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
+  const [dateFilter, setDateFilter] = useState("");
+  const [authorFilter, setAuthorFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const { data: filterAuthors = [], isError: authorsError } = useQuery({
+    queryKey: ["admin-article-filter-authors"],
+    queryFn: async () => {
+      const { data, error } = await backendClient.from("authors").select("id,name").order("name").limit(1000);
+      if (error) throw error;
+      return sortArticleAuthors((data || []) as ArticleAuthorOption[]);
+    },
+    staleTime: 60_000,
+  });
+  const createdSince = useMemo(() => articleCreatedSince(dateFilter), [dateFilter]);
+  const articleFilters = useMemo(() => ({ createdSince, author: filterAuthors.find((author) => author.id === authorFilter), status: statusFilter, category: categoryFilter }), [createdSince, filterAuthors, authorFilter, statusFilter, categoryFilter]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(() => storedArticlePageSize(siteScope));
   const [customPageSize, setCustomPageSize] = useState(() => String(storedArticlePageSize(siteScope)));
   const [customPageSizeMode, setCustomPageSizeMode] = useState(() => !ARTICLE_PAGE_SIZE_PRESETS.includes(storedArticlePageSize(siteScope)));
-  const { data: articlePage, isLoading, refetch: refetchArticles } = useAdminArticles(deferredSearch, page, pageSize, siteScope);
+  const { data: articlePage, isLoading, isError: articlesError, refetch: refetchArticles } = useAdminArticles(deferredSearch, page, pageSize, siteScope, articleFilters);
   const { data: articleCategories = [] } = useArticleCategories(!isSarkari);
   const CATEGORIES = isSarkari ? SARKARI_CATEGORIES : articleCategories;
   const verticalOptions = isSarkari ? SARKARI_VERTICALS : VERTICALS;
   const saveArticle = useSaveArticle(siteScope);
   const deleteArticle = useDeleteArticle(siteScope);
-  const [editing, setEditing] = useDraftState<Partial<DbArticle> | null>(`admin.articles.editing.v2.${siteScope}`, null);
+  const [editing, setEditing] = useDraftState<ArticleDraft | null>(`admin.articles.editing.v2.${siteScope}`, null);
+  const faqQuery = useQuery({
+    queryKey: ["admin-article-faqs", siteScope, editing?.id],
+    enabled: Boolean(editing?.id) && editing?.faqs === undefined,
+    queryFn: async () => {
+      const { data, error } = await backendClient.from("faqs").select("id,question,answer,display_order,is_active")
+        .eq("page", isSarkari ? "sarkari_articles" : "articles").eq("item_slug", editing!.slug!)
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+      return (data || []) as ArticleFaqDraft[];
+    },
+    staleTime: 0,
+  });
+  useEffect(() => {
+    if (!editing?.id || editing.faqs !== undefined || faqQuery.isFetching || !faqQuery.data) return;
+    const id = editing.id;
+    setEditing((current) => current?.id === id && current.faqs === undefined ? { ...current, faqs: faqQuery.data } : current);
+  }, [editing?.id, editing?.faqs, faqQuery.data, faqQuery.isFetching, setEditing]);
+  const faqsPending = Boolean(editing?.id) && editing?.faqs === undefined;
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
   const [bulkStatus, setBulkStatus] = useState("");
@@ -121,7 +157,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const totalPages = Math.max(1, Math.ceil(totalArticles / pageSize));
   const standardPageSizes = ARTICLE_PAGE_SIZE_PRESETS;
 
-  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [normalizedSearch, pageSize, siteScope]);
+  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [normalizedSearch, pageSize, siteScope, dateFilter, authorFilter, statusFilter, categoryFilter]);
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [page, totalPages]);
   useEffect(() => {
     window.localStorage.setItem(`admin.articles.page-size.${siteScope}`, String(pageSize));
@@ -182,6 +218,9 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
   const handleSave = () => {
     if (!editing) return;
+    if (faqsPending) { toast.error("Wait for FAQs to load, or retry loading them before saving."); return; }
+    const faqError = validateArticleFaqs(editing.faqs);
+    if (faqError) { toast.error(faqError); return; }
     const normalizedSlug = normalizeArticleSlug(editing.slug);
     const validationError = validateArticleSave({ ...editing, slug: normalizedSlug }, canPublish);
     if (validationError) { toast.error(validationError); return; }
@@ -219,6 +258,9 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
   const saveDraftToEnableTagging = () => {
     if (!editing) return;
+    if (faqsPending) { toast.error("Wait for FAQs to load, or retry loading them before saving."); return; }
+    const faqError = validateArticleFaqs(editing.faqs);
+    if (faqError) { toast.error(faqError); return; }
     const normalizedSlug = normalizeArticleSlug(editing.slug);
     const validationError = validateArticleSave({ ...editing, slug: normalizedSlug, status: "Draft" }, canPublish);
     if (validationError) { toast.error(validationError); return; }
@@ -231,7 +273,8 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           setEditing(null);
           return;
         }
-        setEditing((current) => current ? { ...current, ...result.article, slug: normalizedSlug, status: "Draft" } : current);
+        // Reload persisted FAQ IDs before any further save, avoiding duplicate inserts.
+        setEditing((current) => current ? { ...current, ...result.article, slug: normalizedSlug, status: "Draft", faqs: undefined } : current);
       },
     });
   };
@@ -291,6 +334,34 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           ]}
           scope={{ column: "site_scope", value: siteScope }}
         />}
+      </div>
+
+      <div className="mb-4 rounded-xl border bg-card p-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <label className="text-xs font-medium">Created in
+            <select aria-label="Article date filter" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} className="mt-1 h-10 w-full rounded-lg border bg-background px-2 text-sm">
+              <option value="">All dates</option><option value="1">Last 1 day</option><option value="2">Last 2 days</option><option value="7">Last 7 days</option>
+            </select>
+          </label>
+          <label className="text-xs font-medium">Author
+            <select aria-label="Article author filter" value={authorFilter} onChange={(e) => setAuthorFilter(e.target.value)} className="mt-1 h-10 w-full rounded-lg border bg-background px-2 text-sm">
+              <option value="">All authors</option>{filterAuthors.map((author) => <option key={author.id} value={author.id}>{author.name}</option>)}
+            </select>
+          </label>
+          <label className="text-xs font-medium">Status
+            <select aria-label="Article status filter" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="mt-1 h-10 w-full rounded-lg border bg-background px-2 text-sm">
+              <option value="">All statuses</option>{STATUSES.map((status) => <option key={status}>{status}</option>)}
+            </select>
+          </label>
+          <label className="text-xs font-medium">Category
+            <select aria-label="Article category filter" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="mt-1 h-10 w-full rounded-lg border bg-background px-2 text-sm">
+              <option value="">All categories</option>{CATEGORIES.map((category) => <option key={category.slug} value={category.name}>{category.name}</option>)}
+            </select>
+          </label>
+          <Button variant="outline" className="self-end" onClick={() => { setDateFilter(""); setAuthorFilter(""); setStatusFilter(""); setCategoryFilter(""); setSearch(""); }}>Clear filters</Button>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">Date ranges use article creation time: the past 24 hours, 48 hours or 7 days. Filters apply across all pages.</p>
+        {authorsError && <p role="alert" className="mt-2 text-xs text-destructive">Author options could not be loaded. Refresh to try again.</p>}
       </div>
 
       {isAdmin && <div className="mb-3 space-y-3 rounded-2xl border bg-card p-3 shadow-sm">
@@ -353,7 +424,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
       {isAdmin && <FeaturedRankPanel table="articles" siteScope={siteScope} detailPath={(slug) => isSarkari ? `https://sarkari.dekhocampus.com/news/${slug}` : `/news/${slug}`} />}
 
-      {isLoading ? (
+      {articlesError ? <div role="alert" className="py-6 text-center text-destructive">Could not load articles. <button type="button" className="underline" onClick={() => void refetchArticles()}>Try again</button></div> : isLoading ? (
         <div className="text-center py-12 text-muted-foreground">Loading...</div>
       ) : (
         <div className="space-y-2">
@@ -509,7 +580,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
               {/* ── Content ── */}
               <AdminFormSection title="Content" icon={<FileText className="w-4 h-4 text-primary" />}>
-                <RichTextEditor label="Article Content" value={editing.content || ""} onChange={(v) => update("content", v)} rows={12} autoGrow />
+                <RichTextEditor label="Article Content" value={editing.content || ""} onChange={(v) => update("content", v)} rows={12} autoGrow allowLeadLinks />
               </AdminFormSection>
 
               {/* ── Links (multi-category) ── */}
@@ -556,12 +627,12 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
               {/* ── FAQs ── */}
               <AdminFormSection title="FAQs (shown on article page)" icon={<HelpCircle className="w-4 h-4 text-primary" />} defaultOpen={false}>
-                {!editing.id && (
-                  <Button type="button" size="sm" variant="outline" className="mb-3 rounded-lg" disabled={!editing.title || !editing.slug || saveArticle.isPending} onClick={saveDraftToEnableTagging}>
-                    {saveArticle.isPending ? "Saving..." : "Save draft to add FAQs"}
-                  </Button>
-                )}
-                <FaqInlineEditor page={isSarkari ? "sarkari_articles" : "articles"} itemSlug={editing.slug || ""} itemName={editing.title} persisted={Boolean(editing.id)} allowDelete={isAdmin} />
+                {faqsPending && (faqQuery.isError ? <div role="alert" className="text-xs text-destructive">
+                  FAQs could not be loaded. Your existing FAQs have not been changed.
+                  <Button type="button" size="sm" variant="outline" onClick={() => void faqQuery.refetch()}>Retry loading FAQs</Button>
+                </div> : <p role="status" className="text-xs text-muted-foreground">Loading saved FAQs…</p>)}
+                <ArticleFaqEditor value={editing.faqs || []} onChange={(faqs) => update("faqs", faqs)}
+                  allowDeleteSaved={isAdmin} disabled={faqsPending || saveArticle.isPending} />
               </AdminFormSection>
 
               {/* ── SEO ── */}
@@ -588,7 +659,8 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                   author_id: (editing as any).author_id,
                   updated_at: (editing as any).updated_at,
                 }}
-                faqsLoaded={false}
+                faqs={editing.faqs}
+                faqsLoaded={!faqsPending}
               />
 
               <AdminFormSection title="Live article preview" icon={<Eye className="w-4 h-4 text-primary" />}>
@@ -617,7 +689,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               <p className="hidden text-xs text-muted-foreground sm:block">{editing.status || "Draft"}</p>
               <div className="ml-auto flex items-center gap-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-lg">Cancel</Button>
-                <Button onClick={handleSave} disabled={saveArticle.isPending} className="rounded-lg">
+                <Button onClick={handleSave} disabled={saveArticle.isPending || faqsPending} className="rounded-lg">
                   {saveArticle.isPending ? "Saving..." : editing.status === "Draft" && canPublish ? "Save Draft" : canPublish ? "Save Article" : "Submit for approval"}
                 </Button>
               </div>

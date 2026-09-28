@@ -19,7 +19,6 @@ const BLOG_DEKHOCAMPUS_HUMAN_EDITORIAL_MIGRATION_KEY = "blog_dekhocampus_human_e
 const BLOG_EEAT_48_MIGRATION_KEY = "blog_eeat_48_policy_v1";
 const BLOG_ALL_COMPETITORS_ACTIVE_MIGRATION_KEY = "blog_all_competitors_active_v1";
 const ADSENSE_REQUESTED_PLACEMENTS_MIGRATION_KEY = "adsense_requested_placements_v3";
-const CONTENT_COPY_PROTECTION_MIGRATION_KEY = "content_copy_protection_v1";
 const ANNOUNCEMENT_CAROUSEL_SEED_MIGRATION_KEY = "announcement_carousel_seed_v1";
 const ANNOUNCEMENT_ROTATION_2_2_MIGRATION_KEY = "announcement_rotation_2_2_v1";
 const ANNOUNCEMENT_GENERIC_CTA_CLEANUP_MIGRATION_KEY = "announcement_generic_cta_cleanup_v1";
@@ -55,7 +54,6 @@ try {
   let competitorSourcesActivated = 0;
   let adsenseUnitsSeeded = 0;
   let autoAdsDisabled = 0;
-  let copyProtectionUpdated = 0;
   let announcementsSeeded = 0;
   let announcementsUpdated = 0;
   let announcementRotationUpdated = 0;
@@ -318,43 +316,6 @@ try {
       },
     });
   }
-  const copyProtectionMigration = await prisma.app_settings.findUnique({
-    where: { key: CONTENT_COPY_PROTECTION_MIGRATION_KEY },
-  });
-  if (!copyProtectionMigration) {
-    const updated = await prisma.site_integrations.updateMany({
-      where: { key: "content_copy_protection" },
-      data: {
-        label: "Content Copy Protection",
-        category: "security",
-        value: "copy_blocked",
-        enabled: true,
-        notes: "Public content protection; admin editors and form controls remain usable",
-        updated_at: new Date(),
-      },
-    });
-    copyProtectionUpdated = updated.count;
-    if (!updated.count) {
-      await prisma.site_integrations.create({
-        data: {
-          id: randomUUID(),
-          key: "content_copy_protection",
-          label: "Content Copy Protection",
-          category: "security",
-          value: "copy_blocked",
-          enabled: true,
-          notes: "Public content protection; admin editors and form controls remain usable",
-        },
-      });
-      copyProtectionUpdated = 1;
-    }
-    await prisma.app_settings.create({
-      data: {
-        key: CONTENT_COPY_PROTECTION_MIGRATION_KEY,
-        value: JSON.stringify({ enabled: true, applied_at: new Date().toISOString() }),
-      },
-    });
-  }
   const announcementCarouselMigration = await prisma.app_settings.findUnique({
     where: { key: ANNOUNCEMENT_CAROUSEL_SEED_MIGRATION_KEY },
   });
@@ -576,7 +537,6 @@ try {
     adsense_requested_placements_migrated: Boolean(adsensePlacementMigration) || adsenseUnitsSeeded > 0,
     adsense_units_seeded: adsenseUnitsSeeded,
     adsense_auto_ads_disabled: autoAdsDisabled,
-    content_copy_protection_enabled: Boolean(copyProtectionMigration) || copyProtectionUpdated > 0,
     announcement_carousel_migrated: Boolean(announcementCarouselMigration) || announcementsSeeded + announcementsUpdated > 0,
     announcement_rotation_seconds: 2.2,
     announcements_seeded: announcementsSeeded,

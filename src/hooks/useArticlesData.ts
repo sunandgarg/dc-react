@@ -1,8 +1,10 @@
-import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 import { normalizeArticleSlug } from "@/lib/articleEditor";
+import type { ArticleFaqDraft } from "@/lib/articleFaqs";
+import { articleAuthorFilter, type AdminArticleFilters } from "@/lib/adminArticleFilters";
 
 function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
@@ -88,14 +90,13 @@ const normalizeArticleSearch = (value: string | undefined) =>
 
 export const legacyArticleSlugCandidates = (slug: string) => [`${slug}-`, `${slug},`];
 
-export function useAdminArticles(search: string | undefined, page: number, pageSize: number, siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
+export function useAdminArticles(search: string | undefined, page: number, pageSize: number, siteScope: SiteScope = DEFAULT_SITE_SCOPE, filters: AdminArticleFilters = {}) {
   const normalizedSearch = normalizeArticleSearch(search);
   const safePage = Math.max(1, Math.floor(page || 1));
   const safePageSize = Math.min(500, Math.max(1, Math.floor(pageSize || 20)));
 
   return useQuery({
-    queryKey: ["db-articles-admin", siteScope, normalizedSearch, safePage, safePageSize],
-    placeholderData: keepPreviousData,
+    queryKey: ["db-articles-admin", siteScope, normalizedSearch, safePage, safePageSize, filters],
     queryFn: async () => {
       let query = backendClient
         .from("articles")
@@ -120,6 +121,11 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
           ].join(",")
         );
       }
+
+      if (filters.createdSince) query = query.gte("created_at", filters.createdSince);
+      if (filters.author) query = query.or(articleAuthorFilter(filters.author));
+      if (filters.status) query = query.eq("status", filters.status);
+      if (filters.category) query = query.eq("category", filters.category);
 
       const from = (safePage - 1) * safePageSize;
       const { data, error, count } = await query.range(from, from + safePageSize - 1);
@@ -168,7 +174,7 @@ export function useDbArticle(slug: string | undefined, siteScope: SiteScope = DE
 export function useSaveArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (article: Partial<DbArticle> & { slug: string; title: string }) => {
+    mutationFn: async (article: Partial<DbArticle> & { slug: string; title: string; faqs?: ArticleFaqDraft[] }) => {
       let pendingReview = false;
       const cleanSlug = normalizeArticleSlug(article.slug);
       const normalized = { ...article, slug: cleanSlug || article.slug, site_scope: siteScope };
@@ -200,6 +206,11 @@ export function useSaveArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
       qc.invalidateQueries({ queryKey: ["db-articles", siteScope] });
       qc.invalidateQueries({ queryKey: ["db-articles-admin", siteScope] });
       toast.success(result.pendingReview ? "Article submitted for admin review." : "Article saved!");
+      if (!result.pendingReview) {
+        qc.invalidateQueries({ queryKey: ["faqs"] });
+        qc.invalidateQueries({ queryKey: ["admin-faqs"] });
+        qc.invalidateQueries({ queryKey: ["admin-article-faqs", siteScope] });
+      }
     },
     onError: (e) => toast.error(`Failed: ${e.message}`),
   });

@@ -6,6 +6,7 @@ import { invalidateDirectorySearchCache, searchDirectory } from "./directory-sea
 import { sanitizeCollegePublicContent } from "./college-content-sanitizer.mjs";
 import { assertArticleTopicsAvailable, loadArticleCoverage, withArticleWriteLock } from "./blog-ai.mjs";
 import { mergeIntentVisitor, prepareIntentEvents, stampTrackingSiteScope, updateIntentScoresForEvents } from "./intent-intelligence.mjs";
+import { normalizeArticleFaqs, saveArticleFaqs } from "./article-faqs.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
@@ -30,6 +31,9 @@ export function omitDerivedFields(table, input) {
 }
 
 export function sanitizePublicWritePayload(table, input) {
+  if (table === "articles" && input && Object.hasOwn(input, "faqs")) {
+    return { ...input, faqs: normalizeArticleFaqs(input.faqs) };
+  }
   if (table !== "colleges" || !input || typeof input !== "object") return input;
   return sanitizeCollegePublicContent(input).row;
 }
@@ -344,6 +348,7 @@ export function prepareStagedArticleUpsertReviews(explicitRows, stagedRows, exis
     const explicitUpdates = Object.fromEntries(Object.entries(explicitDatabaseFields("articles", explicitRows[index]))
       .filter(([column]) => updateColumns.has(column)));
     const after = { ...existing, ...explicitUpdates, id: existing.id, site_scope: existing.site_scope };
+    if (Object.hasOwn(explicitRows[index], "faqs")) after.faqs = explicitRows[index].faqs;
     updatesBefore.push(existing);
     updatesAfter.push(after);
     responseRows.push(after);
@@ -707,6 +712,9 @@ async function handlePost(table, request, url, context) {
     ? resolveConflictColumns(table, requestedConflictColumns)
     : [];
   if (merge) assertAllowedArticleConflictColumns(table, conflictColumns, requestedConflictColumns);
+  if (table === "articles" && !merge && rows.some((row) => row.faqs?.some((faq) => faq.id))) {
+    throw Object.assign(new Error("New articles cannot attach existing FAQ IDs"), { status: 400, code: "INVALID_ARTICLE_FAQS" });
+  }
   if (context.stageReview) {
     const staged = rows.map((row) => applyDefaults(table, row));
     if (table === "articles") {
@@ -759,7 +767,13 @@ async function handlePost(table, request, url, context) {
       }
       const saved = [];
       for (let index = 0; index < prepared.length; index += 1) {
-        saved.push(await insertRow(table, rows[index], merge, conflictColumns, tx, prepared[index]));
+        const article = await insertRow(table, rows[index], merge, conflictColumns, tx, prepared[index]);
+        await saveArticleFaqs(tx, { ...article, ...(Object.hasOwn(rows[index], "faqs") ? { faqs: rows[index].faqs } : {}) }, {
+          previousSlug: existingByCandidate[index]?.[0]?.slug || article.slug,
+          allowDelete: Boolean(context.allowArticleFaqDelete),
+          isNewArticle: !existingByCandidate[index]?.length,
+        });
+        saved.push(article);
       }
       return saved;
     }, [...new Set(prepared.map((row) => canonicalArticleScope(row.site_scope)))].sort())
@@ -791,7 +805,8 @@ async function handlePatch(table, request, url, context) {
   const checkArticleTopic = shouldEnforceArticleTopicGate(table, context)
     && (Object.hasOwn(input, "title") || Object.hasOwn(input, "slug"));
   const checkArticleScope = table === "articles" && Object.hasOwn(input, "site_scope");
-  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic || checkArticleScope;
+  const checkArticleFaqs = table === "articles" && Object.hasOwn(input, "faqs");
+  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic || checkArticleScope || checkArticleFaqs;
   const whereParams = params.slice(columns.length);
   let before = [];
   if (context.stageReview) {
@@ -812,7 +827,7 @@ async function handlePatch(table, request, url, context) {
     };
   }
   let body;
-  if (checkArticleTopic || checkArticleScope) {
+  if (checkArticleTopic || checkArticleScope || checkArticleFaqs) {
     ({ before, body } = await withArticleWriteLock(async (tx) => {
       const lockedBefore = await tx.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where} FOR UPDATE`, ...whereParams);
       if (checkArticleScope) assertArticleSiteScopeUnchanged(input, lockedBefore);
@@ -825,6 +840,12 @@ async function handlePatch(table, request, url, context) {
         });
       }
       await tx.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
+      for (let index = 0; index < nextRows.length; index += 1) {
+        await saveArticleFaqs(tx, nextRows[index], {
+          previousSlug: lockedBefore[index].slug,
+          allowDelete: Boolean(context.allowArticleFaqDelete),
+        });
+      }
       return { before: lockedBefore, body: nextRows };
     }, ["dekhocampus", "sarkari"]));
   } else {

@@ -39,7 +39,6 @@ const HELP: Record<string, string> = {
   google_places_site_id: "Google Place ID for your business profile (used by the homepage Google Reviews widget). Find it via place-id-finder on Google Maps.",
   online_degree_redirect_url: "Where to send the user after they submit the Online Degrees lead form (e.g. partner landing page or program detail). Leave empty to just show a thank-you toast.",
   study_abroad_redirect_url: "Where to send the user after they submit the Study Abroad lead form (e.g. partner landing page). Leave empty to just show a thank-you toast.",
-  content_copy_protection: "Toggle ON to stop text selection, copy/cut and right-click on public pages. Admin pages and form inputs stay usable.",
   lead_popup_delays_ms: "Comma-separated delays in milliseconds for the 3-stage lead popup. Default: 12000,60000,240000 (12s, 60s, 4min). Leave blank to use defaults.",
 };
 
@@ -63,7 +62,9 @@ export default function AdminIntegrations() {
     },
   });
 
-  const grouped = rows.reduce((acc: any, r: any) => {
+  // This legacy setting is deliberately hidden. Public pages always allow
+  // selection, copying and the browser context menu.
+  const grouped = rows.filter((row: any) => row.key !== "content_copy_protection").reduce((acc: any, r: any) => {
     (acc[r.category] = acc[r.category] || []).push(r);
     return acc;
   }, {} as Record<string, any[]>);
@@ -153,42 +154,22 @@ function RuntimeStatus({ status }: { status: {
 }
 
 function IntegrationRow({ row, onChanged }: { row: any; onChanged: () => void }) {
-  const isCopyProtection = row.key === "content_copy_protection";
   const [value, setValue] = useState(row.value || "");
   const [enabled, setEnabled] = useState(!!row.enabled);
-  const [locked, setLocked] = useState(!isCopyProtection && !!row.value);
+  const [locked, setLocked] = useState(!!row.value);
   const [confirmUnlock, setConfirmUnlock] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const save = async () => {
     setSaving(true);
-    const payload = isCopyProtection
-      ? { value: enabled ? "copy_blocked" : "copy_allowed", enabled }
-      : { value, enabled };
+    const payload = { value, enabled };
     const { error } = await (backendClient as any).from("site_integrations").update(payload).eq("id", row.id);
     setSaving(false);
     if (error) return toast.error(error.message);
-    toast.success(isCopyProtection ? "Copy protection setting saved" : `${row.label} saved & locked`);
-    if (!isCopyProtection) setLocked(true);
+    toast.success(`${row.label} saved & locked`);
+    setLocked(true);
     onChanged();
   };
-
-  if (isCopyProtection) {
-    return (
-      <div className="bg-card border border-border rounded-2xl p-4">
-        <div className="flex items-center justify-between gap-3 mb-2">
-          <div>
-            <p className="text-sm font-semibold text-foreground">Content copy protection</p>
-            <p className="text-[11px] text-muted-foreground mt-1">{HELP[row.key]}</p>
-          </div>
-          <Switch checked={enabled} onCheckedChange={setEnabled} />
-        </div>
-        <Button size="sm" onClick={save} disabled={saving} className="w-full mt-2">
-          <Save className="w-4 h-4 mr-2" /> Save {enabled ? "Protected" : "Copy Allowed"}
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-card border border-border rounded-2xl p-4">

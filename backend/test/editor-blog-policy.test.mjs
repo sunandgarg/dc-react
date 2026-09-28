@@ -94,7 +94,8 @@ test("Content Head can reopen private article drafts while public reads remain p
   assert.match(apiSource, /identity && table === "articles"[\s\S]*?role` = 'content_head'[\s\S]*?return \{ request, actorUserId: identity\.id \}/);
   assert.match(apiSource, /table === "articles" \? enforcePublicArticlePolicy\(request\) : request/);
   assert.match(editorSource, /is_active: false, status: "Draft"/);
-  assert.match(editorSource, /Save draft to add FAQs/);
+  assert.doesNotMatch(editorSource, /Save draft to add FAQs/);
+  assert.match(editorSource, /ArticleFaqEditor value=\{editing\.faqs \|\| \[\]\}/);
   assert.match(editorSource, /setSearch\(normalizedSlug\)/);
 });
 

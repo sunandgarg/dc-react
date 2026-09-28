@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata } from "./db.mjs";
 import { assertArticleTopicsAvailable, withArticleWriteLock } from "./blog-ai.mjs";
+import { saveArticleFaqs } from "./article-faqs.mjs";
 
 const REVIEWED_TABLES = new Set([
   "articles", "article_categories", "article_links", "authors",
@@ -169,16 +170,18 @@ export async function applyApprovedReview(tx, review) {
       `INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`,
       ...columns.map((column) => databaseValue(table, column, after[column])),
     );
+    if (table === "articles") await saveArticleFaqs(tx, after, { isNewArticle: true });
     return;
   }
 
   const columns = changed.filter((column) => isWritableField(column) && !["id", "created_at", "updated_at", "short_id"].includes(column));
-  if (!columns.length) return;
+  const hasArticleFaqs = table === "articles" && Object.hasOwn(after, "faqs");
+  if (!columns.length && !hasArticleFaqs) return;
   const identityField = review.entity_id ? "id" : "slug";
   const identityValue = review.entity_id || review.entity_slug;
   if (!identityValue) throw new Error("Reviewed update has no stable entity identity");
   const result = await tx.$executeRawUnsafe(
-    `UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${fields.updated_at ? ",`updated_at` = ?" : ""} WHERE ${quote(identityField)} = ?${articleSiteScope ? " AND `site_scope` = ?" : ""}`,
+    `UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${fields.updated_at ? `${columns.length ? "," : ""}\`updated_at\` = ?` : ""} WHERE ${quote(identityField)} = ?${articleSiteScope ? " AND `site_scope` = ?" : ""}`,
     ...columns.map((column) => databaseValue(table, column, after[column])),
     ...(fields.updated_at ? [new Date()] : []), identityValue, ...(articleSiteScope ? [articleSiteScope] : []),
   );
@@ -193,6 +196,10 @@ export async function applyApprovedReview(tx, review) {
         code: "REVIEW_TARGET_NOT_FOUND",
       });
     }
+  }
+  if (table === "articles") {
+    const before = parseReviewJson(review.before_json, {});
+    await saveArticleFaqs(tx, after, { previousSlug: before.slug || review.entity_slug || after.slug });
   }
 }
 

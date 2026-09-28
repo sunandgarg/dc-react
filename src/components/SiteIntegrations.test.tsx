@@ -1,7 +1,7 @@
-import { act, render, waitFor } from "@testing-library/react";
-import { MemoryRouter, useNavigate } from "react-router-dom";
+import { render } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { SiteIntegrations, isCopyAllowedTarget, shouldBlockPublicCopy } from "./SiteIntegrations";
+import { SiteIntegrations } from "./SiteIntegrations";
 
 vi.mock("@/integrations/backend/client", () => ({
   backendClient: {
@@ -14,52 +14,18 @@ vi.mock("@/integrations/backend/client", () => ({
 }));
 
 afterEach(() => {
-  document.body.classList.remove("content-copy-protected");
+  document.body.className = "";
 });
 
-describe("SiteIntegrations copy guard", () => {
-  it("never blocks selection after a client-side navigation into admin", () => {
-    const paragraph = document.createElement("p");
-    paragraph.textContent = "Article editor copy";
+describe("SiteIntegrations", () => {
+  it("does not block copy, selection, cut, or the context menu, even with a legacy setting", () => {
+    render(<MemoryRouter><SiteIntegrations /></MemoryRouter>);
 
-    expect(shouldBlockPublicCopy("/admin/articles", paragraph.firstChild)).toBe(false);
-  });
-
-  it("recognizes text-node targets inside contenteditable editors", () => {
-    const editor = document.createElement("div");
-    editor.setAttribute("contenteditable", "true");
-    const paragraph = document.createElement("p");
-    paragraph.textContent = "Selectable copy";
-    editor.appendChild(paragraph);
-
-    expect(isCopyAllowedTarget(paragraph.firstChild)).toBe(true);
-    expect(shouldBlockPublicCopy("/news/example", paragraph.firstChild)).toBe(false);
-  });
-
-  it("continues to protect ordinary public article text", () => {
-    const paragraph = document.createElement("p");
-    paragraph.textContent = "Protected copy";
-
-    expect(shouldBlockPublicCopy("/news/example", paragraph.firstChild)).toBe(true);
-  });
-
-  it("updates the body protection class across public and admin route transitions", async () => {
-    let navigate: ReturnType<typeof useNavigate> | undefined;
-    function Harness() {
-      navigate = useNavigate();
-      return <SiteIntegrations />;
-    }
-
-    render(
-      <MemoryRouter initialEntries={["/news/example"]}>
-        <Harness />
-      </MemoryRouter>,
-    );
-
-    await waitFor(() => expect(document.body).toHaveClass("content-copy-protected"));
-    act(() => navigate?.("/admin/articles"));
-    await waitFor(() => expect(document.body).not.toHaveClass("content-copy-protected"));
-    act(() => navigate?.("/news/example"));
-    await waitFor(() => expect(document.body).toHaveClass("content-copy-protected"));
+    ["copy", "cut", "contextmenu", "selectstart"].forEach((type) => {
+      const event = new Event(type, { bubbles: true, cancelable: true });
+      document.body.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(false);
+    });
+    expect(document.body).not.toHaveClass("content-copy-protected");
   });
 });
