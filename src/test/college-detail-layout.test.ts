@@ -33,9 +33,10 @@ describe("college detail summary layout", () => {
     expect(examDetail).toMatch(/category="exam"/);
   });
 
-  it("shows the requested four summary facts only once", () => {
+  it("shows the three summary facts once without a course count", () => {
     expect(stats).toMatch(/label: "Rating"/);
-    expect(stats).toMatch(/label: "Courses"/);
+    expect(stats).not.toMatch(/label: "Courses"|courses_count/);
+    expect(stats).toMatch(/sm:grid-cols-3/);
     expect(stats).toMatch(/label: "Avg Package"/);
     expect(stats).toMatch(/label: "Type"/);
     expect(stats).not.toMatch(/label: "Course Fees"|label: "Student Rating"/);
