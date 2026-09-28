@@ -52,8 +52,18 @@ try {
       }
       await exploreHeading.waitFor({ state: "visible", timeout: 30_000 });
       await exploreHeading.scrollIntoViewIfNeeded();
+      const exploreSection = homepage.locator('section[aria-labelledby="explore-heading"]');
       for (const entity of manifest.entities.filter(({ table }) => ["colleges", "courses", "exams"].includes(table))) {
-        await homepage.locator(`a[href="${entity.route}"]`).first().waitFor({ state: "visible", timeout: 30_000 });
+        // Featured lists are curated, not a feed of newly created QA records.
+        // Verify each real entity panel; fixture CRUD and detail rendering are
+        // still independently checked below for both create and edit phases.
+        const featuredLink = exploreSection.locator(`a[href^="/${entity.table}/"]`).first();
+        await featuredLink.waitFor({ state: "visible", timeout: 30_000 });
+        const href = await featuredLink.getAttribute("href");
+        const heading = await featuredLink.locator("h4").innerText();
+        if (!href || !heading.trim() || href.includes("codex-core-qa-")) {
+          throw new Error(`Homepage ${entity.table} panel did not render a real featured entity`);
+        }
         checks.push({ table: entity.table, phase: expectedPhase, viewport: viewport.name, route: "/#explore-by-category", status: 200 });
       }
       if (homepageErrors.length) throw new Error(`Homepage page errors: ${homepageErrors.join("; ")}`);
