@@ -1,4 +1,4 @@
-import { Clock, Building, Briefcase, TrendingUp } from "lucide-react";
+import { Clock, Briefcase, TrendingUp } from "lucide-react";
 
 interface Props {
   course: any;
@@ -11,13 +11,12 @@ interface Props {
 export function CourseTrustBento({ course }: Props) {
   const items = [
     { icon: Clock, label: "Duration", value: course.duration || "-" },
-    { icon: Building, label: "Colleges", value: course.colleges_count ? `${course.colleges_count}+` : "-" },
     { icon: Briefcase, label: "Avg Salary", value: course.avg_salary || "-" },
     { icon: TrendingUp, label: "Industry Growth", value: course.growth || "-" },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
       {items.map((it) => (
         <div
           key={it.label}

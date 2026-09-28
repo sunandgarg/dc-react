@@ -21,7 +21,6 @@ const FIELDS: { key: keyof Row; label: string; format?: (v: any) => string }[] =
   { key: "fees", label: "Fees" },
   { key: "placement", label: "Avg. Placement" },
   { key: "naac_grade", label: "NAAC" },
-  { key: "courses_count", label: "Courses", format: (v) => (v ? `${v}+` : "-") },
 ];
 
 export default function ComparePage() {

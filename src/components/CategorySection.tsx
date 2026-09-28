@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Star, MapPin, ArrowRight, Clock, Users, TrendingUp, GraduationCap, BookOpen, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Star, MapPin, ArrowRight, Clock, TrendingUp, GraduationCap, BookOpen, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { useHomepageCategoryColleges } from "@/hooks/useCollegesData";
@@ -11,7 +10,7 @@ import { useHomepageCategoryExams } from "@/hooks/useExamsData";
 
 import { useStreamCategories } from "@/hooks/useStreamCategories";
 import { displayRating } from "@/lib/ratings";
-import { formatExamDate } from "@/lib/examDateDisplay";
+import { FEATURED_COLLEGE_NAMES } from "@/lib/homepageExplore";
 
 const DEFAULT_CATEGORY = "Engineering";
 
@@ -65,9 +64,9 @@ export function CategorySection() {
   const { data: dbCategories = [] } = useStreamCategories();
   const categories = useMemo(() => dbCategories, [dbCategories]);
   const [activeCategory, setActiveCategory] = useState<string>(DEFAULT_CATEGORY);
-  const { data: colleges = [] } = useHomepageCategoryColleges(activeCategory);
-  const { data: courses = [] } = useHomepageCategoryCourses(activeCategory);
-  const { data: exams = [] } = useHomepageCategoryExams(activeCategory);
+  const { data: colleges = [], isPending: collegesLoading, isError: collegesError } = useHomepageCategoryColleges(activeCategory);
+  const { data: courses = [], isPending: coursesLoading, isError: coursesError } = useHomepageCategoryCourses(activeCategory);
+  const { data: exams = [], isPending: examsLoading, isError: examsError } = useHomepageCategoryExams(activeCategory);
   const isMobile = useIsMobile();
   const scrollRef = useRef<HTMLDivElement>(null);
   const userInteractedRef = useRef(false);
@@ -167,15 +166,14 @@ export function CategorySection() {
               </Link>
             </div>
             <div className="space-y-3">
-              {colleges.length === 0 && <p className="text-xs text-muted-foreground italic">No colleges yet.</p>}
-              {colleges.slice(0, 5).map((college, i) => (
+              {colleges.length === 0 && <p role="status" className="text-xs text-muted-foreground">{collegesLoading ? "Loading colleges…" : collegesError ? "Colleges could not be loaded. Please try again." : "No colleges listed in this category yet."}</p>}
+              {colleges.slice(0, 5).map((college) => (
                 <Link key={college.slug} to={`/colleges/${college.slug}`} className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/50 transition-colors">
                   <div className="relative flex-shrink-0">
-                    <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center z-10">#{i + 1}</span>
                     <CollegeLogo name={college.name} logo={college.logo} image={college.image} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">{college.short_name || college.name}</h4>
+                    <h4 title={college.name} className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">{FEATURED_COLLEGE_NAMES[college.slug] || college.short_name || college.name}</h4>
                     <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-0.5">
                       <span className="flex items-center gap-0.5 truncate"><MapPin className="w-3 h-3" />{college.city || college.state}</span>
                     </div>
@@ -204,17 +202,14 @@ export function CategorySection() {
               </Link>
             </div>
             <div className="space-y-3">
-              {courses.length === 0 && <p className="text-xs text-muted-foreground italic">No courses yet.</p>}
+              {courses.length === 0 && <p role="status" className="text-xs text-muted-foreground">{coursesLoading ? "Loading courses…" : coursesError ? "Courses could not be loaded. Please try again." : "No courses listed in this category yet."}</p>}
               {courses.slice(0, 5).map((course) => (
                 <Link key={course.slug} to={`/courses/${course.slug}`} className="group block p-3 rounded-xl hover:bg-muted/50 transition-colors">
                   <h4 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">{course.name}</h4>
-                  <div className="flex items-center justify-between mt-2 gap-2">
-                    <span className="text-[11px] text-muted-foreground flex items-center gap-1 truncate"><Users className="w-3 h-3" />{course.colleges_count || 0}+ colleges</span>
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                  {(course.growth || course.avg_salary) && <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                       {course.growth && <Badge className="bg-accent/10 text-accent hover:bg-accent/10 text-[10px] px-1.5 py-0"><TrendingUp className="w-3 h-3 mr-0.5" />{course.growth}</Badge>}
                       {course.avg_salary && <Badge className="bg-primary/10 text-primary hover:bg-primary/10 text-[10px] px-1.5 py-0">{course.avg_salary}</Badge>}
-                    </div>
-                  </div>
+                  </div>}
                 </Link>
               ))}
             </div>
@@ -234,20 +229,17 @@ export function CategorySection() {
               </Link>
             </div>
             <div className="space-y-3">
-              {exams.length === 0 && <p className="text-xs text-muted-foreground italic">No exams yet.</p>}
+              {exams.length === 0 && <p role="status" className="text-xs text-muted-foreground">{examsLoading ? "Loading exams…" : examsError ? "Exams could not be loaded. Please try again." : "No exams listed in this category yet."}</p>}
               {exams.slice(0, 5).map((exam) => (
                 <Link key={exam.slug} to={`/exams/${exam.slug}`} className="group flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors gap-2">
                   <div className="min-w-0 flex-1">
                     <h4 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">{exam.short_name || exam.name}</h4>
                     <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
                       <Clock className="w-3 h-3" />
-                      <span className="truncate">{formatExamDate(exam.exam_date || exam.application_start_date)}</span>
-                      {exam.applicants && <><span>•</span><span className="truncate">{exam.applicants}</span></>}
+                      <span className="truncate">Dates, syllabus & eligibility</span>
                     </div>
                   </div>
-                  <Badge variant="outline" className={`text-[10px] px-1.5 py-0 flex-shrink-0 ${
-                    exam.level === "National" ? "border-destructive/40 text-destructive" : "border-primary/30 text-primary"
-                  }`}>{exam.level || exam.category}</Badge>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 </Link>
               ))}
             </div>

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
-import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
+import { fetchHomepageExplore } from "@/lib/homepageExplore";
 import { getPrefillCookie } from "@/components/CookieConsent";
 import {
   DELHI_NCR_CITIES,
@@ -98,7 +98,6 @@ export type AdminCollegeListFilters = {
 const ADMIN_COLLEGE_LIST_SELECT = "id,slug,name,short_name,location,city,state,type,category,rating,reviews,courses_count,established,image,logo,status,is_active,updated_at,priority,featured_rank,affiliation_kind,is_partner,show_in_explore_by_category";
 const PUBLIC_COLLEGE_CARD_SELECT = "id,slug,name,short_name,location,city,state,type,category,rating,reviews,courses_count,fees,image,logo,tags,established,approvals,naac_grade,is_active,status,priority,priority_updated_at,featured_rank,affiliation_kind,parent_university_slug,is_partner";
 const HOMEPAGE_EXPLORE_COLLEGE_SELECT = "id,slug,name,short_name,city,state,category,categories,rating,image,logo,priority,show_in_explore_by_category,explore_by_category_checked_at";
-const HOMEPAGE_FALLBACK_COLLEGE_SELECT = "id,slug,name,short_name,city,state,category,categories,rating,image,logo,priority";
 type HomepageExploreCollege = Pick<DbCollege, "id" | "slug" | "name" | "short_name" | "city" | "state" | "category" | "rating" | "image" | "logo" | "priority" | "show_in_explore_by_category" | "explore_by_category_checked_at"> & {
   categories: string[];
 };
@@ -191,73 +190,8 @@ export function useFeaturedCollegeCards(slugs: string[]) {
  * directory's first top-100 batch. */
 export function useHomepageCategoryColleges(category: string) {
   return useQuery({
-    queryKey: ["homepage-category-colleges", category],
-    queryFn: async () => {
-      const categoryPattern = `%${category}%`;
-      const selectedBase = () => backendClient
-        .from("colleges")
-        .select(HOMEPAGE_EXPLORE_COLLEGE_SELECT)
-        .eq("is_active", true)
-        .eq("show_in_explore_by_category", true)
-        .order("explore_by_category_checked_at", { ascending: false, nullsFirst: false })
-        .limit(5);
-
-      const [selectedPrimary, selectedAdditional] = await Promise.allSettled([
-        selectedBase().ilike("category", categoryPattern),
-        selectedBase().contains("categories", [category]),
-      ]);
-      const selectedPrimaryResult = selectedPrimary.status === "fulfilled" ? selectedPrimary.value : { data: [], error: selectedPrimary.reason };
-      const selectedAdditionalResult = selectedAdditional.status === "fulfilled" ? selectedAdditional.value : { data: [], error: selectedAdditional.reason };
-      const selectionUnavailable = isMissingExploreSelectionColumn(selectedPrimaryResult.error)
-        || isMissingExploreSelectionColumn(selectedAdditionalResult.error);
-      if (selectedPrimaryResult.error && !selectionUnavailable) throw selectedPrimaryResult.error;
-
-      const selected = new Map<string, HomepageExploreCollege>();
-      if (!selectionUnavailable) {
-        [...(selectedPrimaryResult.data || []), ...(selectedAdditionalResult.error ? [] : selectedAdditionalResult.data || [])]
-          .forEach((row) => selected.set(row.id, row as HomepageExploreCollege));
-      }
-
-      if (selected.size > 0) {
-        return [...selected.values()]
-          .sort((a, b) => Date.parse(b.explore_by_category_checked_at || "0") - Date.parse(a.explore_by_category_checked_at || "0"))
-          .slice(0, 5);
-      }
-
-      const fallbackBase = () => backendClient
-        .from("colleges")
-        .select(HOMEPAGE_FALLBACK_COLLEGE_SELECT)
-        .eq("is_active", true)
-        .order("priority", { ascending: true, nullsFirst: false })
-        .order("rating", { ascending: false, nullsFirst: false })
-        .limit(5);
-      const [fallbackPrimary, fallbackAdditional] = await Promise.allSettled([
-        fallbackBase().ilike("category", categoryPattern),
-        fallbackBase().contains("categories", [category]),
-      ]);
-      const fallbackPrimaryResult = fallbackPrimary.status === "fulfilled" ? fallbackPrimary.value : { data: [], error: fallbackPrimary.reason };
-      const fallbackAdditionalResult = fallbackAdditional.status === "fulfilled" ? fallbackAdditional.value : { data: [], error: fallbackAdditional.reason };
-      if (fallbackPrimaryResult.error) throw fallbackPrimaryResult.error;
-
-      const fallback = new Map<string, HomepageExploreCollege>();
-      [...(fallbackPrimaryResult.data || []), ...(fallbackAdditionalResult.error ? [] : fallbackAdditionalResult.data || [])]
-        .forEach((row) => fallback.set(row.id, row as HomepageExploreCollege));
-      const categoryRows = [...fallback.values()]
-        .sort((a, b) => (a.priority ?? 101) - (b.priority ?? 101) || (b.rating ?? 0) - (a.rating ?? 0))
-        .slice(0, 5);
-      if (categoryRows.length > 0) return categoryRows;
-
-      const { data, error } = await backendClient
-        .from("colleges")
-        .select(HOMEPAGE_FALLBACK_COLLEGE_SELECT)
-        .eq("is_active", true)
-        .order("is_partner", { ascending: false, nullsFirst: false })
-        .order("priority", { ascending: true, nullsFirst: false })
-        .order("rating", { ascending: false, nullsFirst: false })
-        .limit(5);
-      if (error) throw error;
-      return (data || []) as HomepageExploreCollege[];
-    },
+    queryKey: ["homepage-category-colleges", category, "v2"],
+    queryFn: () => fetchHomepageExplore<HomepageExploreCollege>("colleges", category, HOMEPAGE_EXPLORE_COLLEGE_SELECT),
     staleTime: 10 * 60_000,
   });
 }

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Clock, Building, TrendingUp, Briefcase } from "lucide-react";
+import { Clock, TrendingUp, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { DbCourse } from "@/hooks/useCoursesData";
 import { PriorityBadge } from "@/components/PriorityBadge";
@@ -19,7 +19,6 @@ export function CourseCard({ course, index }: CourseCardProps) {
   const fullName = displayText(course.full_name);
   const specializations = (course.specializations || []).map((item) => compactDisplayText(item, "", 28)).filter(Boolean);
   const duration = compactDisplayText(course.duration, "-", 18);
-  const collegesCount = Number(course.colleges_count || 0);
   const growth = compactDisplayText(course.growth, "-", 24);
   const avgSalary = compactDisplayText(course.avg_salary, "-", 24);
 
@@ -67,10 +66,6 @@ export function CourseCard({ course, index }: CourseCardProps) {
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-muted-foreground" />
                 <span className="text-xs text-foreground">{duration}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Building className="w-3.5 h-3.5 text-muted-foreground" />
-                <span className="text-xs text-foreground">{collegesCount} colleges</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <TrendingUp className="w-3.5 h-3.5 text-success" />

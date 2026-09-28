@@ -13,7 +13,12 @@ export function AuthorPicker({ value, onChange, label = "Author" }: Props) {
   const [authors, setAuthors] = useState<{ id: string; name: string; designation: string }[]>([]);
   useEffect(() => {
     (backendClient as any).from("authors").select("id,name,designation").eq("is_active", true).order("display_order")
-      .then(({ data }: any) => setAuthors(data || []));
+      .then(({ data }: any) => {
+        // Keep the configured display order, but surface Neha first in content forms.
+        const options = data || [];
+        const isNeha = (author: { name: string }) => /^neha\b/i.test(author.name.trim());
+        setAuthors([...options.filter(isNeha), ...options.filter((author: { name: string }) => !isNeha(author))]);
+      });
   }, []);
   return (
     <div>

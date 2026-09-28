@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
-import { isMissingExploreSelectionColumn } from "@/lib/homepageExplore";
+import { fetchHomepageExplore } from "@/lib/homepageExplore";
 
 function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
@@ -62,7 +62,6 @@ export type DbCourse = {
 };
 
 const HOMEPAGE_EXPLORE_COURSE_SELECT = "id,slug,name,category,categories,colleges_count,growth,avg_salary,priority,updated_at,show_in_explore_by_category,explore_by_category_checked_at";
-const HOMEPAGE_FALLBACK_COURSE_SELECT = "id,slug,name,category,categories,colleges_count,growth,avg_salary,priority,updated_at";
 type HomepageExploreCourse = Pick<DbCourse, "id" | "slug" | "name" | "category" | "colleges_count" | "growth" | "avg_salary" | "show_in_explore_by_category" | "explore_by_category_checked_at" | "updated_at"> & {
   categories: string[];
   priority: number | null;
@@ -88,72 +87,8 @@ export function useDbCourses() {
 
 export function useHomepageCategoryCourses(category: string) {
   return useQuery({
-    queryKey: ["homepage-category-courses", category],
-    queryFn: async () => {
-      const categoryPattern = `%${category}%`;
-      const selectedBase = () => backendClient
-        .from("courses")
-        .select(HOMEPAGE_EXPLORE_COURSE_SELECT)
-        .eq("is_active", true)
-        .eq("show_in_explore_by_category", true)
-        .order("explore_by_category_checked_at", { ascending: false, nullsFirst: false })
-        .limit(5);
-      const [selectedPrimary, selectedAdditional] = await Promise.allSettled([
-        selectedBase().ilike("category", categoryPattern),
-        selectedBase().contains("categories", [category]),
-      ]);
-      const selectedPrimaryResult = selectedPrimary.status === "fulfilled" ? selectedPrimary.value : { data: [], error: selectedPrimary.reason };
-      const selectedAdditionalResult = selectedAdditional.status === "fulfilled" ? selectedAdditional.value : { data: [], error: selectedAdditional.reason };
-      const selectionUnavailable = isMissingExploreSelectionColumn(selectedPrimaryResult.error)
-        || isMissingExploreSelectionColumn(selectedAdditionalResult.error);
-      if (selectedPrimaryResult.error && !selectionUnavailable) throw selectedPrimaryResult.error;
-
-      const selected = new Map<string, HomepageExploreCourse>();
-      if (!selectionUnavailable) {
-        [...(selectedPrimaryResult.data || []), ...(selectedAdditionalResult.error ? [] : selectedAdditionalResult.data || [])]
-          .forEach((row) => selected.set(row.id, row as HomepageExploreCourse));
-      }
-      if (selected.size > 0) {
-        return [...selected.values()]
-          .sort((a, b) => Date.parse(b.explore_by_category_checked_at || "0") - Date.parse(a.explore_by_category_checked_at || "0"))
-          .slice(0, 5);
-      }
-
-      const fallbackBase = () => backendClient
-        .from("courses")
-        .select(HOMEPAGE_FALLBACK_COURSE_SELECT)
-        .eq("is_active", true)
-        .order("priority", { ascending: true, nullsFirst: false })
-        .order("updated_at", { ascending: false, nullsFirst: false })
-        .order("name")
-        .limit(5);
-      const [fallbackPrimary, fallbackAdditional] = await Promise.allSettled([
-        fallbackBase().ilike("category", categoryPattern),
-        fallbackBase().contains("categories", [category]),
-      ]);
-      const fallbackPrimaryResult = fallbackPrimary.status === "fulfilled" ? fallbackPrimary.value : { data: [], error: fallbackPrimary.reason };
-      const fallbackAdditionalResult = fallbackAdditional.status === "fulfilled" ? fallbackAdditional.value : { data: [], error: fallbackAdditional.reason };
-      if (fallbackPrimaryResult.error) throw fallbackPrimaryResult.error;
-
-      const fallback = new Map<string, HomepageExploreCourse>();
-      [...(fallbackPrimaryResult.data || []), ...(fallbackAdditionalResult.error ? [] : fallbackAdditionalResult.data || [])]
-        .forEach((row) => fallback.set(row.id, row as HomepageExploreCourse));
-      const categoryRows = [...fallback.values()]
-        .sort((a, b) => (a.priority ?? 101) - (b.priority ?? 101) || Date.parse(b.updated_at || "0") - Date.parse(a.updated_at || "0"))
-        .slice(0, 5);
-      if (categoryRows.length > 0) return categoryRows;
-
-      const { data, error } = await backendClient
-        .from("courses")
-        .select(HOMEPAGE_FALLBACK_COURSE_SELECT)
-        .eq("is_active", true)
-        .order("priority", { ascending: true, nullsFirst: false })
-        .order("updated_at", { ascending: false, nullsFirst: false })
-        .order("name")
-        .limit(5);
-      if (error) throw error;
-      return (data || []) as HomepageExploreCourse[];
-    },
+    queryKey: ["homepage-category-courses", category, "v2"],
+    queryFn: () => fetchHomepageExplore<HomepageExploreCourse>("courses", category, HOMEPAGE_EXPLORE_COURSE_SELECT),
     staleTime: 10 * 60_000,
   });
 }

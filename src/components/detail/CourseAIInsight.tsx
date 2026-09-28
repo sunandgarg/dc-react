@@ -15,8 +15,7 @@ export function CourseAIInsight({ course }: Props) {
   const fallback = (
     <>
       {name} is a <span className="font-bold text-slate-900">{course.duration || "-"}</span>{" "}
-      {course.level?.toLowerCase() || ""} program offered at{" "}
-      <span className="font-bold text-slate-900">{course.colleges_count ?? "-"}+ colleges</span>. Graduates earn an
+      {course.level?.toLowerCase() || ""} program. Graduates earn an
       average of <span className="font-bold text-slate-900">{course.avg_salary || "-"}</span> with{" "}
       <span className="font-bold text-blue-600">{course.growth || "strong"} industry growth</span>. A{" "}
       <span className="font-bold text-[#e85d3a]">smart pick</span> for {course.category?.toLowerCase() || "career-focused"} careers in 2026.

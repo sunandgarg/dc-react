@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
   Clock,
-  Building,
   TrendingUp,
   BookOpen,
   CheckCircle,
@@ -249,7 +248,6 @@ export default function CourseDetail() {
   const avgFees = compactDisplayText(course.avg_fees, "-", 36);
   const avgSalary = compactDisplayText(course.avg_salary, "-", 36);
   const growth = compactDisplayText(course.growth, "-", 36);
-  const collegesCount = Number(course.colleges_count || 0);
   const shortDescription = stripMarkup(course.short_description || course.description || "").slice(0, 220);
   const subjects = (course.subjects || []).map((item) => compactDisplayText(item, "", 46)).filter(Boolean);
   const specializations = (course.specializations || []).map((item) => compactDisplayText(item, "", 46)).filter(Boolean);
@@ -394,10 +392,9 @@ export default function CourseDetail() {
           <div className="lg:col-span-2 space-y-6 min-w-0">
             <PageSummary html={(course as any).page_summary} entityName={courseName} kind="course" />
             {/* Quick Stats - FIX: changed sm:grid-cols-4 to grid-cols-2 sm:grid-cols-4 so mobile shows 2 columns */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 md:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 md:gap-3">
               {[
                 { icon: Clock, label: "Duration", value: duration, color: "text-primary" },
-                { icon: Building, label: "Colleges", value: `${collegesCount}+`, color: "text-accent" },
                 { icon: TrendingUp, label: "Growth", value: growth, color: "text-success" },
                 { icon: Briefcase, label: "Avg Salary", value: avgSalary, color: "text-golden" },
               ].map((stat) => (
@@ -426,7 +423,6 @@ export default function CourseDetail() {
                   { label: "Domain", value: domain },
                   { label: "Avg Fees", value: avgFees },
                   { label: "Avg Salary", value: avgSalary },
-                  { label: "Total Colleges", value: `${collegesCount}+` },
                   { label: "Industry Growth", value: growth },
                 ].map((info) => (
                   <div
@@ -446,7 +442,6 @@ export default function CourseDetail() {
               <div className="space-y-2">
                 {[
                   `${fullName || courseName} is a ${duration} ${level} program`,
-                  `Offered at ${collegesCount}+ colleges across India`,
                   `Average fees: ${avgFees}`,
                   `Average salary after ${courseName}: ${avgSalary}`,
                   `Industry growth rate: ${growth}`,
@@ -507,7 +502,7 @@ export default function CourseDetail() {
             {/* Fees */}
             <RichSection id="fees" title={<>Fee Structure</>}>
               {/* FIX: grid-cols-3 on mobile with small content is fine, but added min-w-0 and text truncation */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4">
                 <div className="bg-muted rounded-xl p-2 sm:p-3 text-center min-w-0">
                   <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1 text-golden" />
                   <p className="text-xs sm:text-lg font-bold text-foreground truncate">{avgFees}</p>
@@ -596,10 +591,6 @@ export default function CourseDetail() {
                   <p className="text-xs sm:text-lg font-bold text-foreground truncate">{growth}</p>
                   <p className="text-xs text-muted-foreground">Growth</p>
                 </div>
-                <div className="bg-muted rounded-xl p-2 sm:p-3 text-center min-w-0">
-                  <p className="text-xs sm:text-lg font-bold text-foreground truncate">{collegesCount}+</p>
-                  <p className="text-xs text-muted-foreground">Colleges</p>
-                </div>
               </div>
               {course.placements_content && (
                 <RichText html={course.placements_content} />
@@ -661,7 +652,7 @@ export default function CourseDetail() {
             <section id="top-colleges" className="bg-card rounded-2xl border border-border p-4 md:p-5 scroll-mt-20">
               <h2 data-h className="text-xl font-extrabold text-foreground mb-3 tracking-tight">Top Colleges</h2>
               <p className="text-sm text-muted-foreground mb-3">
-                {collegesCount}+ colleges across India offer {courseName}. Tap any college to see fees, cut-offs and admissions.
+                Explore colleges offering {courseName}. Tap a college to see fees, cut-offs and admissions.
               </p>
               <LinkedColleges by="course" slug={course.slug} emptyText={`No colleges linked to ${courseName} yet.`} />
               <div className="mt-5">

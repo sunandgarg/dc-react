@@ -38,7 +38,7 @@ const suggestedPrompts = [
 
 const heroTiles = [
   { label: "13,004+ Colleges", icon: catCollege, href: "/colleges", tone: "bg-rose-50 border-rose-100" },
-  { label: "840+ Courses", icon: catCourse, href: "/courses", tone: "bg-sky-50 border-sky-100" },
+  { label: "Courses", icon: catCourse, href: "/courses", tone: "bg-sky-50 border-sky-100" },
   { label: "219+ Exams", icon: catExam, href: "/exams", tone: "bg-violet-50 border-violet-100" },
   { label: "News", icon: catNews, href: "/news", tone: "bg-cyan-50 border-cyan-100" },
 ] as const;

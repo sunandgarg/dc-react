@@ -197,7 +197,7 @@ export default function AllCourses() {
         <PageBreadcrumb items={[{ label: "Courses" }]} />
         <header className="mb-4">
           <h1 className="text-xl md:text-2xl font-bold text-primary mb-1">{heading}</h1>
-          <p className="text-sm text-muted-foreground">Explore {filtered.length}+ courses - compare eligibility, fees, career prospects & top colleges</p>
+          <p className="text-sm text-muted-foreground">Explore courses - compare eligibility, fees, career prospects & top colleges</p>
         </header>
 
         <AlsoCheckSection variant="strip" className="mb-4" />

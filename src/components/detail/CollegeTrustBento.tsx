@@ -1,4 +1,4 @@
-import { Building2, GraduationCap, Star, TrendingUp } from "lucide-react";
+import { Building2, Star, TrendingUp } from "lucide-react";
 import { displayRating } from "@/lib/ratings";
 
 interface Props {
@@ -18,19 +18,12 @@ function displayInstitutionType(college: any): string {
  * The single at-a-glance stats row used near the top of every college page.
  */
 export function CollegeTrustBento({ college }: Props) {
-  const courseCount = Number(college.courses_count || 0);
   const items = [
     {
       icon: Star,
       label: "Rating",
       value: `${displayRating(college.rating)}/5`,
       iconClassName: "text-amber-500",
-    },
-    {
-      icon: GraduationCap,
-      label: "Courses",
-      value: courseCount > 0 ? `${courseCount}+` : "Not published",
-      iconClassName: "text-blue-600",
     },
     {
       icon: TrendingUp,
@@ -47,7 +40,7 @@ export function CollegeTrustBento({ college }: Props) {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-5">
       {items.map((it) => (
         <div
           key={it.label}

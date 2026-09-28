@@ -370,7 +370,6 @@ export default function CollegeDetail() {
                   { label: "Type", value: college.type },
                   { label: "Established", value: String(college.established) },
                   { label: "NAAC Grade", value: college.naac_grade },
-                  { label: "Courses", value: `${college.courses_count}+` },
                   { label: "Fees", value: college.fees },
                   { label: "Avg. Package", value: college.placement },
                 ].map((info) => (
@@ -439,16 +438,13 @@ export default function CollegeDetail() {
                           className={`min-w-[7rem] shrink-0 rounded-md border px-3 py-2 text-left transition-colors ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary/40 hover:bg-muted/40"}`}
                         >
                           <span className="block text-sm font-semibold">{level.label}</span>
-                          <span className={`block text-[11px] ${selected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                            {level.courseCount} course{level.courseCount === 1 ? "" : "s"}
-                          </span>
                         </button>
                       );
                     })}
                   </div>
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                     <p className="text-xs text-muted-foreground">
-                      {activeFeeLevel ? `${activeFeeLevel.courseCount} ${activeFeeLevel.label} course${activeFeeLevel.courseCount === 1 ? "" : "s"} across ${activeFeeLevel.groups.length} degree${activeFeeLevel.groups.length === 1 ? "" : "s"}` : ""}
+                      {activeFeeLevel ? `${activeFeeLevel.label} courses and fees` : ""}
                     </p>
                     <label className="relative block w-full sm:w-64">
                       <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
