@@ -87,7 +87,7 @@ export function useDbCourses() {
 
 export function useHomepageCategoryCourses(category: string) {
   return useQuery({
-    queryKey: ["homepage-category-courses", category, "v2"],
+    queryKey: ["homepage-category-courses", category, "v3"],
     queryFn: () => fetchHomepageExplore<HomepageExploreCourse>("courses", category, HOMEPAGE_EXPLORE_COURSE_SELECT),
     staleTime: 10 * 60_000,
   });

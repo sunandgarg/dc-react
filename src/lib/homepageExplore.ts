@@ -1,4 +1,5 @@
 import { backendClient } from "@/integrations/backend/client";
+import { HOMEPAGE_COURSE_PICKS } from "./homepageCoursePicks";
 
 export function isMissingExploreSelectionColumn(error: { message?: string } | null | undefined) {
   const message = String(error?.message || "").toLowerCase();
@@ -62,11 +63,13 @@ const normalizeExam = (name: string) => name.toLowerCase().replace(/\b20\d{2}\b/
 export function rankHomepageExplore<T extends ExploreRow>(rows: T[], category: string, table: string): T[] {
   const byId = new Map<string, T>();
   rows.forEach((row) => byId.set(row.id, { ...byId.get(row.id), ...row }));
-  const unique = [...byId.values()];
+  const unique = [...byId.values()].filter((row) => table !== "courses" || !row.slug.startsWith("dekho-sample-"));
   const preferences = table === "exams" ? EXAM_PREFERENCES[category] || [] : [];
+  const courseSlugs = (HOMEPAGE_COURSE_PICKS[category] || []).map(({ slug }) => slug);
   const rank = (row: T) => {
     const index = table === "colleges" && category === "Engineering"
       ? ENGINEERING_COLLEGE_SLUGS.indexOf(row.slug)
+      : table === "courses" ? courseSlugs.indexOf(row.slug)
       : preferences.findIndex((name) => [row.short_name, row.name].some((value) => value && normalizeExam(value) === normalizeExam(name)));
     return index < 0 ? Number.MAX_SAFE_INTEGER : index;
   };
@@ -111,10 +114,13 @@ export async function fetchHomepageExplore<T extends ExploreRow>(table: "college
   }
   if (result.error) throw result.error;
   const rows = (result.data || []) as T[];
-  // Fetch these exact, user-selected institutions even when legacy category tags are incomplete.
-  if (table === "colleges" && category === "Engineering") {
+  // Exact picks must survive broad legacy tags and the category query's 200-row cap.
+  const featuredSlugs = table === "courses"
+    ? (HOMEPAGE_COURSE_PICKS[category] || []).map(({ slug }) => slug)
+    : table === "colleges" && category === "Engineering" ? ENGINEERING_COLLEGE_SLUGS : [];
+  if (featuredSlugs.length) {
     const fields = select.split(",").filter((field) => !["show_in_explore_by_category", "explore_by_category_checked_at"].includes(field)).join(",");
-    const featured = await backendClient.from(table).select(fields).eq("is_active", true).in("slug", ENGINEERING_COLLEGE_SLUGS);
+    const featured = await backendClient.from(table).select(fields).eq("is_active", true).in("slug", featuredSlugs);
     if (featured.error) throw featured.error;
     rows.push(...(featured.data || []) as T[]);
   }

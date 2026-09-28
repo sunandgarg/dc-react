@@ -11,8 +11,11 @@ import { useHomepageCategoryExams } from "@/hooks/useExamsData";
 import { useStreamCategories } from "@/hooks/useStreamCategories";
 import { displayRating } from "@/lib/ratings";
 import { FEATURED_COLLEGE_NAMES } from "@/lib/homepageExplore";
+import { FEATURED_COURSE_NAMES } from "@/lib/homepageCoursePicks";
 
 const DEFAULT_CATEGORY = "Engineering";
+const panelClass = "bg-card rounded-2xl border border-border p-4 md:p-5 flex flex-col flex-shrink-0 w-[85vw] max-w-sm lg:w-auto lg:max-w-none snap-start";
+const rowClass = "group flex min-h-[76px] items-center gap-3 p-2.5 rounded-xl hover:bg-muted/50 transition-colors";
 
 function CollegeLogo({
   name,
@@ -149,12 +152,12 @@ export function CategorySection() {
         <div
           ref={scrollRef}
           key={activeCategory}
-          className="lg:grid lg:grid-cols-3 gap-5 flex overflow-x-auto snap-x snap-proximity scrollbar-hide -mx-4 px-4 lg:mx-0 lg:px-0 lg:overflow-visible"
+          className="lg:grid lg:grid-cols-3 gap-5 flex overflow-x-auto snap-x snap-proximity scroll-px-4 scrollbar-hide -mx-4 px-4 lg:mx-0 lg:px-0 lg:overflow-visible"
           style={{ touchAction: "pan-x pan-y" }}
         >
           {/* Top Colleges */}
-          <div className="bg-card rounded-2xl border border-border p-4 md:p-5 flex-shrink-0 w-[85vw] max-w-sm lg:w-auto lg:max-w-none snap-start">
-            <div className="flex items-center justify-between mb-4">
+          <div className={panelClass}>
+            <div className="flex min-h-11 items-center justify-between gap-2 mb-4">
               <div>
                 <h3 className="font-bold text-foreground flex items-center gap-2">
                   <GraduationCap className="w-4 h-4 text-primary" /> Top Colleges
@@ -165,10 +168,10 @@ export function CategorySection() {
                 <span className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">View All <ArrowRight className="w-3 h-3" /></span>
               </Link>
             </div>
-            <div className="space-y-3">
+            <div className="grid auto-rows-fr gap-3 flex-1">
               {colleges.length === 0 && <p role="status" className="text-xs text-muted-foreground">{collegesLoading ? "Loading colleges…" : collegesError ? "Colleges could not be loaded. Please try again." : "No colleges listed in this category yet."}</p>}
               {colleges.slice(0, 5).map((college) => (
-                <Link key={college.slug} to={`/colleges/${college.slug}`} className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/50 transition-colors">
+                <Link key={college.slug} to={`/colleges/${college.slug}`} className={rowClass}>
                   <div className="relative flex-shrink-0">
                     <CollegeLogo name={college.name} logo={college.logo} image={college.image} />
                   </div>
@@ -189,35 +192,42 @@ export function CategorySection() {
           </div>
 
           {/* Trending Courses */}
-          <div className="bg-card rounded-2xl border border-border p-4 md:p-5 flex-shrink-0 w-[85vw] max-w-sm lg:w-auto lg:max-w-none snap-start">
-            <div className="flex items-center justify-between mb-4">
+          <div className={panelClass}>
+            <div className="flex min-h-11 items-center justify-between gap-2 mb-4">
               <div>
                 <h3 className="font-bold text-foreground flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-primary" /> Trending Courses
                 </h3>
-                <p className="text-xs text-muted-foreground mt-0.5">High demand programs</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Popular & emerging programmes</p>
               </div>
               <Link to={`/courses?category=${encodeURIComponent(activeCategory)}`}>
                 <span className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">View All <ArrowRight className="w-3 h-3" /></span>
               </Link>
             </div>
-            <div className="space-y-3">
+            <div className="grid auto-rows-fr gap-3 flex-1">
               {courses.length === 0 && <p role="status" className="text-xs text-muted-foreground">{coursesLoading ? "Loading courses…" : coursesError ? "Courses could not be loaded. Please try again." : "No courses listed in this category yet."}</p>}
               {courses.slice(0, 5).map((course) => (
-                <Link key={course.slug} to={`/courses/${course.slug}`} className="group block p-3 rounded-xl hover:bg-muted/50 transition-colors">
-                  <h4 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">{course.name}</h4>
-                  {(course.growth || course.avg_salary) && <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                <Link key={course.slug} to={`/courses/${course.slug}`} className={rowClass}>
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/15 bg-primary/5 text-primary" aria-hidden="true">
+                    <BookOpen className="h-5 w-5" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h4 title={course.name} className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2">{FEATURED_COURSE_NAMES[course.slug] || course.name}</h4>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground truncate">Eligibility, subjects & careers</p>
+                    {(course.growth || course.avg_salary) && <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                       {course.growth && <Badge className="bg-accent/10 text-accent hover:bg-accent/10 text-[10px] px-1.5 py-0"><TrendingUp className="w-3 h-3 mr-0.5" />{course.growth}</Badge>}
                       {course.avg_salary && <Badge className="bg-primary/10 text-primary hover:bg-primary/10 text-[10px] px-1.5 py-0">{course.avg_salary}</Badge>}
-                  </div>}
+                    </div>}
+                  </div>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 </Link>
               ))}
             </div>
           </div>
 
           {/* Upcoming Exams */}
-          <div className="bg-card rounded-2xl border border-border p-4 md:p-5 flex-shrink-0 w-[85vw] max-w-sm lg:w-auto lg:max-w-none snap-start">
-            <div className="flex items-center justify-between mb-4">
+          <div className={panelClass}>
+            <div className="flex min-h-11 items-center justify-between gap-2 mb-4">
               <div>
                 <h3 className="font-bold text-foreground flex items-center gap-2">
                   <FileText className="w-4 h-4 text-primary" /> Top Exams
@@ -228,10 +238,10 @@ export function CategorySection() {
                 <span className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">View All <ArrowRight className="w-3 h-3" /></span>
               </Link>
             </div>
-            <div className="space-y-3">
+            <div className="grid auto-rows-fr gap-3 flex-1">
               {exams.length === 0 && <p role="status" className="text-xs text-muted-foreground">{examsLoading ? "Loading exams…" : examsError ? "Exams could not be loaded. Please try again." : "No exams listed in this category yet."}</p>}
               {exams.slice(0, 5).map((exam) => (
-                <Link key={exam.slug} to={`/exams/${exam.slug}`} className="group flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors gap-2">
+                <Link key={exam.slug} to={`/exams/${exam.slug}`} className={rowClass}>
                   <div className="min-w-0 flex-1">
                     <h4 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">{exam.short_name || exam.name}</h4>
                     <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">

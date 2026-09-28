@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ENGINEERING_COLLEGE_SLUGS, fetchHomepageExplore, rankHomepageExplore } from "./homepageExplore";
+import { HOMEPAGE_COURSE_PICKS } from "./homepageCoursePicks";
 
 const { requests, responses } = vi.hoisted(() => ({ requests: [] as any[], responses: [] as any[] }));
 vi.mock("@/integrations/backend/client", () => ({ backendClient: {
@@ -24,6 +25,44 @@ beforeEach(() => { requests.length = 0; responses.length = 0; });
 const row = (name: string, extra = {}) => ({ id: name, slug: name, name, priority: 50, ...extra });
 
 describe("homepage category recommendations", () => {
+  it.each(Object.entries(HOMEPAGE_COURSE_PICKS))("prioritises the five curated %s courses over alphabetic and admin-priority fallback", (category, picks) => {
+    const rows = [row("Alphabetic fallback", { priority: 0, show_in_explore_by_category: true }),
+      ...picks.map(({ slug, label }) => row(label, { slug }))].reverse();
+    expect(picks).toHaveLength(5);
+    expect(new Set(picks.map(({ slug }) => slug)).size).toBe(5);
+    expect(rankHomepageExplore(rows, category, "courses").slice(0, 5).map(({ slug }) => slug))
+      .toEqual(picks.map(({ slug }) => slug));
+  });
+
+  it("fetches curated courses by active real slugs even when category tags are wrong or the category result is capped", async () => {
+    const picks = HOMEPAGE_COURSE_PICKS.Science;
+    responses.push({ data: [row("Other science course")], error: null },
+      { data: picks.map(({ slug, label }) => row(label, { slug })).reverse(), error: null });
+    const result = await fetchHomepageExplore("courses", "Science", "id,slug,name,show_in_explore_by_category,explore_by_category_checked_at");
+    expect(result.map(({ slug }) => slug)).toEqual(picks.map(({ slug }) => slug));
+    expect(requests[1].in).toEqual(["slug", picks.map(({ slug }) => slug)]);
+    expect(requests[1].filters).toContainEqual(["is_active", true]);
+    expect(requests[1].select).toBe("id,slug,name");
+  });
+
+  it("fills unavailable curated picks only with returned category candidates and deduplicates records", async () => {
+    const pick = row("Btech Computer Science", { slug: "btech-computer-science", show_in_explore_by_category: true });
+    responses.push({ data: [pick, row("Related engineering course")], error: null },
+      { data: [{ ...pick, show_in_explore_by_category: undefined }], error: null });
+    const result = await fetchHomepageExplore("courses", "Engineering", "id,slug,name");
+    expect(result.map(({ slug }) => slug)).toEqual(["btech-computer-science", "Related engineering course"]);
+  });
+
+  it("does not present public sample courses as trending recommendations", () => {
+    expect(rankHomepageExplore([row("Sample B.Tech", { slug: "dekho-sample-btech-cse", priority: 0 }), row("Real Course")], "Engineering", "courses"))
+      .toEqual([row("Real Course")]);
+  });
+
+  it("reports errors in the exact course query rather than silently reverting to alphabetic picks", async () => {
+    responses.push({ data: [row("Other course")], error: null }, { data: null, error: new Error("Featured courses unavailable") });
+    await expect(fetchHomepageExplore("courses", "Engineering", "id,slug,name")).rejects.toThrow("Featured courses unavailable");
+  });
+
   it("keeps the five requested Engineering colleges first, with stable real slugs", () => {
     const rows = [row("Other", { show_in_explore_by_category: true }), ...ENGINEERING_COLLEGE_SLUGS.map((slug) => row(slug))].reverse();
     expect(rankHomepageExplore(rows, "Engineering", "colleges").slice(0, 5).map((item) => item.slug)).toEqual(ENGINEERING_COLLEGE_SLUGS);
