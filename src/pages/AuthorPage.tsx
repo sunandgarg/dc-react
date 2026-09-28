@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { backendClient } from "@/integrations/backend/client";
 import { Navbar } from "@/components/Navbar";
@@ -7,6 +8,11 @@ import { SEO } from "@/components/SEO";
 import { Linkedin, Twitter, Globe, Mail, ArrowRight, Newspaper, GraduationCap, BookOpen, FileText, Award, Briefcase, Library } from "lucide-react";
 import { RichText } from "@/components/detail/RichText";
 import { safeHttpUrl } from "@/lib/safeExternalUrl";
+import { AUTHOR_SOURCES, AuthorSource, fetchAuthorContributions } from "@/lib/authorContributions";
+import { absoluteSiteUrl } from "@/lib/constant";
+import { plainText } from "@/lib/plainText";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface Author {
   id: string; slug: string; name: string; designation: string; photo: string;
@@ -14,47 +20,70 @@ interface Author {
   email: string; linkedin_url: string; twitter_url: string; website_url: string;
 }
 
-const SOURCES: { table: string; label: string; route: (slug: string) => string; icon: any }[] = [
-  { table: "articles", label: "Articles", route: (s) => `/news/${s}`, icon: Newspaper },
-  { table: "colleges", label: "Colleges", route: (s) => `/colleges/${s}`, icon: GraduationCap },
-  { table: "courses", label: "Courses", route: (s) => `/courses/${s}`, icon: BookOpen },
-  { table: "exams", label: "Exams", route: (s) => `/exams/${s}`, icon: FileText },
-  { table: "scholarships", label: "Scholarships", route: (s) => `/scholarships/${s}`, icon: Award },
-  { table: "career_profiles", label: "Career Profiles", route: (s) => `/careers/${s}`, icon: Briefcase },
-  { table: "study_subjects", label: "Study Material", route: () => `/study-material`, icon: Library },
-];
+const ICONS = { articles: Newspaper, colleges: GraduationCap, courses: BookOpen, exams: FileText, scholarships: Award, career_profiles: Briefcase, study_subjects: Library };
+
+function Contributions({ source, author, search, hideEmpty }: { source: AuthorSource; author: Author; search: string; hideEmpty: boolean }) {
+  const query = useInfiniteQuery({
+    queryKey: ["author-contributions", author.id, author.name, source.table, search],
+    initialPageParam: 0,
+    queryFn: ({ pageParam }) => fetchAuthorContributions(source, author, pageParam, search),
+    getNextPageParam: (lastPage) => lastPage.nextOffset,
+    retry: 1,
+  });
+  const items = query.data?.pages.flatMap((page) => page.rows) || [];
+  const total = query.data?.pages[0].count;
+  const Icon = ICONS[source.table];
+  if (hideEmpty && !query.isPending && !query.isError && !items.length) return null;
+  return (
+    <section className="mb-8" aria-label={source.label}>
+      <h3 className="font-semibold mb-3 flex items-center gap-2"><Icon className="w-4 h-4 text-primary" />{source.label}{total != null && ` (${total})`}</h3>
+      {query.isPending && <p className="text-sm text-muted-foreground" role="status">Loading {source.label.toLowerCase()}…</p>}
+      {query.isError && <div role="alert" className="mb-3 rounded-lg border p-3 text-sm">Could not load {source.label.toLowerCase()}. <Button size="sm" variant="outline" onClick={() => void query.refetch()}>Try again</Button></div>}
+      {!query.isPending && !query.isError && !items.length && <p className="text-sm text-muted-foreground">{search ? "No matching contributions." : `No published ${source.label.toLowerCase()} yet.`}</p>}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {items.map((item) => {
+          const image = safeHttpUrl(item.featured_image || item.image || item.cover_image);
+          const date = new Date(item.created_at);
+          return (
+            <Link key={item.id} to={source.href(item)} className="bg-card border border-border rounded-xl p-3 hover:border-primary/40 transition-colors">
+              {image && <img src={image} alt="" className="w-full h-32 object-cover rounded-lg mb-2" loading="lazy" />}
+              <p className="font-semibold text-sm text-foreground line-clamp-2">{item.title || item.name}</p>
+              <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{plainText(item.description)}</p>
+              {!Number.isNaN(date.getTime()) && <time dateTime={item.created_at} className="block text-xs text-muted-foreground mt-2">{date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" })}</time>}
+              <p className="text-xs text-primary mt-2 inline-flex items-center gap-1">Read <ArrowRight className="w-3 h-3" /></p>
+            </Link>
+          );
+        })}
+      </div>
+      {query.hasNextPage && <Button className="mt-4" variant="outline" disabled={query.isFetching} onClick={() => void query.fetchNextPage()}>{query.isFetchingNextPage ? "Loading…" : `Load more ${source.label.toLowerCase()}`}</Button>}
+    </section>
+  );
+}
 
 export default function AuthorPage() {
   const { slug } = useParams<{ slug: string }>();
-  const [author, setAuthor] = useState<Author | null>(null);
-  const [content, setContent] = useState<Record<string, any[]>>({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const { data: a } = await (backendClient as any).from("authors").select("*").eq("slug", slug).maybeSingle();
-      setAuthor(a as Author | null);
-      if (a?.id) {
-        const results = await Promise.all(SOURCES.map(s =>
-          (backendClient as any).from(s.table).select("slug,name,title,description,short_description,image,featured_image,created_at").eq("author_id", a.id).limit(50)
-        ));
-        const next: Record<string, any[]> = {};
-        SOURCES.forEach((s, i) => { next[s.table] = (results[i].data as any[]) || []; });
-        setContent(next);
-      }
-      setLoading(false);
-    })();
-  }, [slug]);
-
-  if (loading) return <div className="min-h-screen bg-background"><Navbar /><div className="container py-20 text-center text-muted-foreground">Loading…</div><Footer /></div>;
+  const [type, setType] = useState("all");
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => { const timer = window.setTimeout(() => setDebouncedSearch(search), 300); return () => window.clearTimeout(timer); }, [search]);
+  const profile = useQuery({
+    queryKey: ["public-author", slug],
+    queryFn: async () => {
+      const { data, error } = await backendClient.from("authors").select("id,slug,name,designation,photo,short_bio,bio,expertise,email,linkedin_url,twitter_url,website_url").eq("slug", slug).eq("is_active", true).maybeSingle();
+      if (error) throw error;
+      return data as Author | null;
+    },
+    retry: 1,
+  });
+  const author = profile.data;
+  if (profile.isPending) return <div className="min-h-screen bg-background"><Navbar /><div className="container py-20 text-center text-muted-foreground">Loading…</div><Footer /></div>;
+  if (profile.isError) return <div className="min-h-screen bg-background"><Navbar /><main className="container py-20 text-center"><p role="alert" className="mb-4">Could not load this writer profile.</p><Button onClick={() => void profile.refetch()}>Try again</Button></main><Footer /></div>;
   if (!author) return <div className="min-h-screen bg-background"><Navbar /><div className="container py-20 text-center text-muted-foreground">Author not found.</div><Footer /></div>;
 
-  const totalCount = Object.values(content).reduce((n, arr) => n + arr.length, 0);
   const ldjson = {
     "@context": "https://schema.org", "@type": "Person",
     name: author.name, jobTitle: author.designation, image: author.photo, description: author.short_bio,
-    url: `${typeof window !== "undefined" ? window.location.origin : ""}/author/${author.slug}`,
+    url: absoluteSiteUrl(`/author/${author.slug}`),
     sameAs: [author.linkedin_url, author.twitter_url, author.website_url].filter(Boolean),
   };
   const linkedInUrl = safeHttpUrl(author.linkedin_url);
@@ -80,10 +109,10 @@ export default function AuthorPage() {
                 </div>
               )}
               <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
-                {linkedInUrl && <a href={linkedInUrl} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Linkedin className="w-4 h-4" /></a>}
-                {twitterUrl && <a href={twitterUrl} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Twitter className="w-4 h-4" /></a>}
-                {websiteUrl && <a href={websiteUrl} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Globe className="w-4 h-4" /></a>}
-                {author.email && <a href={`mailto:${author.email}`} className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Mail className="w-4 h-4" /></a>}
+                {linkedInUrl && <a aria-label="LinkedIn profile" href={linkedInUrl} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Linkedin className="w-4 h-4" /></a>}
+                {twitterUrl && <a aria-label="Twitter profile" href={twitterUrl} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Twitter className="w-4 h-4" /></a>}
+                {websiteUrl && <a aria-label="Writer website" href={websiteUrl} target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Globe className="w-4 h-4" /></a>}
+                {author.email && <a aria-label="Email writer" href={`mailto:${author.email}`} className="p-2 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary"><Mail className="w-4 h-4" /></a>}
               </div>
             </div>
           </div>
@@ -96,29 +125,17 @@ export default function AuthorPage() {
           </section>
         )}
 
-        <section className="container py-6">
-          <h2 className="text-lg md:text-xl font-bold text-foreground mb-4">Contributions ({totalCount})</h2>
-          {SOURCES.map((s) => {
-            const items = content[s.table] || [];
-            if (!items.length) return null;
-            const Icon = s.icon;
-            return (
-              <div key={s.table} className="mb-6">
-                <h3 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-2"><Icon className="w-4 h-4 text-primary" /> {s.label} ({items.length})</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {items.map((it: any) => (
-                    <Link key={it.slug || it.id} to={s.route(it.slug)} className="bg-card border border-border rounded-2xl p-3 hover:shadow-md hover:border-primary/40 transition-all">
-                      {(it.featured_image || it.image) && <img src={it.featured_image || it.image} alt="" className="w-full h-32 object-cover rounded-lg mb-2" loading="lazy" />}
-                      <p className="font-semibold text-sm text-foreground line-clamp-2">{it.title || it.name}</p>
-                      <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{it.description || it.short_description}</p>
-                      <p className="text-xs text-primary mt-2 inline-flex items-center gap-1">Read <ArrowRight className="w-3 h-3" /></p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-          {totalCount === 0 && <p className="text-muted-foreground text-sm">No published content yet.</p>}
+        <section id="contributions" className="container py-6 scroll-mt-24">
+          <h2 className="text-lg md:text-xl font-bold text-foreground mb-1">Published contributions</h2>
+          <p className="text-sm text-muted-foreground mb-4">Browse recent and older work by {author.name}.</p>
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <Input aria-label="Search contributions" placeholder="Search by title" value={search} onChange={(event) => setSearch(event.target.value)} className="sm:max-w-sm" />
+            <select aria-label="Content type" value={type} onChange={(event) => setType(event.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+              <option value="all">All content</option>
+              {AUTHOR_SOURCES.map((source) => <option key={source.table} value={source.table}>{source.label}</option>)}
+            </select>
+          </div>
+          {AUTHOR_SOURCES.filter((source) => type === "all" || type === source.table).map((source) => <Contributions key={`${author.id}:${source.table}`} source={source} author={author} search={debouncedSearch} hideEmpty={type === "all" && source.table !== "articles"} />)}
         </section>
       </main>
       <Footer />

@@ -98,10 +98,8 @@ export default function AdminAuthors() {
                 <p className="text-xs text-muted-foreground truncate">{a.designation}</p>
                 <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{a.short_bio}</p>
                 <div className="flex gap-1 mt-2 flex-wrap">
-                  <Link to={`/author/${a.slug}`} target="_blank" className="text-xs text-primary inline-flex items-center gap-1 hover:underline"><ExternalLink className="w-3 h-3" /> View</Link>
-                  {a.user_id && (
-                    <Link to={`/dashboard?tab=profile`} target="_blank" title="User can manage their profile in dashboard" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">· Dashboard</Link>
-                  )}
+                  <Link to={`/author/${a.slug}`} target="_blank" className="text-xs text-primary inline-flex items-center gap-1 hover:underline"><ExternalLink className="w-3 h-3" /> Profile</Link>
+                  <Link to={`/author/${a.slug}#contributions`} target="_blank" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">· Published work</Link>
                   <Button variant="ghost" size="icon" className="w-7 h-7 ml-auto" onClick={() => setEditing({ ...a })}><Pencil className="w-3.5 h-3.5" /></Button>
                   <Button variant="ghost" size="icon" className="w-7 h-7 text-destructive" onClick={() => remove(a.id!)}><Trash2 className="w-3.5 h-3.5" /></Button>
                 </div>
@@ -130,9 +128,7 @@ export default function AdminAuthors() {
                 />
                 {editing.user_id && (
                   <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                    <span>That user can update their author profile from</span>
-                    <Link to="/dashboard?tab=profile" target="_blank" className="text-primary hover:underline">their dashboard</Link>
-                    <span>or you can edit it here.</span>
+                    <span>Content writers can update their own byline in Admin → My Writer Profile. You can edit this author here.</span>
                   </div>
                 )}
               </div>

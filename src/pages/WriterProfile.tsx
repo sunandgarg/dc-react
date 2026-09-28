@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 type WriterAuthor = {
   id: string; slug: string; name: string; designation: string; photo: string;
@@ -25,7 +26,7 @@ export default function WriterProfile() {
   const [form, setForm] = useState(blank);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["writer-profile", user?.id],
     enabled: Boolean(user),
     queryFn: async () => {
@@ -98,8 +99,12 @@ export default function WriterProfile() {
           <h2 className="text-xl font-bold">Your public byline</h2>
           <p className="mt-1 text-sm text-muted-foreground">Only this account can edit this writer profile. Your user ID is attached to new articles, colleges, courses and exams automatically.</p>
         </div>
-        {isLoading ? <p className="text-sm text-muted-foreground">Loading profile…</p> : <>
-          {data?.author?.slug && <a className="text-sm text-primary underline" href={`/author/${data.author.slug}`} target="_blank" rel="noreferrer">View public author page</a>}
+        {isLoading ? <p className="text-sm text-muted-foreground">Loading profile…</p> : isError ? <div role="alert" className="space-y-3"><p>Could not load your writer profile. Please retry before editing.</p><Button variant="outline" onClick={() => void refetch()}>Try again</Button></div> : <>
+          <div className="flex flex-wrap gap-3">
+            {data?.author?.slug && <Button asChild variant="outline"><Link to={`/author/${data.author.slug}#contributions`} target="_blank" rel="noreferrer">View my published work</Link></Button>}
+            <Button asChild variant="outline"><Link to="/admin/articles">My articles and drafts</Link></Button>
+          </div>
+          <p className="text-xs text-muted-foreground">Your public profile includes published articles, including older posts with your byline. Drafts and submissions awaiting approval are available in Articles, not on the public profile.</p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div><Label htmlFor="writer-name">Byline name</Label><Input id="writer-name" value={form.name} onChange={(event) => set("name", event.target.value)} maxLength={120} /></div>
             <div><Label htmlFor="writer-designation">Designation</Label><Input id="writer-designation" value={form.designation} onChange={(event) => set("designation", event.target.value)} maxLength={120} /></div>
