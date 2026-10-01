@@ -28,10 +28,10 @@ const features = [
   },
   {
     icon: Users,
-    title: "Real Student Stories",
-    description: "Hear from students who've been in your shoes - their tips, experiences, and honest reviews",
+    title: "Personalised Guidance",
+    description: "Get clear answers as you compare colleges, courses, fees and admissions",
     color: "from-accent to-golden",
-    items: ["Senior advice", "Campus life insights", "Placement stories"],
+    items: ["Course shortlists", "Admission support", "College comparisons"],
   },
 ];
 

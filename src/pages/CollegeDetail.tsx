@@ -23,6 +23,7 @@ import { CollegeAffiliationCard } from "@/components/detail/CollegeAffiliationCa
 import { CollegeTrustBento } from "@/components/detail/CollegeTrustBento";
 import { CollegeAIInsight } from "@/components/detail/CollegeAIInsight";
 import { CollegeDecisionRail } from "@/components/detail/CollegeDecisionRail";
+import { EntityDetailSidebar } from "@/components/detail/EntityDetailSidebar";
 import { AuthorByline } from "@/components/AuthorByline";
 import { MobileBottomBar } from "@/components/MobileBottomBar";
 import { useDbCollege, useCollegesByState, useSimilarColleges } from "@/hooks/useCollegesData";
@@ -36,7 +37,6 @@ import { GalleryCarousel } from "@/components/detail/GalleryCarousel";
 import { currentYear } from "@/lib/currentYear";
 import { PlacementCompaniesSection } from "@/components/detail/PlacementCompaniesSection";
 import { CollegeContactSection } from "@/components/detail/CollegeContactSection";
-import { CollegeReviews } from "@/components/detail/CollegeReviews";
 import { LatestNewsSection } from "@/components/detail/LatestNewsSection";
 import { RelatedCoursesExamsStrip } from "@/components/detail/RelatedCoursesExamsStrip";
 import { PartnerCollegeStrip } from "@/components/detail/PartnerCollegeStrip";
@@ -47,27 +47,25 @@ import { RichText } from "@/components/detail/RichText";
 import { PageSummary } from "@/components/detail/PageSummary";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { formatFeePeriod, formatFeeRange, formatIndianFee, groupCollegeFees, groupCollegeFeesByLevel, inferCourseSpecialization } from "@/lib/courseFeeGroups";
-import { STUDENT_RATING_FALLBACK } from "@/lib/ratings";
 
 const COLLEGE_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "Overview" },
+  { id: "contact", label: "Contact" },
   { id: "highlights", label: "Highlights" },
   { id: "courses", label: "Courses & Fees" },
   { id: "admissions", label: "Admissions" },
   { id: "placements", label: "Placements" },
   { id: "cutoff", label: "Cut-Offs" },
   { id: "rankings", label: "Rankings" },
-  { id: "reviews", label: "Reviews" },
   { id: "infrastructure", label: "Infrastructure" },
   { id: "gallery", label: "Gallery" },
+  { id: "faculty", label: "Faculty" },
+  { id: "recruiters", label: "Recruiters" },
   { id: "scholarships", label: "Scholarships" },
   { id: "hostel", label: "Hostel" },
   { id: "compare", label: "Compare" },
-  { id: "faculty", label: "Faculty" },
-  { id: "recruiters", label: "Recruiters" },
-  { id: "contact", label: "Contact" },
-  { id: "news", label: "News" },
   { id: "faq", label: "Q&A" },
+  { id: "news", label: "News" },
 ];
 
 export default function CollegeDetail() {
@@ -256,6 +254,9 @@ export default function CollegeDetail() {
       <main className="container px-3 md:px-6 py-3 md:py-6 max-w-full" style={{ overflowX: "clip" }}>
         <PageBreadcrumb items={[{ label: "Colleges", href: "/colleges" }, { label: college.name }]} />
 
+        <div className="grid items-start gap-4 md:gap-6 lg:grid-cols-3 lg:items-stretch">
+          <div className="min-w-0 lg:col-span-2">
+
         {/* Cinematic hero - 2026 redesign */}
         <CollegeHeroCard college={college} onCounselling={() => setCounsellingOpen(true)} />
         <div className="mt-3"><CollegeAffiliationCard college={college} /></div>
@@ -280,6 +281,8 @@ export default function CollegeDetail() {
                 subtitle="Our counselor will call you back shortly"
                 source={`college_counselling_${college.slug}`}
                 interestedCollegeSlug={college.slug}
+                brandLogoUrl={college.logo}
+                brandName={college.name}
                 onSuccess={() => setCounsellingOpen(false)}
               />
             </div>
@@ -298,10 +301,9 @@ export default function CollegeDetail() {
           <CollegeDecisionRail college={college} />
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6">
             {/* Quick Summary (admin-written page summary) */}
-            <PageSummary html={(college as any).page_summary} entityName={college.short_name || college.name} kind="college" />
+            <PageSummary html={String((college as any).page_summary || "").replace(/Student Reviews And Decision Support/gi, "Decision Support").replace(/A useful review of/gi, "A useful evaluation of")} entityName={college.short_name || college.name} kind="college" />
             {/* Approval logos strip - merges library bodies (selected via codes) + per-college custom logos */}
             {(() => {
               const codes: string[] = (college as any).approvals || [];
@@ -352,37 +354,36 @@ export default function CollegeDetail() {
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-card via-card/90 to-transparent" aria-hidden="true" />
                 )}
               </div>
-              {aboutCanExpand && (
-                <div className="mt-3 flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() => setAboutExpanded((expanded) => !expanded)}
-                    aria-expanded={aboutExpanded}
-                    className="group inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/[0.06] px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-primary/45 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-                  >
-                    <span>{aboutExpanded ? "Show less" : "More"}</span>
-                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${aboutExpanded ? "rotate-180" : "group-hover:translate-y-0.5"}`} aria-hidden="true" />
-                  </button>
-                </div>
-              )}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-5">
-                {[
-                  { label: "Type", value: college.type },
-                  { label: "Established", value: String(college.established) },
-                  { label: "NAAC Grade", value: college.naac_grade },
-                  { label: "Fees", value: college.fees },
-                  { label: "Avg. Package", value: college.placement },
-                ].map((info) => (
-                  <div key={info.label} className="rounded-xl bg-muted/40 border border-border/60 p-3">
-                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">{info.label}</p>
-                    <p className="text-sm font-bold text-foreground line-clamp-1 mt-0.5">{info.value || "-"}</p>
-                  </div>
-                ))}
+              <div className="mt-3 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setAboutExpanded((expanded) => !expanded)}
+                  aria-expanded={aboutExpanded}
+                  aria-controls="college-about-facts"
+                  className="group inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/[0.06] px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-primary/45 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                >
+                  <span>{aboutExpanded ? "Show less" : "More"}</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${aboutExpanded ? "rotate-180" : "group-hover:translate-y-0.5"}`} aria-hidden="true" />
+                </button>
+              </div>
+              <div id="college-about-facts" className={`${aboutExpanded ? "grid" : "hidden"} grid-cols-2 sm:grid-cols-3 gap-2.5 mt-5`}>
+                  {[
+                    { label: "Type", value: college.type },
+                    { label: "Established", value: String(college.established) },
+                    { label: "NAAC Grade", value: college.naac_grade },
+                    { label: "Fees", value: college.fees },
+                    { label: "Avg. Package", value: college.placement },
+                  ].map((info) => (
+                    <div key={info.label} className="rounded-xl bg-muted/40 border border-border/60 p-3">
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">{info.label}</p>
+                      <p className="text-sm font-bold text-foreground line-clamp-1 mt-0.5">{info.value || "-"}</p>
+                    </div>
+                  ))}
               </div>
             </section>
 
             {/* Contact details - gated, shown right above Highlights */}
-            <CollegeContactSection collegeSlug={college.slug} collegeName={college.name} />
+            <CollegeContactSection collegeSlug={college.slug} collegeName={college.name} collegeLogo={college.logo} />
 
             {/* College Details card - moved here, just above Highlights */}
             <section className="bg-card rounded-2xl border border-border p-5">
@@ -600,7 +601,7 @@ export default function CollegeDetail() {
               </div>
             </RichSection>
 
-            <LeadCaptureForm variant="inline" title="📞 Get admission guidance for this college" source={`college_inline_${college.slug}`} interestedCollegeSlug={college.slug} />
+            <LeadCaptureForm variant="inline" title="📞 Get admission guidance for this college" source={`college_inline_${college.slug}`} interestedCollegeSlug={college.slug} brandLogoUrl={college.logo} brandName={college.name} />
 
             {/* Admissions */}
             <RichSection
@@ -720,14 +721,6 @@ export default function CollegeDetail() {
               )}
             </RichSection>
 
-            {/* Reviews - verified user-submitted */}
-            <CollegeReviews
-              collegeSlug={college.slug}
-              collegeName={college.short_name || college.name}
-              fallbackRating={STUDENT_RATING_FALLBACK}
-              fallbackReviewsCount={college.reviews}
-            />
-
             {/* Infrastructure - only render when admin filled facilities or rich content */}
             {(college.facilities?.length > 0 || (college.facilities_content && college.facilities_content.trim())) && (
               <RichSection id="infrastructure" title={<>Infrastructure & Facilities</>}>
@@ -780,7 +773,7 @@ export default function CollegeDetail() {
 
             <FacultySection collegeSlug={college.slug} />
             <PlacementCompaniesSection collegeSlug={college.slug} />
-            <LeadCaptureForm variant="inline" title="Need help with admission?" source={`college_mid_${college.slug}`} interestedCollegeSlug={college.slug} />
+            <LeadCaptureForm variant="inline" title="Need help with admission?" source={`college_mid_${college.slug}`} interestedCollegeSlug={college.slug} brandLogoUrl={college.logo} brandName={college.name} />
 
             {/* Scholarships - admin content only */}
             {college.scholarship_details && college.scholarship_details.trim() && (
@@ -874,7 +867,7 @@ export default function CollegeDetail() {
               collegeName={college.short_name || college.name}
             />
 
-            <LatestNewsSection entityType="college" entitySlug={college.slug} entityName={college.short_name || college.name} />
+            <LatestNewsSection entityType="college" entitySlug={college.slug} entityName={college.short_name || college.name} sectionId="news" />
 
             {(() => {
               const sourceLinks = Array.from(new Set([
@@ -919,14 +912,14 @@ export default function CollegeDetail() {
             />
           </div>
 
-          {/* Sidebar - sticky decision rail leads, then lead form, then context */}
-          <aside className="hidden lg:block">
-            <div className="space-y-4 pb-4">
-              {/* Primary decision rail - single confident next step */}
+          </div>
+
+          <EntityDetailSidebar
+            pageKey="college-detail"
+            title={college.name}
+            leadForm={<LeadCaptureForm variant="sidebar" title={`Get guidance for ${college.name}`} subtitle="Free admissions guidance" source={`college_detail_sidebar_${college.slug}`} interestedCollegeSlug={college.slug} brandLogoUrl={college.logo} brandName={college.name} />}
+          >
               <CollegeDecisionRail college={college} />
-
-              <LeadCaptureForm variant="card" title={`Apply to ${college.name}`} subtitle="Get free counseling and application support" source={`college_detail_sidebar_${college.slug}`} interestedCollegeSlug={college.slug} />
-
 
               {/* Contact Info */}
               <div className="bg-card rounded-2xl border border-border p-4">
@@ -966,18 +959,17 @@ export default function CollegeDetail() {
               <PartnerCollegeStrip title="Partner Colleges" excludeSlug={college.slug} preferredCity={college.city} preferredState={college.state} limit={5} compact />
 
               <DynamicAdBanner variant="vertical" position="sidebar" page="colleges" itemSlug={college.slug} />
-            </div>
-          </aside>
+          </EntityDetailSidebar>
         </div>
 
         <div className="mt-10">
-          <LeadCaptureForm variant="banner" title={`🎓 Want to get into ${college.name}? Get expert guidance!`} subtitle="Our counselors have helped thousands of students with admissions" source={`college_detail_bottom_${college.slug}`} interestedCollegeSlug={college.slug} />
+          <LeadCaptureForm variant="banner" title={`🎓 Want to get into ${college.name}? Get expert guidance!`} subtitle="Our counselors have helped thousands of students with admissions" source={`college_detail_bottom_${college.slug}`} interestedCollegeSlug={college.slug} brandLogoUrl={college.logo} brandName={college.name} />
         </div>
       </main>
 
       <AlsoCheckSection />
       <Footer />
-      <MobileBottomBar type="college" slug={college.slug} collegeName={college.short_name || college.name} brochureUrl={college.brochure_url || undefined} sections={COLLEGE_SECTIONS} />
+      <MobileBottomBar type="college" slug={college.slug} collegeName={college.short_name || college.name} brandLogoUrl={college.logo} brochureUrl={college.brochure_url || undefined} sections={COLLEGE_SECTIONS} />
     </div>
   );
 }

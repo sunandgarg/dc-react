@@ -55,7 +55,6 @@ export const COLLEGE_DETAIL_TABS = [
   "placements",
   "cutoff",
   "rankings",
-  "reviews",
   "infrastructure",
   "gallery",
   "scholarships",

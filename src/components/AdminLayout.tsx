@@ -28,7 +28,6 @@ const groups: NavGroup[] = [
       { label: "My Writer Profile", href: "/admin/writer-profile", icon: UserCircle },
       { label: "Create Link", href: "/admin/writer-links", icon: Link2 },
       { label: "Users & Roles", href: "/admin/users", icon: UserCircle, module: "users" },
-      { label: "Reviews Moderation", href: "/admin/reviews", icon: Star },
       { label: "Referrals", href: "/admin/referrals", icon: Star, module: "referrals" },
       { label: "Jobs", href: "/admin/jobs", icon: Briefcase, module: "jobs" },
       { label: "Vacancy Applications", href: "/admin/vacancy-applications", icon: ClipboardList },

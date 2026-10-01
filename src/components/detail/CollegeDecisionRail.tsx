@@ -131,7 +131,7 @@ export function CollegeDecisionRail({ college }: Props) {
 
           <div className="flex items-center gap-2 text-[#e85d3a] text-xs font-bold">
             <Star className="w-4 h-4 fill-current" />
-            College Rating: {displayRating(college.rating)} / 5.0
+            DekhoCampus Rating: {displayRating(college.rating)} / 5.0
           </div>
         </div>
       </div>

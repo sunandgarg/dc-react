@@ -9,13 +9,14 @@ interface Props {
   entityName: string;
   entityType: "college" | "course" | "exam" | "career";
   entitySlug: string;
+  sectionId?: string;
 }
 
 /**
  * "Latest News & Updates" - full grid layout, used at the bottom of detail pages.
  * Pulls articles linked via `article_links` for the given entity.
  */
-export function LatestNewsSection({ entityName, entityType, entitySlug }: Props) {
+export function LatestNewsSection({ entityName, entityType, entitySlug, sectionId = "latest-news" }: Props) {
   const { data: articles } = useDbArticles();
   const [linkedIds, setLinkedIds] = useState<string[]>([]);
 
@@ -44,7 +45,7 @@ export function LatestNewsSection({ entityName, entityType, entitySlug }: Props)
   if (!items.length) return null;
 
   return (
-    <section id="latest-news" className="bg-card rounded-2xl border border-border p-5 scroll-mt-32">
+    <section id={sectionId} className="bg-card rounded-2xl border border-border p-5 scroll-mt-32">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
           <Newspaper className="w-5 h-5 text-primary" />

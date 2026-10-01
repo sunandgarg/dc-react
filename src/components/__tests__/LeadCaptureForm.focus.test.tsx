@@ -53,4 +53,12 @@ describe.each(["card", "banner", "sidebar", "inline", "article-sidebar"] as cons
     typeWithoutRemount("Email address *", "rahul@example.com");
     typeWithoutRemount("Mobile number *", "9876543210");
   });
+
+  it("shows the page logo and falls back to DekhoCampus if it fails", () => {
+    render(<LeadCaptureForm variant={variant} brandLogoUrl="https://example.com/college-logo.png" brandName="Example College" />);
+    const logo = screen.getByRole("img", { name: "Example College logo" });
+    expect(logo).toHaveAttribute("src", "https://example.com/college-logo.png");
+    fireEvent.error(logo);
+    expect(screen.getByRole("img", { name: "DekhoCampus logo" })).toHaveAttribute("src", expect.stringContaining("dc-lead-logo"));
+  });
 });

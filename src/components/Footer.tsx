@@ -1,6 +1,5 @@
-import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin, Star } from "lucide-react";
+import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import { GoogleGLogo } from "@/components/GoogleGLogo";
 import logo from "@/assets/dekhocampus-footer-logo.png";
 import dcLogo from "@/assets/dc-logo-small.webp";
 import { QuickLinksBar } from "@/components/QuickLinksBar";
@@ -237,16 +236,6 @@ export function Footer() {
             © {new Date().getFullYear()} DekhoCampus. Made with ❤️ for students in India
           </p>
           <div className="flex items-center gap-3 flex-wrap justify-center">
-            <a
-              href="#google-reviews"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/10 hover:bg-background/15 transition-colors"
-              aria-label="4.9 star Google reviews"
-            >
-              <GoogleGLogo className="w-4 h-4" />
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span className="text-xs font-bold text-background">4.9</span>
-              <span className="text-[10px] text-background/70 hidden sm:inline">Google Rating</span>
-            </a>
             <div className="flex items-center gap-2.5">
               {socialLinks.map((social) => (
                 <a

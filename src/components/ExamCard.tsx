@@ -26,9 +26,6 @@ const statusColors: Record<string, string> = {
 
 export function ExamCard({ exam, index }: ExamCardProps) {
   const [leadOpen, setLeadOpen] = useState(false);
-  const importantDates = Array.isArray(exam.important_dates)
-    ? (exam.important_dates as { event: string; date: string }[])
-    : [];
   const { shortName: examName, fullName } = resolveExamNames(exam);
   const category = compactDisplayText(exam.category, "General", 28);
   const level = compactDisplayText(exam.level, "Exam", 22);
@@ -108,23 +105,6 @@ export function ExamCard({ exam, index }: ExamCardProps) {
             </div>
           </div>
         </div>
-
-        {/* Important Dates */}
-        {importantDates.length > 0 && (
-          <div className="mb-4">
-            <h3 className="text-sm font-semibold text-foreground mb-2">Important Dates</h3>
-            <div className="space-y-1.5">
-              {importantDates.slice(0, 4).map((d, i) => (
-                <div key={i} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-3 text-xs leading-relaxed">
-                  <span className="text-muted-foreground break-words">{d.event}:</span>
-                  <span className={`font-medium break-words ${i >= 2 ? "text-destructive" : "text-foreground"}`}>
-                    {d.date}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Frequency & Apply mode */}
         <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4 pb-4 border-b border-border">

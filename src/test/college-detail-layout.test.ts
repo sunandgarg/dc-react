@@ -34,7 +34,7 @@ describe("college detail summary layout", () => {
   });
 
   it("shows the three summary facts once without a course count", () => {
-    expect(stats).toMatch(/label: "Rating"/);
+    expect(stats).toMatch(/label: "DekhoCampus Rating"/);
     expect(stats).not.toMatch(/label: "Courses"|courses_count/);
     expect(stats).toMatch(/sm:grid-cols-3/);
     expect(stats).toMatch(/label: "Avg Package"/);
@@ -48,5 +48,23 @@ describe("college detail summary layout", () => {
   it("shows a university-specific institution type when the stored type is generic", () => {
     expect(stats).toMatch(/displayInstitutionType/);
     expect(stats).toMatch(/`\$\{type\} University`/);
+  });
+
+  it("shows one swipeable college fact at a time on mobile with direct controls", () => {
+    expect(stats).toMatch(/snap-x snap-mandatory/);
+    expect(stats).toMatch(/w-full shrink-0 snap-start/);
+    expect(stats).toMatch(/sm:grid sm:grid-cols-3/);
+    expect(stats).toMatch(/onClick=\{\(\) => goToCard\(index\)\}/);
+  });
+
+  it("orders college tabs like their page sections", () => {
+    const tabs = detail.match(/const COLLEGE_SECTIONS:[\s\S]*?\];/)?.[0] || "";
+    expect(tabs.indexOf('id: "contact"')).toBeGreaterThan(tabs.indexOf('id: "overview"'));
+    expect(tabs.indexOf('id: "contact"')).toBeLessThan(tabs.indexOf('id: "highlights"'));
+    expect(tabs.indexOf('id: "faculty"')).toBeLessThan(tabs.indexOf('id: "scholarships"'));
+    expect(tabs.indexOf('id: "faq"')).toBeLessThan(tabs.indexOf('id: "news"'));
+    expect(detail).toMatch(/<LatestNewsSection[^>]*sectionId="news"/);
+    expect(tabs).not.toMatch(/id: "reviews"/);
+    expect(detail).not.toMatch(/<CollegeReviews\b/);
   });
 });

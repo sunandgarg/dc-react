@@ -37,9 +37,9 @@ export function useHeroCategories() {
 
   const categories = useMemo(() => {
     const rows = query.data ?? [];
-    if (!rows.length) return DEFAULT_HERO_CATEGORIES;
+    if (!rows.length) return DEFAULT_HERO_CATEGORIES.filter((item) => item.key !== "review");
     const defaults = new Map(DEFAULT_HERO_CATEGORIES.map((item) => [item.key, item]));
-    return rows.map((row) => {
+    return rows.filter((row) => row.key !== "review").map((row) => {
       const fallback = defaults.get(row.key);
       return {
         key: row.key,

@@ -117,7 +117,7 @@ export function FeaturedColleges() {
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(displayRating(college.rating)) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
                       ))}
-                      <span className="text-xs text-muted-foreground ml-1">{displayRating(college.rating)}/5</span>
+                      <span className="text-xs text-muted-foreground ml-1" title="DekhoCampus Rating">{displayRating(college.rating)}/5</span>
                     </div>
                     <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin className="w-3 h-3" />

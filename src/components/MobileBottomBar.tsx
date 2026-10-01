@@ -10,11 +10,13 @@ interface MobileBottomBarProps {
   type: "college" | "course" | "exam";
   slug?: string;
   collegeName?: string;
+  brandName?: string;
+  brandLogoUrl?: string;
   brochureUrl?: string;
   sections?: { id: string; label: string }[];
 }
 
-export const MobileBottomBar = forwardRef<HTMLDivElement, MobileBottomBarProps>(function MobileBottomBar({ type, slug, collegeName, brochureUrl, sections }, ref) {
+export const MobileBottomBar = forwardRef<HTMLDivElement, MobileBottomBarProps>(function MobileBottomBar({ type, slug, collegeName, brandName, brandLogoUrl, brochureUrl, sections }, ref) {
   const [showAd, setShowAd] = useState(true);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [showTOC, setShowTOC] = useState(false);
@@ -167,6 +169,8 @@ export const MobileBottomBar = forwardRef<HTMLDivElement, MobileBottomBarProps>(
               interestedCollegeSlug={type === "college" ? slug : undefined}
               interestedCourseSlug={type === "course" ? slug : undefined}
               interestedExamSlug={type === "exam" ? slug : undefined}
+              brandLogoUrl={brandLogoUrl}
+              brandName={brandName || collegeName}
             />
           </div>
         </DialogContent>
@@ -179,6 +183,8 @@ export const MobileBottomBar = forwardRef<HTMLDivElement, MobileBottomBarProps>(
         subtitle="Share your contact details first, then add your course and location preferences."
         source={`mobile_college_${collegeLeadAction || "details"}_${slug || ""}`}
         interestedCollegeSlug={slug}
+        brandLogoUrl={brandLogoUrl}
+        brandName={brandName || collegeName}
         simple
         onSuccess={() => {
           const action = collegeLeadAction;

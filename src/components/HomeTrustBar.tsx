@@ -1,6 +1,4 @@
-import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { GoogleGLogo } from "@/components/GoogleGLogo";
 import { InstitutionLogo } from "@/components/InstitutionLogo";
 import { useTrustedPartners } from "@/hooks/useTrustedPartners";
 import { buildCollegeHref } from "@/lib/entityUrls";
@@ -9,15 +7,12 @@ export function HomeTrustBar() {
   const { data: partners = [] } = useTrustedPartners();
 
   return (
-    <section id="google-reviews" className="scroll-mt-24 border-y border-border/60 bg-background py-7" aria-labelledby="trust-heading">
+    <section id="trusted-partners" className="scroll-mt-24 border-y border-border/60 bg-background py-7" aria-labelledby="trust-heading">
       <div className="container flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12">
         <div className="flex shrink-0 items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white ring-1 ring-border shadow-sm">
-            <GoogleGLogo className="h-6 w-6" />
-          </span>
           <div>
-            <h2 id="trust-heading" className="text-sm font-extrabold text-foreground">Students rate us 4.9 on Google</h2>
-            <p className="flex items-center gap-1 text-xs text-muted-foreground"><span className="flex" aria-label="4.9 out of 5 stars">{[1, 2, 3, 4, 5].map((star) => <Star key={star} className="h-3 w-3 fill-amber-400 text-amber-400" aria-hidden="true" />)}</span><span>600+ reviews</span></p>
+            <h2 id="trust-heading" className="text-sm font-extrabold text-foreground">Explore college partners</h2>
+            <p className="text-xs text-muted-foreground">Find institutions and compare your options.</p>
           </div>
         </div>
 

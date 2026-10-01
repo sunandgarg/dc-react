@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import { Building2, Star, TrendingUp } from "lucide-react";
 import { displayRating } from "@/lib/ratings";
 
@@ -18,10 +19,12 @@ function displayInstitutionType(college: any): string {
  * The single at-a-glance stats row used near the top of every college page.
  */
 export function CollegeTrustBento({ college }: Props) {
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [activeCard, setActiveCard] = useState(0);
   const items = [
     {
       icon: Star,
-      label: "Rating",
+      label: "DekhoCampus Rating",
       value: `${displayRating(college.rating)}/5`,
       iconClassName: "text-amber-500",
     },
@@ -39,20 +42,51 @@ export function CollegeTrustBento({ college }: Props) {
     },
   ];
 
+  const goToCard = (index: number) => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+    carousel.scrollLeft = index * carousel.clientWidth;
+    setActiveCard(index);
+  };
+
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-5">
-      {items.map((it) => (
-        <div
-          key={it.label}
-          className="flex min-h-[132px] flex-col items-center justify-center rounded-3xl border border-slate-200 bg-white p-4 text-center transition-colors hover:border-slate-300 md:min-h-[172px] md:p-6"
-        >
-          <it.icon className={`mb-2.5 h-7 w-7 ${it.iconClassName}`} aria-hidden="true" />
-          <p className="text-lg font-bold leading-snug text-slate-950 md:text-2xl">
-            {it.value}
-          </p>
-          <p className="mt-1 text-sm text-slate-500 md:text-lg">{it.label}</p>
-        </div>
-      ))}
+    <div>
+      <div
+        ref={carouselRef}
+        aria-label="College at a glance"
+        onScroll={(event) => {
+          const carousel = event.currentTarget;
+          if (carousel.clientWidth) setActiveCard(Math.round(carousel.scrollLeft / carousel.clientWidth));
+        }}
+        className="flex snap-x snap-mandatory gap-0 overflow-x-auto overscroll-x-contain scrollbar-hide sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible md:gap-5"
+      >
+        {items.map((it) => (
+          <div
+            key={it.label}
+            className="flex min-h-[132px] w-full shrink-0 snap-start flex-col items-center justify-center rounded-3xl border border-slate-200 bg-white p-4 text-center transition-colors hover:border-slate-300 sm:w-auto sm:shrink md:min-h-[172px] md:p-6"
+          >
+            <it.icon className={`mb-2.5 h-7 w-7 ${it.iconClassName}`} aria-hidden="true" />
+            <p className="text-lg font-bold leading-snug text-slate-950 md:text-2xl">
+              {it.value}
+            </p>
+            <p className="mt-1 text-sm text-slate-500 md:text-lg">{it.label}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 flex justify-center gap-2 sm:hidden" aria-label="College facts carousel controls">
+        {items.map((it, index) => (
+          <button
+            key={it.label}
+            type="button"
+            aria-label={`Show ${it.label}`}
+            aria-current={activeCard === index ? "true" : undefined}
+            onClick={() => goToCard(index)}
+            className="flex h-8 w-8 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            <span className={`h-2 rounded-full transition-all ${activeCard === index ? "w-6 bg-primary" : "w-2 bg-slate-300"}`} />
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

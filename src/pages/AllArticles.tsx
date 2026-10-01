@@ -36,7 +36,7 @@ function fromDb(a: any): DisplayArticle {
 }
 
 export default function AllArticles() {
-  useSEO({ title: "Articles & Guides - Exam Tips, Career Advice & College Reviews", description: "Read expert articles on entrance exams, college selection, scholarships and career planning for Indian students." });
+  useSEO({ title: "Articles & Guides - Exam Tips, Career Advice & College Guides", description: "Read expert articles on entrance exams, college selection, scholarships and career planning for Indian students." });
   const { data: dbArticles = [] } = useDbArticles();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");

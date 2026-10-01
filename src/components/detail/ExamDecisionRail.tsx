@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { IITAlumniBadge } from "@/components/IITAlumniBadge";
 import { trackEvent } from "@/lib/analytics";
+import { resolveExamLogo } from "@/lib/examBranding";
 
 interface Props {
   exam: any;
@@ -110,6 +111,8 @@ export function ExamDecisionRail({ exam, onDownloadSample }: Props) {
         source={destination ? `exam_apply_${exam.slug}` : `exam_rail_${exam.slug}`}
         simple
         interestedExamSlug={exam.slug}
+        brandLogoUrl={resolveExamLogo(exam)}
+        brandName={exam.name}
         onSuccess={() => {
           setOpen(false);
           if (destination) window.location.assign(destination);

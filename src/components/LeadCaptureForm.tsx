@@ -37,6 +37,23 @@ interface LeadCaptureFormProps {
   /** Strip urgency hooks (slots/counselling pitch) and tagline. Used for high-intent Apply/Brochure CTAs. */
   simple?: boolean;
   theme?: "default" | "cat-kit";
+  brandLogoUrl?: string;
+  brandName?: string;
+}
+
+function FormBrandLogo({ url, name, className }: { url?: string; name?: string; className?: string }) {
+  return <img
+    key={url || "dekhocampus"}
+    src={url || dcLogo}
+    alt={url ? `${name || "Institution"} logo` : "DekhoCampus logo"}
+    className={className}
+    onError={(event) => {
+      if (event.currentTarget.src !== new URL(dcLogo, window.location.href).href) {
+        event.currentTarget.src = dcLogo;
+        event.currentTarget.alt = "DekhoCampus logo";
+      }
+    }}
+  />;
 }
 
 const courseOptions = [
@@ -65,6 +82,8 @@ export function LeadCaptureForm({
   interestOptions = courseOptions,
   simple = false,
   theme = "default",
+  brandLogoUrl,
+  brandName,
 }: LeadCaptureFormProps) {
   const interestPrompt = interestLabel === "Course" ? "Interested Course" : interestLabel;
   const [formData, setFormData] = useState({
@@ -355,7 +374,7 @@ export function LeadCaptureForm({
         )}
         <div className={`${isCatKit ? "px-5 pt-5" : ""} flex items-center justify-between mb-4`}>
           <div className="flex items-center gap-3">
-            <img src={dcLogo} alt="DekhoCampus" className="w-10 h-10 object-contain" />
+            <FormBrandLogo url={brandLogoUrl} name={brandName} className="w-10 h-10 shrink-0 rounded-lg bg-white object-contain" />
             <div>
               <h3 className="text-sm font-bold text-foreground">{title}</h3>
               {simple ? (
@@ -401,6 +420,7 @@ export function LeadCaptureForm({
       >
         <div className="flex flex-col items-center gap-5 md:gap-6">
           <div className="text-center max-w-2xl flex flex-col items-center">
+            <FormBrandLogo url={brandLogoUrl} name={brandName} className="mb-3 h-12 w-12 rounded-lg bg-white p-1 object-contain" />
             <h3 className="text-xl md:text-3xl font-bold text-primary-foreground mb-2 leading-tight">{title}</h3>
             <IITAlumniBadge />
             <p className="text-primary-foreground/90 text-sm md:text-base mt-2">{subtitle}</p>
@@ -424,7 +444,7 @@ export function LeadCaptureForm({
         className="bg-card rounded-2xl border border-border p-4"
       >
         <div className="text-center mb-3">
-          <img src={dcLogo} alt="DekhoCampus" className="w-10 h-10 object-contain mx-auto mb-2" />
+          <FormBrandLogo url={brandLogoUrl} name={brandName} className="w-11 h-11 rounded-lg bg-white p-1 object-contain mx-auto mb-2" />
           <h4 className="font-bold text-foreground text-sm">{title}</h4>
           <IITAlumniBadge className="mt-1.5" />
         </div>
@@ -450,7 +470,7 @@ export function LeadCaptureForm({
         <div className="p-4">
           <div className="mb-4 flex items-start gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-orange-200 bg-orange-50">
-              <img src={dcLogo} alt="DekhoCampus" className="h-7 w-7 object-contain" />
+              <FormBrandLogo url={brandLogoUrl} name={brandName} className="h-7 w-7 object-contain" />
             </span>
             <div className="min-w-0">
               <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">Free updates</p>
@@ -475,7 +495,7 @@ export function LeadCaptureForm({
           <p className="text-sm font-medium text-foreground">{title}</p>
           <IITAlumniBadge className="mt-1" />
         </div>
-        <img src={dcLogo} alt="DekhoCampus" className="h-7 w-7 object-contain" />
+        <FormBrandLogo url={brandLogoUrl} name={brandName} className="h-8 w-8 shrink-0 rounded-md bg-white object-contain" />
       </div>
       <form onSubmit={handleSubmit} className="space-y-2">
         {renderTwoStepFields({ compact: true })}

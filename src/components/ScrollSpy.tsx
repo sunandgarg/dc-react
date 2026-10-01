@@ -22,6 +22,7 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
   const navRef = useRef<HTMLElement>(null);
   const activeIdRef = useRef(initialTab);
   const lastRouteTabRef = useRef<string | undefined>(tab);
+  const initialScrollPendingRef = useRef<string | null>(tab || null);
   const sectionsKey = sections.map(({ id }) => id).join("|");
 
   useEffect(() => {
@@ -65,27 +66,35 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
   // Cancel if the user starts scrolling before the timer fires, otherwise the
   // delayed programmatic scroll yanks the page back and feels like "scroll
   // jumps up" on detail pages.
-  const didInitialScroll = useRef(false);
   useEffect(() => {
-    if (didInitialScroll.current) return;
-    didInitialScroll.current = true;
     const initial = tab;
     if (!initial) return;
     let cancelled = false;
-    const cancel = () => { cancelled = true; };
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
+    const cancel = () => {
+      cancelled = true;
+      initialScrollPendingRef.current = null;
+    };
     window.addEventListener("wheel", cancel, { passive: true, once: true });
     window.addEventListener("touchstart", cancel, { passive: true, once: true });
     window.addEventListener("keydown", cancel, { once: true });
-    const timer = setTimeout(() => {
+    const startedAt = Date.now();
+    const scrollWhenReady = () => {
       if (cancelled) return;
       const el = document.getElementById(initial);
       if (el) {
         const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - scrollOffset());
         window.scrollTo({ top: y, behavior: "smooth" });
+      } else if (Date.now() - startedAt < 4000) {
+        retryTimer = setTimeout(scrollWhenReady, 100);
+      } else {
+        initialScrollPendingRef.current = null;
       }
-    }, 300);
+    };
+    const timer = setTimeout(scrollWhenReady, 300);
     return () => {
       clearTimeout(timer);
+      clearTimeout(retryTimer);
       window.removeEventListener("wheel", cancel);
       window.removeEventListener("touchstart", cancel);
       window.removeEventListener("keydown", cancel);
@@ -106,6 +115,17 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
   // the tab always reflects the section immediately below the sticky bars.
   const syncActiveSection = useCallback(() => {
     const marker = scrollOffset() + 16;
+    const pending = initialScrollPendingRef.current;
+    if (pending) {
+      const target = document.getElementById(pending);
+      if (!target) return;
+      const reachedTarget = Math.abs(target.getBoundingClientRect().top - marker) < 32;
+      const reachedPageEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      if (!reachedTarget && !reachedPageEnd) return;
+      initialScrollPendingRef.current = null;
+      setActiveSection(pending);
+      return;
+    }
     const positioned = sections
       .map(({ id }) => {
         const element = document.getElementById(id);
@@ -147,6 +167,7 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
   }, [sectionsKey, sections, syncActiveSection]);
 
   const scrollTo = useCallback((id: string) => {
+    initialScrollPendingRef.current = null;
     setActiveSection(id, false);
     updateUrl(id);
     const el = document.getElementById(id);
@@ -167,7 +188,7 @@ export function ScrollSpy({ sections, className, baseUrl, updateUrlOnScroll = fa
       const nextLeft = btn.offsetLeft - nav.clientWidth / 2 + btn.clientWidth / 2;
       nav.scrollTo({ left: Math.max(0, nextLeft), behavior: "smooth" });
     }
-  }, [activeId]);
+  }, [activeId, sectionsKey]);
 
   return (
     <nav

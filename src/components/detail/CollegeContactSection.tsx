@@ -21,7 +21,7 @@ const STORAGE_PREFIX = "contact_unlocked_";
  * (no oversized iframe). Uses a single Google Maps button instead of an
  * embedded map.
  */
-export function CollegeContactSection({ collegeSlug, collegeName }: { collegeSlug: string; collegeName?: string }) {
+export function CollegeContactSection({ collegeSlug, collegeName, collegeLogo }: { collegeSlug: string; collegeName?: string; collegeLogo?: string }) {
   const { user } = useAuth();
   const [c, setC] = useState<Contact | null>(null);
   const [open, setOpen] = useState(false);
@@ -136,6 +136,8 @@ export function CollegeContactSection({ collegeSlug, collegeName }: { collegeSlu
               subtitle="We'll unlock contact details right after."
               source={`college_contact_unlock_${collegeSlug}`}
               interestedCollegeSlug={collegeSlug}
+              brandLogoUrl={collegeLogo}
+              brandName={collegeName}
               onSuccess={handleUnlock}
             />
           </div>

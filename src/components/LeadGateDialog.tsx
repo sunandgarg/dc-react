@@ -29,6 +29,8 @@ interface LeadGateDialogProps {
   interestedCourseSlug?: string;
   interestedExamSlug?: string;
   theme?: "default" | "cat-kit";
+  brandLogoUrl?: string;
+  brandName?: string;
 }
 
 
@@ -48,6 +50,8 @@ export function LeadGateDialog({
   interestedCourseSlug,
   interestedExamSlug,
   theme = "default",
+  brandLogoUrl,
+  brandName,
 }: LeadGateDialogProps) {
   const { user } = useAuth();
   const { data: profile } = useUserProfile();
@@ -139,6 +143,8 @@ export function LeadGateDialog({
           interestedCollegeSlug={interestedCollegeSlug}
           interestedCourseSlug={interestedCourseSlug}
           interestedExamSlug={interestedExamSlug}
+          brandLogoUrl={brandLogoUrl}
+          brandName={brandName}
           theme={theme}
         />
       </DialogContent>

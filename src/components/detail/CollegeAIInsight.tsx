@@ -18,8 +18,7 @@ export function CollegeAIInsight({ college }: Props) {
 
   const fallback = (
     <>
-      {name} is rated <span className="font-bold text-slate-900">{displayRating(college.rating)}/5</span>{" "}
-      by students. With an average placement of{" "}
+      {name} has a DekhoCampus Rating of <span className="font-bold text-slate-900">{displayRating(college.rating)}/5</span>. With an average placement of{" "}
       <span className="font-bold text-slate-900">{college.placement || "-"}</span>, it&apos;s a{" "}
       <span className="font-bold text-blue-600">strong fit</span> if you value{" "}
       {college.category?.toLowerCase() || "quality education"} in{" "}

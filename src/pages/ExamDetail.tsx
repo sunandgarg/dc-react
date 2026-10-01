@@ -33,6 +33,7 @@ import { LinkedSyllabus } from "@/components/detail/LinkedSyllabus";
 import { ExamTrustBento } from "@/components/detail/ExamTrustBento";
 import { ExamAIInsight } from "@/components/detail/ExamAIInsight";
 import { ExamDecisionRail } from "@/components/detail/ExamDecisionRail";
+import { EntityDetailSidebar } from "@/components/detail/EntityDetailSidebar";
 import { trackEvent } from "@/lib/analytics";
 import { compactEntityLabel } from "@/lib/compactEntityLabel";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
@@ -189,6 +190,9 @@ export default function ExamDetail() {
           ...(strategy ? [{ label: strategy.label }] : []),
         ]} />
 
+        <div className="grid items-start gap-6 lg:grid-cols-3 lg:items-stretch">
+          <div className="min-w-0 lg:col-span-2">
+
         {strategy && (
           <section
             className="mb-4 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 md:p-5"
@@ -279,8 +283,7 @@ export default function ExamDetail() {
           />
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6">
             <PageSummary html={(exam as any).page_summary} entityName={exam.name} kind="exam" />
             {/* Quick Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -427,7 +430,7 @@ export default function ExamDetail() {
               </div>
             </RichSection>
 
-            <LeadCaptureForm variant="inline" title={`📞 Get ${exam.name} preparation guidance`} source={`exam_inline_${exam.slug}`} interestedExamSlug={exam.slug} />
+            <LeadCaptureForm variant="inline" title={`📞 Get ${exam.name} preparation guidance`} source={`exam_inline_${exam.slug}`} interestedExamSlug={exam.slug} brandLogoUrl={resolveExamLogo(exam)} brandName={exam.name} />
 
             {/* Eligibility */}
             <RichSection id="eligibility" title={<>Eligibility Criteria</>}>
@@ -596,7 +599,7 @@ export default function ExamDetail() {
 
             <LatestNewsSection entityType="exam" entitySlug={exam.slug} entityName={exam.name} />
 
-            <LeadCaptureForm variant="inline" title={`Get preparation tips for ${exam.name}`} source={`exam_detail_${exam.slug}`} interestedExamSlug={exam.slug} />
+            <LeadCaptureForm variant="inline" title={`Get preparation tips for ${exam.name}`} source={`exam_detail_${exam.slug}`} interestedExamSlug={exam.slug} brandLogoUrl={resolveExamLogo(exam)} brandName={exam.name} />
 
             {/* Useful Links */}
             <UsefulLinks
@@ -609,8 +612,13 @@ export default function ExamDetail() {
             />
           </div>
 
-          <aside className="hidden lg:block">
-            <div className="space-y-4 sticky top-20">
+          </div>
+
+          <EntityDetailSidebar
+            pageKey="exam-detail"
+            title={exam.name}
+            leadForm={<LeadCaptureForm variant="sidebar" title={`Prepare for ${exam.short_name || exam.name}`} subtitle="Free preparation guidance" source={`exam_detail_sidebar_${exam.slug}`} interestedExamSlug={exam.slug} brandLogoUrl={resolveExamLogo(exam)} brandName={exam.name} />}
+          >
               <ExamDecisionRail
                 exam={exam}
                 onDownloadSample={() =>
@@ -658,18 +666,17 @@ export default function ExamDetail() {
               <PartnerCollegeStrip title="Partner Colleges" limit={5} compact />
 
               <DynamicAdBanner variant="vertical" position="sidebar" page="exams" itemSlug={slug} />
-            </div>
-          </aside>
+          </EntityDetailSidebar>
         </div>
 
         <div className="mt-10">
-          <LeadCaptureForm variant="banner" title={`📝 Preparing for ${exam.name}? Get expert strategy for free!`} subtitle="Our mentors have helped thousands score top ranks" source={`exam_detail_bottom_${exam.slug}`} interestedExamSlug={exam.slug} />
+          <LeadCaptureForm variant="banner" title={`📝 Preparing for ${exam.name}? Get expert strategy for free!`} subtitle="Our mentors have helped thousands score top ranks" source={`exam_detail_bottom_${exam.slug}`} interestedExamSlug={exam.slug} brandLogoUrl={resolveExamLogo(exam)} brandName={exam.name} />
         </div>
       </main>
 
       <AlsoCheckSection />
       <Footer />
-      <MobileBottomBar type="exam" slug={exam.slug} sections={EXAM_SECTIONS} />
+      <MobileBottomBar type="exam" slug={exam.slug} brandName={exam.name} brandLogoUrl={resolveExamLogo(exam)} sections={EXAM_SECTIONS} />
       {gateFile && (
         <DownloadGate
           open={gateOpen}
@@ -688,6 +695,8 @@ export default function ExamDetail() {
         source={`exam_apply_${exam.slug}`}
         simple
         interestedExamSlug={exam.slug}
+        brandLogoUrl={resolveExamLogo(exam)}
+        brandName={exam.name}
         onSuccess={() => {
           setApplyGateOpen(false);
           if (exam.registration_url && exam.registration_url !== "#") window.location.assign(exam.registration_url);

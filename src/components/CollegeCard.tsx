@@ -77,9 +77,9 @@ function CollegeCardComponent({ college, index }: CollegeCardProps) {
             )}
           </Link>
 
-          {/* Rating & Location */}
+          {/* DekhoCampus rating and location */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" aria-label={`DekhoCampus Rating: ${rating} out of 5`}>
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
@@ -90,7 +90,7 @@ function CollegeCardComponent({ college, index }: CollegeCardProps) {
                   }`}
                 />
               ))}
-              <span className="text-xs text-muted-foreground ml-1">{rating}/5</span>
+              <span className="text-xs text-muted-foreground ml-1">DekhoCampus Rating: {rating}/5</span>
             </div>
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <MapPin className="w-3 h-3" />

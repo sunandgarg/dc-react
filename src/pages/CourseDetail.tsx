@@ -48,6 +48,7 @@ import { ScrollSpy } from "@/components/ScrollSpy";
 import { CourseTrustBento } from "@/components/detail/CourseTrustBento";
 import { CourseAIInsight } from "@/components/detail/CourseAIInsight";
 import { CourseDecisionRail } from "@/components/detail/CourseDecisionRail";
+import { EntityDetailSidebar } from "@/components/detail/EntityDetailSidebar";
 import { trackEvent } from "@/lib/analytics";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowRight } from "lucide-react";
@@ -261,6 +262,9 @@ export default function CourseDetail() {
       <main className="container px-3 md:px-6 py-4 md:py-6 pb-24 md:pb-6 w-full">
         <PageBreadcrumb items={[{ label: "Courses", href: "/courses" }, { label: courseName }]} />
 
+        <div className="grid items-start gap-6 lg:grid-cols-3 lg:items-stretch">
+          <div className="min-w-0 lg:col-span-2">
+
         {/* Hero Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -388,8 +392,7 @@ export default function CourseDetail() {
           <CourseDecisionRail course={course} />
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6 min-w-0">
+        <div className="space-y-6 min-w-0">
             <PageSummary html={(course as any).page_summary} entityName={courseName} kind="course" />
             {/* Quick Stats - FIX: changed sm:grid-cols-4 to grid-cols-2 sm:grid-cols-4 so mobile shows 2 columns */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 md:gap-3">
@@ -735,8 +738,13 @@ export default function CourseDetail() {
             />
           </div>
 
-          <aside className="hidden lg:block">
-            <div className="space-y-4 sticky top-20">
+          </div>
+
+          <EntityDetailSidebar
+            pageKey="course-detail"
+            title={courseName}
+            leadForm={<LeadCaptureForm variant="sidebar" title={`Explore ${courseName}`} subtitle="Free course and college guidance" source={`course_detail_sidebar_${course.slug}`} interestedCourseSlug={course.slug} />}
+          >
               <CourseDecisionRail course={course} />
 
               {/* Other Courses */}
@@ -761,8 +769,7 @@ export default function CourseDetail() {
               <PartnerCollegeStrip title="Partner Colleges" limit={5} compact />
 
               <DynamicAdBanner variant="vertical" position="sidebar" page="courses" itemSlug={slug} />
-            </div>
-          </aside>
+          </EntityDetailSidebar>
         </div>
 
         <div className="mt-10">

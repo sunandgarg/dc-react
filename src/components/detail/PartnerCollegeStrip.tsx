@@ -97,7 +97,7 @@ export function PartnerCollegeStrip({
             <div className="flex flex-none flex-col items-end gap-1">
               <Badge variant="outline" className="border-emerald-200 bg-emerald-50 px-1.5 py-0 text-[10px] text-emerald-700">Partner</Badge>
               {Number(college.rating || 0) > 0 && (
-                <span className="flex items-center gap-0.5 text-xs text-foreground">
+                <span className="flex items-center gap-0.5 text-xs text-foreground" title="DekhoCampus Rating">
                   <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                   {Number(college.rating).toFixed(1)}
                 </span>
