@@ -25,6 +25,11 @@ test("returns MySQL decimal fields as JSON numbers", () => {
   assert.equal(row.rating, 4.75);
 });
 
+test("returns MySQL tinyint flags as JSON Booleans", () => {
+  assert.equal(decodeRow("faqs", { is_active: 1 }).is_active, true);
+  assert.equal(decodeRow("faqs", { is_active: 0 }).is_active, false);
+});
+
 test("canonicalizes imported storage URLs at the API boundary", () => {
   const previous = process.env.MEDIA_BASE_URL;
   process.env.MEDIA_BASE_URL = "https://dekhocampus.com/storage/v1/object/public";

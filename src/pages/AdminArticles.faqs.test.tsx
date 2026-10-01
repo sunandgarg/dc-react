@@ -4,14 +4,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import AdminArticles from "./AdminArticles";
 
-const mocks = vi.hoisted(() => ({ role: "content_writer", writes: [] as unknown[], faqData: [] as unknown[], faqError: null as Error | null,
+const mocks = vi.hoisted(() => ({ role: "content_writer", writes: [] as unknown[], articles: [] as unknown[], faqData: [] as unknown[], faqError: null as Error | null,
   toastError: vi.fn(), from: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: mocks.toastError } }));
-vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ isAdmin: false, roles: [mocks.role], can: (_resource: string, action: string) =>
-  action === "create" || (mocks.role !== "content_writer" && ["view", "edit"].includes(action)) || (mocks.role === "content_head" && action === "publish") }) }));
+vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ isAdmin: mocks.role === "admin", roles: [mocks.role], can: (_resource: string, action: string) =>
+  mocks.role === "admin" || action === "create" || (mocks.role !== "content_writer" && ["view", "edit"].includes(action)) || (mocks.role === "content_head" && action === "publish") }) }));
 vi.mock("@/integrations/backend/client", () => ({ backendClient: { from: mocks.from } }));
 vi.mock("@/hooks/useArticlesData", async (importOriginal) => ({ ...await importOriginal<typeof import("@/hooks/useArticlesData")>(),
-  useAdminArticles: () => ({ data: { rows: [], total: 0 }, isLoading: false, isError: false, refetch: vi.fn() }) }));
+  useAdminArticles: () => ({ data: { rows: mocks.articles, total: mocks.articles.length }, isLoading: false, isError: false, refetch: vi.fn() }) }));
 vi.mock("@/components/AdminLayout", () => ({ AdminLayout: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }));
 vi.mock("@/components/PermGate", () => ({ PermGate: () => null }));
 vi.mock("@/components/RichTextEditor", () => ({ RichTextEditor: ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) =>
@@ -45,7 +45,7 @@ function addFaq() {
 }
 beforeEach(() => {
   sessionStorage.clear(); localStorage.clear(); mocks.role = "content_writer"; mocks.writes.length = 0;
-  mocks.faqData = []; mocks.faqError = null; mocks.toastError.mockClear();
+  mocks.articles = []; mocks.faqData = []; mocks.faqError = null; mocks.toastError.mockClear();
   mocks.from.mockImplementation((table: string) => {
     let write = false;
     const response = () => Promise.resolve(write ? { data: { id: "new-article", slug: draft.slug }, error: null, status: mocks.role === "content_head" ? 201 : 202 }
@@ -97,7 +97,7 @@ describe("article FAQ workflow", () => {
 
   it("managers can edit loaded FAQs and add more without deleting saved FAQs", async () => {
     mocks.role = "content";
-    mocks.faqData = [{ id: "saved-faq", question: "Existing question?", answer: "Existing answer", is_active: true }];
+    mocks.faqData = [{ id: "saved-faq", question: "Existing question?", answer: "Existing answer", is_active: 1 }];
     sessionStorage.setItem(draftKey, JSON.stringify({ ...draft, id: "existing-article", faqs: undefined }));
     mount(); expandFaqs();
     await waitFor(() => expect(screen.getByRole("textbox", { name: "FAQ 1 question" })).toHaveValue("Existing question?"));
@@ -107,8 +107,34 @@ describe("article FAQ workflow", () => {
     expect(screen.getByRole("button", { name: "Remove FAQ 2" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Remove FAQ 2" }));
     fireEvent.click(screen.getByRole("button", { name: "Submit for approval" }));
-    await waitFor(() => expect(mocks.writes[0]).toMatchObject({ faqs: [{ id: "saved-faq", answer: "Updated answer" }] }));
+    await waitFor(() => expect(mocks.writes[0]).toMatchObject({ faqs: [{ id: "saved-faq", answer: "Updated answer", is_active: true }] }));
   });
+
+  it("normalizes an old saved draft with numeric FAQ flags before editing or saving", async () => {
+    mocks.role = "content";
+    sessionStorage.setItem(draftKey, JSON.stringify({ ...draft, id: "existing-article", faqs: [
+      { id: "saved-faq", question: "Existing question?", answer: "Existing answer", is_active: 0 },
+    ] }));
+    mount(); expandFaqs();
+    expect(screen.getByRole("checkbox", { name: "Show this FAQ" })).not.toBeChecked();
+    fireEvent.click(screen.getByRole("button", { name: "Submit for approval" }));
+    await waitFor(() => expect(mocks.writes[0]).toMatchObject({ faqs: [{ id: "saved-faq", is_active: false }] }));
+  });
+
+  for (const role of ["admin", "content"]) {
+    it(`${role} can reopen another author's article and save its existing FAQs`, async () => {
+      mocks.role = role;
+      const { faqs: _omitted, ...listedArticle } = draft;
+      mocks.articles = [{ ...listedArticle, id: "existing-article", author: "Another Author", created_at: "2026-09-28T10:00:00Z" }];
+      mocks.faqData = [{ id: "saved-faq", question: "Existing question?", answer: "Existing answer", is_active: 1 }];
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Edit Admission guide" }));
+      expandFaqs();
+      await waitFor(() => expect(screen.getByRole("textbox", { name: "FAQ 1 question" })).toHaveValue("Existing question?"));
+      fireEvent.click(screen.getByRole("button", { name: role === "admin" ? "Save Draft" : "Submit for approval" }));
+      await waitFor(() => expect(mocks.writes[0]).toMatchObject({ author: "Another Author", faqs: [{ id: "saved-faq", is_active: true }] }));
+    });
+  }
 
   it("failed FAQ loading cannot overwrite saved FAQs and can be retried", async () => {
     mocks.role = "content"; mocks.faqError = new Error("Temporary outage");

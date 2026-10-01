@@ -6,6 +6,14 @@ export type ArticleFaqDraft = {
   is_active?: boolean;
 };
 
+/** MySQL may return saved Boolean flags as 0/1; normalize old editor drafts too. */
+export function normalizeArticleFaqDrafts(faqs: ArticleFaqDraft[] | undefined) {
+  return faqs?.map((faq) => {
+    const active = (faq as { is_active?: unknown }).is_active;
+    return { ...faq, is_active: active !== false && active !== 0 && active !== "0" };
+  });
+}
+
 export function validateArticleFaqs(faqs: ArticleFaqDraft[] | undefined) {
   if (!faqs) return null; // An unopened existing FAQ section is left unchanged.
   if (faqs.length > 50) return "An article can have at most 50 FAQs.";

@@ -367,6 +367,9 @@ export function decodeRow(table, row) {
     if (field.type === "Decimal" && row[name] !== null && row[name] !== undefined) {
       row[name] = typeof row[name]?.toNumber === "function" ? row[name].toNumber() : Number(row[name]);
     }
+    if (field.type === "Boolean" && row[name] !== null && row[name] !== undefined) {
+      row[name] = row[name] === true || row[name] === 1;
+    }
   }
   return toPublicMediaUrls(toStoredMediaKeys(row));
 }

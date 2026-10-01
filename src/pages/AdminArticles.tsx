@@ -31,7 +31,7 @@ import { BulkEditToggle } from "@/components/admin/BulkEditToggle";
 import { FeaturedRankPicker } from "@/components/admin/FeaturedRankPicker";
 import { FeaturedRankPanel } from "@/components/admin/FeaturedRankPanel";
 import { ArticleFaqEditor } from "@/components/admin/ArticleFaqEditor";
-import { validateArticleFaqs, type ArticleFaqDraft } from "@/lib/articleFaqs";
+import { normalizeArticleFaqDrafts, validateArticleFaqs, type ArticleFaqDraft } from "@/lib/articleFaqs";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { Link } from "react-router-dom";
@@ -133,7 +133,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
         .eq("page", isSarkari ? "sarkari_articles" : "articles").eq("item_slug", editing!.slug!)
         .order("display_order", { ascending: true });
       if (error) throw error;
-      return (data || []) as ArticleFaqDraft[];
+      return normalizeArticleFaqDrafts((data || []) as ArticleFaqDraft[]) || [];
     },
     staleTime: 0,
   });
@@ -143,6 +143,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     setEditing((current) => current?.id === id && current.faqs === undefined ? { ...current, faqs: faqQuery.data } : current);
   }, [editing?.id, editing?.faqs, faqQuery.data, faqQuery.isFetching, setEditing]);
   const faqsPending = Boolean(editing?.id) && editing?.faqs === undefined;
+  const editorFaqs = useMemo(() => normalizeArticleFaqDrafts(editing?.faqs), [editing?.faqs]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
   const [bulkStatus, setBulkStatus] = useState("");
@@ -219,7 +220,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const handleSave = () => {
     if (!editing) return;
     if (faqsPending) { toast.error("Wait for FAQs to load, or retry loading them before saving."); return; }
-    const faqError = validateArticleFaqs(editing.faqs);
+    const faqError = validateArticleFaqs(editorFaqs);
     if (faqError) { toast.error(faqError); return; }
     const normalizedSlug = normalizeArticleSlug(editing.slug);
     const validationError = validateArticleSave({ ...editing, slug: normalizedSlug }, canPublish);
@@ -231,7 +232,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
       return;
     }
     const { featured_rank: _omit, ...payload } = {
-      ...editing, slug: normalizedSlug,
+      ...editing, faqs: editorFaqs, slug: normalizedSlug,
       is_active: editing.status === "Published" ? true : false,
     } as any;
     if (isSarkari) {
@@ -259,13 +260,13 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const saveDraftToEnableTagging = () => {
     if (!editing) return;
     if (faqsPending) { toast.error("Wait for FAQs to load, or retry loading them before saving."); return; }
-    const faqError = validateArticleFaqs(editing.faqs);
+    const faqError = validateArticleFaqs(editorFaqs);
     if (faqError) { toast.error(faqError); return; }
     const normalizedSlug = normalizeArticleSlug(editing.slug);
     const validationError = validateArticleSave({ ...editing, slug: normalizedSlug, status: "Draft" }, canPublish);
     if (validationError) { toast.error(validationError); return; }
 
-    const { featured_rank: _omit, ...payload } = { ...editing, slug: normalizedSlug, status: "Draft", is_active: false, site_scope: siteScope } as any;
+    const { featured_rank: _omit, ...payload } = { ...editing, faqs: editorFaqs, slug: normalizedSlug, status: "Draft", is_active: false, site_scope: siteScope } as any;
     saveArticle.mutate(payload, {
       onSuccess: (result) => {
         if (result.pendingReview || !result.article?.id) {
@@ -449,7 +450,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               </div>
               <div className="flex gap-1">
                 <a href={isSarkari ? `https://sarkari.dekhocampus.com/news/${a.slug}` : `/news/${a.slug}`} target="_blank" rel="noopener noreferrer" title="Open public page" className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted text-muted-foreground hover:text-primary"><ExternalLink className="w-3.5 h-3.5" /></a>
-                {canEdit && <Button variant="ghost" size="icon" onClick={() => setEditing({ ...a })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
+                {canEdit && <Button variant="ghost" size="icon" aria-label={`Edit ${a.title}`} onClick={() => setEditing({ ...a })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="articles" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteArticle.mutate(a.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
             </div>
@@ -631,7 +632,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                   FAQs could not be loaded. Your existing FAQs have not been changed.
                   <Button type="button" size="sm" variant="outline" onClick={() => void faqQuery.refetch()}>Retry loading FAQs</Button>
                 </div> : <p role="status" className="text-xs text-muted-foreground">Loading saved FAQs…</p>)}
-                <ArticleFaqEditor value={editing.faqs || []} onChange={(faqs) => update("faqs", faqs)}
+                <ArticleFaqEditor value={editorFaqs || []} onChange={(faqs) => update("faqs", faqs)}
                   allowDeleteSaved={isAdmin} disabled={faqsPending || saveArticle.isPending} />
               </AdminFormSection>
 
@@ -659,7 +660,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                   author_id: (editing as any).author_id,
                   updated_at: (editing as any).updated_at,
                 }}
-                faqs={editing.faqs}
+                faqs={editorFaqs}
                 faqsLoaded={!faqsPending}
               />
 
