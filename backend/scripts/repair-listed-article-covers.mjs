@@ -36,7 +36,12 @@ const titles = [
   "BSEB 2027 Dummy Registration Card Correction Window Extended: Verification Steps and Student Declaration Mandate",
   "Maharashtra BSc Nursing CAP 2026: Registration Timeline, Mandatory CET Verification, and Seat Matrix Guide",
   "Bihar Mahila Vishwavidyalaya 2026: Admission Vision, All-Women Faculty Model, and Balika PhD Fellowship Details",
+  "भारत राष्ट्रीय क्रिकेट टीम बनाम न्यूज़ीलैंड राष्ट्रीय क्रिकेट टीम मैच स्कोरकार्ड और पूरा मैच सारांश",
 ];
+
+const coverTitleOverrides = new Map([
+  ["भारत राष्ट्रीय क्रिकेट टीम बनाम न्यूज़ीलैंड राष्ट्रीय क्रिकेट टीम मैच स्कोरकार्ड और पूरा मैच सारांश", "भारत बनाम न्यूज़ीलैंड: मैच स्कोरकार्ड और पूरा सारांश"],
+]);
 
 const requestedArticleId = String(process.env.ARTICLE_COVER_REPAIR_ID || "").trim();
 
@@ -58,7 +63,8 @@ const replacements = [];
 for (const title of requestedTitles) {
   const article = grouped.get(title)[0];
   const diagnostics = {};
-  const featuredImage = await createBlogCover(article.slug, article.title, {
+  const coverTitle = coverTitleOverrides.get(article.title) || article.title;
+  const featuredImage = await createBlogCover(article.slug, coverTitle, {
     imageMode: "template",
     templateUrl: DEFAULT_BLOG_COVER_TEMPLATE_KEY,
     includeLogo: false,
@@ -93,7 +99,7 @@ for (const title of requestedTitles) {
     id: article.id,
     slug: article.slug,
     title: article.title,
-    hook: article.title,
+    hook: coverTitle,
     old_image: article.featured_image || null,
     new_image: featuredImage,
     source_mode: diagnostics.sourceMode,

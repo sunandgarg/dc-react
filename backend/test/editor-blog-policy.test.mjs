@@ -679,6 +679,15 @@ test("rasterizes template headings with the bundled production font", async () =
   assert.ok(stats.channels[3].max > 0, "Expected the title overlay to contain visible alpha pixels");
 });
 
+test("rasterizes Hindi article headings with the bundled Devanagari font", async () => {
+  const overlay = await templateCoverTitleRasterOverlay("भारत बनाम न्यूज़ीलैंड: मैच स्कोरकार्ड और पूरा सारांश", { width: 1600, height: 900 });
+  const metadata = await sharp(overlay.input).metadata();
+  const stats = await sharp(overlay.input).stats();
+  assert.equal(metadata.format, "png");
+  assert.ok(metadata.width > 500 && metadata.height > 50);
+  assert.ok(stats.channels[3].max > 0, "Expected a visible Hindi headline");
+});
+
 test("renders the supplied template as a 16:9 WebP while preserving its own artwork", async () => {
   const source = await readFile(new URL("../assets/dekhocampus-blog-cover-template-v1.png", import.meta.url));
   const bytes = await renderBlogCover(source, {

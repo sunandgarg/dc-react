@@ -76,6 +76,7 @@ const OPENAI_TEXT_PRICING_PER_MILLION = {
 };
 export const DEFAULT_BLOG_COVER_TEMPLATE_KEY = "admin-uploads/blog-templates/dekhocampus-blog-cover-template-v1.png";
 const BLOG_COVER_FONT_FILE = fileURLToPath(new URL("../assets/Inter.ttf", import.meta.url));
+const BLOG_COVER_DEVANAGARI_FONT_FILE = fileURLToPath(new URL("../assets/NotoSansDevanagari.ttf", import.meta.url));
 const BLOG_COVER_LOGO_FILE = new URL("../assets/dekhocampus-blog-logo.png", import.meta.url);
 const BLOG_COVER_REFERENCE_FILE = new URL("../assets/dekhocampus-blog-cover-reference-v2.png", import.meta.url);
 const immutableCoverSourceCache = new Map();
@@ -361,6 +362,12 @@ function escapeCoverText(value) {
   return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[char]);
 }
 
+function coverTitleFont(value) {
+  return /[\u0900-\u097f]/u.test(String(value || ""))
+    ? { family: "Noto Sans Devanagari", file: BLOG_COVER_DEVANAGARI_FONT_FILE }
+    : { family: "Inter", file: BLOG_COVER_FONT_FILE };
+}
+
 export function formatBlogCoverTitle(value) {
   const normalized = stripHtml(value)
     .replace(/\s*(?:\.{3,}|…)\s*/g, " ")
@@ -428,10 +435,11 @@ export function layoutTemplateCoverTitle(value, options) {
 
 export function templateCoverTitleOverlay(value, options) {
   const layout = layoutTemplateCoverTitle(value, options);
+  const titleFont = coverTitleFont(value);
   const midpoint = (layout.lines.length - 1) / 2;
   const title = layout.lines.map((text, index) => (
     `<text x="${layout.centerX}" y="${Math.round(layout.centerY + (index - midpoint) * layout.lineHeight)}" `
-    + `text-anchor="middle" dominant-baseline="middle" font-family="Inter, Arial, Helvetica, sans-serif" `
+    + `text-anchor="middle" dominant-baseline="middle" font-family="${titleFont.family}, Arial, Helvetica, sans-serif" `
     + `font-size="${layout.fontSize}" font-weight="600" fill="#111827">${escapeCoverText(text)}</text>`
   )).join("");
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}" viewBox="0 0 ${options.width} ${options.height}">${title}</svg>`);
@@ -439,12 +447,13 @@ export function templateCoverTitleOverlay(value, options) {
 
 export async function templateCoverTitleRasterOverlay(value, options) {
   const layout = layoutTemplateCoverTitle(value, options);
+  const titleFont = coverTitleFont(value);
   const width = Math.round(options.width * 0.62);
   const rendered = await sharp({
     text: {
       text: layout.lines.map(escapeCoverText).join("\n"),
-      font: `Inter SemiBold ${layout.fontSize}`,
-      fontfile: BLOG_COVER_FONT_FILE,
+      font: `${titleFont.family} SemiBold ${layout.fontSize}`,
+      fontfile: titleFont.file,
       width,
       align: "centre",
       rgba: true,
