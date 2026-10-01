@@ -582,22 +582,6 @@ export default function ArticleDetail() {
             <article className="lg:col-span-8 min-w-0">
               <PageBreadcrumb items={[{ label: "News", href: "/news" }, { label: article.category, href: `/news?category=${encodeURIComponent(article.category)}` }, { label: article.title }]} />
 
-              <figure className="mb-6 overflow-hidden rounded-[24px] border border-border bg-gradient-to-br from-slate-50 via-white to-orange-50 shadow-[0_22px_55px_rgba(15,23,42,0.09)]">
-                <div className="aspect-[16/8.7] overflow-hidden bg-slate-100">
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    width="1600"
-                    height="870"
-                    className="h-full w-full object-cover object-center"
-                    loading="eager"
-                    decoding="async"
-                    fetchPriority="high"
-                    sizes="(min-width: 1024px) 66vw, 100vw"
-                  />
-                </div>
-              </figure>
-
               <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-wrap items-center gap-2">
                 <Link
@@ -627,6 +611,22 @@ export default function ArticleDetail() {
                   {article.excerpt}
                 </p>
               )}
+
+              <figure className="mt-6 mb-6 overflow-hidden rounded-[24px] border border-border bg-gradient-to-br from-slate-50 via-white to-orange-50 shadow-[0_22px_55px_rgba(15,23,42,0.09)]">
+                <div className="aspect-[16/8.7] overflow-hidden bg-slate-100">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    width="1600"
+                    height="870"
+                    className="h-full w-full object-cover object-center"
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    sizes="(min-width: 1024px) 66vw, 100vw"
+                  />
+                </div>
+              </figure>
 
               <div className="mt-5 flex flex-wrap items-center gap-3 pb-5 mb-6 border-b border-border">
                 {article.author_id ? (
