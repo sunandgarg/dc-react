@@ -9,22 +9,22 @@ interface BreadcrumbItem {
 export function PageBreadcrumb({ items }: { items: BreadcrumbItem[] }) {
   return (
     <nav aria-label="Breadcrumb" className="py-3 md:py-4">
-      <ol className="flex items-center gap-1.5 text-sm text-muted-foreground flex-wrap">
-        <li>
+      <ol className="flex min-w-0 items-center gap-1.5 overflow-hidden whitespace-nowrap text-sm text-muted-foreground">
+        <li className="shrink-0">
           <Link to="/" className="flex items-center gap-1 hover:text-foreground transition-colors">
             <Home className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Home</span>
           </Link>
         </li>
         {items.map((item, i) => (
-          <li key={i} className="flex items-center gap-1.5">
+          <li key={i} className={`flex min-w-0 items-center gap-1.5 ${i === items.length - 1 ? "flex-1" : "shrink-0"}`}>
             <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" />
             {item.href ? (
-              <Link to={item.href} className="hover:text-foreground transition-colors truncate max-w-[150px] sm:max-w-none">
+              <Link to={item.href} className="block max-w-[96px] truncate transition-colors hover:text-foreground sm:max-w-none">
                 {item.label}
               </Link>
             ) : (
-              <span className="text-foreground font-medium truncate max-w-[150px] sm:max-w-none">{item.label}</span>
+              <span className="block min-w-0 truncate font-medium text-foreground">{item.label}</span>
             )}
           </li>
         ))}

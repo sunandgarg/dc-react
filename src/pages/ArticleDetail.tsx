@@ -590,7 +590,7 @@ export default function ArticleDetail() {
                 >
                   {article.category}
                 </Link>
-                {dbArticle?.created_at && isArticlePublishedToday(dbArticle.created_at) && <LiveNewsBadge />}
+                {dbArticle?.created_at && isArticlePublishedToday(dbArticle.created_at) && <LiveNewsBadge intensity="high" />}
                 </div>
                 {article.sourceLogo && (
                   <InstitutionLogo
@@ -602,33 +602,7 @@ export default function ArticleDetail() {
                 )}
               </div>
 
-              <h1 className="mt-4 w-full text-[22px] sm:text-[32px] lg:text-[38px] font-extrabold text-foreground leading-[1.1] break-words">
-                {article.title}
-              </h1>
-
-              {article.excerpt && (
-                <p className="mt-4 max-w-4xl text-[16px] sm:text-[19px] leading-[1.8] text-slate-600">
-                  {article.excerpt}
-                </p>
-              )}
-
-              <figure className="mt-6 mb-6 overflow-hidden rounded-[24px] border border-border bg-gradient-to-br from-slate-50 via-white to-orange-50 shadow-[0_22px_55px_rgba(15,23,42,0.09)]">
-                <div className="aspect-[16/8.7] overflow-hidden bg-slate-100">
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    width="1600"
-                    height="870"
-                    className="h-full w-full object-cover object-center"
-                    loading="eager"
-                    decoding="async"
-                    fetchPriority="high"
-                    sizes="(min-width: 1024px) 66vw, 100vw"
-                  />
-                </div>
-              </figure>
-
-              <div className="mt-5 flex flex-wrap items-center gap-3 pb-5 mb-6 border-b border-border">
+              <div className="mt-4 mb-4 flex flex-wrap items-center gap-3 border-b border-border pb-4">
                 {article.author_id ? (
                   <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <AuthorByline authorId={article.author_id} fallbackName={article.author} />
@@ -659,6 +633,32 @@ export default function ArticleDetail() {
                   <Bookmark className={`w-4 h-4 ${saved ? "fill-current" : ""}`} />
                 </button>
               </div>
+
+              <h1 className="w-full text-[22px] sm:text-[32px] lg:text-[38px] font-extrabold text-foreground leading-[1.1] break-words">
+                {article.title}
+              </h1>
+
+              {article.excerpt && (
+                <p className="mt-4 max-w-4xl text-[16px] sm:text-[19px] leading-[1.8] text-slate-600">
+                  {article.excerpt}
+                </p>
+              )}
+
+              <figure className="mt-6 mb-6 overflow-hidden rounded-[24px] border border-border bg-gradient-to-br from-slate-50 via-white to-orange-50 shadow-[0_22px_55px_rgba(15,23,42,0.09)]">
+                <div className="aspect-[16/8.7] overflow-hidden bg-slate-100">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    width="1600"
+                    height="870"
+                    className="h-full w-full object-cover object-center"
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    sizes="(min-width: 1024px) 66vw, 100vw"
+                  />
+                </div>
+              </figure>
 
               <div className="mb-6">
                 <button

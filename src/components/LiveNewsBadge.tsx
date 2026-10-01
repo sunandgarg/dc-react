@@ -24,7 +24,7 @@ export function LiveNewsBadge({ intensity = "low", className = "", ...props }: L
     >
       <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden="true">
         <span className={`absolute inset-0 rounded-full bg-white/80 ${intensity === "high" ? "animate-dc-live-pulse-high" : "animate-dc-live-pulse-low"}`} />
-        <span className="relative m-0.5 h-1.5 w-1.5 rounded-full bg-white" />
+        <span className={`relative m-0.5 h-1.5 w-1.5 rounded-full bg-white ${intensity === "high" ? "shadow-[0_0_8px_2px_rgba(255,255,255,0.85)]" : ""}`} />
       </span>
       Live
     </span>
