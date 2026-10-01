@@ -50,7 +50,6 @@ import { formatFeePeriod, formatFeeRange, formatIndianFee, groupCollegeFees, gro
 
 const COLLEGE_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "Overview" },
-  { id: "contact", label: "Contact" },
   { id: "highlights", label: "Highlights" },
   { id: "courses", label: "Courses & Fees" },
   { id: "admissions", label: "Admissions" },
@@ -296,11 +295,6 @@ export default function CollegeDetail() {
         </div>
 
 
-        {/* Mobile decision rail - surfaces Apply, Counselor, Brochure, Campus Tour on small screens */}
-        <div className="lg:hidden mb-6">
-          <CollegeDecisionRail college={college} />
-        </div>
-
         <div className="space-y-6">
             {/* Quick Summary (admin-written page summary) */}
             <PageSummary html={String((college as any).page_summary || "").replace(/Student Reviews And Decision Support/gi, "Decision Support").replace(/A useful review of/gi, "A useful evaluation of")} entityName={college.short_name || college.name} kind="college" />
@@ -319,11 +313,11 @@ export default function CollegeDetail() {
                 <section className="bg-card rounded-2xl border border-border p-5">
                   <h3 data-h className="text-sm font-bold text-foreground mb-3 flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /> Approvals & Accreditations</h3>
                   <TooltipProvider delayDuration={150}>
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div className="-mb-2 flex snap-x snap-mandatory items-center gap-3 overflow-x-auto overscroll-x-contain pb-2 scroll-smooth scrollbar-hide sm:mb-0 sm:flex-wrap sm:overflow-visible sm:pb-0">
                       {items.map((it, i) => (
                         <Tooltip key={i}>
                           <TooltipTrigger asChild>
-                            <div className="bg-muted/40 rounded-lg p-2 flex flex-col items-center justify-center h-20 w-28 border border-border hover:border-primary/40 transition cursor-help">
+                            <div className="flex h-20 w-[6.25rem] shrink-0 snap-start flex-col items-center justify-center rounded-lg border border-border bg-muted/40 p-2 transition hover:border-primary/40 cursor-default sm:w-28">
                               <img src={it.url} alt={it.name} loading="lazy" className="max-h-10 max-w-full object-contain" />
                               <span className="mt-1 text-[10px] font-medium text-muted-foreground line-clamp-1 text-center">{it.code || it.name}</span>
                             </div>
@@ -359,14 +353,15 @@ export default function CollegeDetail() {
                   type="button"
                   onClick={() => setAboutExpanded((expanded) => !expanded)}
                   aria-expanded={aboutExpanded}
-                  aria-controls="college-about-facts"
+                  aria-controls="college-about-extra"
                   className="group inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/[0.06] px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-primary/45 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                 >
-                  <span>{aboutExpanded ? "Show less" : "More"}</span>
+                  <span>{aboutExpanded ? "Show less" : "Show more"}</span>
                   <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${aboutExpanded ? "rotate-180" : "group-hover:translate-y-0.5"}`} aria-hidden="true" />
                 </button>
               </div>
-              <div id="college-about-facts" className={`${aboutExpanded ? "grid" : "hidden"} grid-cols-2 sm:grid-cols-3 gap-2.5 mt-5`}>
+              <div id="college-about-extra" hidden={!aboutExpanded} className="mt-5 space-y-5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {[
                     { label: "Type", value: college.type },
                     { label: "Established", value: String(college.established) },
@@ -379,22 +374,19 @@ export default function CollegeDetail() {
                       <p className="text-sm font-bold text-foreground line-clamp-1 mt-0.5">{info.value || "-"}</p>
                     </div>
                   ))}
-              </div>
-            </section>
-
-            {/* Contact details - gated, shown right above Highlights */}
-            <CollegeContactSection collegeSlug={college.slug} collegeName={college.name} collegeLogo={college.logo} />
-
-            {/* College Details card - moved here, just above Highlights */}
-            <section className="bg-card rounded-2xl border border-border p-5">
-              <h3 data-h className="text-sm font-bold text-foreground mb-3 flex items-center gap-2"><Building className="w-4 h-4 text-primary" /> College Details</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                <div><p className="text-muted-foreground">Location</p><p className="font-medium text-foreground">{college.location || "-"}</p></div>
-                <div><p className="text-muted-foreground">State</p><p className="font-medium text-foreground">{college.state || "-"}</p></div>
-                <div><p className="text-muted-foreground">City</p><p className="font-medium text-foreground">{college.city || "-"}</p></div>
-                <div><p className="text-muted-foreground">Established</p><p className="font-medium text-foreground">{college.established || "-"}</p></div>
-                <div><p className="text-muted-foreground">Type</p><p className="font-medium text-foreground">{college.type || "-"}</p></div>
-                <div><p className="text-muted-foreground">NAAC</p><p className="font-medium text-foreground">{college.naac_grade || "-"}</p></div>
+                </div>
+                <div className="border-t border-border pt-5">
+                  <h3 data-h className="mb-3 flex items-center gap-2 text-base font-bold text-foreground"><Building className="h-4 w-4 text-primary" /> College Details</h3>
+                  <div className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-3">
+                    <div><p className="text-muted-foreground">Location</p><p className="font-medium text-foreground">{college.location || "-"}</p></div>
+                    <div><p className="text-muted-foreground">State</p><p className="font-medium text-foreground">{college.state || "-"}</p></div>
+                    <div><p className="text-muted-foreground">City</p><p className="font-medium text-foreground">{college.city || "-"}</p></div>
+                    <div><p className="text-muted-foreground">Established</p><p className="font-medium text-foreground">{college.established || "-"}</p></div>
+                    <div><p className="text-muted-foreground">Type</p><p className="font-medium text-foreground">{college.type || "-"}</p></div>
+                    <div><p className="text-muted-foreground">NAAC</p><p className="font-medium text-foreground">{college.naac_grade || "-"}</p></div>
+                  </div>
+                </div>
+                <CollegeContactSection collegeSlug={college.slug} collegeName={college.name} collegeLogo={college.logo} />
               </div>
             </section>
 
@@ -910,6 +902,11 @@ export default function CollegeDetail() {
               sections={COLLEGE_SECTIONS}
               topCourses={feeCourseMetadata.map((c: any) => ({ name: c.name, slug: c.slug }))}
             />
+
+            {/* Keep the mobile admission actions after the college information. */}
+            <div className="lg:hidden">
+              <CollegeDecisionRail college={college} />
+            </div>
           </div>
 
           </div>
@@ -920,17 +917,6 @@ export default function CollegeDetail() {
             leadForm={<LeadCaptureForm variant="sidebar" title={`Get guidance for ${college.name}`} subtitle="Free admissions guidance" source={`college_detail_sidebar_${college.slug}`} interestedCollegeSlug={college.slug} brandLogoUrl={college.logo} brandName={college.name} />}
           >
               <CollegeDecisionRail college={college} />
-
-              {/* Contact Info */}
-              <div className="bg-card rounded-2xl border border-border p-4">
-                <h3 data-h className="text-sm font-bold text-foreground mb-3">📍 Contact Information</h3>
-                <div className="space-y-2 text-xs text-muted-foreground">
-                  <p><span className="font-medium text-foreground">Location:</span> {college.location}</p>
-                  <p><span className="font-medium text-foreground">State:</span> {college.state}</p>
-                  <p><span className="font-medium text-foreground">City:</span> {college.city}</p>
-                  <p><span className="font-medium text-foreground">Established:</span> {college.established}</p>
-                </div>
-              </div>
 
               {/* Top Courses */}
               {feeCourseMetadata.length > 0 && (

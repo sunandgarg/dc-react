@@ -63,17 +63,17 @@ export function CollegeTrustBento({ college }: Props) {
         {items.map((it) => (
           <div
             key={it.label}
-            className="flex min-h-[132px] w-full shrink-0 snap-start flex-col items-center justify-center rounded-3xl border border-slate-200 bg-white p-4 text-center transition-colors hover:border-slate-300 sm:w-auto sm:shrink md:min-h-[172px] md:p-6"
+            className="flex min-h-[116px] w-full shrink-0 snap-start flex-col items-center justify-center rounded-3xl border border-slate-200 bg-white p-3 text-center transition-colors hover:border-slate-300 sm:w-auto sm:shrink md:min-h-[136px] md:p-4"
           >
-            <it.icon className={`mb-2.5 h-7 w-7 ${it.iconClassName}`} aria-hidden="true" />
-            <p className="text-lg font-bold leading-snug text-slate-950 md:text-2xl">
+            <it.icon className={`mb-1.5 h-6 w-6 md:mb-2 ${it.iconClassName}`} aria-hidden="true" />
+            <p className="text-lg font-bold leading-snug text-slate-950 md:text-xl">
               {it.value}
             </p>
-            <p className="mt-1 text-sm text-slate-500 md:text-lg">{it.label}</p>
+            <p className="mt-0.5 text-sm text-slate-500 md:text-base">{it.label}</p>
           </div>
         ))}
       </div>
-      <div className="mt-3 flex justify-center gap-2 sm:hidden" aria-label="College facts carousel controls">
+      <div className="mt-1.5 flex justify-center gap-2 sm:hidden" aria-label="College facts carousel controls">
         {items.map((it, index) => (
           <button
             key={it.label}

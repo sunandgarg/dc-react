@@ -62,7 +62,6 @@ export const COLLEGE_DETAIL_TABS = [
   "compare",
   "faculty",
   "recruiters",
-  "contact",
   "news",
   "faq",
 ] as const;

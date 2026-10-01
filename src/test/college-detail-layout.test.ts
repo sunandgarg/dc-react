@@ -59,12 +59,22 @@ describe("college detail summary layout", () => {
 
   it("orders college tabs like their page sections", () => {
     const tabs = detail.match(/const COLLEGE_SECTIONS:[\s\S]*?\];/)?.[0] || "";
-    expect(tabs.indexOf('id: "contact"')).toBeGreaterThan(tabs.indexOf('id: "overview"'));
-    expect(tabs.indexOf('id: "contact"')).toBeLessThan(tabs.indexOf('id: "highlights"'));
+    expect(tabs).not.toMatch(/id: "contact"/);
+    expect(detail).toMatch(/id="college-about-extra" hidden=\{!aboutExpanded\}/);
+    expect(detail).toMatch(/<CollegeContactSection[^>]*\/>/);
+    expect(detail).not.toMatch(/cursor-help/);
+    expect(detail).not.toMatch(/Contact Information/);
     expect(tabs.indexOf('id: "faculty"')).toBeLessThan(tabs.indexOf('id: "scholarships"'));
     expect(tabs.indexOf('id: "faq"')).toBeLessThan(tabs.indexOf('id: "news"'));
     expect(detail).toMatch(/<LatestNewsSection[^>]*sectionId="news"/);
     expect(tabs).not.toMatch(/id: "reviews"/);
     expect(detail).not.toMatch(/<CollegeReviews\b/);
+  });
+
+  it("keeps mobile admission actions at the end and approval logos in one swipeable row", () => {
+    expect(detail.indexOf("<CollegeDecisionRail college={college} />")).toBeGreaterThan(detail.indexOf("<UsefulLinks"));
+    expect(detail).toMatch(/snap-x snap-mandatory items-center gap-3 overflow-x-auto/);
+    expect(detail).toMatch(/sm:flex-wrap sm:overflow-visible/);
+    expect(detail).toMatch(/shrink-0 snap-start/);
   });
 });
