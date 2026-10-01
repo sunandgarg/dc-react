@@ -32,6 +32,7 @@ import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBad
 import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { addCbseSamplePaperLinks } from "@/lib/cbseSamplePaperLinks";
+import { resolveArticleSourceLogo } from "@/lib/articleSourceLogo";
 
 // Heavy below-the-fold components - lazy loaded for faster initial paint
 const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(m => ({ default: m.AlsoCheckSection })), "AlsoCheckSection");
@@ -199,7 +200,7 @@ export default function ArticleDetail() {
         views: (dbArticle as any).views ?? 0,
         tags: dbArticle.tags || [],
         author_id: (dbArticle as any).author_id as string | undefined,
-        sourceLogo: (dbArticle as any).source_logo || "",
+        sourceLogo: resolveArticleSourceLogo((dbArticle as any).source_logo),
       };
     }
     return staticArticle ? { ...staticArticle, content: stripVisibleArticleSources(staticArticle.content), views: 0, author_id: undefined as string | undefined, sourceLogo: "" } : null;
@@ -617,7 +618,7 @@ export default function ArticleDetail() {
                 )}
               </div>
 
-              <h1 className="mt-4 max-w-5xl text-[22px] sm:text-[32px] lg:text-[38px] font-extrabold text-foreground leading-[1.1] break-words text-balance">
+              <h1 className="mt-4 w-full text-[22px] sm:text-[32px] lg:text-[38px] font-extrabold text-foreground leading-[1.1] break-words">
                 {article.title}
               </h1>
 
