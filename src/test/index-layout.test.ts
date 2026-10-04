@@ -113,8 +113,8 @@ describe("Index page layout (static source assertions)", () => {
     expect(homeNewsSrc).not.toMatch(/Live news|animate-ping/);
     expect(homeNewsSrc).not.toMatch(/grid-cols|featured_image|formatDate/);
     expect(homeNewsSrc).not.toMatch(/LeadCaptureForm|DynamicAdBanner/);
-    expect(homeTrustSrc).toMatch(/GoogleGLogo/);
-    expect(homeTrustSrc).toMatch(/Students rate us 4\.9 on Google/);
+    expect(homeTrustSrc).not.toMatch(/GoogleGLogo|Students rate us 4\.9 on Google/);
+    expect(homeTrustSrc).toMatch(/Explore college partners/);
     expect(homeTrustSrc).toMatch(/Working with leading institutions/);
     expect(topRankedSrc).toMatch(/displayName[\s\S]*showFullName[\s\S]*\{displayName\}/);
     expect(faqSrc).toMatch(/compact\?: boolean/);

@@ -9,6 +9,7 @@ import { provisionExistingContentHead } from "./editor-access.mjs";
 import { ensureSupportedAiModels, startBlogAgentWorker, stopBlogAgentWorker } from "./blog-ai.mjs";
 import { startDataCleanerWorker, stopDataCleanerWorker } from "./data-cleaner.mjs";
 import { prisma } from "./db.mjs";
+import { createDatabasePoolWatchdog, databaseEndpointReachable } from "./database-pool-watchdog.mjs";
 import { warmDirectorySearchCache } from "./directory-search.mjs";
 
 const port = Number(process.env.PORT || 8787);
@@ -63,8 +64,16 @@ const server = http.createServer(async (req, res) => {
   }
 }).listen(port, host, () => console.log(`DekhoCampus Node/Prisma backend listening on http://${host}:${port}`));
 
+const databasePoolWatchdog = createDatabasePoolWatchdog({
+  query: () => prisma.$queryRawUnsafe("SELECT 1"),
+  reachable: () => databaseEndpointReachable(process.env.DATABASE_URL),
+  restart: () => process.exit(1),
+});
+databasePoolWatchdog.start();
+
 async function shutdown(signal) {
   console.log(`Received ${signal}; stopping cleanly`);
+  databasePoolWatchdog.stop();
   stopLeadOutboxWorker();
   stopBlogAgentWorker();
   stopDataCleanerWorker();
