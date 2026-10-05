@@ -63,7 +63,17 @@ test("writer can save only their own byline profile", async () => {
   }) });
   const saved = await handleWriterProfile(request, userId, database);
   assert.equal(saved.name, "Neha S");
+  assert.equal(saved.avatar_style, "illustration");
+  assert.equal(saved.avatar_emoji, "✍️");
   assert.equal(calls.at(-1)[1], author.id);
   assert.equal(calls.at(-1)[2].is_active, undefined);
   assert.equal(calls.at(-1)[2].user_id, undefined);
+
+  const emojiRequest = new Request("https://example.com/v1/functions/writer-profile", { method: "POST", body: JSON.stringify({ avatar_style: "emoji", avatar_emoji: "📚" }) });
+  const emojiProfile = await handleWriterProfile(emojiRequest, userId, database);
+  assert.equal(emojiProfile.avatar_style, "emoji");
+  assert.equal(emojiProfile.avatar_emoji, "📚");
+
+  const badRequest = new Request("https://example.com/v1/functions/writer-profile", { method: "POST", body: JSON.stringify({ avatar_style: "not-a-style" }) });
+  await assert.rejects(() => handleWriterProfile(badRequest, userId, database), /valid writer avatar style/);
 });

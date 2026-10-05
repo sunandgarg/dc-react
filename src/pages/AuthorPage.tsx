@@ -13,9 +13,11 @@ import { absoluteSiteUrl } from "@/lib/constant";
 import { plainText } from "@/lib/plainText";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AuthorAvatar } from "@/components/AuthorAvatar";
 
 interface Author {
   id: string; slug: string; name: string; designation: string; photo: string;
+  avatar_style: string; avatar_emoji: string;
   short_bio: string; bio: string; expertise: string[];
   email: string; linkedin_url: string; twitter_url: string; website_url: string;
 }
@@ -69,7 +71,7 @@ export default function AuthorPage() {
   const profile = useQuery({
     queryKey: ["public-author", slug],
     queryFn: async () => {
-      const { data, error } = await backendClient.from("authors").select("id,slug,name,designation,photo,short_bio,bio,expertise,email,linkedin_url,twitter_url,website_url").eq("slug", slug).eq("is_active", true).maybeSingle();
+      const { data, error } = await backendClient.from("authors").select("id,slug,name,designation,photo,avatar_style,avatar_emoji,short_bio,bio,expertise,email,linkedin_url,twitter_url,website_url").eq("slug", slug).eq("is_active", true).maybeSingle();
       if (error) throw error;
       return data as Author | null;
     },
@@ -82,7 +84,9 @@ export default function AuthorPage() {
 
   const ldjson = {
     "@context": "https://schema.org", "@type": "Person",
-    name: author.name, jobTitle: author.designation, image: author.photo, description: author.short_bio,
+    name: author.name, jobTitle: author.designation,
+    ...(author.avatar_style === "photo" && safeHttpUrl(author.photo) ? { image: safeHttpUrl(author.photo) } : {}),
+    description: author.short_bio,
     url: absoluteSiteUrl(`/author/${author.slug}`),
     sameAs: [author.linkedin_url, author.twitter_url, author.website_url].filter(Boolean),
   };
@@ -98,7 +102,7 @@ export default function AuthorPage() {
       <main>
         <section className="bg-gradient-to-br from-primary/5 to-background border-b border-border">
           <div className="container py-10 md:py-14 flex flex-col md:flex-row gap-6 items-center md:items-start">
-            {author.photo ? <img src={author.photo} alt={author.name} className="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover border border-border" /> : <div className="w-28 h-28 md:w-36 md:h-36 rounded-2xl bg-primary/10" />}
+            <AuthorAvatar name={author.name} photo={author.photo} avatarStyle={author.avatar_style} avatarEmoji={author.avatar_emoji} size="lg" className="w-28 h-28 md:w-36 md:h-36 shrink-0 rounded-2xl overflow-hidden border border-border" />
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-2xl md:text-4xl font-bold text-foreground">{author.name}</h1>
               {author.designation && <p className="text-primary font-medium mt-1">{author.designation}</p>}

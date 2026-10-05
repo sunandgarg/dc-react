@@ -417,6 +417,8 @@ model authors {
   name          String   @db.LongText
   designation   String   @db.LongText
   photo         String   @db.LongText
+  avatar_style  String   @default("illustration") @db.VarChar(16)
+  avatar_emoji  String   @default("✍️") @db.VarChar(24)
   short_bio     String   @db.LongText
   bio           String   @db.LongText
   expertise     Json

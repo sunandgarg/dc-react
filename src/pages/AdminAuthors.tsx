@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { slugify, syncAutoSlug } from "@/lib/slugify";
 import { UserPicker } from "@/components/admin/UserPicker";
+import { AUTHOR_AVATAR_EMOJIS, AuthorAvatar, type AuthorAvatarStyle } from "@/components/AuthorAvatar";
 
 import { CSVTools } from "@/components/CSVTools";
 import { useDraftState } from "@/hooks/useDraftState";
@@ -21,6 +22,8 @@ interface Author {
   name: string;
   designation: string;
   photo: string;
+  avatar_style: AuthorAvatarStyle;
+  avatar_emoji: string;
   short_bio: string;
   bio: string;
   expertise: string[];
@@ -34,7 +37,7 @@ interface Author {
 }
 
 const empty: Author = {
-  slug: "", name: "", designation: "", photo: "", short_bio: "", bio: "", expertise: [],
+  slug: "", name: "", designation: "", photo: "", avatar_style: "illustration", avatar_emoji: "✍️", short_bio: "", bio: "", expertise: [],
   email: "", linkedin_url: "", twitter_url: "", website_url: "", display_order: 0, is_active: true,
   user_id: null,
 };
@@ -88,11 +91,7 @@ export default function AdminAuthors() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {authors.map((a) => (
             <div key={a.id} className="bg-card border border-border rounded-2xl p-4 flex gap-3">
-              {a.photo ? (
-                <img src={a.photo} alt={a.name} className="w-14 h-14 rounded-full object-cover" />
-              ) : (
-                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center"><UserCheck className="w-6 h-6 text-primary" /></div>
-              )}
+              <AuthorAvatar name={a.name} photo={a.photo} avatarStyle={a.avatar_style} avatarEmoji={a.avatar_emoji} className="w-14 h-14 shrink-0 rounded-full overflow-hidden" />
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-foreground truncate">{a.name}</p>
                 <p className="text-xs text-muted-foreground truncate">{a.designation}</p>
@@ -142,7 +141,30 @@ export default function AdminAuthors() {
                 <div><label className="text-xs text-muted-foreground">Website URL</label><Input value={editing.website_url} onChange={(e) => setEditing({ ...editing, website_url: e.target.value })} /></div>
                 <div><label className="text-xs text-muted-foreground">Display Order</label><Input type="number" value={editing.display_order} onChange={(e) => setEditing({ ...editing, display_order: Number(e.target.value) || 0 })} /></div>
               </div>
-              <ImageUploadField label="Profile Photo" value={editing.photo} onChange={(v) => setEditing({ ...editing, photo: v })} folder="authors" preset="article" />
+              <div className="rounded-xl border border-border p-4 space-y-3">
+                <div className="flex items-center gap-3">
+                  <AuthorAvatar name={editing.name || "Writer"} photo={editing.photo} avatarStyle={editing.avatar_style} avatarEmoji={editing.avatar_emoji} className="w-16 h-16 shrink-0 rounded-full overflow-hidden" />
+                  <div>
+                    <p className="text-sm font-semibold">Public writer avatar</p>
+                    <p className="text-xs text-muted-foreground">Existing writers use the illustrated avatar. Saved photos are not displayed unless Photo is selected.</p>
+                  </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div><label htmlFor="author-avatar-style" className="text-xs text-muted-foreground">Display style</label>
+                    <select id="author-avatar-style" value={editing.avatar_style || "illustration"} onChange={(event) => setEditing({ ...editing, avatar_style: event.target.value as AuthorAvatarStyle })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                      <option value="illustration">Default illustrated avatar</option>
+                      <option value="emoji">Emoji avatar</option>
+                      <option value="photo">Profile photo</option>
+                    </select>
+                  </div>
+                  {editing.avatar_style === "emoji" && <div><label htmlFor="author-avatar-emoji" className="text-xs text-muted-foreground">Emoji</label>
+                    <select id="author-avatar-emoji" value={editing.avatar_emoji || "✍️"} onChange={(event) => setEditing({ ...editing, avatar_emoji: event.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                      {AUTHOR_AVATAR_EMOJIS.map((emoji) => <option key={emoji} value={emoji}>{emoji}</option>)}
+                    </select>
+                  </div>}
+                </div>
+                {editing.avatar_style === "photo" && <ImageUploadField label="Profile Photo" value={editing.photo} onChange={(v) => setEditing({ ...editing, photo: v })} folder="authors" preset="article" />}
+              </div>
               <div><label className="text-xs text-muted-foreground">Short Bio (1-2 lines, shown next to byline)</label>
                 <textarea value={editing.short_bio} onChange={(e) => setEditing({ ...editing, short_bio: e.target.value })} rows={2} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm" />
               </div>

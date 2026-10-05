@@ -14,7 +14,7 @@ import careerAvatar from "@/assets/avatar-career.png";
 interface Props {
   seed?: string;
   gender?: string;
-  variant?: "faculty" | "career";
+  variant?: "faculty" | "career" | "author";
   className?: string;
 }
 
@@ -27,6 +27,7 @@ function hash(s: string) {
 export function ProfessionalAvatar({ seed = "", gender, variant = "faculty", className }: Props) {
   let src = careerAvatar;
   let alt = "Career illustration";
+  if (variant === "author") alt = "Writer illustration";
   if (variant === "faculty") {
     const g = (gender || "").toLowerCase();
     const isFemale = g.startsWith("f") || (!g && hash(seed) % 2 === 1);

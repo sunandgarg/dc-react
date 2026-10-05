@@ -973,6 +973,8 @@ export type Database = {
       }
       authors: {
         Row: {
+          avatar_emoji: string
+          avatar_style: string
           bio: string
           created_at: string
           designation: string
@@ -992,6 +994,8 @@ export type Database = {
           website_url: string
         }
         Insert: {
+          avatar_emoji?: string
+          avatar_style?: string
           bio?: string
           created_at?: string
           designation?: string
@@ -1011,6 +1015,8 @@ export type Database = {
           website_url?: string
         }
         Update: {
+          avatar_emoji?: string
+          avatar_style?: string
           bio?: string
           created_at?: string
           designation?: string

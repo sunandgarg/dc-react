@@ -2517,6 +2517,22 @@
         "default": "",
         "foreignKey": null
       },
+      "avatar_style": {
+        "type": "String",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "text",
+        "default": "illustration",
+        "foreignKey": null
+      },
+      "avatar_emoji": {
+        "type": "String",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "text",
+        "default": "✍️",
+        "foreignKey": null
+      },
       "short_bio": {
         "type": "String",
         "nullable": false,

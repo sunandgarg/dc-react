@@ -337,6 +337,18 @@ async function ensureLeadAutomationAuditSchema(report) {
   }
 }
 
+async function ensureAuthorAvatarSchema(report) {
+  const columns = [
+    ["avatar_style", "VARCHAR(16) NOT NULL DEFAULT 'illustration'"],
+    ["avatar_emoji", "VARCHAR(24) NOT NULL DEFAULT '✍️'"],
+  ];
+  for (const [column, definition] of columns) {
+    if (await columnInfo("authors", column)) continue;
+    await prisma.$executeRawUnsafe(`ALTER TABLE \`authors\` ADD COLUMN ${quote(column)} ${definition}`);
+    report.createdRuntimeColumns.push(`authors.${column}`);
+  }
+}
+
 async function ensureLeadAutomationPerformanceIndexes(report) {
   const indexes = [
     ["lp_automation_rules", "ix_lp_rules_dispatch", ["is_active", "auto_dispatch", "priority"]],
@@ -665,6 +677,7 @@ try {
   await ensureHomepageExploreSchema(report);
   await ensureCourseFeeGroupingSchema(report);
   await ensureLeadAutomationAuditSchema(report);
+  await ensureAuthorAvatarSchema(report);
   await ensureLeadAutomationPerformanceIndexes(report);
   for (const [table, ...columns] of uniqueIndexes) await makeUniqueIndex(table, columns, report);
   await retireLegacyArticleSlugIndexes(report);

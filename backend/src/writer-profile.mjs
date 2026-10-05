@@ -21,6 +21,21 @@ function authorSlug(name, userId) {
   return `${base}-${userId.slice(0, 8)}`;
 }
 
+const avatarStyles = new Set(["illustration", "emoji", "photo"]);
+const avatarEmojis = new Set(["✍️", "📚", "📝", "🎓", "💡", "🧠", "📖", "🌟"]);
+
+function cleanAvatarStyle(value) {
+  const style = String(value ?? "illustration");
+  if (!avatarStyles.has(style)) throw inputError("Choose a valid writer avatar style");
+  return style;
+}
+
+function cleanAvatarEmoji(value) {
+  const emoji = String(value ?? "✍️");
+  if (!avatarEmojis.has(emoji)) throw inputError("Choose a supported writer avatar emoji");
+  return emoji;
+}
+
 export async function ensureWriterAuthorProfile(database, userId, nameHint = "") {
   const existing = await database.authors.findFirst({ where: { user_id: userId } });
   if (existing) return existing;
@@ -28,7 +43,7 @@ export async function ensureWriterAuthorProfile(database, userId, nameHint = "")
   const name = cleanText(profile?.display_name || nameHint || "DekhoCampus Writer", 120);
   return database.authors.create({ data: {
     name, slug: authorSlug(name, userId), user_id: userId,
-    designation: "Content Writer", photo: "", short_bio: "", bio: "",
+    designation: "Content Writer", photo: "", avatar_style: "illustration", avatar_emoji: "✍️", short_bio: "", bio: "",
     expertise: [], email: "", linkedin_url: "", twitter_url: "", website_url: "",
     display_order: 0, is_active: true,
   } });
@@ -59,6 +74,8 @@ export async function handleWriterProfile(request, userId, database) {
       name,
       designation: cleanText(input.designation ?? author.designation, 120),
       photo: cleanUrl(input.photo ?? author.photo),
+      avatar_style: cleanAvatarStyle(input.avatar_style ?? author.avatar_style),
+      avatar_emoji: cleanAvatarEmoji(input.avatar_emoji ?? author.avatar_emoji),
       short_bio: cleanText(input.short_bio ?? author.short_bio, 400),
       bio: cleanText(input.bio ?? author.bio, 5000),
       expertise,

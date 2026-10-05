@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import WriterProfile from "./WriterProfile";
@@ -21,7 +21,7 @@ describe("private writer profile", () => {
     openProfile();
     expect(await screen.findByRole("link", { name: "View my published work" })).toHaveAttribute("href", "/author/neha#contributions");
     expect(screen.getByRole("link", { name: "My articles and drafts" })).toHaveAttribute("href", "/admin/articles");
-    expect(screen.getByLabelText("Byline name")).toHaveValue("Neha");
+    await waitFor(() => expect(screen.getByLabelText("Byline name")).toHaveValue("Neha"));
   });
   it("prevents editing an empty form after a failed profile load and supports retry", async () => {
     mocks.invoke.mockResolvedValue({ data: null, error: new Error("Offline") });
@@ -31,5 +31,17 @@ describe("private writer profile", () => {
     mocks.invoke.mockResolvedValue({ data: { author: null, suggested_name: "Neha" }, error: null });
     fireEvent.click(screen.getByRole("button", { name: "Try again" }));
     expect(await screen.findByRole("button", { name: "Save my profile" })).toBeInTheDocument();
+  });
+  it("defaults existing photo holders to an illustration and offers emoji or photo", async () => {
+    mocks.invoke.mockResolvedValue({ data: { author: { slug: "neha", name: "Neha", photo: "https://example.com/neha.jpg", expertise: [] }, suggested_name: "Neha" }, error: null });
+    openProfile();
+    expect(await screen.findByLabelText("Avatar style")).toHaveValue("illustration");
+    expect(screen.getByAltText("Writer illustration")).toBeInTheDocument();
+    expect(screen.queryByAltText("Neha profile photo")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Avatar style"), { target: { value: "emoji" } });
+    expect(screen.getByLabelText("Emoji")).toHaveValue("✍️");
+    fireEvent.change(screen.getByLabelText("Avatar style"), { target: { value: "photo" } });
+    expect(screen.getByAltText("Neha profile photo")).toBeInTheDocument();
+    expect(screen.getByLabelText("Profile photo")).toBeInTheDocument();
   });
 });

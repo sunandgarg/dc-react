@@ -34,6 +34,15 @@ beforeEach(() => {
 });
 
 describe("public writer profile", () => {
+  it("does not publish an old writer photo in the page or Person schema by default", async () => {
+    mocks.profile.mockResolvedValue({ data: { id: "neha", slug: "neha", name: "Neha", photo: "https://example.com/old-photo.jpg", avatar_style: "illustration", expertise: [] }, error: null });
+    const view = openProfile();
+    expect(await screen.findByAltText("Writer illustration")).toBeInTheDocument();
+    expect(screen.queryByAltText("Neha profile photo")).not.toBeInTheDocument();
+    const schema = JSON.parse(view.container.querySelector('script[type="application/ld+json"]')?.textContent || "{}");
+    expect(schema).not.toHaveProperty("image");
+  });
+
   it("shows existing posts and loads older posts beyond 50", async () => {
     openProfile();
     expect(await screen.findByText("Articles (63)")).toBeInTheDocument();
