@@ -33,6 +33,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { addCbseSamplePaperLinks } from "@/lib/cbseSamplePaperLinks";
 import { resolveArticleSourceLogo } from "@/lib/articleSourceLogo";
+import { splitAtEditorialBoundary } from "@/lib/articleEditorialSplit";
 import { useArticleCategories } from "@/hooks/useArticleCategories";
 
 // Heavy below-the-fold components - lazy loaded for faster initial paint
@@ -46,18 +47,6 @@ function slugifyHeading(s: string) {
 }
 function normalizeSlug(s: string) {
   return s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-}
-
-function splitAtEditorialBoundary(content: string, richHtml: boolean) {
-  if (!content.trim()) return [content, ""] as const;
-  const candidates: number[] = [];
-  const pattern = richHtml ? /<h[23]\b[^>]*>|<\/p>/gi : /\n(?=#{2,3}\s)|\n\s*\n/g;
-  let match: RegExpExecArray | null;
-  while ((match = pattern.exec(content))) candidates.push(richHtml && match[0].toLowerCase() === "</p>" ? pattern.lastIndex : match.index);
-  const useful = candidates.filter((index) => index > content.length * 0.28 && index < content.length * 0.72);
-  const splitIndex = useful.sort((a, b) => Math.abs(a - content.length / 2) - Math.abs(b - content.length / 2))[0];
-  if (!splitIndex) return [content, ""] as const;
-  return [content.slice(0, splitIndex), content.slice(splitIndex)] as const;
 }
 
 function ArticleLeaderboardAd({ position, eager = false }: { position: "top" | "middle"; eager?: boolean }) {
