@@ -122,6 +122,8 @@ export default function WriterProfile() {
               <div><Label htmlFor="writer-avatar-style">Avatar style</Label>
                 <select id="writer-avatar-style" value={form.avatar_style} onChange={(event) => set("avatar_style", event.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
                   <option value="illustration">Default illustrated avatar</option>
+                  <option value="illustration_f">Woman illustration</option>
+                  <option value="illustration_m">Man illustration</option>
                   <option value="emoji">Emoji avatar</option>
                   <option value="photo">Profile photo</option>
                 </select>

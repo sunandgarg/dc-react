@@ -1,5 +1,5 @@
 import { Fragment, useState, useMemo, useEffect, useRef, useCallback, memo } from "react";
-import { Search, Clock, TrendingUp, GraduationCap, Briefcase, Building2, FileText, Award, Globe, BookOpen, Users, Newspaper, X, Tag as TagIcon, ArrowRight } from "lucide-react";
+import { Search, Clock, TrendingUp, GraduationCap, Building2, FileText, Globe, BookOpen, Users, Newspaper, X, Tag as TagIcon, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
@@ -17,19 +17,13 @@ import { buildExamHref } from "@/lib/entityUrls";
 import { NumberedPagination } from "@/components/NumberedPagination";
 import { normalizePage } from "@/lib/pagination";
 import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
+import { useArticleCategories } from "@/hooks/useArticleCategories";
 
-const categories = [
-  { label: "All News", icon: Newspaper, value: "" },
-  { label: "Admission News", icon: GraduationCap, value: "Admissions" },
-  { label: "Trending News", icon: TrendingUp, value: "Trending" },
-  { label: "Job Opportunities", icon: Briefcase, value: "Jobs" },
-  { label: "College News", icon: Building2, value: "College" },
-  { label: "Exam News", icon: FileText, value: "Exam Updates" },
-  { label: "Success Stories", icon: Award, value: "Success" },
-  { label: "Scholarships", icon: BookOpen, value: "Scholarships" },
-  { label: "Career", icon: Users, value: "Career" },
-  { label: "World Today", icon: Globe, value: "World" },
-];
+const categoryIcons = {
+  admission: GraduationCap, trending: TrendingUp, "college-reviews": Building2,
+  "exam-tips": FileText, scholarships: BookOpen, "career-guidance": Users,
+  "study-abroad": Globe, news: Newspaper,
+};
 
 const PAGE_SIZE = 12;
 const ARTICLE_COLS = "id,slug,title,description,featured_image,category,tags,created_at,featured_rank";
@@ -186,6 +180,15 @@ function GridSkeleton() {
 }
 
 export default function News() {
+  const { data: articleCategories } = useArticleCategories();
+  const categories = [
+    { label: "All News", icon: Newspaper, value: "" },
+    ...(Array.isArray(articleCategories) ? articleCategories : []).map((category) => ({
+      label: category.name,
+      icon: categoryIcons[category.slug as keyof typeof categoryIcons] || TagIcon,
+      value: category.name,
+    })),
+  ];
   const [searchParams, setSearchParams] = useSearchParams();
   const { tag: tagFromPath } = useParams<{ tag?: string }>();
   const navigate = useNavigate();
@@ -293,7 +296,7 @@ export default function News() {
         .order("created_at", { ascending: false });
 
       if (tagParam) q = q.contains("tags", [tagParam]);
-      if (activeCategory) q = q.ilike("category", `%${activeCategory}%`);
+      if (activeCategory) q = q.eq("category", activeCategory);
       if (debouncedSearch) q = q.or(`title.ilike.%${debouncedSearch}%,description.ilike.%${debouncedSearch}%`);
       // Exclude pinned IDs from the "latest" stream only on the unfiltered home view,
       // so pinned items don't appear twice. With filters active, show everything matching.
@@ -373,7 +376,7 @@ export default function News() {
       .slice(0, 5)
       .map((item) => ({ href: `/news/${item.slug}`, title: item.title, meta: item.category || "Admissions", isLive: liveArticleIds.has(item.id) }));
     return items.length ? items : [{
-      href: "/news?category=Admissions",
+      href: "/news?category=Admission",
       title: "Latest 2027 admissions, counselling and application updates",
       meta: "Admissions 2027",
     }];
@@ -537,7 +540,7 @@ export default function News() {
                     <GoogleAd placement="article" position="top" pageKey="news" className="min-h-[220px]" />
                   </section>
                   <NewsLinkModule title="Latest Articles" items={latestSidebarArticles} moreHref="/news" moreLabel="View all articles" />
-                  <NewsLinkModule title="Admission Alerts 2027" items={admissionAlerts} moreHref="/news?category=Admissions" moreLabel="View admission updates" />
+                  <NewsLinkModule title="Admission Alerts 2027" items={admissionAlerts} moreHref="/news?category=Admission" moreLabel="View admission updates" />
                   <NewsLinkModule title="Important Exams" items={importantExamLinks} moreHref="/exams" moreLabel="Explore all exams" />
                 </aside>
               </div>

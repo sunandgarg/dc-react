@@ -42,28 +42,13 @@ import { normalizeArticleSlug, validateArticleSave } from "@/lib/articleEditor";
 import { NumberedPagination } from "@/components/NumberedPagination";
 import { ArticleScorePanel } from "@/components/admin/ArticleScorePanel";
 import { articleCreatedSince, sortArticleAuthors, type ArticleAuthorOption } from "@/lib/adminArticleFilters";
+import { useArticleCategories } from "@/hooks/useArticleCategories";
 
 const STATUSES = ["Draft", "Published"];
 const VERTICALS = ["Engineering", "Medical", "Management", "Law", "Design", "Science", "General"];
 const SARKARI_VERTICALS = ["Government Jobs", "Central Government", "State Government", "Railways", "Banking", "Defence", "Teaching", "Police", "PSU"];
 const SARKARI_CATEGORIES = ["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"]
   .map((name) => ({ slug: name.toLowerCase().replace(/\s+/g, "-"), name }));
-
-function useArticleCategories(enabled = true) {
-  return useQuery({
-    queryKey: ["article_categories"],
-    staleTime: 5 * 60 * 1000,
-    enabled,
-    queryFn: async () => {
-      const { data } = await (backendClient as any)
-        .from("article_categories")
-        .select("slug, name, display_order, is_active")
-        .eq("is_active", true)
-        .order("display_order");
-      return (data || []) as { slug: string; name: string }[];
-    },
-  });
-}
 
 type ArticleDraft = Partial<DbArticle> & { faqs?: ArticleFaqDraft[] };
 const emptyArticle: ArticleDraft = {

@@ -74,6 +74,10 @@ test("writer can save only their own byline profile", async () => {
   assert.equal(emojiProfile.avatar_style, "emoji");
   assert.equal(emojiProfile.avatar_emoji, "📚");
 
+  const portraitRequest = new Request("https://example.com/v1/functions/writer-profile", { method: "POST", body: JSON.stringify({ avatar_style: "illustration_f" }) });
+  const portraitProfile = await handleWriterProfile(portraitRequest, userId, database);
+  assert.equal(portraitProfile.avatar_style, "illustration_f");
+
   const badRequest = new Request("https://example.com/v1/functions/writer-profile", { method: "POST", body: JSON.stringify({ avatar_style: "not-a-style" }) });
   await assert.rejects(() => handleWriterProfile(badRequest, userId, database), /valid writer avatar style/);
 });

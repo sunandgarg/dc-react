@@ -21,7 +21,7 @@ function authorSlug(name, userId) {
   return `${base}-${userId.slice(0, 8)}`;
 }
 
-const avatarStyles = new Set(["illustration", "emoji", "photo"]);
+const avatarStyles = new Set(["illustration", "illustration_f", "illustration_m", "emoji", "photo"]);
 const avatarEmojis = new Set(["✍️", "📚", "📝", "🎓", "💡", "🧠", "📖", "🌟"]);
 
 function cleanAvatarStyle(value) {

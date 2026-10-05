@@ -153,6 +153,8 @@ export default function AdminAuthors() {
                   <div><label htmlFor="author-avatar-style" className="text-xs text-muted-foreground">Display style</label>
                     <select id="author-avatar-style" value={editing.avatar_style || "illustration"} onChange={(event) => setEditing({ ...editing, avatar_style: event.target.value as AuthorAvatarStyle })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
                       <option value="illustration">Default illustrated avatar</option>
+                      <option value="illustration_f">Woman illustration</option>
+                      <option value="illustration_m">Man illustration</option>
                       <option value="emoji">Emoji avatar</option>
                       <option value="photo">Profile photo</option>
                     </select>

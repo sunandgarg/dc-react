@@ -33,25 +33,13 @@ import { backendClient } from "@/integrations/backend/client";
 import { useQuery } from "@tanstack/react-query";
 import { addCbseSamplePaperLinks } from "@/lib/cbseSamplePaperLinks";
 import { resolveArticleSourceLogo } from "@/lib/articleSourceLogo";
+import { useArticleCategories } from "@/hooks/useArticleCategories";
 
 // Heavy below-the-fold components - lazy loaded for faster initial paint
 const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(m => ({ default: m.AlsoCheckSection })), "AlsoCheckSection");
 const GoogleAd = lazyRetry(() => import("@/components/ads/GoogleAd").then(m => ({ default: m.GoogleAd })), "GoogleAd");
 const FAQSection = lazyRetry(() => import("@/components/FAQSection").then(m => ({ default: m.FAQSection })), "FAQSection");
 const ArticleLinkedResources = lazyRetry(() => import("@/components/detail/ArticleLinkedResources").then(m => ({ default: m.ArticleLinkedResources })), "ArticleLinkedResources");
-
-const NEWS_CATEGORIES = [
-  { label: "All News", value: "" },
-  { label: "Admissions", value: "Admissions" },
-  { label: "Trending", value: "Trending" },
-  { label: "Jobs", value: "Jobs" },
-  { label: "College", value: "College" },
-  { label: "Exam Updates", value: "Exam Updates" },
-  { label: "Success", value: "Success" },
-  { label: "Scholarships", value: "Scholarships" },
-  { label: "Career", value: "Career" },
-  { label: "World", value: "World" },
-];
 
 function slugifyHeading(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-").slice(0, 80);
@@ -163,6 +151,7 @@ function SidebarLinkModule({
 }
 
 export default function ArticleDetail() {
+  const { data: articleCategories } = useArticleCategories();
   const { slug: rawSlug } = useParams<{ slug: string }>();
   const decoded = decodeURIComponent(rawSlug || "");
   const cleanSlug = normalizeSlug(decoded);
@@ -346,7 +335,7 @@ export default function ArticleDetail() {
       .slice(0, 5)
       .map((item) => ({ href: `/news/${normalizeSlug(item.slug)}`, title: item.title, meta: item.category || "Admissions", isLive: liveSidebarIds.has(item.id) }));
     return items.length ? items : [{
-      href: "/news?category=Admissions",
+      href: "/news?category=Admission",
       title: "Latest 2027 admissions, counselling and application updates",
       meta: "Admissions 2027",
       isLive: false,
@@ -559,14 +548,14 @@ export default function ArticleDetail() {
       <div className="bg-card border-b border-border">
         <div className="container max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex gap-2 overflow-x-auto py-3 scrollbar-hide">
-            {NEWS_CATEGORIES.map((c) => (
-              <Link key={c.label} to={c.value ? `/news?category=${encodeURIComponent(c.value)}` : "/news"}
+            {[{ name: "All News" }, ...(Array.isArray(articleCategories) ? articleCategories : [])].map((c) => (
+              <Link key={c.name} to={c.name !== "All News" ? `/news?category=${encodeURIComponent(c.name)}` : "/news"}
                 className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${
-                  (article?.category || "").toLowerCase().includes(c.value.toLowerCase()) && c.value
+                  article?.category === c.name
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-primary"
                 }`}>
-                {c.label}
+                {c.name}
               </Link>
             ))}
           </div>
@@ -760,7 +749,7 @@ export default function ArticleDetail() {
               </section>
 
               <SidebarLinkModule title="Latest Articles" items={latestSidebarArticles} moreHref="/news" moreLabel="View all articles" />
-              <SidebarLinkModule title="Admission Alerts 2027" items={admissionAlerts} moreHref="/news?category=Admissions" moreLabel="View admission updates" />
+              <SidebarLinkModule title="Admission Alerts 2027" items={admissionAlerts} moreHref="/news?category=Admission" moreLabel="View admission updates" />
               <SidebarLinkModule title="Important Exams" items={importantExamLinks} moreHref="/exams" moreLabel="Explore all exams" />
 
               <div className="sticky top-[7.5rem]">

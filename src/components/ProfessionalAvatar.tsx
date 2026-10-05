@@ -1,7 +1,7 @@
 /**
  * ProfessionalAvatar - default fallback portrait used when a real photo
  * is missing (career cards, faculty cards). Uses curated illustrated avatars:
- *  - male / female for faculty (driven by `gender`)
+ *  - male / female for faculty and writers (driven by `gender`)
  *  - a dedicated career illustration when `variant="career"` is passed.
  *
  * `seed` is kept for API compatibility (used to deterministically pick
@@ -27,7 +27,11 @@ function hash(s: string) {
 export function ProfessionalAvatar({ seed = "", gender, variant = "faculty", className }: Props) {
   let src = careerAvatar;
   let alt = "Career illustration";
-  if (variant === "author") alt = "Writer illustration";
+  if (variant === "author") {
+    const isFemale = gender !== "male";
+    src = isFemale ? femaleAvatar : maleAvatar;
+    alt = isFemale ? "Woman writer illustration" : "Man writer illustration";
+  }
   if (variant === "faculty") {
     const g = (gender || "").toLowerCase();
     const isFemale = g.startsWith("f") || (!g && hash(seed) % 2 === 1);

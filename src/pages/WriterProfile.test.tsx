@@ -36,7 +36,7 @@ describe("private writer profile", () => {
     mocks.invoke.mockResolvedValue({ data: { author: { slug: "neha", name: "Neha", photo: "https://example.com/neha.jpg", expertise: [] }, suggested_name: "Neha" }, error: null });
     openProfile();
     expect(await screen.findByLabelText("Avatar style")).toHaveValue("illustration");
-    expect(screen.getByAltText("Writer illustration")).toBeInTheDocument();
+    expect(screen.getByAltText("Woman writer illustration")).toBeInTheDocument();
     expect(screen.queryByAltText("Neha profile photo")).not.toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Avatar style"), { target: { value: "emoji" } });
     expect(screen.getByLabelText("Emoji")).toHaveValue("✍️");
