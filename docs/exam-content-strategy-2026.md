@@ -1,6 +1,6 @@
 # DekhoCampus exam content strategy
 
-Last reconciled: 23 September 2026
+Last reconciled: 6 October 2026
 
 This is the canonical policy for researching, writing, reviewing and publishing exam pages. It replaces conflicting wording in individual batch notes. A batch report is evidence for review; it is not a database migration and it is not proof a page is live.
 
@@ -24,6 +24,7 @@ This is the canonical policy for researching, writing, reviewing and publishing 
 
 - Open with the practical answer or consequence in the first two or three sentences. Never print prompt residue such as "Answer first" or "Executive summary".
 - Name the authority, route, paper, course, counselling body or document when it helps the student act.
+- Include at least one concrete named detail backed by a stored official source. A previous-cycle section, programme route or document requirement can be useful when clearly dated. Never invent a code or cutoff merely to sound specific.
 - State uncertain facts once. Avoid repeating the same official-confirmation disclaimer under several headings.
 - Explain that a submitted form, qualifying score or rank is not an admission offer. Cover the actual next step: shortlist, choice filling, interview, verification, allotment or joining.
 - Use Indian admissions context and plain Indian English. A small natural Hindi phrase is optional, never forced or reused as a batch slogan.
@@ -34,9 +35,10 @@ This is the canonical policy for researching, writing, reviewing and publishing 
 - Never paste a flattened Markdown table or a vertical sequence of orphaned column labels.
 - Do not add an H1 inside managed content because the page template supplies it.
 - Use short paragraphs and varied sentence lengths. The layout should follow the topic, not a repeated intro, facts, risks, checklist and conclusion template.
+- Do not force an "Executive summary / Key facts / rationale / steps / risk matrix / red flags / FAQs" sequence. A table is optional, never a quota; when used, it needs headers and real data cells.
 - Put FAQs only in the dedicated FAQ field and render them in the page FAQ section. Do not repeat the same questions and answers inside the article body.
 - Keep four distinct, exam-specific FAQs unless the page contract explicitly calls for a different reviewed count.
-- Add three or four verified, contextually useful DekhoCampus links. Add the official application link and the official notification or bulletin link. Do not publish unverified external links.
+- Add one to four verified, contextually useful DekhoCampus links; do not pad every page with the same navigation block. Link the exact official application or bulletin page when available and relevant. Do not publish unverified external links.
 
 ## 5. Every exam must sound and work differently
 
@@ -58,6 +60,7 @@ This is the canonical policy for researching, writing, reviewing and publishing 
 
 - A reviewer must check claim-to-source support, current dates, authority ownership, duplicate identity, broken links, spelling and mobile rendering.
 - Automated checks must reject duplicate slugs, repeated openings, repeated application or preparation blocks, duplicate FAQ questions, FAQs embedded in body HTML, forbidden phrases, raw Markdown, schema-invalid fields, unsupported dates and missing official sources.
+- The current batch gate also rejects prompt labels, flattened comparison labels even when another valid table exists, more than two recycled verification cautions, a repeated outline across more than two records, and a concrete claim without a matching stored official URL.
 - SEO, AEO and GEO scores are diagnostics, not ranking guarantees. AI-detector percentages are not a publication standard and must not replace factual or editorial review.
 - Do not publish merely because a generator returned content or a numeric score reached 100.
 
@@ -71,4 +74,4 @@ This is the canonical policy for researching, writing, reviewing and publishing 
 
 ## Current repository status
 
-The audit dated 23 September 2026 found 41 committed batch builders and 41 JSON plus 41 Markdown reports. They contain 410 versions for 390 unique exam rows. Twenty rows have competing batch versions, 112 active rows from the old 506-row snapshot were never refreshed, and only batch 041 enforces the final variation policy. Batches 001 through 040 must be regenerated or individually reviewed before a production cutover. See `reports/exam-refresh-repository-audit-2026-09-23.md` for the reproducible inventory.
+The local audit on 6 October 2026 found 42 batch builders and 42 JSON plus 42 Markdown reports. They contain 420 versions for 400 unique exam slugs; 102 active rows from the old 506-row snapshot remain uncovered. Batches 041 and 042 pass their current checks, but the repository remains **not production-ready**: earlier batches contain repeated wording, competing versions remain, and none of these reports is a live database migration. Batch 042 is a review artifact with ten source-backed examples, not a publication. Resolve the current live rows and complete human review before any production cutover. See `reports/exam-refresh-repository-audit-2026-09-23.md` for the earlier reproducible inventory and run `npm run verify:exam-refresh-policy` for current counts.

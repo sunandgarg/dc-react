@@ -1,0 +1,861 @@
+{
+  "batch": "exam-refresh-batch-042",
+  "checked_at": "2026-10-06T00:00:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten active canonical rows after batch 041; this is a review artifact, not a live database update",
+  "policy": "Batch variation is mandatory. Every item in a batch needs a different first sentence and a topic-specific consequence. Never copy a lead sentence across sibling records. Describe the application route in a record-specific form. Rotate paragraph, ordered list, checklist and short action plan formats, but keep the facts accurate. Preparation advice must come from the actual subject matter. Replace generic study slogans with a concrete task such as biology diagrams, timed quantitative sets, case-law reading or design observation. FAQ questions and answers must be unique across the batch. Ask about a decision that belongs to the individual exam or course, not a generic deadline question repeated everywhere. Lead with the real consequence, never an Answer first label. Choose a topic-native section order, not the same summary/facts/risk/checklist/FAQ ladder. Use semantic HTML tables only when a real comparison benefits; otherwise use prose or bullets. Consolidate repeated official-verification advice. Include a named, source-backed detail when the evidence provides one, and never invent a code, cutoff or date to sound specific. Never reuse these phrases: Roz thoda, same as above, use the official portal and current bulletin before payment. A template may control field shape, but it must not control wording, hook, FAQ phrasing, application explanation or preparation tip.",
+  "variation": {
+    "records": 10,
+    "unique_openings": 10,
+    "unique_applications": 10,
+    "unique_preparations": 10,
+    "unique_faq_questions": 40
+  },
+  "human_editorial": {
+    "records": 10,
+    "unique_outlines": 10,
+    "sourced_examples": 10
+  },
+  "updates": [
+    {
+      "id": "62bb394f-5ee3-4eaf-89a5-3d249028f5c7",
+      "old_slug": "wbjee-jelet",
+      "slug": "wbjee-jelet",
+      "name": "JELET",
+      "title": "JELET 2027: Eligibility, Route and Next Steps",
+      "full_name": "JELET 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "West Bengal Joint Entrance Examinations Board",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Engineering/Pharmacy",
+      "description": "JELET 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "Put your diploma discipline next to the intended engineering, technology or pharmacy branch. Lateral entry is different from applying for a first-year seat, so the college preference list needs a separate eligibility check.",
+      "application_process": "<h2>Application route</h2><p>When WBJEEB opens JELET 2027, compare the diploma details with the bulletin and seat matrix before registering. Keep the diploma marksheet and category documents beside the form, then save the submitted choices.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Work one timed applied-mathematics set, then revisit the diploma subject that produced the most errors. Separate calculation errors from branch-concept gaps; they need different practice.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The JELET 2027 pattern needs confirmation in the next West Bengal Joint Entrance Examinations Board notice. The 2026 JELET route covered second-year (third-semester) entry to engineering, technology and pharmacy degrees, but not architecture.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The JELET 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>JELET at a glance</h2><p>The 2026 JELET route covered second-year (third-semester) entry to engineering, technology and pharmacy degrees, but not architecture.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "JELET 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "JELET 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the JELET route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "JELET, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "JELET",
+        "Engineering/Pharmacy",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/jelet/",
+      "official_website": "https://wbjeeb.nic.in/jelet/",
+      "registration_url": "https://wbjeeb.nic.in/jelet/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/jelet/",
+        "https://wbjeeb.nic.in/current-events-jelet/"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://wbjeeb.nic.in/jelet/",
+        "evidence": "https://wbjeeb.nic.in/jelet/"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The 2026 JELET route covered second-year (third-semester) entry to engineering, technology and pharmacy degrees, but not architecture.",
+          "source_url": "https://wbjeeb.nic.in/jelet/"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Does JELET place diploma students into the first year?",
+          "answer": "No. The published 2026 JELET route was for second-year, third-semester entry."
+        },
+        {
+          "question": "Is architecture part of the published JELET lateral-entry route?",
+          "answer": "No. The 2026 WBJEEB description excluded architecture from this lateral-entry route."
+        },
+        {
+          "question": "What should I compare before JELET option entry?",
+          "answer": "Compare your diploma discipline, the current branch list and the live seat matrix before locking preferences."
+        },
+        {
+          "question": "Are JELET 2027 dates published yet?",
+          "answer": "The checked WBJEEB material did not establish 2027 dates. Use its next JELET notice for the new cycle."
+        }
+      ],
+      "article_html": "<p>A diploma can open a second-year engineering seat through JELET, but not every degree or branch sits on that route. Start with the branch you want, not a borrowed exam timetable.</p><h2>Which seat are you actually trying to enter?</h2><p>Put your diploma discipline next to the intended engineering, technology or pharmacy branch. Lateral entry is different from applying for a first-year seat, so the college preference list needs a separate eligibility check.</p><p>The 2026 JELET route covered second-year (third-semester) entry to engineering, technology and pharmacy degrees, but not architecture. <a href=\"https://wbjeeb.nic.in/jelet/\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>What does the last cycle establish?</h2><p>The published 2026 route is a useful boundary, not a promise that the 2027 paper, branch list or seat matrix will be identical.</p><h2>The choice-filling mistake to avoid</h2><p>A rank becomes useful only when the programme appears in the current seat matrix and your documents match the route. Save the option list before locking it; the order can matter more than a generic college ranking.</p><p>The JELET 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next West Bengal Joint Entrance Examinations Board notice for the new cycle.</p><h2>Before a diploma holder locks choices</h2><p>When WBJEEB opens JELET 2027, compare the diploma details with the bulletin and seat matrix before registering. Keep the diploma marksheet and category documents beside the form, then save the submitted choices.</p><p>Work one timed applied-mathematics set, then revisit the diploma subject that produced the most errors. Separate calculation errors from branch-concept gaps; they need different practice.</p><p>Name the branch first, then use the <a href=\"/courses\">engineering course options</a> to refine your college list.</p>",
+      "content_variation": {
+        "opening": "A diploma can open a second-year engineering seat through JELET, but not every degree or branch sits on that route. Start with the branch you want, not a borrowed exam timetable.",
+        "application": "When WBJEEB opens JELET 2027, compare the diploma details with the bulletin and seat matrix before registering. Keep the diploma marksheet and category documents beside the form, then save the submitted choices.",
+        "preparation": "Work one timed applied-mathematics set, then revisit the diploma subject that produced the most errors. Separate calculation errors from branch-concept gaps; they need different practice.",
+        "faq_questions": [
+          "Does JELET place diploma students into the first year?",
+          "Is architecture part of the published JELET lateral-entry route?",
+          "What should I compare before JELET option entry?",
+          "Are JELET 2027 dates published yet?"
+        ]
+      }
+    },
+    {
+      "id": "009f500e-ef84-49da-9e8b-d5971b30ba54",
+      "old_slug": "wbjee-jeca",
+      "slug": "wbjee-jeca",
+      "name": "JECA",
+      "title": "JECA 2027: Eligibility, Route and Next Steps",
+      "full_name": "JECA 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "West Bengal Joint Entrance Examinations Board",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Computer Applications",
+      "description": "JECA 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "The test produces a rank, while counselling connects that rank to a listed MCA seat. An institute outside the participating list cannot be assumed available just because it teaches computer applications.",
+      "application_process": "<h2>Application route</h2><p>Use the JECA candidate dashboard only after the new bulletin identifies the qualifying degree and mathematics conditions. Download the confirmation, then track rank and counselling notices as separate steps.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Practise a mixed mathematics and reasoning block under a timer. After each set, write down whether the lost mark came from a concept, a calculation or the time spent reading the question.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The JECA 2027 pattern needs confirmation in the next West Bengal Joint Entrance Examinations Board notice. WBJEEB described JECA 2026 as its entrance test and counselling route for MCA admission in participating West Bengal institutions.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The JECA 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>JECA at a glance</h2><p>WBJEEB described JECA 2026 as its entrance test and counselling route for MCA admission in participating West Bengal institutions.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "JECA 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "JECA 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the JECA route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "JECA, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "JECA",
+        "Computer Applications",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/jeca/",
+      "official_website": "https://wbjeeb.nic.in/jeca/",
+      "registration_url": "https://wbjeeb.nic.in/jeca/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/jeca/",
+        "https://wbjeeb.nic.in/current-events-jeca/"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/colleges"
+      ],
+      "external_links": {
+        "authority": "https://wbjeeb.nic.in/jeca/",
+        "evidence": "https://wbjeeb.nic.in/jeca/"
+      },
+      "evidence_examples": [
+        {
+          "claim": "WBJEEB described JECA 2026 as its entrance test and counselling route for MCA admission in participating West Bengal institutions.",
+          "source_url": "https://wbjeeb.nic.in/jeca/"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Does JECA admission end when the rank card appears?",
+          "answer": "No. The published JECA process also has counselling and seat allotment."
+        },
+        {
+          "question": "Where is the participating MCA institute list published?",
+          "answer": "WBJEEB's JECA page links the current seat matrix and counselling material."
+        },
+        {
+          "question": "How should I build a JECA MCA preference order?",
+          "answer": "List MCA institutes you would actually accept after comparing programme, fee and location."
+        },
+        {
+          "question": "Can the JECA 2026 calendar be used for 2027?",
+          "answer": "No. The 2026 calendar is previous-cycle context, not a 2027 announcement."
+        }
+      ],
+      "article_html": "<p>JECA is the MCA route in West Bengal, so a student choosing an institute should look past the test score and read the counselling list as closely as the question paper.</p><h2>What does a JECA score lead to?</h2><p>The test produces a rank, while counselling connects that rank to a listed MCA seat. An institute outside the participating list cannot be assumed available just because it teaches computer applications.</p><p>WBJEEB described JECA 2026 as its entrance test and counselling route for MCA admission in participating West Bengal institutions. <a href=\"https://wbjeeb.nic.in/jeca/\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>Read the 2026 page as context</h2><p>WBJEEB separated the 2026 application, rank card, seat matrix and counselling notices. That sequence is useful for planning; it does not establish a 2027 date.</p><h2>A practical MCA shortlist</h2><p>Compare the institute's MCA programme, fee and location before you order choices. Record what you would accept rather than copying someone else's preference list.</p><p>The JECA 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next West Bengal Joint Entrance Examinations Board notice for the new cycle.</p><h2>Turn the MCA shortlist into a plan</h2><p>Use the JECA candidate dashboard only after the new bulletin identifies the qualifying degree and mathematics conditions. Download the confirmation, then track rank and counselling notices as separate steps.</p><p>Practise a mixed mathematics and reasoning block under a timer. After each set, write down whether the lost mark came from a concept, a calculation or the time spent reading the question.</p><p>Use <a href=\"/colleges\">college profiles</a> to compare location and fees only after the JECA seat list confirms a participating MCA programme.</p>",
+      "content_variation": {
+        "opening": "JECA is the MCA route in West Bengal, so a student choosing an institute should look past the test score and read the counselling list as closely as the question paper.",
+        "application": "Use the JECA candidate dashboard only after the new bulletin identifies the qualifying degree and mathematics conditions. Download the confirmation, then track rank and counselling notices as separate steps.",
+        "preparation": "Practise a mixed mathematics and reasoning block under a timer. After each set, write down whether the lost mark came from a concept, a calculation or the time spent reading the question.",
+        "faq_questions": [
+          "Does JECA admission end when the rank card appears?",
+          "Where is the participating MCA institute list published?",
+          "How should I build a JECA MCA preference order?",
+          "Can the JECA 2026 calendar be used for 2027?"
+        ]
+      }
+    },
+    {
+      "id": "3a636ef3-a8a2-4509-9591-906f3fd2ffe5",
+      "old_slug": "jemscn",
+      "slug": "jemscn",
+      "name": "JEMScN",
+      "title": "JEMScN 2027: Eligibility, Route and Next Steps",
+      "full_name": "JEMScN 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "West Bengal Joint Entrance Examinations Board",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Nursing/Postgraduate",
+      "description": "JEMScN 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "Read the programme's degree, registration and category conditions beside your certificates. A strong entrance result does not repair a missing eligibility document at admission.",
+      "application_process": "<h2>Application route</h2><p>Once WBJEEB releases JEMScN 2027, match your BSc Nursing and registration evidence to its bulletin, upload the requested files and retain the confirmation for counselling.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Take one clinical case at a time: assessment, priority intervention, contraindication and reason. This exposes a shaky nursing decision more clearly than rereading a summary page.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The JEMScN 2027 pattern needs confirmation in the next West Bengal Joint Entrance Examinations Board notice. The JEMScN 2026 page identified an OMR-based entrance test for MSc Nursing seats in West Bengal colleges and institutes.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The JEMScN 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>JEMScN at a glance</h2><p>The JEMScN 2026 page identified an OMR-based entrance test for MSc Nursing seats in West Bengal colleges and institutes.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "JEMScN 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "JEMScN 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the JEMScN route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "JEMScN, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "JEMScN",
+        "Nursing/Postgraduate",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/jemscn/",
+      "official_website": "https://wbjeeb.nic.in/jemscn/",
+      "registration_url": "https://wbjeeb.nic.in/jemscn/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/jemscn/",
+        "https://wbjeeb.nic.in/current-events-jemscn/"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://wbjeeb.nic.in/jemscn/",
+        "evidence": "https://wbjeeb.nic.in/jemscn/"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The JEMScN 2026 page identified an OMR-based entrance test for MSc Nursing seats in West Bengal colleges and institutes.",
+          "source_url": "https://wbjeeb.nic.in/jemscn/"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Is JEMScN the route for Post Basic BSc Nursing?",
+          "answer": "No. JEMScN was the MSc Nursing route; JEPBN covered Post Basic BSc Nursing in the published 2026 cycle."
+        },
+        {
+          "question": "Which nursing documents matter before JEMScN registration?",
+          "answer": "Keep the qualifying nursing degree, registration proof and category records required by the new bulletin ready."
+        },
+        {
+          "question": "What follows the JEMScN rank card?",
+          "answer": "The published 2026 sequence continued into counselling and seat allotment."
+        },
+        {
+          "question": "Can I rely on the JEMScN 2026 exam date for 2027?",
+          "answer": "No. A 2026 test date does not establish the 2027 schedule."
+        }
+      ],
+      "article_html": "<p>For a nurse considering an MSc, JEMScN is not simply another test date. The qualifying nursing record and the later seat choice have to line up with the same application.</p><h2>Map the nursing qualification first</h2><p>Read the programme's degree, registration and category conditions beside your certificates. A strong entrance result does not repair a missing eligibility document at admission.</p><p>The JEMScN 2026 page identified an OMR-based entrance test for MSc Nursing seats in West Bengal colleges and institutes. <a href=\"https://wbjeeb.nic.in/jemscn/\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>What can the previous cycle tell you?</h2><p>The 2026 page distinguishes the test from the later counselling and seat-allotment stages. Use that sequence to organise documents, not to guess 2027 deadlines.</p><h2>Plan beyond the rank card</h2><p>Compare clinical specialisation, seat availability and travel before entering college choices. Keep the current seat matrix open while making the list.</p><p>The JEMScN 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next West Bengal Joint Entrance Examinations Board notice for the new cycle.</p><h2>Keep the clinical route and paperwork together</h2><p>Once WBJEEB releases JEMScN 2027, match your BSc Nursing and registration evidence to its bulletin, upload the requested files and retain the confirmation for counselling.</p><p>Take one clinical case at a time: assessment, priority intervention, contraindication and reason. This exposes a shaky nursing decision more clearly than rereading a summary page.</p><p>Compare <a href=\"/courses\">postgraduate course options</a> with the MSc Nursing route before committing to a specialisation.</p>",
+      "content_variation": {
+        "opening": "For a nurse considering an MSc, JEMScN is not simply another test date. The qualifying nursing record and the later seat choice have to line up with the same application.",
+        "application": "Once WBJEEB releases JEMScN 2027, match your BSc Nursing and registration evidence to its bulletin, upload the requested files and retain the confirmation for counselling.",
+        "preparation": "Take one clinical case at a time: assessment, priority intervention, contraindication and reason. This exposes a shaky nursing decision more clearly than rereading a summary page.",
+        "faq_questions": [
+          "Is JEMScN the route for Post Basic BSc Nursing?",
+          "Which nursing documents matter before JEMScN registration?",
+          "What follows the JEMScN rank card?",
+          "Can I rely on the JEMScN 2026 exam date for 2027?"
+        ]
+      }
+    },
+    {
+      "id": "ba2fee4f-c90f-41ff-97e6-251f7b35da97",
+      "old_slug": "jepbn",
+      "slug": "jepbn",
+      "name": "JEPBN",
+      "title": "JEPBN 2027: Eligibility, Route and Next Steps",
+      "full_name": "JEPBN 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "West Bengal Joint Entrance Examinations Board",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Nursing/Undergraduate",
+      "description": "JEPBN 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "Start with the exact nursing qualification and registration listed in the current bulletin. The course name is the first filter; a generic nursing entrance guide is not enough.",
+      "application_process": "<h2>Application route</h2><p>Read the JEPBN 2027 notice against your GNM and registration records before using the WBJEEB form. Retain the uploaded files and payment proof for the later seat process.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Build short patient-care scenarios from community, medical-surgical and maternal nursing topics. Answer the priority question before looking at the explanation.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The JEPBN 2027 pattern needs confirmation in the next West Bengal Joint Entrance Examinations Board notice. WBJEEB described JEPBN 2026 as the OMR-based route to Post Basic BSc Nursing admission in West Bengal.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The JEPBN 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>JEPBN at a glance</h2><p>WBJEEB described JEPBN 2026 as the OMR-based route to Post Basic BSc Nursing admission in West Bengal.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "JEPBN 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "JEPBN 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the JEPBN route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "JEPBN, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "JEPBN",
+        "Nursing/Undergraduate",
+        "2027"
+      ],
+      "website": "https://wbjeeb.nic.in/jepbn/",
+      "official_website": "https://wbjeeb.nic.in/jepbn/",
+      "registration_url": "https://wbjeeb.nic.in/jepbn/",
+      "data_source_urls": [
+        "https://wbjeeb.nic.in/jepbn/",
+        "https://wbjeeb.nic.in/current-events-jepbn/"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/exams"
+      ],
+      "external_links": {
+        "authority": "https://wbjeeb.nic.in/jepbn/",
+        "evidence": "https://wbjeeb.nic.in/jepbn/"
+      },
+      "evidence_examples": [
+        {
+          "claim": "WBJEEB described JEPBN 2026 as the OMR-based route to Post Basic BSc Nursing admission in West Bengal.",
+          "source_url": "https://wbjeeb.nic.in/jepbn/"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Which nursing course does JEPBN lead to?",
+          "answer": "The published 2026 JEPBN route led to Post Basic BSc Nursing."
+        },
+        {
+          "question": "Is JEPBN the same exam as JEMScN?",
+          "answer": "No. WBJEEB listed JEMScN separately for MSc Nursing."
+        },
+        {
+          "question": "Why keep registration proof after JEPBN submission?",
+          "answer": "Counselling and document verification can require the same registration evidence after the form is submitted."
+        },
+        {
+          "question": "Where will JEPBN 2027 dates appear?",
+          "answer": "The next WBJEEB JEPBN notice should establish the new-cycle calendar; the checked 2026 page did not."
+        }
+      ],
+      "article_html": "<p>JEPBN serves a different nursing decision from JEMScN: it leads towards Post Basic BSc Nursing, not an MSc seat. Mixing the two routes wastes both preparation and form fees.</p><h2>Do you need the post-basic route?</h2><p>Start with the exact nursing qualification and registration listed in the current bulletin. The course name is the first filter; a generic nursing entrance guide is not enough.</p><p>WBJEEB described JEPBN 2026 as the OMR-based route to Post Basic BSc Nursing admission in West Bengal. <a href=\"https://wbjeeb.nic.in/jepbn/\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>How the seat stage changes the plan</h2><p>WBJEEB's 2026 page carried counselling notices, a seat matrix and a rank-card route separately. Prepare the documents for those stages before the test result arrives.</p><h2>Use the right nursing practice</h2><p>Revise practical nursing priorities and the science behind them. If a question asks for the first action, explain why it is safer than the plausible second choice.</p><p>The JEPBN 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next West Bengal Joint Entrance Examinations Board notice for the new cycle.</p><h2>What a post-basic applicant can do now</h2><p>Read the JEPBN 2027 notice against your GNM and registration records before using the WBJEEB form. Retain the uploaded files and payment proof for the later seat process.</p><p>Build short patient-care scenarios from community, medical-surgical and maternal nursing topics. Answer the priority question before looking at the explanation.</p><p>If the qualification does not fit JEPBN, compare <a href=\"/exams\">other nursing entrance routes</a> instead of submitting the wrong form.</p>",
+      "content_variation": {
+        "opening": "JEPBN serves a different nursing decision from JEMScN: it leads towards Post Basic BSc Nursing, not an MSc seat. Mixing the two routes wastes both preparation and form fees.",
+        "application": "Read the JEPBN 2027 notice against your GNM and registration records before using the WBJEEB form. Retain the uploaded files and payment proof for the later seat process.",
+        "preparation": "Build short patient-care scenarios from community, medical-surgical and maternal nursing topics. Answer the priority question before looking at the explanation.",
+        "faq_questions": [
+          "Which nursing course does JEPBN lead to?",
+          "Is JEPBN the same exam as JEMScN?",
+          "Why keep registration proof after JEPBN submission?",
+          "Where will JEPBN 2027 dates appear?"
+        ]
+      }
+    },
+    {
+      "id": "f273da20-85a0-4879-a7ff-da18f093a657",
+      "old_slug": "mah-bdesign-cet",
+      "slug": "mah-bdesign-cet",
+      "name": "MAH B.Design CET",
+      "title": "MAH B.Design CET 2027: Eligibility, Route and Next Steps",
+      "full_name": "MAH B.Design CET 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "Maharashtra State Common Entrance Test Cell",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Design",
+      "description": "MAH B.Design CET 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "The identity requirements and offline mode belong to the published 2026 cycle. They are concrete preparation clues, not an announcement of the 2027 rules or dates.",
+      "application_process": "<h2>Application route</h2><p>Wait for the CET Cell's MAH B.Design CET 2027 notice, then confirm the identity fields and uploaded files before payment. Do not carry a 2026 edit-window date into a new application.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Use timed observation sketches, visual-comparison questions and a short written explanation of each design choice. Mark whether you lost time on ideation, drawing or interpretation.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The MAH B.Design CET 2027 pattern needs confirmation in the next Maharashtra State Common Entrance Test Cell notice. The Maharashtra CET Cell's 2026 B.Design registration notice required an APAAR ID and Aadhaar ID and described the test as offline.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The MAH B.Design CET 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>MAH B.Design CET at a glance</h2><p>The Maharashtra CET Cell's 2026 B.Design registration notice required an APAAR ID and Aadhaar ID and described the test as offline.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "MAH B.Design CET 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "MAH B.Design CET 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the MAH B.Design CET route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "MAH B.Design CET, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "MAH B.Design CET",
+        "Design",
+        "2027"
+      ],
+      "website": "https://cetcell.mahacet.org/cms-download/information-brochure-for-b-design-cet-a-y-2026-27/",
+      "official_website": "https://cetcell.mahacet.org/cms-download/information-brochure-for-b-design-cet-a-y-2026-27/",
+      "registration_url": "https://cetcell.mahacet.org/cms-download/information-brochure-for-b-design-cet-a-y-2026-27/",
+      "data_source_urls": [
+        "https://cetcell.mahacet.org/cms-download/information-brochure-for-b-design-cet-a-y-2026-27/",
+        "https://cetcell.mahacet.org/wp-content/uploads/2023/12/CET-Registration-Notice_B-Design_-CET-2026-1.pdf"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://cetcell.mahacet.org/cms-download/information-brochure-for-b-design-cet-a-y-2026-27/",
+        "evidence": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/CET-Registration-Notice_B-Design_-CET-2026-1.pdf"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Maharashtra CET Cell's 2026 B.Design registration notice required an APAAR ID and Aadhaar ID and described the test as offline.",
+          "source_url": "https://cetcell.mahacet.org/wp-content/uploads/2023/12/CET-Registration-Notice_B-Design_-CET-2026-1.pdf"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Was the MAH B.Design CET 2026 test online?",
+          "answer": "No. The Maharashtra CET Cell's 2026 notice described it as an offline test."
+        },
+        {
+          "question": "Which IDs did the 2026 design registration notice require?",
+          "answer": "The 2026 registration notice required APAAR ID and Aadhaar ID."
+        },
+        {
+          "question": "How should I practise design observation?",
+          "answer": "Sketch an object from observation, explain its user problem and revise one design choice after feedback."
+        },
+        {
+          "question": "Is a 2027 MAH B.Design CET date confirmed?",
+          "answer": "The checked official material did not establish a 2027 date."
+        }
+      ],
+      "article_html": "<p>A design entrance form can be derailed by identity details before a portfolio is even considered. MAH B.Design CET applicants should treat registration and practical preparation as two separate jobs.</p><h2>What the 2026 notice actually says</h2><p>The identity requirements and offline mode belong to the published 2026 cycle. They are concrete preparation clues, not an announcement of the 2027 rules or dates.</p><p>The Maharashtra CET Cell's 2026 B.Design registration notice required an APAAR ID and Aadhaar ID and described the test as offline. <a href=\"https://cetcell.mahacet.org/wp-content/uploads/2023/12/CET-Registration-Notice_B-Design_-CET-2026-1.pdf\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>Prepare work you can explain</h2><p>Sketch an everyday object from observation, then explain the user's problem it solves. Compare two versions and note what changed after feedback; a decorative drawing alone says less about design judgement.</p><h2>Before paying for the next cycle</h2><p>Compare the latest brochure's eligibility, test mode, centre rules and document list with the programme you want. Keep a local copy of the application confirmation.</p><p>The MAH B.Design CET 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next Maharashtra State Common Entrance Test Cell notice for the new cycle.</p><h2>From an observation sketch to the form</h2><p>Wait for the CET Cell's MAH B.Design CET 2027 notice, then confirm the identity fields and uploaded files before payment. Do not carry a 2026 edit-window date into a new application.</p><p>Use timed observation sketches, visual-comparison questions and a short written explanation of each design choice. Mark whether you lost time on ideation, drawing or interpretation.</p><p>Compare <a href=\"/courses\">design courses</a> by their actual studio work while the next CET Cell notice is pending.</p>",
+      "content_variation": {
+        "opening": "A design entrance form can be derailed by identity details before a portfolio is even considered. MAH B.Design CET applicants should treat registration and practical preparation as two separate jobs.",
+        "application": "Wait for the CET Cell's MAH B.Design CET 2027 notice, then confirm the identity fields and uploaded files before payment. Do not carry a 2026 edit-window date into a new application.",
+        "preparation": "Use timed observation sketches, visual-comparison questions and a short written explanation of each design choice. Mark whether you lost time on ideation, drawing or interpretation.",
+        "faq_questions": [
+          "Was the MAH B.Design CET 2026 test online?",
+          "Which IDs did the 2026 design registration notice require?",
+          "How should I practise design observation?",
+          "Is a 2027 MAH B.Design CET date confirmed?"
+        ]
+      }
+    },
+    {
+      "id": "d0bdcf10-9f97-4b2a-bf23-f4ecf7c4b590",
+      "old_slug": "ipmat-indore",
+      "slug": "ipmat-indore",
+      "name": "IPMAT Indore",
+      "title": "IPMAT Indore 2027: Eligibility, Route and Next Steps",
+      "full_name": "IPMAT Indore 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "Indian Institute of Management Indore",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Management",
+      "description": "IPMAT Indore 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "A short-answer problem removes the comfort of eliminating options. Practise writing the result cleanly, then switch to MCQs and measure whether speed changes your accuracy.",
+      "application_process": "<h2>Application route</h2><p>When IIM Indore posts its 2027 IPM procedure, compare your Class 10 and 12 details with the eligibility paragraph before creating the application. Save the submitted form and monitor the institute's shortlist page.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Alternate quantitative short-answer and MCQ sets, then review verbal passages for the inference you missed. Once a week, explain a recent academic choice in two minutes without a script.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The IPMAT Indore 2027 pattern needs confirmation in the next Indian Institute of Management Indore notice. IIM Indore's 2026 domestic procedure listed quantitative ability in MCQ and short-answer sections, verbal ability in MCQs, and a personal interview for shortlisted candidates.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The IPMAT Indore 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>IPMAT Indore at a glance</h2><p>IIM Indore's 2026 domestic procedure listed quantitative ability in MCQ and short-answer sections, verbal ability in MCQs, and a personal interview for shortlisted candidates.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "IPMAT Indore 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "IPMAT Indore 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the IPMAT Indore route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "IPMAT Indore, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "IPMAT Indore",
+        "Management",
+        "2027"
+      ],
+      "website": "https://iimidr.ac.in/programmes/academic-programmes/five-year-integrated-programme-in-management-ipm/ipm-admissions-details/",
+      "official_website": "https://iimidr.ac.in/programmes/academic-programmes/five-year-integrated-programme-in-management-ipm/ipm-admissions-details/",
+      "registration_url": "https://iimidr.ac.in/programmes/academic-programmes/five-year-integrated-programme-in-management-ipm/ipm-admissions-details/",
+      "data_source_urls": [
+        "https://iimidr.ac.in/programmes/academic-programmes/five-year-integrated-programme-in-management-ipm/ipm-admissions-details/",
+        "https://iimidr.ac.in/wp-content/uploads/2026/01/AdmissionProcedure_IPM-2026-31_-Domestic-Applicants.pdf"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/exams"
+      ],
+      "external_links": {
+        "authority": "https://iimidr.ac.in/programmes/academic-programmes/five-year-integrated-programme-in-management-ipm/ipm-admissions-details/",
+        "evidence": "https://iimidr.ac.in/wp-content/uploads/2026/01/AdmissionProcedure_IPM-2026-31_-Domestic-Applicants.pdf"
+      },
+      "evidence_examples": [
+        {
+          "claim": "IIM Indore's 2026 domestic procedure listed quantitative ability in MCQ and short-answer sections, verbal ability in MCQs, and a personal interview for shortlisted candidates.",
+          "source_url": "https://iimidr.ac.in/wp-content/uploads/2026/01/AdmissionProcedure_IPM-2026-31_-Domestic-Applicants.pdf"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Does IPMAT Indore use only multiple-choice quantitative questions?",
+          "answer": "No. The 2026 domestic procedure also listed a quantitative short-answer section."
+        },
+        {
+          "question": "Did the 2026 IIM Indore process include an interview?",
+          "answer": "Yes. Shortlisted domestic applicants went through a personal interview in the published 2026 procedure."
+        },
+        {
+          "question": "Which school records should an IPM applicant keep ready?",
+          "answer": "Keep the Class 10 and 12 records and category evidence required by the new procedure ready."
+        },
+        {
+          "question": "Are IPMAT Indore 2027 sections final?",
+          "answer": "No. The checked 2026 procedure cannot establish the 2027 section or marking rules."
+        }
+      ],
+      "article_html": "<p>IPMAT Indore is a route into IIM Indore's five-year IPM, but a test score by itself was not the whole 2026 selection. That distinction matters when you build a preparation plan.</p><h2>Why two quantitative formats matter</h2><p>A short-answer problem removes the comfort of eliminating options. Practise writing the result cleanly, then switch to MCQs and measure whether speed changes your accuracy.</p><p>IIM Indore's 2026 domestic procedure listed quantitative ability in MCQ and short-answer sections, verbal ability in MCQs, and a personal interview for shortlisted candidates. <a href=\"https://iimidr.ac.in/wp-content/uploads/2026/01/AdmissionProcedure_IPM-2026-31_-Domestic-Applicants.pdf\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>The interview is a separate gate</h2><p>IIM Indore's published 2026 process considered aptitude-test and personal-interview performance. Build the habit of explaining a choice aloud; memorised headlines will not replace clear reasoning.</p><h2>What remains open for 2027</h2><p>The next admission procedure must confirm eligibility, section timing, marking and interview stages. Avoid converting the 2026 PDF into a 2027 promise.</p><p>The IPMAT Indore 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next Indian Institute of Management Indore notice for the new cycle.</p><h2>Separate test practice from interview practice</h2><p>When IIM Indore posts its 2027 IPM procedure, compare your Class 10 and 12 details with the eligibility paragraph before creating the application. Save the submitted form and monitor the institute's shortlist page.</p><p>Alternate quantitative short-answer and MCQ sets, then review verbal passages for the inference you missed. Once a week, explain a recent academic choice in two minutes without a script.</p><p>Compare <a href=\"/exams\">management entrance options</a> only after separating IIM Indore's own IPM procedure from other institutes' tests.</p>",
+      "content_variation": {
+        "opening": "IPMAT Indore is a route into IIM Indore's five-year IPM, but a test score by itself was not the whole 2026 selection. That distinction matters when you build a preparation plan.",
+        "application": "When IIM Indore posts its 2027 IPM procedure, compare your Class 10 and 12 details with the eligibility paragraph before creating the application. Save the submitted form and monitor the institute's shortlist page.",
+        "preparation": "Alternate quantitative short-answer and MCQ sets, then review verbal passages for the inference you missed. Once a week, explain a recent academic choice in two minutes without a script.",
+        "faq_questions": [
+          "Does IPMAT Indore use only multiple-choice quantitative questions?",
+          "Did the 2026 IIM Indore process include an interview?",
+          "Which school records should an IPM applicant keep ready?",
+          "Are IPMAT Indore 2027 sections final?"
+        ]
+      }
+    },
+    {
+      "id": "310389e4-19d1-4ac6-bb6c-3f57ede17a46",
+      "old_slug": "ipmat-rohtak",
+      "slug": "ipmat-rohtak",
+      "name": "IIM Rohtak IPM AT",
+      "title": "IPMAT Rohtak 2027: Eligibility, Route and Next Steps",
+      "full_name": "IPMAT Rohtak 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "Indian Institute of Management Rohtak",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Management",
+      "description": "IPMAT Rohtak 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "Rohtak's published 2026 route also used a personal interview after shortlisting. Compare each institute's own procedure before choosing practice papers or assuming the same score formula.",
+      "application_process": "<h2>Application route</h2><p>Use IIM Rohtak's 2027 IPM admission page when it opens. Enter the school-mark details exactly as certified, keep the form receipt and watch for the separate interview shortlist.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Run three short timed blocks for quantitative, logical and verbal questions. Log which block consumes the most minutes and why, then revise that question type next.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The IPMAT Rohtak 2027 pattern needs confirmation in the next Indian Institute of Management Rohtak notice. IIM Rohtak's 2026 IPM aptitude test listed quantitative ability, logical reasoning and verbal ability as its three sections.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The IPMAT Rohtak 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>IPMAT Rohtak at a glance</h2><p>IIM Rohtak's 2026 IPM aptitude test listed quantitative ability, logical reasoning and verbal ability as its three sections.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "IPMAT Rohtak 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "IPMAT Rohtak 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the IPMAT Rohtak route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "IPMAT Rohtak, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "IPMAT Rohtak",
+        "Management",
+        "2027"
+      ],
+      "website": "https://iimrohtak.ac.in/ipm-admission.php",
+      "official_website": "https://iimrohtak.ac.in/ipm-admission.php",
+      "registration_url": "https://iimrohtak.ac.in/ipm-admission.php",
+      "data_source_urls": [
+        "https://iimrohtak.ac.in/ipm-admission.php",
+        "https://www.iimrohtak.ac.in/ipm-admission.php"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://iimrohtak.ac.in/ipm-admission.php",
+        "evidence": "https://iimrohtak.ac.in/ipm-admission.php"
+      },
+      "evidence_examples": [
+        {
+          "claim": "IIM Rohtak's 2026 IPM aptitude test listed quantitative ability, logical reasoning and verbal ability as its three sections.",
+          "source_url": "https://iimrohtak.ac.in/ipm-admission.php"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Is IIM Rohtak IPM AT identical to IIM Indore IPMAT?",
+          "answer": "No. The institutes publish separate admission procedures and section plans."
+        },
+        {
+          "question": "Did Rohtak's 2026 paper include logical reasoning?",
+          "answer": "Yes. IIM Rohtak's 2026 page listed logical reasoning with quantitative and verbal ability."
+        },
+        {
+          "question": "How did the 2026 Rohtak selection treat school academics?",
+          "answer": "The 2026 composite selection included past academic performance alongside test and interview stages."
+        },
+        {
+          "question": "Can I use the Rohtak 2026 eligibility percentages for 2027?",
+          "answer": "No. The next Rohtak notice controls 2027 eligibility; do not carry a past-cycle percentage forward as a rule."
+        }
+      ],
+      "article_html": "<p>IIM Rohtak's IPM selection is not the same paper as IIM Indore's. Copying another institute's section plan can leave a logical-reasoning gap on test day.</p><h2>Keep the two IPMAT routes separate</h2><p>Rohtak's published 2026 route also used a personal interview after shortlisting. Compare each institute's own procedure before choosing practice papers or assuming the same score formula.</p><p>IIM Rohtak's 2026 IPM aptitude test listed quantitative ability, logical reasoning and verbal ability as its three sections. <a href=\"https://iimrohtak.ac.in/ipm-admission.php\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>Where school marks enter</h2><p>The 2026 IIM Rohtak page included past academics in its composite selection. A test-preparation calendar should therefore leave time to assemble the school marksheets and category proof.</p><h2>A useful practice split</h2><p>Give logical reasoning its own timed set rather than hiding it inside quantitative practice. Review the step where the argument failed, not only the final option.</p><p>The IPMAT Rohtak 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next Indian Institute of Management Rohtak notice for the new cycle.</p><h2>Build a Rohtak-specific practice week</h2><p>Use IIM Rohtak's 2027 IPM admission page when it opens. Enter the school-mark details exactly as certified, keep the form receipt and watch for the separate interview shortlist.</p><p>Run three short timed blocks for quantitative, logical and verbal questions. Log which block consumes the most minutes and why, then revise that question type next.</p><p>Review <a href=\"/courses\">management programmes</a> alongside the institute's own eligibility and selection stages.</p>",
+      "content_variation": {
+        "opening": "IIM Rohtak's IPM selection is not the same paper as IIM Indore's. Copying another institute's section plan can leave a logical-reasoning gap on test day.",
+        "application": "Use IIM Rohtak's 2027 IPM admission page when it opens. Enter the school-mark details exactly as certified, keep the form receipt and watch for the separate interview shortlist.",
+        "preparation": "Run three short timed blocks for quantitative, logical and verbal questions. Log which block consumes the most minutes and why, then revise that question type next.",
+        "faq_questions": [
+          "Is IIM Rohtak IPM AT identical to IIM Indore IPMAT?",
+          "Did Rohtak's 2026 paper include logical reasoning?",
+          "How did the 2026 Rohtak selection treat school academics?",
+          "Can I use the Rohtak 2026 eligibility percentages for 2027?"
+        ]
+      }
+    },
+    {
+      "id": "486bae8f-3557-4b39-97fd-67c0646e5737",
+      "old_slug": "jmi-ba-llb",
+      "slug": "jmi-ba-llb",
+      "name": "JMI B.A. LL.B. Entrance",
+      "title": "JMI BA LLB Entrance 2027: Eligibility, Route and Next Steps",
+      "full_name": "JMI BA LLB Entrance 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "Jamia Millia Islamia",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Law",
+      "description": "JMI BA LLB Entrance 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "Jamia's prospectus separates programme codes, test schedules and eligibility. Find the BA LLB row for the cycle you are applying to before selecting the test route.",
+      "application_process": "<h2>Application route</h2><p>For the next JMI BA LLB cycle, open the university prospectus first, identify the programme code and entrance route, then complete the admission portal form using matching school records.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Practise legal reasoning by stating the rule, applying it to a changed fact and explaining why the tempting alternative fails. Pair this with timed reading comprehension.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The JMI BA LLB Entrance 2027 pattern needs confirmation in the next Jamia Millia Islamia notice. Jamia Millia Islamia's 2026-27 university prospectus listed BA LLB among programmes with multiple entrance-test centres.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The JMI BA LLB Entrance 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>JMI BA LLB Entrance at a glance</h2><p>Jamia Millia Islamia's 2026-27 university prospectus listed BA LLB among programmes with multiple entrance-test centres.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "JMI BA LLB Entrance 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "JMI BA LLB Entrance 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the JMI BA LLB Entrance route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "JMI BA LLB Entrance, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "JMI BA LLB Entrance",
+        "Law",
+        "2027"
+      ],
+      "website": "https://admission.jmi.ac.in/Prospectus",
+      "official_website": "https://admission.jmi.ac.in/Prospectus",
+      "registration_url": "https://admission.jmi.ac.in/Prospectus",
+      "data_source_urls": [
+        "https://admission.jmi.ac.in/Prospectus",
+        "https://admission.jmi.ac.in/application/assets/pdfFile/prospectus/UniversityProspectus/University_Prospectus_2026_2027.pdf"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://admission.jmi.ac.in/Prospectus",
+        "evidence": "https://admission.jmi.ac.in/application/assets/pdfFile/prospectus/UniversityProspectus/University_Prospectus_2026_2027.pdf"
+      },
+      "evidence_examples": [
+        {
+          "claim": "Jamia Millia Islamia's 2026-27 university prospectus listed BA LLB among programmes with multiple entrance-test centres.",
+          "source_url": "https://admission.jmi.ac.in/application/assets/pdfFile/prospectus/UniversityProspectus/University_Prospectus_2026_2027.pdf"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Where is the JMI BA LLB entrance route listed?",
+          "answer": "The JMI university prospectus lists programme codes, eligibility and entrance-test scheduling."
+        },
+        {
+          "question": "Did Jamia offer more than one test centre in 2026-27?",
+          "answer": "Yes. Its 2026-27 prospectus included BA LLB among multi-centre entrance programmes."
+        },
+        {
+          "question": "Which records should a BA LLB applicant keep together?",
+          "answer": "Keep Class 12, identity, category, admit-card and application records available for the stated stages."
+        },
+        {
+          "question": "Has Jamia issued a JMI BA LLB 2027 test schedule?",
+          "answer": "The checked prospectus was for 2026-27 and did not establish a separate 2027 test schedule."
+        }
+      ],
+      "article_html": "<p>A BA LLB applicant at Jamia should not treat a law entrance score as the entire admission file. The programme, test centre and later document stage belong to the same decision.</p><h2>Read the programme row, not a generic law page</h2><p>Jamia's prospectus separates programme codes, test schedules and eligibility. Find the BA LLB row for the cycle you are applying to before selecting the test route.</p><p>Jamia Millia Islamia's 2026-27 university prospectus listed BA LLB among programmes with multiple entrance-test centres. <a href=\"https://admission.jmi.ac.in/application/assets/pdfFile/prospectus/UniversityProspectus/University_Prospectus_2026_2027.pdf\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>The centre choice is practical</h2><p>A multi-centre test is easier to plan when you consider travel, identity documents and the reporting window together. Save the admit card and application number before the entrance day.</p><h2>After the result</h2><p>A shortlist can still lead to document verification or another stated admission step. Prepare Class 12, category and identity records in the format Jamia requests for the current cycle.</p><p>The JMI BA LLB Entrance 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next Jamia Millia Islamia notice for the new cycle.</p><h2>Prepare the correct Jamia file</h2><p>For the next JMI BA LLB cycle, open the university prospectus first, identify the programme code and entrance route, then complete the admission portal form using matching school records.</p><p>Practise legal reasoning by stating the rule, applying it to a changed fact and explaining why the tempting alternative fails. Pair this with timed reading comprehension.</p><p>Look at <a href=\"/courses\">law courses</a> with the BA LLB programme row in hand, not a generic entrance checklist.</p>",
+      "content_variation": {
+        "opening": "A BA LLB applicant at Jamia should not treat a law entrance score as the entire admission file. The programme, test centre and later document stage belong to the same decision.",
+        "application": "For the next JMI BA LLB cycle, open the university prospectus first, identify the programme code and entrance route, then complete the admission portal form using matching school records.",
+        "preparation": "Practise legal reasoning by stating the rule, applying it to a changed fact and explaining why the tempting alternative fails. Pair this with timed reading comprehension.",
+        "faq_questions": [
+          "Where is the JMI BA LLB entrance route listed?",
+          "Did Jamia offer more than one test centre in 2026-27?",
+          "Which records should a BA LLB applicant keep together?",
+          "Has Jamia issued a JMI BA LLB 2027 test schedule?"
+        ]
+      }
+    },
+    {
+      "id": "0cb1948e-366a-4486-8026-6859fb68ad9c",
+      "old_slug": "amu-ba-llb",
+      "slug": "amu-ba-llb",
+      "name": "AMU B.A. LL.B. Admission Test",
+      "title": "AMU BA LLB Admission Test 2027: Eligibility, Route and Next Steps",
+      "full_name": "AMU BA LLB Admission Test 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "Aligarh Muslim University",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Law",
+      "description": "AMU BA LLB Admission Test 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "Find the BA LLB programme row and note the qualification, test and document instructions together. A recycled cutoff list is not a substitute for the current guide.",
+      "application_process": "<h2>Application route</h2><p>Read AMU's next BA LLB guide before submitting. Match your Class 12 and category evidence to its programme conditions, and keep the form and later counselling notice together.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Alternate comprehension passages with legal-principle questions. Write one sentence explaining the incorrect option that looked most convincing.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The AMU BA LLB Admission Test 2027 pattern needs confirmation in the next Aligarh Muslim University notice. Aligarh Muslim University's 2026-27 guide to admissions published the BA LLB route under the university's own admission process.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The AMU BA LLB Admission Test 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>AMU BA LLB Admission Test at a glance</h2><p>Aligarh Muslim University's 2026-27 guide to admissions published the BA LLB route under the university's own admission process.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "AMU BA LLB Admission Test 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "AMU BA LLB Admission Test 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the AMU BA LLB Admission Test route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "AMU BA LLB Admission Test, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "AMU BA LLB Admission Test",
+        "Law",
+        "2027"
+      ],
+      "website": "https://www.amucontrollerexams.com/",
+      "official_website": "https://www.amucontrollerexams.com/",
+      "registration_url": "https://www.amucontrollerexams.com/",
+      "data_source_urls": [
+        "https://www.amucontrollerexams.com/",
+        "https://mail.amucontrollerexams.com/uploads/files/e97cf6112508c8e79149275de5ae1cb3.pdf"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/colleges"
+      ],
+      "external_links": {
+        "authority": "https://www.amucontrollerexams.com/",
+        "evidence": "https://mail.amucontrollerexams.com/uploads/files/e97cf6112508c8e79149275de5ae1cb3.pdf"
+      },
+      "evidence_examples": [
+        {
+          "claim": "Aligarh Muslim University's 2026-27 guide to admissions published the BA LLB route under the university's own admission process.",
+          "source_url": "https://mail.amucontrollerexams.com/uploads/files/e97cf6112508c8e79149275de5ae1cb3.pdf"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Does an AMU BA LLB test rank guarantee admission?",
+          "answer": "No. A rank is followed by the university's counselling and document stages."
+        },
+        {
+          "question": "Where did AMU publish BA LLB counselling notices in 2026?",
+          "answer": "AMU's Office of the Controller of Examinations published separate BA LLB counselling notices."
+        },
+        {
+          "question": "Which guide controls the AMU BA LLB application?",
+          "answer": "The current AMU guide to admissions and controller notices control the programme route."
+        },
+        {
+          "question": "Should I reuse an AMU BA LLB 2026 cutoff for 2027?",
+          "answer": "No. A 2026 cutoff belongs to that cycle and is not a 2027 admission rule."
+        }
+      ],
+      "article_html": "<p>AMU BA LLB candidates have two calendars to track: the admission test and the counselling call. A rank on its own is not a seat offer.</p><h2>Start from the AMU guide</h2><p>Find the BA LLB programme row and note the qualification, test and document instructions together. A recycled cutoff list is not a substitute for the current guide.</p><p>Aligarh Muslim University's 2026-27 guide to admissions published the BA LLB route under the university's own admission process. <a href=\"https://mail.amucontrollerexams.com/uploads/files/e97cf6112508c8e79149275de5ae1cb3.pdf\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>Why the post-test stage matters</h2><p>AMU's controller issued separate 2026 BA LLB counselling notices after the test. Put the controller's notice page on your follow-up list rather than waiting for an individual message.</p><h2>Use a legal problem, not a slogan</h2><p>Read a short fact pattern, identify the governing rule and change one fact to see whether the conclusion still holds. This makes preparation less dependent on memorised answer keys.</p><p>The AMU BA LLB Admission Test 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next Aligarh Muslim University notice for the new cycle.</p><h2>After the AMU form is submitted</h2><p>Read AMU's next BA LLB guide before submitting. Match your Class 12 and category evidence to its programme conditions, and keep the form and later counselling notice together.</p><p>Alternate comprehension passages with legal-principle questions. Write one sentence explaining the incorrect option that looked most convincing.</p><p>Keep AMU's controller notices next to the <a href=\"/colleges\">college information</a> you use to compare the programme.</p>",
+      "content_variation": {
+        "opening": "AMU BA LLB candidates have two calendars to track: the admission test and the counselling call. A rank on its own is not a seat offer.",
+        "application": "Read AMU's next BA LLB guide before submitting. Match your Class 12 and category evidence to its programme conditions, and keep the form and later counselling notice together.",
+        "preparation": "Alternate comprehension passages with legal-principle questions. Write one sentence explaining the incorrect option that looked most convincing.",
+        "faq_questions": [
+          "Does an AMU BA LLB test rank guarantee admission?",
+          "Where did AMU publish BA LLB counselling notices in 2026?",
+          "Which guide controls the AMU BA LLB application?",
+          "Should I reuse an AMU BA LLB 2026 cutoff for 2027?"
+        ]
+      }
+    },
+    {
+      "id": "87ac3c8a-0fa8-4d59-87c6-7bafebad9771",
+      "old_slug": "jmi-mba",
+      "slug": "jmi-mba",
+      "name": "JMI MBA Entrance",
+      "title": "JMI MBA Entrance 2027: Eligibility, Route and Next Steps",
+      "full_name": "JMI MBA Entrance 2027: Eligibility, Route and Next Steps",
+      "conducting_authority": "Jamia Millia Islamia",
+      "status": "2027 schedule not established by the checked official material",
+      "exam_date": "Not announced",
+      "application_start_date": "Not announced",
+      "application_end_date": "Not announced",
+      "result_date": "Not announced",
+      "category": "Management",
+      "description": "JMI MBA Entrance 2027: a source-checked explanation of the admission route, previous-cycle context, eligibility decisions and what applicants can prepare now.",
+      "eligibility": "Write the exact programme name and code beside your intended career direction. The admission portal and prospectus, not a generic MBA article, decide which entrance record you need.",
+      "application_process": "<h2>Application route</h2><p>Wait for the next Jamia university prospectus, select the exact MBA programme in its code list, then complete the JMI portal form and retain the submitted acknowledgement.</p>",
+      "preparation_tips": "<h2>Preparation that fits this test</h2><p>Review one data-interpretation set and one management case together. Record where a calculation error changed the business conclusion rather than only marking the answer wrong.</p>",
+      "exam_pattern": "<h2>Exam pattern status</h2><p>The JMI MBA Entrance 2027 pattern needs confirmation in the next Jamia Millia Islamia notice. The JMI 2026-27 university prospectus listed MBA, MBA International Business and MBA Entrepreneurship and Family Business among its multi-centre entrance programmes.</p>",
+      "dates_content": "<h2>2027 dates</h2><p>The JMI MBA Entrance 2027 application, exam and result dates were not established by the official material checked on 6 October 2026.</p>",
+      "summary_content": "<h2>JMI MBA Entrance at a glance</h2><p>The JMI 2026-27 university prospectus listed MBA, MBA International Business and MBA Entrepreneurship and Family Business among its multi-centre entrance programmes.</p><p>2027 schedule not established by the checked official material</p>",
+      "page_summary": "JMI MBA Entrance 2027 eligibility, previous-cycle evidence, application route and preparation decisions.",
+      "meta_title": "JMI MBA Entrance 2027: Eligibility and Exam Route",
+      "meta_description": "Understand the JMI MBA Entrance route, source-checked 2026 context and what to prepare for 2027 without relying on guessed dates.",
+      "meta_keywords": "JMI MBA Entrance, 2027 eligibility, exam route, admission, official notice",
+      "tags": [
+        "JMI MBA Entrance",
+        "Management",
+        "2027"
+      ],
+      "website": "https://admission.jmi.ac.in/Prospectus",
+      "official_website": "https://admission.jmi.ac.in/Prospectus",
+      "registration_url": "https://admission.jmi.ac.in/Prospectus",
+      "data_source_urls": [
+        "https://admission.jmi.ac.in/Prospectus",
+        "https://admission.jmi.ac.in/application/assets/pdfFile/prospectus/UniversityProspectus/University_Prospectus_2026_2027.pdf"
+      ],
+      "data_verified_at": "2026-10-06T00:00:00+05:30",
+      "data_last_checked_at": "2026-10-06T00:00:00+05:30",
+      "data_clean_state": "reviewed_batch_042",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://admission.jmi.ac.in/Prospectus",
+        "evidence": "https://admission.jmi.ac.in/application/assets/pdfFile/prospectus/UniversityProspectus/University_Prospectus_2026_2027.pdf"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The JMI 2026-27 university prospectus listed MBA, MBA International Business and MBA Entrepreneurship and Family Business among its multi-centre entrance programmes.",
+          "source_url": "https://admission.jmi.ac.in/application/assets/pdfFile/prospectus/UniversityProspectus/University_Prospectus_2026_2027.pdf"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Are all JMI MBA variants the same programme?",
+          "answer": "No. The 2026-27 prospectus named regular MBA, International Business and Entrepreneurship and Family Business separately."
+        },
+        {
+          "question": "Which JMI document lists MBA entrance codes?",
+          "answer": "The JMI university prospectus lists programme codes and entrance details."
+        },
+        {
+          "question": "Can a generic CAT rule replace Jamia's MBA prospectus?",
+          "answer": "No. The selected JMI programme's own eligibility and test route control the application."
+        },
+        {
+          "question": "Has JMI released MBA 2027 entrance dates?",
+          "answer": "The checked 2026-27 prospectus did not establish a separate MBA 2027 schedule."
+        }
+      ],
+      "article_html": "<p>Jamia's MBA choices are not one interchangeable form. The regular MBA and named variants need to be mapped to the programme row before an applicant studies for the wrong route.</p><h2>Which MBA are you applying for?</h2><p>Write the exact programme name and code beside your intended career direction. The admission portal and prospectus, not a generic MBA article, decide which entrance record you need.</p><p>The JMI 2026-27 university prospectus listed MBA, MBA International Business and MBA Entrepreneurship and Family Business among its multi-centre entrance programmes. <a href=\"https://admission.jmi.ac.in/application/assets/pdfFile/prospectus/UniversityProspectus/University_Prospectus_2026_2027.pdf\" rel=\"noopener noreferrer\">See the published authority material</a>.</p><h2>Compare the selection stages</h2><p>Before paying, read the current row for test, eligibility and any later selection component. Do not assume a CAT score or another university's MBA rule automatically applies.</p><h2>Make practice decision-based</h2><p>Use a short business case and a timed quantitative set, then explain which information changed your decision. That review is more useful than collecting unrelated mock scores.</p><p>The JMI MBA Entrance 2027 application, test and result dates were not established by the official material checked on 6 October 2026. Use the next Jamia Millia Islamia notice for the new cycle.</p><h2>Apply to the MBA you actually mean</h2><p>Wait for the next Jamia university prospectus, select the exact MBA programme in its code list, then complete the JMI portal form and retain the submitted acknowledgement.</p><p>Review one data-interpretation set and one management case together. Record where a calculation error changed the business conclusion rather than only marking the answer wrong.</p><p>Use <a href=\"/courses\">MBA course options</a> to compare specialisations, then return to the exact JMI programme code before applying.</p>",
+      "content_variation": {
+        "opening": "Jamia's MBA choices are not one interchangeable form. The regular MBA and named variants need to be mapped to the programme row before an applicant studies for the wrong route.",
+        "application": "Wait for the next Jamia university prospectus, select the exact MBA programme in its code list, then complete the JMI portal form and retain the submitted acknowledgement.",
+        "preparation": "Review one data-interpretation set and one management case together. Record where a calculation error changed the business conclusion rather than only marking the answer wrong.",
+        "faq_questions": [
+          "Are all JMI MBA variants the same programme?",
+          "Which JMI document lists MBA entrance codes?",
+          "Can a generic CAT rule replace Jamia's MBA prospectus?",
+          "Has JMI released MBA 2027 entrance dates?"
+        ]
+      }
+    }
+  ]
+}

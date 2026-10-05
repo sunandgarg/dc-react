@@ -22,15 +22,6 @@ const articleHtml = `
 <p>Keep a simple record as you work. Save the notification date, the page where the rule appears, and the question you sent to the help desk. When a correction window opens, compare the new notice with your saved copy instead of trusting a screenshot shared in a group. The <a href="/exams/cuet-ug">CUET exam page</a> can sit beside your notes, while a shortlisted <a href="/colleges">college page</a> and a relevant <a href="/courses">course page</a> help you check the next decision without losing the original source.</p>
 <p>Parents can help without taking over the form. Ask the student to explain why each paper is selected, then read the eligibility line together. If the answer is vague, pause. A ten-minute call with the authority is cheaper than discovering a mismatch after counselling. Also check the application preview on a laptop or a second phone, because cramped screens can hide a selected paper, payment status, or an unchecked declaration.</p>
 <p>Do not chase every rumour about cut-offs or preferred combinations. Rules change, and coaching groups often mix last year's advice with a new form. Use the date on the bulletin, note the university's wording, and treat an unofficial list as a lead rather than proof. This habit keeps the plan flexible while still giving the student a clear next action.</p>
-<h2>Frequently asked questions</h2>
-<h3>When should a student choose subjects?</h3>
-<p>Choose subjects after checking the target course rules and the current official notice.</p>
-<h3>Can a science student apply for humanities courses?</h3>
-<p>A science student can apply when the university lists the chosen subjects as acceptable.</p>
-<h3>Where should applicants verify the final rule?</h3>
-<p>Applicants should verify the final rule in the current university and exam notice.</p>
-<h3>What should a student keep after submitting the form?</h3>
-<p>Keep the confirmation page, payment receipt, and a copy of the submitted subjects.</p>
 <p>Before the form closes, compare the saved notice with the final preview and ask the authority about anything that still looks unclear.</p>
 `;
 
@@ -52,7 +43,7 @@ describe("scoreArticleForEditor", () => {
     });
 
     expect(report.targetKeywordSource).toBe("explicit");
-    expect(report.wordCount).toBeGreaterThan(550);
+    expect(report.wordCount).toBeGreaterThan(500);
     expect(report.seo.score).toBeGreaterThanOrEqual(90);
     expect(report.aeo.score).toBeGreaterThanOrEqual(90);
     expect(report.geo.score).toBeGreaterThanOrEqual(90);
@@ -74,5 +65,17 @@ describe("scoreArticleForEditor", () => {
       .map((check) => check.key);
     expect(failedKeys).toEqual(expect.arrayContaining(["seo-meta-title", "seo-meta-description", "seo-slug", "seo-markdown", "aeo-prompt-residue", "geo-citation-ready"]));
     expect(report.overall).toBeLessThan(65);
+  });
+
+  it("does not reward a quota table or FAQ copy pasted into the body", () => {
+    const report = scoreArticleForEditor({
+      title: "CUET UG 2027 Subject Selection: A Practical Course Map",
+      slug: "cuet-ug-2027-subject-selection-course-map",
+      content: `<p>CUET UG 2027 subject selection needs a course-specific eligibility check before payment.</p><h2>Choose the paper that fits</h2><p>Student profile Target courses Risk to check Safer approach</p><h2>Keep the record</h2><p>${faqItems[0].question} ${faqItems[0].answer}</p>`,
+      faqs: faqItems,
+      faqsLoaded: true,
+    });
+    expect(report.aeo.checks.find((check) => check.key === "aeo-table")?.status).toBe("fail");
+    expect(report.aeo.checks.find((check) => check.key === "aeo-faq")?.status).toBe("fail");
   });
 });

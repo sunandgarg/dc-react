@@ -83,7 +83,7 @@ const DEFAULT_SETTINGS: Settings = {
   audience: "Indian students and parents",
   tone: "Direct, practical, opinionated and conversational Indian admissions guidance for stressed students and parents",
   content_goals: ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"],
-  required_sections: ["Answer first"],
+  required_sections: [],
   minimum_sources: 2,
   editorial_quality_target: 90,
   human_review_required: false,
@@ -149,7 +149,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         setSettings({
           ...DEFAULT_SETTINGS,
           ...settingsData,
-          required_sections: [...new Set([...DEFAULT_SETTINGS.required_sections, ...(Array.isArray(settingsData.required_sections) ? settingsData.required_sections : [])])].filter((section) => !["key facts", "decision guidance", "faqs", "frequently asked questions"].includes(String(section).trim().toLowerCase())).slice(0, 12),
+          required_sections: [...new Set([...DEFAULT_SETTINGS.required_sections, ...(Array.isArray(settingsData.required_sections) ? settingsData.required_sections : [])])].filter((section) => !["answer first", "quick answer", "executive summary", "key facts", "decision guidance", "faqs", "frequently asked questions"].includes(String(section).trim().toLowerCase())).slice(0, 12),
           model_provider: textModel.startsWith("gemini-") ? "gemini" : "openai",
           text_model: textModel,
           image_provider: "openai",
@@ -249,7 +249,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
         daily_post_cap: dailyPostCap,
         word_limit: wordLimit,
         content_goals: [...DEFAULT_SETTINGS.content_goals],
-        required_sections: [...new Set([...DEFAULT_SETTINGS.required_sections, ...settings.required_sections])].filter((section) => !["key facts", "decision guidance", "faqs", "frequently asked questions"].includes(section.trim().toLowerCase())).slice(0, 12),
+        required_sections: [...new Set([...DEFAULT_SETTINGS.required_sections, ...settings.required_sections])].filter((section) => !["answer first", "quick answer", "executive summary", "key facts", "decision guidance", "faqs", "frequently asked questions"].includes(section.trim().toLowerCase())).slice(0, 12),
         minimum_sources: minimumSources,
         editorial_quality_target: qualityTarget,
         model_provider: settings.text_model.startsWith("gemini-") ? "gemini" : "openai",
@@ -549,7 +549,7 @@ export function BlogAutoAgentPanel({ onArticlesCreated }: { onArticlesCreated?: 
               onChange={(event) => updateSetting("required_sections", event.target.value.split(/\r?\n/).map((value) => value.trim()).filter(Boolean))}
               className="mt-1"
             />
-            <p className="mt-1 text-[10px] text-muted-foreground">The answer-first opening remains mandatory. FAQs are stored separately, so do not add an FAQ heading here.</p>
+            <p className="mt-1 text-[10px] text-muted-foreground">The opening should answer the reader naturally, without an “Answer first” label. Add only topic-specific sections; FAQs are stored separately.</p>
           </div>
           <div className="space-y-3 rounded-xl border p-3">
             <div>

@@ -5,6 +5,7 @@ export const BATCH_CONTENT_VARIATION_POLICY = Object.freeze({
   application: "Describe the application route in a record-specific form. Rotate paragraph, ordered list, checklist and short action plan formats, but keep the facts accurate.",
   preparation: "Preparation advice must come from the actual subject matter. Replace generic study slogans with a concrete task such as biology diagrams, timed quantitative sets, case-law reading or design observation.",
   faqs: "FAQ questions and answers must be unique across the batch. Ask about a decision that belongs to the individual exam or course, not a generic deadline question repeated everywhere.",
+  human_editorial: "Lead with the real consequence, never an Answer first label. Choose a topic-native section order, not the same summary/facts/risk/checklist/FAQ ladder. Use semantic HTML tables only when a real comparison benefits; otherwise use prose or bullets. Consolidate repeated official-verification advice. Include a named, source-backed detail when the evidence provides one, and never invent a code, cutoff or date to sound specific.",
   forbidden_phrases: ["Roz thoda", "same as above", "use the official portal and current bulletin before payment"],
 });
 
@@ -14,9 +15,74 @@ export const BATCH_CONTENT_VARIATION_TEXT = [
   BATCH_CONTENT_VARIATION_POLICY.application,
   BATCH_CONTENT_VARIATION_POLICY.preparation,
   BATCH_CONTENT_VARIATION_POLICY.faqs,
+  BATCH_CONTENT_VARIATION_POLICY.human_editorial,
   `Never reuse these phrases: ${BATCH_CONTENT_VARIATION_POLICY.forbidden_phrases.join(", ")}.`,
   "A template may control field shape, but it must not control wording, hook, FAQ phrasing, application explanation or preparation tip.",
 ].join(" ");
+
+const plain = (value) => String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+const normalizedHeading = (value) => plain(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+const FLATTENED_LABELS = /\b(?:student profile|target courses|risk to check|safer approach|target course type|check first|possible result if missed|safer decision)\b/gi;
+const VERIFICATION_CLICHE = /\b(?:check|verify|recheck|read|confirm)\b[\s\S]{0,65}\b(?:official|authority|notification|portal|notice)\b/gi;
+
+export function auditHumanEditorialHtml(html, { authority = "", evidence = [] } = {}) {
+  const source = String(html || "");
+  const issues = [];
+  const prose = plain(source.replace(/<table\b[^>]*>[\s\S]*?<\/table>/gi, " "));
+  const firstParagraph = plain(source.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1]);
+  const headings = [...source.matchAll(/<h[2-4]\b[^>]*>([\s\S]*?)<\/h[2-4]>/gi)].map((match) => normalizedHeading(match[1]));
+  if (/^(?:answer\s*first|answer|executive\s+summary|here\s+is\s+the\s+answer)\s*[:\-]/i.test(firstParagraph)
+    || headings.some((heading) => heading === "answer first" || heading.startsWith("answer first ") || heading === "executive summary" || heading.startsWith("executive summary "))) {
+    issues.push("prompt residue in the opening or heading");
+  }
+  const labels = new Set([...prose.matchAll(FLATTENED_LABELS)].map((match) => match[0].toLowerCase().replace(/\s+/g, " ")));
+  if (labels.size >= 3 || /(?:^|\n)\s*\|[^\n]+\|/m.test(source)) issues.push("flattened or raw Markdown comparison table");
+  for (const table of source.matchAll(/<table\b[^>]*>([\s\S]*?)<\/table>/gi)) {
+    if (!/<thead\b/i.test(table[1]) || !/<th\b/i.test(table[1]) || !/<tbody\b/i.test(table[1]) || !/<td\b/i.test(table[1])) {
+      issues.push("comparison table lacks semantic headers or data cells");
+    }
+  }
+  const genericSequence = ["executive summary", "key facts", "conceptual rationale", "step by step guide", "risk matrix", "red flags", "frequently asked questions"];
+  let genericCursor = 0;
+  for (const heading of headings) {
+    if (heading === genericSequence[genericCursor] || heading.startsWith(`${genericSequence[genericCursor]} `)) genericCursor += 1;
+  }
+  if (genericCursor >= 5) issues.push("formulaic summary-to-FAQ section sequence");
+  if ((prose.match(VERIFICATION_CLICHE) || []).length > 2) issues.push("repeated generic official-verification advice");
+  if (authority && !normalize(prose).includes(normalize(authority))) issues.push("named exam authority is absent from the article");
+  if (evidence.length && !evidence.some(({ claim }) => claim && normalize(prose).includes(normalize(claim)))) {
+    issues.push("no source-backed concrete detail appears in the article");
+  }
+  return { headings, issues };
+}
+
+export function assertBatchHumanEditorial(records, label = "batch") {
+  const rows = Array.isArray(records) ? records : [];
+  const issues = [];
+  const outlines = [];
+  const paragraphCounts = new Map();
+  for (const row of rows) {
+    const evidence = Array.isArray(row.evidence_examples) ? row.evidence_examples : [];
+    if (!evidence.length || evidence.some(({ source_url }) => !row.data_source_urls?.includes(source_url))) {
+      issues.push(`${row.slug}: concrete examples need a matching stored source URL`);
+    }
+    const audit = auditHumanEditorialHtml(row.article_html, { authority: row.conducting_authority, evidence });
+    issues.push(...audit.issues.map((issue) => `${row.slug}: ${issue}`));
+    outlines.push(audit.headings.join(" > "));
+    for (const match of String(row.article_html || "").matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)) {
+      const prose = normalizedHeading(match[1]);
+      if (prose.split(" ").length >= 12) paragraphCounts.set(prose, (paragraphCounts.get(prose) || 0) + 1);
+    }
+  }
+  if (rows.length >= 4) {
+    const counts = new Map();
+    for (const outline of outlines) counts.set(outline, (counts.get(outline) || 0) + 1);
+    if ([...counts.values()].some((count) => count > 2)) issues.push("more than two records reuse the same section outline");
+    if ([...paragraphCounts.values()].some((count) => count > 2)) issues.push("more than two records reuse the same article paragraph");
+  }
+  if (issues.length) throw new Error(`${label} human editorial validation failed: ${issues.join("; ")}`);
+  return { records: rows.length, unique_outlines: new Set(outlines).size, sourced_examples: rows.reduce((count, row) => count + row.evidence_examples.length, 0) };
+}
 
 const examVariant = (opening, application, preparation, faq_questions, application_html) => ({ opening, application, preparation, faq_questions, application_html });
 

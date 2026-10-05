@@ -49,7 +49,7 @@ const DEFAULT_EDITORIAL_SETTINGS: EditorialSettings = {
   text_model: DEFAULT_TEXT_MODEL,
   word_limit: 0,
   content_goals: ["SEO", "AEO", "GEO", "LLMO", "E-E-A-T"],
-  required_sections: ["Answer first"],
+  required_sections: [],
   minimum_sources: 2,
   editorial_quality_target: 90,
   language: "English",
@@ -106,7 +106,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
         ...DEFAULT_EDITORIAL_SETTINGS,
         ...data,
         text_model: normalizeTextModel(data.text_model),
-        required_sections: [...new Set(["Answer first", ...(Array.isArray(data.required_sections) ? data.required_sections : [])])].filter((section) => !["key facts", "decision guidance", "faqs", "frequently asked questions"].includes(String(section).trim().toLowerCase())),
+        required_sections: [...new Set(Array.isArray(data.required_sections) ? data.required_sections : [])].filter((section) => !["answer first", "quick answer", "executive summary", "key facts", "decision guidance", "faqs", "frequently asked questions"].includes(String(section).trim().toLowerCase())),
       };
       setEditorial(nextEditorial);
       setWordLimit(Number(nextEditorial.word_limit) || 0);

@@ -130,7 +130,10 @@ const currentPolicyFailures = currentPolicyRecords.flatMap((record) => {
   if (!String(record.article_html || "").startsWith("<p>")) errors.push("article does not start with a paragraph");
   if ((record.faqs || []).length !== 4) errors.push("FAQ count is not four");
   if ((record.faqs || []).some((faq) => normalise(record.article_html).includes(normalise(faq.question)))) errors.push("FAQ duplicated in article body");
-  if ((record.internal_links || []).length < 3) errors.push("fewer than three internal links");
+  // Batch 042 permits one to four contextual links; a fixed three-link block
+  // was making unrelated exam pages close with the same navigation boilerplate.
+  const minimumInternalLinks = record._batch >= 42 ? 1 : 3;
+  if ((record.internal_links || []).length < minimumInternalLinks) errors.push(`fewer than ${minimumInternalLinks} internal links`);
   if ((record.data_source_urls || []).length < 2) errors.push("fewer than two official sources");
   if (String(record.meta_title || "").length > 60) errors.push("meta title exceeds 60 characters");
   if (String(record.meta_description || "").length > 155) errors.push("meta description exceeds 155 characters");
