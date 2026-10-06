@@ -7,8 +7,12 @@ import { X, Search, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 interface Props {
-  articleId: string;
+  articleId?: string;
+  draftLinks?: EntityLinkDraft[];
+  onDraftLinksChange?: (links: EntityLinkDraft[]) => void;
 }
+
+export interface EntityLinkDraft { entity_type: string; entity_slug: string }
 
 type EntityType = "college" | "course" | "exam" | "career" | "scholarship" | "article" | "study_subject" | "study_chapter";
 
@@ -35,7 +39,7 @@ interface EntityRow { id: string; name: string; sub?: string }
 interface Link { id: string; entity_type: string; entity_slug: string }
 
 /** Multi-select picker for tagging an article to entities (colleges/courses/exams/careers/subjects/chapters). */
-export function EntityMultiPicker({ articleId }: Props) {
+export function EntityMultiPicker({ articleId, draftLinks = [], onDraftLinksChange }: Props) {
   const initial = TYPES.reduce((acc, t) => ({ ...acc, [t.key]: [] as EntityRow[] }), {} as Record<EntityType, EntityRow[]>);
   const [data, setData] = useState<Record<EntityType, EntityRow[]>>(initial);
   const [links, setLinks] = useState<Link[]>([]);
@@ -93,11 +97,19 @@ export function EntityMultiPicker({ articleId }: Props) {
   }, [articleId]);
   useEffect(() => { void reload(); }, [reload]);
 
+  const currentLinks: Link[] = articleId ? links : draftLinks.map((link) => ({ ...link, id: `${link.entity_type}:${link.entity_slug}` }));
+
   const linkedFor = (type: string) =>
-    new Set(links.filter((l) => l.entity_type === type).map((l) => l.entity_slug));
+    new Set(currentLinks.filter((l) => l.entity_type === type).map((l) => l.entity_slug));
 
   const toggle = async (type: EntityType, id: string) => {
-    const existing = links.find((l) => l.entity_type === type && l.entity_slug === id);
+    const existing = currentLinks.find((l) => l.entity_type === type && l.entity_slug === id);
+    if (!articleId) {
+      onDraftLinksChange?.(existing
+        ? draftLinks.filter((link) => !(link.entity_type === type && link.entity_slug === id))
+        : [...draftLinks, { entity_type: type, entity_slug: id }]);
+      return;
+    }
     if (existing) {
       await (backendClient as any).from("article_links").delete().eq("id", existing.id);
     } else {
@@ -108,8 +120,6 @@ export function EntityMultiPicker({ articleId }: Props) {
     }
     reload();
   };
-
-  if (!articleId) return <p className="text-xs text-muted-foreground">Save the article first to tag entities.</p>;
 
   const filtered = (data[active] || []).slice(0, 200);
 
@@ -122,7 +132,7 @@ export function EntityMultiPicker({ articleId }: Props) {
       </label>
       <div className="flex gap-1.5 flex-wrap">
         {TYPES.map((t) => {
-          const count = links.filter((l) => l.entity_type === t.key).length;
+          const count = currentLinks.filter((l) => l.entity_type === t.key).length;
           return (
             <Button
               key={t.key}
@@ -159,6 +169,10 @@ export function EntityMultiPicker({ articleId }: Props) {
               const toAdd = filtered.filter(e => !linked.has(e.id));
               if (!toAdd.length) return;
               const rows = toAdd.map(e => ({ article_id: articleId, entity_type: active, entity_slug: e.id }));
+              if (!articleId) {
+                onDraftLinksChange?.([...draftLinks, ...toAdd.map((e) => ({ entity_type: active, entity_slug: e.id }))]);
+                return;
+              }
               const { error } = await (backendClient as any).from("article_links").insert(rows);
               if (error) toast.error(error.message); else { toast.success(`Tagged ${toAdd.length}`); reload(); }
             }}
@@ -167,7 +181,11 @@ export function EntityMultiPicker({ articleId }: Props) {
             type="button"
             className="text-destructive hover:underline"
             onClick={async () => {
-              const ids = links.filter(l => l.entity_type === active).map(l => l.id);
+              if (!articleId) {
+                onDraftLinksChange?.(draftLinks.filter((link) => link.entity_type !== active));
+                return;
+              }
+              const ids = currentLinks.filter(l => l.entity_type === active).map(l => l.id);
               if (!ids.length) return;
               await (backendClient as any).from("article_links").delete().in("id", ids);
               reload();
@@ -201,7 +219,7 @@ export function EntityMultiPicker({ articleId }: Props) {
         {filtered.length === 0 && (
           <div className="p-4 text-center space-y-2">
             <p className="text-xs text-muted-foreground">No matches{search[active] ? ` for "${search[active]}"` : ""}</p>
-            {search[active]?.trim() && active !== "study_subject" && active !== "study_chapter" && (
+            {articleId && search[active]?.trim() && active !== "study_subject" && active !== "study_chapter" && (
               <Button type="button" size="sm" variant="outline" className="rounded-lg gap-1"
                 onClick={async () => {
                   const q = search[active].trim();
@@ -228,9 +246,9 @@ export function EntityMultiPicker({ articleId }: Props) {
           </div>
         )}
       </div>
-      {links.length > 0 && (
+      {currentLinks.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
-          {links.map((l) => (
+          {currentLinks.map((l) => (
             <Badge key={l.id} variant="outline" className="gap-1">
               {l.entity_type}: {l.entity_slug.length > 24 ? l.entity_slug.slice(0, 8) + "…" : l.entity_slug}
               <button onClick={() => toggle(l.entity_type as EntityType, l.entity_slug)}>

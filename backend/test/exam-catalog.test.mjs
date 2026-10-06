@@ -18,7 +18,7 @@ test("canonical exam catalog contains the complete deduplicated 400+ inventory",
   const { catalog, deletedSlugs, refreshReports } = await loadCanonicalExamCatalog(repositoryRoot);
   assert.equal(catalog.length, 485);
   assert.equal(deletedSlugs.length, 17);
-  assert.equal(refreshReports.length, 42);
+  assert.equal(refreshReports.length, 43);
   assert.equal(new Set(catalog.map((exam) => exam.slug)).size, catalog.length);
   assert.equal(catalog.some((exam) => deletedSlugs.includes(exam.slug)), false);
 });

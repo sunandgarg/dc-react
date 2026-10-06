@@ -5,6 +5,7 @@ import {
   articleSiteProfile,
   articleTitleSimilarity,
   articleTopicSimilarity,
+  assessArticleSiblingVariation,
   assessGeneratedArticle,
   assertArticleTopicsAvailable,
   compactArticleCoverage,
@@ -152,6 +153,23 @@ test("compresses prior coverage into an inexpensive subject and intent fingerpri
   assert.match(fingerprint, /ug/);
   assert.match(fingerprint, /merit-list/);
   assert.match(fingerprint, /2026/);
+});
+
+test("AI blog batch gate catches repeated openings, FAQ questions and a third identical skeleton", () => {
+  const article = (opening, heading, question) => ({
+    content_html: `<p>${opening}</p><h2>${heading}</h2><p>A useful topic-specific explanation follows.</p>`,
+    faqs: [{ question, answer: "Use the relevant current authority notice." }],
+  });
+  const siblings = [article("A practical choice starts here.", "First decision", "Which form applies?"), article("Another route starts here.", "Second decision", "What changes next?")];
+  assert.deepEqual(assessArticleSiblingVariation(article("A practical choice starts here.", "Third decision", "Which form applies?"), siblings), [
+    "opening sentence repeats a batch sibling",
+    "article skeleton repeats more than two times in the batch",
+    "FAQ question repeats a batch sibling",
+  ]);
+  assert.deepEqual(assessArticleSiblingVariation({
+    content_html: "<p>A different consequence changes this case.</p><h2>Specific choice</h2><ul><li>One actual step</li></ul>",
+    faqs: [{ question: "How does this case differ?", answer: "It changes the decision." }],
+  }, siblings), []);
 });
 
 test("editorial quality gate accepts useful structured copy and rejects thin source-led copy", () => {

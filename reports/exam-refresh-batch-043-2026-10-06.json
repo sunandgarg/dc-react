@@ -1,0 +1,715 @@
+{
+  "batch": "exam-refresh-batch-043",
+  "checked_at": "2026-10-06T12:30:00+05:30",
+  "source_snapshot": "reports/pre-rollback-2026-07-29/exams-current.json",
+  "scope": "Ten active canonical professional and teaching exam rows; editorial review only, no production database update",
+  "policy": "Batch variation is mandatory. Every item in a batch needs a different first sentence and a topic-specific consequence. Never copy a lead sentence across sibling records. Describe the application route in a record-specific form. Rotate paragraph, ordered list, checklist and short action plan formats, but keep the facts accurate. Preparation advice must come from the actual subject matter. Replace generic study slogans with a concrete task such as biology diagrams, timed quantitative sets, case-law reading or design observation. FAQ questions and answers must be unique across the batch. Ask about a decision that belongs to the individual exam or course, not a generic deadline question repeated everywhere. Lead with the real consequence, never an Answer first label. Choose a topic-native section order, not the same summary/facts/risk/checklist/FAQ ladder. Use semantic HTML tables only when a real comparison benefits; otherwise use prose or bullets. Consolidate repeated official-verification advice. Include a named, source-backed detail when the evidence provides one, and never invent a code, cutoff or date to sound specific. Never reuse these phrases: Roz thoda, same as above, use the official portal and current bulletin before payment. A template may control field shape, but it must not control wording, hook, FAQ phrasing, application explanation or preparation tip.",
+  "variation": {
+    "records": 10,
+    "unique_openings": 10,
+    "unique_applications": 10,
+    "unique_preparations": 10,
+    "unique_faq_questions": 40
+  },
+  "human_editorial": {
+    "records": 10,
+    "unique_outlines": 10,
+    "sourced_examples": 10
+  },
+  "structural_variation": {
+    "records": 10,
+    "unique_structures": 10
+  },
+  "updates": [
+    {
+      "id": "2eacd47d-97db-48a0-98f2-139d3265a66e",
+      "old_slug": "ca-foundation",
+      "slug": "ca-foundation",
+      "name": "CA Foundation",
+      "conducting_authority": "The Institute of Chartered Accountants of India",
+      "description": "CA Foundation explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>Use ICAI's student examination page for the live session's form and eligibility instructions. Keep registration details beside the form rather than guessing them from a coaching calendar.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>Work ten quantitative questions under a timer, then write the mistaken step next to each wrong answer. On another day, explain one economics concept without looking at the options.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Institute of Chartered Accountants of India published May 2026 Foundation MCQ keys for Paper 3, Quantitative Aptitude, and Paper 4, Business Economics.</p>",
+      "summary_content": "<h2>CA Foundation decision point</h2><p>CA Foundation revision can go wrong when every paper gets the same study method. A timed calculation set tells you something different from a written explanation of a business-law rule.</p><p>The Institute of Chartered Accountants of India published May 2026 Foundation MCQ keys for Paper 3, Quantitative Aptitude, and Paper 4, Business Economics.</p>",
+      "page_summary": "CA Foundation paper choice, application route and subject-specific preparation.",
+      "meta_title": "CA Foundation: Papers and Application Route",
+      "meta_description": "Understand the CA Foundation papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CA Foundation, exam papers, application, preparation, official notice",
+      "tags": [
+        "CA Foundation",
+        "Commerce"
+      ],
+      "data_source_urls": [
+        "https://www.icai.org/post/24181"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://www.icai.org/students.shtml",
+        "evidence": "https://www.icai.org/post/24181"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Institute of Chartered Accountants of India published May 2026 Foundation MCQ keys for Paper 3, Quantitative Aptitude, and Paper 4, Business Economics.",
+          "source_url": "https://www.icai.org/post/24181"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Which CA Foundation papers had ICAI MCQ keys in May 2026?",
+          "answer": "ICAI published keys for Quantitative Aptitude and Business Economics in that session."
+        },
+        {
+          "question": "Does an MCQ key describe every Foundation paper?",
+          "answer": "No. It describes the published MCQ papers, not the whole writing workload."
+        },
+        {
+          "question": "What should a Quantitative Aptitude error log separate?",
+          "answer": "Keep concept, arithmetic and time-loss errors in different columns."
+        },
+        {
+          "question": "Where should a Foundation candidate get the live form rules?",
+          "answer": "Use ICAI's examination notice for the session being entered."
+        }
+      ],
+      "article_html": "<p>CA Foundation revision can go wrong when every paper gets the same study method. A timed calculation set tells you something different from a written explanation of a business-law rule.</p><p><a href=\"https://www.icai.org/post/24181\" rel=\"noopener noreferrer\">The Institute of Chartered Accountants of India</a> published May 2026 Foundation MCQ keys for Paper 3, Quantitative Aptitude, and Paper 4, Business Economics.</p><h2>Where the MCQ practice belongs</h2><p>Paper 3 brings business mathematics, logical reasoning and statistics together. Keep separate error counts for formulas, reading and time pressure; one total mock score hides the reason a mark was lost.</p><ul><li>Separate calculation errors from concept gaps.</li><li>Practise written answers where the paper asks for them.</li><li>Compare the current study material with the session's announced syllabus.</li></ul><h2>Don't ignore the other papers</h2><p>The released MCQ keys cover only part of the Foundation workload. Read the current scheme before building a plan from old question papers, and give writing practice its own slot.</p><p>Use ICAI's student examination page for the live session's form and eligibility instructions. Keep registration details beside the form rather than guessing them from a coaching calendar.</p><p>Work ten quantitative questions under a timer, then write the mistaken step next to each wrong answer. On another day, explain one economics concept without looking at the options.</p><p>The choice is simple: practise the skill each paper actually tests, not one generic mock routine for all four.</p>",
+      "content_variation": {
+        "opening": "CA Foundation revision can go wrong when every paper gets the same study method. A timed calculation set tells you something different from a written explanation of a business-law rule.",
+        "application": "Use ICAI's student examination page for the live session's form and eligibility instructions. Keep registration details beside the form rather than guessing them from a coaching calendar.",
+        "preparation": "Work ten quantitative questions under a timer, then write the mistaken step next to each wrong answer. On another day, explain one economics concept without looking at the options.",
+        "faq_questions": [
+          "Which CA Foundation papers had ICAI MCQ keys in May 2026?",
+          "Does an MCQ key describe every Foundation paper?",
+          "What should a Quantitative Aptitude error log separate?",
+          "Where should a Foundation candidate get the live form rules?"
+        ]
+      }
+    },
+    {
+      "id": "fa0765cb-5c85-488f-95df-c1a043e0db72",
+      "old_slug": "ca-intermediate",
+      "slug": "ca-intermediate",
+      "name": "CA Intermediate",
+      "conducting_authority": "The Institute of Chartered Accountants of India",
+      "description": "CA Intermediate explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>Before selecting an Intermediate group in the ICAI form, match it to the papers you are ready to sit and the institute's current eligibility record. Save the submitted group selection.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>Solve a tax computation without notes, then write one sentence explaining every adjustment. For GST, use a short transaction and decide the treatment before reading the model answer.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Institute of Chartered Accountants of India lists Intermediate Paper 3 as Taxation, with Income-tax Law in Section A and Goods and Services Tax in Section B under its new scheme.</p>",
+      "summary_content": "<h2>CA Intermediate decision point</h2><p>CA Intermediate Taxation has two distinct legal systems inside one paper. Treating GST as a quick appendix to income tax is a poor revision bet.</p><p>The Institute of Chartered Accountants of India lists Intermediate Paper 3 as Taxation, with Income-tax Law in Section A and Goods and Services Tax in Section B under its new scheme.</p>",
+      "page_summary": "CA Intermediate paper choice, application route and subject-specific preparation.",
+      "meta_title": "CA Intermediate: Papers and Application Route",
+      "meta_description": "Understand the CA Intermediate papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CA Intermediate, exam papers, application, preparation, official notice",
+      "tags": [
+        "CA Intermediate",
+        "Commerce"
+      ],
+      "data_source_urls": [
+        "https://www.icai.org/post/intermediate-nset"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://www.icai.org/students.shtml",
+        "evidence": "https://www.icai.org/post/intermediate-nset"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Institute of Chartered Accountants of India lists Intermediate Paper 3 as Taxation, with Income-tax Law in Section A and Goods and Services Tax in Section B under its new scheme.",
+          "source_url": "https://www.icai.org/post/intermediate-nset"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "What sits inside CA Intermediate Paper 3?",
+          "answer": "ICAI's new-scheme page separates Income-tax Law and Goods and Services Tax."
+        },
+        {
+          "question": "Can a prior tax rate be assumed for the next Intermediate session?",
+          "answer": "No. Use the applicable ICAI study guideline and amendment supplement."
+        },
+        {
+          "question": "How should a GST practice question be reviewed?",
+          "answer": "Write the supply or credit rule first, then revisit the calculation."
+        },
+        {
+          "question": "Why save the Intermediate group selection?",
+          "answer": "It lets you compare the submitted form with the papers on the current admit card."
+        }
+      ],
+      "article_html": "<p>CA Intermediate Taxation has two distinct legal systems inside one paper. Treating GST as a quick appendix to income tax is a poor revision bet.</p><h2>Keep the two tax lanes separate</h2><p>Make one revision sheet for income-tax computation and another for GST supply and credit decisions. The same word, such as exemption, may need a different legal test in each lane.</p><p><a href=\"https://www.icai.org/post/intermediate-nset\" rel=\"noopener noreferrer\">The Institute of Chartered Accountants of India</a> lists Intermediate Paper 3 as Taxation, with Income-tax Law in Section A and Goods and Services Tax in Section B under its new scheme.</p><p>Before selecting an Intermediate group in the ICAI form, match it to the papers you are ready to sit and the institute's current eligibility record. Save the submitted group selection.</p><h2>Why a current supplement matters</h2><p>A remembered rule can become an outdated answer when the applicable law changes. Use the session-specific Board of Studies material to check which amendments are examinable before memorising rates or thresholds.</p><ol><li>Label each practice problem Income-tax or GST.</li><li>Write the governing rule before calculating.</li><li>Retest the questions that changed because of an amendment.</li></ol><p>Solve a tax computation without notes, then write one sentence explaining every adjustment. For GST, use a short transaction and decide the treatment before reading the model answer.</p><p>A neat tax notebook is useful only if it distinguishes the law, the computation and the current session's applicable text.</p>",
+      "content_variation": {
+        "opening": "CA Intermediate Taxation has two distinct legal systems inside one paper. Treating GST as a quick appendix to income tax is a poor revision bet.",
+        "application": "Before selecting an Intermediate group in the ICAI form, match it to the papers you are ready to sit and the institute's current eligibility record. Save the submitted group selection.",
+        "preparation": "Solve a tax computation without notes, then write one sentence explaining every adjustment. For GST, use a short transaction and decide the treatment before reading the model answer.",
+        "faq_questions": [
+          "What sits inside CA Intermediate Paper 3?",
+          "Can a prior tax rate be assumed for the next Intermediate session?",
+          "How should a GST practice question be reviewed?",
+          "Why save the Intermediate group selection?"
+        ]
+      }
+    },
+    {
+      "id": "9333ead5-6c03-4c52-b38d-ee7322650226",
+      "old_slug": "ca-final",
+      "slug": "ca-final",
+      "name": "CA Final",
+      "conducting_authority": "The Institute of Chartered Accountants of India",
+      "description": "CA Final explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>For the live Final session, use the ICAI examination notice to confirm eligibility and paper selection. Keep the registration and required training evidence ready before the form opens.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>Take one multidisciplinary case and limit yourself to three minutes to map the decision. After writing the answer, underline each unsupported assumption and replace it with a fact from the case.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Institute of Chartered Accountants of India lists Final Paper 6 as Integrated Business Solutions, a multidisciplinary case study with Strategic Management, in its May 2026 paper set.</p>",
+      "summary_content": "<h2>CA Final decision point</h2><p>A CA Final case study rarely announces which chapter it belongs to. The harder move is choosing which financial, tax or governance issue changes the business decision.</p><p>The Institute of Chartered Accountants of India lists Final Paper 6 as Integrated Business Solutions, a multidisciplinary case study with Strategic Management, in its May 2026 paper set.</p>",
+      "page_summary": "CA Final paper choice, application route and subject-specific preparation.",
+      "meta_title": "CA Final: Papers and Application Route",
+      "meta_description": "Understand the CA Final papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CA Final, exam papers, application, preparation, official notice",
+      "tags": [
+        "CA Final",
+        "Commerce"
+      ],
+      "data_source_urls": [
+        "https://www.icai.org/post/24181"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://www.icai.org/students.shtml",
+        "evidence": "https://www.icai.org/post/24181"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Institute of Chartered Accountants of India lists Final Paper 6 as Integrated Business Solutions, a multidisciplinary case study with Strategic Management, in its May 2026 paper set.",
+          "source_url": "https://www.icai.org/post/24181"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "What is CA Final Paper 6 called in ICAI's May 2026 set?",
+          "answer": "It is Integrated Business Solutions, described as a multidisciplinary case study with Strategic Management."
+        },
+        {
+          "question": "Should a case answer list every possible standard?",
+          "answer": "No. Select the rule that bears on the decision and explain its effect."
+        },
+        {
+          "question": "What is worth underlining in a practice case?",
+          "answer": "Mark unsupported assumptions so the next answer relies on the stated facts."
+        },
+        {
+          "question": "Where are the next Final session's form conditions published?",
+          "answer": "ICAI's current examination notice controls those conditions."
+        }
+      ],
+      "article_html": "<p>A CA Final case study rarely announces which chapter it belongs to. The harder move is choosing which financial, tax or governance issue changes the business decision.</p><h2>Read the case before reaching for a formula</h2><p>Mark the business objective, the constraint and the missing information. Then decide which rule is relevant; reciting every standard you remember will not answer the question asked.</p><h2>Build an answer the examiner can follow</h2><p>State a recommendation, cite the decisive fact and show the alternative you rejected. This is practice in judgement, not a shortcut around technical accuracy.</p><p><a href=\"https://www.icai.org/post/24181\" rel=\"noopener noreferrer\">The Institute of Chartered Accountants of India</a> lists Final Paper 6 as Integrated Business Solutions, a multidisciplinary case study with Strategic Management, in its May 2026 paper set.</p><p>Take one multidisciplinary case and limit yourself to three minutes to map the decision. After writing the answer, underline each unsupported assumption and replace it with a fact from the case.</p><p>For the live Final session, use the ICAI examination notice to confirm eligibility and paper selection. Keep the registration and required training evidence ready before the form opens.</p><p>Case practice should make the reasoning visible; a correct-looking number without a defensible decision is incomplete.</p>",
+      "content_variation": {
+        "opening": "A CA Final case study rarely announces which chapter it belongs to. The harder move is choosing which financial, tax or governance issue changes the business decision.",
+        "application": "For the live Final session, use the ICAI examination notice to confirm eligibility and paper selection. Keep the registration and required training evidence ready before the form opens.",
+        "preparation": "Take one multidisciplinary case and limit yourself to three minutes to map the decision. After writing the answer, underline each unsupported assumption and replace it with a fact from the case.",
+        "faq_questions": [
+          "What is CA Final Paper 6 called in ICAI's May 2026 set?",
+          "Should a case answer list every possible standard?",
+          "What is worth underlining in a practice case?",
+          "Where are the next Final session's form conditions published?"
+        ]
+      }
+    },
+    {
+      "id": "e5aaad4b-f0a2-4699-937a-858f3bc97e68",
+      "old_slug": "cma-foundation",
+      "slug": "cma-foundation",
+      "name": "CMA Foundation",
+      "conducting_authority": "The Institute of Cost Accountants of India",
+      "description": "CMA Foundation explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>Use ICMAI's live Foundation examination form and read the eligibility line before payment. Photograph, signature and registration data should match the student record exactly.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>Do two 25-question OMR blocks and count bubbling mistakes separately from content errors. Review the chapter only after you know which kind of miss occurred.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Institute of Cost Accountants of India said its June 2026 Foundation examination would use centre-based OMR multiple-choice papers, with no negative marking.</p>",
+      "summary_content": "<h2>CMA Foundation decision point</h2><p>CMA Foundation's OMR format changes how a student should practise, but a past term's marking rule is not a licence to ignore the next notice. First learn the paper, then refine the attempt strategy.</p><p>The Institute of Cost Accountants of India said its June 2026 Foundation examination would use centre-based OMR multiple-choice papers, with no negative marking.</p>",
+      "page_summary": "CMA Foundation paper choice, application route and subject-specific preparation.",
+      "meta_title": "CMA Foundation: Papers and Application Route",
+      "meta_description": "Understand the CMA Foundation papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CMA Foundation, exam papers, application, preparation, official notice",
+      "tags": [
+        "CMA Foundation",
+        "Commerce"
+      ],
+      "data_source_urls": [
+        "https://icmai.in/upload/Examination/FOUNDATION_June_2026.pdf"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/exams"
+      ],
+      "external_links": {
+        "authority": "https://icmai.in/ClntStudents/UpdateandAnnouncements",
+        "evidence": "https://icmai.in/upload/Examination/FOUNDATION_June_2026.pdf"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Institute of Cost Accountants of India said its June 2026 Foundation examination would use centre-based OMR multiple-choice papers, with no negative marking.",
+          "source_url": "https://icmai.in/upload/Examination/FOUNDATION_June_2026.pdf"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Was CMA Foundation June 2026 centre-based?",
+          "answer": "Yes. ICMAI described an offline, centre-based OMR examination."
+        },
+        {
+          "question": "Did the June 2026 Foundation notice state negative marking?",
+          "answer": "It stated that there was no negative marking for that term."
+        },
+        {
+          "question": "What is an OMR error log for?",
+          "answer": "It separates a wrong answer from a correct answer marked in the wrong bubble."
+        },
+        {
+          "question": "Can the June 2026 marking rule be copied to a later CMA term?",
+          "answer": "No. Read the later term's own ICMAI instructions."
+        }
+      ],
+      "article_html": "<p>CMA Foundation's OMR format changes how a student should practise, but a past term's marking rule is not a licence to ignore the next notice. First learn the paper, then refine the attempt strategy.</p><p><a href=\"https://icmai.in/upload/Examination/FOUNDATION_June_2026.pdf\" rel=\"noopener noreferrer\">The Institute of Cost Accountants of India</a> said its June 2026 Foundation examination would use centre-based OMR multiple-choice papers, with no negative marking.</p><ol><li>Mark answers as you go.</li><li>Keep an OMR error tally.</li><li>Read the live instruction sheet before deciding whether to guess.</li></ol><h2>Use the old format as a practice clue</h2><p>The June 2026 notice described 50 questions per paper. That makes short, timed blocks useful: fill the OMR-style response while practising, not five minutes after the set ends.</p><p>Do two 25-question OMR blocks and count bubbling mistakes separately from content errors. Review the chapter only after you know which kind of miss occurred.</p><h2>Keep the attempt rule session-specific</h2><p>No negative marking was stated for June 2026. If the next term keeps it, unanswered items carry an avoidable cost; confirm the current instructions before adopting that tactic.</p><p>Use ICMAI's live Foundation examination form and read the eligibility line before payment. Photograph, signature and registration data should match the student record exactly.</p><p>The practical gain is not more guesses; it is fewer answer-sheet errors under the actual rules of the session.</p>",
+      "content_variation": {
+        "opening": "CMA Foundation's OMR format changes how a student should practise, but a past term's marking rule is not a licence to ignore the next notice. First learn the paper, then refine the attempt strategy.",
+        "application": "Use ICMAI's live Foundation examination form and read the eligibility line before payment. Photograph, signature and registration data should match the student record exactly.",
+        "preparation": "Do two 25-question OMR blocks and count bubbling mistakes separately from content errors. Review the chapter only after you know which kind of miss occurred.",
+        "faq_questions": [
+          "Was CMA Foundation June 2026 centre-based?",
+          "Did the June 2026 Foundation notice state negative marking?",
+          "What is an OMR error log for?",
+          "Can the June 2026 marking rule be copied to a later CMA term?"
+        ]
+      }
+    },
+    {
+      "id": "5428c53a-f1bb-426a-bd9e-a1cad195eb69",
+      "old_slug": "cma-intermediate",
+      "slug": "cma-intermediate",
+      "name": "CMA Intermediate",
+      "conducting_authority": "The Institute of Cost Accountants of India",
+      "description": "CMA Intermediate explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>On ICMAI's current examination form, select the Intermediate group and centre that match your enrolment record. Save the final form and payment receipt together.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>Alternate a financial-management calculation with a small dataset interpretation. Record whether a wrong result came from the formula, the units or the conclusion drawn from it.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Institute of Cost Accountants of India's June 2026 Intermediate timetable listed Paper 11 as Financial Management and Business Data Analytics under Syllabus 2022.</p>",
+      "summary_content": "<h2>CMA Intermediate decision point</h2><p>CMA Intermediate Paper 11 asks for more than finance formulas. A candidate also has to make sense of business data, and that needs its own practice time.</p><p>The Institute of Cost Accountants of India's June 2026 Intermediate timetable listed Paper 11 as Financial Management and Business Data Analytics under Syllabus 2022.</p>",
+      "page_summary": "CMA Intermediate paper choice, application route and subject-specific preparation.",
+      "meta_title": "CMA Intermediate: Papers and Application Route",
+      "meta_description": "Understand the CMA Intermediate papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CMA Intermediate, exam papers, application, preparation, official notice",
+      "tags": [
+        "CMA Intermediate",
+        "Commerce"
+      ],
+      "data_source_urls": [
+        "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://icmai.in/ClntStudents/UpdateandAnnouncements",
+        "evidence": "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Institute of Cost Accountants of India's June 2026 Intermediate timetable listed Paper 11 as Financial Management and Business Data Analytics under Syllabus 2022.",
+          "source_url": "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "What is Paper 11 in ICMAI's June 2026 Intermediate timetable?",
+          "answer": "It is Financial Management and Business Data Analytics under Syllabus 2022."
+        },
+        {
+          "question": "Should a CMA Intermediate data answer stop at the calculation?",
+          "answer": "No. Explain the business meaning and the limitation of the number."
+        },
+        {
+          "question": "Why keep the Intermediate group receipt?",
+          "answer": "It records the group and centre selected in the submitted form."
+        },
+        {
+          "question": "Is the CMA Final timetable interchangeable with Intermediate?",
+          "answer": "No. ICMAI publishes the stages separately."
+        }
+      ],
+      "article_html": "<p>CMA Intermediate Paper 11 asks for more than finance formulas. A candidate also has to make sense of business data, and that needs its own practice time.</p><h2>Put the numbers into a decision</h2><p>A ratio is only the start. In a practice case, write what it says about liquidity or cost and which extra figure could reverse the conclusion.</p><ul><li>Calculate first.</li><li>Interpret the number in one sentence.</li><li>Ask what additional evidence would change the decision.</li></ul><p><a href=\"https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf\" rel=\"noopener noreferrer\">The Institute of Cost Accountants of India</a>'s June 2026 Intermediate timetable listed Paper 11 as Financial Management and Business Data Analytics under Syllabus 2022.</p><h2>Choose the group deliberately</h2><p>The published June 2026 timetable separated Intermediate and Final, with different sessions. Do not use a Final timetable or an old group list to plan an Intermediate form.</p><p>On ICMAI's current examination form, select the Intermediate group and centre that match your enrolment record. Save the final form and payment receipt together.</p><p>Alternate a financial-management calculation with a small dataset interpretation. Record whether a wrong result came from the formula, the units or the conclusion drawn from it.</p><p>That habit makes analytics a business explanation rather than a second pile of disconnected formulas.</p>",
+      "content_variation": {
+        "opening": "CMA Intermediate Paper 11 asks for more than finance formulas. A candidate also has to make sense of business data, and that needs its own practice time.",
+        "application": "On ICMAI's current examination form, select the Intermediate group and centre that match your enrolment record. Save the final form and payment receipt together.",
+        "preparation": "Alternate a financial-management calculation with a small dataset interpretation. Record whether a wrong result came from the formula, the units or the conclusion drawn from it.",
+        "faq_questions": [
+          "What is Paper 11 in ICMAI's June 2026 Intermediate timetable?",
+          "Should a CMA Intermediate data answer stop at the calculation?",
+          "Why keep the Intermediate group receipt?",
+          "Is the CMA Final timetable interchangeable with Intermediate?"
+        ]
+      }
+    },
+    {
+      "id": "014fe953-9306-47b6-a171-86ddb3e19687",
+      "old_slug": "cma-final",
+      "slug": "cma-final",
+      "name": "CMA Final",
+      "conducting_authority": "The Institute of Cost Accountants of India",
+      "description": "CMA Final explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>When using the ICMAI Final form, re-read the elective selection and group details on the preview screen. Keep a copy of that screen and the payment confirmation.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>For valuation, explain a changed assumption; for banking risk, identify the exposure before the control; for entrepreneurship, connect a funding choice to cash flow. Choose the lane matching your elected paper.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Institute of Cost Accountants of India's June 2026 Final timetable offered Paper 20 electives including Strategic Performance Management and Business Valuation, Risk Management in Banking and Insurance, and Entrepreneurship and Start up.</p>",
+      "summary_content": "<h2>CMA Final decision point</h2><p>A CMA Final elective is not just another date on the timetable. It changes the examples, laws and calculations a student will spend weeks practising.</p><p>The Institute of Cost Accountants of India's June 2026 Final timetable offered Paper 20 electives including Strategic Performance Management and Business Valuation, Risk Management in Banking and Insurance, and Entrepreneurship and Start up.</p>",
+      "page_summary": "CMA Final paper choice, application route and subject-specific preparation.",
+      "meta_title": "CMA Final: Papers and Application Route",
+      "meta_description": "Understand the CMA Final papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CMA Final, exam papers, application, preparation, official notice",
+      "tags": [
+        "CMA Final",
+        "Commerce"
+      ],
+      "data_source_urls": [
+        "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://icmai.in/ClntStudents/UpdateandAnnouncements",
+        "evidence": "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Institute of Cost Accountants of India's June 2026 Final timetable offered Paper 20 electives including Strategic Performance Management and Business Valuation, Risk Management in Banking and Insurance, and Entrepreneurship and Start up.",
+          "source_url": "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Which Paper 20 electives appeared in the CMA Final June 2026 timetable?",
+          "answer": "ICMAI listed valuation, banking and insurance risk, and entrepreneurship choices."
+        },
+        {
+          "question": "Can a candidate prepare all Paper 20 electives equally?",
+          "answer": "The form selects an elective; focused preparation should follow that selected paper."
+        },
+        {
+          "question": "What should be checked on the CMA Final form preview?",
+          "answer": "Check the group, centre and elective before submitting."
+        },
+        {
+          "question": "Does an old CMA elective list settle the current term?",
+          "answer": "No. The current ICMAI timetable and form control the term."
+        }
+      ],
+      "article_html": "<p>A CMA Final elective is not just another date on the timetable. It changes the examples, laws and calculations a student will spend weeks practising.</p><h2>Pick the elective you can sustain</h2><p>Compare the current elective choices with your strongest work, not just their titles. A valuation problem and a banking-risk case demand different evidence and answer styles.</p><p><a href=\"https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf\" rel=\"noopener noreferrer\">The Institute of Cost Accountants of India</a>'s June 2026 Final timetable offered Paper 20 electives including Strategic Performance Management and Business Valuation, Risk Management in Banking and Insurance, and Entrepreneurship and Start up.</p><h2>Keep the timetable in context</h2><p>The three options above were published for June 2026 under Syllabus 2022. Check the live term's elective list before locking a group or buying material for a paper you may not sit.</p><p>When using the ICMAI Final form, re-read the elective selection and group details on the preview screen. Keep a copy of that screen and the payment confirmation.</p><p>For valuation, explain a changed assumption; for banking risk, identify the exposure before the control; for entrepreneurship, connect a funding choice to cash flow. Choose the lane matching your elected paper.</p><p>The wrong elective in a study plan costs time even if the rest of the Final timetable is copied correctly.</p>",
+      "content_variation": {
+        "opening": "A CMA Final elective is not just another date on the timetable. It changes the examples, laws and calculations a student will spend weeks practising.",
+        "application": "When using the ICMAI Final form, re-read the elective selection and group details on the preview screen. Keep a copy of that screen and the payment confirmation.",
+        "preparation": "For valuation, explain a changed assumption; for banking risk, identify the exposure before the control; for entrepreneurship, connect a funding choice to cash flow. Choose the lane matching your elected paper.",
+        "faq_questions": [
+          "Which Paper 20 electives appeared in the CMA Final June 2026 timetable?",
+          "Can a candidate prepare all Paper 20 electives equally?",
+          "What should be checked on the CMA Final form preview?",
+          "Does an old CMA elective list settle the current term?"
+        ]
+      }
+    },
+    {
+      "id": "75842942-d595-4b6b-98a9-afb7147fcab2",
+      "old_slug": "cseet-icsi",
+      "slug": "cseet-icsi",
+      "name": "CSEET",
+      "conducting_authority": "The Institute of Company Secretaries of India",
+      "description": "CSEET explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>Register through ICSI's CSEET student route for the chosen session. The institute's current eligibility and cut-off notice, not a social-media screenshot, controls that application.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>Write one short Business Communication response, solve an accounting entry and then practise the objective law-and-management questions on separate days. Each reveals a different weakness.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Institute of Company Secretaries of India restructured CSEET from the June 2026 session, replacing the old January 2026 format.</p>",
+      "summary_content": "<h2>CSEET decision point</h2><p>The biggest CSEET preparation mistake now is using an old remote-proctored mock as if nothing changed. The entry test was restructured in 2026, so the syllabus version matters more than a familiar title.</p><p>The Institute of Company Secretaries of India restructured CSEET from the June 2026 session, replacing the old January 2026 format.</p>",
+      "page_summary": "CSEET paper choice, application route and subject-specific preparation.",
+      "meta_title": "CSEET: Papers and Application Route",
+      "meta_description": "Understand the CSEET papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CSEET, exam papers, application, preparation, official notice",
+      "tags": [
+        "CSEET",
+        "Commerce/Law"
+      ],
+      "data_source_urls": [
+        "https://www.icsi.edu/media/filer_public/25/b2/25b20bc7-3ff0-458b-89fc-cbc88f5d7731/2026_june_cseet_2.pdf"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/exams"
+      ],
+      "external_links": {
+        "authority": "https://www.icsi.edu/",
+        "evidence": "https://www.icsi.edu/media/filer_public/25/b2/25b20bc7-3ff0-458b-89fc-cbc88f5d7731/2026_june_cseet_2.pdf"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Institute of Company Secretaries of India restructured CSEET from the June 2026 session, replacing the old January 2026 format.",
+          "source_url": "https://www.icsi.edu/media/filer_public/25/b2/25b20bc7-3ff0-458b-89fc-cbc88f5d7731/2026_june_cseet_2.pdf"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "When did ICSI restructure CSEET?",
+          "answer": "ICSI said the restructured format began with the June 2026 session."
+        },
+        {
+          "question": "Can a January 2026 remote-proctored mock define later CSEET papers?",
+          "answer": "No. That was the last session under the old structure."
+        },
+        {
+          "question": "Which skills should a new-format CSEET plan separate?",
+          "answer": "Give communication writing, accounting and objective law practice distinct blocks."
+        },
+        {
+          "question": "Where should a CSEET applicant verify registration cut-offs?",
+          "answer": "Use ICSI's current CSEET notice for the selected session."
+        }
+      ],
+      "article_html": "<p>The biggest CSEET preparation mistake now is using an old remote-proctored mock as if nothing changed. The entry test was restructured in 2026, so the syllabus version matters more than a familiar title.</p><p><a href=\"https://www.icsi.edu/media/filer_public/25/b2/25b20bc7-3ff0-458b-89fc-cbc88f5d7731/2026_june_cseet_2.pdf\" rel=\"noopener noreferrer\">The Institute of Company Secretaries of India</a> restructured CSEET from the June 2026 session, replacing the old January 2026 format.</p><h2>Start with the restructured papers</h2><p>ICSI's June 2026 question-paper list separated Business Communication, Fundamentals of Accounting, Economic and Business Environment, and Business Laws and Management. Read each paper's mode before copying an older practice timetable.</p><p>Register through ICSI's CSEET student route for the chosen session. The institute's current eligibility and cut-off notice, not a social-media screenshot, controls that application.</p><ul><li>Confirm the syllabus version.</li><li>Separate written and objective practice.</li><li>Track the session-specific registration notice.</li></ul><h2>What the old format cannot tell you</h2><p>An old pass-story may describe a different test. Use it for confidence, perhaps, but not for current paper order, answer mode or the subjects to prioritise.</p><p>Write one short Business Communication response, solve an accounting entry and then practise the objective law-and-management questions on separate days. Each reveals a different weakness.</p><p>One test name can conceal two formats. Work from the format you will actually sit.</p>",
+      "content_variation": {
+        "opening": "The biggest CSEET preparation mistake now is using an old remote-proctored mock as if nothing changed. The entry test was restructured in 2026, so the syllabus version matters more than a familiar title.",
+        "application": "Register through ICSI's CSEET student route for the chosen session. The institute's current eligibility and cut-off notice, not a social-media screenshot, controls that application.",
+        "preparation": "Write one short Business Communication response, solve an accounting entry and then practise the objective law-and-management questions on separate days. Each reveals a different weakness.",
+        "faq_questions": [
+          "When did ICSI restructure CSEET?",
+          "Can a January 2026 remote-proctored mock define later CSEET papers?",
+          "Which skills should a new-format CSEET plan separate?",
+          "Where should a CSEET applicant verify registration cut-offs?"
+        ]
+      }
+    },
+    {
+      "id": "61cd2fbc-5eaf-49fa-a860-0131b4e67b00",
+      "old_slug": "cs-executive",
+      "slug": "cs-executive",
+      "name": "CS Executive",
+      "conducting_authority": "The Institute of Company Secretaries of India",
+      "description": "CS Executive explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>When enrolling for the Executive examination, select the right syllabus and group in ICSI's portal. Check the preview against your registration before final submission.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>Take a Company Law and Practice question, write a two-line issue statement and a three-step application. Then compare the answer with the institute's guideline answer, not only a coaching summary.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Institute of Company Secretaries of India's Syllabus 2022 Executive question-paper archive lists Company Law and Practice as paper code 522.</p>",
+      "summary_content": "<h2>CS Executive decision point</h2><p>CS Executive Company Law answers need the right provision applied to the facts, not a long paragraph that merely sounds legal. The paper archive gives a better practice starting point than stock notes.</p><p>The Institute of Company Secretaries of India's Syllabus 2022 Executive question-paper archive lists Company Law and Practice as paper code 522.</p>",
+      "page_summary": "CS Executive paper choice, application route and subject-specific preparation.",
+      "meta_title": "CS Executive: Papers and Application Route",
+      "meta_description": "Understand the CS Executive papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CS Executive, exam papers, application, preparation, official notice",
+      "tags": [
+        "CS Executive",
+        "Commerce/Law"
+      ],
+      "data_source_urls": [
+        "https://www.icsi.edu/examination/previous-sessions-qps/december-2025"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://www.icsi.edu/",
+        "evidence": "https://www.icsi.edu/examination/previous-sessions-qps/december-2025"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Institute of Company Secretaries of India's Syllabus 2022 Executive question-paper archive lists Company Law and Practice as paper code 522.",
+          "source_url": "https://www.icsi.edu/examination/previous-sessions-qps/december-2025"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "What is CS Executive paper 522?",
+          "answer": "ICSI's Syllabus 2022 archive calls it Company Law and Practice."
+        },
+        {
+          "question": "What should come before a Company Law conclusion?",
+          "answer": "State the issue, governing condition and relevant fact first."
+        },
+        {
+          "question": "Can an archived CS Executive paper replace current supplements?",
+          "answer": "No. Use the session's applicable ICSI material as well."
+        },
+        {
+          "question": "Why check the Executive form preview?",
+          "answer": "It confirms the group and syllabus selected before submission."
+        }
+      ],
+      "article_html": "<p>CS Executive Company Law answers need the right provision applied to the facts, not a long paragraph that merely sounds legal. The paper archive gives a better practice starting point than stock notes.</p><h2>Make an answer do legal work</h2><p>For one past question, mark the company action, the governing rule and the consequence. If the question changes one fact, your conclusion may need to change too.</p><p><a href=\"https://www.icsi.edu/examination/previous-sessions-qps/december-2025\" rel=\"noopener noreferrer\">The Institute of Company Secretaries of India</a>'s Syllabus 2022 Executive question-paper archive lists Company Law and Practice as paper code 522.</p><ol><li>Extract the issue.</li><li>State the rule with its condition.</li><li>Apply that condition to the given facts.</li></ol><h2>Don't study a code without its session</h2><p>The archive shows the paper under Syllabus 2022, but the current ICSI supplements can alter what must be read for an upcoming term. Keep the paper code and the applicable update together.</p><p>Take a Company Law and Practice question, write a two-line issue statement and a three-step application. Then compare the answer with the institute's guideline answer, not only a coaching summary.</p><p>When enrolling for the Executive examination, select the right syllabus and group in ICSI's portal. Check the preview against your registration before final submission.</p><p>This is the difference between a remembered section number and a defensible company-law answer.</p>",
+      "content_variation": {
+        "opening": "CS Executive Company Law answers need the right provision applied to the facts, not a long paragraph that merely sounds legal. The paper archive gives a better practice starting point than stock notes.",
+        "application": "When enrolling for the Executive examination, select the right syllabus and group in ICSI's portal. Check the preview against your registration before final submission.",
+        "preparation": "Take a Company Law and Practice question, write a two-line issue statement and a three-step application. Then compare the answer with the institute's guideline answer, not only a coaching summary.",
+        "faq_questions": [
+          "What is CS Executive paper 522?",
+          "What should come before a Company Law conclusion?",
+          "Can an archived CS Executive paper replace current supplements?",
+          "Why check the Executive form preview?"
+        ]
+      }
+    },
+    {
+      "id": "8d2724d2-ca64-41c1-aace-2f900b48671d",
+      "old_slug": "cs-professional",
+      "slug": "cs-professional",
+      "name": "CS Professional",
+      "conducting_authority": "The Institute of Company Secretaries of India",
+      "description": "CS Professional explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>Use the ICSI Professional enrolment route and verify the selected group and elective, if applicable, before paying. Retain the form for admit-card comparison.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>Write a 150-word ESG case answer with a board action, a measurable signal and one limitation. Remove any line that could be copied into an unrelated corporate-governance question.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Institute of Company Secretaries of India's Syllabus 2022 Professional archive names Environmental, Social and Governance (ESG) Principles and Practice as paper code 531.</p>",
+      "summary_content": "<h2>CS Professional decision point</h2><p>ESG in CS Professional is not a slogan contest. An answer needs to connect a governance failure or environmental claim to an actual board, disclosure or compliance decision.</p><p>The Institute of Company Secretaries of India's Syllabus 2022 Professional archive names Environmental, Social and Governance (ESG) Principles and Practice as paper code 531.</p>",
+      "page_summary": "CS Professional paper choice, application route and subject-specific preparation.",
+      "meta_title": "CS Professional: Papers and Application Route",
+      "meta_description": "Understand the CS Professional papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CS Professional, exam papers, application, preparation, official notice",
+      "tags": [
+        "CS Professional",
+        "Commerce/Law"
+      ],
+      "data_source_urls": [
+        "https://www.icsi.edu/examination/previous-sessions-qps/december-2025"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/courses"
+      ],
+      "external_links": {
+        "authority": "https://www.icsi.edu/",
+        "evidence": "https://www.icsi.edu/examination/previous-sessions-qps/december-2025"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Institute of Company Secretaries of India's Syllabus 2022 Professional archive names Environmental, Social and Governance (ESG) Principles and Practice as paper code 531.",
+          "source_url": "https://www.icsi.edu/examination/previous-sessions-qps/december-2025"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "What is ICSI Professional paper 531?",
+          "answer": "It is Environmental, Social and Governance Principles and Practice under Syllabus 2022."
+        },
+        {
+          "question": "How can an ESG answer avoid vague claims?",
+          "answer": "Name a board decision, a measurable signal and a limitation."
+        },
+        {
+          "question": "Should Professional candidates use current ICSI supplements?",
+          "answer": "Yes. Match them to the session being attempted."
+        },
+        {
+          "question": "What form detail needs a final Professional check?",
+          "answer": "Confirm the group and any elective selection in the enrolment preview."
+        }
+      ],
+      "article_html": "<p>ESG in CS Professional is not a slogan contest. An answer needs to connect a governance failure or environmental claim to an actual board, disclosure or compliance decision.</p><p><a href=\"https://www.icsi.edu/examination/previous-sessions-qps/december-2025\" rel=\"noopener noreferrer\">The Institute of Company Secretaries of India</a>'s Syllabus 2022 Professional archive names Environmental, Social and Governance (ESG) Principles and Practice as paper code 531.</p><h2>Turn a broad theme into a case</h2><p>A company says its process is sustainable. Ask what evidence the board has, which metric could be checked and what would make the claim misleading. That is closer to a professional answer than repeating a definition.</p><h2>Use the right paper and update</h2><p>The ICSI archive identifies the ESG paper under Syllabus 2022. Session supplements matter because practice questions may turn on a newer compliance or disclosure rule.</p><p>Write a 150-word ESG case answer with a board action, a measurable signal and one limitation. Remove any line that could be copied into an unrelated corporate-governance question.</p><ul><li>What decision did the board make?</li><li>What evidence supports the claim?</li><li>Which disclosure would let a reader test it?</li></ul><p>Use the ICSI Professional enrolment route and verify the selected group and elective, if applicable, before paying. Retain the form for admit-card comparison.</p><p>A specific, testable governance answer is stronger than polished but empty sustainability language.</p>",
+      "content_variation": {
+        "opening": "ESG in CS Professional is not a slogan contest. An answer needs to connect a governance failure or environmental claim to an actual board, disclosure or compliance decision.",
+        "application": "Use the ICSI Professional enrolment route and verify the selected group and elective, if applicable, before paying. Retain the form for admit-card comparison.",
+        "preparation": "Write a 150-word ESG case answer with a board action, a measurable signal and one limitation. Remove any line that could be copied into an unrelated corporate-governance question.",
+        "faq_questions": [
+          "What is ICSI Professional paper 531?",
+          "How can an ESG answer avoid vague claims?",
+          "Should Professional candidates use current ICSI supplements?",
+          "What form detail needs a final Professional check?"
+        ]
+      }
+    },
+    {
+      "id": "d90bae7b-c67f-44ff-a555-4d34e9125030",
+      "old_slug": "ctet",
+      "slug": "ctet",
+      "name": "CTET",
+      "conducting_authority": "The Central Board of Secondary Education",
+      "description": "CTET explained through a verified previous-session detail, the live application route and preparation that matches the actual paper. Check the current authority notice for dates.",
+      "application_process": "<h2>Application route</h2><p>Use the CTET portal's live bulletin and candidate login for the chosen edition. Read the correction-window rules before assuming a submitted paper choice can be changed later.</p>",
+      "preparation_tips": "<h2>Paper-specific practice</h2><p>Answer one child-development scenario and one subject-pedagogy question per session. Note the tempting distractor and the classroom evidence that rules it out.</p>",
+      "exam_pattern": "<h2>Published session evidence</h2><p>The Central Board of Secondary Education conducts CTET, and its official site directs candidates to the information bulletin for the syllabus.</p>",
+      "summary_content": "<h2>CTET decision point</h2><p>CTET preparation starts with a teaching level, not with a random pile of pedagogy questions. A candidate should know which paper and classroom age group they are preparing for before choosing a mock.</p><p>The Central Board of Secondary Education conducts CTET, and its official site directs candidates to the information bulletin for the syllabus.</p>",
+      "page_summary": "CTET paper choice, application route and subject-specific preparation.",
+      "meta_title": "CTET: Papers and Application Route",
+      "meta_description": "Understand the CTET papers, form route and useful practice with a verified authority detail, without copying an old session date.",
+      "meta_keywords": "CTET, exam papers, application, preparation, official notice",
+      "tags": [
+        "CTET",
+        "Teaching"
+      ],
+      "data_source_urls": [
+        "https://ctet.nic.in/"
+      ],
+      "data_verified_at": "2026-10-06T12:30:00+05:30",
+      "data_last_checked_at": "2026-10-06T12:30:00+05:30",
+      "data_clean_state": "reviewed_batch_043",
+      "internal_links": [
+        "/exams"
+      ],
+      "external_links": {
+        "authority": "https://ctet.nic.in/",
+        "evidence": "https://ctet.nic.in/"
+      },
+      "evidence_examples": [
+        {
+          "claim": "The Central Board of Secondary Education conducts CTET, and its official site directs candidates to the information bulletin for the syllabus.",
+          "source_url": "https://ctet.nic.in/"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Who conducts CTET?",
+          "answer": "The Central Board of Secondary Education conducts it."
+        },
+        {
+          "question": "Where is the CTET syllabus published?",
+          "answer": "The official CTET site directs candidates to its information bulletin."
+        },
+        {
+          "question": "What should a pedagogy error log capture?",
+          "answer": "Record the misconception, the tempting answer and the better classroom response."
+        },
+        {
+          "question": "Can a CTET paper choice be assumed editable after submission?",
+          "answer": "No. Read the live edition's correction-window conditions first."
+        }
+      ],
+      "article_html": "<p>CTET preparation starts with a teaching level, not with a random pile of pedagogy questions. A candidate should know which paper and classroom age group they are preparing for before choosing a mock.</p><h2>Choose the classroom before the question bank</h2><p>Put the intended teaching stage beside the paper choice in the current bulletin. That narrows the child-development and subject work you need to review.</p><ol><li>Identify the learner's misconception.</li><li>Pick a response that diagnoses it.</li><li>Explain why the next teaching step fits.</li></ol><h2>Use a classroom explanation, not a slogan</h2><p>If a child misunderstands a fraction, write the first question you would ask and why. Pedagogy practice improves when the response has a learner and a misconception, not just a memorised term.</p><p><a href=\"https://ctet.nic.in/\" rel=\"noopener noreferrer\">The Central Board of Secondary Education</a> conducts CTET, and its official site directs candidates to the information bulletin for the syllabus.</p><p>Use the CTET portal's live bulletin and candidate login for the chosen edition. Read the correction-window rules before assuming a submitted paper choice can be changed later.</p><p>Answer one child-development scenario and one subject-pedagogy question per session. Note the tempting distractor and the classroom evidence that rules it out.</p><p>A good CTET mock review should tell you what you would do in a classroom, not only which option was correct.</p>",
+      "content_variation": {
+        "opening": "CTET preparation starts with a teaching level, not with a random pile of pedagogy questions. A candidate should know which paper and classroom age group they are preparing for before choosing a mock.",
+        "application": "Use the CTET portal's live bulletin and candidate login for the chosen edition. Read the correction-window rules before assuming a submitted paper choice can be changed later.",
+        "preparation": "Answer one child-development scenario and one subject-pedagogy question per session. Note the tempting distractor and the classroom evidence that rules it out.",
+        "faq_questions": [
+          "Who conducts CTET?",
+          "Where is the CTET syllabus published?",
+          "What should a pedagogy error log capture?",
+          "Can a CTET paper choice be assumed editable after submission?"
+        ]
+      }
+    }
+  ]
+}

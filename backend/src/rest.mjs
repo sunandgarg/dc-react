@@ -7,6 +7,7 @@ import { sanitizeCollegePublicContent } from "./college-content-sanitizer.mjs";
 import { assertArticleTopicsAvailable, loadArticleCoverage, withArticleWriteLock } from "./blog-ai.mjs";
 import { mergeIntentVisitor, prepareIntentEvents, stampTrackingSiteScope, updateIntentScoresForEvents } from "./intent-intelligence.mjs";
 import { normalizeArticleFaqs, saveArticleFaqs } from "./article-faqs.mjs";
+import { normalizeArticleEntityLinks, saveNewArticleEntityLinks } from "./article-entity-links.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
@@ -31,8 +32,12 @@ export function omitDerivedFields(table, input) {
 }
 
 export function sanitizePublicWritePayload(table, input) {
-  if (table === "articles" && input && Object.hasOwn(input, "faqs")) {
-    return { ...input, faqs: normalizeArticleFaqs(input.faqs) };
+  if (table === "articles" && input && (Object.hasOwn(input, "faqs") || Object.hasOwn(input, "entity_links"))) {
+    return {
+      ...input,
+      ...(Object.hasOwn(input, "faqs") ? { faqs: normalizeArticleFaqs(input.faqs) } : {}),
+      ...(Object.hasOwn(input, "entity_links") ? { entity_links: normalizeArticleEntityLinks(input.entity_links) } : {}),
+    };
   }
   if (table !== "colleges" || !input || typeof input !== "object") return input;
   return sanitizeCollegePublicContent(input).row;
@@ -776,6 +781,7 @@ async function handlePost(table, request, url, context) {
           allowDelete: Boolean(context.allowArticleFaqDelete),
           isNewArticle: !existingByCandidate[index]?.length,
         });
+        if (!existingByCandidate[index]?.length) await saveNewArticleEntityLinks(tx, { ...article, entity_links: rows[index].entity_links });
         saved.push(article);
       }
       return saved;

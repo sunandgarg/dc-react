@@ -21,6 +21,7 @@ export const BATCH_CONTENT_VARIATION_TEXT = [
 ].join(" ");
 
 const plain = (value) => String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+const comparableProse = (value) => plain(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 const normalizedHeading = (value) => plain(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 const FLATTENED_LABELS = /\b(?:student profile|target courses|risk to check|safer approach|target course type|check first|possible result if missed|safer decision)\b/gi;
 const VERIFICATION_CLICHE = /\b(?:check|verify|recheck|read|confirm)\b[\s\S]{0,65}\b(?:official|authority|notification|portal|notice)\b/gi;
@@ -50,7 +51,7 @@ export function auditHumanEditorialHtml(html, { authority = "", evidence = [] } 
   if (genericCursor >= 5) issues.push("formulaic summary-to-FAQ section sequence");
   if ((prose.match(VERIFICATION_CLICHE) || []).length > 2) issues.push("repeated generic official-verification advice");
   if (authority && !normalize(prose).includes(normalize(authority))) issues.push("named exam authority is absent from the article");
-  if (evidence.length && !evidence.some(({ claim }) => claim && normalize(prose).includes(normalize(claim)))) {
+  if (evidence.length && !evidence.some(({ claim }) => claim && comparableProse(prose).includes(comparableProse(claim)))) {
     issues.push("no source-backed concrete detail appears in the article");
   }
   return { headings, issues };
@@ -82,6 +83,18 @@ export function assertBatchHumanEditorial(records, label = "batch") {
   }
   if (issues.length) throw new Error(`${label} human editorial validation failed: ${issues.join("; ")}`);
   return { records: rows.length, unique_outlines: new Set(outlines).size, sourced_examples: rows.reduce((count, row) => count + row.evidence_examples.length, 0) };
+}
+
+export function assertBatchStructuralVariation(records, label = "batch") {
+  const rows = Array.isArray(records) ? records : [];
+  const shapes = rows.map((row) => [...String(row.article_html || "").matchAll(/<(p|h2|h3|ul|ol|table)\b/gi)]
+    .map((match) => match[1].toLowerCase()).join("-"));
+  const counts = new Map();
+  for (const shape of shapes) counts.set(shape, (counts.get(shape) || 0) + 1);
+  if (rows.length >= 4 && [...counts.values()].some((count) => count > 2)) {
+    throw new Error(`${label} structural validation failed: more than two articles reuse the same paragraph, heading and list sequence`);
+  }
+  return { records: rows.length, unique_structures: counts.size };
 }
 
 const examVariant = (opening, application, preparation, faq_questions, application_html) => ({ opening, application, preparation, faq_questions, application_html });

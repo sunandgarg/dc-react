@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata } from "./db.mjs";
 import { assertArticleTopicsAvailable, withArticleWriteLock } from "./blog-ai.mjs";
 import { saveArticleFaqs } from "./article-faqs.mjs";
+import { saveNewArticleEntityLinks } from "./article-entity-links.mjs";
 
 const REVIEWED_TABLES = new Set([
   "articles", "article_categories", "article_links", "authors",
@@ -170,7 +171,10 @@ export async function applyApprovedReview(tx, review) {
       `INSERT INTO ${quote(table)} (${columns.map(quote).join(",")}) VALUES (${columns.map(() => "?").join(",")})`,
       ...columns.map((column) => databaseValue(table, column, after[column])),
     );
-    if (table === "articles") await saveArticleFaqs(tx, after, { isNewArticle: true });
+    if (table === "articles") {
+      await saveArticleFaqs(tx, after, { isNewArticle: true });
+      await saveNewArticleEntityLinks(tx, after);
+    }
     return;
   }
 

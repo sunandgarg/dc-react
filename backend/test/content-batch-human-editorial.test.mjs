@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { auditHumanEditorialHtml, assertBatchHumanEditorial } from "../../scripts/content-batch-policy.mjs";
+import { auditHumanEditorialHtml, assertBatchHumanEditorial, assertBatchStructuralVariation } from "../../scripts/content-batch-policy.mjs";
 import { readFileSync } from "node:fs";
 
 const article = (slug, heading) => ({
@@ -45,4 +45,23 @@ test("prepared batch 042 stays review-only and passes the human editorial gate",
   assert.match(payload.scope, /review artifact, not a live database update/);
   assert.equal(assertBatchHumanEditorial(payload.updates, payload.batch).sourced_examples, 10);
   assert.ok(payload.updates.every((row) => row.exam_date === "Not announced" && row.data_source_urls.length >= 2));
+});
+
+test("different headings cannot conceal the same article skeleton", () => {
+  const rows = ["Branch choice", "Required papers", "Counselling route", "Seat decision"].map((heading, index) => ({
+    ...article(`route-${index}`, heading),
+    article_html: `<p>Distinct opening ${index} with a named fact.</p><h2>${heading}</h2><p>Distinct explanation ${index} for this route.</p>`,
+  }));
+  assert.throws(() => assertBatchStructuralVariation(rows, "same-shape"), /reuse the same paragraph, heading and list sequence/);
+});
+
+test("prepared batch 043 keeps verified detail and varied HTML shapes without a live write", () => {
+  const payload = JSON.parse(readFileSync(new URL("../../reports/exam-refresh-batch-043-2026-10-06.json", import.meta.url), "utf8"));
+  assert.equal(payload.updates.length, 10);
+  assert.match(payload.scope, /editorial review only, no production database update/);
+  assert.equal(assertBatchHumanEditorial(payload.updates, payload.batch).sourced_examples, 10);
+  assert.ok(assertBatchStructuralVariation(payload.updates, payload.batch).unique_structures >= 5);
+  assert.ok(payload.updates.every((row) => row.data_source_urls.every((url) => /^https:\/\//.test(url))));
+  assert.ok(payload.updates.every((row) => ["eligibility", "status", "exam_date", "application_start_date", "application_end_date", "result_date", "registration_url"].every((field) => !(field in row))));
+  assert.ok(payload.updates.every((row) => row.faqs.length === 4 && !/Answer first:|<h1\b|\|\s*---/i.test(row.article_html)));
 });

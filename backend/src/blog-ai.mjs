@@ -210,6 +210,23 @@ function hasFormulaicSectionSequence(headings) {
   return false;
 }
 
+export function assessArticleSiblingVariation(draft, siblings = []) {
+  const rows = Array.isArray(siblings) ? siblings : [];
+  const html = String(draft?.content_html || "");
+  const first = normalizeArticleTitle(stripHtml(html.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1] || "").split(/[.!?](?:\s|$)/)[0]);
+  const shape = [...html.matchAll(/<(p|h2|h3|ul|ol|table)\b/gi)].map((match) => match[1].toLowerCase()).join("-");
+  const questions = new Set(normalizeGeneratedFaqs(draft?.faqs).map((faq) => normalizeArticleTitle(faq.question)));
+  const siblingOpenings = rows.map((row) => normalizeArticleTitle(stripHtml(row?.opening || row?.content_variation?.opening || row?.content_html?.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1] || "").split(/[.!?](?:\s|$)/)[0]));
+  const siblingShapes = rows.map((row) => [...String(row?.content_html || "").matchAll(/<(p|h2|h3|ul|ol|table)\b/gi)].map((match) => match[1].toLowerCase()).join("-"));
+  const siblingQuestions = rows.flatMap((row) => Array.isArray(row?.faq_questions) ? row.faq_questions : (row?.faqs || []).map((faq) => faq.question))
+    .map((question) => normalizeArticleTitle(question));
+  const issues = [];
+  if (first.length >= 25 && siblingOpenings.includes(first)) issues.push("opening sentence repeats a batch sibling");
+  if (shape && siblingShapes.filter((candidate) => candidate === shape).length >= 2) issues.push("article skeleton repeats more than two times in the batch");
+  if (siblingQuestions.some((question) => question && questions.has(question))) issues.push("FAQ question repeats a batch sibling");
+  return issues;
+}
+
 const stripPublishedAttributionPhrases = (value) => String(value || "")
   .replace(/\baccording to\b\s*/gi, "")
   .replace(/\bas reported by\b\s*/gi, "")
@@ -1781,10 +1798,10 @@ function batchSiblingContextText(value) {
   return siblings.map((sibling, index) => JSON.stringify({
     index: index + 1,
     title: String(sibling?.title || sibling?.name || "").slice(0, 160),
-    opening: String(sibling?.opening || sibling?.content_variation?.opening || "").slice(0, 500),
+    opening: String(sibling?.opening || sibling?.content_variation?.opening || stripHtml(sibling?.content_html?.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1] || "")).slice(0, 500),
     application: String(sibling?.application || sibling?.content_variation?.application || "").slice(0, 500),
     preparation: String(sibling?.preparation || sibling?.content_variation?.preparation || "").slice(0, 500),
-    faq_questions: Array.isArray(sibling?.faq_questions) ? sibling.faq_questions.slice(0, 8) : (sibling?.content_variation?.faq_questions || []).slice(0, 8),
+    faq_questions: Array.isArray(sibling?.faq_questions) ? sibling.faq_questions.slice(0, 8) : (sibling?.content_variation?.faq_questions || sibling?.faqs?.map((faq) => faq.question) || []).slice(0, 8),
   })).join("\n");
 }
 
@@ -2018,6 +2035,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   const hasFlattenedTableCopy = containsFlattenedTableCopy(body, contentHtml);
   const hasFormulaicOutline = hasFormulaicSectionSequence(headings);
   const verificationMentions = body.match(GENERIC_VERIFICATION_PATTERN) || [];
+  const siblingIssues = assessArticleSiblingVariation(draft, rawEditorialSettings.batchSiblings);
   const internalLinks = [...contentHtml.matchAll(/<a\b[^>]*href=["'](\/(?!\/)(?:news|exams|courses|colleges|scholarships|study-material)(?:[/?#][^"']*)?)["']/gi)];
   const officialUrls = new Set(verifiedOfficialExternalLinks(rawEditorialSettings.evidenceSignals || []));
   const externalLinks = [...contentHtml.matchAll(/<a\b[^>]*href=["'](https?:\/\/[^"']+)["']/gi)].map((match) => match[1]);
@@ -2056,6 +2074,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   check("No flattened table copy", !hasFlattenedTableCopy, 4, "comparison content has been pasted as a line-by-line table copy; use semantic table markup, bullets or descriptive prose", true);
   check("Topic-native outline", !hasFormulaicOutline, 3, "section order follows a repetitive executive-summary/risk-matrix/checklist template; vary the outline for the topic", true);
   check("Consolidated cautions", verificationMentions.length <= 2, 3, "the same official-verification caution is repeated too many times; state it once and apply it", true);
+  check("Batch editorial variation", siblingIssues.length === 0, 0, siblingIssues.join("; "), true);
   let topicFocused = true;
   if (topicProfile.anchors.size >= 2) {
     const coveredAnchors = [...topicProfile.anchors].filter((anchor) => new RegExp(`\\b${anchor.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(searchableBody));
@@ -2259,7 +2278,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
       featured_image: "",
       site_scope: normalizedScope,
     };
-    const deterministic = assessGeneratedArticle(draft, topic, wordLimit, { ...editorial, evidenceSignals: evidence });
+    const deterministic = assessGeneratedArticle(draft, topic, wordLimit, { ...editorial, evidenceSignals: evidence, batchSiblings });
     if (!deterministic.passed) {
       quality = deterministic;
       correctionIssues = deterministic.issues;
@@ -2590,7 +2609,7 @@ async function geethikaEditorialAuthor(client = prisma) {
   return author;
 }
 
-async function saveGeneratedArticle(topic, settings, signals, entityContext = null, existingCoverage = null, coverageWindow = null) {
+async function saveGeneratedArticle(topic, settings, signals, entityContext = null, existingCoverage = null, coverageWindow = null, runSiblings = []) {
   const editorial = normalizeBlogAgentSettings(settings);
   const siteScope = "dekhocampus";
   const topicTitle = String(topic?.title || topic).trim();
@@ -2606,7 +2625,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     model: editorial.text_model,
     feature: "blog-agent",
     siteScope,
-    batchSiblings: Array.isArray(entityContext?.batch_siblings) ? entityContext.batch_siblings : [],
+    batchSiblings: [...(Array.isArray(entityContext?.batch_siblings) ? entityContext.batch_siblings : []), ...runSiblings],
     cover: {
       imageMode: editorial.image_mode,
       templateUrl: editorial.image_template_url,
@@ -2660,6 +2679,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     tags: article.tags,
     created_at: article.created_at,
   });
+  runSiblings.push({ title: draft.title, content_html: draft.content_html, faqs: draft.faqs });
   return article.id;
 }
 
@@ -2843,9 +2863,10 @@ export async function runBlogAgent(body = {}) {
     if (!topics.length) throw new Error(`The configured text model returned no usable non-duplicate article topics after three structured research attempts (${rejected.length} duplicate suggestions rejected). Review the active research sources and try again.`);
     await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { progress: 30, current_step: `Writing ${topics.length} article(s)`, selected_topics: topics, sources: signals.map(({ signal, ...source }) => source) } });
     const ids = [];
+    const runSiblings = [];
     for (const topic of topics) {
       await assertRunActive(run.id, executionToken);
-      const id = await saveGeneratedArticle(topic, settings, signals, entityContext, todayCoverage, dayWindow);
+      const id = await saveGeneratedArticle(topic, settings, signals, entityContext, todayCoverage, dayWindow, runSiblings);
       await assertRunActive(run.id, executionToken);
       if (id) ids.push(id);
     }

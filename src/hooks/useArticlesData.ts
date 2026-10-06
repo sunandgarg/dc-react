@@ -174,7 +174,7 @@ export function useDbArticle(slug: string | undefined, siteScope: SiteScope = DE
 export function useSaveArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (article: Partial<DbArticle> & { slug: string; title: string; faqs?: ArticleFaqDraft[] }) => {
+    mutationFn: async (article: Partial<DbArticle> & { slug: string; title: string; faqs?: ArticleFaqDraft[]; entity_links?: { entity_type: string; entity_slug: string }[] }) => {
       let pendingReview = false;
       const cleanSlug = normalizeArticleSlug(article.slug);
       const normalized = { ...article, slug: cleanSlug || article.slug, site_scope: siteScope };

@@ -22,7 +22,8 @@ vi.mock("@/components/admin/ArticleCoverGenerator", () => ({ ArticleCoverGenerat
 vi.mock("@/components/admin/ArticleScorePanel", () => ({ ArticleScorePanel: () => null }));
 vi.mock("@/components/admin/FeaturedRankPicker", () => ({ FeaturedRankPicker: () => null }));
 vi.mock("@/components/admin/FeaturedRankPanel", () => ({ FeaturedRankPanel: () => null }));
-vi.mock("@/components/admin/EntityMultiPicker", () => ({ EntityMultiPicker: () => null }));
+vi.mock("@/components/admin/EntityMultiPicker", () => ({ EntityMultiPicker: ({ draftLinks, onDraftLinksChange }: { draftLinks?: { entity_type: string; entity_slug: string }[]; onDraftLinksChange?: (links: { entity_type: string; entity_slug: string }[]) => void }) =>
+  onDraftLinksChange ? <button type="button" onClick={() => onDraftLinksChange([...(draftLinks || []), { entity_type: "exam", entity_slug: "jee-main" }])}>Tag JEE Main</button> : null }));
 vi.mock("@/components/admin/StudyMaterialQuickTagger", () => ({ StudyMaterialQuickTagger: () => null }));
 vi.mock("@/components/admin/CollegeStudyTagger", () => ({ CollegeStudyTagger: () => null }));
 vi.mock("@/components/admin/ArticleLinksEditor", () => ({ ArticleLinksEditor: () => null }));
@@ -60,6 +61,17 @@ beforeEach(() => {
 afterEach(() => { cleanup(); clientList.splice(0).forEach((client) => client.clear()); });
 
 describe("article FAQ workflow", () => {
+  for (const role of ["content_writer", "content"]) {
+    it(`${role} can choose an exam tag on a new article and submit it for review`, async () => {
+      mocks.role = role;
+      sessionStorage.setItem(draftKey, JSON.stringify(draft));
+      mount();
+      fireEvent.click(screen.getByRole("button", { name: "Tag JEE Main" }));
+      fireEvent.click(screen.getByRole("button", { name: "Submit for approval" }));
+      await waitFor(() => expect(mocks.writes[0]).toMatchObject({ entity_links: [{ entity_type: "exam", entity_slug: "jee-main" }] }));
+    });
+  }
+
   for (const role of ["content_writer", "content", "content_head"]) {
     it(`${role} can add FAQs before saving and submit them with the article`, async () => {
       mocks.role = role;
@@ -149,15 +161,13 @@ describe("article FAQ workflow", () => {
     expect(mocks.writes).toHaveLength(0);
   });
 
-  it("saving a draft for tagging reloads FAQ IDs before another save", async () => {
+  it("saves FAQs and entity tags together without an intermediate draft", async () => {
     mocks.role = "content_head";
-    mocks.faqData = [{ id: "persisted-faq-id", question: "When?", answer: "Next month", is_active: true }];
     sessionStorage.setItem(draftKey, JSON.stringify({ ...draft, faqs: [{ question: "When?", answer: "Next month", is_active: true }] }));
     mount(); expandFaqs();
-    fireEvent.click(screen.getByRole("button", { name: "Save draft to enable tagging" }));
-    await waitFor(() => expect(JSON.parse(sessionStorage.getItem(draftKey)!).faqs[0].id).toBe("persisted-faq-id"));
+    fireEvent.click(screen.getByRole("button", { name: "Tag JEE Main" }));
     fireEvent.click(screen.getByRole("button", { name: "Save Draft" }));
-    await waitFor(() => expect(mocks.writes).toHaveLength(2));
-    expect(mocks.writes[1]).toMatchObject({ faqs: [{ id: "persisted-faq-id" }] });
+    await waitFor(() => expect(mocks.writes).toHaveLength(1));
+    expect(mocks.writes[0]).toMatchObject({ faqs: [{ question: "When?" }], entity_links: [{ entity_type: "exam", entity_slug: "jee-main" }] });
   });
 });

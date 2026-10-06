@@ -17,7 +17,7 @@ import { Plus, Pencil, Trash2, Search, Newspaper, Info, FileText, Settings, Exte
 import { toast } from "sonner";
 import { CSVTools } from "@/components/CSVTools";
 import { useAuth } from "@/hooks/useAuth";
-import { EntityMultiPicker } from "@/components/admin/EntityMultiPicker";
+import { EntityMultiPicker, type EntityLinkDraft } from "@/components/admin/EntityMultiPicker";
 import { StudyMaterialQuickTagger } from "@/components/admin/StudyMaterialQuickTagger";
 import { ArticleLinksEditor } from "@/components/admin/ArticleLinksEditor";
 import { LinksSummary } from "@/components/admin/LinksSummary";
@@ -50,11 +50,11 @@ const SARKARI_VERTICALS = ["Government Jobs", "Central Government", "State Gover
 const SARKARI_CATEGORIES = ["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"]
   .map((name) => ({ slug: name.toLowerCase().replace(/\s+/g, "-"), name }));
 
-type ArticleDraft = Partial<DbArticle> & { faqs?: ArticleFaqDraft[] };
+type ArticleDraft = Partial<DbArticle> & { faqs?: ArticleFaqDraft[]; entity_links?: EntityLinkDraft[] };
 const emptyArticle: ArticleDraft = {
   slug: "", title: "", description: "", content: "", vertical: "", category: "", author: "",
   featured_image: "", source_logo: "", views: 0, tags: [], meta_title: "", meta_description: "", meta_keywords: "",
-  is_active: false, status: "Draft", faqs: [],
+  is_active: false, status: "Draft", faqs: [], entity_links: [],
 };
 
 const normalizeAdminArticleSearch = (value: unknown) =>
@@ -238,29 +238,6 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           setSearch(normalizedSlug);
           setPage(1);
         }
-      },
-    });
-  };
-
-  const saveDraftToEnableTagging = () => {
-    if (!editing) return;
-    if (faqsPending) { toast.error("Wait for FAQs to load, or retry loading them before saving."); return; }
-    const faqError = validateArticleFaqs(editorFaqs);
-    if (faqError) { toast.error(faqError); return; }
-    const normalizedSlug = normalizeArticleSlug(editing.slug);
-    const validationError = validateArticleSave({ ...editing, slug: normalizedSlug, status: "Draft" }, canPublish);
-    if (validationError) { toast.error(validationError); return; }
-
-    const { featured_rank: _omit, ...payload } = { ...editing, faqs: editorFaqs, slug: normalizedSlug, status: "Draft", is_active: false, site_scope: siteScope } as any;
-    saveArticle.mutate(payload, {
-      onSuccess: (result) => {
-        if (result.pendingReview || !result.article?.id) {
-          toast.success("Draft submitted for admin review. Tagging becomes available after approval.");
-          setEditing(null);
-          return;
-        }
-        // Reload persisted FAQ IDs before any further save, avoiding duplicate inserts.
-        setEditing((current) => current ? { ...current, ...result.article, slug: normalizedSlug, status: "Draft", faqs: undefined } : current);
       },
     });
   };
@@ -594,19 +571,12 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                     </TabsContent>
                   </Tabs>
                 ) : (
-                  <div className="mt-3 flex flex-col gap-2 bg-muted/40 rounded-lg p-3">
-                    <p className="text-xs text-muted-foreground">Save the article to start tagging colleges, courses, exams, news, careers, scholarships and study material.</p>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="self-start rounded-lg"
-                      disabled={!editing.slug || !editing.title || saveArticle.isPending}
-                      onClick={saveDraftToEnableTagging}
-                    >
-                      {saveArticle.isPending ? "Saving…" : canPublish ? "Save draft to enable tagging" : "Submit draft for review"}
-                    </Button>
-                    <p className="text-[11px] text-muted-foreground">(Requires Title + Slug above)</p>
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs text-muted-foreground">Choose related colleges, courses, exams and more now. These links are saved with the article or included in its review submission.</p>
+                    <EntityMultiPicker
+                      draftLinks={editing.entity_links || []}
+                      onDraftLinksChange={(links) => update("entity_links", links)}
+                    />
                   </div>
                 ))}
               </AdminFormSection>
