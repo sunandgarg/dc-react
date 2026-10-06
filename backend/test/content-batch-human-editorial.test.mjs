@@ -61,7 +61,7 @@ test("prepared batch 043 keeps verified detail and varied HTML shapes without a 
   assert.match(payload.scope, /editorial review only, no production database update/);
   assert.equal(assertBatchHumanEditorial(payload.updates, payload.batch).sourced_examples, 10);
   assert.ok(assertBatchStructuralVariation(payload.updates, payload.batch).unique_structures >= 5);
-  assert.ok(payload.updates.every((row) => row.data_source_urls.every((url) => /^https:\/\//.test(url))));
+  assert.ok(payload.updates.every((row) => row.data_source_urls.length >= 2 && row.data_source_urls.every((url) => /^https:\/\//.test(url))));
   assert.ok(payload.updates.every((row) => ["eligibility", "status", "exam_date", "application_start_date", "application_end_date", "result_date", "registration_url"].every((field) => !(field in row))));
   assert.ok(payload.updates.every((row) => row.faqs.length === 4 && !/Answer first:|<h1\b|\|\s*---/i.test(row.article_html)));
 });

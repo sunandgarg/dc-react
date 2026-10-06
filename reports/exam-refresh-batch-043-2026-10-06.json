@@ -41,7 +41,8 @@
         "Commerce"
       ],
       "data_source_urls": [
-        "https://www.icai.org/post/24181"
+        "https://www.icai.org/post/24181",
+        "https://www.icai.org/students.shtml"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -110,7 +111,8 @@
         "Commerce"
       ],
       "data_source_urls": [
-        "https://www.icai.org/post/intermediate-nset"
+        "https://www.icai.org/post/intermediate-nset",
+        "https://www.icai.org/students.shtml"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -179,7 +181,8 @@
         "Commerce"
       ],
       "data_source_urls": [
-        "https://www.icai.org/post/24181"
+        "https://www.icai.org/post/24181",
+        "https://www.icai.org/students.shtml"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -248,7 +251,8 @@
         "Commerce"
       ],
       "data_source_urls": [
-        "https://icmai.in/upload/Examination/FOUNDATION_June_2026.pdf"
+        "https://icmai.in/upload/Examination/FOUNDATION_June_2026.pdf",
+        "https://icmai.in/ClntStudents/UpdateandAnnouncements"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -317,7 +321,8 @@
         "Commerce"
       ],
       "data_source_urls": [
-        "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf"
+        "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf",
+        "https://icmai.in/ClntStudents/UpdateandAnnouncements"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -386,7 +391,8 @@
         "Commerce"
       ],
       "data_source_urls": [
-        "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf"
+        "https://icmai.in/upload/Examination/Inter_Final_June_2026.pdf",
+        "https://icmai.in/ClntStudents/UpdateandAnnouncements"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -455,7 +461,8 @@
         "Commerce/Law"
       ],
       "data_source_urls": [
-        "https://www.icsi.edu/media/filer_public/25/b2/25b20bc7-3ff0-458b-89fc-cbc88f5d7731/2026_june_cseet_2.pdf"
+        "https://www.icsi.edu/media/filer_public/25/b2/25b20bc7-3ff0-458b-89fc-cbc88f5d7731/2026_june_cseet_2.pdf",
+        "https://www.icsi.edu/"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -524,7 +531,8 @@
         "Commerce/Law"
       ],
       "data_source_urls": [
-        "https://www.icsi.edu/examination/previous-sessions-qps/december-2025"
+        "https://www.icsi.edu/examination/previous-sessions-qps/december-2025",
+        "https://www.icsi.edu/"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -593,7 +601,8 @@
         "Commerce/Law"
       ],
       "data_source_urls": [
-        "https://www.icsi.edu/examination/previous-sessions-qps/december-2025"
+        "https://www.icsi.edu/examination/previous-sessions-qps/december-2025",
+        "https://www.icsi.edu/"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -662,7 +671,8 @@
         "Teaching"
       ],
       "data_source_urls": [
-        "https://ctet.nic.in/"
+        "https://ctet.nic.in/",
+        "https://ctet.nic.in/documents/"
       ],
       "data_verified_at": "2026-10-06T12:30:00+05:30",
       "data_last_checked_at": "2026-10-06T12:30:00+05:30",
@@ -671,7 +681,7 @@
         "/exams"
       ],
       "external_links": {
-        "authority": "https://ctet.nic.in/",
+        "authority": "https://ctet.nic.in/documents/",
         "evidence": "https://ctet.nic.in/"
       },
       "evidence_examples": [

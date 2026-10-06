@@ -209,7 +209,7 @@ function build(config) {
   if (!row || row.is_active === false) throw new Error(`Missing active canonical exam row: ${config.slug}`);
   const portal = config.slug.startsWith("ca-") ? "https://www.icai.org/students.shtml"
     : config.slug.startsWith("cma-") ? "https://icmai.in/ClntStudents/UpdateandAnnouncements"
-      : config.slug === "ctet" ? "https://ctet.nic.in/" : "https://www.icsi.edu/";
+      : config.slug === "ctet" ? "https://ctet.nic.in/documents/" : "https://www.icsi.edu/";
   const linkedFact = esc(config.fact).replace(esc(config.authority), `<a href="${esc(config.source)}" rel="noopener noreferrer">${esc(config.authority)}</a>`);
   const blocks = {
     fact: `<p>${linkedFact}</p>`,
@@ -233,7 +233,7 @@ function build(config) {
     meta_description: `Understand the ${config.name} papers, form route and useful practice with a verified authority detail, without copying an old session date.`.slice(0, 155),
     meta_keywords: `${config.name}, exam papers, application, preparation, official notice`,
     tags: [config.name, config.category],
-    data_source_urls: [config.source], data_verified_at: checkedAt, data_last_checked_at: checkedAt, data_clean_state: "reviewed_batch_043",
+    data_source_urls: [config.source, portal], data_verified_at: checkedAt, data_last_checked_at: checkedAt, data_clean_state: "reviewed_batch_043",
     internal_links: [config.related], external_links: { authority: portal, evidence: config.source },
     evidence_examples: [{ claim: config.fact, source_url: config.source }], faqs, article_html: articleHtml,
     content_variation: { opening: config.opening, application: config.application, preparation: config.preparation, faq_questions: faqs.map((faq) => faq.question) },
