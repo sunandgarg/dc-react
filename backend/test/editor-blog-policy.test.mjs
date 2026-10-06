@@ -91,13 +91,21 @@ test("Content Head sessions and article edits preserve browser independence", as
 test("Content Head can reopen private article drafts while public reads remain published-only", async () => {
   const apiSource = await readFile(new URL("../src/index.mjs", import.meta.url), "utf8");
   const editorSource = await readFile(new URL("../../src/pages/AdminArticles.tsx", import.meta.url), "utf8");
-  assert.match(apiSource, /identity && table === "articles"[\s\S]*?role` = 'content_head'[\s\S]*?return \{ request, actorUserId: identity\.id \}/);
+  assert.match(apiSource, /identity && table === "articles"[\s\S]*?role` IN \('content_head','manager'\)[\s\S]*?return \{ request, actorUserId: identity\.id \}/);
   assert.match(apiSource, /table === "articles" \? enforcePublicArticlePolicy\(request\) : request/);
   assert.match(editorSource, /is_active: false, status: "Draft"/);
   assert.doesNotMatch(editorSource, /Save draft to add FAQs/);
   assert.match(editorSource, /ArticleFaqEditor value=\{editorFaqs \|\| \[\]\}/);
   assert.match(editorSource, /disabled=\{faqsPending \|\| saveArticle\.isPending\}/);
   assert.match(editorSource, /setSearch\(normalizedSlug\)/);
+});
+
+test("manager can publish articles and higher editorial roles take precedence over writer restrictions", async () => {
+  const apiSource = await readFile(new URL("../src/index.mjs", import.meta.url), "utf8");
+  const authorization = apiSource.slice(apiSource.indexOf("async function authorizeRest("), apiSource.indexOf("async function authorizeRest(") + 9000);
+  assert.match(authorization, /role === "manager"[\s\S]*?table === "articles"[\s\S]*?actorUserId: null/);
+  assert.ok(authorization.indexOf('role === "manager"') < authorization.indexOf('role === "content_writer"'));
+  assert.ok(authorization.indexOf('role === "content_head"') < authorization.indexOf('role === "content_writer"'));
 });
 
 test("non-publishing editors are forced into draft state by the server", () => {

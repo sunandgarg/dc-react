@@ -25,11 +25,12 @@ export function visibleArticleText(value: string | null | undefined) {
     .trim();
 }
 
-export function validateArticleSave(article: ArticleSaveFields, canPublish: boolean) {
+export function validateArticleSave(article: ArticleSaveFields, canPublish: boolean, isWriter = false) {
   if (!String(article.title || "").trim()) return "Add an article title.";
   if (!normalizeArticleSlug(article.slug)) return "Add a valid article slug.";
   if (article.status === "Published" && !canPublish) return "You do not have permission to publish this article.";
-  if (article.status !== "Published") return null;
+  // Review submissions are published on approval, so they need the same body checks.
+  if (article.status !== "Published" && canPublish && !isWriter) return null;
   if (visibleArticleText(article.description).length < 10) return "Add a useful article description before publishing.";
   if (visibleArticleText(article.content).length < 20) return "Add article content before publishing.";
   return null;

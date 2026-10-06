@@ -14,6 +14,8 @@ describe("article editor save contract", () => {
     const incomplete = { title: "CAT update", slug: "CAT update", description: "<p></p>", content: "<p></p>" };
     expect(validateArticleSave({ ...incomplete, status: "Draft" }, true)).toBeNull();
     expect(validateArticleSave({ ...incomplete, status: "Published" }, true)).toMatch(/description/i);
+    expect(validateArticleSave({ ...incomplete, status: "Draft" }, false)).toMatch(/description/i);
+    expect(validateArticleSave({ ...incomplete, status: "Draft" }, true, true)).toMatch(/description/i);
   });
 
   it("accepts a complete publishable article", () => {

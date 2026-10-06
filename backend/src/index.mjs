@@ -306,7 +306,7 @@ async function authorizeRest(table, request) {
     if (identity && await isAdmin(identity.id)) return { request, actorUserId: identity.id };
     if (identity && table === "articles") {
       const contentHeadRoles = await prisma.$queryRawUnsafe(
-        "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content_head' LIMIT 1",
+        "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` IN ('content_head','manager') LIMIT 1",
         identity.id,
       );
       if (contentHeadRoles.length) return { request, actorUserId: identity.id };
@@ -354,11 +354,28 @@ async function authorizeRest(table, request) {
     const action = request.method === "POST"
       ? (String(request.headers.get("prefer") || "").includes("resolution=merge-duplicates") ? "edit" : "create")
       : request.method === "PATCH" ? "edit" : request.method === "DELETE" ? "delete" : "view";
-    const writerRoles = await prisma.$queryRawUnsafe(
-      "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content_writer' LIMIT 1",
+    const editorialRoles = await prisma.$queryRawUnsafe(
+      "SELECT `role` FROM `user_roles` WHERE `user_id` = ? AND `role` IN ('manager','content_head','content','content_writer')",
       identity.id,
     );
-    if (writerRoles.length) {
+    if (editorialRoles.some((row) => row.role === "manager") && table === "articles" && ["view", "create", "edit"].includes(action)) {
+      return {
+        request: await validateSiteScopeWriteRequest(table, request),
+        actorUserId: null,
+        allowManualArticleTopicDuplicate: action !== "view",
+      };
+    }
+    if (editorialRoles.some((row) => row.role === "content_head") && canContentHeadAccess(table, action)) {
+      return {
+        request: await validateSiteScopeWriteRequest(table, request),
+        actorUserId: null,
+        allowManualArticleTopicDuplicate: table === "articles" && action !== "view",
+      };
+    }
+    if (editorialRoles.some((row) => row.role === "content") && canContentEditorAccess(table, action)) {
+      return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: identity.id, stageReview: action !== "view", forceDraft: action !== "view" };
+    }
+    if (editorialRoles.some((row) => row.role === "content_writer")) {
       if (!canContentWriterAccess(table, action)) {
         throw new HttpError(403, "WRITER_CREATE_ONLY", "Content writers can only create new articles, colleges, courses and exams");
       }
@@ -400,22 +417,6 @@ async function authorizeRest(table, request) {
         forceDraft: false,
         publishOnApproval: !directPublish,
       };
-    }
-    const editorialRoles = await prisma.$queryRawUnsafe(
-      "SELECT `role` FROM `user_roles` WHERE `user_id` = ? AND `role` IN ('content_head','content')",
-      identity.id,
-    );
-    if (editorialRoles.some((row) => row.role === "content_head") && canContentHeadAccess(table, action)) {
-      return {
-        request: await validateSiteScopeWriteRequest(table, request),
-        actorUserId: null,
-        stageReview: false,
-        forceDraft: false,
-        allowManualArticleTopicDuplicate: table === "articles" && action !== "view",
-      };
-    }
-    if (editorialRoles.some((row) => row.role === "content") && canContentEditorAccess(table, action)) {
-      return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: identity.id, stageReview: action !== "view", forceDraft: action !== "view" };
     }
     const permission = await prisma.$queryRawUnsafe(
       `SELECT \`can_publish\` FROM \`user_permissions\`

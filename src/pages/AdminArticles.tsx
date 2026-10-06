@@ -208,7 +208,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     const faqError = validateArticleFaqs(editorFaqs);
     if (faqError) { toast.error(faqError); return; }
     const normalizedSlug = normalizeArticleSlug(editing.slug);
-    const validationError = validateArticleSave({ ...editing, slug: normalizedSlug }, canPublish);
+    const validationError = validateArticleSave({ ...editing, slug: normalizedSlug }, canPublish, isWriter);
     if (validationError) { toast.error(validationError); return; }
     const rawRank = (editing as any).featured_rank ?? null;
     const desiredRank = rawRank == null ? null : Number(rawRank);
