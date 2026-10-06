@@ -1,4 +1,4 @@
-# B.Tech Computer Science — one-course editorial pilot
+# B.Tech Computer Science - one-course editorial pilot
 
 > Review draft only. Nothing here has been published or applied to the database.
 
@@ -20,7 +20,7 @@ Students who like maths, patient debugging and building things from incomplete i
 
 ### CSE or an AI-labelled branch?
 
-Do not choose between B.Tech CSE and a CSE–AI variant by the title alone. Put the two semester plans side by side. If one replaces algorithms, systems or project time with fashionable topic names, ask what foundation those topics rest on. If it keeps the core and adds well-supported electives, the narrower label may make sense for your interests. The answer lies in the actual programme plan, faculty and work students produce, not in the suffix on the brochure.
+Do not choose between B.Tech CSE and a CSE-AI variant by the title alone. Put the two semester plans side by side. If one replaces algorithms, systems or project time with fashionable topic names, ask what foundation those topics rest on. If it keeps the core and adds well-supported electives, the narrower label may make sense for your interests. The answer lies in the actual programme plan, faculty and work students produce, not in the suffix on the brochure.
 
 ## Subjects
 

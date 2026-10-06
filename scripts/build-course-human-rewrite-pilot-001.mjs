@@ -34,7 +34,7 @@ export const coursePatch = {
 <p>Imagine a college timetable tool that keeps showing two students the same lab seat. A quick patch might hide the error for one user. A stronger computer-science response asks how the data is stored, what happens when two requests arrive together, and how to test the fix. You may not build that exact tool, but the habit of breaking an untidy problem into smaller, testable pieces sits at the heart of the course.</p>
 <p>Students who like maths, patient debugging and building things from incomplete instructions often find that satisfying. You do not need to arrive as an expert programmer; you do need to be willing to practise after the first attempt fails.</p>
 <h3>CSE or an AI-labelled branch?</h3>
-<p>Do not choose between B.Tech CSE and a CSE–AI variant by the title alone. Put the two semester plans side by side. If one replaces algorithms, systems or project time with fashionable topic names, ask what foundation those topics rest on. If it keeps the core and adds well-supported electives, the narrower label may make sense for your interests. The answer lies in the actual programme plan, faculty and work students produce, not in the suffix on the brochure.</p>`,
+<p>Do not choose between B.Tech CSE and a CSE-AI variant by the title alone. Put the two semester plans side by side. If one replaces algorithms, systems or project time with fashionable topic names, ask what foundation those topics rest on. If it keeps the core and adds well-supported electives, the narrower label may make sense for your interests. The answer lies in the actual programme plan, faculty and work students produce, not in the suffix on the brochure.</p>`,
   subjects_content: `
 <p>Core subjects commonly move from programming and mathematics toward data structures, algorithms, computer architecture, operating systems and networks. The exact order matters: an algorithms class is easier to use well when you already know how data is represented and manipulated.</p>
 <p>IIT Delhi's published CSE plan makes the distinction visible. Data Structures (CSL201) and Operating Systems (CSL373) sit in its departmental core; Artificial Intelligence is listed among departmental electives. When another college advertises “AI from first year”, ask where the mathematical and systems foundations appear, and whether the AI work includes assessed projects rather than only a module title.</p>`,
@@ -129,7 +129,7 @@ const sections = [
   ["Specialisations", "specialization_content"],
 ];
 const preview = [
-  "# B.Tech Computer Science — one-course editorial pilot",
+  "# B.Tech Computer Science - one-course editorial pilot",
   "",
   "> Review draft only. Nothing here has been published or applied to the database.",
   "",
