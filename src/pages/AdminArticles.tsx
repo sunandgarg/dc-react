@@ -530,7 +530,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                 )}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
                   <ImageUploadField label="Featured image" value={editing.featured_image || ""} onChange={(v) => update("featured_image", v)} preset="article" folder="article-images" />
-                  {isAdmin && <ArticleCoverGenerator title={editing.title || ""} slug={editing.slug} siteScope={siteScope} onGenerated={(url) => update("featured_image", url)} />}
+                  <ArticleCoverGenerator title={editing.title || ""} slug={editing.slug} siteScope={siteScope} onGenerated={(url) => update("featured_image", url)} />
                 </div>
                 <ImageUploadField
                   label="Source, institution or exam logo (optional)"
