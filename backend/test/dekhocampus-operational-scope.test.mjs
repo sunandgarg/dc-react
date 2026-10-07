@@ -216,6 +216,21 @@ test("AWS runtime allows a low-memory API enough time to become healthy", async 
   assert.match(runtimeStep, /pm2 logs dc-react-api --lines 120 --nostream/);
 });
 
+test("API binds before background work and deploy validates required database setup first", async () => {
+  const [server, setup, workflow] = await Promise.all([
+    readSource("../src/server.mjs"),
+    readSource("../scripts/setup-runtime-database.mjs"),
+    readSource("../../.github/workflows/deploy-aws-lightsail.yml"),
+  ]);
+  const listenAt = server.indexOf("}).listen(port, host");
+  assert.ok(listenAt > 0);
+  assert.ok(server.indexOf('startBackgroundTask("Lead outbox"') > listenAt);
+  assert.ok(server.indexOf('startBackgroundTask("Blog agent"') > listenAt);
+  assert.doesNotMatch(server.slice(0, listenAt), /await (ensureContentReviewTable|provisionExistingContentHead|startLeadOutboxWorker|startBlogAgentWorker)/);
+  assert.match(setup, /await ensureContentReviewTable\(\);[\s\S]*await provisionExistingContentHead\(\);/);
+  assert.ok(workflow.indexOf("npm --prefix backend run db:setup:runtime") < workflow.indexOf("pm2 reload dc-react-api"));
+});
+
 test("AWS runtime enables SES only after the DekhoCampus domain identity is verified", async () => {
   const workflow = await readSource("../../.github/workflows/deploy-aws-lightsail.yml");
   const runtimeStart = workflow.indexOf("- name: Configure AWS runtime");

@@ -4,27 +4,20 @@ import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { handleRequest } from "./index.mjs";
 import { startLeadOutboxWorker, stopLeadOutboxWorker } from "./lead-outbox.mjs";
-import { ensureContentReviewTable } from "./content-review.mjs";
-import { provisionExistingContentHead } from "./editor-access.mjs";
 import { ensureSupportedAiModels, startBlogAgentWorker, stopBlogAgentWorker } from "./blog-ai.mjs";
 import { startDataCleanerWorker, stopDataCleanerWorker } from "./data-cleaner.mjs";
 import { prisma } from "./db.mjs";
 import { createDatabasePoolWatchdog, databaseEndpointReachable } from "./database-pool-watchdog.mjs";
-import { warmDirectorySearchCache } from "./directory-search.mjs";
 
 const port = Number(process.env.PORT || 8787);
 const host = process.env.HOST || "0.0.0.0";
-await ensureContentReviewTable();
-await provisionExistingContentHead();
-await ensureSupportedAiModels();
-await warmDirectorySearchCache();
 const backgroundWorkersEnabled = String(process.env.RUN_BACKGROUND_WORKERS || "yes").toLowerCase() !== "no";
-if (backgroundWorkersEnabled) {
-  await startLeadOutboxWorker();
-  await startBlogAgentWorker();
-  startDataCleanerWorker();
-} else {
-  console.log("Background workers are disabled for this standby instance");
+
+function startBackgroundTask(name, task) {
+  void Promise.resolve().then(task).catch((error) => {
+    console.error(`${name} startup failed; retrying in 60 seconds`, error);
+    setTimeout(() => startBackgroundTask(name, task), 60_000).unref();
+  });
 }
 
 function requestClientIp(req) {
@@ -63,6 +56,16 @@ const server = http.createServer(async (req, res) => {
     res.end(JSON.stringify({ error: "Internal server error" }));
   }
 }).listen(port, host, () => console.log(`DekhoCampus Node/Prisma backend listening on http://${host}:${port}`));
+
+// Serving requests must not wait for startup maintenance or a queue drain.
+startBackgroundTask("AI model sync", ensureSupportedAiModels);
+if (backgroundWorkersEnabled) {
+  startBackgroundTask("Lead outbox", startLeadOutboxWorker);
+  startBackgroundTask("Blog agent", startBlogAgentWorker);
+  startBackgroundTask("Data cleaner", startDataCleanerWorker);
+} else {
+  console.log("Background workers are disabled for this standby instance");
+}
 
 const databasePoolWatchdog = createDatabasePoolWatchdog({
   query: () => prisma.$queryRawUnsafe("SELECT 1"),

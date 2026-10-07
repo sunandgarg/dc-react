@@ -1,6 +1,9 @@
 import { spawnSync } from "node:child_process";
 import { PrismaClient } from "@prisma/client";
 import "../src/database-url.mjs";
+import { ensureContentReviewTable } from "../src/content-review.mjs";
+import { provisionExistingContentHead } from "../src/editor-access.mjs";
+import { prisma as appPrisma } from "../src/db.mjs";
 
 if (!process.env.DATABASE_URL) {
   console.error("DATABASE_URL or DB_HOST/DB_USER/DB_PASSWORD/DB_NAME must be configured");
@@ -29,3 +32,10 @@ if (!existingSchema.length) {
 }
 run(process.execPath, ["scripts/apply-mysql-parity.mjs"]);
 run(process.execPath, ["scripts/normalize-delhi-ncr.mjs"]);
+// Fail the deploy before reloading the serving API if required setup cannot finish.
+try {
+  await ensureContentReviewTable();
+  await provisionExistingContentHead();
+} finally {
+  await appPrisma.$disconnect();
+}
