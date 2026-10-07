@@ -1028,7 +1028,18 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
 
+          refresh_ssh_access() {
+            aws lightsail get-instance-access-details \
+              --instance-name "$INSTANCE_NAME" --protocol ssh --output json > /tmp/lightsail-access-refresh.json
+            jq -r '.accessDetails.privateKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey
+            jq -r '.accessDetails.certKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey-cert.pub
+            chmod 600 /tmp/tempkey
+            chmod 644 /tmp/tempkey-cert.pub
+            rm -f /tmp/lightsail-access-refresh.json
+          }
+
           run_core_phase() {
+            refresh_ssh_access
             ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
               "$SSH_USER@$SSH_IP" "sudo bash -s -- '$1'" <<'REMOTE'
           set -euo pipefail
@@ -1049,11 +1060,13 @@ jobs:
           trap cleanup_core_records EXIT
 
           run_core_phase prepare
+          refresh_ssh_access
           scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
             "$SSH_USER@$SSH_IP:/tmp/dc-core-entity-regression.json" /tmp/dc-core-create.json
           PUBLIC_BASE_URL=https://dekhocampus.com node scripts/verify-core-entity-ui.mjs /tmp/dc-core-create.json create
 
           run_core_phase edit
+          refresh_ssh_access
           scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
             "$SSH_USER@$SSH_IP:/tmp/dc-core-entity-regression.json" /tmp/dc-core-edit.json
           PUBLIC_BASE_URL=https://dekhocampus.com node scripts/verify-core-entity-ui.mjs /tmp/dc-core-edit.json edit
@@ -1063,6 +1076,13 @@ jobs:
 
       - name: Verify Content Head direct publishing workflow
         run: |
+          aws lightsail get-instance-access-details \
+            --instance-name "$INSTANCE_NAME" --protocol ssh --output json > /tmp/lightsail-access-refresh.json
+          jq -r '.accessDetails.privateKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey
+          jq -r '.accessDetails.certKey' /tmp/lightsail-access-refresh.json > /tmp/tempkey-cert.pub
+          chmod 600 /tmp/tempkey
+          chmod 644 /tmp/tempkey-cert.pub
+          rm -f /tmp/lightsail-access-refresh.json
           ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
             "$SSH_USER@$SSH_IP" "sudo bash -s" <<'REMOTE'
           set -euo pipefail

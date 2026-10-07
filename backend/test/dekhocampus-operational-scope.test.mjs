@@ -229,6 +229,9 @@ test("API binds before background work and deploy validates required database se
   assert.doesNotMatch(server.slice(0, listenAt), /await (ensureContentReviewTable|provisionExistingContentHead|startLeadOutboxWorker|startBlogAgentWorker)/);
   assert.match(setup, /await ensureContentReviewTable\(\);[\s\S]*await provisionExistingContentHead\(\);/);
   assert.ok(workflow.indexOf("npm --prefix backend run db:setup:runtime") < workflow.indexOf("pm2 reload dc-react-api"));
+  const coreCheck = workflow.slice(workflow.indexOf("- name: Verify full-field core entity create and edit on public UI"));
+  assert.ok(coreCheck.indexOf("npx playwright install --with-deps chromium") < coreCheck.indexOf("refresh_ssh_access()"));
+  assert.match(coreCheck, /run_core_phase\(\) \{\n\s+refresh_ssh_access/);
 });
 
 test("AWS runtime enables SES only after the DekhoCampus domain identity is verified", async () => {
