@@ -122,12 +122,31 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     },
     staleTime: 0,
   });
+  const linksQuery = useQuery({
+    queryKey: ["admin-article-entity-links", editing?.id],
+    enabled: Boolean(editing?.id) && editing?.entity_links === undefined,
+    queryFn: async () => {
+      const { data, error } = await backendClient.from("article_links")
+        .select("entity_type,entity_slug").eq("article_id", editing!.id!);
+      if (error) throw error;
+      return ((data || []) as EntityLinkDraft[]).filter((link) =>
+        ["college", "course", "exam", "career", "scholarship", "article", "study_subject", "study_chapter"].includes(link.entity_type));
+    },
+    staleTime: 0,
+  });
   useEffect(() => {
     if (!editing?.id || editing.faqs !== undefined || faqQuery.isFetching || !faqQuery.data) return;
     const id = editing.id;
     setEditing((current) => current?.id === id && current.faqs === undefined ? { ...current, faqs: faqQuery.data } : current);
   }, [editing?.id, editing?.faqs, faqQuery.data, faqQuery.isFetching, setEditing]);
+  useEffect(() => {
+    if (!editing?.id || editing.entity_links !== undefined || linksQuery.isFetching || !linksQuery.data) return;
+    const id = editing.id;
+    setEditing((current) => current?.id === id && current.entity_links === undefined
+      ? { ...current, entity_links: linksQuery.data } : current);
+  }, [editing?.id, editing?.entity_links, linksQuery.data, linksQuery.isFetching, setEditing]);
   const faqsPending = Boolean(editing?.id) && editing?.faqs === undefined;
+  const linksPending = Boolean(editing?.id) && editing?.entity_links === undefined;
   const editorFaqs = useMemo(() => normalizeArticleFaqDrafts(editing?.faqs), [editing?.faqs]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
@@ -205,6 +224,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const handleSave = () => {
     if (!editing) return;
     if (faqsPending) { toast.error("Wait for FAQs to load, or retry loading them before saving."); return; }
+    if (linksPending) { toast.error("Wait for saved article tags to load, or retry loading them before saving."); return; }
     const faqError = validateArticleFaqs(editorFaqs);
     if (faqError) { toast.error(faqError); return; }
     const normalizedSlug = normalizeArticleSlug(editing.slug);
@@ -549,26 +569,29 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               {/* ── Links (multi-category) ── */}
               <AdminFormSection title={isSarkari ? "Search and discovery tags" : "Links - tag this article to colleges, courses, exams, news, careers, scholarships & study material"} icon={<Link2 className="w-4 h-4 text-primary" />}>
                 <ArrayFieldEditor label="Free-form Tags" values={editing.tags || []} onChange={(v) => update("tags", v)} placeholder="Add tag..." />
-                {!isSarkari && (editing.id ? (
+                {!isSarkari && (linksPending ? (
+                  linksQuery.isError ? <div role="alert" className="text-xs text-destructive">Saved tags could not be loaded. <Button type="button" size="sm" variant="outline" onClick={() => void linksQuery.refetch()}>Retry loading tags</Button></div>
+                    : <p role="status" className="text-xs text-muted-foreground">Loading saved tags…</p>
+                ) : editing.id ? (
                   <Tabs defaultValue="entities" className="mt-4">
                     <TabsList className="w-full justify-start flex-wrap h-auto gap-1 bg-muted/40 p-1 rounded-xl">
                       <TabsTrigger value="entities" className="rounded-lg text-xs">Colleges / Courses / Exams / News / Careers / Scholarships</TabsTrigger>
-                      <TabsTrigger value="study" className="rounded-lg text-xs">Study Material (School)</TabsTrigger>
-                      <TabsTrigger value="college-study" className="rounded-lg text-xs">College Study Material</TabsTrigger>
-                      <TabsTrigger value="saved" className="rounded-lg text-xs">All Saved Links</TabsTrigger>
+                      {isAdmin && <TabsTrigger value="study" className="rounded-lg text-xs">Study Material (School)</TabsTrigger>}
+                      {isAdmin && <TabsTrigger value="college-study" className="rounded-lg text-xs">College Study Material</TabsTrigger>}
+                      {isAdmin && <TabsTrigger value="saved" className="rounded-lg text-xs">All Saved Links</TabsTrigger>}
                     </TabsList>
                     <TabsContent value="entities" className="mt-3">
-                      <EntityMultiPicker articleId={editing.id} />
+                      <EntityMultiPicker draftLinks={editing.entity_links || []} onDraftLinksChange={(links) => update("entity_links", links)} />
                     </TabsContent>
-                    <TabsContent value="study" className="mt-3">
+                    {isAdmin && <TabsContent value="study" className="mt-3">
                       <StudyMaterialQuickTagger tags={editing.tags || []} onChange={(v) => update("tags", v)} articleId={editing.id as string} />
-                    </TabsContent>
-                    <TabsContent value="college-study" className="mt-3">
+                    </TabsContent>}
+                    {isAdmin && <TabsContent value="college-study" className="mt-3">
                       <CollegeStudyTagger articleId={editing.id as string} onDone={() => setEditing(null)} />
-                    </TabsContent>
-                    <TabsContent value="saved" className="mt-3">
+                    </TabsContent>}
+                    {isAdmin && <TabsContent value="saved" className="mt-3">
                       <ArticleLinksEditor ownerId={editing.id as string} label="All saved links for this article (add/remove any entity by slug)" />
-                    </TabsContent>
+                    </TabsContent>}
                   </Tabs>
                 ) : (
                   <div className="mt-3 space-y-2">
@@ -645,7 +668,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               <p className="hidden text-xs text-muted-foreground sm:block">{editing.status || "Draft"}</p>
               <div className="ml-auto flex items-center gap-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-lg">Cancel</Button>
-                <Button onClick={handleSave} disabled={saveArticle.isPending || faqsPending} className="rounded-lg">
+                <Button onClick={handleSave} disabled={saveArticle.isPending || faqsPending || linksPending} className="rounded-lg">
                   {saveArticle.isPending ? "Saving..." : editing.status === "Draft" && canPublish ? "Save Draft" : canPublish ? "Save Article" : "Submit for approval"}
                 </Button>
               </div>

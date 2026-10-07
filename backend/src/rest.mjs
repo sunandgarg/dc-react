@@ -7,7 +7,7 @@ import { sanitizeCollegePublicContent } from "./college-content-sanitizer.mjs";
 import { assertArticleTopicsAvailable, loadArticleCoverage, withArticleWriteLock } from "./blog-ai.mjs";
 import { mergeIntentVisitor, prepareIntentEvents, stampTrackingSiteScope, updateIntentScoresForEvents } from "./intent-intelligence.mjs";
 import { normalizeArticleFaqs, saveArticleFaqs } from "./article-faqs.mjs";
-import { normalizeArticleEntityLinks, saveNewArticleEntityLinks } from "./article-entity-links.mjs";
+import { normalizeArticleEntityLinks, replaceArticleEntityLinks, saveNewArticleEntityLinks } from "./article-entity-links.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
@@ -354,6 +354,7 @@ export function prepareStagedArticleUpsertReviews(explicitRows, stagedRows, exis
       .filter(([column]) => updateColumns.has(column)));
     const after = { ...existing, ...explicitUpdates, id: existing.id, site_scope: existing.site_scope };
     if (Object.hasOwn(explicitRows[index], "faqs")) after.faqs = explicitRows[index].faqs;
+    if (Object.hasOwn(explicitRows[index], "entity_links")) after.entity_links = explicitRows[index].entity_links;
     updatesBefore.push(existing);
     updatesAfter.push(after);
     responseRows.push(after);
@@ -781,7 +782,8 @@ async function handlePost(table, request, url, context) {
           allowDelete: Boolean(context.allowArticleFaqDelete),
           isNewArticle: !existingByCandidate[index]?.length,
         });
-        if (!existingByCandidate[index]?.length) await saveNewArticleEntityLinks(tx, { ...article, entity_links: rows[index].entity_links });
+        if (existingByCandidate[index]?.length) await replaceArticleEntityLinks(tx, { ...article, entity_links: rows[index].entity_links });
+        else await saveNewArticleEntityLinks(tx, { ...article, entity_links: rows[index].entity_links });
         saved.push(article);
       }
       return saved;
@@ -815,7 +817,8 @@ async function handlePatch(table, request, url, context) {
     && (Object.hasOwn(input, "title") || Object.hasOwn(input, "slug"));
   const checkArticleScope = table === "articles" && Object.hasOwn(input, "site_scope");
   const checkArticleFaqs = table === "articles" && Object.hasOwn(input, "faqs");
-  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic || checkArticleScope || checkArticleFaqs;
+  const checkArticleLinks = table === "articles" && Object.hasOwn(input, "entity_links");
+  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic || checkArticleScope || checkArticleFaqs || checkArticleLinks;
   const whereParams = params.slice(columns.length);
   let before = [];
   if (context.stageReview) {
@@ -836,7 +839,7 @@ async function handlePatch(table, request, url, context) {
     };
   }
   let body;
-  if (checkArticleTopic || checkArticleScope || checkArticleFaqs) {
+  if (checkArticleTopic || checkArticleScope || checkArticleFaqs || checkArticleLinks) {
     ({ before, body } = await withArticleWriteLock(async (tx) => {
       const lockedBefore = await tx.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where} FOR UPDATE`, ...whereParams);
       if (checkArticleScope) assertArticleSiteScopeUnchanged(input, lockedBefore);
@@ -848,12 +851,13 @@ async function handlePatch(table, request, url, context) {
           excludeIdsByCandidate: nextRows.map(() => excludedIds),
         });
       }
-      await tx.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
+      if (columns.length) await tx.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
       for (let index = 0; index < nextRows.length; index += 1) {
         await saveArticleFaqs(tx, nextRows[index], {
           previousSlug: lockedBefore[index].slug,
           allowDelete: Boolean(context.allowArticleFaqDelete),
         });
+        await replaceArticleEntityLinks(tx, nextRows[index]);
       }
       return { before: lockedBefore, body: nextRows };
     }, ["dekhocampus", "sarkari"]));

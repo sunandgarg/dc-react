@@ -35,3 +35,28 @@ export async function saveNewArticleEntityLinks(tx, article) {
     );
   }
 }
+
+export async function replaceArticleEntityLinks(tx, article) {
+  const links = normalizeArticleEntityLinks(article.entity_links);
+  if (links === undefined) return;
+  const types = [...ENTITY_TYPES];
+  const existing = await tx.$queryRawUnsafe(
+    `SELECT \`id\`, \`entity_type\`, \`entity_slug\` FROM \`article_links\` WHERE \`article_id\` = ? AND \`entity_type\` IN (${types.map(() => "?").join(",")})`,
+    article.id, ...types,
+  );
+  const selected = new Set(links.map(({ entity_type, entity_slug }) => `${entity_type}:${entity_slug}`));
+  const saved = new Set(existing.map(({ entity_type, entity_slug }) => `${entity_type}:${entity_slug}`));
+  for (const row of existing) {
+    if (!selected.has(`${row.entity_type}:${row.entity_slug}`)) {
+      await tx.$executeRawUnsafe("DELETE FROM `article_links` WHERE `id` = ?", row.id);
+    }
+  }
+  for (const link of links) {
+    if (!saved.has(`${link.entity_type}:${link.entity_slug}`)) {
+      await tx.$executeRawUnsafe(
+        "INSERT INTO `article_links` (`id`, `article_id`, `entity_type`, `entity_slug`, `created_at`) VALUES (?,?,?,?,?)",
+        randomUUID(), article.id, link.entity_type, link.entity_slug, new Date(),
+      );
+    }
+  }
+}

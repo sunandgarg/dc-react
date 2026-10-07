@@ -129,6 +129,7 @@ describe("article FAQ workflow", () => {
     ] }));
     mount(); expandFaqs();
     expect(screen.getByRole("checkbox", { name: "Show this FAQ" })).not.toBeChecked();
+    await waitFor(() => expect(screen.getByRole("button", { name: "Submit for approval" })).toBeEnabled());
     fireEvent.click(screen.getByRole("button", { name: "Submit for approval" }));
     await waitFor(() => expect(mocks.writes[0]).toMatchObject({ faqs: [{ id: "saved-faq", is_active: false }] }));
   });
@@ -169,5 +170,16 @@ describe("article FAQ workflow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save Draft" }));
     await waitFor(() => expect(mocks.writes).toHaveLength(1));
     expect(mocks.writes[0]).toMatchObject({ faqs: [{ question: "When?" }], entity_links: [{ entity_type: "exam", entity_slug: "jee-main" }] });
+  });
+
+  it("content manager can tag an existing article and submit the change", async () => {
+    mocks.role = "content";
+    mocks.articles = [{ ...draft, id: "existing-article", entity_links: undefined }];
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Edit Admission guide" }));
+    await screen.findByRole("button", { name: "Tag JEE Main" });
+    fireEvent.click(screen.getByRole("button", { name: "Tag JEE Main" }));
+    fireEvent.click(screen.getByRole("button", { name: "Submit for approval" }));
+    await waitFor(() => expect(mocks.writes[0]).toMatchObject({ entity_links: [{ entity_type: "exam", entity_slug: "jee-main" }] }));
   });
 });

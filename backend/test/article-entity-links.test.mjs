@@ -86,3 +86,44 @@ test("directly saving an article writes selected links in the same transaction",
     prisma.$transaction = transaction;
   }
 });
+
+test("editing an article replaces selected tags without deleting unrelated study links", async () => {
+  const transaction = prisma.$transaction;
+  const writes = [];
+  prisma.$transaction = async (operation) => operation({
+    $queryRawUnsafe: async (sql, ...params) => {
+      if (sql.includes("article_write_locks")) return [{ site_scope: params[0] }];
+      if (sql.includes("FROM `articles`")) return [article];
+      if (sql.includes("FROM `article_links`")) return [
+        { id: "old-tag", entity_type: "college", entity_slug: "old-college" },
+      ];
+      return [];
+    },
+    $executeRawUnsafe: async (sql, ...params) => { writes.push([sql, params]); return 1; },
+  });
+  try {
+    const result = await handleRest("articles", new Request(`http://localhost/v1/rest/articles?id=eq.${article.id}`, {
+      method: "PATCH", body: JSON.stringify({ entity_links: [entity_links[2]] }),
+    }), {});
+    assert.equal(result.status, 200);
+    assert.ok(writes.some(([sql, params]) => sql.includes("DELETE FROM `article_links`") && params[0] === "old-tag"));
+    assert.ok(writes.some(([sql, params]) => sql.includes("INSERT INTO `article_links`") && params[2] === "exam" && params[3] === "jee-main"));
+  } finally {
+    prisma.$transaction = transaction;
+  }
+});
+
+test("approving a content-manager edit applies its article tags", async () => {
+  const writes = [];
+  const tx = {
+    $queryRawUnsafe: async (sql) => sql.includes("FROM `article_links`")
+      ? [{ id: "old-tag", entity_type: "college", entity_slug: "old-college" }] : [],
+    $executeRawUnsafe: async (sql, ...params) => { writes.push([sql, params]); return 1; },
+  };
+  await applyApprovedReview(tx, {
+    entity_type: "articles", entity_id: article.id, operation: "update",
+    before_json: article, after_json: { ...article, entity_links: [entity_links[2]] }, changed_fields: ["entity_links"],
+  });
+  assert.ok(writes.some(([sql]) => sql.includes("DELETE FROM `article_links`")));
+  assert.ok(writes.some(([sql, params]) => sql.includes("INSERT INTO `article_links`") && params[2] === "exam"));
+});
