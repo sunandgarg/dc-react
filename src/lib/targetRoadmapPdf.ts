@@ -1,4 +1,3 @@
-import jsPDF from "jspdf";
 import logo from "@/assets/dekhocampus-logo.png";
 
 export type RoadmapData = {
@@ -38,6 +37,7 @@ async function loadLogoDataUrl(): Promise<string | null> {
 }
 
 export async function downloadRoadmapPDF(data: RoadmapData, meta: RoadmapMeta) {
+  const { default: jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();

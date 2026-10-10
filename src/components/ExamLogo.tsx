@@ -22,6 +22,7 @@ export function ExamLogo({ exam, className, eager = false }: ExamLogoProps) {
           alt={`${shortName} logo`}
           className="h-full w-full object-contain"
           loading={eager ? "eager" : "lazy"}
+          fetchPriority={eager ? "high" : undefined}
           decoding="async"
           onError={() => setFailedSources((previous) => previous.includes(source) ? previous : [...previous, source])}
         />

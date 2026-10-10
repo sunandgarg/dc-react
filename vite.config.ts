@@ -76,6 +76,18 @@ export default defineConfig(({ mode }) => ({
     sourcemap: false,
     minify: "esbuild",
     chunkSizeWarningLimit: 1200,
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            // Group shared runtimes without pulling admin editors or the entire icon catalogue into startup.
+            { name: "react", test: /node_modules[\\/](?:react(?:-dom|-router(?:-dom)?)?|scheduler|@tanstack[\\/](?:react-query|query-core))[\\/]/, priority: 20 },
+            { name: "motion", test: /node_modules[\\/](?:framer-motion|motion-dom|motion-utils)[\\/]/, priority: 10 },
+            { name: "ui", test: /node_modules[\\/]@radix-ui[\\/]/ },
+          ],
+        },
+      },
+    },
   },
   // A tiny, explicitly uncached marker lets an already-open tab notice a new
   // deployment without interrupting the page or any operation in progress.

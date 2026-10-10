@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Calendar, ChevronRight, Newspaper } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { backendClient } from "@/integrations/backend/client";
-import { useDbArticles } from "@/hooks/useArticlesData";
+import { useEntityNewsArticles } from "@/hooks/useArticlesData";
 import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
 
 interface Props {
@@ -17,30 +15,8 @@ interface Props {
  * Pulls articles linked via `article_links` for the given entity.
  */
 export function LatestNewsSection({ entityName, entityType, entitySlug, sectionId = "latest-news" }: Props) {
-  const { data: articles } = useDbArticles();
-  const [linkedIds, setLinkedIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!entitySlug) return;
-    (backendClient as any)
-      .from("article_links")
-      .select("article_id")
-      .eq("entity_type", entityType)
-      .eq("entity_slug", entitySlug)
-      .then(({ data }: any) => setLinkedIds((data || []).map((d: any) => d.article_id)));
-  }, [entityType, entitySlug]);
-
-  const items = useMemo(() => {
-    if (!articles) return [];
-    const linked = articles.filter((a) => linkedIds.includes(a.id));
-    if (linked.length > 0) return linked.slice(0, 2);
-    const words = entityName.toLowerCase().split(/\s+/).filter((w) => w.length > 3);
-    const matched = articles
-      .filter((a) => words.some((w) => a.title.toLowerCase().includes(w) || a.description?.toLowerCase().includes(w)))
-      .slice(0, 2);
-    if (matched.length > 0) return matched;
-    return [...articles].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)).slice(0, 2);
-  }, [articles, linkedIds, entityName]);
+  const { data: articles = [] } = useEntityNewsArticles({ entityName, entityType, entitySlug });
+  const items = articles.slice(0, 2);
 
   if (!items.length) return null;
 

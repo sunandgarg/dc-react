@@ -4,16 +4,17 @@ type HomeStyleGateOptions = {
   timeoutMs?: number;
 };
 
-export function renderWhenHomeStylesReady(
+export function renderWhenPageStylesReady(
   render: () => void,
   options: HomeStyleGateOptions = {},
 ) {
   const documentRef = options.document ?? document;
   const locationRef = options.location ?? window.location;
   const stylesheet = documentRef.querySelector<HTMLLinkElement>("link[data-dc-app-style]");
-  const hasHomeShell = Boolean(documentRef.getElementById("dc-first-paint-shell"));
+  const hasShell = (locationRef.pathname === "/" && Boolean(documentRef.getElementById("dc-first-paint-shell")))
+    || Boolean(documentRef.querySelector("#root > [data-dc-edge-prerender]"));
 
-  if (locationRef.pathname !== "/" || !hasHomeShell || !stylesheet || stylesheet.rel === "stylesheet" || stylesheet.sheet) {
+  if (!hasShell || !stylesheet || stylesheet.rel === "stylesheet" || stylesheet.sheet) {
     render();
     return;
   }

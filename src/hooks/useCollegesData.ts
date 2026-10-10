@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { fetchHomepageExplore } from "@/lib/homepageExplore";
+import { initialPageData } from "@/lib/initialPageData";
 import { getPrefillCookie } from "@/components/CookieConsent";
 import {
   DELHI_NCR_CITIES,
@@ -314,6 +315,7 @@ function applyCollegeFallbacks(c: DbCollege | null): DbCollege | null {
 export function useDbCollege(slugOrSlugId: string | undefined) {
   return useQuery({
     queryKey: ["db-college", slugOrSlugId],
+    initialData: () => applyCollegeFallbacks(initialPageData<DbCollege>("colleges", slugOrSlugId) ?? null) ?? undefined,
     queryFn: async () => {
       if (!slugOrSlugId) return null;
       // Parse trailing -<id>

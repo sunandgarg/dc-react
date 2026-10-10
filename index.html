@@ -191,6 +191,8 @@
         }
         url.searchParams.set("limit", "2");
 
+        if (document.getElementById("dc-initial-page-data")) return;
+
         const controller = new AbortController();
         const timeout = window.setTimeout(() => controller.abort(), 8000);
         const request = fetch(url, { credentials: "omit", signal: controller.signal })

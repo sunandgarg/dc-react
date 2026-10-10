@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
+import { initialPageData } from "@/lib/initialPageData";
 import { toast } from "sonner";
 import { fetchHomepageExplore } from "@/lib/homepageExplore";
 
@@ -113,6 +114,7 @@ export function useAllDbCourses() {
 export function useDbCourse(slugOrSlugId: string | undefined) {
   return useQuery({
     queryKey: ["db-course", slugOrSlugId],
+    initialData: () => initialPageData<DbCourse>("courses", slugOrSlugId),
     queryFn: async () => {
       if (!slugOrSlugId) return null;
       const m = slugOrSlugId.match(/^(.*?)-(\d+)$/);

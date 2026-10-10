@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
 import { fetchHomepageExplore } from "@/lib/homepageExplore";
+import { initialPageData } from "@/lib/initialPageData";
 
 function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
@@ -156,6 +157,10 @@ export function useAllDbExams() {
 export function useDbExam(slugOrSlugId: string | undefined) {
   return useQuery({
     queryKey: ["db-exam", slugOrSlugId],
+    initialData: () => {
+      const row = initialPageData<DbExam>("exams", slugOrSlugId);
+      return row ? mapExam(row) : undefined;
+    },
     queryFn: async () => {
       if (!slugOrSlugId) return null;
       const m = slugOrSlugId.match(/^(.*?)-(\d+)$/);

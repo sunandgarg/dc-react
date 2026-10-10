@@ -5,6 +5,7 @@ import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 import { normalizeArticleSlug } from "@/lib/articleEditor";
 import type { ArticleFaqDraft } from "@/lib/articleFaqs";
 import { articleAuthorFilter, type AdminArticleFilters } from "@/lib/adminArticleFilters";
+import { initialPageData } from "@/lib/initialPageData";
 
 function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
@@ -88,6 +89,47 @@ const normalizeArticleSearch = (value: string | undefined) =>
     .replace(/\s+/g, " ")
     .trim();
 
+type EntityNewsOptions = { entityName: string; entityType: "college" | "course" | "exam" | "career"; entitySlug?: string; category?: string };
+type EntityNewsArticle = Pick<DbArticle, "id" | "title" | "slug" | "description" | "vertical" | "category" | "author" | "featured_image" | "created_at">;
+
+export async function fetchEntityNewsArticles({ entityName, entityType, entitySlug, category }: EntityNewsOptions): Promise<EntityNewsArticle[]> {
+  const feed = () => backendClient.from("articles")
+    .select("id,title,slug,description,vertical,category,author,featured_image,created_at")
+    .eq("site_scope", DEFAULT_SITE_SCOPE).eq("is_active", true).eq("status", "Published")
+    .order("created_at", { ascending: false }).limit(3);
+
+  if (entitySlug) {
+    const { data: links, error } = await backendClient.from("article_links").select("article_id")
+      .eq("entity_type", entityType).eq("entity_slug", entitySlug).limit(100);
+    if (error) throw error;
+    const ids = (links || []).map((link: { article_id: string }) => link.article_id);
+    if (ids.length) {
+      const { data, error: articleError } = await feed().in("id", ids);
+      if (articleError) throw articleError;
+      if (data?.length) return data;
+    }
+  }
+  const words = normalizeArticleSearch(entityName).split(/\s+/).filter((word) => word.length > 3).slice(0, 8);
+  const filters = words.flatMap((word) => [`title.ilike.%${word}%`, `description.ilike.%${word}%`]);
+  filters.push(`vertical.eq.${entityType}`);
+  const cleanCategory = normalizeArticleSearch(category);
+  if (cleanCategory) filters.push(`category.ilike.${cleanCategory}`);
+  const { data, error } = await feed().or(filters.join(","));
+  if (error) throw error;
+  if (data?.length) return data;
+  const recent = await feed();
+  if (recent.error) throw recent.error;
+  return recent.data || [];
+}
+
+export function useEntityNewsArticles(options: EntityNewsOptions) {
+  return useQuery({
+    queryKey: ["entity-news", options.entityType, options.entitySlug, options.entityName, options.category],
+    queryFn: () => fetchEntityNewsArticles(options),
+    staleTime: 5 * 60_000,
+  });
+}
+
 export const legacyArticleSlugCandidates = (slug: string) => [`${slug}-`, `${slug},`];
 
 export function useAdminArticles(search: string | undefined, page: number, pageSize: number, siteScope: SiteScope = DEFAULT_SITE_SCOPE, filters: AdminArticleFilters = {}) {
@@ -139,6 +181,7 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
 export function useDbArticle(slug: string | undefined, siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   return useQuery({
     queryKey: ["db-article", siteScope, slug],
+    initialData: () => siteScope === DEFAULT_SITE_SCOPE ? initialPageData<DbArticle>("articles", slug) : undefined,
     queryFn: async () => {
       const { data, error } = await backendClient
         .from("articles")

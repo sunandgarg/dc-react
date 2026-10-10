@@ -6,6 +6,12 @@ import { RichText } from "@/components/detail/RichText";
 import { prepareArticleContent } from "./articleContentSanitizer";
 
 describe("Cloudflare edge SEO", () => {
+  it("prioritizes an exam's logo rather than downloading its unused wide banner", () => {
+    const metadata = entityEdgeSeo({ name: "VSAT", logo: "/exam-logo.svg", image: "/exam-banner.webp" }, new URL("https://dekhocampus.com/exams/vsat-30475"), "exams");
+    expect(metadata.prerenderHtml).toContain('width="96" height="96"');
+    expect(metadata.prerenderHtml).toContain("exam-logo.svg");
+    expect(metadata.prerenderHtml).not.toContain("exam-banner.webp");
+  });
   it("serves self-canonical metadata for an indexable college filter", () => {
     const seo = edgeSeoFor("https://dekhocampus.com/colleges?stream=Management&state=Delhi+NCR");
     expect(seo.indexable).toBe(true);
@@ -123,6 +129,8 @@ describe("Cloudflare edge SEO", () => {
     expect(output).toContain('"primaryImageOfPage"');
     expect(output).toContain('<img src="https://cdn.dekhocampus.com/news/neet-update-2026.webp"');
     expect(output).toContain('alt="NEET Update 2026"');
+    expect(metadata.prerenderHtml.indexOf("<h1>")).toBeLessThan(metadata.prerenderHtml.indexOf("<img"));
+    expect(metadata.prerenderHtml.indexOf("The latest verified update.")).toBeLessThan(metadata.prerenderHtml.indexOf("<img"));
     expect(output).toContain("<h2>What changed</h2>");
     expect(output).toContain("What changed");
     expect(output).toContain("Useful details.");

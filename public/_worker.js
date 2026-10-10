@@ -61,12 +61,6 @@ const CACHEABLE_PUBLIC_TABLES = new Set([
 
 const PUBLIC_STORAGE_PATH = /^\/storage\/v1\/object\/public\/(?:admin-uploads|ad-images|legacy-public-assets|study-material)(?:\/|$)/;
 
-const ENTITY_SELECTS = {
-  colleges: "name,slug,short_id,description,page_summary,meta_title,meta_description,image,logo,city,state,youtube_video_url,updated_at",
-  courses: "name,full_name,slug,short_id,description,page_summary,meta_title,meta_description,image,category,youtube_video_url,updated_at",
-  exams: "name,full_name,slug,short_id,description,page_summary,meta_title,meta_description,image,logo,category,youtube_video_url,updated_at",
-};
-
 function isApiRequest(pathname) {
   return pathname === "/health"
     || /^\/(?:news-(?:sitemap|feed)|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname)
@@ -117,14 +111,14 @@ function temporarilyUnavailable(request) {
   }));
 }
 
-async function fetchPublicRows(table, query) {
+async function fetchPublicRows(table, query, cacheTtl = 300) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), PUBLIC_LOOKUP_TIMEOUT_MS);
   try {
     const response = await fetch(`${API_ORIGIN}/v1/rest/${table}?${query}`, {
       headers: { accept: "application/json" },
       signal: controller.signal,
-      cf: { cacheEverything: true, cacheTtlByStatus: { "200-299": 300, "300-599": 0 } },
+      cf: { cacheEverything: true, cacheTtlByStatus: { "200-299": cacheTtl, "300-599": 0 } },
     });
     if (!response.ok) throw new Error(`${table} API returned ${response.status}`);
     const payload = await response.json();
@@ -175,12 +169,13 @@ async function proxyToApiWithCache(request, context) {
 async function fetchPublicEntity(entityType, publicSlug) {
   const fetchRows = async (filter) => {
     const query = new URLSearchParams({
-      select: ENTITY_SELECTS[entityType],
+      // This anonymous response is the same public detail row consumed by the page.
+      select: "*",
       is_active: "eq.true",
       ...filter,
       limit: "1",
     });
-    return fetchPublicRows(entityType, query);
+    return fetchPublicRows(entityType, query, 30);
   };
 
   const shortId = publicSlug.match(/-(\d+)$/)?.[1];
@@ -256,13 +251,14 @@ async function serveAsset(request, env) {
     const articleMatch = url.pathname.match(/^\/news\/([^/]+)\/?$/);
     if (articleMatch && articleMatch[1] !== "tag") {
       const query = new URLSearchParams({
-        select: "status,title,slug,description,content,author,author_id,featured_image,meta_title,meta_description,created_at,updated_at",
+        select: "*",
+        site_scope: "eq.dekhocampus",
         slug: `eq.${decodeURIComponent(articleMatch[1])}`,
         status: "eq.Published",
         is_active: "eq.true",
         limit: "1",
       });
-      const [article] = await fetchPublicRows("articles", query);
+      const [article] = await fetchPublicRows("articles", query, 30);
       if (article?.author_id) {
         const authorQuery = new URLSearchParams({ select: "name,slug", id: `eq.${article.author_id}`, limit: "1" });
         try {
@@ -274,6 +270,7 @@ async function serveAsset(request, env) {
       metadata = article
         ? articleEdgeSeo(article, url)
         : { ...metadata, indexable: false, notFound: true };
+      if (article) metadata.initialData = { table: "articles", routeSlug: decodeURIComponent(articleMatch[1]), row: article };
     }
     const entityMatch = metadata.indexable
       ? url.pathname.match(/^\/(colleges|courses|exams)\/([^/]+)(?:\/[^/]+)?\/?$/)
@@ -286,12 +283,15 @@ async function serveAsset(request, env) {
         metadata = await curatedListingMetadata(url, metadata, entityType, listingFilters);
       } else {
         const entity = await fetchPublicEntity(entityType, decodedSlug);
-        if (entity) metadata = entityEdgeSeo(entity, url, entityType);
+        if (entity) {
+          metadata = entityEdgeSeo(entity, url, entityType);
+          metadata.initialData = { table: entityType, routeSlug: decodedSlug, row: entity };
+        }
         else metadata = { ...metadata, indexable: false, notFound: true };
       }
     }
     let html = applyEdgeSeo(await response.text(), metadata);
-    if (url.pathname === "/") html = applyHomeCriticalCssDelivery(html);
+    if (url.pathname === "/" || metadata.initialData) html = applyHomeCriticalCssDelivery(html);
     response = new Response(html, {
       status: metadata.notFound ? 404 : response.status,
       statusText: metadata.notFound ? "Not Found" : response.statusText,

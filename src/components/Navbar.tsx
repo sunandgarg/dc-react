@@ -1,22 +1,33 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { Menu, X, ChevronDown, User, Shield, LogOut, Home, Gift, FileText, Settings } from "lucide-react";
 import logo from "@/assets/dekhocampus-logo-small.webp";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { MegaMenu, MobileMegaMenu } from "@/components/MegaMenu";
+import { lazyRetry } from "@/lib/lazyRetry";
 import { GlobalSearchBar } from "@/components/GlobalSearchBar";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
+
+const MegaMenu = lazyRetry(() => import("./MegaMenu").then(m => ({ default: m.MegaMenu })), "MegaMenu");
+const MobileMegaMenu = lazyRetry(() => import("./MegaMenu").then(m => ({ default: m.MobileMegaMenu })), "MobileMegaMenu");
 
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [desktopMenu, setDesktopMenu] = useState(() => window.matchMedia("(min-width: 1280px)").matches);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { user, isAdmin, canAccess, signOut } = useAuth();
   const { data: profile } = useUserProfile();
   const { pathname } = useLocation();
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1280px)");
+    const update = () => setDesktopMenu(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -66,7 +77,7 @@ export function Navbar() {
             <img src={logo} alt="DekhoCampus" className="h-auto w-[145px] 2xl:w-[170px]" />
           </Link>
 
-          <MegaMenu />
+          {desktopMenu && <Suspense fallback={null}><MegaMenu /></Suspense>}
 
           <div className="flex shrink-0 items-center gap-2">
             {hasContentAdminAccess && (
@@ -178,7 +189,9 @@ export function Navbar() {
         {isMobileMenuOpen && (
             <div id="mobile-navigation-panel" className="xl:hidden border-t border-border">
               <div className="container py-4 space-y-1 bg-card max-h-[calc(100dvh-120px)] overflow-y-auto overscroll-contain">
-                <MobileMegaMenu onNavigate={() => setIsMobileMenuOpen(false)} />
+                <Suspense fallback={<p role="status">Loading navigation…</p>}>
+                  <MobileMegaMenu onNavigate={() => setIsMobileMenuOpen(false)} />
+                </Suspense>
 
                 {user && (
                   <Link

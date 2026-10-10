@@ -3,6 +3,14 @@ import { describe, expect, it } from "vitest";
 import { ExamLogo } from "./ExamLogo";
 
 describe("ExamLogo", () => {
+  it("prioritizes the hero mark but keeps listing logos lazy", () => {
+    const { rerender } = render(<ExamLogo exam={{ name: "Example", logo: "/logo.webp" }} eager />);
+    expect(screen.getByRole("img")).toHaveAttribute("fetchpriority", "high");
+    expect(screen.getByRole("img")).toHaveAttribute("loading", "eager");
+    rerender(<ExamLogo exam={{ name: "Example", logo: "/logo.webp" }} />);
+    expect(screen.getByRole("img")).not.toHaveAttribute("fetchpriority");
+    expect(screen.getByRole("img")).toHaveAttribute("loading", "lazy");
+  });
   it("shows a reviewed official asset instead of an old generated ring", () => {
     render(<ExamLogo exam={{ slug: "pu-cet-ug", short_name: "PU CET", logo: "/exam-logos-v2/pu.webp" }} />);
     expect(screen.getByRole("img", { name: "PU CET logo" })).toHaveAttribute("src", expect.stringContaining("/exam-logos/official-v1/"));

@@ -1,4 +1,5 @@
-import { AlsoCheckSection } from "@/components/AlsoCheckSection";
+import { lazyRetry } from "@/lib/lazyRetry";
+import { DeferUntilVisible } from "@/components/DeferUntilVisible";
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { buildExamHref } from "@/lib/entityUrls";
@@ -60,6 +61,7 @@ const EXAM_SECTIONS: ScrollSection[] = [
 ];
 
 const HERO_BADGE_CLASS = "border border-primary/20 bg-primary/10 text-primary hover:bg-primary/10 text-xs";
+const AlsoCheckSection = lazyRetry(() => import("@/components/AlsoCheckSection").then(m => ({ default: m.AlsoCheckSection })), "AlsoCheckSection");
 const HERO_SECONDARY_ACTION_CLASS = "h-10 rounded-xl border-border bg-background px-4 text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-primary/5";
 
 const HTML_FRAGMENT_RE = /<[a-z][\s\S]*>|&(?:amp;)?(?:lt|#0*60|#x0*3c);/i;
@@ -674,7 +676,9 @@ export default function ExamDetail() {
         </div>
       </main>
 
-      <AlsoCheckSection />
+      <DeferUntilVisible minHeight={120} fallbackDelay={0}>
+        <AlsoCheckSection />
+      </DeferUntilVisible>
       <Footer />
       <MobileBottomBar type="exam" slug={exam.slug} brandName={exam.name} brandLogoUrl={resolveExamLogo(exam)} sections={EXAM_SECTIONS} />
       {gateFile && (

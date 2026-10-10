@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Calendar, ChevronRight } from "lucide-react";
-import { useDbArticles } from "@/hooks/useArticlesData";
-import { useEffect, useMemo, useState } from "react";
-import { backendClient } from "@/integrations/backend/client";
+import { useEntityNewsArticles } from "@/hooks/useArticlesData";
 
 interface WhatsNewSectionProps {
   entityName: string;
@@ -12,38 +10,7 @@ interface WhatsNewSectionProps {
 }
 
 export function WhatsNewSection({ entityName, entityType, entitySlug, category }: WhatsNewSectionProps) {
-  const { data: articles } = useDbArticles();
-  const [linkedIds, setLinkedIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!entitySlug) return;
-    (backendClient as any)
-      .from("article_links")
-      .select("article_id")
-      .eq("entity_type", entityType)
-      .eq("entity_slug", entitySlug)
-      .then(({ data }: any) => setLinkedIds((data || []).map((d: any) => d.article_id)));
-  }, [entityType, entitySlug]);
-
-  const relevantArticles = useMemo(() => {
-    if (!articles) return [];
-    const linked = articles.filter((a) => linkedIds.includes(a.id));
-    if (linked.length > 0) return linked.slice(0, 3);
-
-    const nameWords = entityName.toLowerCase().split(/\s+/);
-    const matched = articles
-      .filter((a) => {
-        const titleLower = a.title.toLowerCase();
-        const descLower = (a.description || "").toLowerCase();
-        return nameWords.some((w) => w.length > 3 && (titleLower.includes(w) || descLower.includes(w))) ||
-          (category && (a.category || "").toLowerCase() === category.toLowerCase()) ||
-          (a.vertical || "").toLowerCase() === entityType;
-      })
-      .slice(0, 3);
-    if (matched.length > 0) return matched;
-
-    return [...articles].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)).slice(0, 3);
-  }, [articles, entityName, entityType, category, linkedIds]);
+  const { data: relevantArticles = [] } = useEntityNewsArticles({ entityName, entityType, entitySlug, category });
 
   // Only hide if absolutely nothing exists
   if (relevantArticles.length === 0) return null;

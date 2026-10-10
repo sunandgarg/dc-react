@@ -355,7 +355,7 @@ export function entityEdgeSeo(entity, url, entityType) {
   const title = titleWithTab.includes("DekhoCampus") ? titleWithTab : `${titleWithTab} | DekhoCampus`;
   const description = articlePlainText(entity.page_summary || entity.meta_description || entity.description)
     || `Explore verified ${config.label.toLowerCase()} information for ${name} on DekhoCampus.`;
-  const image = absoluteMediaUrl(entity.image || entity.logo);
+  const image = absoluteMediaUrl(entityType === "exams" ? entity.logo || entity.image : entity.image || entity.logo);
   const imageAlt = config.imageAlt(name);
   const modifiedAt = entity.updated_at;
   const videoEmbedUrl = youtubeEmbedUrl(entity.youtube_video_url);
@@ -438,7 +438,7 @@ export function entityEdgeSeo(entity, url, entityType) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:1180px;margin:24px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p></article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:1180px;margin:24px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="${entityType === "exams" ? 96 : 1200}" height="${entityType === "exams" ? 96 : 675}" style="display:block;${entityType === "exams" ? "width:96px;height:96px;object-fit:contain" : "width:100%;height:auto;aspect-ratio:16/9;object-fit:cover"}" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p></article>`,
   };
 }
 
@@ -448,6 +448,7 @@ export function articleEdgeSeo(article, url) {
   const description = articlePlainText(article.meta_description || article.description || "");
   const image = absoluteMediaUrl(article.featured_image);
   const imageAlt = String(article.title || title);
+  const excerpt = (articlePlainText(article.description) || description).slice(0, 240);
   const publishedAt = article.published_at || article.created_at;
   const modifiedAt = article.updated_at || publishedAt;
   const authorName = String(article.resolved_author?.name || article.author || "DekhoCampus Editorial");
@@ -508,7 +509,7 @@ export function articleEdgeSeo(article, url) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.65;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(article.title || title)}</h1><p>By ${authorSlug ? `<a href="/author/${encodeURIComponent(authorSlug)}">${escapeHtml(authorName)}</a>` : escapeHtml(authorName)}${publicationLabel ? ` · <time datetime="${escapeHtml(publishedAt)}">${escapeHtml(publicationLabel)} IST</time>` : ""}</p>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(addCbseSamplePaperLinks(article.title, article.content))}</article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.65;color:#111827"><p>By ${authorSlug ? `<a href="/author/${encodeURIComponent(authorSlug)}">${escapeHtml(authorName)}</a>` : escapeHtml(authorName)}${publicationLabel ? ` · <time datetime="${escapeHtml(publishedAt)}">${escapeHtml(publicationLabel)} IST</time>` : ""}</p><h1>${escapeHtml(article.title || title)}</h1>${excerpt ? `<p>${escapeHtml(excerpt)}</p>` : ""}${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1600" height="870" style="display:block;width:100%;height:auto;aspect-ratio:1600/870;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}${articlePrerenderBlocks(addCbseSamplePaperLinks(article.title, article.content))}</article>`,
   };
 }
 
@@ -541,6 +542,11 @@ export function applyEdgeSeo(html, metadata) {
   if (metadata.structuredData) {
     const json = JSON.stringify(metadata.structuredData).replace(/</g, "\\u003c");
     output = output.replace(/<\/head>/i, `    <script type="application/ld+json" data-dc-edge-schema>${json}</script>\n  </head>`);
+  }
+  if (metadata.initialData) {
+    // JSON stays inert even when an editor's text contains a closing script tag.
+    const json = JSON.stringify(metadata.initialData).replace(/</g, "\\u003c");
+    output = output.replace(/<\/head>/i, `<script id="dc-initial-page-data" type="application/json">${json}</script></head>`);
   }
   if (metadata.prerenderHtml) {
     // The static first-paint shell belongs to the homepage, not to article or archive HTML.

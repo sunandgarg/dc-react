@@ -12,6 +12,21 @@ const rowsResponse = (rows: unknown) => new Response(JSON.stringify(rows), { hea
 afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
 
 describe("Cloudflare serving failure classification", () => {
+  it("embeds only the anonymous public detail response as inert JSON", async () => {
+    const row = { id: "a1", slug: "existing-article", title: "News", content: '<p>Text</p></script><script>alert(1)</script>', is_active: true, status: "Published", site_scope: "dekhocampus" };
+    const api = vi.spyOn(globalThis, "fetch").mockImplementation(async () => rowsResponse([row]));
+    const response = await serve("/news/existing-article");
+    const html = await response.text();
+    const json = html.match(/<script id="dc-initial-page-data" type="application\/json">(.*?)<\/script>/)?.[1];
+    expect(JSON.parse(json!)).toEqual({ table: "articles", routeSlug: "existing-article", row });
+    expect(json).not.toContain("<");
+    const query = new URL(String(api.mock.calls[0][0])).searchParams;
+    expect(query.get("site_scope")).toBe("eq.dekhocampus");
+    expect(query.get("status")).toBe("eq.Published");
+    expect(api.mock.calls[0][1]?.headers).toEqual({ accept: "application/json" });
+    const options = api.mock.calls[0][1] as RequestInit & { cf: { cacheTtlByStatus: Record<string, number> } };
+    expect(options.cf.cacheTtlByStatus["200-299"]).toBe(30);
+  });
   it.each(routes)("keeps a successful existing lookup indexable: %s", async (route) => {
     const slug = route.split("/").at(-1)!.replace(/-12345$/, "");
     vi.spyOn(globalThis, "fetch").mockImplementation(async () => rowsResponse([{ slug, short_id: 12345, name: "Existing entity", title: "Existing article", description: "Verified page details", content: "<p>Existing article body</p>" }]));

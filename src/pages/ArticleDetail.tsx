@@ -712,6 +712,7 @@ export default function ArticleDetail() {
 
               {/* You may also like - bottom only */}
               {recommendations.length > 0 && (
+                <DeferUntilVisible minHeight={240} fallbackDelay={0}>
                 <section className="mt-10">
                   <h2 data-h className="text-xl font-bold text-foreground mb-4">You may also like</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -727,6 +728,7 @@ export default function ArticleDetail() {
                     ))}
                   </div>
                 </section>
+                </DeferUntilVisible>
               )}
 
             </article>
@@ -885,7 +887,7 @@ export default function ArticleDetail() {
 
 
 
-      <DeferUntilVisible minHeight={120}>
+      <DeferUntilVisible minHeight={120} fallbackDelay={0}>
         <AlsoCheckSection />
       </DeferUntilVisible>
       <Footer />

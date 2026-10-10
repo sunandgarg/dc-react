@@ -1,4 +1,3 @@
-import jsPDF from "jspdf";
 import { backendClient } from "@/integrations/backend/client";
 
 export interface FeeRow {
@@ -24,6 +23,7 @@ function fmtINR(n: number) {
 }
 
 export async function downloadCourseFeePDF(opts: { collegeSlug: string; collegeName: string }) {
+  const { default: jsPDF } = await import("jspdf");
   const rows = await fetchCourseFees(opts.collegeSlug);
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
