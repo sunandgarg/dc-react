@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { prisma, schemaMetadata } from "../src/db.mjs";
 import { handleRest } from "../src/rest.mjs";
+import { coreEntityRoute } from "../../scripts/core-entity-seo-check.mjs";
 
 const PUBLIC_BASE_URL = String(process.env.PUBLIC_BASE_URL || "https://dekhocampus.com").replace(/\/$/, "");
 const API_BASE_URL = String(process.env.API_BASE_URL || PUBLIC_BASE_URL).replace(/\/$/, "");
@@ -49,13 +50,6 @@ const ADMIN_FIELDS = {
     "author", "author_id", "category", "content", "description", "featured_image", "featured_rank", "is_active",
     "meta_description", "meta_keywords", "meta_title", "slug", "status", "tags", "title", "vertical", "views",
   ],
-};
-
-const ROUTES = {
-  colleges: (slug) => `/colleges/${slug}`,
-  courses: (slug) => `/courses/${slug}`,
-  exams: (slug) => `/exams/${slug}`,
-  articles: (slug) => `/news/${slug}`,
 };
 
 function requestFor(table, method, { body, id, prefer = "return=representation" } = {}) {
@@ -269,7 +263,7 @@ async function prepare() {
         id: created.id,
         slug: created.slug,
         marker: markerFor(runToken, false),
-        route: ROUTES[table](created.slug),
+        route: coreEntityRoute(table, created),
         fieldsChecked: ADMIN_FIELDS[table].length,
       });
     }
@@ -300,7 +294,7 @@ async function edit() {
       ...entity,
       slug: edited.slug,
       marker: markerFor(manifest.runToken, true),
-      route: ROUTES[entity.table](edited.slug),
+      route: coreEntityRoute(entity.table, edited),
     });
   }
   const editedManifest = { ...manifest, phase: "edit", entities };

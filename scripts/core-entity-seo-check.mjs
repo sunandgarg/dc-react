@@ -1,3 +1,7 @@
+export function coreEntityRoute(table, { slug, short_id }) {
+  return `/${table === "articles" ? "news" : table}/${slug}${table !== "articles" && short_id ? `-${short_id}` : ""}`;
+}
+
 export function verifyCoreEntityInitialHtml({ status, html, expectedUrl, marker }) {
   if (status !== 200) throw new Error(`${expectedUrl} returned HTTP ${status}`);
   if (!html.includes(marker)) throw new Error(`${expectedUrl} is missing its content marker in initial HTML`);
