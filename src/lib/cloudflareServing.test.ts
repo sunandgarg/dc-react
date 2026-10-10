@@ -30,6 +30,27 @@ describe("Cloudflare serving failure classification", () => {
     expect(await response.text()).toContain('content="noindex, follow, noarchive"');
   });
 
+  it.each(["colleges", "courses", "exams"])("does not reuse an old slug lookup after editing %s", async (table) => {
+    const cached = new Map<string, string>();
+    let slug = "original-name";
+    const api = vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      const url = String(input);
+      if (!cached.has(url)) {
+        const query = new URL(url).searchParams;
+        cached.set(url, JSON.stringify(query.get("slug") === `eq.${slug}`
+          ? [{ slug, short_id: 12345, name: "Existing entity", description: "Verified page details" }] : []));
+      }
+      return new Response(cached.get(url), { headers: { "content-type": "application/json" } });
+    });
+    expect((await serve(`/${table}/${slug}-12345`)).status).toBe(200);
+    slug = "edited-name";
+    const response = await serve(`/${table}/${slug}-12345`);
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain(`rel="canonical" href="https://dekhocampus.com/${table}/${slug}-12345"`);
+    expect(api).toHaveBeenCalledTimes(2);
+    expect(new URL(String(api.mock.calls[1][0])).searchParams.get("short_id")).toBe("eq.12345");
+  });
+
   for (const failure of ["http503", "http404", "network", "invalidJson", "errorObject", "wrappedError", "invalidRows", "missingFields"]) {
     it.each(routes)(`${failure} remains temporary instead of removing %s`, async (route) => {
       vi.spyOn(console, "error").mockImplementation(() => undefined);

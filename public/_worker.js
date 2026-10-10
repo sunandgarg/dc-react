@@ -185,7 +185,7 @@ async function fetchPublicEntity(entityType, publicSlug) {
 
   const shortId = publicSlug.match(/-(\d+)$/)?.[1];
   if (shortId) {
-    const [candidate] = await fetchRows({ short_id: `eq.${shortId}` });
+    const [candidate] = await fetchRows({ short_id: `eq.${shortId}`, slug: `eq.${publicSlug.slice(0, -(shortId.length + 1))}` });
     if (candidate && `${candidate.slug}-${candidate.short_id}` === publicSlug) return candidate;
   }
   const [legacyCandidate] = await fetchRows({ slug: `eq.${publicSlug}` });
