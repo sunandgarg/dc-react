@@ -19,7 +19,8 @@ export function slugify(input: string): string {
     .replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
+    .slice(0, 60)
+    .replace(/-+$/, "");
 }
 
 /** Keep a slug in sync with its source until an editor manually changes it. */

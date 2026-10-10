@@ -119,18 +119,21 @@ test("non-publishing editors are forced into draft state by the server", () => {
   );
 });
 
-test("administrator AI article paths publish immediately", async () => {
+test("administrator AI article paths retain draft saves and enforce the Studio review policy", async () => {
   const blogSource = await readFile(new URL("../src/blog-ai.mjs", import.meta.url), "utf8");
   const studioSource = await readFile(new URL("../../src/components/admin/BlogStudioDialog.tsx", import.meta.url), "utf8");
   const articlesPageSource = await readFile(new URL("../../src/pages/AdminArticles.tsx", import.meta.url), "utf8");
   assert.match(blogSource, /const status = shouldReview \? "Draft" : "Published"/);
-  assert.match(blogSource, /const requestedStatus = body\.status === "Draft" \? "Draft" : "Published"/);
+  assert.match(blogSource, /const requestedStatus = blogStudioPublicationStatus\(body\.status, saved\)/);
   assert.match(blogSource, /USE_EDITORIAL_BLOG_STUDIO/);
   assert.match(blogSource, /const siteScope = normalizeArticleSiteScope\(body\.site_scope\)/);
   assert.match(blogSource, /site_scope: siteScope/);
   assert.match(blogSource, /siteScope === "sarkari" \? "sarkari_articles" : "articles"/);
   assert.match(studioSource, /action: "publish"/);
-  assert.match(studioSource, /status: "Published"/);
+  assert.match(studioSource, /save\("Published"\)/);
+  assert.match(studioSource, /save\("Draft"\)/);
+  assert.match(studioSource, /evidence_id: evidenceId/);
+  assert.match(studioSource, /data\?\.article\?\.status === "Draft"/);
   assert.match(studioSource, /site_scope: siteScope/);
   assert.doesNotMatch(studioSource, /\.from\("articles"\)\.upsert/);
   assert.doesNotMatch(articlesPageSource, /AIGenerateDialog/);

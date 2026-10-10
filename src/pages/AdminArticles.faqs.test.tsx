@@ -118,8 +118,20 @@ describe("article FAQ workflow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Add FAQ" }));
     expect(screen.getByRole("button", { name: "Remove FAQ 2" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Remove FAQ 2" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Submit for approval" })).toBeEnabled());
     fireEvent.click(screen.getByRole("button", { name: "Submit for approval" }));
     await waitFor(() => expect(mocks.writes[0]).toMatchObject({ faqs: [{ id: "saved-faq", answer: "Updated answer", is_active: true }] }));
+  });
+
+  it("publish-capable editors can submit the complete proposed article for human review", async () => {
+    mocks.role = "content_head";
+    sessionStorage.setItem(draftKey, JSON.stringify({ ...draft, id: "existing-article", entity_links: [], faqs: [{ question: "Who confirms the programme rule?", answer: "Ask the responsible admission office.", is_active: true }] }));
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Submit for human review" }));
+    await waitFor(() => expect(mocks.writes[0]).toMatchObject({
+      _request_human_review: true, status: "Published", is_active: true,
+      content: draft.content, faqs: [{ question: "Who confirms the programme rule?" }], entity_links: [],
+    }));
   });
 
   it("normalizes an old saved draft with numeric FAQ flags before editing or saving", async () => {

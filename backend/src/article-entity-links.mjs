@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 const ENTITY_TYPES = new Set([
   "college", "course", "exam", "career", "scholarship", "article", "study_subject", "study_chapter",
 ]);
+const ENTITY_TABLES = { college: "colleges", course: "courses", exam: "exams", career: "career_profiles", scholarship: "scholarships", article: "articles", study_subject: "study_subjects", study_chapter: "study_chapters" };
 
 export function normalizeArticleEntityLinks(value) {
   if (value === undefined) return undefined;
@@ -25,9 +26,20 @@ export function normalizeArticleEntityLinks(value) {
   });
 }
 
+export async function assertArticleEntityLinksExist(tx, links, siteScope = "dekhocampus") {
+  for (const link of normalizeArticleEntityLinks(links) || []) {
+    const rows = await tx.$queryRawUnsafe(
+      `SELECT \`id\` FROM \`${ENTITY_TABLES[link.entity_type]}\` WHERE \`slug\` = ?${link.entity_type === "article" ? " AND `site_scope` = ?" : ""} LIMIT 1`,
+      link.entity_slug, ...(link.entity_type === "article" ? [siteScope] : []),
+    );
+    if (!rows.length) throw Object.assign(new Error(`Article link target was not found: ${link.entity_type}/${link.entity_slug}`), { status: 422, code: "ARTICLE_LINK_TARGET_NOT_FOUND" });
+  }
+}
+
 export async function saveNewArticleEntityLinks(tx, article) {
   const links = normalizeArticleEntityLinks(article.entity_links);
   if (!links?.length) return;
+  await assertArticleEntityLinksExist(tx, links, article.site_scope);
   for (const link of links) {
     await tx.$executeRawUnsafe(
       "INSERT INTO `article_links` (`id`, `article_id`, `entity_type`, `entity_slug`, `created_at`) VALUES (?,?,?,?,?)",
@@ -39,6 +51,7 @@ export async function saveNewArticleEntityLinks(tx, article) {
 export async function replaceArticleEntityLinks(tx, article) {
   const links = normalizeArticleEntityLinks(article.entity_links);
   if (links === undefined) return;
+  await assertArticleEntityLinksExist(tx, links, article.site_scope);
   const types = [...ENTITY_TYPES];
   const existing = await tx.$queryRawUnsafe(
     `SELECT \`id\`, \`entity_type\`, \`entity_slug\` FROM \`article_links\` WHERE \`article_id\` = ? AND \`entity_type\` IN (${types.map(() => "?").join(",")})`,

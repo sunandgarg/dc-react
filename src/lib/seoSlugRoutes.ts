@@ -125,9 +125,9 @@ export function parseExamSlug(slug: string): Record<string, string> {
     if (s.includes(key)) { filters.stream = val; break; }
   }
 
-  if (s.includes("national")) filters.level = "National";
-  else if (s.includes("state")) filters.level = "State";
-  else if (s.includes("university")) filters.level = "University";
+  if (s.includes("national")) filters.scope = "National";
+  else if (s.includes("state")) filters.scope = "State";
+  else if (s.includes("university")) filters.scope = "University";
 
   return filters;
 }
@@ -145,7 +145,7 @@ export function filtersToSlug(type: "colleges" | "courses" | "exams", filters: R
   }
 
   if (type === "exams") {
-    if (filters.level) parts.push(filters.level.toLowerCase());
+    if (filters.scope || filters.level) parts.push((filters.scope || filters.level).toLowerCase());
     parts.push("entrance-exams");
   } else {
     parts.push(type);

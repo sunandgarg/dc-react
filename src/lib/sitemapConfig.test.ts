@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { COLLEGE_DETAIL_TABS, COURSE_DETAIL_TABS, EXAM_DETAIL_TABS, STATIC_SITEMAP_ROUTES } from "./sitemapConfig";
+import { canonicalSitemapSectionPath, COLLEGE_DETAIL_TABS, COURSE_DETAIL_TABS, EXAM_DETAIL_TABS, STATIC_SITEMAP_ROUTES } from "./sitemapConfig";
 
 const REQUIRED_PUBLIC_ROOTS = [
   "/",
@@ -26,6 +26,14 @@ const REQUIRED_PUBLIC_ROOTS = [
 ];
 
 describe("sitemap configuration", () => {
+  it("normalizes recovered college/course section aliases but preserves distinct resources", () => {
+    expect(canonicalSitemapSectionPath("/colleges/chandigarh-university-10026/courses")).toBe("/colleges/chandigarh-university-10026");
+    expect(canonicalSitemapSectionPath("/colleges/chandigarh-university-10026/contact")).toBe("/colleges/chandigarh-university-10026");
+    expect(canonicalSitemapSectionPath("/courses/computer-science-12345/eligibility")).toBe("/courses/computer-science-12345");
+    for (const path of ["/colleges", "/colleges/top-btech-colleges-in-india", "/exams/jee-12345/answer-key", "/college-study-material/btech/university/semester-1", "/news/article"]) {
+      expect(canonicalSitemapSectionPath(path)).toBe(path);
+    }
+  });
   it("covers every canonical public root", () => {
     const configured = new Set(STATIC_SITEMAP_ROUTES.map((route) => route.path));
     expect(REQUIRED_PUBLIC_ROOTS.filter((route) => !configured.has(route))).toEqual([]);
@@ -37,13 +45,12 @@ describe("sitemap configuration", () => {
     expect(paths.some((path) => path.startsWith("/admin") || path.startsWith("/dashboard") || path === "/auth")).toBe(false);
   });
 
-  it("keeps every detail sitemap tab unique and crawlable", () => {
-    for (const tabs of [COLLEGE_DETAIL_TABS, COURSE_DETAIL_TABS, EXAM_DETAIL_TABS]) {
-      expect(new Set(tabs).size).toBe(tabs.length);
-      expect(tabs).toContain("overview");
-      expect(tabs).toContain("faq");
-    }
-    expect(COLLEGE_DETAIL_TABS).toContain("courses");
+  it("lists only distinct detail pages, not whole-page section aliases", () => {
+    expect(COLLEGE_DETAIL_TABS).toEqual([]);
+    expect(COURSE_DETAIL_TABS).toEqual([]);
+    expect(new Set(EXAM_DETAIL_TABS).size).toBe(EXAM_DETAIL_TABS.length);
+    expect(EXAM_DETAIL_TABS).toContain("overview");
+    expect(EXAM_DETAIL_TABS).toContain("faq");
     expect(EXAM_DETAIL_TABS).toContain("answer-key");
   });
 });

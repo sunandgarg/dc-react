@@ -18,8 +18,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-        display: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-site, sans-serif)'],
+        display: ['var(--font-site, sans-serif)'],
+        serif: ['var(--font-site, sans-serif)'],
+        mono: ['var(--font-site, sans-serif)'],
       },
       colors: {
         border: "hsl(var(--border))",

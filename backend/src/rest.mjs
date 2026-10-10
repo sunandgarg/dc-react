@@ -4,7 +4,7 @@ import { recordContentReviews } from "./content-review.mjs";
 import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 import { invalidateDirectorySearchCache, searchDirectory } from "./directory-search.mjs";
 import { sanitizeCollegePublicContent } from "./college-content-sanitizer.mjs";
-import { assertArticleTopicsAvailable, loadArticleCoverage, withArticleWriteLock } from "./blog-ai.mjs";
+import { assertArticleTopicsAvailable, loadArticleCoverage, withArticleWriteLock, prepareStudioArticlePublication, commitStudioArticlePublication } from "./blog-ai.mjs";
 import { mergeIntentVisitor, prepareIntentEvents, stampTrackingSiteScope, updateIntentScoresForEvents } from "./intent-intelligence.mjs";
 import { normalizeArticleFaqs, saveArticleFaqs } from "./article-faqs.mjs";
 import { normalizeArticleEntityLinks, replaceArticleEntityLinks, saveNewArticleEntityLinks } from "./article-entity-links.mjs";
@@ -564,6 +564,14 @@ async function handleGet(table, request, url, context) {
   const query = `SELECT ${selection} FROM ${quote(table)}${where}${orderSql(table, url.searchParams.get("order"))} LIMIT ${limit} OFFSET ${Math.max(0, offset)}`;
   let rows = request.method === "HEAD" ? [] : await prisma.$queryRawUnsafe(query, ...params);
   rows = rows.map((row) => decodeRow(table, row));
+  if (table === "articles" && context.publicAccess) {
+    const tagFields = new Set(["tags", ...nodes.filter((node) => node.kind === "field" && node.field === "tags").map((node) => node.alias || "tags")]);
+    for (const row of rows) for (const key of tagFields) {
+      let tags = row[key];
+      if (typeof tags === "string") { try { tags = JSON.parse(tags); } catch { continue; } }
+      if (Array.isArray(tags)) row[key] = tags.filter((tag) => tag !== "blog-studio");
+    }
+  }
   rows = await hydrateRelations(table, rows, nodes);
   rows.forEach((row) => hiddenRelationFields.forEach((field) => delete row[field]));
   const safe = jsonSafe(rows);
@@ -763,6 +771,14 @@ async function handlePost(table, request, url, context) {
     };
   }
   const prepared = rows.map((row) => applyDefaults(table, row));
+  const studioReviews = [];
+  if (table === "articles") {
+    const existing = merge ? await findExistingUpsertRows(table, prepared, conflictColumns) : prepared.map(() => []);
+    const candidates = prepareStagedArticleUpsertReviews(rows, prepared, existing, conflictColumns).gateCandidates;
+    for (let index = 0; index < candidates.length; index += 1) {
+      studioReviews.push(await prepareStudioArticlePublication(existing[index]?.[0] || null, candidates[index], { allowFaqDelete: Boolean(context.allowArticleFaqDelete) }));
+    }
+  }
   const inserted = table === "articles"
     ? await withArticleWriteLock(async (tx) => {
       const existingByCandidate = merge
@@ -775,7 +791,9 @@ async function handlePost(table, request, url, context) {
         });
       }
       const saved = [];
+      const candidates = prepareStagedArticleUpsertReviews(rows, prepared, existingByCandidate, conflictColumns).gateCandidates;
       for (let index = 0; index < prepared.length; index += 1) {
+        await commitStudioArticlePublication(tx, existingByCandidate[index]?.[0] || null, candidates[index], studioReviews[index]);
         const article = await insertRow(table, rows[index], merge, conflictColumns, tx, prepared[index]);
         await saveArticleFaqs(tx, { ...article, ...(Object.hasOwn(rows[index], "faqs") ? { faqs: rows[index].faqs } : {}) }, {
           previousSlug: existingByCandidate[index]?.[0]?.slug || article.slug,
@@ -818,7 +836,8 @@ async function handlePatch(table, request, url, context) {
   const checkArticleScope = table === "articles" && Object.hasOwn(input, "site_scope");
   const checkArticleFaqs = table === "articles" && Object.hasOwn(input, "faqs");
   const checkArticleLinks = table === "articles" && Object.hasOwn(input, "entity_links");
-  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic || checkArticleScope || checkArticleFaqs || checkArticleLinks;
+  const checkStudioPublication = table === "articles";
+  const needsBefore = prefer.includes("return=representation") || Boolean(context.actorUserId) || checkArticleTopic || checkArticleScope || checkArticleFaqs || checkArticleLinks || checkStudioPublication;
   const whereParams = params.slice(columns.length);
   let before = [];
   if (context.stageReview) {
@@ -839,7 +858,12 @@ async function handlePatch(table, request, url, context) {
     };
   }
   let body;
-  if (checkArticleTopic || checkArticleScope || checkArticleFaqs || checkArticleLinks) {
+  const studioReviews = new Map();
+  if (checkStudioPublication) {
+    before = await prisma.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where}`, ...whereParams);
+    for (const row of before) studioReviews.set(row.id, await prepareStudioArticlePublication(row, { ...row, ...input }, { allowFaqDelete: Boolean(context.allowArticleFaqDelete) }));
+  }
+  if (checkArticleTopic || checkArticleScope || checkArticleFaqs || checkArticleLinks || checkStudioPublication) {
     ({ before, body } = await withArticleWriteLock(async (tx) => {
       const lockedBefore = await tx.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where} FOR UPDATE`, ...whereParams);
       if (checkArticleScope) assertArticleSiteScopeUnchanged(input, lockedBefore);
@@ -851,6 +875,7 @@ async function handlePatch(table, request, url, context) {
           excludeIdsByCandidate: nextRows.map(() => excludedIds),
         });
       }
+      for (let index = 0; index < nextRows.length; index += 1) await commitStudioArticlePublication(tx, lockedBefore[index], nextRows[index], studioReviews.get(lockedBefore[index].id));
       if (columns.length) await tx.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${columns.map((column) => `${quote(column)} = ?`).join(",")}${where}`, ...params);
       for (let index = 0; index < nextRows.length; index += 1) {
         await saveArticleFaqs(tx, nextRows[index], {

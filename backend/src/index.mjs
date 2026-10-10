@@ -760,6 +760,17 @@ export async function handleRequest(request) {
     if (restMatch) {
       const table = restMatch[1];
       const authorization = await authorizeRest(table, request);
+      // Opt into the existing admin approval queue only after normal edit/create
+      // authorisation. This never grants publish permission or changes writer policy.
+      if (table === "articles" && ["POST", "PATCH"].includes(request.method)) {
+        const payload = await authorization.request.clone().json().catch(() => null);
+        if (!Array.isArray(payload) && payload?._request_human_review === true) {
+          const identity = await resolveIdentity(request);
+          if (!identity) throw new HttpError(401, "AUTH_REQUIRED", "A valid user session is required");
+          authorization.actorUserId = identity.id;
+          authorization.stageReview = true;
+        }
+      }
       const articleWriteRequest = table === "articles" ? authorization.request.clone() : null;
       const result = await handleRest(table, authorization.request, authorization);
       await queuePublishedArticleWrite(articleWriteRequest, result);

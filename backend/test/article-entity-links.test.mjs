@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { prisma } from "../src/db.mjs";
-import { normalizeArticleEntityLinks } from "../src/article-entity-links.mjs";
+import { assertArticleEntityLinksExist, normalizeArticleEntityLinks, replaceArticleEntityLinks } from "../src/article-entity-links.mjs";
 import { applyApprovedReview } from "../src/content-review.mjs";
 import { handleRest } from "../src/rest.mjs";
 
@@ -15,12 +15,24 @@ const entity_links = [
   { entity_type: "course", entity_slug: "btech-computer-science" },
   { entity_type: "exam", entity_slug: "jee-main" },
 ];
+const isTargetQuery = (sql) => /SELECT `id` FROM `(?:colleges|courses|exams|career_profiles|scholarships|study_subjects|study_chapters)`/.test(sql);
 
 test("article entity links validate types, deduplicate, and reject malformed inputs", () => {
   assert.deepEqual(normalizeArticleEntityLinks([...entity_links, entity_links[0]]), entity_links);
   assert.throws(() => normalizeArticleEntityLinks([{ entity_type: "admin", entity_slug: "x" }]), /valid entity type/);
   assert.throws(() => normalizeArticleEntityLinks([{ entity_type: "exam", entity_slug: "" }]), /valid entity type/);
   assert.throws(() => normalizeArticleEntityLinks({ entity_type: "exam", entity_slug: "jee-main" }), /at most 100/);
+});
+
+test("article links must resolve existing entities in the article's site workspace", async () => {
+  const queries = [];
+  await assertArticleEntityLinksExist({ $queryRawUnsafe: async (sql, ...params) => { queries.push([sql, params]); return [{ id: "target" }]; } }, [{ entity_type: "article", entity_slug: "shared-slug" }], "sarkari");
+  assert.match(queries[0][0], /`site_scope` = \?/);
+  assert.deepEqual(queries[0][1], ["shared-slug", "sarkari"]);
+  await assert.rejects(assertArticleEntityLinksExist({ $queryRawUnsafe: async () => [] }, [entity_links[2]]), (error) => error.code === "ARTICLE_LINK_TARGET_NOT_FOUND");
+  let writes = 0;
+  await assert.rejects(replaceArticleEntityLinks({ $queryRawUnsafe: async () => [], $executeRawUnsafe: async () => { writes += 1; } }, { ...article, entity_links }), /target was not found/);
+  assert.equal(writes, 0);
 });
 
 test("writer and content-manager article reviews retain selected entity links", async () => {
@@ -49,7 +61,7 @@ test("approving a new article saves its selected links after inserting the paren
   let parentInserted = false;
   const saved = [];
   const tx = {
-    $queryRawUnsafe: async () => [],
+    $queryRawUnsafe: async (sql) => isTargetQuery(sql) ? [{ id: "target" }] : [],
     $executeRawUnsafe: async (sql, ...params) => {
       if (sql.includes("INSERT INTO `articles`")) parentInserted = true;
       if (sql.includes("INSERT INTO `article_links`")) {
@@ -70,7 +82,7 @@ test("directly saving an article writes selected links in the same transaction",
   const transaction = prisma.$transaction;
   const saved = [];
   prisma.$transaction = async (operation) => operation({
-    $queryRawUnsafe: async (sql, scope) => sql.includes("article_write_locks") ? [{ site_scope: scope }] : [],
+    $queryRawUnsafe: async (sql, scope) => sql.includes("article_write_locks") ? [{ site_scope: scope }] : isTargetQuery(sql) ? [{ id: "target" }] : [],
     $executeRawUnsafe: async (sql, ...params) => {
       if (sql.includes("INSERT INTO `article_links`")) saved.push(params.slice(1, 4));
       return 1;
@@ -89,9 +101,12 @@ test("directly saving an article writes selected links in the same transaction",
 
 test("editing an article replaces selected tags without deleting unrelated study links", async () => {
   const transaction = prisma.$transaction;
+  const query = prisma.$queryRawUnsafe;
   const writes = [];
+  prisma.$queryRawUnsafe = async (sql) => sql.includes("FROM `articles`") ? [article] : [];
   prisma.$transaction = async (operation) => operation({
     $queryRawUnsafe: async (sql, ...params) => {
+      if (isTargetQuery(sql)) return [{ id: "target" }];
       if (sql.includes("article_write_locks")) return [{ site_scope: params[0] }];
       if (sql.includes("FROM `articles`")) return [article];
       if (sql.includes("FROM `article_links`")) return [
@@ -110,13 +125,14 @@ test("editing an article replaces selected tags without deleting unrelated study
     assert.ok(writes.some(([sql, params]) => sql.includes("INSERT INTO `article_links`") && params[2] === "exam" && params[3] === "jee-main"));
   } finally {
     prisma.$transaction = transaction;
+    prisma.$queryRawUnsafe = query;
   }
 });
 
 test("approving a content-manager edit applies its article tags", async () => {
   const writes = [];
   const tx = {
-    $queryRawUnsafe: async (sql) => sql.includes("FROM `article_links`")
+    $queryRawUnsafe: async (sql) => isTargetQuery(sql) ? [{ id: "target" }] : sql.includes("FROM `article_links`")
       ? [{ id: "old-tag", entity_type: "college", entity_slug: "old-college" }] : [],
     $executeRawUnsafe: async (sql, ...params) => { writes.push([sql, params]); return 1; },
   };

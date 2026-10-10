@@ -176,7 +176,7 @@ export default function CollegeDetail() {
     title: college ? (detailTab ? `${college.name} ${detailTab.label} ${currentYear()}` : (college.meta_title || `${college.name} - Admissions, Fees, Placements ${currentYear()}`)) : undefined,
     description: college ? (detailTab ? `Explore ${college.name} ${detailTab.label.toLowerCase()} details for ${currentYear()}, with verified information and related admission guidance.` : (college.meta_description || `${college.name} - admissions, fees, placements, courses, ranking details for ${currentYear()}`)) : undefined,
     keywords: college?.meta_keywords || undefined,
-    canonical: college ? `${buildCollegeHref(college as any)}${detailTab ? `/${detailTab.id}` : ""}` : undefined,
+    canonical: college ? buildCollegeHref(college as any) : undefined,
     ogImage: college?.image || undefined,
     jsonLd: college ? {
       "@context": "https://schema.org",
@@ -184,7 +184,7 @@ export default function CollegeDetail() {
       name: college.name,
       alternateName: college.short_name || undefined,
       description: (college as any).page_summary || college.description || undefined,
-      url: absoluteSiteUrl(`${buildCollegeHref(college as any)}${detailTab ? `/${detailTab.id}` : ""}`),
+      url: absoluteSiteUrl(buildCollegeHref(college as any)),
       image: college.image ? { "@type": "ImageObject", url: absoluteCanonical(college.image), contentUrl: absoluteCanonical(college.image), caption: `${college.name} campus` } : undefined,
       logo: college.logo ? { "@type": "ImageObject", url: absoluteCanonical(college.logo), contentUrl: absoluteCanonical(college.logo), caption: `${college.name} logo` } : undefined,
       foundingDate: college.established ? String(college.established) : undefined,

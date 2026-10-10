@@ -13,6 +13,8 @@ import { Switch } from "@/components/ui/switch";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { DEFAULT_SITE_SCOPE, siteScopeLabel, type SiteScope } from "@/lib/siteScope";
 import { ArticleScorePanel } from "@/components/admin/ArticleScorePanel";
+import { RichText } from "@/components/detail/RichText";
+import { ArticleSocialDrafts } from "@/components/admin/ArticleSocialDrafts";
 
 type Suggestion = { entity_type: string; entity_slug: string; label: string };
 type DraftFaq = { question: string; answer: string };
@@ -27,6 +29,7 @@ type EditorialSettings = {
   language: string;
   audience: string;
   tone: string;
+  human_review_required: boolean;
 };
 type Quality = { score?: number; issues?: string[]; model_review?: { score?: number; summary?: string } };
 const LENGTHS = [0, 350, 400, 500, 900, 1200, 1500, 1800] as const;
@@ -55,6 +58,7 @@ const DEFAULT_EDITORIAL_SETTINGS: EditorialSettings = {
   language: "English",
   audience: "Indian students and parents",
   tone: "Direct, practical, opinionated and conversational Indian admissions guidance for stressed students and parents",
+  human_review_required: false,
 };
 const SARKARI_CATEGORIES = ["Latest Jobs", "Results", "Admit Card", "Answer Key", "Admissions", "Syllabus", "Scholarships"];
 
@@ -77,6 +81,8 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
   const [logoUrl, setLogoUrl] = useState("");
   const [editorial, setEditorial] = useState<EditorialSettings>(DEFAULT_EDITORIAL_SETTINGS);
   const [researchSources, setResearchSources] = useState<string[]>([]);
+  const [evidenceId, setEvidenceId] = useState("");
+  const [generatedContent, setGeneratedContent] = useState("");
   const [quality, setQuality] = useState<Quality | null>(null);
   const [modelUsed, setModelUsed] = useState("");
   const [analysisModelUsed, setAnalysisModelUsed] = useState("openai:gpt-6-luna");
@@ -86,13 +92,13 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
     void (async () => {
       const settingsId = siteScope === "sarkari" ? "sarkari" : "default";
       const { data: scopedData } = await (backendClient as any).from("blog_auto_agent_settings")
-        .select("image_mode,image_template_url,include_logo,logo_url,text_model,word_limit,content_goals,required_sections,minimum_sources,editorial_quality_target,language,audience,tone")
+        .select("image_mode,image_template_url,include_logo,logo_url,text_model,word_limit,content_goals,required_sections,minimum_sources,editorial_quality_target,language,audience,tone,human_review_required")
         .eq("id", settingsId)
         .maybeSingle();
       let data = scopedData;
       if (!data && settingsId !== "default") {
         const fallback = await (backendClient as any).from("blog_auto_agent_settings")
-          .select("image_mode,image_template_url,include_logo,logo_url,text_model,word_limit,content_goals,required_sections,minimum_sources,editorial_quality_target,language,audience,tone")
+          .select("image_mode,image_template_url,include_logo,logo_url,text_model,word_limit,content_goals,required_sections,minimum_sources,editorial_quality_target,language,audience,tone,human_review_required")
           .eq("id", "default")
           .maybeSingle();
         data = fallback.data;
@@ -149,6 +155,9 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
       const next = data.draft as Draft;
       next.slug = next.slug || slugify(next.title || topic);
       setDraft(next);
+      setGeneratedContent(JSON.stringify(next));
+      setEvidenceId(String(data.evidence_id || ""));
+      setEditorial(previous => ({ ...previous, human_review_required: Boolean(data.editorial_settings?.human_review_required) }));
       setSelected(new Set((next.entity_suggestions || []).map(item => `${item.entity_type}:${item.entity_slug}`)));
       setResearchSources(Array.isArray(data.research_sources) ? data.research_sources : []);
       setQuality(data.quality || null);
@@ -159,7 +168,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
     } finally { setBusy(false); }
   };
 
-  const save = async () => {
+  const save = async (status: "Draft" | "Published") => {
     if (!draft) return;
     setBusy(true);
     try {
@@ -177,18 +186,21 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
       const { data, error } = await backendClient.functions.invoke("admin-blog-studio", {
         body: {
           action: "publish",
-          status: "Published",
+          status,
           site_scope: siteScope,
           draft: publishDraft,
           entity_links: entityLinks,
           research_sources: researchSources,
+          evidence_id: evidenceId,
         },
       });
       if (error || data?.error) throw error || new Error(data.error);
-      toast.success(`${siteScopeLabel(siteScope)} article published after quality and duplicate checks (${data?.quality?.score || quality?.score || 0}/100)`);
+      toast.success(data?.article?.status === "Draft"
+        ? `${siteScopeLabel(siteScope)} draft saved privately${data?.human_review_required ? "; open it in Articles and submit for human review" : "; it is not public"}`
+        : `${siteScopeLabel(siteScope)} article published after final checks (${data?.quality?.score || 0}/100)`);
       setOpen(false); setDraft(null); onSaved?.();
     } catch (error: any) {
-      toast.error(await functionErrorMessage(error, "Could not publish the article"));
+      toast.error(await functionErrorMessage(error, "Could not save the article"));
     } finally { setBusy(false); }
   };
 
@@ -224,7 +236,7 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
           {imageMode === "template" && <p className="mt-2 text-xs text-muted-foreground">Uses only the custom background above. The locked logo, panel and typography are still rendered locally.</p>}
           {imageMode === "generated" && <p className="mt-2 text-xs text-muted-foreground">OpenAI receives the supplied DekhoCampus cover as a style reference and changes only the illustrated background. Branding and typography are rendered locally and stay fixed.</p>}
         </div>
-        <p className="text-xs text-muted-foreground">Research sources are private editorial inputs, never published citations. Every result is checked against all existing article intents, reviewed for factual usefulness, and rechecked when you publish.</p>
+        <p className="text-xs text-muted-foreground">Research excerpts are private editorial inputs. Relevant official links may appear in the article; a working URL alone does not verify a claim. Publication rechecks your final edits against the saved evidence and existing coverage. Saving a private draft does not require a live AI check.</p>
         <Button onClick={generate} disabled={busy} className="gap-2">{busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <CircleDot className="w-4 h-4" />} Research, write and generate branded cover</Button>
         {draft && <div className="grid gap-4 border-t pt-4 lg:grid-cols-[1.2fr_.8fr]">
           <div className="space-y-4">
@@ -251,13 +263,18 @@ export function BlogStudioDialog({ onSaved, siteScope = DEFAULT_SITE_SCOPE, init
           <div className="space-y-4">
             {draft.featured_image ? <div className="overflow-hidden rounded-xl border bg-muted"><img alt="Editorial cover" src={draft.featured_image} className="aspect-video w-full object-cover" loading="lazy" /><div className="flex gap-2 p-3 text-xs text-muted-foreground"><ImageIcon className="h-4 w-4" /> Web-optimised editorial cover</div></div> : <div className="rounded-xl border bg-muted p-8 text-center text-sm text-muted-foreground">No cover selected</div>}
             <div className="rounded-xl border p-3 text-sm">
-              <div className="flex items-center justify-between gap-3"><span className="font-medium">Editorial quality</span><Badge variant={(quality?.score || 0) >= editorial.editorial_quality_target ? "default" : "secondary"}>{quality?.score || 0}/100</Badge></div>
+              <div className="flex items-center justify-between gap-3"><span className="font-medium">Generation quality</span><Badge variant={(quality?.score || 0) >= editorial.editorial_quality_target ? "default" : "secondary"}>{quality?.score || 0}/100</Badge></div>
               <p className="mt-2 text-xs text-muted-foreground">Analysis: {analysisModelUsed}. Writing: {textModelLabel(modelUsed || editorial.text_model)}. Private sources checked: {researchSources.length}.</p>
+              {JSON.stringify(draft) !== generatedContent && <p className="mt-2 text-xs text-amber-700">This draft has changed since generation. The score above applies to the generated version; final checks review your edits.</p>}
               {!!quality?.issues?.length && <p className="mt-2 text-xs text-amber-700">{quality.issues.join("; ")}</p>}
             </div>
             <ArticleScorePanel article={draft} faqs={draft.faqs || []} faqsLoaded />
+            <ArticleSocialDrafts article={draft} siteScope={siteScope} />
+            <details className="rounded-xl border p-3"><summary className="cursor-pointer text-sm font-medium">Article preview</summary><div className="mt-3"><h2 className="text-lg font-semibold">{draft.title}</h2><RichText html={draft.content_html} demoteH1 className="mt-3 max-w-none" />{!!draft.faqs?.length && <div className="mt-4 space-y-3">{draft.faqs.map((faq, index) => <div key={index}><h3 className="text-sm font-semibold">{faq.question}</h3><p className="mt-1 text-sm">{faq.answer}</p></div>)}</div>}</div></details>
             {siteScope === "dekhocampus" && <div><Label>Suggested entity links</Label><div className="mt-2 flex flex-wrap gap-2">{(draft.entity_suggestions || []).map(suggestion => { const key = `${suggestion.entity_type}:${suggestion.entity_slug}`; return <Badge key={key} variant={selected.has(key) ? "default" : "outline"} className="cursor-pointer" onClick={() => setSelected(previous => { const next = new Set(previous); if (next.has(key)) next.delete(key); else next.add(key); return next; })}>{suggestion.label || suggestion.entity_slug}</Badge>; })}</div></div>}
-            <Button onClick={save} disabled={busy} className="w-full">{busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}{siteScope === "sarkari" ? "Publish Sarkari article after final checks" : "Publish after final checks"}</Button>
+            {editorial.human_review_required && <p className="text-sm text-muted-foreground">Human review is required. Save this private draft, then open it in Articles and choose Submit for human review. An admin can approve it in Content Review.</p>}
+            <Button onClick={() => save("Draft")} disabled={busy} variant="outline" className="w-full">Save private draft</Button>
+            {!editorial.human_review_required && <Button onClick={() => save("Published")} disabled={busy} className="w-full">{busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}Publish after final checks</Button>}
           </div>
         </div>}
       </div>

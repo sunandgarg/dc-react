@@ -14,12 +14,12 @@ export function matchExamRecord(topic, rows = []) {
   const matches = rows.flatMap((row) => {
     const aliases = [row?.short_name, row?.name, row?.full_name].map(normalize)
       .filter((alias) => alias.length >= 3 && !GENERIC_NAMES.has(alias));
-    const scores = aliases.filter((alias) => hasPhrase(primary, alias) || hasPhrase(title, alias))
-      .map((alias) => (hasPhrase(primary, alias) ? 1_000 : 0) + alias.length + (row?.is_active ? 10 : 0));
-    return scores.length ? [{ row, score: Math.max(...scores) }] : [];
+    const matched = aliases.filter((alias) => hasPhrase(primary || title, alias));
+    return matched.length ? [{ row, aliases: matched }] : [];
   });
-  matches.sort((left, right) => right.score - left.score);
-  return matches[0]?.row || null;
+  const allAliases = matches.flatMap((match) => match.aliases);
+  const specific = matches.filter((match) => match.aliases.some((alias) => !allAliases.some((other) => other !== alias && hasPhrase(other, alias))));
+  return specific.length === 1 ? specific[0].row : null;
 }
 
 export function candidateOfficialExamUrl(row) {
@@ -38,6 +38,25 @@ function sameTrustedDestination(source, destination) {
     return (original === finalHost || (OFFICIAL_HOST.test(finalHost) && (finalHost.endsWith(`.${original}`) || original.endsWith(`.${finalHost}`))))
       && new URL(destination).protocol === "https:";
   } catch { return false; }
+}
+
+async function officialPageExcerpt(response) {
+  const reader = response.body?.getReader();
+  if (!reader) return "";
+  const chunks = [];
+  let size = 0;
+  try {
+    while (size < 24_000) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = value.slice(0, 24_000 - size);
+      chunks.push(chunk);
+      size += chunk.length;
+    }
+  } finally { await reader.cancel().catch(() => {}); }
+  return Buffer.concat(chunks).toString("utf8")
+    .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 1_500);
 }
 
 export async function resolveExamLinkContext(topic, { client = prisma, fetchImpl = fetch } = {}) {
@@ -62,11 +81,14 @@ export async function resolveExamLinkContext(topic, { client = prisma, fetchImpl
       signal: AbortSignal.timeout(8_000),
     });
     const finalUrl = response.url || url;
-    await response.body?.cancel().catch(() => {});
-    if (!response.ok || !sameTrustedDestination(url, finalUrl)) return { internalLinks, officialSignal: null };
+    if (!response.ok || !sameTrustedDestination(url, finalUrl)) {
+      await response.body?.cancel().catch(() => {});
+      return { internalLinks, officialSignal: null };
+    }
+    const excerpt = await officialPageExcerpt(response);
     return {
       internalLinks,
-      officialSignal: { name: `${label} official exam website`, url, source_type: "official", signal: `Verified live official website for ${label}. Use it for current notices and actions; this link check did not establish dates, fees or eligibility.` },
+      officialSignal: { name: `${label} official exam website`, url: finalUrl, source_type: "official", fetched_at: new Date().toISOString(), evidence_kind: excerpt.length >= 80 ? "page_excerpt" : "availability_only", signal: `Fetched official website for ${label}. URL availability alone does not verify facts; use only claims explicitly established by this excerpt, otherwise omit dates, fees and eligibility details. Fetched excerpt: ${excerpt}` },
     };
   } catch {
     return { internalLinks, officialSignal: null };

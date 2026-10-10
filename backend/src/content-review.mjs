@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata } from "./db.mjs";
-import { assertArticleTopicsAvailable, withArticleWriteLock } from "./blog-ai.mjs";
+import { assertArticleTopicsAvailable, withArticleWriteLock, blogStudioContentVersion, prepareStudioArticlePublication, commitStudioArticlePublication } from "./blog-ai.mjs";
 import { saveArticleFaqs } from "./article-faqs.mjs";
 import { replaceArticleEntityLinks, saveNewArticleEntityLinks } from "./article-entity-links.mjs";
 
@@ -209,6 +209,20 @@ export async function applyApprovedReview(tx, review) {
   }
 }
 
+async function articleReviewState(client, review) {
+  const after = parseReviewJson(review.after_json, {});
+  const siteScope = resolveArticleReviewSiteScope(review);
+  if (review.operation === "create") return { before: null, after: { ...after, site_scope: siteScope } };
+  const field = review.entity_id ? "id" : "slug";
+  const value = review.entity_id || review.entity_slug;
+  const rows = await client.$queryRawUnsafe(`SELECT * FROM \`articles\` WHERE \`${field}\` = ? AND \`site_scope\` = ? LIMIT 1`, value, siteScope);
+  const before = rows[0] || null;
+  const changed = parseReviewJson(review.changed_fields, []);
+  const patch = Object.fromEntries(Object.entries(after).filter(([key]) => changed.includes(key) && schemaMetadata.articles.fields[key] && !["id", "site_scope", "created_at", "updated_at", "short_id"].includes(key)));
+  for (const key of ["faqs", "entity_links"]) if (Object.hasOwn(after, key)) patch[key] = after[key];
+  return { before, after: { ...(before || after), ...patch, site_scope: siteScope } };
+}
+
 export async function handleContentReviews(request, reviewerId) {
   const url = new URL(request.url);
   if (request.method === "GET") {
@@ -241,13 +255,35 @@ export async function handleContentReviews(request, reviewerId) {
     const status = body.status;
     const reviewId = String(body.id || "");
     let publishedArticleUrl = null;
+    let preparedStudioReview = null;
+    let preflightReview = null;
+    if (status === "approved") {
+      const rows = await prisma.$queryRawUnsafe("SELECT * FROM `content_change_reviews` WHERE `id` = ?", reviewId);
+      preflightReview = rows[0];
+      if (preflightReview?.entity_type === "articles" && preflightReview.status === "pending") {
+        const state = await articleReviewState(prisma, preflightReview);
+        preparedStudioReview = await prepareStudioArticlePublication(state.before, state.after, { humanReviewerId: reviewerId });
+        if (preparedStudioReview) {
+          const proposed = parseReviewJson(preflightReview.after_json, {});
+          if (!Object.hasOwn(proposed, "faqs") || blogStudioContentVersion(proposed, state.after.site_scope) !== preparedStudioReview.version) {
+            throw Object.assign(new Error("This Studio review no longer contains the complete current article and FAQs. Open the Article editor and Submit for human review again."), { status: 409, code: "STUDIO_REVIEW_STALE" });
+          }
+          if (!String(body.review_notes || "").trim()) throw Object.assign(new Error("Add a review note confirming that you checked the final Studio article and its factual claims before approval."), { status: 422, code: "STUDIO_HUMAN_REVIEW_NOTE_REQUIRED" });
+        }
+      }
+    }
     await withArticleWriteLock(async (tx) => {
       const rows = await tx.$queryRawUnsafe("SELECT * FROM `content_change_reviews` WHERE `id` = ? FOR UPDATE", reviewId);
       const review = rows[0];
       if (!review) throw Object.assign(new Error("Review was not found"), { status: 404, code: "REVIEW_NOT_FOUND" });
       if (review.status !== "pending") throw Object.assign(new Error("Review has already been decided"), { status: 409, code: "REVIEW_ALREADY_DECIDED" });
+      if (preparedStudioReview && ["before_json", "after_json", "changed_fields"].some((key) => jsonValue(parseReviewJson(review[key], null)) !== jsonValue(parseReviewJson(preflightReview[key], null)))) {
+        throw Object.assign(new Error("The proposed Studio review changed. Reload Content Review before approving."), { status: 409, code: "STUDIO_REVIEW_STALE" });
+      }
       if (status === "approved") {
         if (review.entity_type === "articles") {
+          const state = await articleReviewState(tx, review);
+          await commitStudioArticlePublication(tx, state.before, state.after, preparedStudioReview);
           const after = parseReviewJson(review.after_json, {});
           const before = parseReviewJson(review.before_json, null);
           const siteScope = resolveArticleReviewSiteScope(review);

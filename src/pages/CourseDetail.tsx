@@ -193,7 +193,7 @@ export default function CourseDetail() {
       ? (detailTab ? `Explore ${seoCourseName} ${detailTab.label.toLowerCase()} for ${new Date().getFullYear()}, including verified course details and related guidance.` : course.meta_description || `${seoCourseName} course details - fees, top colleges, career scope for ${new Date().getFullYear()}`)
       : undefined,
     keywords: course?.meta_keywords || undefined,
-    canonical: course ? `${buildCourseHref(course as any)}${detailTab ? `/${detailTab.id}` : ""}` : undefined,
+    canonical: course ? buildCourseHref(course as any) : undefined,
     ogImage: course?.image || undefined,
     jsonLd: course ? {
       "@context": "https://schema.org",
@@ -201,7 +201,7 @@ export default function CourseDetail() {
       name: seoFullName || seoCourseName,
       alternateName: seoCourseName,
       description: seoDescription || undefined,
-      url: absoluteSiteUrl(`${buildCourseHref(course as any)}${detailTab ? `/${detailTab.id}` : ""}`),
+      url: absoluteSiteUrl(buildCourseHref(course as any)),
       image: course.image ? { "@type": "ImageObject", url: absoluteCanonical(course.image), contentUrl: absoluteCanonical(course.image), caption: `${seoCourseName} course` } : undefined,
       primaryImageOfPage: course.image ? { "@type": "ImageObject", url: absoluteCanonical(course.image), contentUrl: absoluteCanonical(course.image), caption: `${seoCourseName} course` } : undefined,
       timeRequired: displayText(course.duration) || undefined,

@@ -47,40 +47,13 @@ export const STATIC_SITEMAP_ROUTES: SitemapRoute[] = [
   { path: "/legal/cookie-policy", changefreq: "monthly", priority: "0.35" },
 ];
 
-export const COLLEGE_DETAIL_TABS = [
-  "overview",
-  "highlights",
-  "courses",
-  "admissions",
-  "placements",
-  "cutoff",
-  "rankings",
-  "infrastructure",
-  "gallery",
-  "scholarships",
-  "hostel",
-  "compare",
-  "faculty",
-  "recruiters",
-  "news",
-  "faq",
-] as const;
+// These section routes render the whole entity page and canonicalize to its base.
+export const COLLEGE_DETAIL_TABS = [] as const;
+export const COURSE_DETAIL_TABS = [] as const;
 
-export const COURSE_DETAIL_TABS = [
-  "overview",
-  "highlights",
-  "eligibility",
-  "syllabus",
-  "fees",
-  "admission",
-  "career",
-  "placements",
-  "specializations",
-  "top-exams",
-  "top-colleges",
-  "cutoff",
-  "faq",
-] as const;
+export function canonicalSitemapSectionPath(pathname: string) {
+  return pathname.replace(/^(\/(?:colleges|courses)\/[^/]+)\/[^/]+$/, "$1");
+}
 
 export const EXAM_DETAIL_TABS = [
   "overview",

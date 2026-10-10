@@ -10,6 +10,15 @@ describe("college detail summary layout", () => {
   const stats = readFileSync(resolve(process.cwd(), "src/components/detail/CollegeTrustBento.tsx"), "utf8");
   const detail = readFileSync(resolve(process.cwd(), "src/pages/CollegeDetail.tsx"), "utf8");
 
+  it("keeps the college/course canonical and schema URL stable while sections remain navigable", () => {
+    expect(detail).toContain("canonical: college ? buildCollegeHref(college as any) : undefined");
+    expect(detail).toContain("url: absoluteSiteUrl(buildCollegeHref(college as any))");
+    expect(courseDetail).toContain("canonical: course ? buildCourseHref(course as any) : undefined");
+    expect(courseDetail).toContain("url: absoluteSiteUrl(buildCourseHref(course as any))");
+    expect(detail).toContain("updateUrlOnScroll");
+    expect(courseDetail).toContain("updateUrlOnScroll");
+  });
+
   it("uses one primary treatment for hero badges and actions", () => {
     expect(hero).toMatch(/heroBadgeClass/);
     expect(hero).toMatch(/secondaryActionClass/);

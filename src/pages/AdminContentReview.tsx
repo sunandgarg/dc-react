@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
+import { RichText } from "@/components/detail/RichText";
 
 type Review = {
   id: string;
@@ -107,9 +108,15 @@ export default function AdminContentReview() {
             </div>
 
             <div className="space-y-3">
+              {selected.entity_type === "articles" && <div className="rounded-lg border p-3">
+                <p className="mb-3 text-xs text-muted-foreground">Check the complete proposed article and FAQs. Approving a Studio article is a human editorial approval of this exact version, including its factual claims; add a review note confirming your checks. It does not mark source URLs as fact verification.</p>
+                <h4 className="mb-2 font-semibold">{String(selected.after_json.title || "Article preview")}</h4>
+                <RichText html={String(selected.after_json.content || selected.after_json.content_html || "")} />
+                {Array.isArray(selected.after_json.faqs) && selected.after_json.faqs.map((faq: any, index: number) => <div key={index} className="mt-3 text-sm"><strong>{String(faq.question || "")}</strong><RichText html={String(faq.answer || "")} /></div>)}
+              </div>}
               {selected.changed_fields.map((field) => (
                 <div key={field} className="overflow-hidden rounded-lg border border-amber-200 bg-amber-50/30">
-                  <div className="border-b border-amber-200 bg-amber-100/70 px-3 py-2 text-xs font-bold text-amber-900">{field.replaceAll("_", " ")}</div>
+                  <div className="border-b border-amber-200 bg-amber-100/70 px-3 py-2 text-xs font-bold text-amber-900">{field.replace(/_/g, " ")}</div>
                   <div className="grid md:grid-cols-2">
                     <div className="min-w-0 border-b p-3 md:border-b-0 md:border-r"><p className="mb-2 text-[10px] font-bold uppercase text-muted-foreground">Before</p>{renderValue(selected.before_json?.[field])}</div>
                     <div className="min-w-0 bg-emerald-50/50 p-3"><p className="mb-2 text-[10px] font-bold uppercase text-emerald-700">After</p>{renderValue(selected.after_json?.[field])}</div>

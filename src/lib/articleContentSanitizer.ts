@@ -1,78 +1,30 @@
-const VISIBLE_SOURCE_LABEL =
-  "(?:sources?|references?|citations?|bibliography|source\\s+links?|credits?)";
-
-const COMPETITOR_TERMS = [
-  "collegedekho",
-  "college dekho",
-  "collegedunia",
-  "college dunia",
-  "shiksha",
-  "careers360",
-  "careers 360",
-  "kollegeapply",
-  "kollege apply",
-  "getmyuni",
-  "pagalguy",
-  "sarvgyan",
-];
-
-const COMPETITOR_PATTERN = COMPETITOR_TERMS
-  .map((term) => term.replace(/\s+/g, "\\s*"))
-  .join("|");
-
 const RICH_ARTICLE_HTML_PATTERN = /<(?:a|blockquote|br|div|figure|h[1-6]|hr|img|li|ol|p|pre|section|table|ul)\b[^>]*>/i;
 
 export function containsRichArticleHtml(value?: string | null) {
   return RICH_ARTICLE_HTML_PATTERN.test(String(value || ""));
 }
 
-export function stripVisibleArticleSources(value?: string | null) {
-  let output = String(value || "");
-  if (!output.trim()) return "";
-
-  const sourceLabel = VISIBLE_SOURCE_LABEL;
-  const competitor = COMPETITOR_PATTERN;
-
-  // Remove a trailing visible source/credit block in common HTML formats:
-  // <h2>Sources</h2>..., <p><strong>Sources</strong><br>..., etc.
-  output = output
-    .replace(new RegExp(`<h[1-6][^>]*>\\s*(?:<[^>]+>\\s*)*${sourceLabel}(?:\\s*<\\/[^>]+>)*\\s*<\\/h[1-6]>[\\s\\S]*$`, "i"), "")
-    .replace(new RegExp(`<p[^>]*>\\s*(?:<strong>|<b>)?\\s*${sourceLabel}\\s*(?:<\\/strong>|<\\/b>)?(?:\\s*<br\\s*\\/?>)?[\\s\\S]*$`, "i"), "")
-    .replace(new RegExp(`<div[^>]*>\\s*(?:<strong>|<b>)?\\s*${sourceLabel}\\s*(?:<\\/strong>|<\\/b>)?(?:\\s*<br\\s*\\/?>)?[\\s\\S]*$`, "i"), "");
-
-  // Remove Markdown-style blocks:
-  // **Sources**
-  // **WBJEEB:** ...
-  output = output.replace(new RegExp(`(?:^|\\n)\\s*(?:#{1,6}\\s*)?(?:\\*\\*)?\\s*${sourceLabel}\\s*(?:\\*\\*)?\\s*(?:\\n|<br\\s*\\/?>)[\\s\\S]*$`, "i"), "");
-
-  // If a model wrote competitor credits without a "Sources" heading, remove
-  // the affected paragraph/list item instead of exposing the brand.
-  output = output
-    .replace(new RegExp(`<p[^>]*>(?:(?!<\\/p>)[\\s\\S])*(?:${competitor})(?:(?!<\\/p>)[\\s\\S])*<\\/p>\\s*`, "gi"), "")
-    .replace(new RegExp(`<li[^>]*>(?:(?!<\\/li>)[\\s\\S])*(?:${competitor})(?:(?!<\\/li>)[\\s\\S])*<\\/li>\\s*`, "gi"), "")
-    .replace(new RegExp(`(?:^|\\n)\\s*(?:[-*]\\s*)?(?:\\*\\*)?[^\\n]*(?:${competitor})[^\\n]*(?:\\*\\*)?\\s*(?=\\n|$)`, "gim"), "");
-
-  // Preserve deliberately authored lead links through legacy URL stripping.
-  // The public RichText renderer still sanitizes their HTML and href protocols.
-  const leadLinks: string[] = [];
-  output = output.replace(/<a\b(?=[^>]*\bdata-lead-capture=["']true["'])[^>]*>[\s\S]*?<\/a>/gi, (link) => {
-    const token = `\uE000DCLEADLINK${leadLinks.length}\uE001`;
-    leadLinks.push(link);
-    return token;
-  });
-
-  // Keep verified first-party navigation, but never expose third-party links or
-  // attribution language in public article copy.
-  output = output
-    .replace(/href=(["'])https?:\/\/(?:www\.)?dekhocampus\.com(\/[^"']*)\1/gi, 'href="$2"')
-    .replace(/<a\b[^>]*href=["']https?:\/\/[^"']+["'][^>]*>([\s\S]*?)<\/a>/gi, "$1")
-    .replace(/\bhttps?:\/\/[^\s<]+|\bwww\.[^\s<]+/gi, "")
-    .replace(/\s*\[(?:source|citation|reference)?\s*\d+\]/gi, "")
-    .replace(/\s*\((?:source|citation|reference)\s*:[^)]+\)/gi, "")
-    .replace(/\baccording to\b\s*/gi, "")
-    .replace(/\bas reported by\b\s*/gi, "")
-    .replace(/\bsources? (?:say|says|suggest|suggests|indicate|indicates)\b[:,]?\s*/gi, "")
-    .replace(/[\u2013\u2014]/g, "-");
-
-  return output.replace(/\uE000DCLEADLINK(\d+)\uE001/g, (token, index) => leadLinks[Number(index)] || token).trim();
+/** Preserve authored citations; RichText/ReactMarkdown still enforce HTML and URL safety. */
+export function prepareArticleContent(value?: string | null) {
+  let content = String(value || "");
+  // Decode legacy CMS fragments before choosing the HTML or Markdown renderer.
+  // The resulting HTML still goes through RichText's unchanged DOMPurify policy.
+  if (typeof document !== "undefined") {
+    for (let pass = 0; pass < 3 && /&(?:amp;)?(?:lt|#0*60|#x0*3c);/i.test(content); pass += 1) {
+      const textarea = document.createElement("textarea");
+      textarea.innerHTML = content;
+      const next = textarea.value;
+      if (next === content) break;
+      content = next;
+    }
+  }
+  return content
+    // Older imports escaped attribute quotes as if the HTML were still JSON.
+    .replace(/<[^>]+>/g, (tag) => tag.replace(/\\+(["'])/g, "$1"))
+    .replace(/<h1(\s[^>]*)?>/gi, "<h2$1>")
+    .replace(/<\/h1\s*>/gi, "</h2>")
+    .trim();
 }
+
+// Compatibility for existing lead-link callers; sources are no longer stripped.
+export const stripVisibleArticleSources = prepareArticleContent;

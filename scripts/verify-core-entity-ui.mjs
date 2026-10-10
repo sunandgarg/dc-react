@@ -2,6 +2,7 @@
 
 import { readFile } from "node:fs/promises";
 import { chromium } from "@playwright/test";
+import { verifyCoreEntityInitialHtml } from "./core-entity-seo-check.mjs";
 
 const manifestPath = process.argv[2];
 const expectedPhase = process.argv[3];
@@ -74,7 +75,10 @@ try {
       const pageErrors = [];
       page.on("pageerror", (error) => pageErrors.push(error.message));
       const response = await navigateForApp(page, `${baseUrl}${entity.route}`);
-      if (response && response.status() >= 400) throw new Error(`${entity.route} returned HTTP ${response.status()}`);
+      if (!response) throw new Error(`${entity.route} returned no document response`);
+      if (["colleges", "courses", "exams", "articles"].includes(entity.table)) {
+        verifyCoreEntityInitialHtml({ status: response.status(), html: await response.text(), expectedUrl: `${baseUrl}${entity.route}`, marker: entity.marker });
+      } else if (response.status() >= 400) throw new Error(`${entity.route} returned HTTP ${response.status()}`);
       await page.getByText(entity.marker, { exact: false }).first().waitFor({ state: "visible", timeout: 30_000 });
       const body = await page.locator("body").innerText();
       if (/not found|page unavailable|something went wrong/i.test(body)) throw new Error(`${entity.route} rendered an error state`);

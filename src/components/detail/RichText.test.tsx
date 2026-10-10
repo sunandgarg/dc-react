@@ -3,6 +3,21 @@ import { describe, expect, it } from "vitest";
 import { RichText } from "./RichText";
 
 describe("RichText", () => {
+  it("normalizes pasted font families including shorthand without changing other formatting", () => {
+    const { container } = render(<RichText html={'<p style="font-family: Georgia !important; font-size: 20px; color: red; text-align: center">English</p><p style="font: italic 700 18px Georgia !important; line-height: 1.8">हिन्दी</p>'} />);
+    const paragraphs = container.querySelectorAll("p");
+    expect(paragraphs[0].style.fontFamily).toBe("");
+    expect(paragraphs[0].style.fontSize).toBe("20px");
+    expect(paragraphs[0].style.color).toBe("red");
+    expect(paragraphs[0].style.textAlign).toBe("center");
+    expect(paragraphs[1].style.fontFamily).toBe("");
+    expect(paragraphs[1].getAttribute("style")).not.toContain("Georgia");
+    expect(paragraphs[1].style.fontSize).toBe("18px");
+    expect(paragraphs[1].style.fontWeight).toBe("700");
+    expect(paragraphs[1].style.fontStyle).toBe("italic");
+    expect(paragraphs[1].style.lineHeight).toBe("1.8");
+  });
+
   it("decodes legacy encoded markup and wraps tables for mobile scrolling", () => {
     const encoded = "&amp;lt;p&amp;gt;Syllabus intro&amp;lt;/p&amp;gt;&amp;lt;table&amp;gt;&amp;lt;tbody&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td&amp;gt;Topic&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/tbody&amp;gt;&amp;lt;/table&amp;gt;";
     const { container } = render(<RichText html={encoded} />);

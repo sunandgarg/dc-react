@@ -221,14 +221,14 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     void refetchArticles();
   };
 
-  const handleSave = () => {
+  const handleSave = (requestHumanReview = false) => {
     if (!editing) return;
     if (faqsPending) { toast.error("Wait for FAQs to load, or retry loading them before saving."); return; }
     if (linksPending) { toast.error("Wait for saved article tags to load, or retry loading them before saving."); return; }
     const faqError = validateArticleFaqs(editorFaqs);
     if (faqError) { toast.error(faqError); return; }
     const normalizedSlug = normalizeArticleSlug(editing.slug);
-    const validationError = validateArticleSave({ ...editing, slug: normalizedSlug }, canPublish, isWriter);
+    const validationError = validateArticleSave({ ...editing, slug: normalizedSlug, ...(requestHumanReview ? { status: "Published" } : {}) }, canPublish, isWriter);
     if (validationError) { toast.error(validationError); return; }
     const rawRank = (editing as any).featured_rank ?? null;
     const desiredRank = rawRank == null ? null : Number(rawRank);
@@ -245,6 +245,12 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
       payload.vertical = payload.vertical || "Government Jobs";
       payload.category = payload.category || "Latest Jobs";
       payload.author = payload.author || "Sarkari DekhoCampus Desk";
+    }
+    if (requestHumanReview) {
+      if (!canPublish || !editing.id) { toast.error("Only an editor with publish permission can request this publication review."); return; }
+      payload.status = "Published";
+      payload.is_active = true;
+      payload._request_human_review = true;
     }
     saveArticle.mutate(payload, {
       onSuccess: async (result) => {
@@ -665,10 +671,11 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
             </div>
             </div>
             <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border bg-background px-5 py-3 sm:px-6">
-              <p className="hidden text-xs text-muted-foreground sm:block">{editing.status || "Draft"}</p>
+              <p className="hidden max-w-sm text-xs text-muted-foreground sm:block">{editing.status || "Draft"}. If Studio checks fail, save Draft or submit the final content for admin review.</p>
               <div className="ml-auto flex items-center gap-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-lg">Cancel</Button>
-                <Button onClick={handleSave} disabled={saveArticle.isPending || faqsPending || linksPending} className="rounded-lg">
+                {canPublish && editing.id && <Button variant="outline" onClick={() => handleSave(true)} disabled={saveArticle.isPending || faqsPending || linksPending} className="rounded-lg">Submit for human review</Button>}
+                <Button onClick={() => handleSave()} disabled={saveArticle.isPending || faqsPending || linksPending} className="rounded-lg">
                   {saveArticle.isPending ? "Saving..." : editing.status === "Draft" && canPublish ? "Save Draft" : canPublish ? "Save Article" : "Submit for approval"}
                 </Button>
               </div>

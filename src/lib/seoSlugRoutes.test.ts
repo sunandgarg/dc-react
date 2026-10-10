@@ -46,6 +46,12 @@ describe("Course deep-link slugs", () => {
 });
 
 describe("Exam deep-link slugs", () => {
+  it("keeps geographical exam scope separate from UG/PG education levels", () => {
+    expect(parseExamSlug("top-national-entrance-exams-in-india")).toEqual({ scope: "National" });
+    expect(parseExamSlug("top-state-entrance-exams-in-india")).toEqual({ scope: "State" });
+    expect(parseExamSlug("top-university-entrance-exams-in-india")).toEqual({ scope: "University" });
+    expect(filtersToSlug("exams", { scope: "National" })).toBe("top-national-entrance-exams-in-india");
+  });
   it("returns an object (no crash)", () => {
     expect(typeof parseExamSlug("jee-main-2026")).toBe("object");
   });

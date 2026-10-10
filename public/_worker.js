@@ -1,6 +1,47 @@
 import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor, entityEdgeSeo, newsListingEdgeSeo } from "./edge-seo.js";
 
 const API_ORIGIN = "https://aws-origin.dekhocampus.com";
+const PUBLIC_LOOKUP_TIMEOUT_MS = 8_000;
+
+// Keep this bounded route set in sync with the sitemap publisher (covered by a parity test).
+const CURATED_LISTINGS = {
+  colleges: {
+    "top-engineering-colleges-in-india": { category: "eq.Engineering" },
+    "top-btech-colleges-in-india": { category: "eq.Engineering" },
+    "top-engineering-colleges-in-delhi-ncr": { category: "eq.Engineering", state: "eq.Delhi NCR" },
+    "top-engineering-colleges-in-bangalore": { category: "eq.Engineering", state: "eq.Karnataka", city: "eq.Bangalore" },
+    "top-engineering-colleges-in-pune": { category: "eq.Engineering", state: "eq.Maharashtra", city: "eq.Pune" },
+    "top-engineering-colleges-in-hyderabad": { category: "eq.Engineering", state: "eq.Telangana", city: "eq.Hyderabad" },
+    "top-management-colleges-in-india": { category: "eq.Management" },
+    "top-mba-colleges-in-india": { category: "eq.Management" },
+    "top-bba-colleges-in-india": { category: "eq.Management" },
+    "top-mba-colleges-in-delhi-ncr": { category: "eq.Management", state: "eq.Delhi NCR" },
+    "top-mba-colleges-in-mumbai": { category: "eq.Management", state: "eq.Maharashtra", city: "eq.Mumbai" },
+    "top-mba-colleges-in-bangalore": { category: "eq.Management", state: "eq.Karnataka", city: "eq.Bangalore" },
+    "top-medical-colleges-in-india": { category: "eq.Medical" },
+    "top-mbbs-colleges-in-india": { category: "eq.Medical" },
+    "top-medical-colleges-in-karnataka": { category: "eq.Medical", state: "eq.Karnataka" },
+    "top-law-colleges-in-india": { category: "eq.Law" },
+    "top-llb-colleges-in-india": { category: "eq.Law" },
+    "top-pharmacy-colleges-in-india": { category: "eq.Pharmacy" },
+  },
+  courses: {
+    "top-btech-courses-in-india": { category: "eq.Engineering" },
+    "top-mba-courses-in-india": { category: "eq.Management" },
+    "top-bca-courses-in-india": { category: "in.(Computer Applications,IT and Software,IT & Computing)" },
+    "top-mca-courses-in-india": { category: "in.(Computer Applications,IT and Software,IT & Computing)" },
+    "top-online-courses-in-india": { mode: "eq.Online" },
+    "top-distance-courses-in-india": { mode: "eq.Distance" },
+  },
+  exams: {
+    "top-engineering-entrance-exams-in-india": { exam_streams: 'ov.["Engineering"]' },
+    "top-medical-entrance-exams-in-india": { exam_streams: 'ov.["Medical"]' },
+    "top-management-entrance-exams-in-india": { exam_streams: 'ov.["Management"]' },
+    "top-law-entrance-exams-in-india": { exam_streams: 'ov.["Law"]' },
+    "top-national-entrance-exams-in-india": { level: "eq.National" },
+    "top-state-entrance-exams-in-india": { level: "eq.State" },
+  },
+};
 
 const API_PREFIXES = [
   "/auth/v1/",
@@ -49,7 +90,9 @@ async function proxyToApi(request) {
   const incomingUrl = new URL(request.url);
   const upstreamUrl = new URL(`${incomingUrl.pathname}${incomingUrl.search}`, API_ORIGIN);
   const upstreamResponse = await fetch(new Request(upstreamUrl, request));
+  if (upstreamResponse.status >= 500) return temporarilyUnavailable(request);
   const headers = new Headers(upstreamResponse.headers);
+  if (!upstreamResponse.ok) headers.set("cache-control", "no-store");
   const location = headers.get("location");
 
   if (location?.startsWith(API_ORIGIN)) {
@@ -61,6 +104,39 @@ async function proxyToApi(request) {
     statusText: upstreamResponse.statusText,
     headers,
   });
+}
+
+function temporarilyUnavailable(request) {
+  const headers = { "cache-control": "no-store", "retry-after": "60" };
+  if (isApiRequest(new URL(request.url).pathname)) {
+    return withSecurityHeaders(Response.json({ error: "Service temporarily unavailable. Please try again shortly." }, { status: 503, headers }));
+  }
+  return withSecurityHeaders(new Response('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/site-font.css"><title>Temporarily unavailable | DekhoCampus</title></head><body style="font-family:var(--font-site,sans-serif)"><main><h1>This page is temporarily unavailable</h1><p>Your content has not been removed. Please reload this page shortly.</p></main></body></html>', {
+    status: 503,
+    headers: { ...headers, "content-type": "text/html; charset=utf-8" },
+  }));
+}
+
+async function fetchPublicRows(table, query) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), PUBLIC_LOOKUP_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${API_ORIGIN}/v1/rest/${table}?${query}`, {
+      headers: { accept: "application/json" },
+      signal: controller.signal,
+      cf: { cacheEverything: true, cacheTtlByStatus: { "200-299": 300, "300-599": 0 } },
+    });
+    if (!response.ok) throw new Error(`${table} API returned ${response.status}`);
+    const payload = await response.json();
+    const rows = Array.isArray(payload) ? payload : payload?.data;
+    const requiredFields = table === "articles" ? ["slug", "title"] : table === "authors" ? ["name"] : ["slug", "name"];
+    if (payload?.error || !Array.isArray(rows) || rows.some((row) => !row || typeof row !== "object" || Array.isArray(row) || requiredFields.some((field) => typeof row[field] !== "string" || !row[field].trim()))) {
+      throw new Error(`${table} API returned invalid rows`);
+    }
+    return rows;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function edgeCacheTtl(request, pathname) {
@@ -104,12 +180,7 @@ async function fetchPublicEntity(entityType, publicSlug) {
       ...filter,
       limit: "1",
     });
-    const response = await fetch(`${API_ORIGIN}/v1/rest/${entityType}?${query}`, {
-      headers: { accept: "application/json" },
-      cf: { cacheEverything: true, cacheTtl: 300 },
-    });
-    const payload = response.ok ? await response.json().catch(() => []) : [];
-    return Array.isArray(payload) ? payload : payload?.data || [];
+    return fetchPublicRows(entityType, query);
   };
 
   const shortId = publicSlug.match(/-(\d+)$/)?.[1];
@@ -119,6 +190,40 @@ async function fetchPublicEntity(entityType, publicSlug) {
   }
   const [legacyCandidate] = await fetchRows({ slug: `eq.${publicSlug}` });
   return legacyCandidate;
+}
+
+async function curatedListingMetadata(url, metadata, entityType, filters) {
+  const select = entityType === "colleges" ? "name,slug,short_id,category,city,state" : "name,slug,short_id,category";
+  const query = new URLSearchParams({ select, is_active: "eq.true", ...filters, order: "priority.asc.nullslast,name.asc", limit: "18" });
+  if (entityType === "courses") {
+    const group = url.pathname.match(/^\/courses\/top-(btech|mba|bca|mca)-/)?.[1];
+    const aliases = {
+      btech: ["B.Tech", "BTech", "Bachelor of Technology"],
+      mba: ["MBA", "Master of Business Administration", "Management"],
+      bca: ["BCA", "Bachelor of Computer Applications", "Computer Applications", "IT"],
+      mca: ["MCA", "Master of Computer Applications", "Computer Applications", "IT"],
+    };
+    if (group) query.set("or", `(${["name", "full_name", "category", "level", "description"].flatMap((field) => aliases[group].map((term) => `${field}.ilike.%${term}%`)).join(",")})`);
+  }
+  const rows = await fetchPublicRows(entityType, query);
+  const escape = (value) => String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const heading = metadata.title.split(" | ")[0];
+  const description = entityType === "colleges"
+    ? "Explore colleges and compare their courses, fees and admission information. Open a college to check its available details."
+    : entityType === "courses"
+      ? "Explore courses and compare eligibility, duration, fees and career information. Open a course to check its available details."
+      : "Explore entrance exams and compare eligibility, applications and preparation resources. Open an exam to check its available details.";
+  const items = rows.filter((row) => row.slug && row.name).map((row) => {
+    const href = `/${entityType}/${encodeURIComponent(row.slug)}${row.short_id ? `-${encodeURIComponent(row.short_id)}` : ""}`;
+    const detail = [row.category, row.city, row.state].filter(Boolean).map(escape).join(" · ");
+    return `<li><a href="${href}">${escape(row.name)}</a>${detail ? `<p>${detail}</p>` : ""}</li>`;
+  }).join("");
+  return {
+    ...metadata,
+    title: `${heading} | DekhoCampus`,
+    description,
+    prerenderHtml: `<main data-dc-edge-prerender><h1>${escape(heading)}</h1><p>${description}</p>${items ? `<ul>${items}</ul>` : "<p>No matching active entries are currently available.</p>"}<p><a href="/${entityType}">Explore all ${entityType}</a></p></main>`,
+  };
 }
 
 async function serveAsset(request, env) {
@@ -144,19 +249,9 @@ async function serveAsset(request, env) {
         offset: String((page - 1) * 12),
         limit: "13",
       });
-      try {
-        const articlesResponse = await fetch(`${API_ORIGIN}/v1/rest/articles?${query}`, {
-          headers: { accept: "application/json" },
-          cf: { cacheEverything: true, cacheTtl: 300 },
-        });
-        if (!articlesResponse.ok) throw new Error(`Articles API returned ${articlesResponse.status}`);
-        const payload = await articlesResponse.json();
-        const articles = Array.isArray(payload) ? payload : payload?.data || [];
-        if (page > 1 && articles.length === 0) metadata = { ...metadata, indexable: false, notFound: true };
-        else metadata = newsListingEdgeSeo(articles.slice(0, 12), url, page, articles.length > 12);
-      } catch (error) {
-        console.error(JSON.stringify({ event: "news_listing_prerender_failed", message: error instanceof Error ? error.message : String(error) }));
-      }
+      const articles = await fetchPublicRows("articles", query);
+      if (page > 1 && articles.length === 0) metadata = { ...metadata, indexable: false, notFound: true };
+      else metadata = newsListingEdgeSeo(articles.slice(0, 12), url, page, articles.length > 12);
     }
     const articleMatch = url.pathname.match(/^\/news\/([^/]+)\/?$/);
     if (articleMatch && articleMatch[1] !== "tag") {
@@ -167,21 +262,11 @@ async function serveAsset(request, env) {
         is_active: "eq.true",
         limit: "1",
       });
-      const articleResponse = await fetch(`${API_ORIGIN}/v1/rest/articles?${query}`, {
-        headers: { accept: "application/json" },
-        cf: { cacheEverything: true, cacheTtl: 300 },
-      });
-      const payload = articleResponse.ok ? await articleResponse.json().catch(() => []) : [];
-      const article = Array.isArray(payload) ? payload[0] : payload?.data?.[0];
+      const [article] = await fetchPublicRows("articles", query);
       if (article?.author_id) {
         const authorQuery = new URLSearchParams({ select: "name,slug", id: `eq.${article.author_id}`, limit: "1" });
         try {
-          const authorResponse = await fetch(`${API_ORIGIN}/v1/rest/authors?${authorQuery}`, {
-            headers: { accept: "application/json" },
-            cf: { cacheEverything: true, cacheTtl: 300 },
-          });
-          const authorPayload = authorResponse.ok ? await authorResponse.json() : [];
-          article.resolved_author = Array.isArray(authorPayload) ? authorPayload[0] : authorPayload?.data?.[0];
+          [article.resolved_author] = await fetchPublicRows("authors", authorQuery);
         } catch (error) {
           console.error(JSON.stringify({ event: "article_author_lookup_failed", message: error instanceof Error ? error.message : String(error) }));
         }
@@ -196,9 +281,14 @@ async function serveAsset(request, env) {
     if (entityMatch) {
       const [, entityType, publicSlug] = entityMatch;
       const decodedSlug = decodeURIComponent(publicSlug);
-      const entity = await fetchPublicEntity(entityType, decodedSlug);
-      if (entity) metadata = entityEdgeSeo(entity, url, entityType);
-      else metadata = { ...metadata, indexable: false, notFound: true };
+      const listingFilters = Object.hasOwn(CURATED_LISTINGS[entityType], decodedSlug) ? CURATED_LISTINGS[entityType][decodedSlug] : null;
+      if (listingFilters && /^\/(colleges|courses|exams)\/[^/]+\/?$/.test(url.pathname)) {
+        metadata = await curatedListingMetadata(url, metadata, entityType, listingFilters);
+      } else {
+        const entity = await fetchPublicEntity(entityType, decodedSlug);
+        if (entity) metadata = entityEdgeSeo(entity, url, entityType);
+        else metadata = { ...metadata, indexable: false, notFound: true };
+      }
     }
     let html = applyEdgeSeo(await response.text(), metadata);
     if (url.pathname === "/") html = applyHomeCriticalCssDelivery(html);
@@ -225,13 +315,16 @@ export default {
       url.hostname = "dekhocampus.com";
       return Response.redirect(url.toString(), 308);
     }
+    let response;
     try {
-      return isApiRequest(url.pathname)
+      const assetRequest = request.method === "HEAD" ? new Request(request.url, { method: "GET", headers: request.headers }) : request;
+      response = isApiRequest(url.pathname)
         ? withSecurityHeaders(await proxyToApiWithCache(request, context))
-        : await serveAsset(request, env);
+        : await serveAsset(assetRequest, env);
     } catch (error) {
       console.error(JSON.stringify({ event: "candidate_proxy_error", path: url.pathname, message: error instanceof Error ? error.message : String(error) }));
-      return Response.json({ error: "Candidate service is temporarily unavailable" }, { status: 502 });
+      response = temporarilyUnavailable(request);
     }
+    return request.method === "HEAD" ? new Response(null, { status: response.status, statusText: response.statusText, headers: response.headers }) : response;
   },
 };

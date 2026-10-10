@@ -123,7 +123,9 @@ export function edgeSeoFor(input) {
   const privatePath = PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
   const publicPath = isPublicPath(pathname);
   const indexable = !privatePath && publicPath && isIndexableQuery(url, pathname);
-  const canonicalPath = indexable && url.search ? `${pathname}${url.search}` : pathname;
+  const fullPageAlias = pathname.match(/^\/(colleges|courses)\/([^/]+)\/[^/]+$/);
+  const canonicalBase = fullPageAlias ? `/${fullPageAlias[1]}/${fullPageAlias[2]}` : pathname;
+  const canonicalPath = indexable && url.search ? `${canonicalBase}${url.search}` : canonicalBase;
   const canonical = `${SITE_URL}${canonicalPath === "/" ? "" : canonicalPath}`;
 
   if (pathname === "/") {
@@ -158,7 +160,7 @@ export function newsListingEdgeSeo(articles, url, page = 1, hasNextPage = false)
   const next = hasNextPage ? `<a href="/news?page=${page + 1}">Older articles</a>` : "";
   return {
     ...metadata,
-    prerenderHtml: `<main data-dc-edge-prerender style="max-width:1000px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.6;color:#111827"><h1>Latest education news${page > 1 ? ` - Page ${page}` : ""}</h1><p>Exam, admission and college updates for students in India.</p><ul>${items}</ul><nav aria-label="News pages">${previous}${previous && next ? " | " : ""}${next}</nav></main>`,
+    prerenderHtml: `<main data-dc-edge-prerender style="max-width:1000px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827"><h1>Latest education news${page > 1 ? ` - Page ${page}` : ""}</h1><p>Exam, admission and college updates for students in India.</p><ul>${items}</ul><nav aria-label="News pages">${previous}${previous && next ? " | " : ""}${next}</nav></main>`,
   };
 }
 
@@ -175,32 +177,109 @@ function articlePlainText(value) {
     .trim();
 }
 
+const ARTICLE_TAGS = new Set("h1 h2 h3 h4 h5 h6 p br hr span div section article strong b em i u s sub sup mark small ul ol li blockquote q cite a figure figcaption img table thead tbody tfoot tr th td caption colgroup col code pre kbd samp var".split(" "));
+const ARTICLE_VOID_TAGS = new Set(["br", "hr", "img", "col"]);
+const ARTICLE_BLOCKED_TAGS = new Set(["script", "style", "iframe", "object", "embed", "form", "svg", "math", "template", "textarea", "title", "noscript"]);
+
+function decodeArticleAttribute(value) {
+  const named = { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", colon: ":", tab: "\t", newline: "\n" };
+  return String(value).replace(/&(#x[\da-f]+|#\d+|amp|quot|apos|lt|gt|colon|tab|newline);/gi, (entity, name) => {
+    if (name[0] !== "#") return named[name.toLowerCase()];
+    const code = name[1].toLowerCase() === "x" ? parseInt(name.slice(2), 16) : parseInt(name.slice(1), 10);
+    return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : entity;
+  });
+}
+
+function articleSafeUrl(value) {
+  try {
+    const decoded = decodeArticleAttribute(value).replace(/[\u0000-\u001f\u007f]/g, "").trim();
+    if (!decoded) return "";
+    const parsed = new URL(decoded, SITE_URL);
+    if (!/^https?:$/.test(parsed.protocol) || parsed.username || parsed.password) return "";
+    return decoded.startsWith("#") ? decoded : parsed.href;
+  } catch { return ""; }
+}
+
 function articlePrerenderBlocks(value) {
-  const safe = String(value || "").replace(/<(script|style|iframe|object|embed|form)\b[\s\S]*?<\/\1>/gi, " ");
-  const blocks = [];
-  const pattern = /<(h2|h3|p|li)\b[^>]*>([\s\S]*?)<\/\1>/gi;
-  let match;
-  while ((match = pattern.exec(safe)) && blocks.length < 80) {
-    const links = [];
-    const withLinkTokens = match[2].replace(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_, href, label) => {
-      try {
-        const parsed = new URL(href, SITE_URL);
-        if (!/^https?:$/.test(parsed.protocol)) return label;
-        const token = `DCLINKTOKEN${links.length}END`;
-        links.push({ token, href: parsed.href, label: articlePlainText(label) });
-        return token;
-      } catch { return label; }
-    });
-    const text = articlePlainText(withLinkTokens);
-    if (!text) continue;
-    const tag = match[1].toLowerCase() === "li" ? "p" : match[1].toLowerCase();
-    let safeText = escapeHtml(text);
-    for (const link of links) safeText = safeText.replace(link.token, `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`);
-    blocks.push(`<${tag}>${safeText}</${tag}>`);
+  // Rebuild allowlisted markup; Workers have no DOMParser and cannot trust authored attributes.
+  let source = String(value || "");
+  // Some older CMS imports encoded the complete HTML fragment more than once.
+  for (let pass = 0; pass < 3 && /&(?:amp;)?(?:lt|#0*60|#x0*3c);/i.test(source); pass += 1) {
+    source = decodeArticleAttribute(source);
   }
-  if (blocks.length) return blocks.join("");
-  const fallback = articlePlainText(safe);
-  return fallback ? `<p>${escapeHtml(fallback)}</p>` : "";
+  source = source.replace(/<[^>]+>/g, (tag) => tag.replace(/\\+(["'])/g, "$1"));
+  const tokens = /<!--[\s\S]*?(?:-->|$)|<\/?[a-z][\w:-]*(?:[^<>"']|"[^"]*"|'[^']*')*>/gi;
+  const text = (part) => escapeHtml(part).replace(/&amp;((?:#\d+|#x[\da-f]+|[a-z][a-z\d]+);)/gi, "&$1");
+  const output = [];
+  const stack = [];
+  const citationIds = new Set();
+  let blocked = "";
+  let last = 0;
+  let token;
+  while ((token = tokens.exec(source))) {
+    if (!blocked) output.push(text(source.slice(last, token.index)));
+    last = tokens.lastIndex;
+    const match = token[0].match(/^<(\/)?([a-z][\w:-]*)\b([\s\S]*?)>$/i);
+    if (!match) continue;
+    const [, closing, rawTag, rawAttributes] = match;
+    const name = rawTag.toLowerCase();
+    if (blocked) {
+      if (closing && name === blocked) blocked = "";
+      continue;
+    }
+    if (ARTICLE_BLOCKED_TAGS.has(name)) {
+      if (!closing && !/\/\s*>$/.test(token[0]) && !["embed"].includes(name)) blocked = name;
+      continue;
+    }
+    if (!ARTICLE_TAGS.has(name)) continue;
+    const tag = name === "h1" ? "h2" : name;
+    if (closing) {
+      const index = stack.lastIndexOf(tag);
+      if (index !== -1) while (stack.length > index) output.push(`</${stack.pop()}>`);
+      continue;
+    }
+    const attributes = new Map();
+    const attributePattern = /([^\s"'<>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
+    let attribute;
+    while ((attribute = attributePattern.exec(rawAttributes))) {
+      const key = attribute[1].toLowerCase();
+      if (!attributes.has(key)) attributes.set(key, attribute[2] ?? attribute[3] ?? attribute[4] ?? "");
+    }
+    let safeAttributes = "";
+    const add = (key, val) => { safeAttributes += ` ${key}="${escapeHtml(val)}"`; };
+    if (attributes.has("title")) add("title", decodeArticleAttribute(attributes.get("title")).slice(0, 200));
+    if (tag === "a" && attributes.has("href")) {
+      const href = articleSafeUrl(attributes.get("href"));
+      if (href) { add("href", href); add("rel", "noopener noreferrer"); }
+    }
+    if (tag === "img") {
+      const src = articleSafeUrl(attributes.get("src") || "");
+      if (!src) continue;
+      add("src", src); add("alt", decodeArticleAttribute(attributes.get("alt") || ""));
+      add("loading", "lazy"); add("decoding", "async");
+    }
+    for (const key of ["colspan", "rowspan", "width", "height", "start"]) {
+      const val = attributes.get(key) || "";
+      if (/^\d{1,4}$/.test(val) && (Number(val) > 0 || key === "rowspan")) add(key, val);
+    }
+    if (["row", "col", "rowgroup", "colgroup"].includes(attributes.get("scope"))) add("scope", attributes.get("scope"));
+    const id = decodeArticleAttribute(attributes.get("id") || "");
+    // Namespace citation targets so authored IDs cannot clobber application IDs.
+    if (/^[a-z][a-z\d_.:-]{0,199}$/i.test(id)) {
+      add("id", `dc-article-${id}`);
+      citationIds.add(id);
+    }
+    output.push(`<${tag}${safeAttributes}>`);
+    if (!ARTICLE_VOID_TAGS.has(tag)) stack.push(tag);
+  }
+  if (!blocked) output.push(text(source.slice(last)));
+  while (stack.length) output.push(`</${stack.pop()}>`);
+  return output.join("").trim().replace(/ href="#([^"<>]*)"/g, (attribute, fragment) => {
+    try {
+      const id = decodeURIComponent(fragment);
+      return citationIds.has(id) ? ` href="#dc-article-${id}"` : attribute;
+    } catch { return attribute; }
+  });
 }
 
 function addCbseSamplePaperLinks(title, content) {
@@ -218,7 +297,7 @@ function absoluteMediaUrl(value) {
     if (url.pathname.startsWith("/storage/v1/object/public/")) {
       return `${SITE_URL}${url.pathname}${url.search}`;
     }
-    return url.href;
+    return /^https?:$/.test(url.protocol) ? url.href : "";
   } catch {
     return "";
   }
@@ -264,8 +343,11 @@ const ENTITY_SEO = {
 export function entityEdgeSeo(entity, url, entityType) {
   const config = ENTITY_SEO[entityType];
   if (!config) return edgeSeoFor(url);
-  const canonical = `${SITE_URL}${cleanPath(url.pathname)}`;
   const segments = cleanPath(url.pathname).split("/").filter(Boolean);
+  // College/course section routes display the same full entity page, not separate content.
+  const fullPageEntity = entityType === "colleges" || entityType === "courses";
+  const canonicalSlug = entity.slug ? `${entity.slug}${entity.short_id ? `-${entity.short_id}` : ""}` : segments[1];
+  const canonical = `${SITE_URL}${fullPageEntity ? `/${entityType}/${canonicalSlug}` : cleanPath(url.pathname)}`;
   const tab = segments.length > 2 ? titleCase(segments.at(-1)) : "";
   const name = String(entity.name || entity.full_name || titleCase(segments[1])).trim();
   const rawTitle = articlePlainText(entity.meta_title) || config.fallbackTitle(name);
@@ -306,9 +388,9 @@ export function entityEdgeSeo(entity, url, entityType) {
   const breadcrumbItems = [
     { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
     { "@type": "ListItem", position: 2, name: `${config.label}s`, item: `${SITE_URL}/${entityType}` },
-    { "@type": "ListItem", position: 3, name, item: `${SITE_URL}/${entityType}/${segments[1]}` },
+    { "@type": "ListItem", position: 3, name, item: fullPageEntity ? canonical : `${SITE_URL}/${entityType}/${segments[1]}` },
   ];
-  if (tab) breadcrumbItems.push({ "@type": "ListItem", position: 4, name: tab, item: canonical });
+  if (tab && !fullPageEntity) breadcrumbItems.push({ "@type": "ListItem", position: 4, name: tab, item: canonical });
 
   return {
     canonical,
@@ -356,7 +438,7 @@ export function entityEdgeSeo(entity, url, entityType) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:1180px;margin:24px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.6;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p></article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:1180px;margin:24px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p></article>`,
   };
 }
 
@@ -426,7 +508,7 @@ export function articleEdgeSeo(article, url) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:Arial,sans-serif;line-height:1.65;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(article.title || title)}</h1><p>By ${authorSlug ? `<a href="/author/${encodeURIComponent(authorSlug)}">${escapeHtml(authorName)}</a>` : escapeHtml(authorName)}${publicationLabel ? ` · <time datetime="${escapeHtml(publishedAt)}">${escapeHtml(publicationLabel)} IST</time>` : ""}</p>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(addCbseSamplePaperLinks(article.title, article.content))}</article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.65;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1200" height="675" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(article.title || title)}</h1><p>By ${authorSlug ? `<a href="/author/${encodeURIComponent(authorSlug)}">${escapeHtml(authorName)}</a>` : escapeHtml(authorName)}${publicationLabel ? ` · <time datetime="${escapeHtml(publishedAt)}">${escapeHtml(publicationLabel)} IST</time>` : ""}</p>${description ? `<p>${escapeHtml(description)}</p>` : ""}${articlePrerenderBlocks(addCbseSamplePaperLinks(article.title, article.content))}</article>`,
   };
 }
 

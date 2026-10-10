@@ -39,6 +39,18 @@ function postProcess(html: string): string {
   const tpl = document.createElement("template");
   tpl.innerHTML = html;
 
+  // Pasted inline !important declarations must not override the site font.
+  tpl.content.querySelectorAll<HTMLElement>("[style]").forEach((element) => {
+    const style = element.style;
+    if (style.getPropertyValue("font")) {
+      const properties = ["font-size", "font-style", "font-weight", "font-variant", "font-stretch", "line-height"]
+        .map((key) => [key, style.getPropertyValue(key), style.getPropertyPriority(key) || style.getPropertyPriority("font")]);
+      style.removeProperty("font");
+      properties.forEach(([key, value, priority]) => { if (value) style.setProperty(key, value, priority); });
+    }
+    style.removeProperty("font-family");
+  });
+
   // The HTML parser clones an unclosed anchor into each later text block.
   // The pre-sanitization pass marks only the unmatched opening tag, so keep
   // its first inline occurrence and unwrap parser-created spillover clones.

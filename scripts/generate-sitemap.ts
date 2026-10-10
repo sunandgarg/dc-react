@@ -13,6 +13,7 @@ import {
   SITEMAP_CHUNK_SIZE,
   STATIC_SITEMAP_ROUTES,
   sitemapPriority,
+  canonicalSitemapSectionPath,
 } from "../src/lib/sitemapConfig";
 import {
   citiesByState,
@@ -391,6 +392,7 @@ function canonicalSeedPath(rawLocation: string) {
     if (pathname === "/articles") pathname = "/news";
     else if (pathname.startsWith("/articles/")) pathname = pathname.replace(/^\/articles\//, "/news/");
     if (pathname.startsWith("/college/")) pathname = pathname.replace(/^\/college\//, "/colleges/");
+    pathname = canonicalSitemapSectionPath(pathname);
     const allowed = pathname === "/" || PUBLIC_ROUTE_ROOTS.some((root) => pathname === root || pathname.startsWith(`${root}/`));
     return allowed ? `${pathname}${url.search}` : null;
   } catch {

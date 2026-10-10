@@ -25,7 +25,7 @@ import { RichText } from "@/components/detail/RichText";
 import { ArticleLeadLinks } from "@/components/ArticleLeadLinks";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { lazyRetry } from "@/lib/lazyRetry";
-import { containsRichArticleHtml, stripVisibleArticleSources } from "@/lib/articleContentSanitizer";
+import { containsRichArticleHtml, prepareArticleContent } from "@/lib/articleContentSanitizer";
 import { buildExamHref } from "@/lib/entityUrls";
 import { InstitutionLogo } from "@/components/InstitutionLogo";
 import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
@@ -146,7 +146,7 @@ export default function ArticleDetail() {
   const cleanSlug = normalizeSlug(decoded);
   const needsRedirect = !!(rawSlug && cleanSlug && cleanSlug !== rawSlug && cleanSlug !== decoded);
 
-  const { data: dbArticle, isLoading: dbLoading } = useDbArticle(cleanSlug || rawSlug);
+  const { data: dbArticle, isLoading: dbLoading, isError: articleError, isFetching: articleFetching, refetch: refetchArticle } = useDbArticle(cleanSlug || rawSlug);
   const { data: resolvedAuthor } = useQuery({
     queryKey: ["article-author", dbArticle?.author_id],
     enabled: !!dbArticle?.author_id,
@@ -169,19 +169,19 @@ export default function ArticleDetail() {
         slug: normalizeSlug(dbArticle.slug),
         title: dbArticle.title,
         excerpt: (dbArticle.description || "").replace(/<[^>]+>/g, " ").slice(0, 240) || text.slice(0, 240),
-        content: addCbseSamplePaperLinks(dbArticle.title, stripVisibleArticleSources(dbArticle.content || dbArticle.description || "")),
+        content: addCbseSamplePaperLinks(dbArticle.title, prepareArticleContent(dbArticle.content || dbArticle.description || "")),
         category: dbArticle.category || "General",
         image: dbArticle.featured_image || "/placeholder.svg",
         readTime: `${mins} min read`,
         author: dbArticle.author || "DekhoCampus",
         publishedAt: new Date(dbArticle.created_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }),
         views: (dbArticle as any).views ?? 0,
-        tags: dbArticle.tags || [],
+        tags: (dbArticle.tags || []).filter((tag) => tag !== "blog-studio"),
         author_id: (dbArticle as any).author_id as string | undefined,
         sourceLogo: resolveArticleSourceLogo((dbArticle as any).source_logo),
       };
     }
-    return staticArticle ? { ...staticArticle, content: stripVisibleArticleSources(staticArticle.content), views: 0, author_id: undefined as string | undefined, sourceLogo: "" } : null;
+    return staticArticle ? { ...staticArticle, tags: (staticArticle.tags || []).filter((tag) => tag !== "blog-studio"), content: prepareArticleContent(staticArticle.content), views: 0, author_id: undefined as string | undefined, sourceLogo: "" } : null;
   }, [dbArticle, staticArticle]);
 
   const navigate = useNavigate();
@@ -448,6 +448,19 @@ export default function ArticleDetail() {
         </div>
       );
     }
+    if (articleError) return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container py-20 text-center" role="alert">
+          <h1 className="mb-2 text-2xl font-bold text-foreground">Article temporarily unavailable</h1>
+          <p className="mb-6 text-muted-foreground">We couldn't load this article right now. Please try again shortly.</p>
+          <Button onClick={() => void refetchArticle()} disabled={articleFetching} className="rounded-xl">
+            {articleFetching ? "Retrying…" : "Try again"}
+          </Button>
+        </main>
+        <Footer />
+      </div>
+    );
     return (
       <div className="min-h-screen bg-background">
         <Navbar />

@@ -36,28 +36,32 @@ Disallow: /admin
 Disallow: /admin/
 Disallow: /dashboard
 Disallow: /dashboard/
-Disallow: /auth
+Disallow: /auth$
+Disallow: /auth/
 Disallow: /onboarding
 
 User-agent: Googlebot
 Allow: /
 Disallow: /admin
 Disallow: /dashboard
-Disallow: /auth
+Disallow: /auth$
+Disallow: /auth/
 Disallow: /onboarding
 
 User-agent: Bingbot
 Allow: /
 Disallow: /admin
 Disallow: /dashboard
-Disallow: /auth
+Disallow: /auth$
+Disallow: /auth/
 Disallow: /onboarding
 
 User-agent: GPTBot
 Allow: /
 Disallow: /admin
 Disallow: /dashboard
-Disallow: /auth
+Disallow: /auth$
+Disallow: /auth/
 Disallow: /onboarding
 
 User-agent: ChatGPT-User

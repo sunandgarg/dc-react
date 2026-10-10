@@ -26,6 +26,7 @@ import {
 } from "@/data/indianLocations";
 
 const topSearches = ["JEE Main", "NEET", "CAT", "GATE", "CLAT", "CUET", "JEE Advanced", "NEET PG"];
+const examScopes = ["National", "State", "University"];
 
 export default function AllExams() {
   const [searchParams] = useSearchParams();
@@ -53,7 +54,8 @@ export default function AllExams() {
     return readMultiParam(searchParams, "stream", seoSlugFilters.stream ? [seoSlugFilters.stream] : []);
   });
   const [selectedCourseGroups, setSelectedCourseGroups] = useState<string[]>(() => readMultiParam(searchParams, "group").map(normalizeCollegeCourseGroup));
-  const [selectedLevels, setSelectedLevels] = useState<string[]>(() => readMultiParam(searchParams, "level", seoSlugFilters.level ? [seoSlugFilters.level] : []));
+  const [selectedLevels, setSelectedLevels] = useState<string[]>(() => readMultiParam(searchParams, "level").filter((level) => !examScopes.includes(level)));
+  const [selectedScopes, setSelectedScopes] = useState<string[]>(() => readMultiParam(searchParams, "level", seoSlugFilters.scope ? [seoSlugFilters.scope] : []).filter((level) => examScopes.includes(level)));
 
   useEffect(() => {
     const currentUrl = `${location.pathname}${location.search}`;
@@ -67,11 +69,14 @@ export default function AllExams() {
     const categories = readMultiParam(searchParams, "category");
     const streams = readMultiParam(searchParams, "stream", seoSlugFilters.stream ? [seoSlugFilters.stream] : []);
     const groups = readMultiParam(searchParams, "group").map(normalizeCollegeCourseGroup);
-    const levels = readMultiParam(searchParams, "level", seoSlugFilters.level ? [seoSlugFilters.level] : []);
+    const levels = readMultiParam(searchParams, "level", seoSlugFilters.scope ? [seoSlugFilters.scope] : []);
     setSelectedCategories((prev) => (sameStringList(prev, categories) ? prev : categories));
     setSelectedStreams((prev) => (sameStringList(prev, streams) ? prev : streams));
     setSelectedCourseGroups((prev) => (sameStringList(prev, groups) ? prev : groups));
-    setSelectedLevels((prev) => (sameStringList(prev, levels) ? prev : levels));
+    const educationLevels = levels.filter((level) => !examScopes.includes(level));
+    const scopes = levels.filter((level) => examScopes.includes(level));
+    setSelectedLevels((prev) => (sameStringList(prev, educationLevels) ? prev : educationLevels));
+    setSelectedScopes((prev) => (sameStringList(prev, scopes) ? prev : scopes));
     setSearch((prev) => (prev === querySearch ? prev : querySearch));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, location.search]);
@@ -86,8 +91,9 @@ export default function AllExams() {
   const dbFilters = useMemo(() => {
     const f: Record<string, string | string[] | undefined> = {};
     if (selectedCategories.length > 0) f.listing_category = selectedCategories[0];
+    if (selectedScopes.length > 0) f.level = selectedScopes;
     return f;
-  }, [selectedCategories]);
+  }, [selectedCategories, selectedScopes]);
 
   const { items: exams, totalCount, sentinelRef, isLoading, isFetchingMore, hasMore, error: examsError } = useInfiniteData({
     table: "exams",
@@ -114,7 +120,8 @@ export default function AllExams() {
     && selectedCategories.length === 0
     && sameStringList(selectedStreams, seoSlugFilters.stream ? [seoSlugFilters.stream] : [])
     && selectedCourseGroups.length === 0
-    && sameStringList(selectedLevels, seoSlugFilters.level ? [seoSlugFilters.level] : []);
+    && selectedLevels.length === 0
+    && sameStringList(selectedScopes, seoSlugFilters.scope ? [seoSlugFilters.scope] : []);
 
   useEffect(() => {
     if (skipNextListingSyncRef.current) {
@@ -126,7 +133,7 @@ export default function AllExams() {
     writeMultiParam(params, "category", selectedCategories);
     writeMultiParam(params, "stream", selectedStreams);
     writeMultiParam(params, "group", selectedCourseGroups);
-    writeMultiParam(params, "level", selectedLevels);
+    writeMultiParam(params, "level", [...selectedLevels, ...selectedScopes]);
     if (debouncedSearch) params.set("search", debouncedSearch);
     const newPath = params.toString() ? `/exams?${params.toString()}` : "/exams";
     const currentUrl = `${location.pathname}${location.search}`;
@@ -136,9 +143,9 @@ export default function AllExams() {
     } else if (pendingListingUrlRef.current === newPath) {
       pendingListingUrlRef.current = null;
     }
-  }, [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels, debouncedSearch, seoLandingMatches, navigate, location.pathname, location.search]);
+  }, [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels, selectedScopes, debouncedSearch, seoLandingMatches, navigate, location.pathname, location.search]);
 
-  const activeFilters = uniqueValues([...selectedCategories, ...selectedStreams, ...selectedCourseGroups, ...selectedLevels]);
+  const activeFilters = uniqueValues([...selectedCategories, ...selectedStreams, ...selectedCourseGroups, ...selectedLevels, ...selectedScopes]);
 
   const filtered = useMemo(() => {
     return exams;
@@ -148,14 +155,14 @@ export default function AllExams() {
     category: selectedCategories[0],
     stream: selectedStreams[0],
     courseGroup: selectedCourseGroups[0],
-    level: selectedLevels[0],
-  }), [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels]);
+    level: selectedScopes[0] || selectedLevels[0],
+  }), [selectedStreams, selectedCategories, selectedCourseGroups, selectedLevels, selectedScopes]);
 
   useSEO({ title: heading, description: `${heading} - dates, eligibility, syllabus, application steps and previous year papers.`, canonical: seoLandingMatches ? location.pathname : `/exams${searchParams.toString() ? `?${searchParams.toString()}` : ""}` });
 
   const clearAll = () => {
     setSelectedCategories([]); setSelectedStreams([]);
-    setSelectedCourseGroups([]); setSelectedLevels([]);
+    setSelectedCourseGroups([]); setSelectedLevels([]); setSelectedScopes([]);
     setSearch("");
   };
 
@@ -164,6 +171,7 @@ export default function AllExams() {
     setSelectedStreams(prev => prev.filter(x => x !== f));
     setSelectedCourseGroups(prev => prev.filter(x => x !== f));
     setSelectedLevels(prev => prev.filter(x => x !== f));
+    setSelectedScopes(prev => prev.filter(x => x !== f));
   };
 
   const filterConfigs = [

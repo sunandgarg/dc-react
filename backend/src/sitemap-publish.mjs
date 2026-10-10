@@ -59,8 +59,6 @@ const EXAM_GROUPS_BY_CATEGORY = new Map(Object.entries({
   Medical: ["MBBS", "MD"],
   Aviation: ["A.M.E."],
 }));
-const COLLEGE_TABS = ["overview", "highlights", "courses", "admissions", "placements", "cutoff", "rankings", "reviews", "infrastructure", "gallery", "scholarships", "hostel", "compare", "faculty", "recruiters", "contact", "news", "faq"];
-const COURSE_TABS = ["overview", "highlights", "eligibility", "syllabus", "fees", "admission", "career", "placements", "specializations", "top-exams", "top-colleges", "cutoff", "faq"];
 const EXAM_TABS = ["overview", "highlights", "dates", "application", "eligibility", "syllabus", "pattern", "preparation", "admit-card", "answer-key", "results", "counselling", "cutoff", "colleges", "faq"];
 const EXAM_STRATEGIES = [
   "sample-paper", "tips-and-tricks", "last-1-month-preparation-strategy", "15-days-preparation-strategy",
@@ -757,8 +755,8 @@ async function dynamicEntries(prismaClient, now = Date.now()) {
     }
   }
   const entries = [
-    ...colleges.flatMap((row) => canonicalEntity("/colleges", row, "0.88", ["image", "logo", "carousel_images", "gallery_images"], COLLEGE_TABS)),
-    ...courses.flatMap((row) => canonicalEntity("/courses", row, "0.85", ["image"], COURSE_TABS)),
+    ...colleges.flatMap((row) => canonicalEntity("/colleges", row, "0.88", ["image", "logo", "carousel_images", "gallery_images"])),
+    ...courses.flatMap((row) => canonicalEntity("/courses", row, "0.85", ["image"])),
     ...exams.flatMap((row) => [
       ...canonicalEntity("/exams", row, "0.85", ["image", "logo"], EXAM_TABS),
       ...EXAM_STRATEGIES.map((strategy) => ({
