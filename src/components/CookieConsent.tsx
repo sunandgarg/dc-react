@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cookie, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -55,15 +55,11 @@ export function savePrefillCookie(data: PrefillCookie) {
 }
 
 export function CookieConsent() {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem(COOKIE_KEY);
-    if (!saved) {
-      const t = setTimeout(() => setOpen(true), 1500);
-      return () => clearTimeout(t);
-    }
-  }, []);
+  // Consent is first-paint UI, not a delayed promotion that replaces the page's LCP.
+  const [open, setOpen] = useState(() => {
+    try { return !localStorage.getItem(COOKIE_KEY); }
+    catch { return true; }
+  });
 
   const persist = (consent: "accepted" | "essential" | "rejected", finalPrefs: Prefs) => {
     localStorage.setItem(COOKIE_KEY, consent);
@@ -94,7 +90,7 @@ export function CookieConsent() {
     <AnimatePresence>
       {open && (
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}

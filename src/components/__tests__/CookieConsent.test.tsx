@@ -11,8 +11,6 @@ describe("CookieConsent", () => {
   it("pins the consent bar to the mobile top and desktop bottom", () => {
     render(<CookieConsent />);
 
-    act(() => vi.advanceTimersByTime(1_500));
-
     const bar = screen.getByTestId("cookie-consent-bar");
     expect(bar).toHaveClass("top-0", "bottom-auto", "md:top-auto", "md:bottom-0");
     expect(screen.getByRole("button", { name: "Essential only" })).toBeInTheDocument();
@@ -24,7 +22,6 @@ describe("CookieConsent", () => {
 
   it("keeps analytics and marketing disabled for essential consent", () => {
     render(<CookieConsent />);
-    act(() => vi.advanceTimersByTime(1_500));
 
     act(() => screen.getByRole("button", { name: "Essential only" }).click());
 
@@ -35,5 +32,16 @@ describe("CookieConsent", () => {
       analytics: false,
       marketing: false,
     });
+  });
+
+  it("does not wait for timers to offer consent to a new visitor", () => {
+    render(<CookieConsent />);
+    expect(screen.getByTestId("cookie-consent-bar")).toBeInTheDocument();
+  });
+
+  it("keeps an existing consent choice without showing the banner again", () => {
+    localStorage.setItem("dc_cookie_consent_v1", "essential");
+    render(<CookieConsent />);
+    expect(screen.queryByTestId("cookie-consent-bar")).not.toBeInTheDocument();
   });
 });

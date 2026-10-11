@@ -13,6 +13,7 @@ import { HomeMobileBottomNav } from "@/components/HomeMobileBottomNav";
 import { GlobalInternalAds } from "@/components/GlobalInternalAds";
 import { AdminActionGuard } from "@/components/AdminActionGuard";
 import { UserTrackingProvider } from "@/hooks/useUserTracking";
+import { CookieConsent } from "@/components/CookieConsent";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ScrollLockGuard } from "@/components/ScrollLockGuard";
@@ -24,7 +25,6 @@ import { SITE_URL } from "@/lib/constant";
 const CompareFloatingBar = lazyRetry(() => import("@/components/CompareFloatingBar").then((module) => ({ default: module.CompareFloatingBar })), "CompareFloatingBar");
 const LockTargetFloatingPromo = lazyRetry(() => import("@/components/LockTargetFloatingPromo").then((module) => ({ default: module.LockTargetFloatingPromo })), "LockTargetFloatingPromo");
 const FloatingBot = lazyRetry(() => import("@/components/FloatingBot").then((module) => ({ default: module.FloatingBot })), "FloatingBot");
-const CookieConsent = lazyRetry(() => import("@/components/CookieConsent").then((module) => ({ default: module.CookieConsent })), "CookieConsent");
 const DeploymentUpdateCoordinator = lazyRetry(() => import("@/components/DeploymentUpdateCoordinator").then((module) => ({ default: module.DeploymentUpdateCoordinator })), "DeploymentUpdateCoordinator");
 const WhatsAppButton = lazyRetry(() => import("@/components/WhatsAppButton").then((module) => ({ default: module.WhatsAppButton })), "WhatsAppButton");
 const PreferredSourceNudge = lazyRetry(() => import("@/components/PreferredSourceNudge").then((module) => ({ default: module.PreferredSourceNudge })), "PreferredSourceNudge");
@@ -138,7 +138,6 @@ function DeferredGlobalUi() {
       <AdsenseLoader />
       <CompareFloatingBar />
       <LockTargetFloatingPromo />
-      <CookieConsent />
       <IntentTrackingProvider>{null}</IntentTrackingProvider>
       <GlobalWhatsApp />
       <GlobalDiya />
@@ -537,6 +536,7 @@ const App = () => (
            </Suspense>
            </ChunkErrorBoundary>
            <GlobalMobileNavigation />
+           <CookieConsent />
            <DeferredGlobalUi />
          </BrowserRouter>
         </TooltipProvider>
