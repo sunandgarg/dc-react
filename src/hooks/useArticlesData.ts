@@ -124,7 +124,7 @@ export async function fetchEntityNewsArticles({ entityName, entityType, entitySl
 
 export function useEntityNewsArticles(options: EntityNewsOptions) {
   return useQuery({
-    queryKey: ["entity-news", options.entityType, options.entitySlug, options.entityName, options.category],
+    queryKey: ["db-articles", DEFAULT_SITE_SCOPE, "entity-news", options.entityType, options.entitySlug, options.entityName, options.category],
     queryFn: () => fetchEntityNewsArticles(options),
     staleTime: 5 * 60_000,
   });
