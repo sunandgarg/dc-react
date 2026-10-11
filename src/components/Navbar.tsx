@@ -246,7 +246,7 @@ export function Navbar() {
         )}
       </nav>
     </header>
-    {pathname !== "/" && <div id="global-internal-ad-top-anchor" />}
+    {pathname !== "/" && <div id="global-internal-ad-top-anchor" className={/^\/(?:news|colleges|courses|exams)\/[^/]+/.test(pathname) ? "min-h-[62px] sm:min-h-[102px]" : undefined} />}
     {!pathname.startsWith("/admin") && !pathname.startsWith("/auth") && (
       <div className="border-b border-border/70 bg-white px-3 py-2">
         <div className="container px-0">

@@ -51,7 +51,7 @@ function normalizeSlug(s: string) {
 
 function ArticleLeaderboardAd({ position, eager = false }: { position: "top" | "middle"; eager?: boolean }) {
   return (
-    <section className="my-3 overflow-hidden sm:my-4" aria-label="Advertisement">
+    <section className="my-3 min-h-[68px] overflow-hidden sm:my-4 sm:min-h-[108px]" aria-label="Advertisement">
       <p className="mb-1 text-center text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Advertisement</p>
       <GoogleAd
         placement="article"
