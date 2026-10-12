@@ -3,6 +3,20 @@ import { describe, expect, it } from "vitest";
 import { RichText } from "./RichText";
 
 describe("RichText", () => {
+  it("renders PDFs between content blocks with no native iframe dependency", () => {
+    const { container } = render(<RichText html='<h2>Eligibility</h2><div class="doc-viewer" data-pdf="/paper.pdf" data-title="Official brochure"><a href="/paper.pdf">PDF</a></div><p>Next steps</p>' />);
+    expect(screen.getByRole("heading", { name: "Eligibility" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "View PDF document" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open or download PDF" })).toHaveAttribute("href", "/paper.pdf");
+    expect(screen.getByText("Next steps")).toBeInTheDocument();
+    expect(container.querySelector("iframe")).toBeNull();
+  });
+
+  it("renders old image viewers and ignores unsafe document URLs", () => {
+    render(<RichText html='<div class="doc-viewer" data-title="Paper"><img src="/page.jpg"></div><div class="doc-viewer" data-pdf="javascript:alert(1)"></div>' />);
+    expect(screen.getByRole("img", { name: "Paper page 1" })).toHaveAttribute("src", "/page.jpg");
+    expect(screen.queryByRole("button", { name: "View PDF document" })).toBeNull();
+  });
   it("normalizes pasted font families including shorthand without changing other formatting", () => {
     const { container } = render(<RichText html={'<p style="font-family: Georgia !important; font-size: 20px; color: red; text-align: center">English</p><p style="font: italic 700 18px Georgia !important; line-height: 1.8">हिन्दी</p>'} />);
     const paragraphs = container.querySelectorAll("p");

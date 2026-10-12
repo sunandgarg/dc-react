@@ -1,6 +1,27 @@
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { readFileSync, readdirSync } from "node:fs";
+
+// PDF.js decoders, fonts and CMaps are self-hosted; no third-party viewer/CDN.
+const pdfjsRoot = path.resolve(import.meta.dirname, "node_modules/pdfjs-dist");
+const pdfjsVersion = JSON.parse(readFileSync(path.join(pdfjsRoot, "package.json"), "utf8")).version;
+const pdfAssets = ["cmaps", "standard_fonts", "wasm"].flatMap(folder =>
+  readdirSync(path.join(pdfjsRoot, folder)).map(file => ({ name: `assets/pdfjs/${pdfjsVersion}/${folder}/${file}`, path: path.join(pdfjsRoot, folder, file) })));
+const pdfAssetsPlugin: Plugin = {
+  name: "pdf-viewer-assets",
+  generateBundle() {
+    pdfAssets.forEach(asset => this.emitFile({ type: "asset", fileName: asset.name, source: readFileSync(asset.path) }));
+  },
+  configureServer(server) {
+    server.middlewares.use((request, response, next) => {
+      const asset = pdfAssets.find(item => `/${item.name}` === request.url?.split("?")[0]);
+      if (!asset) return next();
+      response.setHeader("Content-Type", asset.name.endsWith(".js") ? "text/javascript" : asset.name.endsWith(".wasm") ? "application/wasm" : "application/octet-stream");
+      response.end(readFileSync(asset.path));
+    });
+  },
+};
 
 const buildId =
   process.env.CF_PAGES_COMMIT_SHA ||
@@ -59,6 +80,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
+    pdfAssetsPlugin,
     emitBuildVersionPlugin,
     prioritizeStylesPlugin,
   ].filter(Boolean),

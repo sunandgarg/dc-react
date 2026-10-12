@@ -26,6 +26,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { backendClient } from "@/integrations/backend/client";
 import { optimizeImageFile } from "@/lib/imageOptimizer";
 import { toast } from "sonner";
+import { DocumentNode } from "@/components/admin/DocumentNode";
 
 interface RichTextEditorProps {
   label?: string;
@@ -177,6 +178,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
       Highlight.configure({ multicolor: true }),
       LeadCaptureLink.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
       ResizableImage.configure({ HTMLAttributes: { class: "rounded-lg max-w-full my-2" } }),
+      DocumentNode,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Placeholder.configure({ placeholder: placeholder || "Start typing…" }),
       Table.configure({ resizable: true, HTMLAttributes: { class: "border-collapse w-full my-2" } }),
@@ -278,6 +280,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   const [docDialog, setDocDialog] = useState(false);
   const [docTitle, setDocTitle] = useState("");
   const [docImages, setDocImages] = useState<string[]>([]);
+  const [docPdf, setDocPdf] = useState("");
   const [docUploading, setDocUploading] = useState(false);
   const [linkDialog, setLinkDialog] = useState(false);
   const [imageDialog, setImageDialog] = useState(false);
@@ -366,13 +369,26 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
     setImageDialog(false);
   };
 
-  const openDoc = () => { setDocTitle(""); setDocImages([]); setDocDialog(true); };
+  const openDoc = () => { setDocTitle(""); setDocImages([]); setDocPdf(""); setDocDialog(true); };
   const handleDocUpload = async (files: FileList | null) => {
     if (!files || !files.length) return;
+    const selected = Array.from(files);
+    const pdfs = selected.filter(file => file.type === "application/pdf" || /\.pdf$/i.test(file.name));
+    if (pdfs.length && (selected.length !== 1 || docImages.length)) { toast.error("Choose one PDF, or image pages - not both"); return; }
+    if (docPdf) { toast.error("Remove the selected PDF before uploading another document"); return; }
+    if (selected.some(file => file.size > 20 * 1024 * 1024)) { toast.error("Documents cannot exceed 20 MB"); return; }
+    if (!pdfs.length && selected.some(file => !safeInlineImageTypes.has(file.type))) { toast.error("Upload a PDF, JPG, PNG, WebP, GIF or AVIF"); return; }
     setDocUploading(true);
     try {
-      const { backendClient } = await import("@/integrations/backend/client");
-      const { optimizeImageFile } = await import("@/lib/imageOptimizer");
+      if (pdfs.length) {
+        const path = `editor/documents/${crypto.randomUUID()}.pdf`;
+        const { error } = await backendClient.storage.from("admin-uploads").upload(path, pdfs[0], { upsert: false, contentType: "application/pdf" });
+        if (error) throw error;
+        setDocPdf(backendClient.storage.from("admin-uploads").getPublicUrl(path).data.publicUrl);
+        if (!docTitle) setDocTitle(pdfs[0].name.replace(/\.pdf$/i, ""));
+        toast.success("PDF validated and optimized. Save the content after inserting it.");
+        return;
+      }
       const urls: string[] = [];
       for (const raw of Array.from(files)) {
         const file = await optimizeImageFile(raw);
@@ -385,14 +401,12 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       }
       setDocImages((prev) => [...prev, ...urls]);
     } catch (e: any) {
-      alert(e.message || "Upload failed");
+      toast.error(e.message || "Upload failed");
     } finally { setDocUploading(false); }
   };
   const applyDoc = () => {
-    if (!docImages.length) return;
-    const safeTitle = (docTitle || "").replace(/"/g, "&quot;");
-    const imgs = docImages.map((u) => `<img src="${u}" alt="Document page" />`).join("");
-    editor.chain().focus().insertContent(`<div class="doc-viewer" data-title="${safeTitle}">${imgs}</div><p></p>`).run();
+    if (docUploading || (!docImages.length && !docPdf)) return;
+    editor.chain().focus().insertContent([{ type: "documentViewer", attrs: { title: docTitle, pdf: docPdf, images: docImages } }, { type: "paragraph" }]).run();
     setDocDialog(false);
   };
 
@@ -434,7 +448,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       <Btn icon={Quote} title="Blockquote" active={editor.isActive("blockquote")} onClick={() => editor.chain().focus().toggleBlockquote().run()} />
       <Btn icon={LinkIcon} title="Insert / edit link" active={editor.isActive("link")} onClick={openLink} />
       <Btn icon={ImageIcon} title="Insert image" onClick={openImage} />
-      <Btn icon={FileText} title="Insert document viewer (multi-page images)" onClick={openDoc} />
+      <Btn icon={FileText} title="Insert document viewer (PDF or images)" onClick={openDoc} />
       <span className="w-px h-4 bg-border mx-1" />
       <div className="relative">
         <button type="button" onClick={() => setTableOpen(o => !o)} className="p-1.5 rounded text-muted-foreground hover:bg-muted hover:text-foreground flex items-center" title="Table">
@@ -591,16 +605,17 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       <Dialog open={docDialog} onOpenChange={setDocDialog}>
         <DialogContent showCloseButton={false} className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-lg gap-3 overflow-y-auto p-5">
             <DialogTitle className="flex items-center gap-2 text-base"><FileText className="w-4 h-4 text-primary" /> Insert document viewer</DialogTitle>
-            <p className="text-xs text-muted-foreground">Upload pages of a PDF, question paper or notes as images. They'll appear as a paginated viewer in the article.</p>
+            <p className="text-xs text-muted-foreground">Upload one PDF (up to 20 MB / 500 pages) or images of its pages. PDFs are validated and losslessly optimized before storage. Insert, then save the content to keep the document.</p>
             <div>
               <label className="text-xs font-medium text-muted-foreground">Title (optional)</label>
               <input value={docTitle} onChange={e => setDocTitle(e.target.value)} placeholder="e.g. CUET 2026 Biology Question Paper PDF" className="w-full mt-1 px-3 py-2 rounded-lg border border-border bg-background text-sm" />
             </div>
             <label className="block border-2 border-dashed border-border rounded-xl p-4 text-center cursor-pointer hover:border-primary/50 transition">
-              <input type="file" accept="image/*" multiple className="hidden" onChange={e => handleDocUpload(e.target.files)} />
+              <input type="file" aria-label="Upload document" accept="application/pdf,.pdf,image/png,image/jpeg,image/webp,image/gif,image/avif" multiple disabled={docUploading} className="hidden" onChange={e => { void handleDocUpload(e.target.files); e.target.value = ""; }} />
               <ImageIcon className="w-6 h-6 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-xs text-muted-foreground">{docUploading ? "Uploading…" : "Click to upload one or more pages (JPG/PNG)"}</p>
+              <p className="text-xs text-muted-foreground">{docUploading ? "Uploading and optimizing…" : "Click to upload a PDF or image pages"}</p>
             </label>
+            {docPdf && <div className="flex items-center gap-2 rounded-lg border p-3 text-sm"><FileText className="h-4 w-4" /><span className="flex-1">PDF ready to insert</span><button type="button" aria-label="Remove selected PDF" onClick={() => setDocPdf("")}><Trash2 className="h-4 w-4" /></button></div>}
             {docImages.length > 0 && (
               <div className="grid grid-cols-3 gap-2">
                 {docImages.map((u, i) => (
@@ -617,7 +632,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
             )}
             <div className="flex justify-end gap-2 pt-1">
               <button type="button" onClick={() => setDocDialog(false)} className="px-3 py-1.5 rounded-lg text-sm hover:bg-muted">Cancel</button>
-              <button type="button" onClick={applyDoc} disabled={!docImages.length} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm disabled:opacity-40">Insert ({docImages.length})</button>
+              <button type="button" onClick={applyDoc} disabled={docUploading || (!docImages.length && !docPdf)} className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm disabled:opacity-40">{docPdf ? "Insert PDF" : `Insert (${docImages.length})`}</button>
             </div>
         </DialogContent>
       </Dialog>

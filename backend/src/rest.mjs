@@ -8,6 +8,7 @@ import { assertArticleTopicsAvailable, loadArticleCoverage, withArticleWriteLock
 import { mergeIntentVisitor, prepareIntentEvents, stampTrackingSiteScope, updateIntentScoresForEvents } from "./intent-intelligence.mjs";
 import { normalizeArticleFaqs, saveArticleFaqs } from "./article-faqs.mjs";
 import { normalizeArticleEntityLinks, replaceArticleEntityLinks, saveNewArticleEntityLinks } from "./article-entity-links.mjs";
+import { publicContentCache } from "./public-content-cache.mjs";
 
 const CONTROL_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 const SHORT_ID_STARTS = { colleges: 10001, courses: 20001, exams: 30001 };
@@ -915,6 +916,7 @@ export async function handleRest(table, request, context = {}) {
   else if (request.method === "PATCH") result = await handlePatch(table, request, url, context);
   else if (request.method === "DELETE") result = await handleDelete(table, request, url);
   if (result) {
+    if (result.status >= 200 && result.status < 300 && result.status !== 202) await publicContentCache.invalidate(table);
     if (["colleges", "courses", "exams", "career_profiles"].includes(table) && result.status < 400) invalidateDirectorySearchCache();
     return result;
   }
@@ -930,6 +932,7 @@ export async function handleRpc(name, request) {
   if (name === "clear_featured_rank" || name === "set_featured_rank") {
     if (!tableNames.has(body._table) || !schemaMetadata[body._table].fields.featured_rank) throw new Error("Invalid featured table");
     await prisma.$executeRawUnsafe(`UPDATE ${quote(body._table)} SET \`featured_rank\` = ? WHERE \`id\` = ?`, name === "clear_featured_rank" ? null : body._rank, body._id);
+    await publicContentCache.invalidate(body._table);
     return { status: 200, body: null };
   }
   if (name === "set_ai_emergency_stop") {

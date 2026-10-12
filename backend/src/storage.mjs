@@ -1,6 +1,7 @@
 import { resolveNativeIdentity } from "./auth.mjs";
 import { prisma } from "./db.mjs";
 import { CONTENT_EDITOR_RESOURCES } from "./editor-access.mjs";
+import { optimizeDocumentPdf } from "./document-pdf.mjs";
 import {
   DeleteObjectsCommand,
   GetObjectCommand,
@@ -256,7 +257,8 @@ async function s3Storage(request, route, config) {
   const key = route.objectPath ? storageObjectKey(route.bucket, route.objectPath) : "";
   if (["POST", "PUT"].includes(request.method) && route.modifier === null && route.objectPath) {
     const contentType = String(request.headers.get("content-type") || "application/octet-stream").split(";", 1)[0];
-    const result = await uploadStorageObject(route.bucket, route.objectPath, await checkedBody(request), contentType, {
+    const body = await documentUploadBody(request, route);
+    const result = await uploadStorageObject(route.bucket, route.objectPath, body, contentType, {
       upsert: request.method === "PUT" || request.headers.get("x-upsert") === "true",
       cacheControl: request.headers.get("cache-control") || undefined,
     });
@@ -301,12 +303,22 @@ async function s3Storage(request, route, config) {
       "content-type": result.ContentType || "application/octet-stream",
       "cache-control": result.CacheControl || "private,max-age=60",
       etag: result.ETag || "",
+      "accept-ranges": "bytes",
+      "x-content-type-options": "nosniff",
     });
     if (result.ContentLength !== undefined) headers.set("content-length", String(result.ContentLength));
     if (result.ContentRange) headers.set("content-range", result.ContentRange);
     return new Response(request.method === "HEAD" ? null : result.Body?.transformToWebStream(), { status: result.ContentRange ? 206 : 200, headers });
   }
   return jsonResponse(405, { message: "Storage method is not supported" });
+}
+
+async function documentUploadBody(request, route) {
+  const body = await checkedBody(request);
+  if (route.bucket !== ADMIN_UPLOAD_BUCKET || !route.objectPath.startsWith("editor/documents/")) return body;
+  const type = String(request.headers.get("content-type") || "").split(";", 1)[0].trim().toLowerCase();
+  if (type !== "application/pdf" || !route.objectPath.endsWith(".pdf")) throw Object.assign(new Error("Document uploads must be PDF files"), { status: 415 });
+  return optimizeDocumentPdf(body);
 }
 
 export async function handleStorage(request) {
@@ -329,4 +341,4 @@ export async function handleStorage(request) {
   return s3Storage(request, route, config);
 }
 
-export const storagePolicyInternals = { checkedBody, hasWebsiteMediaPermission, hasWebsiteMediaRole, objectReadCommand, ownsPath, routeDetails, PUBLIC_READ_BUCKETS };
+export const storagePolicyInternals = { checkedBody, documentUploadBody, hasWebsiteMediaPermission, hasWebsiteMediaRole, objectReadCommand, ownsPath, routeDetails, PUBLIC_READ_BUCKETS };

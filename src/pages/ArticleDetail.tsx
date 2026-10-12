@@ -20,7 +20,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 import { useSEO } from "@/hooks/useSEO";
-import { DocumentViewer } from "@/components/detail/DocumentViewer";
 import { RichText } from "@/components/detail/RichText";
 import { ArticleLeadLinks } from "@/components/ArticleLeadLinks";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
@@ -373,7 +372,6 @@ export default function ArticleDetail() {
   };
 
   // Inject IDs onto h2/h3 of HTML content for TOC anchors - must run before early returns
-  // Also split out <div class="doc-viewer" ...>...</div> blocks so they can be rendered as React.
   const contentSegments = useMemo(() => {
     const c = article?.content || "";
     if (!articleUsesRichHtml) return null;
@@ -382,23 +380,7 @@ export default function ArticleDetail() {
       const id = slugifyHeading(text);
       return `<h${lvl}${attrs} id="${id}">${inner}</h${lvl}>`;
     });
-    // Parse out doc-viewer blocks
-    const segs: Array<{ type: "html"; value: string } | { type: "doc"; title: string; images: string[] }> = [];
-    const re = /<div\s+class="doc-viewer"([^>]*)>([\s\S]*?)<\/div>/gi;
-    let last = 0; let m: RegExpExecArray | null;
-    while ((m = re.exec(html))) {
-      if (m.index > last) segs.push({ type: "html", value: html.slice(last, m.index) });
-      const attrs = m[1] || "";
-      const inner = m[2] || "";
-      const titleMatch = attrs.match(/data-title="([^"]*)"/);
-      const imgs: string[] = [];
-      const imgRe = /<img[^>]+src="([^"]+)"/gi; let im: RegExpExecArray | null;
-      while ((im = imgRe.exec(inner))) imgs.push(im[1]);
-      segs.push({ type: "doc", title: titleMatch?.[1] || "", images: imgs });
-      last = m.index + m[0].length;
-    }
-    if (last < html.length) segs.push({ type: "html", value: html.slice(last) });
-    return segs;
+    return [{ type: "html" as const, value: html }];
   }, [article?.content, articleUsesRichHtml]);
   const displayContentSegments = useMemo(() => {
     if (!contentSegments?.length) return contentSegments;
@@ -669,11 +651,7 @@ export default function ArticleDetail() {
                     <>
                       {displayContentSegments.map((seg, i) => (
                         <Fragment key={`${seg.type}-${i}`}>
-                          {seg.type === "html" ? (
-                            <RichText html={seg.value} demoteH1 className="article-prose article-prose--news max-w-none" />
-                          ) : (
-                            <DocumentViewer title={seg.title} images={seg.images} />
-                          )}
+                          <RichText html={seg.value} demoteH1 className="article-prose article-prose--news max-w-none" />
                           {i === Math.max(0, Math.ceil(displayContentSegments.length / 2) - 1) && (
                             <ArticleLeaderboardAd position="middle" />
                           )}

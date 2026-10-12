@@ -297,9 +297,6 @@ export default function AdminCourses() {
                 <div><label className="text-xs font-medium text-muted-foreground">Description</label>
                   <textarea value={editing.description || ""} onChange={(e) => update("description", e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none" />
                 </div>
-                <div><label className="text-xs font-medium text-muted-foreground">Eligibility</label>
-                  <textarea value={editing.eligibility || ""} onChange={(e) => update("eligibility", e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none" />
-                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">Listing Priority (1-100)</label>
@@ -366,6 +363,7 @@ export default function AdminCourses() {
               <AdminFormSection title="Detailed Content" icon={<FileText className="w-4 h-4 text-primary" />} defaultOpen={false}>
                 <PageSummaryField value={(editing as any).page_summary || ""} onChange={(v) => update("page_summary" as any, v)} />
                 <RichTextEditor label="About" value={editing.about_content || ""} onChange={(v) => update("about_content", v)} />
+                <RichTextEditor label="Eligibility" value={editing.eligibility || ""} onChange={(v) => update("eligibility", v)} />
                 <RichTextEditor label="Scope" value={editing.scope_content || ""} onChange={(v) => update("scope_content", v)} />
                 <RichTextEditor label="Subjects" value={editing.subjects_content || ""} onChange={(v) => update("subjects_content", v)} />
                 <RichTextEditor label="Placements" value={editing.placements_content || ""} onChange={(v) => update("placements_content", v)} />

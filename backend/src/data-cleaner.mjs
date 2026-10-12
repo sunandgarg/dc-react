@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata } from "./db.mjs";
 import { generateGeminiJson } from "./blog-ai.mjs";
+import { publicContentCache } from "./public-content-cache.mjs";
 
 const ENTITIES = {
   colleges: { table: "colleges", name: "name" },
@@ -39,6 +40,7 @@ async function applyProposedData(table, entityId, proposed, sourceUrls) {
   if (fields.length) {
     const values = fields.map((field) => normalizeDbValue(table, field, proposed[field]));
     await prisma.$executeRawUnsafe(`UPDATE ${quote(table)} SET ${fields.map((field) => `${quote(field)} = ?`).join(",")}, \`data_clean_successes\` = COALESCE(\`data_clean_successes\`,0) + 1, \`data_clean_state\` = 'cleaned', \`data_verified_at\` = ?, \`data_source_urls\` = ?, \`updated_at\` = ? WHERE \`id\` = ?`, ...values, new Date(), JSON.stringify(sourceUrls), new Date(), entityId);
+    await publicContentCache.invalidate(table);
   }
 }
 

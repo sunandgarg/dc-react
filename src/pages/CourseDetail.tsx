@@ -461,7 +461,7 @@ export default function CourseDetail() {
 
             {/* Eligibility */}
             <RichSection id="eligibility" title={<>Eligibility Criteria</>}>
-              <p className="text-sm text-muted-foreground leading-relaxed">{course.eligibility}</p>
+              <RichText html={course.eligibility} />
             </RichSection>
 
             {/* Syllabus */}

@@ -3,6 +3,7 @@ import { prisma, quote, schemaMetadata } from "./db.mjs";
 import { assertArticleTopicsAvailable, withArticleWriteLock, blogStudioContentVersion, prepareStudioArticlePublication, commitStudioArticlePublication } from "./blog-ai.mjs";
 import { saveArticleFaqs } from "./article-faqs.mjs";
 import { replaceArticleEntityLinks, saveNewArticleEntityLinks } from "./article-entity-links.mjs";
+import { publicContentCache } from "./public-content-cache.mjs";
 
 const REVIEWED_TABLES = new Set([
   "articles", "article_categories", "article_links", "authors",
@@ -316,6 +317,7 @@ export async function handleContentReviews(request, reviewerId) {
         status, reviewerId, String(body.review_notes || "").slice(0, 4000) || null, new Date(), reviewId,
       );
     });
+    if (status === "approved") await publicContentCache.invalidate();
     return { success: true, applied: status === "approved", published_article_url: publishedArticleUrl };
   }
   throw Object.assign(new Error("Method not allowed"), { status: 405, code: "METHOD_NOT_ALLOWED" });

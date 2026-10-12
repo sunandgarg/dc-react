@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import DOMPurify from "isomorphic-dompurify";
 import { cn } from "@/lib/utils";
+import { splitDocumentViewers } from "@/lib/documentViewer";
+import { DocumentViewer } from "./DocumentViewer";
 
 interface RichTextProps {
   html?: string | null;
@@ -32,6 +34,7 @@ const ALLOWED_ATTR = [
   "href","target","rel","title","alt","src","srcset","sizes","loading","decoding",
   "width","height","colspan","rowspan","scope","start","reversed","type",
   "class","style","id","name","data-width","data-align","data-dc-unclosed-anchor","data-lead-capture",
+  "data-title","data-pdf",
 ];
 
 function postProcess(html: string): string {
@@ -193,6 +196,7 @@ function markUnclosedAnchorTags(value: string): string {
 }
 
 export function RichText({ html, className, demoteH1 = false }: RichTextProps) {
+  const segments = useMemo(() => splitDocumentViewers(decodeLegacyHtml(html || "")), [html]);
   const safe = useMemo(() => {
     if (!html) return "";
     const trimmed = markUnclosedAnchorTags(decodeLegacyHtml(html.trim()));
@@ -248,6 +252,12 @@ export function RichText({ html, className, demoteH1 = false }: RichTextProps) {
     "[&_tbody_tr:hover]:bg-primary/[0.04] [&_tbody_tr]:transition-colors",
     className,
   );
+
+  if (segments.some(segment => segment.type === "doc")) return <div className={className}>
+    {segments.map((segment, index) => segment.type === "doc"
+      ? <DocumentViewer key={index} title={segment.title} images={segment.images} pdf={segment.pdf} />
+      : <RichText key={index} html={segment.value} demoteH1={demoteH1} />)}
+  </div>;
 
   if (!safe) {
     // Plain text fallback - preserve paragraph breaks

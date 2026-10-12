@@ -8,6 +8,7 @@ import { ensureSupportedAiModels, startBlogAgentWorker, stopBlogAgentWorker } fr
 import { startDataCleanerWorker, stopDataCleanerWorker } from "./data-cleaner.mjs";
 import { prisma } from "./db.mjs";
 import { createDatabasePoolWatchdog, databaseEndpointReachable } from "./database-pool-watchdog.mjs";
+import { publicContentCache } from "./public-content-cache.mjs";
 
 const port = Number(process.env.PORT || 8787);
 const host = process.env.HOST || "0.0.0.0";
@@ -77,6 +78,7 @@ databasePoolWatchdog.start();
 async function shutdown(signal) {
   console.log(`Received ${signal}; stopping cleanly`);
   databasePoolWatchdog.stop();
+  publicContentCache.close();
   stopLeadOutboxWorker();
   stopBlogAgentWorker();
   stopDataCleanerWorker();

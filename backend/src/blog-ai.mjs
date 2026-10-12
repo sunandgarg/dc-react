@@ -6,6 +6,7 @@ import { prisma, schemaMetadata } from "./db.mjs";
 import { uploadStorageObject } from "./storage.mjs";
 import { toPublicMediaUrls, toStoredMediaKeys } from "./media-values.mjs";
 import { queueIndexNowUrls } from "./indexnow.mjs";
+import { publicContentCache } from "./public-content-cache.mjs";
 import { resolveExamLinkContext, insertVerifiedExamLinks } from "./blog-exam-links.mjs";
 import { assertArticleEntityLinksExist, normalizeArticleEntityLinks } from "./article-entity-links.mjs";
 import { BATCH_CONTENT_VARIATION_POLICY, BATCH_CONTENT_VARIATION_TEXT } from "../../scripts/content-batch-policy.mjs";
@@ -2604,6 +2605,7 @@ async function publishBlogStudioDraft(body, userId) {
     else await tx.ai_usage_events.create({ data: { id: randomUUID(), user_id: userId, provider: "draft", model: saved.text_model, feature: "blog-studio", operation: "editorial-evidence", metadata } });
     return created;
   }, siteScope);
+  await publicContentCache.invalidate("articles");
   if (siteScope === "dekhocampus" && requestedStatus === "Published") {
     queueIndexNowUrls([`https://dekhocampus.com/news/${article.slug}`]);
   }
@@ -2820,6 +2822,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     throw error;
   }
   if (!article) return null;
+  await publicContentCache.invalidate("articles");
   if (siteScope === "dekhocampus" && status === "Published") {
     queueIndexNowUrls([`https://dekhocampus.com/news/${article.slug}`]);
   }

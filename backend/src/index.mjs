@@ -23,6 +23,7 @@ import { handleAdminUsers } from "./admin-users.mjs";
 import { consumeSarkariHomeFeedReadLimit, loadSarkariHomeFeed } from "./sarkari-home-feed.mjs";
 import { queueIndexNowUrls } from "./indexnow.mjs";
 import { counselorSse, generateCounselorReply } from "./ai-counselor.mjs";
+import { publicContentCache } from "./public-content-cache.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -271,7 +272,7 @@ function corsHeaders(request) {
   return {
     "access-control-allow-origin": allowedOrigin,
     "access-control-allow-headers": "accept, accept-profile, authorization, apikey, content-profile, content-type, prefer, range, range-unit, x-client-info, x-request-id, x-upsert",
-    "access-control-expose-headers": "content-range, range-unit, retry-after, x-request-id",
+    "access-control-expose-headers": "accept-ranges, content-length, content-range, range-unit, retry-after, x-request-id",
     "access-control-allow-methods": "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS",
     vary: "Origin",
   };
@@ -772,7 +773,8 @@ export async function handleRequest(request) {
         }
       }
       const articleWriteRequest = table === "articles" ? authorization.request.clone() : null;
-      const result = await handleRest(table, authorization.request, authorization);
+      const result = await publicContentCache.read(table, authorization.request, authorization,
+        () => handleRest(table, authorization.request, authorization));
       await queuePublishedArticleWrite(articleWriteRequest, result);
       const publicArticleCache = authorization.publicAccess && table === "articles" && result.status < 400
         ? { "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600" }
