@@ -7,8 +7,8 @@ import AdminArticles from "./AdminArticles";
 const mocks = vi.hoisted(() => ({ role: "content_writer", writes: [] as unknown[], articles: [] as unknown[], faqData: [] as unknown[], faqError: null as Error | null,
   toastError: vi.fn(), from: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: mocks.toastError } }));
-vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ isAdmin: mocks.role === "admin", roles: [mocks.role], can: (_resource: string, action: string) =>
-  mocks.role === "admin" || action === "create" || (mocks.role !== "content_writer" && ["view", "edit"].includes(action)) || (mocks.role === "content_head" && action === "publish") }) }));
+vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ isAdmin: mocks.role === "admin", roles: [mocks.role], can: (resource: string, action: string) =>
+  mocks.role === "admin" || action === "create" || (mocks.role !== "content_writer" && ["view", "edit"].includes(action)) || (mocks.role === "content_head" && (action === "publish" || (resource === "faqs" && action === "delete"))) }) }));
 vi.mock("@/integrations/backend/client", () => ({ backendClient: { from: mocks.from } }));
 vi.mock("@/hooks/useArticlesData", async (importOriginal) => ({ ...await importOriginal<typeof import("@/hooks/useArticlesData")>(),
   useAdminArticles: () => ({ data: { rows: mocks.articles, total: mocks.articles.length }, isLoading: false, isError: false, refetch: vi.fn() }) }));
@@ -121,6 +121,17 @@ describe("article FAQ workflow", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: "Submit for approval" })).toBeEnabled());
     fireEvent.click(screen.getByRole("button", { name: "Submit for approval" }));
     await waitFor(() => expect(mocks.writes[0]).toMatchObject({ faqs: [{ id: "saved-faq", answer: "Updated answer", is_active: true }] }));
+  });
+
+  it("Content Head can remove a saved FAQ and save the remaining bundle", async () => {
+    mocks.role = "content_head";
+    mocks.faqData = [{ id: "saved-faq", question: "Existing question?", answer: "Existing answer", is_active: 1 }];
+    sessionStorage.setItem(draftKey, JSON.stringify({ ...draft, id: "existing-article", faqs: undefined }));
+    mount(); expandFaqs();
+    fireEvent.click(await screen.findByRole("button", { name: "Remove FAQ 1" }));
+    expect(screen.queryByRole("textbox", { name: "FAQ 1 question" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Save Draft" }));
+    await waitFor(() => expect(mocks.writes[0]).toMatchObject({ faqs: [] }));
   });
 
   it("publish-capable editors can submit the complete proposed article for human review", async () => {

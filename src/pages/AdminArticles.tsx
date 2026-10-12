@@ -617,7 +617,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                   <Button type="button" size="sm" variant="outline" onClick={() => void faqQuery.refetch()}>Retry loading FAQs</Button>
                 </div> : <p role="status" className="text-xs text-muted-foreground">Loading saved FAQs…</p>)}
                 <ArticleFaqEditor value={editorFaqs || []} onChange={(faqs) => update("faqs", faqs)}
-                  allowDeleteSaved={isAdmin} disabled={faqsPending || saveArticle.isPending} />
+                  allowDeleteSaved={isAdmin || can("faqs", "delete")} disabled={faqsPending || saveArticle.isPending} />
               </AdminFormSection>
 
               {/* ── SEO ── */}

@@ -96,7 +96,7 @@ try {
   if (permissionRows.length !== CONTENT_HEAD_RESOURCES.size) throw new Error("Content Head permission-count verification failed");
   for (const resource of CONTENT_HEAD_RESOURCES) {
     const permission = permissionRows.find((row) => row.resource === resource);
-    if (!permission?.can_view || !permission?.can_create || !permission?.can_edit || !permission?.can_publish || permission.can_delete) {
+    if (!permission?.can_view || !permission?.can_create || !permission?.can_edit || !permission?.can_publish || Boolean(permission.can_delete) !== (resource === "faqs")) {
       throw new Error(`${resource} Content Head permission verification failed`);
     }
   }
@@ -107,7 +107,7 @@ try {
     content_head_phone: CONTENT_HEAD_PHONE,
     content_head_user_id: contentHead.id,
     permissions: [...CONTENT_HEAD_RESOURCES],
-    can_delete: false,
+    delete_permissions: ["faqs"],
   }));
 } finally {
   await prisma.$disconnect();

@@ -34,7 +34,7 @@ export function canContentEditorAccess(resource, action) {
 
 export function canContentHeadAccess(resource, action) {
   return CONTENT_HEAD_RESOURCES.has(String(resource || ""))
-    && ["view", "create", "edit"].includes(String(action || ""));
+    && (["view", "create", "edit"].includes(String(action || "")) || (resource === "faqs" && action === "delete"));
 }
 
 export function canContentWriterAccess(resource, action) {
@@ -61,7 +61,7 @@ async function replaceContentHeadAccess(tx, userId) {
       data: {
         id: randomUUID(), user_id: userId, module: resource, action: "view",
         allow: true, resource, scope: "all", can_view: true, can_create: true,
-        can_edit: true, can_delete: false, can_publish: true,
+        can_edit: true, can_delete: resource === "faqs", can_publish: true,
         created_at: now, updated_at: now,
       },
     });

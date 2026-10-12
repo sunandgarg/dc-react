@@ -45,7 +45,7 @@ test("content role covers editorial resources without destructive access", () =>
   assert.equal(canContentEditorAccess("leads", "view"), false);
 });
 
-test("Content Head can edit articles and their FAQs without deleting", () => {
+test("Content Head can delete FAQs but not their parent content", () => {
   assert.deepEqual([...CONTENT_HEAD_RESOURCES].sort(), ["articles", "colleges", "courses", "exams", "faqs"]);
   assert.equal(canContentHeadAccess("articles", "create"), true);
   assert.equal(canContentHeadAccess("colleges", "edit"), true);
@@ -53,8 +53,10 @@ test("Content Head can edit articles and their FAQs without deleting", () => {
   assert.equal(canContentHeadAccess("exams", "create"), true);
   assert.equal(canContentHeadAccess("faqs", "create"), true);
   assert.equal(canContentHeadAccess("faqs", "edit"), true);
-  assert.equal(canContentHeadAccess("faqs", "delete"), false);
-  assert.equal(canContentHeadAccess("articles", "delete"), false);
+  assert.equal(canContentHeadAccess("faqs", "delete"), true);
+  for (const resource of ["articles", "colleges", "courses", "exams", "media"]) {
+    assert.equal(canContentHeadAccess(resource, "delete"), false);
+  }
   assert.equal(canContentHeadAccess("course_fees", "edit"), false);
   assert.equal(canContentHeadAccess("leads", "view"), false);
 });
@@ -78,13 +80,15 @@ test("Content Head sessions and article edits preserve browser independence", as
   const authSource = await readFile(new URL("../src/auth.mjs", import.meta.url), "utf8");
   const editorSource = await readFile(new URL("../src/editor-access.mjs", import.meta.url), "utf8");
   const clientSource = await readFile(new URL("../../src/integrations/backend/client.ts", import.meta.url), "utf8");
+  const reconcileSource = await readFile(new URL("../scripts/reconcile-content-head-access.mjs", import.meta.url), "utf8");
 
   assert.match(authSource, /data: \{ expires_at: new Date\(Date\.now\(\) \+ REFRESH_TTL_SECONDS \* 1000\) \}/);
   assert.doesNotMatch(authSource, /claimed\.count === 1 \? issueSession/);
   assert.match(authSource, /where: \{ token_hash: digest\(refreshToken\), revoked_at: null \}/);
   assert.match(clientSource, /let refreshPromise: Promise<BackendSession \| null> \| null = null/);
   assert.match(clientSource, /body: JSON\.stringify\(\{ refresh_token: session\.refresh_token \}\)/);
-  assert.match(editorSource, /can_delete: false, can_publish: true/);
+  assert.match(editorSource, /can_delete: resource === "faqs", can_publish: true/);
+  assert.match(reconcileSource, /Boolean\(permission\.can_delete\) !== \(resource === "faqs"\)/);
   assert.doesNotMatch(editorSource, /7428966263/);
 });
 

@@ -342,7 +342,14 @@ async function authorizeRest(table, request) {
   };
   const ownerColumn = ownedTables.get(table);
   if (request.method === "DELETE" && !ownerColumn) {
-    throw new HttpError(403, "ADMIN_REQUIRED", "Only an administrator can permanently delete website data");
+    const pages = new URL(request.url).searchParams.getAll("page");
+    const roles = canContentHeadAccess(table, "delete") ? await prisma.$queryRawUnsafe(
+      "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` = 'content_head' LIMIT 1", identity.id,
+    ) : [];
+    if (!roles.length || pages.length !== 1 || !["eq.articles", "eq.sarkari_articles", "eq.colleges", "eq.courses", "eq.exams"].includes(pages[0])) {
+      throw new HttpError(403, "ADMIN_REQUIRED", "Only an administrator can permanently delete website data; Content Head can delete FAQs on articles, colleges, courses and exams");
+    }
+    return { request, actorUserId: null };
   }
 
   if (["GET", "HEAD"].includes(request.method) && ["user_roles", "user_permissions"].includes(table)) {
@@ -371,6 +378,7 @@ async function authorizeRest(table, request) {
         request: await validateSiteScopeWriteRequest(table, request),
         actorUserId: null,
         allowManualArticleTopicDuplicate: table === "articles" && action !== "view",
+        allowArticleFaqDelete: table === "articles",
       };
     }
     if (editorialRoles.some((row) => row.role === "content") && canContentEditorAccess(table, action)) {

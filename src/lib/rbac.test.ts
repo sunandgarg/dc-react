@@ -30,6 +30,13 @@ describe("RBAC capability matrix", () => {
     expect(can(roles, "leads", "view")).toBe(false);
     expect(can(roles, "media", "edit")).toBe(true);
     expect(can(roles, "scholarships", "view")).toBe(false);
+    expect(can(roles, "faqs", "delete")).toBe(true);
+    for (const module of ["articles", "colleges", "courses", "exams", "media"] as const) {
+      expect(can(roles, module, "delete")).toBe(false);
+    }
+    for (const role of ["manager", "content", "content_writer"] as const) {
+      expect(can([role], "faqs", "delete")).toBe(false);
+    }
   });
 
   it("content editor can manage all editorial modules but cannot publish", () => {

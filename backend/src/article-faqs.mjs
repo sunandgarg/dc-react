@@ -49,7 +49,7 @@ export async function saveArticleFaqs(tx, article, { previousSlug = article.slug
       await tx.faqs.create({ data: { ...data, id: randomUUID() } });
     }
   }
-  // Managers can edit/add, but only an admin can delete already persisted FAQs.
+  // Deletion requires explicit permission from the authorised parent-article write.
   if (hasFaqs && allowDelete && !isNewArticle) {
     const kept = new Set(faqs.map(({ id }) => id).filter(Boolean));
     const removed = existing.filter(({ id }) => !kept.has(id)).map(({ id }) => id);

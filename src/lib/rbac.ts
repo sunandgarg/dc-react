@@ -6,7 +6,7 @@ export type Module =
   | "promoted_programs" | "featured" | "ai_providers" | "otp_providers"
   | "applications" | "referrals" | "careers" | "companies" | "placements"
   | "faculty" | "facilities" | "contacts" | "course_fees" | "partners" | "cat_universe"
-  | "content" | "media" | "legal" | "sitemap" | "docs" | "authors" | "scholarships" | "jobs";
+  | "content" | "media" | "legal" | "sitemap" | "docs" | "authors" | "scholarships" | "jobs" | "faqs";
 
 export type Action = "view" | "create" | "edit" | "edit_own" | "delete" | "publish";
 
@@ -45,7 +45,7 @@ export const CAPABILITIES: Matrix = {
     colleges: REVIEW_AND_PUBLISH,
     courses: REVIEW_AND_PUBLISH,
     exams: REVIEW_AND_PUBLISH,
-    faqs: NO_DELETE,
+    faqs: ALL,
     media: NO_DELETE,
   },
   content: {
