@@ -45,6 +45,7 @@ function slugifyHeading(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-").slice(0, 80);
 }
 function normalizeSlug(s: string) {
+  if (/^[A-Za-z0-9-]+$/.test(s)) return s;
   return s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 

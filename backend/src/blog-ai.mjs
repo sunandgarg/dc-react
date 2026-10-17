@@ -182,7 +182,7 @@ export function normalizeBlogAgentSettings(value = {}) {
     google_trends_daily_posts: Math.min(3, Math.max(1, Math.trunc(Number(value.google_trends_daily_posts) || 3))),
   };
 }
-const PUBLISHED_COMPETITOR_PATTERN = /\b(?:college\s*dunia|college\s*dekho|shiksha|careers\s*360|kollege\s*apply|get\s*my\s*uni|pagal\s*guy|sarvgyan)\b/i;
+const PUBLISHED_COMPETITOR_PATTERN = /\b(?:college\s*dunia|college\s*dekho|shiksha|careers\s*360|kollege\s*apply|get\s*my\s*uni|pagal\s*guy|sarvgyan|find\s*my\s*college)\b/i;
 const PUBLISHED_ATTRIBUTION_PATTERN = /\b(?:according to|as reported by|sources? (?:say|says|suggest|suggests|indicate|indicates)|reports? (?:say|says|suggest|suggests|indicate|indicates)|information (?:from|published by)|data (?:from|published by))\b/i;
 const escapeRegex = (value) => String(value).split("").map((character) => "\\^$.*+?()[]{}|".includes(character) ? `\\${character}` : character).join("");
 const HUMAN_BANNED_WORD_PATTERN = new RegExp(`(?:${DEKHOCAMPUS_HUMAN_EDITORIAL_POLICY.banned.map(escapeRegex).join("|")})`, "i");
@@ -1748,10 +1748,11 @@ export async function createBlogCover(slug, prompt, rawOptions = {}) {
   return upload.publicUrl;
 }
 
-async function researchSignals(limit = MAX_RESEARCH_SOURCES, siteScope = "dekhocampus") {
+export async function researchSignals(limit = MAX_RESEARCH_SOURCES, siteScope = "dekhocampus") {
   const normalizedScope = normalizeArticleSiteScope(siteScope);
   const requestedLimit = Math.min(MAX_RESEARCH_SOURCES, Math.max(2, Number(limit) || MAX_RESEARCH_SOURCES));
-  const configured = await prisma.blog_research_sources.findMany({ where: { is_active: true }, orderBy: { display_order: "asc" }, take: MAX_RESEARCH_SOURCES });
+  const configuredRows = await prisma.blog_research_sources.findMany({ orderBy: { display_order: "asc" } });
+  const configured = configuredRows.filter((source) => source.is_active);
   const defaults = normalizedScope === "sarkari"
     ? [
       { name: "Google News Government Jobs India", url: "https://news.google.com/rss/search?q=government+jobs+recruitment+notification+India&hl=en-IN&gl=IN&ceid=IN:en", source_type: "public_signal" },
@@ -1763,21 +1764,27 @@ async function researchSignals(limit = MAX_RESEARCH_SOURCES, siteScope = "dekhoc
       { name: "Google News Education India", url: "https://news.google.com/rss/search?q=education+college+admission+exam+India&hl=en-IN&gl=IN&ceid=IN:en", source_type: "public_signal" },
       { name: "Google Trends India", url: "https://trends.google.com/trending/rss?geo=IN", source_type: "public_signal" },
     ];
-  const candidates = normalizedScope === "sarkari" ? [...defaults, ...configured] : [...configured, ...defaults];
-  const sources = candidates
+  const configuredUrls = new Set(configuredRows.map((source) => String(source.url || "").replace(/\/$/, "")));
+  const fallbackSources = defaults.filter((source) => !configuredUrls.has(source.url.replace(/\/$/, "")));
+  const candidates = normalizedScope === "sarkari" ? [...fallbackSources, ...configured] : [...configured, ...fallbackSources];
+  const rankedSources = candidates
     .filter((source, index, values) => values.findIndex((candidate) => candidate.url === source.url) === index)
     .map((source, index) => ({ source, index }))
     .sort((left, right) => {
       const rank = (candidate) => {
         const text = `${candidate.name || ""} ${candidate.url || ""}`.toLowerCase();
-        if (verifiedOfficialExternalLinks([candidate]).length) return 0;
-        if (text.includes("sarvgyan") || text.includes("shiksha")) return 2;
+        if (normalizedScope === "dekhocampus" && safeEditorialResearchUrl(candidate.url) && isCompetitorResearchSource(candidate, candidate.url)) return 0;
+        if (verifiedOfficialExternalLinks([candidate]).length) return 1;
         if (/google news|google trends/.test(text)) return 3;
-        return 1;
+        return 2;
       };
       return rank(left.source) - rank(right.source) || left.index - right.index;
     })
-    .map(({ source }) => source)
+    .map(({ source }) => source);
+  const competitorSources = normalizedScope === "dekhocampus"
+    ? rankedSources.filter((source) => safeEditorialResearchUrl(source.url) && isCompetitorResearchSource(source, source.url))
+    : [];
+  const sources = [...competitorSources.slice(0, 3), ...rankedSources.filter((source) => !competitorSources.includes(source)), ...competitorSources.slice(3)]
     .slice(0, requestedLimit);
   const profile = articleSiteProfile(normalizedScope);
   const settled = await Promise.allSettled(sources.map((source) => fetchedEditorialSignal(source, normalizedScope)));
@@ -1864,7 +1871,7 @@ Editorial contract:
 - Scope requirements: ${scopeRules}
 ${correction}
 
-Private fact-checking context: ${JSON.stringify(signals)}. Synthesize facts and add original decision value. Never copy, lightly rewrite, spin, or preserve the structure of one source. Do not leak unapproved research URLs, footnotes, reference lists, bibliographies or research notes into a publishable field. You may and should name an official authority, university, exam body or institution when the supplied evidence supports the name and it makes the reader's decision clearer. Do not promote a competitor or name a research publisher merely to decorate the copy.
+Private fact-checking context: ${JSON.stringify(signals)}. Synthesize facts and add original decision value. Never copy, lightly rewrite, spin, or preserve the structure of one source. Do not leak unapproved research URLs, footnotes, reference lists, bibliographies or research notes into a publishable field. You may and should name an official authority, university, exam body or institution when the supplied evidence supports the name and it makes the reader's decision clearer. Never name or link to a competitor in any publishable field, including article text, metadata, tags and FAQs.
 
 People-first trust contract:
 - WHO: write for the stated student and parent audience under the real configured byline; never invent credentials, interviews, personal use, first-hand testing or lived experience.
@@ -1911,7 +1918,7 @@ Search and page structure:
 - Verified official external-link context: ${JSON.stringify(verifiedExternalLinks)}. If the exam's exact official website appears here, link it beside the current notice or next action. Otherwise, if a fetched official URL directly supports a claim or reader action, add a relevant contextual anchor using only an exact URL from this list. If this list is empty or none of its pages matches the topic, add no external link and do not guess one. Never link to a competitor, RSS feed or generic research signal. Do not append a generic source list.
 - The page UI supplies the real author or reviewer and Last updated date. Do not invent a byline, credential, correction history or editorial-process note inside content_html.
 
-Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}. Return strict JSON with clean semantic HTML in content_html, not Markdown, because the page renderer supplies the H1 and renders the body HTML. Write a complete, specific, accurate title of roughly 55-85 characters preserving the key exam, institution, authority, date or outcome. Write a click-worthy meta_title of no more than 60 characters with the primary keyword front-loaded, and a benefit-led meta_description of no more than 155 characters. Set hero_hook exactly equal to title. Open with 2-3 natural sentences that identify the entity, current consequence and next useful action without a label. Answer one identifiable search intent and deliver unique value through evidence-backed comparison, calculation, timeline, checklist, interpretation or decision guidance beyond a rewritten announcement. Build topic-specific sections instead of a reusable template. Every section must help the reader decide, act, avoid a mistake or understand a concrete consequence.
+Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}. Return strict JSON with clean semantic HTML in content_html, not Markdown, because the page renderer supplies the H1 and renders the body HTML. ${typeof topic === "object" && topic?.preserve_title ? `Use the supplied headline exactly as the title and hero_hook; only the headline is reused, and the article body must be independently written and fact-checked.` : "Write a complete, specific, accurate title of roughly 55-85 characters preserving the key exam, institution, authority, date or outcome."} Write a click-worthy meta_title of no more than 60 characters with the primary keyword front-loaded, and a benefit-led meta_description of no more than 155 characters. Set hero_hook exactly equal to title. Open with 2-3 natural sentences that identify the entity, current consequence and next useful action without a label. Answer one identifiable search intent and deliver unique value through evidence-backed comparison, calculation, timeline, checklist, interpretation or decision guidance beyond a rewritten announcement. Build topic-specific sections instead of a reusable template. Every section must help the reader decide, act, avoid a mistake or understand a concrete consequence.
 
 Do not put ${profile.brand} in the title, use an ellipsis, add trailing punctuation, or use generic phrases such as Complete Guide or Everything You Need to Know. Write 4-8 distinct search-intent FAQs in the faqs array only. Never include their heading, questions or answers in content_html because the page renders FAQs separately. Use descriptive H2/H3 headings, short readable paragraphs, and lists or a semantic table only when useful. Never invent interviews, first-hand testing, personal experience, quotes, statistics or official facts. When evidence is uncertain, omit the claim or label it subject to official confirmation, then tell readers what detail to verify on the responsible official authority portal without naming or linking a research source.`;
 }
@@ -2034,7 +2041,8 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   const externalLinks = [...contentHtml.matchAll(/<a\b[^>]*href=["'](https?:\/\/[^"']+)["']/gi)].map((match) => match[1]);
   const unsafeExternalLinks = externalLinks.filter((url) => !officialUrls.has(url));
 
-  check("Specific title", titleLength >= 45 && titleLength <= 95 && !/\.\.\.|complete guide|everything you need to know/i.test(String(draft?.title || "")), 5, "title must be specific, complete and 45-95 characters");
+  const titleRange = rawEditorialSettings.sourceTitle === draft?.title ? titleLength >= 25 && titleLength <= 160 : titleLength >= 45 && titleLength <= 95;
+  check("Specific title", titleRange && !/\.\.\.|complete guide|everything you need to know/i.test(String(draft?.title || "")), 5, "title must be specific, complete and 45-95 characters unless preserved from the source article");
   check("Search metadata", metaTitleLength >= 35 && metaTitleLength <= 60 && metaDescriptionLength >= 100 && metaDescriptionLength <= 155, 8, "meta title must be 35-60 characters and meta description must be 100-155 characters");
   check("Editorial summary", descriptionLength >= 80 && descriptionLength <= 360, 4, "description must clearly summarize the article in 80-360 characters");
   check("Useful depth", words.length >= minimumWords && words.length <= maximumWords, 13, `article has ${words.length} words; useful range is ${minimumWords}-${maximumWords}`, true);
@@ -2077,7 +2085,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   check("Single page H1", !/<h1\b/i.test(contentHtml), 0, "content_html contains an H1 even though the page title is already the H1", true);
   const withoutAllowedAnchors = contentHtml.replace(/<a\b[^>]*href=["']https?:\/\/[^"']+["'][^>]*>[\s\S]*?<\/a>/gi, "");
   check("No published research leakage", !/https?:\/\/|\bwww\.|<h[2-4][^>]*>\s*(?:sources?|references?|citations?|bibliography|credits?)/i.test(withoutAllowedAnchors), 5, "published content contains a bare research URL or source section", true);
-  check("No competitor or attribution leakage", !PUBLISHED_COMPETITOR_PATTERN.test(publishedText) && !PUBLISHED_ATTRIBUTION_PATTERN.test(publishedText), 0, "published content contains a competitor name or source-attribution phrase", true);
+  check("No competitor or attribution leakage", !articleHasCompetitorReference(draft, rawEditorialSettings.evidenceSignals) && !PUBLISHED_ATTRIBUTION_PATTERN.test(publishedText), 0, "published content contains a competitor name, link or source-attribution phrase", true);
   check("No long dash characters", !/[\u2013\u2014]/.test(publishedText), 0, "published content contains an em dash or en dash", true);
   check("No raw Markdown syntax", !MARKDOWN_ARTIFACT_PATTERN.test(contentHtml), 2, "content_html contains Markdown markers; use semantic HTML only", true);
   check("DekhoCampus banned lexicon", !HUMAN_BANNED_WORD_PATTERN.test(publishedText), 0, "published content contains wording from the DekhoCampus banned lexicon", true);
@@ -2219,7 +2227,7 @@ export function articleRevisionPrompt(draft, topic, signals, correctionIssues = 
   return `${prompt}\n\nFinal FAQ rule: return 4-8 FAQs in the faqs array only. Remove any FAQ heading, FAQ question or FAQ answer from content_html because the article page renders FAQs in a separate dedicated section.`;
 }
 
-async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null, requiredTitle = "", editorialSettings = {}, model: requestedModel = "", feature = "blog-studio", siteScope = "dekhocampus", batchSiblings = [] } = {}) {
+async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null, requiredTitle = "", requiredSlug = "", exactTitle = "", editorialSettings = {}, model: requestedModel = "", feature = "blog-studio", siteScope = "dekhocampus", batchSiblings = [] } = {}) {
   const normalizedScope = normalizeArticleSiteScope(siteScope);
   const profile = articleSiteProfile(normalizedScope);
   const editorial = normalizeBlogAgentSettings({ audience: profile.audience, ...editorialSettings });
@@ -2260,8 +2268,8 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
     textProvider = generated.provider;
     const officialUrls = verifiedOfficialExternalLinks(evidence);
     const generatedArticle = normalizeGeneratedArticlePayload(generated.result, officialUrls);
-    const title = stripPublishedPlainText(requiredTitle || generatedArticle.title || fallbackTitle);
-    const slug = slugify(requiredTitle || generatedArticle.slug || generatedArticle.title || fallbackTitle);
+    const title = exactTitle || stripPublishedPlainText(requiredTitle || generatedArticle.title || fallbackTitle);
+    const slug = requiredSlug || slugify(requiredTitle || generatedArticle.slug || generatedArticle.title || fallbackTitle);
     draft = {
       ...generatedArticle,
       title,
@@ -2273,7 +2281,7 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
       featured_image: "",
       site_scope: normalizedScope,
     };
-    const deterministic = assessGeneratedArticle(draft, topic, wordLimit, { ...editorial, evidenceSignals: evidence, batchSiblings });
+    const deterministic = assessGeneratedArticle(draft, topic, wordLimit, { ...editorial, evidenceSignals: evidence, batchSiblings, sourceTitle: exactTitle });
     if (!deterministic.passed) {
       quality = deterministic;
       correctionIssues = deterministic.issues;
@@ -2407,27 +2415,98 @@ export function safeEditorialResearchUrl(value) {
   } catch { return null; }
 }
 
-async function fetchedEditorialSignal(source, siteScope) {
-  const url = safeEditorialResearchUrl(source.url);
-  if (!url) throw new Error("Unsafe editorial research URL");
+const decodeEditorialText = (value) => stripHtml(value).replace(/&(#(?:x[\da-f]+|\d+)|amp|lt|gt|quot|apos|nbsp);/gi, (entity, code) => {
+  if (code[0] === "#") {
+    const hex = code[1]?.toLowerCase() === "x";
+    const point = Number.parseInt(code.slice(hex ? 2 : 1), hex ? 16 : 10);
+    return point > 0 && point <= 0x10ffff ? String.fromCodePoint(point) : entity;
+  }
+  return { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " }[code.toLowerCase()] || entity;
+}).replace(/\s+/g, " ").trim();
+
+const competitorHost = (hostname) => /(?:^|\.)(?:shiksha\.com|sarvgyan\.com|careers360\.com|kollegeapply\.com|collegedunia\.com|collegedekho\.com|pagalguy\.com)$/i.test(hostname);
+const isCompetitorResearchSource = (source, url) => /competitor/i.test(String(source.source_type || "")) || competitorHost(new URL(url).hostname);
+
+export function articleHasCompetitorReference(draft, sources = []) {
+  const published = [draft?.title, draft?.slug, draft?.description, draft?.content_html, draft?.meta_title,
+    draft?.meta_description, draft?.meta_keywords, draft?.hero_hook, draft?.category,
+    ...(draft?.tags || []), ...((draft?.faqs || []).flatMap((faq) => [faq.question, faq.answer]))].join(" ");
+  if (PUBLISHED_COMPETITOR_PATTERN.test(published)) return true;
+  const compact = published.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  return sources.some((source) => {
+    if (!source?.url || !isCompetitorResearchSource(source, source.url)) return false;
+    const hostname = new URL(source.url).hostname.split(".");
+    const domain = hostname.at(-2) === "co" && hostname.at(-1) === "in" ? hostname.at(-3) : hostname.at(-2);
+    const name = String(source.name || "").replace(/\b(?:education|news|articles|blogs?|official|india)\b/gi, "");
+    return [domain, name].some((brand) => {
+      const token = String(brand || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+      return token.length >= 6 && token !== "dekhocampus" && compact.includes(token);
+    });
+  });
+}
+
+export function extractEditorialArticleCandidates(html, sourceUrl) {
+  const source = new URL(sourceUrl);
+  const found = new Map();
+  for (const match of String(html).matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    const href = match[1].match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2];
+    if (!href) continue;
+    try {
+      const target = new URL(href.replace(/&amp;/gi, "&"), source);
+      if (target.hostname !== source.hostname || !safeEditorialResearchUrl(target.href)) continue;
+      if (!/^\/(?:news|articles)\/[^/]+\/?$/i.test(target.pathname)
+        && !(source.hostname.startsWith("news.") && /^\/[^/]+\/?$/.test(target.pathname))) continue;
+      const slug = target.pathname.split("/").filter(Boolean).at(-1);
+      const title = decodeEditorialText(match[2]);
+      if (/(?:^|\.)shiksha\.com$/i.test(source.hostname) && !/-blogId-\d+$/i.test(slug)) continue;
+      if (!/^[a-z0-9][a-z0-9-]{5,190}$/i.test(slug) || title.length < 25 || title.length > 160 || /^(?:read more|continue reading)/i.test(title) || /\.\.\.|complete guide|everything you need to know/i.test(title)) continue;
+      target.search = "";
+      target.hash = "";
+      if (!found.has(target.href)) found.set(target.href, { title, slug, url: target.href });
+      if (found.size >= 40) break;
+    } catch { /* ignore malformed links in third-party HTML */ }
+  }
+  return [...found.values()];
+}
+
+async function readEditorialPage(url, siteScope, maxBytes) {
+  if (!safeEditorialResearchUrl(url)) throw new Error("Unsafe editorial research URL");
   // Redirects are rejected before any follow-up request can reach a private host.
   const response = await fetch(url, { redirect: "error", headers: { "user-agent": `${articleSiteProfile(siteScope).brand} editorial research/2.0` }, signal: AbortSignal.timeout(12_000) });
-  if (!response.ok || (response.url && !safeEditorialResearchUrl(response.url))) throw new Error("Editorial source was unavailable");
+  if (!response.ok || (response.url && response.url !== url)) throw new Error("Editorial source was unavailable");
   const reader = response.body?.getReader();
   if (!reader) throw new Error("Editorial source has no readable excerpt");
   const chunks = [];
   let size = 0;
   try {
-    while (size < 24_000) {
+    while (size < maxBytes) {
       const { done, value } = await reader.read();
       if (done) break;
-      const chunk = value.slice(0, 24_000 - size);
+      const chunk = value.slice(0, maxBytes - size);
       chunks.push(chunk); size += chunk.length;
     }
   } finally { await reader.cancel().catch(() => {}); }
-  const signal = stripHtml(Buffer.concat(chunks).toString("utf8").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ")).slice(0, MAX_RESEARCH_SIGNAL_CHARACTERS);
-  if (signal.length < 80) throw new Error("Editorial source has insufficient text");
-  return { name: source.name, url, source_type: source.source_type, fetched_at: new Date().toISOString(), evidence_kind: "page_excerpt", signal };
+  return Buffer.concat(chunks).toString("utf8");
+}
+
+async function fetchedEditorialSignal(source, siteScope) {
+  const url = safeEditorialResearchUrl(source.url);
+  if (!url) throw new Error("Unsafe editorial research URL");
+  const competitor = isCompetitorResearchSource(source, url);
+  const html = await readEditorialPage(url, siteScope, competitor ? 1_500_000 : 24_000);
+  const articleCandidates = competitor ? extractEditorialArticleCandidates(html, url) : [];
+  const signal = (articleCandidates.length
+    ? articleCandidates.map((article) => article.title).join(" | ")
+    : stripHtml(html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " "))).slice(0, MAX_RESEARCH_SIGNAL_CHARACTERS);
+  if (signal.length < 80 && !articleCandidates.length) throw new Error("Editorial source has insufficient text");
+  return { name: source.name, url, source_type: competitor ? "competitor_gap" : source.source_type, fetched_at: new Date().toISOString(), evidence_kind: "page_excerpt", signal, ...(articleCandidates.length ? { article_candidates: articleCandidates } : {}) };
+}
+
+export async function verifyEditorialArticle(candidate, siteScope = "dekhocampus") {
+  const html = await readEditorialPage(candidate.url, siteScope, 1_500_000);
+  const title = decodeEditorialText(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] || "");
+  if (title.length < 25 || title.length > 160 || /\.\.\.|complete guide|everything you need to know/i.test(title) || articleHasCompetitorReference({ title }, [{ url: candidate.url, source_type: "competitor_gap" }])) throw new Error("Source article has no usable headline");
+  return { ...candidate, title };
 }
 
 /** Prepare outside the write lock: provider/research requests must not hold DB locks. */
@@ -2775,6 +2854,8 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     wordLimit: editorial.word_limit,
     signals,
     requiredTitle: topicTitle,
+    exactTitle: topic?.source_url ? topicTitle : "",
+    requiredSlug: topic?.source_slug || "",
     editorialSettings: editorial,
     model: editorial.text_model,
     feature: "blog-agent",
@@ -2794,6 +2875,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     },
   });
   const draft = generated.draft;
+  if (articleHasCompetitorReference(draft, signals)) throw Object.assign(new Error("Draft contains a competitor name or link in a publishable field"), { status: 422, code: "COMPETITOR_PUBLICATION_LEAK" });
   if (findDuplicateArticleTopic(draft, existing)) return null;
   const shouldReview = editorial.human_review_required || editorial.publish_status === "Draft";
   const status = shouldReview ? "Draft" : "Published";
@@ -2803,10 +2885,11 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
     article = await withArticleWriteLock(async (tx) => {
       await assertArticleTopicsAvailable([draft], { client: tx, siteScope, coverageWindow });
       if (schedule) await assertArticleEntityLinksExist(tx, [{ entity_type: schedule.entity_type.replace(/s$/, ""), entity_slug: schedule.entity_slug }], siteScope);
-      const articleSlug = await uniqueAutoArticleSlug(tx, siteScope, draft.slug);
+      if (topic?.source_slug && await tx.articles.findFirst({ where: { site_scope: siteScope, slug: draft.slug }, select: { id: true } })) return null;
+      const articleSlug = topic?.source_slug ? draft.slug : await uniqueAutoArticleSlug(tx, siteScope, draft.slug);
       const created = await tx.articles.create({ data: {
         id: randomUUID(), site_scope: siteScope, status,
-        title: String(draft.title || topic), slug: articleSlug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: selectedAuthor?.name || "DekhoCampus Editorial", author_id: selectedAuthor?.id || null, featured_image: draft.featured_image || "", source_logo: contextLogo?.url || null, views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(topic?.trend_based === true ? ["google-trends-daily"] : []), ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: status === "Published", data_source_urls: generated.research_sources, data_verified_at: null, data_quality_score: generated.quality.score, data_clean_state: "not_checked",
+        title: String(draft.title || topic), slug: articleSlug, description: String(draft.description || ""), content: String(draft.content_html || ""), vertical: "General", category: String(draft.category || "Education"), author: selectedAuthor?.name || "DekhoCampus Editorial", author_id: selectedAuthor?.id || null, featured_image: draft.featured_image || "", source_logo: contextLogo?.url || null, views: 0, tags: [...new Set([...(draft.tags || []), "auto-blog-agent", ...(topic?.trend_based === true ? ["google-trends-daily"] : []), ...(schedule ? ["entity-article-agent", schedule.entity_type, schedule.entity_slug] : [])])], meta_title: String(draft.meta_title || draft.title || topic), meta_description: String(draft.meta_description || draft.description || ""), meta_keywords: String(draft.meta_keywords || ""), is_active: status === "Published", data_source_urls: [...new Set(generated.research_sources.filter((url) => url !== topic?.source_url && !signals.some((source) => source.url === url && source.source_type === "competitor_gap")))], data_verified_at: null, data_quality_score: generated.quality.score, data_clean_state: "not_checked",
       } });
       if (draft.faqs.length) {
         await tx.faqs.createMany({ data: draft.faqs.map((faq, index) => ({ id: randomUUID(), page: "articles", item_slug: created.slug, question: faq.question, answer: faq.answer, display_order: (index + 1) * 10, is_active: status === "Published" })) });
@@ -2940,6 +3023,10 @@ export async function runBlogAgent(body = {}) {
     : await prisma.blog_auto_agent_runs.create({ data: { id: randomUUID(), status: "running", trigger_type: triggerType, interval_minutes: interval, model_provider: blogTextProvider(settings.text_model), word_limit: settings.word_limit, sources: [], selected_topics: [], created_article_ids: [], message: "Researching", progress: 5, current_step: "Researching education signals", estimated_seconds: postCount * 180, completed_steps: 0, total_steps: postCount * 2 + 1, control_note: executionToken, entity_schedule_id: entityContext?.schedule.id || null, agent_mode: entityContext ? "entity_schedule" : "general" } });
   try {
     const signals = await researchSignals(Math.max(4, settings.minimum_sources), "dekhocampus");
+    const sourceCandidates = [...new Map(signals.flatMap((source) => (source.article_candidates || []).filter((article) => !articleHasCompetitorReference({ title: article.title }, [source]))).map((article) => [article.url, article])).values()].slice(0, 60);
+    const sourceByUrl = new Map(sourceCandidates.map((article) => [article.url, article]));
+    if (!entityContext && !sourceCandidates.length) throw new Error("No article headlines and URLs were readable from the enabled competitor sources; the agent will not invent an exact title or slug");
+    const writingSignals = signals.map(({ article_candidates, ...signal }) => signal);
     await assertRunActive(run.id, executionToken);
     const allCoverage = await loadArticleCoverage("dekhocampus");
     const todayCoverage = await loadArticleCoverage("dekhocampus", prisma, dayWindow);
@@ -2957,12 +3044,16 @@ export async function runBlogAgent(body = {}) {
     const topics = [];
     const comparedCoverage = [...todayCoverage];
     const rejected = [];
+    const verifiedSources = new Map();
     for (let round = 1; round <= 3 && topics.length < postCount; round += 1) {
       const rejectedInstruction = rejected.length
         ? `These suggestions were rejected as too similar to existing coverage; propose materially different student questions and angles: ${JSON.stringify(rejected.slice(-20))}.`
         : "";
       const suggestionCount = Math.min(8, Math.max(postCount * 2, 6));
-      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(signals)}, propose ${suggestionCount} original Indian education article opportunities. ${entityInstruction} ${trendInstruction} Follow this discovery order: inspect Sarvgyan coverage gaps first, then Shiksha coverage gaps, then compare the full DekhoCampus fingerprint list. Existing DekhoCampus subject + intent fingerprints: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Competitors are discovery inputs only: never copy, cite, link, name, credit, paraphrase closely or preserve their structure. Verify dates, eligibility, fees, results and deadlines against official or primary evidence in the signals. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic on the same India calendar day. A subject covered on an earlier day is eligible only when a new dated development or materially different student decision exists. Each proposal needs one primary entity, one precise search intent, a non-empty unique value, a concrete impact reason and a dated or evergreen evidence signal. Each title must be complete, specific, factual, roughly 55-85 characters, free of ellipses or trailing punctuation. Keep every non-title field concise, no more than 35 words, and return no more than six tags. Never truncate a title for cover artwork.`, "blog-agent", {
+      const sourceSelection = entityContext
+        ? "Use the entity schedule to propose a factual, original title."
+        : `Select every proposal from these verified links on enabled competitor source pages: ${JSON.stringify(sourceCandidates)}. Return source_url exactly as listed for each proposal. Do not invent a source URL, title or slug; the server will read the source headline before writing.`;
+      const { result } = await blogTextJson(`Using these private official/public/competitor-gap signals ${JSON.stringify(writingSignals)}, propose ${suggestionCount} Indian education article opportunities. ${entityInstruction} ${trendInstruction} ${sourceSelection} Compare the full DekhoCampus fingerprint list: ${JSON.stringify(promptCoverage)}. ${rejectedInstruction} Competitors provide only the topic and headline; the article body must be original, independently structured and fact-checked, with no competitor citation or promotion. Verify dates, eligibility, fees, results and deadlines against official or primary evidence in the signals. Select named exams, institutions, authorities, deadlines, decisions or high-intent student questions with current evidence. Reject vague regional roundups, generic advice, speculative future-year topics and angles that merely restate an announcement. A changed word order or headline is not a new topic on the same India calendar day. A subject covered on an earlier day is eligible only when a new dated development or materially different student decision exists. Each proposal needs one primary entity, one precise search intent, a non-empty unique value, a concrete impact reason and a dated or evergreen evidence signal. Keep every non-title field concise, no more than 35 words, and return no more than six tags. Never truncate a title for cover artwork.`, "blog-agent", {
         model: DEFAULT_BLOG_ANALYSIS_MODEL,
         reasoningEffort: "none",
         thinkingLevel: "low",
@@ -2978,6 +3069,7 @@ export async function runBlogAgent(body = {}) {
                 type: "OBJECT",
                 properties: {
                   title: { type: "STRING" },
+                  source_url: { type: "STRING" },
                   angle: { type: "STRING" },
                   search_intent: { type: "STRING" },
                   primary_entity: { type: "STRING" },
@@ -2988,7 +3080,7 @@ export async function runBlogAgent(body = {}) {
                   tags: { type: "ARRAY", items: { type: "STRING" } },
                   trend_based: { type: "BOOLEAN" },
                 },
-                required: ["title", "angle", "search_intent", "primary_entity", "unique_value", "impact_reason", "time_signal", "trend_based"],
+                required: ["title", "angle", "search_intent", "primary_entity", "unique_value", "impact_reason", "time_signal", "trend_based", ...(entityContext ? [] : ["source_url"])],
               },
             },
           },
@@ -2997,7 +3089,13 @@ export async function runBlogAgent(body = {}) {
       });
       await assertRunActive(run.id, executionToken);
       const locallyNovel = [];
-      for (const topic of normalizeTopicSuggestions(result)) {
+      for (const suggestion of normalizeTopicSuggestions(result)) {
+        const source = entityContext ? null : sourceByUrl.get(String(suggestion.source_url || ""));
+        if (!entityContext && !source) {
+          rejected.push({ suggested: suggestion.title, reason: "source URL is not an enabled competitor article" });
+          continue;
+        }
+        const topic = source ? { ...suggestion, title: source.title, source_url: source.url, source_slug: source.slug, preserve_title: true } : suggestion;
         const duplicate = findDuplicateArticleTopic(topic, comparedCoverage);
         if (duplicate) {
           rejected.push({ suggested: topic.title, conflicts_with: duplicate.title });
@@ -3011,18 +3109,34 @@ export async function runBlogAgent(body = {}) {
         ? [...semantic.accepted].sort((left, right) => Number(right.trend_based === true) - Number(left.trend_based === true))
         : semantic.accepted;
       for (const topic of rankedTopics) {
-        topics.push(topic);
-        comparedCoverage.push({ ...topic, slug: slugify(topic.title) });
+        let selected = topic;
+        if (topic.source_url) {
+          try {
+            if (!verifiedSources.has(topic.source_url)) verifiedSources.set(topic.source_url, await verifyEditorialArticle(topic));
+            const verified = verifiedSources.get(topic.source_url);
+            selected = { ...topic, title: verified.title, source_slug: verified.slug };
+          } catch {
+            rejected.push({ suggested: topic.title, reason: "source article headline could not be verified" });
+            continue;
+          }
+          const duplicate = findDuplicateArticleTopic(selected, comparedCoverage);
+          if (duplicate) {
+            rejected.push({ suggested: selected.title, conflicts_with: duplicate.title });
+            continue;
+          }
+        }
+        topics.push(selected);
+        comparedCoverage.push({ ...selected, slug: selected.source_slug || slugify(selected.title) });
         if (topics.length >= postCount) break;
       }
     }
     if (!topics.length) throw new Error(`The configured text model returned no usable non-duplicate article topics after three structured research attempts (${rejected.length} duplicate suggestions rejected). Review the active research sources and try again.`);
-    await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { progress: 30, current_step: `Writing ${topics.length} article(s)`, selected_topics: topics, sources: signals.map(({ signal, ...source }) => source) } });
+    await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { progress: 30, current_step: `Writing ${topics.length} article(s)`, selected_topics: topics, sources: signals.map(({ signal, article_candidates, ...source }) => ({ ...source, article_candidate_count: article_candidates?.length || 0 })) } });
     const ids = [];
     const runSiblings = [];
     for (const topic of topics) {
       await assertRunActive(run.id, executionToken);
-      const id = await saveGeneratedArticle(topic, settings, signals, entityContext, todayCoverage, dayWindow, runSiblings);
+      const id = await saveGeneratedArticle(topic, settings, writingSignals, entityContext, todayCoverage, dayWindow, runSiblings);
       await assertRunActive(run.id, executionToken);
       if (id) ids.push(id);
     }
