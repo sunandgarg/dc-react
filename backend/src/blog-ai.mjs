@@ -2085,7 +2085,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
   check("Single page H1", !/<h1\b/i.test(contentHtml), 0, "content_html contains an H1 even though the page title is already the H1", true);
   const withoutAllowedAnchors = contentHtml.replace(/<a\b[^>]*href=["']https?:\/\/[^"']+["'][^>]*>[\s\S]*?<\/a>/gi, "");
   check("No published research leakage", !/https?:\/\/|\bwww\.|<h[2-4][^>]*>\s*(?:sources?|references?|citations?|bibliography|credits?)/i.test(withoutAllowedAnchors), 5, "published content contains a bare research URL or source section", true);
-  check("No competitor or attribution leakage", !articleHasCompetitorReference(draft, rawEditorialSettings.evidenceSignals) && !PUBLISHED_ATTRIBUTION_PATTERN.test(publishedText), 0, "published content contains a competitor name, link or source-attribution phrase", true);
+  check("No competitor or attribution leakage", !articleHasCompetitorReference(draft, rawEditorialSettings.evidenceSignals) && !PUBLISHED_ATTRIBUTION_PATTERN.test(publishedText), 0, "published content contains a competitor name or source-attribution phrase", true);
   check("No long dash characters", !/[\u2013\u2014]/.test(publishedText), 0, "published content contains an em dash or en dash", true);
   check("No raw Markdown syntax", !MARKDOWN_ARTIFACT_PATTERN.test(contentHtml), 2, "content_html contains Markdown markers; use semantic HTML only", true);
   check("DekhoCampus banned lexicon", !HUMAN_BANNED_WORD_PATTERN.test(publishedText), 0, "published content contains wording from the DekhoCampus banned lexicon", true);
