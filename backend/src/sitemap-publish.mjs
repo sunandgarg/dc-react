@@ -15,6 +15,18 @@ const OBJECT_IO_CONCURRENCY = 4;
 const NEWS_WINDOW_MS = 2 * 24 * 60 * 60 * 1000;
 const NEWS_SITEMAP_LIMIT = 1_000;
 const RECENT_ARTICLE_LIMIT = 1_000;
+const RECENT_ENTITY_LIMIT = 1_000;
+const RECENT_ENTITY_SOURCES = [
+  { table: "colleges", prefix: "/colleges", shortId: true },
+  { table: "courses", prefix: "/courses", shortId: true },
+  { table: "exams", prefix: "/exams", shortId: true },
+  { table: "scholarships", prefix: "/scholarships" },
+  { table: "career_profiles", prefix: "/careers" },
+  { table: "jobs", prefix: "/jobs" },
+  { table: "landing_pages", prefix: "/landing" },
+  { table: "promoted_programs", prefix: "/premium-programs" },
+  { table: "authors", prefix: "/author" },
+];
 const COLLEGE_FEE_RANGES = [
   "Less than 1 Lakh", "1 - 2 Lakh", "2 - 3 Lakh", "3 - 5 Lakh", "5 - 7 Lakh",
   "7 - 10 Lakh", "15 - 20 Lakh", "20 - 25 Lakh", "Above 25 Lakh",
@@ -291,6 +303,24 @@ function recentArticleEntries(articles) {
     .map((article) => ({ path: `/news/${article.slug}`, lastmod: dateOnly(article.updated_at || article.created_at) }));
 }
 
+async function recentEntityEntries(client) {
+  const groups = await boundedMap(RECENT_ENTITY_SOURCES, DB_QUERY_CONCURRENCY, async ({ table, prefix, shortId }) => {
+    const records = await client[table].findMany({
+      where: { is_active: true },
+      orderBy: [{ updated_at: "desc" }, { id: "desc" }],
+      take: RECENT_ENTITY_LIMIT,
+      select: { slug: true, updated_at: true, ...(shortId ? { short_id: true } : {}) },
+    });
+    return records.flatMap((row) => {
+      const slug = String(row.slug || "").trim();
+      if (!slug) return [];
+      const suffix = shortId && row.short_id ? `-${row.short_id}` : "";
+      return [{ path: `${prefix}/${slug}${suffix}`, lastmod: dateOnly(row.updated_at) }];
+    });
+  });
+  return groups.flat();
+}
+
 function stripMarkup(value) {
   return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -431,9 +461,8 @@ export async function readPublishedSitemap(request, options = {}) {
   const pathname = new URL(request.url).pathname;
   const key = publicKey(pathname);
   if (!key) return null;
-  // These two small sitemaps read the published rows, so publishing an article
-  // does not have to wait for the next full S3 catalog rebuild. Keep a short
-  // edge TTL; crawler scheduling is still controlled by the search engine.
+  // Recent sitemap rows come from the database, so new public pages need not
+  // wait for the next full S3 catalog rebuild.
   const liveClient = options.prismaClient || (!options.repository ? prisma : null);
   if (liveClient && ["/news-sitemap.xml", "/sitemap-0.xml"].includes(pathname)) {
     try {
@@ -450,13 +479,15 @@ export async function readPublishedSitemap(request, options = {}) {
         take: newsOnly ? NEWS_SITEMAP_LIMIT : RECENT_ARTICLE_LIMIT,
         select: { slug: true, title: true, created_at: true, updated_at: true },
       });
-      const xml = newsOnly ? newsSitemapXml(newsSitemapEntries(articles, now)) : sitemapXml(recentArticleEntries(articles));
+      const xml = newsOnly
+        ? newsSitemapXml(newsSitemapEntries(articles, now))
+        : sitemapXml([...recentArticleEntries(articles), ...await recentEntityEntries(liveClient)]);
       return new Response(request.method === "HEAD" ? null : xml, {
         status: 200,
         headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public,max-age=30,must-revalidate" },
       });
     } catch (error) {
-      console.error(`[sitemap] Live article sitemap failed: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(`[sitemap] Live sitemap failed: ${error instanceof Error ? error.message : String(error)}`);
       return new Response("Live sitemap temporarily unavailable", { status: 503, headers: { "retry-after": "60", "cache-control": "no-store" } });
     }
   }

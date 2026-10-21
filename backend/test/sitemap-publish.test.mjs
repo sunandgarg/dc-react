@@ -216,7 +216,7 @@ test("published Google News sitemap is served from the public sitemap store", as
   assert.match(await response.text(), /sitemap-news/);
 });
 
-test("live article sitemaps reflect publication without a full catalog rebuild", async () => {
+test("live recent sitemap includes newly active content without a full catalog rebuild", async () => {
   const now = new Date("2026-09-23T12:00:00Z").getTime();
   const articles = [
     { slug: "new-story", title: "New story", site_scope: "dekhocampus", status: "Published", is_active: true, created_at: new Date(now - 60_000), updated_at: new Date(now - 60_000) },
@@ -231,6 +231,15 @@ test("live article sitemaps reflect publication without a full catalog rebuild",
       .sort((left, right) => right[Object.keys(orderBy[0])[0]].getTime() - left[Object.keys(orderBy[0])[0]].getTime())
       .slice(0, take);
   } } };
+  const emptyEntities = ["colleges", "courses", "exams", "scholarships", "career_profiles", "jobs", "landing_pages", "promoted_programs", "authors"];
+  for (const name of emptyEntities) prismaClient[name] = { async findMany() { return []; } };
+  prismaClient.colleges.findMany = async () => [{ slug: "new-college", short_id: 101, updated_at: new Date(now - 10_000) }];
+  prismaClient.courses.findMany = async () => [{ slug: "new-course", short_id: 202, updated_at: new Date(now - 20_000) }];
+  prismaClient.exams.findMany = async () => [{ slug: "new-exam", short_id: 303, updated_at: new Date(now - 30_000) }];
+  prismaClient.scholarships.findMany = async ({ where }) => {
+    assert.deepEqual(where, { is_active: true });
+    return [{ slug: "new-scholarship", updated_at: new Date(now - 40_000) }];
+  };
 
   const recent = await readPublishedSitemap(new Request("https://dekhocampus.com/sitemap-0.xml"), { prismaClient, now });
   const recentXml = await recent.text();
@@ -238,6 +247,10 @@ test("live article sitemaps reflect publication without a full catalog rebuild",
   assert.match(recent.headers.get("cache-control"), /max-age=30/);
   assert.match(recentXml, /\/news\/new-story<\/loc>/);
   assert.match(recentXml, /\/news\/older-draft-now-live<\/loc>/);
+  assert.match(recentXml, /\/colleges\/new-college-101<\/loc>/);
+  assert.match(recentXml, /\/courses\/new-course-202<\/loc>/);
+  assert.match(recentXml, /\/exams\/new-exam-303<\/loc>/);
+  assert.match(recentXml, /\/scholarships\/new-scholarship<\/loc>/);
   assert.doesNotMatch(recentXml, /private-draft|sarkari-story/);
 
   const news = await readPublishedSitemap(new Request("https://dekhocampus.com/news-sitemap.xml"), { prismaClient, now });
