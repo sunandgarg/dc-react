@@ -267,7 +267,7 @@ test("AI articles receive a verified, topic-relevant internal link", () => {
   const prompt = articlePrompt("JEE Main 2027 counselling", [], 400, [], {});
   assert.match(prompt, /Verified internal-link context/);
   assert.match(prompt, /"path":"\/exams"/);
-  assert.match(prompt, /Add one to four distinct, relevant internal links naturally/i);
+  assert.match(prompt, /Add two or three distinct, relevant internal links when that many useful destinations are verified/i);
   assert.match(prompt, /Verified official external-link context/);
 });
 

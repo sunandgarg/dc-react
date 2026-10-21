@@ -21,7 +21,6 @@ import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 import { useSEO } from "@/hooks/useSEO";
 import { RichText } from "@/components/detail/RichText";
-import { ArticleLeadLinks } from "@/components/ArticleLeadLinks";
 import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { lazyRetry } from "@/lib/lazyRetry";
 import { containsRichArticleHtml, prepareArticleContent } from "@/lib/articleContentSanitizer";
@@ -649,7 +648,7 @@ export default function ArticleDetail() {
               </div>
 
               {/* Body - explicitly left-aligned, tightened 2026 scale */}
-              <ArticleLeadLinks key={article.slug} articleSlug={article.slug}>
+              <div className="space-y-5">
                 {articleUsesRichHtml ? (
                   displayContentSegments ? (
                     <>
@@ -675,7 +674,7 @@ export default function ArticleDetail() {
                     <ArticleMarkdown content={markdownContentParts[1]} />
                   </>
                 )}
-              </ArticleLeadLinks>
+              </div>
 
               {/* Mid-content lead capture - lighter spacing */}
               <div className="my-5 sm:my-7">

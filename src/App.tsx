@@ -14,6 +14,7 @@ import { GlobalInternalAds } from "@/components/GlobalInternalAds";
 import { AdminActionGuard } from "@/components/AdminActionGuard";
 import { UserTrackingProvider } from "@/hooks/useUserTracking";
 import { CookieConsent } from "@/components/CookieConsent";
+import { ArticleLeadLinks } from "@/components/ArticleLeadLinks";
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ScrollLockGuard } from "@/components/ScrollLockGuard";
@@ -355,6 +356,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ArticleLeadLinks articleSlug="site" siteWide />
             <ScrollToTop />
             <ScrollLockGuard />
             <UserTrackingProvider>{null}</UserTrackingProvider>

@@ -50,7 +50,7 @@ describe("article lead links", () => {
     fill();
     fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
     await waitFor(() => expect(proceed).toHaveBeenCalledWith("https://example.org/apply"));
-    expect(saveLeadPhase).toHaveBeenCalledWith(expect.objectContaining({ source: "article_link_test-article", consent_terms_accepted: true, otp_verified: false, initial_query: "Requested link: https://example.org/apply" }));
+    expect(saveLeadPhase).toHaveBeenCalledWith(expect.objectContaining({ source: "article_link_test-article", consent_terms_accepted: true, otp_verified: false, initial_query: "Requested link site: example.org" }));
   });
   it("keeps the form open after a save failure and allows retry", async () => {
     vi.mocked(saveLeadPhase).mockRejectedValue(new Error("Please try again"));
@@ -65,5 +65,15 @@ describe("article lead links", () => {
     fireEvent.click(screen.getByRole("link", { name: "Normal link" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(saveLeadPhase).not.toHaveBeenCalled();
+  });
+  it("gates external links site-wide but leaves DekhoCampus links alone", () => {
+    render(<><ArticleLeadLinks articleSlug="site" siteWide onContinue={proceed} /><a href="https://example.org/notice">Official notice</a><a href="https://sarkari.dekhocampus.com/jobs" onClick={(event) => event.preventDefault()}>Sarkari jobs</a><a href="/exams" data-lead-capture="true">Apply inside site</a></>);
+    fireEvent.click(screen.getByRole("link", { name: "Official notice" }));
+    expect(screen.getByRole("dialog")).toHaveTextContent("example.org");
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    fireEvent.click(screen.getByRole("link", { name: "Sarkari jobs" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("link", { name: "Apply inside site" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 });

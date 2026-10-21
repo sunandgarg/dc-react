@@ -1,4 +1,4 @@
-import { useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,8 @@ import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsent
 import { isStrictIndianMobile, normalizeIndianMobile } from "@/lib/phone";
 import { saveLeadPhase } from "@/lib/twoStepLead";
 
-export function ArticleLeadLinks({ children, articleSlug, onContinue = (url) => window.location.assign(url) }: {
-  children: ReactNode; articleSlug: string; onContinue?: (url: string) => void;
+export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onContinue = (url) => window.location.assign(url) }: {
+  children?: ReactNode; articleSlug: string; siteWide?: boolean; onContinue?: (url: string) => void;
 }) {
   const [destination, setDestination] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -18,26 +18,42 @@ export function ArticleLeadLinks({ children, articleSlug, onContinue = (url) => 
   const [error, setError] = useState("");
   const submitting = useRef(false);
 
-  const capture = (event: MouseEvent<HTMLDivElement>) => {
-    if (event.type === "auxclick" && event.button !== 1) return;
-    const anchor = (event.target as Element).closest?.('a[data-lead-capture="true"][href]');
-    if (!anchor || !event.currentTarget.contains(anchor)) return;
-    event.preventDefault();
-    event.stopPropagation();
+  const capture = (event: ReactMouseEvent<HTMLDivElement> | globalThis.MouseEvent) => {
+    if (event.button !== 0 && event.button !== 1) return;
+    if (siteWide && /^\/(?:admin|auth|dashboard|onboarding)(?:\/|$)/.test(window.location.pathname)) return;
+    const anchor = (event.target as Element).closest?.('a[href]') as HTMLAnchorElement | null;
+    if (!anchor || (!siteWide && anchor.dataset.leadCapture !== "true")) return;
+    if (!siteWide && !(event.currentTarget as HTMLDivElement).contains(anchor)) return;
     try {
       const url = new URL(anchor.getAttribute("href") || "", window.location.href);
       if (!["http:", "https:", "mailto:", "tel:"].includes(url.protocol) || url.username || url.password) return;
+      if (siteWide && !["http:", "https:"].includes(url.protocol) && anchor.dataset.leadCapture !== "true") return;
+      if (siteWide && anchor.dataset.leadCapture !== "true" && (
+        url.origin === window.location.origin || url.hostname === "dekhocampus.com" || url.hostname.endsWith(".dekhocampus.com")
+      )) return;
+      event.preventDefault();
+      event.stopPropagation();
       setDestination(url.href);
       setError("");
     } catch { /* Invalid authored URLs never become navigation targets. */ }
   };
 
+  useEffect(() => {
+    if (!siteWide) return;
+    document.addEventListener("click", capture, true);
+    document.addEventListener("auxclick", capture, true);
+    return () => {
+      document.removeEventListener("click", capture, true);
+      document.removeEventListener("auxclick", capture, true);
+    };
+  });
+
   return <>
-    <div className="space-y-5" onClickCapture={capture} onAuxClickCapture={capture}>{children}</div>
+    {siteWide ? children : <div className="space-y-5" onClickCapture={capture} onAuxClickCapture={capture}>{children}</div>}
     <Dialog open={Boolean(destination)} onOpenChange={(open) => { if (!open && !submitting.current) setDestination(null); }}>
       <DialogContent className="max-w-sm p-5">
         <DialogTitle className="text-lg">Continue to the link</DialogTitle>
-        <DialogDescription className="text-xs">Share your details with DekhoCampus to continue.</DialogDescription>
+        <DialogDescription className="text-xs">Share your details with DekhoCampus to continue to {destination ? new URL(destination).hostname || "this link" : "this link"}.</DialogDescription>
         <form className="space-y-3" onSubmit={async (event) => {
           event.preventDefault();
           if (submitting.current || !destination) return;
@@ -48,8 +64,9 @@ export function ArticleLeadLinks({ children, articleSlug, onContinue = (url) => 
           try {
             const saved = await saveLeadPhase({
               phase: "complete", name: name.trim(), phone, email: email.trim(),
-              source: `article_link_${articleSlug}`, source_category: "article", cta: "article_link",
-              page_url: window.location.pathname, initial_query: `Requested link: ${destination}`,
+              source: siteWide ? "site_link" : `article_link_${articleSlug}`,
+              source_category: siteWide ? "website" : "article", cta: siteWide ? "site_link" : "article_link",
+              page_url: window.location.pathname, initial_query: `Requested link site: ${new URL(destination).hostname || new URL(destination).protocol}`,
               otp_verified: false, consent_terms_accepted: true, consent_text: LEAD_CONSENT_TEXT,
               consent_at: new Date().toISOString(),
             });
