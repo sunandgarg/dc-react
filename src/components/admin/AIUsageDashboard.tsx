@@ -12,14 +12,9 @@ export function AIUsageDashboard({ compact = false }: Props) {
   const query = useQuery({
     queryKey: ["ai-usage-dashboard"],
     queryFn: async () => {
-      const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);
-      const [events, budgets] = await Promise.all([
-        (backendClient as any).from("ai_usage_events").select("provider,model,feature,input_tokens,output_tokens,image_count,estimated_cost_usd,created_at").gte("created_at", monthStart.toISOString()).order("created_at", { ascending: false }).limit(10000),
-        (backendClient as any).from("ai_budget_settings").select("provider,monthly_budget_usd,baseline_spend_usd"),
-      ]);
-      if (events.error) throw events.error;
-      if (budgets.error) throw budgets.error;
-      return { events: events.data || [], budgets: budgets.data || [] };
+      const { data, error } = await backendClient.functions.invoke("admin-ai-usage-summary", { method: "GET" });
+      if (error) throw error;
+      return { events: data?.events || [], budgets: data?.budgets || [] };
     },
     staleTime: 30_000,
   });
@@ -29,13 +24,13 @@ export function AIUsageDashboard({ compact = false }: Props) {
     for (const budget of query.data?.budgets || []) rows.set(budget.provider, { ...budget, tracked: 0, tokens: 0, requests: 0, images: 0, features: new Map<string, number>(), models: new Map<string, number>() });
     for (const event of query.data?.events || []) {
       const row = rows.get(event.provider) || { provider: event.provider, monthly_budget_usd: 0, baseline_spend_usd: 0, tracked: 0, tokens: 0, requests: 0, images: 0, features: new Map(), models: new Map() };
-      row.tracked += Number(event.estimated_cost_usd || 0); row.tokens += Number(event.input_tokens || 0) + Number(event.output_tokens || 0); row.requests += 1; row.images += Number(event.image_count || 0);
-      row.features.set(event.feature, (row.features.get(event.feature) || 0) + 1); row.models.set(event.model, (row.models.get(event.model) || 0) + 1); rows.set(event.provider, row);
+      row.tracked += Number(event.estimated_cost_usd || 0); row.tokens += Number(event.input_tokens || 0) + Number(event.output_tokens || 0); row.requests += Number(event.requests || 0); row.images += Number(event.image_count || 0);
+      row.features.set(event.feature, (row.features.get(event.feature) || 0) + Number(event.requests || 0)); row.models.set(event.model, (row.models.get(event.model) || 0) + Number(event.requests || 0)); rows.set(event.provider, row);
     }
     return [...rows.values()].map((row) => ({ ...row, total: Number(row.baseline_spend_usd || 0) + row.tracked })).sort((a, b) => b.total - a.total);
   }, [query.data]);
 
-  if (query.isError) return <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">AI usage tracking is ready in code. Apply the latest database migration to activate this dashboard.</div>;
+  if (query.isError) return <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">AI usage could not be loaded. Please retry or check the API logs.</div>;
   const total = summary.reduce((sum, row) => sum + row.total, 0);
 
   return <section className="rounded-3xl border border-border/70 bg-card p-4 shadow-sm md:p-5" aria-labelledby="ai-usage-heading">

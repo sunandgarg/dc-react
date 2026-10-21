@@ -838,6 +838,35 @@ export function nextJitteredBlogRunAt(reference = new Date(), intervalMinutes = 
   return new Date(baseMs + jitter * 60_000);
 }
 
+export function isOpenAiBillingExhausted(error) {
+  return error?.code === "OPENAI_REQUEST_FAILED" && error?.status === 429
+    && /insufficient[_ -]?quota|out of credits|no credits|billing|exceeded.*quota/i.test(String(error.message || ""));
+}
+
+export async function markFailedBlogRun(client, { runId, triggerType, entityContext, interval, error, failedAt = new Date() }) {
+  const billingExhausted = isOpenAiBillingExhausted(error);
+  const failureMessage = String(error?.message || error);
+  if (entityContext) {
+    await client.entity_article_schedules.update({ where: { id: entityContext.schedule.id }, data: {
+      last_run_at: failedAt, last_status: "failed", last_message: failureMessage.slice(0, 500),
+      ...(triggerType === "schedule" ? {
+        next_run_at: nextJitteredBlogRunAt(failedAt, entityContext.schedule.interval_minutes),
+        ...(billingExhausted ? { enabled: false } : {}),
+      } : {}),
+    } });
+  } else if (triggerType === "schedule") {
+    // Advance from failure time, never from an overdue slot: a failed paid run
+    // must not be retried on every one-minute worker poll.
+    await client.blog_auto_agent_settings.update({ where: { id: "default" }, data: {
+      last_run_at: failedAt, next_run_at: nextJitteredBlogRunAt(failedAt, interval),
+      ...(billingExhausted ? { enabled: false } : {}),
+    } });
+  }
+  await client.blog_auto_agent_runs.update({ where: { id: runId }, data: {
+    status: "failed", progress: 100, current_step: "Failed", finished_at: failedAt, message: failureMessage.slice(0, 2000),
+  } });
+}
+
 const ARTICLE_COVERAGE_SELECT = {
   id: true,
   slug: true,
@@ -1407,6 +1436,7 @@ async function openAiJson(prompt, feature = "blog-studio", options = {}) {
     });
     if (response.ok) break;
     providerText = await response.text();
+    if (response.status === 429 && /insufficient[_ -]?quota|out of credits|no credits|billing|exceeded.*quota/i.test(providerText)) break;
     if (![408, 429, 500, 502, 503, 504].includes(response.status) || attempt === 3) break;
     const retryAfter = Number(response.headers.get("retry-after") || 0) * 1000;
     await sleep(Math.min(30_000, retryAfter || 500 * (attempt + 1)));
@@ -3177,8 +3207,7 @@ export async function runBlogAgent(body = {}) {
     return { success: true, created_article_ids: ids, topics, duplicate_topics_rejected: rejected, analysis_model_used: `openai:${DEFAULT_BLOG_ANALYSIS_MODEL}`, writing_model_used: `${blogTextProvider(settings.text_model)}:${normalizeBlogTextModel(settings.text_model)}`, next_run_at: nextRun, run_id: run.id, schedule_id: entityContext?.schedule.id || null };
   } catch (error) {
     if (error?.code === "BLOG_RUN_CONTROLLED") return { success: true, run_id: run.id, status: error.status, message: error.message };
-    await prisma.blog_auto_agent_runs.update({ where: { id: run.id }, data: { status: "failed", progress: 100, current_step: "Failed", finished_at: new Date(), message: String(error?.message || error).slice(0, 2000) } });
-    if (entityContext) await prisma.entity_article_schedules.update({ where: { id: entityContext.schedule.id }, data: { last_status: "failed", last_message: String(error?.message || error).slice(0, 500) } });
+    await markFailedBlogRun(prisma, { runId: run.id, triggerType, entityContext, interval, error });
     throw error;
   }
 }
@@ -3186,7 +3215,15 @@ export async function runBlogAgent(body = {}) {
 let workerTimer;
 let workerBusy = false;
 export async function startBlogAgentWorker() {
+  const interrupted = await prisma.blog_auto_agent_runs.findMany({ where: { status: "running" }, select: { trigger_type: true, agent_mode: true, entity_schedule_id: true, interval_minutes: true } });
   await prisma.blog_auto_agent_runs.updateMany({ where: { status: "running" }, data: { status: "failed", progress: 100, current_step: "Interrupted by process restart", finished_at: new Date(), message: "This run was interrupted by a Node process restart. Start a new run or resume it from the admin controls." } });
+  const restartedAt = new Date();
+  if (interrupted.some((run) => run.trigger_type === "schedule" && run.agent_mode !== "entity_schedule")) {
+    await prisma.blog_auto_agent_settings.updateMany({ where: { id: "default", next_run_at: { lte: restartedAt } }, data: { next_run_at: nextJitteredBlogRunAt(restartedAt, interrupted.find((run) => run.trigger_type === "schedule" && run.agent_mode !== "entity_schedule").interval_minutes) } });
+  }
+  for (const run of interrupted.filter((item) => item.trigger_type === "schedule" && item.entity_schedule_id)) {
+    await prisma.entity_article_schedules.updateMany({ where: { id: run.entity_schedule_id, next_run_at: { lte: restartedAt } }, data: { next_run_at: nextJitteredBlogRunAt(restartedAt, run.interval_minutes), last_status: "failed", last_message: "Previous run was interrupted; next attempt deferred to the scheduled interval" } });
+  }
   const tick = async () => {
     if (workerBusy) return;
     workerBusy = true;

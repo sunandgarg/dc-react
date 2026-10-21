@@ -8,6 +8,7 @@ import { dispatchLead, previewLeadAutomation } from "./lead-automation.mjs";
 import { integrationStatus } from "./integration-status.mjs";
 import { handleContentReviews } from "./content-review.mjs";
 import { handleAiGenerate, handleArticleCover, handleBlogAiSettings, handleBlogStudio, runBlogAgent } from "./blog-ai.mjs";
+import { aiUsageSummary } from "./ai-usage-summary.mjs";
 import { handleDataCleaner } from "./data-cleaner.mjs";
 import { canContentEditorAccess, canContentHeadAccess, canContentWriterAccess } from "./editor-access.mjs";
 import { ensureWriterAuthorProfile, handleWriterProfile, stampWriterByline } from "./writer-profile.mjs";
@@ -858,6 +859,11 @@ export async function handleRequest(request) {
         const authorization = request.headers.get("authorization");
         await authorizeRest("articles", new Request(request.url, { method: "POST", headers: authorization ? { authorization } : {} }));
         return json(200, await handleArticleCover(request), requestId, request, { "cache-control": "private, no-store" });
+      }
+      if (functionMatch[1] === "admin-ai-usage-summary") {
+        const identity = await resolveIdentity(request);
+        if (!identity || !(await isAdmin(identity.id))) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required");
+        return json(200, await aiUsageSummary(), requestId, request, { "cache-control": "private, no-store" });
       }
       if (["admin-blog-ai-settings", "admin-blog-studio", "admin-blog-agent", "admin-ai-generate"].includes(functionMatch[1])) {
         const identity = await resolveIdentity(request);
