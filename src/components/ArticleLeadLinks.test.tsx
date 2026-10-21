@@ -76,4 +76,21 @@ describe("article lead links", () => {
     fireEvent.click(screen.getByRole("link", { name: "Apply inside site" }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
+  it("opens social destinations without a lead form, including opted-in links", () => {
+    const socialUrls = [
+      "https://x.com/dekhocampus", "https://twitter.com/intent/tweet", "https://www.facebook.com/dekhocampus",
+      "https://instagram.com/dekhocampus", "https://m.youtube.com/watch?v=123", "https://youtu.be/123",
+      "https://www.linkedin.com/company/dekhocampus", "https://wa.me/919876543210", "https://t.me/dekhocampus",
+    ];
+    render(<><ArticleLeadLinks articleSlug="site" siteWide onContinue={proceed} />
+      {socialUrls.map((url) => <a key={url} href={url} data-lead-capture="true" onClick={(event) => event.preventDefault()}>{url}</a>)}
+      <a href="https://notfacebook.com/notice" onClick={(event) => event.preventDefault()}>Lookalike domain</a>
+    </>);
+    for (const url of socialUrls) {
+      fireEvent.click(screen.getByRole("link", { name: url }));
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    }
+    fireEvent.click(screen.getByRole("link", { name: "Lookalike domain" }));
+    expect(screen.getByRole("dialog")).toHaveTextContent("notfacebook.com");
+  });
 });

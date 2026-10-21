@@ -6,6 +6,13 @@ import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsent
 import { isStrictIndianMobile, normalizeIndianMobile } from "@/lib/phone";
 import { saveLeadPhase } from "@/lib/twoStepLead";
 
+const SOCIAL_HOSTS = [
+  "x.com", "twitter.com", "facebook.com", "instagram.com", "youtube.com", "youtu.be",
+  "linkedin.com", "tiktok.com", "pinterest.com", "snapchat.com", "threads.net",
+  "reddit.com", "whatsapp.com", "wa.me", "telegram.me", "t.me", "discord.com",
+  "discord.gg", "bsky.app", "mastodon.social",
+];
+
 export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onContinue = (url) => window.location.assign(url) }: {
   children?: ReactNode; articleSlug: string; siteWide?: boolean; onContinue?: (url: string) => void;
 }) {
@@ -27,6 +34,7 @@ export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onCo
     try {
       const url = new URL(anchor.getAttribute("href") || "", window.location.href);
       if (!["http:", "https:", "mailto:", "tel:"].includes(url.protocol) || url.username || url.password) return;
+      if (["http:", "https:"].includes(url.protocol) && SOCIAL_HOSTS.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`))) return;
       if (siteWide && !["http:", "https:"].includes(url.protocol) && anchor.dataset.leadCapture !== "true") return;
       if (siteWide && anchor.dataset.leadCapture !== "true" && (
         url.origin === window.location.origin || url.hostname === "dekhocampus.com" || url.hostname.endsWith(".dekhocampus.com")
