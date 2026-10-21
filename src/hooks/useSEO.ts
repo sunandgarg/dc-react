@@ -3,6 +3,7 @@ import { absoluteCanonical } from "@/lib/constant";
 
 type SEOOptions = {
   title?: string;
+  exactTitle?: boolean;
   description?: string;
   keywords?: string;
   canonical?: string;
@@ -13,6 +14,7 @@ type SEOOptions = {
 
 export function useSEO({
   title,
+  exactTitle = false,
   description,
   keywords,
   canonical,
@@ -24,7 +26,7 @@ export function useSEO({
 
   useEffect(() => {
     if (title) {
-      document.title = title.includes("DekhoCampus") ? title : `${title} | DekhoCampus`;
+      document.title = exactTitle || title.includes("DekhoCampus") ? title : `${title} | DekhoCampus`;
     }
 
     const setNameMeta = (name: string, content?: string) => {
@@ -91,5 +93,5 @@ export function useSEO({
     return () => {
       document.title = "DekhoCampus - Find Your Dream College";
     };
-  }, [title, description, keywords, canonical, ogImage, ogType, jsonLdKey]);
+  }, [title, exactTitle, description, keywords, canonical, ogImage, ogType, jsonLdKey]);
 }

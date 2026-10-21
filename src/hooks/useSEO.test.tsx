@@ -30,4 +30,10 @@ describe("useSEO structured data", () => {
       headline: "Client headline",
     });
   });
+
+  it("keeps an article's saved meta title exact after hydration", () => {
+    renderHook(() => useSEO({ title: "JEE Main 2027 Registration Dates", description: "The saved article summary | DekhoCampus", exactTitle: true }));
+    expect(document.title).toBe("JEE Main 2027 Registration Dates");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute("content", "The saved article summary | DekhoCampus");
+  });
 });

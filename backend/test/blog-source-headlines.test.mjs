@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { prisma } from "../src/db.mjs";
-import { articleHasCompetitorReference, articlePrompt, assessGeneratedArticle, extractEditorialArticleCandidates, researchSignals, verifyEditorialArticle } from "../src/blog-ai.mjs";
+import { articleHasCompetitorReference, articlePrompt, assessGeneratedArticle, extractEditorialArticleCandidates, researchSignals, sourceLedMetadata, verifyEditorialArticle } from "../src/blog-ai.mjs";
 
 test("extracts real article URLs and keeps each source's exact slug", () => {
   const shiksha = extractEditorialArticleCandidates(`
@@ -48,13 +48,26 @@ test("short source headlines pass the title check only when verified as exact", 
   assert.equal(titleCheck({ sourceTitle: title }).passed, true);
 });
 
+test("verified source metadata reuses the H1 and adds only DekhoCampus branding", () => {
+  const title = "JEE Main 2027 Session 1 Registration Dates, Form and Documents Required";
+  const source = "Find the JEE Main 2027 registration timeline, application steps, required documents and the official form details on Shiksha.";
+  const metadata = sourceLedMetadata(title, source, "An unrelated AI-generated summary.", [{ name: "Shiksha", url: "https://www.shiksha.com/news", source_type: "competitor_gap" }]);
+  assert.equal(metadata.meta_title, title);
+  assert.equal(metadata.meta_description, "Find the JEE Main 2027 registration timeline, application steps, required documents and the official form details | DekhoCampus");
+  assert.equal(articleHasCompetitorReference(metadata), false);
+  assert.ok(metadata.meta_description.length <= 155);
+  const check = assessGeneratedArticle({ title, ...metadata, content_html: "<p>Article body.</p>" }, { title }, 0, { sourceTitle: title }).checks.find((item) => item.name === "Search metadata");
+  assert.equal(check.passed, true);
+});
+
 test("the article H1, not the listing-card text, becomes the exact title", async () => {
   const originalFetch = globalThis.fetch;
-  globalThis.fetch = async () => new Response("<h1>JEE Main 2027 Exam Dates: Check Session 1 &amp; Session 2 Schedule</h1>", { headers: { "content-type": "text/html" } });
+  globalThis.fetch = async () => new Response('<meta content="Know when to register for JEE Main 2027, how both sessions work and what to check before submitting your application." name="description"><h1>JEE Main 2027 Exam Dates: Check Session 1 &amp; Session 2 Schedule</h1>', { headers: { "content-type": "text/html" } });
   try {
     const article = await verifyEditorialArticle({ title: "Short listing teaser", slug: "jee-main-2027-blogId-244659", url: "https://www.shiksha.com/news/jee-main-2027-blogId-244659" });
     assert.equal(article.title, "JEE Main 2027 Exam Dates: Check Session 1 & Session 2 Schedule");
     assert.equal(article.slug, "jee-main-2027-blogId-244659");
+    assert.equal(article.source_meta_description, "Know when to register for JEE Main 2027, how both sessions work and what to check before submitting your application.");
   } finally { globalThis.fetch = originalFetch; }
 });
 
@@ -63,6 +76,14 @@ test("skips an exact source headline if it names the competitor", async () => {
   globalThis.fetch = async () => new Response("<h1>Shiksha explains JEE Main 2027 application dates</h1>", { headers: { "content-type": "text/html" } });
   try {
     await assert.rejects(verifyEditorialArticle({ title: "Listing teaser", slug: "jee-main-2027-blogId-244659", url: "https://www.shiksha.com/news/jee-main-2027-blogId-244659" }), /no usable headline/);
+  } finally { globalThis.fetch = originalFetch; }
+});
+
+test("skips a source URL slug that contains the competitor brand", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response("<h1>JEE Main 2027 Registration Dates and Required Documents</h1>");
+  try {
+    await assert.rejects(verifyEditorialArticle({ slug: "shiksha-jee-main-2027", url: "https://www.shiksha.com/news/shiksha-jee-main-2027" }), /no usable headline or slug/);
   } finally { globalThis.fetch = originalFetch; }
 });
 

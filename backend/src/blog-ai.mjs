@@ -1920,7 +1920,7 @@ Search and page structure:
 
 Return {title,slug,description,content_html,meta_title,meta_description,meta_keywords,tags,category,hero_hook,faqs:[{question,answer}]}. Return strict JSON with clean semantic HTML in content_html, not Markdown, because the page renderer supplies the H1 and renders the body HTML. ${typeof topic === "object" && topic?.preserve_title ? `Use the supplied headline exactly as the title and hero_hook; only the headline is reused, and the article body must be independently written and fact-checked.` : "Write a complete, specific, accurate title of roughly 55-85 characters preserving the key exam, institution, authority, date or outcome."} Write a click-worthy meta_title of no more than 60 characters with the primary keyword front-loaded, and a benefit-led meta_description of no more than 155 characters. Set hero_hook exactly equal to title. Open with 2-3 natural sentences that identify the entity, current consequence and next useful action without a label. Answer one identifiable search intent and deliver unique value through evidence-backed comparison, calculation, timeline, checklist, interpretation or decision guidance beyond a rewritten announcement. Build topic-specific sections instead of a reusable template. Every section must help the reader decide, act, avoid a mistake or understand a concrete consequence.
 
-Do not put ${profile.brand} in the title, use an ellipsis, add trailing punctuation, or use generic phrases such as Complete Guide or Everything You Need to Know. Write 4-8 distinct search-intent FAQs in the faqs array only. Never include their heading, questions or answers in content_html because the page renders FAQs separately. Use descriptive H2/H3 headings, short readable paragraphs, and lists or a semantic table only when useful. Never invent interviews, first-hand testing, personal experience, quotes, statistics or official facts. When evidence is uncertain, omit the claim or label it subject to official confirmation, then tell readers what detail to verify on the responsible official authority portal without naming or linking a research source.`;
+Do not put ${profile.brand} in the title, use an ellipsis, add trailing punctuation, or use generic phrases such as Complete Guide or Everything You Need to Know. Write 4-8 distinct search-intent FAQs in the faqs array only. Never include their heading, questions or answers in content_html because the page renders FAQs separately. Use descriptive H2/H3 headings, short readable paragraphs, and lists or a semantic table only when useful. Never invent interviews, first-hand testing, personal experience, quotes, statistics or official facts. When evidence is uncertain, omit the claim or label it subject to official confirmation, then tell readers what detail to verify on the responsible official authority portal without naming or linking a research source. ${topic?.preserve_title ? "For this source-led article, the server will set meta_title to the exact verified H1 even if it exceeds 60 characters, and derive meta_description from the verified page description plus DekhoCampus. Do not penalize the source title length or add a competitor brand." : ""}`;
 }
 
 const ARTICLE_RESPONSE_SCHEMA = {
@@ -2043,7 +2043,7 @@ export function assessGeneratedArticle(draft, topic, wordLimit = 0, rawEditorial
 
   const titleRange = rawEditorialSettings.sourceTitle === draft?.title ? titleLength >= 25 && titleLength <= 160 : titleLength >= 45 && titleLength <= 95;
   check("Specific title", titleRange && !/\.\.\.|complete guide|everything you need to know/i.test(String(draft?.title || "")), 5, "title must be specific, complete and 45-95 characters unless preserved from the source article");
-  check("Search metadata", metaTitleLength >= 35 && metaTitleLength <= 60 && metaDescriptionLength >= 100 && metaDescriptionLength <= 155, 8, "meta title must be 35-60 characters and meta description must be 100-155 characters");
+  check("Search metadata", (rawEditorialSettings.sourceTitle === draft?.title ? draft?.meta_title === draft.title : metaTitleLength >= 35 && metaTitleLength <= 60) && metaDescriptionLength >= 100 && metaDescriptionLength <= 155, 8, "meta title must match the verified source headline when one is preserved, and meta description must be 100-155 characters");
   check("Editorial summary", descriptionLength >= 80 && descriptionLength <= 360, 4, "description must clearly summarize the article in 80-360 characters");
   check("Useful depth", words.length >= minimumWords && words.length <= maximumWords, 13, `article has ${words.length} words; useful range is ${minimumWords}-${maximumWords}`, true);
   check("Descriptive structure", headings.length >= (compactWordMode ? 2 : 3), 7, "article needs descriptive, topic-specific H2/H3 sections");
@@ -2173,7 +2173,7 @@ Draft: ${JSON.stringify({ title: draft.title, description: draft.description, me
 Score 0-100 for accurate intent satisfaction, evidence discipline, original information gain, direct-opening usefulness, natural reader-focused prose, precise entities/dates, metadata, structure and FAQ isolation. Apply a people-first trust review and score all four E-E-A-T dimensions: Experience through useful evidence-backed scenarios or actions without fabricated first-hand claims; Expertise through accurate explanation and reasoning; Authoritativeness through correct identification of responsible entities and rules; and Trust through consistency, uncertainty disclosure and safe verification guidance. The article must clearly serve the intended reader, add substantial topic-specific value, distinguish verified facts from interpretation, avoid fabricated experience or expertise, and exist to help a decision or action rather than merely capture search traffic. Confirm that the first 2-3 sentences answer the intent directly, section openings answer the reader's question where appropriate, useful facts or steps use semantic lists, the primary topic appears naturally near the start, the meta title is no longer than 60 characters, and the meta description is no longer than 155 characters. A table is optional: if one exists it must contain a genuine comparison with semantic headers and real cells. Do not reward a table added solely to satisfy a template. Treat an evidence-backed data point, named authority fact or clearly labelled expert interpretation as information gain; reject invented surveys, benchmarks, quotes or statistics. Confirm FAQs are distinct records in the faqs array and are not duplicated in content_html.
 
 Also score the internal human editorial rubric exactly as follows: natural sentence variation 20, specific useful information 20, non-repetitive language 15, logical human flow 15, appropriate Indian context 10, balanced non-promotional tone 10, and evidence of careful editing 10. Expect deliberate rhythm changes, including occasional 3-6 word sentences alongside nuanced multi-clause sentences, active voice, natural contractions and contextual transitions. Reject competitor promotion or private-source attribution, citations, references, footnotes, unverified external links, attribution phrases, em dash, en dash, AI-process wording, invented byline, duplicated H1, repeated fact, or paragraph that reads like an unedited template. Allow only contextual official links whose exact URL appears in the fetched official evidence; do not require an external link when the evidence offers none. Official authorities, universities and exam bodies should be named when supported by the private evidence; hiding every rule behind "a university may" is a specificity failure. Reject an opening that literally starts with "Answer first:", "Answer:", "Executive summary:" or "Here is the answer:". Reject a flattened plain-text comparison matrix, especially a run of labels such as Student profile, Target courses, Risk to check and Safer approach. Reject a mechanically repeated section order such as Executive summary, Key facts, Conceptual rationale, Step-by-step guide, Risk matrix, Red flags and FAQs when the topic does not require it. Check that repeated official-verification advice has been consolidated rather than restated under every heading, and prefer named, evidence-supported examples when they genuinely clarify the decision. Reject these words and phrases in publishable copy: delve, testament, tapestry, paramount, in conclusion, furthermore, moreover, game-changer, dive in, unlock the power, in today's world, beacon, vital role, firstly, secondly and in summary. Normal prose paragraphs should usually contain two to four sentences. Do not reveal this scoring rubric in the article.
-Reject raw Markdown syntax, including hash headings, fenced code, Markdown bullets, numbered markers, pipe tables and bold or italic markers. Require a genuinely human cadence with at least one short punchy sentence and one longer explanatory sentence, but do not reward spelling mistakes or fake slang. Apply the full DekhoCampus banned lexicon from the human editorial policy, not only the short legacy list.
+Reject raw Markdown syntax, including hash headings, fenced code, Markdown bullets, numbered markers, pipe tables and bold or italic markers. Require a genuinely human cadence with at least one short punchy sentence and one longer explanatory sentence, but do not reward spelling mistakes or fake slang. Apply the full DekhoCampus banned lexicon from the human editorial policy, not only the short legacy list. ${topic?.preserve_title ? "Exception to the 60-character meta-title rule above: the exact verified source H1 is intentionally reused as meta_title and may be longer. Do not reject it for length alone." : ""}
 
 Reject rewritten announcements, generic filler, unsupported claims, misleading certainty, source leakage, repeated templates, mismatched FAQs or content that does not materially help the intended reader act or decide. Mark publishable false only for a material factual, safety, intent, completeness or reader-action defect. Optional polish must not block publication; an article scoring 85-89 can be publishable when it is accurate, complete and useful. If publishable is false or the score is below ${independentReviewThreshold}, issues must contain at least one precise, actionable correction. If there is no substantive defect, set publishable to true and score at least ${independentReviewThreshold}.`;
   const generated = await blogTextJson(reviewPrompt, feature, {
@@ -2270,10 +2270,12 @@ async function generateDraft(topic, { wordLimit = 0, cover = {}, signals = null,
     const generatedArticle = normalizeGeneratedArticlePayload(generated.result, officialUrls);
     const title = exactTitle || stripPublishedPlainText(requiredTitle || generatedArticle.title || fallbackTitle);
     const slug = requiredSlug || slugify(requiredTitle || generatedArticle.slug || generatedArticle.title || fallbackTitle);
+    const sourceMetadata = exactTitle ? sourceLedMetadata(title, topic?.source_meta_description, generatedArticle.meta_description || generatedArticle.description, evidence) : null;
     draft = {
       ...generatedArticle,
       title,
       slug,
+      ...(sourceMetadata || {}),
       content_html: ensureArticleInternalLink(insertVerifiedExamLinks(stripCompetitorCredits(generatedArticle.content_html, officialUrls), examLinks), topic, normalizedScope),
       tags: Array.isArray(generatedArticle.tags) ? generatedArticle.tags : [],
       hero_hook: title,
@@ -2424,6 +2426,17 @@ const decodeEditorialText = (value) => stripHtml(value).replace(/&(#(?:x[\da-f]+
   return { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " }[code.toLowerCase()] || entity;
 }).replace(/\s+/g, " ").trim();
 
+export function sourceLedMetadata(title, sourceDescription, generatedDescription, sources = []) {
+  const suffix = " | DekhoCampus";
+  const sourceText = stripPublishedPlainText(sourceDescription);
+  const description = sourceText.length >= 100 && !articleHasCompetitorReference({ meta_description: sourceText }, sources)
+    ? sourceText : stripPublishedPlainText(generatedDescription);
+  const limit = 155 - suffix.length;
+  const shortened = description.length > limit
+    ? description.slice(0, limit + 1).replace(/\s+\S*$/, "").trim() : description;
+  return { meta_title: title, meta_description: `${shortened.replace(/[\s,;:|.!?-]+$/, "").replace(/\b(?:on|at|by|via|from)\s*$/i, "").trim()}${suffix}` };
+}
+
 const competitorHost = (hostname) => /(?:^|\.)(?:shiksha\.com|sarvgyan\.com|careers360\.com|kollegeapply\.com|collegedunia\.com|collegedekho\.com|pagalguy\.com)$/i.test(hostname);
 const isCompetitorResearchSource = (source, url) => /competitor/i.test(String(source.source_type || "")) || competitorHost(new URL(url).hostname);
 
@@ -2505,8 +2518,12 @@ async function fetchedEditorialSignal(source, siteScope) {
 export async function verifyEditorialArticle(candidate, siteScope = "dekhocampus") {
   const html = await readEditorialPage(candidate.url, siteScope, 1_500_000);
   const title = decodeEditorialText(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] || "");
-  if (title.length < 25 || title.length > 160 || /\.\.\.|complete guide|everything you need to know/i.test(title) || articleHasCompetitorReference({ title }, [{ url: candidate.url, source_type: "competitor_gap" }])) throw new Error("Source article has no usable headline");
-  return { ...candidate, title };
+  if (title.length < 25 || title.length > 160 || /\.\.\.|complete guide|everything you need to know/i.test(title) || articleHasCompetitorReference({ title, slug: candidate.slug }, [{ url: candidate.url, source_type: "competitor_gap" }])) throw new Error("Source article has no usable headline or slug");
+  const descriptionTag = [...html.matchAll(/<meta\b[^>]*>/gi)].map(([tag]) => ({
+    name: tag.match(/\b(?:name|property)\s*=\s*(["'])(.*?)\1/i)?.[2]?.toLowerCase(),
+    content: tag.match(/\bcontent\s*=\s*(["'])(.*?)\1/i)?.[2],
+  })).find((tag) => tag.name === "description" || tag.name === "og:description");
+  return { ...candidate, title, source_meta_description: decodeEditorialText(descriptionTag?.content || "") };
 }
 
 /** Prepare outside the write lock: provider/research requests must not hold DB locks. */
@@ -3023,7 +3040,7 @@ export async function runBlogAgent(body = {}) {
     : await prisma.blog_auto_agent_runs.create({ data: { id: randomUUID(), status: "running", trigger_type: triggerType, interval_minutes: interval, model_provider: blogTextProvider(settings.text_model), word_limit: settings.word_limit, sources: [], selected_topics: [], created_article_ids: [], message: "Researching", progress: 5, current_step: "Researching education signals", estimated_seconds: postCount * 180, completed_steps: 0, total_steps: postCount * 2 + 1, control_note: executionToken, entity_schedule_id: entityContext?.schedule.id || null, agent_mode: entityContext ? "entity_schedule" : "general" } });
   try {
     const signals = await researchSignals(Math.max(4, settings.minimum_sources), "dekhocampus");
-    const sourceCandidates = [...new Map(signals.flatMap((source) => (source.article_candidates || []).filter((article) => !articleHasCompetitorReference({ title: article.title }, [source]))).map((article) => [article.url, article])).values()].slice(0, 60);
+    const sourceCandidates = [...new Map(signals.flatMap((source) => (source.article_candidates || []).filter((article) => !articleHasCompetitorReference({ title: article.title, slug: article.slug }, [source]))).map((article) => [article.url, article])).values()].slice(0, 60);
     const sourceByUrl = new Map(sourceCandidates.map((article) => [article.url, article]));
     if (!entityContext && !sourceCandidates.length) throw new Error("No article headlines and URLs were readable from the enabled competitor sources; the agent will not invent an exact title or slug");
     const writingSignals = signals.map(({ article_candidates, ...signal }) => signal);

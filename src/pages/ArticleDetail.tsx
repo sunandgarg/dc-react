@@ -168,6 +168,8 @@ export default function ArticleDetail() {
       return {
         slug: normalizeSlug(dbArticle.slug),
         title: dbArticle.title,
+        metaTitle: dbArticle.meta_title || dbArticle.title,
+        metaDescription: dbArticle.meta_description || dbArticle.description || "",
         excerpt: (dbArticle.description || "").replace(/<[^>]+>/g, " ").slice(0, 240) || text.slice(0, 240),
         content: addCbseSamplePaperLinks(dbArticle.title, prepareArticleContent(dbArticle.content || dbArticle.description || "")),
         category: dbArticle.category || "General",
@@ -181,7 +183,7 @@ export default function ArticleDetail() {
         sourceLogo: resolveArticleSourceLogo((dbArticle as any).source_logo),
       };
     }
-    return staticArticle ? { ...staticArticle, tags: (staticArticle.tags || []).filter((tag) => tag !== "blog-studio"), content: prepareArticleContent(staticArticle.content), views: 0, author_id: undefined as string | undefined, sourceLogo: "" } : null;
+    return staticArticle ? { ...staticArticle, metaTitle: staticArticle.title, metaDescription: staticArticle.excerpt, tags: (staticArticle.tags || []).filter((tag) => tag !== "blog-studio"), content: prepareArticleContent(staticArticle.content), views: 0, author_id: undefined as string | undefined, sourceLogo: "" } : null;
   }, [dbArticle, staticArticle]);
 
   const navigate = useNavigate();
@@ -196,8 +198,9 @@ export default function ArticleDetail() {
   const articleCanonical = article ? absoluteSiteUrl(`/news/${article.slug}`) : undefined;
   const organizationId = `${absoluteSiteUrl("/")}#organization`;
   useSEO({
-    title: article ? article.title : "Article",
-    description: article?.excerpt || "Read the latest education and career articles.",
+    title: article ? article.metaTitle : "Article",
+    exactTitle: Boolean(article),
+    description: article?.metaDescription || article?.excerpt || "Read the latest education and career articles.",
     canonical: article ? `/news/${article.slug}` : undefined,
     ogImage: article?.image,
     ogType: "article",
