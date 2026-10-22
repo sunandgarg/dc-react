@@ -25,15 +25,14 @@ export default function ScholarshipDetail() {
   const [gateOpen, setGateOpen] = useState(false);
   const [gateMode, setGateMode] = useState<"apply" | "guidance">("apply");
   const [gatePlacement, setGatePlacement] = useState<string>("hero");
+  const canApply = typeof s?.apply_url === "string" && /^https?:\/\//i.test(s.apply_url.trim());
 
   const openApplyGate = (placement: string = "hero") => { setGateMode("apply"); setGatePlacement(placement); setGateOpen(true); };
   const openGuidanceGate = (placement: string = "hero") => { setGateMode("guidance"); setGatePlacement(placement); setGateOpen(true); };
   const onLeadSuccess = () => {
-    if (gateMode === "apply" && s?.apply_url) {
+    if (gateMode === "apply" && canApply) {
       toast.success("Redirecting you to the application portal…");
       window.open(s.apply_url, "_blank", "noopener,noreferrer");
-    } else if (gateMode === "apply") {
-      toast.success("Thanks! Our counsellor will connect with you shortly.");
     } else {
       toast.success("Thanks! Your counsellor will connect with you shortly.");
     }
@@ -68,10 +67,10 @@ export default function ScholarshipDetail() {
       s.description && { id: "about", label: "About" },
       s.amount && { id: "benefits", label: "Benefits" },
       s.deadline && { id: "deadline", label: "Deadline" },
-      { id: "apply", label: "How to Apply" },
+      { id: "apply", label: canApply ? "How to Apply" : "Application Status" },
     ].filter(Boolean) as { id: string; label: string }[];
     return items;
-  }, [s]);
+  }, [s, canApply]);
 
   const handleShare = async () => {
     try {
@@ -124,9 +123,9 @@ export default function ScholarshipDetail() {
               {s.provider && <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-2 break-words">By {s.provider}</p>}
               <div className="mb-4"><AuthorByline authorId={(s as any).author_id} /></div>
               <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                <Button size="lg" onClick={() => openApplyGate("hero")} className="w-full sm:w-auto rounded-xl gradient-primary text-primary-foreground border-0 shadow-lg shadow-primary/30 hover:shadow-xl">
+                {canApply && <Button size="lg" onClick={() => openApplyGate("hero")} className="w-full sm:w-auto rounded-xl gradient-primary text-primary-foreground border-0 shadow-lg shadow-primary/30 hover:shadow-xl">
                   Apply Now <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
+                </Button>}
                 <Button size="lg" variant="outline" onClick={() => openGuidanceGate("hero")} className="w-full sm:w-auto rounded-xl border-primary/40 text-primary hover:bg-primary/10">
                   <CircleDot className="w-4 h-4 mr-1" /> Get Free Guidance
                 </Button>
@@ -178,8 +177,8 @@ export default function ScholarshipDetail() {
                 </div>
               )}
               <div id="apply" className="bg-card border border-border rounded-2xl p-5 md:p-6">
-                                <h2 data-h className="text-xl font-extrabold tracking-tight text-foreground mb-3">How to Apply</h2>
-                <ol className="relative space-y-3 pl-6 border-l-2 border-accent/30">
+                                <h2 data-h className="text-xl font-extrabold tracking-tight text-foreground mb-3">{canApply ? "How to Apply" : "Application Status"}</h2>
+                {canApply ? <><ol className="relative space-y-3 pl-6 border-l-2 border-accent/30">
                   {[
                     "Read the eligibility carefully and confirm you qualify.",
                     "Keep documents ready (ID proof, marksheets, income proof).",
@@ -195,11 +194,11 @@ export default function ScholarshipDetail() {
                 <div className="mt-5 flex flex-wrap gap-2">
                   <Button onClick={() => openApplyGate("apply_section")} className="rounded-xl gradient-primary text-primary-foreground border-0">Apply Now <ArrowRight className="w-4 h-4 ml-1" /></Button>
                   <Button variant="outline" onClick={() => openGuidanceGate("apply_section")} className="rounded-xl border-primary/40 text-primary"><MessageCircle className="w-4 h-4 mr-1" />Talk to Counsellor</Button>
-                </div>
+                </div></> : <p className="text-[15px] text-foreground/90 leading-relaxed">No verified application link is available yet. Check the current official announcement before applying; we will update this page when the application route is confirmed.</p>}
               </div>
 
               {/* Attractive mid-page CTA banner */}
-              <div className="rounded-2xl p-5 md:p-6 bg-gradient-to-r from-primary via-primary to-accent text-primary-foreground flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg shadow-primary/20">
+              {canApply && <div className="rounded-2xl p-5 md:p-6 bg-gradient-to-r from-primary via-primary to-accent text-primary-foreground flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg shadow-primary/20">
                 <div className="flex-1">
                   <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-foreground/15 text-[10.5px] font-bold uppercase tracking-wide mb-1.5">
                     <CircleDot className="w-3 h-3" /> Limited slots
@@ -215,7 +214,7 @@ export default function ScholarshipDetail() {
                     Apply Now
                   </Button>
                 </div>
-              </div>
+              </div>}
 
               {/* Related */}
               {related.length > 0 && (
@@ -259,10 +258,10 @@ export default function ScholarshipDetail() {
                   <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10.5px] font-bold uppercase tracking-wide mb-2">
                     <CircleDot className="w-3 h-3" /> Free
                   </div>
-                  <h3 className="text-base font-bold text-foreground">Need help applying?</h3>
+                  <h3 className="text-base font-bold text-foreground">{canApply ? "Need help applying?" : "Need help planning?"}</h3>
                   <p className="text-xs text-muted-foreground mt-1 mb-3">Get free guidance from our scholarship experts</p>
                   <div className="space-y-2">
-                    <Button onClick={() => openApplyGate("sidebar")} className="w-full rounded-xl gradient-primary text-primary-foreground border-0">Apply Now</Button>
+                    {canApply && <Button onClick={() => openApplyGate("sidebar")} className="w-full rounded-xl gradient-primary text-primary-foreground border-0">Apply Now</Button>}
                     <Button variant="outline" onClick={() => openGuidanceGate("sidebar")} className="w-full rounded-xl border-primary/40 text-primary">
                       <MessageCircle className="w-4 h-4 mr-1" /> Get Free Guidance
                     </Button>
@@ -287,9 +286,9 @@ export default function ScholarshipDetail() {
         <Button onClick={() => openGuidanceGate("mobile_bar")} variant="outline" className="flex-1 rounded-xl border-primary/40 text-primary">
           <MessageCircle className="w-4 h-4 mr-1" /> Free Guidance
         </Button>
-        <Button onClick={() => openApplyGate("mobile_bar")} className="flex-1 rounded-xl gradient-primary text-primary-foreground border-0">
+        {canApply && <Button onClick={() => openApplyGate("mobile_bar")} className="flex-1 rounded-xl gradient-primary text-primary-foreground border-0">
           Apply Now <ArrowRight className="w-4 h-4 ml-1" />
-        </Button>
+        </Button>}
       </div>
 
       <LeadGateDialog
