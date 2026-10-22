@@ -331,12 +331,12 @@ function BootstrapHydrator() {
 }
 
 const firstPagePath = window.location.pathname;
-const firstPageHtml = document.querySelector("#root > [data-dc-edge-prerender]")?.outerHTML;
+const hasFirstPageHtml = Boolean(document.querySelector("#dc-edge-fallback > [data-dc-edge-prerender]"));
 
 function PageLoader() {
   const { pathname } = useLocation();
   // Do not replace already-visible server content with a blank loading screen.
-  if (firstPageHtml && pathname === firstPagePath) return <div dangerouslySetInnerHTML={{ __html: firstPageHtml }} />;
+  if (hasFirstPageHtml && pathname === firstPagePath) return null;
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />

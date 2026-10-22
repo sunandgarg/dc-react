@@ -12,7 +12,7 @@ export function renderWhenPageStylesReady(
   const locationRef = options.location ?? window.location;
   const stylesheet = documentRef.querySelector<HTMLLinkElement>("link[data-dc-app-style]");
   const hasShell = (locationRef.pathname === "/" && Boolean(documentRef.getElementById("dc-first-paint-shell")))
-    || Boolean(documentRef.querySelector("#root > [data-dc-edge-prerender]"));
+    || Boolean(documentRef.querySelector("#dc-edge-fallback > [data-dc-edge-prerender]"));
 
   if (!hasShell || !stylesheet || stylesheet.rel === "stylesheet" || stylesheet.sheet) {
     render();

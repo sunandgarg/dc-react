@@ -11,7 +11,7 @@ afterEach(() => {
 describe("home stylesheet gate", () => {
   it("also keeps public detail text visible until its deferred stylesheet is ready", () => {
     vi.spyOn(window, "requestAnimationFrame").mockImplementation(callback => { callback(0); return 1; });
-    document.body.innerHTML = '<div id="root"><article data-dc-edge-prerender><h1>Visible title</h1></article></div>';
+    document.body.innerHTML = '<div id="root"></div><div id="dc-edge-fallback"><article data-dc-edge-prerender><h1>Visible title</h1></article></div>';
     document.head.innerHTML = '<link rel="preload" as="style" data-dc-app-style href="/assets/index.css">';
     const render = vi.fn();
     renderWhenPageStylesReady(render, { document, location: { pathname: "/news/example" } });

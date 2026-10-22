@@ -109,6 +109,7 @@ describe("Cloudflare edge SEO", () => {
     expect(output).toContain('rel="canonical" href="https://dekhocampus.com/news?page=2"');
     expect(output).not.toContain("Discover Your Ideal Path");
     expect((output.match(/<h1\b/g) || []).length).toBe(1);
+    expect(output).toContain('<div id="root"></div><div id="dc-edge-fallback"><main data-dc-edge-prerender');
   });
 
   it("prerenders published article content and NewsArticle schema", () => {
@@ -134,6 +135,7 @@ describe("Cloudflare edge SEO", () => {
     expect(output).toContain("<h2>What changed</h2>");
     expect(output).toContain("What changed");
     expect(output).toContain("Useful details.");
+    expect(output).toContain('<div id="root"></div><div id="dc-edge-fallback"><article data-dc-edge-prerender');
     expect(output).not.toContain("alert(1)");
     expect(output).not.toContain("onerror");
     expect(output).not.toContain("javascript:");

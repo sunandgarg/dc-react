@@ -53,6 +53,7 @@
     <style>
       #dc-first-paint-shell { min-height: 100vh; background: #f8fafc; color: #111827; font-family: var(--font-site, sans-serif); }
       #dc-first-paint-shell[hidden] { display: none; }
+      #root:has(main) + #dc-edge-fallback { display: none; }
       .dc-shell-nav { height: 56px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid #e5e7eb; background: #fff; }
       .dc-shell-logo { font-size: 22px; font-weight: 900; color: #111827; }
       .dc-shell-logo span { color: #f97316; }

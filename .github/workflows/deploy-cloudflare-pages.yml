@@ -25,8 +25,8 @@ jobs:
 
       - name: Build production frontend
         env:
-          # Static Pages requests do not consume the Workers free-tier quota.
-          # The browser calls the CORS-restricted AWS API directly.
+          # Public content pages use the Pages Worker for crawlable first-response HTML.
+          # The browser calls the CORS-restricted AWS API directly after hydration.
           VITE_API_URL: https://aws-origin.dekhocampus.com
           VITE_AWS_API_URL: https://aws-origin.dekhocampus.com
           VITE_MEDIA_BASE_URL: https://aws-origin.dekhocampus.com/storage/v1/object/public
@@ -50,8 +50,8 @@ jobs:
           npm test
           npm run lint
           npm run build
-          rm -f dist/_worker.js
-          test ! -e dist/_worker.js
+          test -s dist/_worker.js
+          test -s dist/_routes.json
           grep -R -Fq "https://aws-origin.dekhocampus.com" dist/assets
           ! grep -R -Fq "127.0.0.1:8787" dist/assets
           EXPECTED_ASSET=$(basename "$(find dist/assets -maxdepth 1 -type f -name 'index-*.js' | head -1)")

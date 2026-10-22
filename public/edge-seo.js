@@ -550,8 +550,9 @@ export function applyEdgeSeo(html, metadata) {
   }
   if (metadata.prerenderHtml) {
     // The static first-paint shell belongs to the homepage, not to article or archive HTML.
-    output = output.replace(/<div id="dc-first-paint-shell" hidden>[\s\S]*?<\/main>\s*<\/div>/i, "");
-    output = output.replace(/(<div\s+id=["']root["']\s*>)/i, (_, rootStart) => `${rootStart}${metadata.prerenderHtml}`);
+    output = output.replace(/<div id="dc-first-paint-shell"(?: hidden)?>(?:<\/div>|[\s\S]*?<\/main>\s*<\/div>)/i, "");
+    // Keep crawlable content outside React's root so a failed client render cannot erase it.
+    output = output.replace(/(<div\s+id=["']root["']\s*>\s*<\/div>)/i, `$1<div id="dc-edge-fallback">${metadata.prerenderHtml}</div>`);
   }
   return output;
 }

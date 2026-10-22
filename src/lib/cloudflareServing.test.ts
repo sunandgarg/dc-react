@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import worker from "../../public/_worker.js";
 
 const shellHtml = readFileSync("index.html", "utf8");
+const routeConfig = JSON.parse(readFileSync("public/_routes.json", "utf8"));
 const env = { ASSETS: { fetch: async () => new Response(shellHtml, { headers: { "content-type": "text/html" } }) } };
 const context = { waitUntil: () => undefined };
 const routes = ["/news/existing-article", "/colleges/existing-college-12345", "/courses/existing-course-12345", "/exams/existing-exam-12345"];
@@ -12,6 +13,10 @@ const rowsResponse = (rows: unknown) => new Response(JSON.stringify(rows), { hea
 afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
 
 describe("Cloudflare serving failure classification", () => {
+  it("routes public content HTML through the Worker without routing assets", () => {
+    expect(routeConfig.include).toEqual(expect.arrayContaining(["/news", "/news/*", "/colleges/*", "/courses/*", "/exams/*"]));
+    expect(routeConfig.include).not.toContain("/*");
+  });
   it("embeds only the anonymous public detail response as inert JSON", async () => {
     const row = { id: "a1", slug: "existing-article", title: "News", content: '<p>Text</p></script><script>alert(1)</script>', is_active: true, status: "Published", site_scope: "dekhocampus" };
     const api = vi.spyOn(globalThis, "fetch").mockImplementation(async () => rowsResponse([row]));
