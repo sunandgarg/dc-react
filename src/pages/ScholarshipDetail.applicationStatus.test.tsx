@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import ScholarshipDetail from "./ScholarshipDetail";
 
-const mocks = vi.hoisted(() => ({ scholarship: { title: "Kotak Kanya Scholarship", slug: "kotak-kanya-scholarship", apply_url: "" } }));
+const mocks = vi.hoisted(() => ({ scholarship: { title: "Kotak Kanya Scholarship", slug: "kotak-kanya-scholarship", apply_url: "", meta_description: "<p>Official details &amp; application link pending.</p>" } }));
 vi.mock("@/integrations/backend/client", () => ({
   backendClient: {
     from: () => ({ select: () => ({
@@ -14,7 +14,7 @@ vi.mock("@/integrations/backend/client", () => ({
 }));
 vi.mock("@/components/Navbar", () => ({ Navbar: () => null }));
 vi.mock("@/components/Footer", () => ({ Footer: () => null }));
-vi.mock("@/components/SEO", () => ({ SEO: () => null }));
+vi.mock("@/components/SEO", () => ({ SEO: ({ description }: { description: string }) => <span data-testid="seo-description">{description}</span> }));
 vi.mock("@/components/AuthorByline", () => ({ AuthorByline: () => null }));
 vi.mock("@/components/AlsoCheckSection", () => ({ AlsoCheckSection: () => null }));
 vi.mock("@/components/LeadGateDialog", () => ({ LeadGateDialog: () => null }));
@@ -32,6 +32,7 @@ describe("scholarship application status", () => {
     expect(await screen.findByRole("heading", { name: "Application Status" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Apply Now/i })).not.toBeInTheDocument();
     expect(screen.getByText(/No verified application link is available yet/)).toBeInTheDocument();
+    expect(screen.getByTestId("seo-description")).toHaveTextContent("Official details & application link pending.");
     expect(screen.getAllByRole("button", { name: /Free Guidance/i }).length).toBeGreaterThan(0);
   });
 

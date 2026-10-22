@@ -11,6 +11,7 @@ import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { AuthorByline } from "@/components/AuthorByline";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
+import { plainText } from "@/lib/plainText";
 import { PageSummary } from "@/components/detail/PageSummary";
 import { RichText } from "@/components/detail/RichText";
 import { Award, Calendar, IndianRupee, GraduationCap, ArrowUp, Share2, ArrowRight, CheckCircle2, Phone, CircleDot, MessageCircle } from "lucide-react";
@@ -96,7 +97,7 @@ export default function ScholarshipDetail() {
 
   return (
     <div className="min-h-screen bg-background overflow-x-clip">
-      <SEO title={s.meta_title || `${s.title} | DekhoCampus`} description={s.meta_description || s.description} />
+      <SEO title={s.meta_title || `${s.title} | DekhoCampus`} description={plainText(s.meta_description || s.description)} />
       <div className="fixed top-0 left-0 right-0 h-1 z-[60] bg-transparent">
         <div className="h-full bg-primary transition-[width] duration-150" style={{ width: `${progress}%` }} />
       </div>
