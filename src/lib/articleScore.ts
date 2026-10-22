@@ -119,7 +119,10 @@ export function scoreArticleForEditor(input: ArticleScoreInput = {}): ArticleSco
   const faqItems = Array.isArray(input.faqs) ? input.faqs.filter((faq) => normalize(faq.question) && normalize(faq.answer)) : [];
   const faqDuplicated = faqItems.some((faq) => bodyLower.includes(lower(faq.question)) || bodyLower.includes(lower(faq.answer)));
   const tables = [...content.matchAll(/<table\b[^>]*>([\s\S]*?)<\/table>/gi)];
-  const validTables = tables.every((match) => /<thead\b/i.test(match[1]) && /<th\b/i.test(match[1]) && /<tbody\b/i.test(match[1]) && /<td\b/i.test(match[1]));
+  const validTables = tables.every((match) => {
+    const firstRow = match[1].match(/<tr\b[^>]*>([\s\S]*?)<\/tr>/i)?.[1] || "";
+    return /<tbody\b/i.test(match[1]) && /<th\b/i.test(firstRow) && /<td\b/i.test(match[1]);
+  });
   const proseWithoutTables = htmlText(content.replace(/<table\b[^>]*>[\s\S]*?<\/table>/gi, " "));
   const flattenedLabels = new Set([...proseWithoutTables.matchAll(/\b(?:student profile|target courses|risk to check|safer approach|target course type|check first|possible result if missed|safer decision)\b/gi)].map((match) => match[0].toLowerCase()));
   const flattenedTable = flattenedLabels.size >= 3;

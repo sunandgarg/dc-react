@@ -78,4 +78,18 @@ describe("scoreArticleForEditor", () => {
     expect(report.aeo.checks.find((check) => check.key === "aeo-table")?.status).toBe("fail");
     expect(report.aeo.checks.find((check) => check.key === "aeo-faq")?.status).toBe("fail");
   });
+
+  it("accepts the editor's header-cell table without a thead", () => {
+    const report = scoreArticleForEditor({
+      content: "<table><tbody><tr><th>Discipline</th><th>Minimum marks</th></tr><tr><th>Ayurveda</th><td>115</td></tr></tbody></table>",
+    });
+    expect(report.aeo.checks.find((check) => check.key === "aeo-table")?.status).toBe("pass");
+  });
+
+  it("rejects a table with only data cells", () => {
+    const report = scoreArticleForEditor({
+      content: "<table><tbody><tr><td>Discipline</td><td>Minimum marks</td></tr><tr><td>Ayurveda</td><td>115</td></tr></tbody></table>",
+    });
+    expect(report.aeo.checks.find((check) => check.key === "aeo-table")?.status).toBe("fail");
+  });
 });
