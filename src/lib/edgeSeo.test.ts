@@ -27,6 +27,9 @@ describe("Cloudflare edge SEO", () => {
     expect(edgeSeoFor("https://dekhocampus.com/not-a-real-page").notFound).toBe(true);
     expect(edgeSeoFor("https://dekhocampus.com/admin/colleges").notFound).toBe(false);
     expect(edgeSeoFor("https://dekhocampus.com/colleges?q=lpu").notFound).toBe(false);
+    expect(edgeSeoFor("https://dekhocampus.com/about-us/not-a-page").notFound).toBe(true);
+    expect(edgeSeoFor("https://dekhocampus.com/news/story/extra").notFound).toBe(true);
+    expect(edgeSeoFor("https://dekhocampus.com/study-material/class-12/cbse/physics/chapter-1").notFound).toBe(false);
   });
 
   it("does not treat public author pages as auth routes", () => {

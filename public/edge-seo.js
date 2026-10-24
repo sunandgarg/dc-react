@@ -101,7 +101,20 @@ function detailMetadata(pathname) {
 }
 
 function isPublicPath(pathname) {
-  return pathname === "/" || PUBLIC_ROOTS.some((root) => pathname === root || pathname.startsWith(`${root}/`));
+  if (pathname === "/") return true;
+  const parts = pathname.split("/").filter(Boolean);
+  const root = `/${parts[0]}`;
+  if (!PUBLIC_ROOTS.includes(root)) return false;
+  if (parts.length === 1) return !["/landing", "/author", "/legal"].includes(root);
+  if (root === "/news") return parts.length === 2 || (parts.length === 3 && parts[1] === "tag");
+  if (root === "/study-material" || root === "/college-study-material") return parts.length <= 5;
+  if (["/colleges", "/courses", "/exams"].includes(root)) return parts.length <= 3;
+  return parts.length === 2 && [
+    "/premium-programs", "/careers", "/jobs", "/vacancies", "/scholarships",
+    "/resources", "/tools", "/cat-universe", "/eligibility-checker",
+    "/college-predictor", "/lock-target", "/achieve-target", "/roadmap",
+    "/dream-college-roadmap", "/landing", "/author", "/legal",
+  ].includes(root);
 }
 
 function isIndexableQuery(url, pathname) {

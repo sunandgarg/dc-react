@@ -60,6 +60,17 @@ const CACHEABLE_PUBLIC_TABLES = new Set([
 ]);
 
 const PUBLIC_STORAGE_PATH = /^\/storage\/v1\/object\/public\/(?:admin-uploads|ad-images|legacy-public-assets|study-material)(?:\/|$)/;
+const PUBLIC_DETAIL_TABLES = {
+  scholarships: "scholarships",
+  careers: "career_profiles",
+  jobs: "jobs",
+  vacancies: "jobs",
+  "premium-programs": "promoted_programs",
+  legal: "legal_pages",
+  author: "authors",
+  landing: "landing_pages",
+};
+const ACTIVE_DETAIL_TABLES = new Set(["legal_pages", "authors", "landing_pages"]);
 
 function isApiRequest(pathname) {
   return pathname === "/health"
@@ -123,7 +134,7 @@ async function fetchPublicRows(table, query, cacheTtl = 300) {
     if (!response.ok) throw new Error(`${table} API returned ${response.status}`);
     const payload = await response.json();
     const rows = Array.isArray(payload) ? payload : payload?.data;
-    const requiredFields = table === "articles" ? ["slug", "title"] : table === "authors" ? ["name"] : ["slug", "name"];
+    const requiredFields = table === "articles" ? ["slug", "title"] : table === "authors" ? ["slug", "name"] : ["scholarships", "jobs", "promoted_programs", "legal_pages", "landing_pages"].includes(table) ? ["slug"] : ["slug", "name"];
     if (payload?.error || !Array.isArray(rows) || rows.some((row) => !row || typeof row !== "object" || Array.isArray(row) || requiredFields.some((field) => typeof row[field] !== "string" || !row[field].trim()))) {
       throw new Error(`${table} API returned invalid rows`);
     }
@@ -221,6 +232,17 @@ async function curatedListingMetadata(url, metadata, entityType, filters) {
   };
 }
 
+function missingPageMetadata(metadata) {
+  return {
+    ...metadata,
+    title: "Page Not Found | DekhoCampus",
+    description: "This DekhoCampus page is unavailable. Explore colleges, courses, exams and education news instead.",
+    indexable: false,
+    notFound: true,
+    prerenderHtml: '<div data-dc-edge-prerender style="min-height:100vh;display:flex;flex-direction:column;font-family:var(--font-site,sans-serif);color:#111827"><header style="padding:20px max(20px,calc((100vw - 1100px)/2));border-bottom:1px solid #e5e7eb"><a href="/" style="font-size:22px;font-weight:700;color:#c2410c;text-decoration:none">DekhoCampus</a></header><main style="flex:1;max-width:1100px;width:100%;margin:0 auto;padding:80px 20px"><p style="color:#c2410c;font-weight:700">404 · Page not found</p><h1>Oops! Page not found</h1><p>The link may have changed, or the page may no longer be available.</p><p><a href="/">Return to Home</a></p><nav aria-label="Explore DekhoCampus"><a href="/colleges">Colleges</a> · <a href="/courses">Courses</a> · <a href="/exams">Exams</a> · <a href="/news">Education news</a></nav></main><footer style="padding:20px;text-align:center;border-top:1px solid #e5e7eb"><a href="/about-us">About DekhoCampus</a> · <a href="/scholarships">Scholarships</a></footer></div>',
+  };
+}
+
 async function serveAsset(request, env) {
   const url = new URL(request.url);
   let response = await env.ASSETS.fetch(request);
@@ -290,6 +312,17 @@ async function serveAsset(request, env) {
         else metadata = { ...metadata, indexable: false, notFound: true };
       }
     }
+    const detailMatch = metadata.indexable
+      ? url.pathname.match(/^\/(scholarships|careers|jobs|vacancies|premium-programs|legal|author|landing)\/([^/]+)\/?$/)
+      : null;
+    if (detailMatch) {
+      const table = PUBLIC_DETAIL_TABLES[detailMatch[1]];
+      const query = new URLSearchParams({ select: ["authors", "career_profiles"].includes(table) ? "slug,name" : "slug", slug: `eq.${decodeURIComponent(detailMatch[2])}`, limit: "1" });
+      if (ACTIVE_DETAIL_TABLES.has(table)) query.set("is_active", "eq.true");
+      const rows = await fetchPublicRows(table, query, 30);
+      if (!rows.length) metadata = { ...metadata, indexable: false, notFound: true };
+    }
+    if (metadata.notFound) metadata = missingPageMetadata(metadata);
     let html = applyEdgeSeo(await response.text(), metadata);
     if (url.pathname === "/" || metadata.initialData) html = applyHomeCriticalCssDelivery(html);
     response = new Response(html, {

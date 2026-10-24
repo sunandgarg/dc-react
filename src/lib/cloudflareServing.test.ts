@@ -14,8 +14,42 @@ afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
 
 describe("Cloudflare serving failure classification", () => {
   it("routes public content HTML through the Worker without routing assets", () => {
-    expect(routeConfig.include).toEqual(expect.arrayContaining(["/news", "/news/*", "/colleges/*", "/courses/*", "/exams/*"]));
-    expect(routeConfig.include).not.toContain("/*");
+    expect(routeConfig.include).toContain("/*");
+    expect(routeConfig.exclude).toEqual(expect.arrayContaining(["/", "/assets/*", "/fonts/*", "/college/*", "/articles/*"]));
+  });
+  it.each(["/not-a-real-page", "/about-us/not-a-real-page", "/news/not-a-real-page/extra"])('returns a real, navigable HTML 404 for unknown routes: %s', async (route) => {
+    const response = await serve(route);
+    const html = await response.text();
+    expect(response.status).toBe(404);
+    expect(html).toContain('content="noindex, follow, noarchive"');
+    expect(html).toContain("<h1>Oops! Page not found</h1>");
+    expect(html).toContain('<a href="/">Return to Home</a>');
+    expect(html).toContain("<header");
+    expect(html).toContain("<footer");
+    expect(html).not.toContain("Discover Your Ideal Path");
+  });
+  it("keeps a real static deep link live", async () => {
+    const response = await serve("/about-us");
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain('content="index, follow');
+  });
+  it.each(["/scholarships", "/author", "/premium-programs", "/careers", "/jobs", "/vacancies", "/legal", "/landing"])("checks database-backed detail pages before choosing 404: %s", async (root) => {
+    const api = vi.spyOn(globalThis, "fetch").mockImplementation(async () => rowsResponse([]));
+    expect((await serve(`${root}/missing-entry`)).status).toBe(404);
+    expect(api).toHaveBeenCalledOnce();
+    api.mockClear();
+    api.mockImplementation(async () => rowsResponse([{ slug: "existing-entry", name: "Existing entry", title: "Existing entry" }]));
+    expect((await serve(`${root}/existing-entry`)).status).toBe(200);
+    const query = new URL(String(api.mock.calls[0][0])).searchParams;
+    expect(query.get("select")).toBe(root === "/author" || root === "/careers" ? "slug,name" : "slug");
+    expect(query.get("is_active")).toBe(["/author", "/legal", "/landing"].includes(root) ? "eq.true" : null);
+  });
+  it("does not call an unavailable scholarship missing", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("Unavailable", { status: 503 }));
+    const response = await serve("/scholarships/existing-entry");
+    expect(response.status).toBe(503);
+    expect((await response.text())).not.toContain("noindex");
   });
   it("embeds only the anonymous public detail response as inert JSON", async () => {
     const row = { id: "a1", slug: "existing-article", title: "News", content: '<p>Text</p></script><script>alert(1)</script>', is_active: true, status: "Published", site_scope: "dekhocampus" };

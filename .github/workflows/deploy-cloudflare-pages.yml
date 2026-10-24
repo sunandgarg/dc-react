@@ -25,6 +25,7 @@ jobs:
 
       - name: Build production frontend
         env:
+          CF_PAGES: "1"
           # Public content pages use the Pages Worker for crawlable first-response HTML.
           # The browser calls the CORS-restricted AWS API directly after hydration.
           VITE_API_URL: https://aws-origin.dekhocampus.com
@@ -89,3 +90,10 @@ jobs:
             | jq -e '.ok == true and .database == "mysql" and .storage == "s3"' >/dev/null
           curl --fail --silent --show-error --max-time 20 \
             https://dekhocampus-aws-candidate.pages.dev/sitemap.xml >/dev/null
+          curl --fail --silent --show-error --max-time 20 \
+            https://dekhocampus-aws-candidate.pages.dev/about-us >/dev/null
+          MISSING_STATUS=$(curl --silent --show-error --max-time 20 \
+            --output /tmp/dekhocampus-404.html --write-out '%{http_code}' \
+            https://dekhocampus-aws-candidate.pages.dev/definitely-not-a-page-404-check)
+          test "$MISSING_STATUS" = "404"
+          grep -Fq 'Oops! Page not found' /tmp/dekhocampus-404.html
