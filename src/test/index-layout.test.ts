@@ -157,6 +157,7 @@ describe("Index page layout (static source assertions)", () => {
     expect(footerSrc).toMatch(/Engineering College Rankings/);
     expect(footerSrc).toMatch(/MBA College Rankings/);
     expect(footerSrc).toMatch(/Important Entrance Exams/);
+    expect(footerSrc).not.toMatch(/href:\s*"#"|href="#"/);
   });
 
   it("uses a persistent black announcement bar without dismiss or multicolour controls", () => {

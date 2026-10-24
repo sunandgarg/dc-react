@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { Linkedin, Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/dekhocampus-footer-logo.png";
 import dcLogo from "@/assets/dc-logo-small.webp";
@@ -10,8 +10,8 @@ const footerLinks = {
     { label: "Colleges", href: "/colleges" },
     { label: "Courses", href: "/courses" },
     { label: "Exams", href: "/exams" },
-    { label: "Rankings", href: "#" },
-    { label: "Compare", href: "#" },
+    { label: "Engineering rankings", href: "/colleges/top-engineering-colleges-in-india" },
+    { label: "Compare", href: "/compare" },
   ],
   resources: [
     { label: "Articles", href: "/news" },
@@ -24,8 +24,6 @@ const footerLinks = {
     { label: "About Us", href: "/about-us" },
     { label: "Careers", href: "/vacancies" },
     { label: "Press", href: "/about-us#press" },
-    { label: "Partners", href: "#" },
-    { label: "Contact", href: "#" },
   ],
   legal: [
     { label: "Disclaimer", href: "/legal/disclaimer" },
@@ -37,14 +35,6 @@ const footerLinks = {
     { label: "Accessibility", href: "/legal/accessibility" },
   ],
 };
-
-const socialLinks = [
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Youtube, href: "#", label: "YouTube" },
-];
 
 const popularFooterGroups = [
   {
@@ -236,18 +226,15 @@ export function Footer() {
             © {new Date().getFullYear()} DekhoCampus. Made with ❤️ for students in India
           </p>
           <div className="flex items-center gap-3 flex-wrap justify-center">
-            <div className="flex items-center gap-2.5">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-accent hover:text-foreground transition-colors"
-                  aria-label={social.label}
-                >
-                  <social.icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
+            <a
+              href="https://www.linkedin.com/company/75508578/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-accent hover:text-foreground transition-colors"
+              aria-label="DekhoCampus on LinkedIn"
+            >
+              <Linkedin className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </div>
