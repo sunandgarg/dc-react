@@ -53,6 +53,7 @@ jobs:
           npm run build
           test -s dist/_worker.js
           test -s dist/_routes.json
+          test -s dist/404.html
           grep -R -Fq "https://aws-origin.dekhocampus.com" dist/assets
           ! grep -R -Fq "127.0.0.1:8787" dist/assets
           EXPECTED_ASSET=$(basename "$(find dist/assets -maxdepth 1 -type f -name 'index-*.js' | head -1)")
@@ -97,3 +98,11 @@ jobs:
             https://dekhocampus-aws-candidate.pages.dev/definitely-not-a-page-404-check)
           test "$MISSING_STATUS" = "404"
           grep -Fq 'Oops! Page not found' /tmp/dekhocampus-404.html
+          MISSING_ASSET_STATUS=$(curl --silent --show-error --max-time 20 \
+            --output /dev/null --write-out '%{http_code}' \
+            https://dekhocampus-aws-candidate.pages.dev/assets/definitely-not-an-asset-404-check.js)
+          test "$MISSING_ASSET_STATUS" = "404"
+          LEGACY_REDIRECT_STATUS=$(curl --silent --show-error --max-time 20 \
+            --output /dev/null --write-out '%{http_code}' \
+            https://dekhocampus-aws-candidate.pages.dev/articles)
+          test "$LEGACY_REDIRECT_STATUS" = "301"

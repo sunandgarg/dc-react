@@ -247,8 +247,12 @@ async function serveAsset(request, env) {
   const url = new URL(request.url);
   let response = await env.ASSETS.fetch(request);
 
-  if (response.status === 404 && request.method === "GET" && request.headers.get("accept")?.includes("text/html")) {
-    response = await env.ASSETS.fetch(new Request(new URL("/index.html", url), request));
+  // A top-level 404.html stops Pages from returning index.html with HTTP 200
+  // for missing assets. Document routes still need the SPA shell so the edge
+  // can validate them and serve either the real page or a real HTTP 404.
+  const looksLikeFile = /\/[^/]+\.[a-z0-9]{1,10}$/i.test(url.pathname);
+  if (response.status === 404 && request.method === "GET" && !looksLikeFile) {
+    response = await env.ASSETS.fetch(new Request(new URL("/index.html", url)));
   }
 
   if (request.method === "GET" && response.ok && response.headers.get("content-type")?.includes("text/html")) {
@@ -333,7 +337,7 @@ async function serveAsset(request, env) {
   }
 
   const secured = withSecurityHeaders(response);
-  if (url.pathname.startsWith("/assets/")) {
+  if (url.pathname.startsWith("/assets/") && secured.ok) {
     secured.headers.set("cache-control", "public, max-age=31536000, immutable");
   } else if (url.pathname === "/version.json" || secured.headers.get("content-type")?.includes("text/html")) {
     secured.headers.set("cache-control", "no-cache, no-store, must-revalidate");

@@ -16,6 +16,23 @@ describe("Cloudflare serving failure classification", () => {
   it("routes public content HTML through the Worker without routing assets", () => {
     expect(routeConfig.include).toContain("/*");
     expect(routeConfig.exclude).toEqual(expect.arrayContaining(["/", "/assets/*", "/fonts/*", "/college/*", "/articles/*"]));
+    const fallback = readFileSync("public/404.html", "utf8");
+    expect(fallback).toContain('content="noindex, follow"');
+    expect(fallback).toContain("<header>");
+    expect(fallback).toContain("<footer>");
+  });
+  it("recovers valid document routes when Pages has a static 404 fallback", async () => {
+    const fallback = readFileSync("public/404.html", "utf8");
+    const pagesEnv = { ASSETS: { fetch: async (request: Request) => new URL(request.url).pathname === "/index.html"
+      ? new Response(shellHtml, { headers: { "content-type": "text/html" } })
+      : new Response(fallback, { status: 404, headers: { "content-type": "text/html" } }) } };
+    const valid = await worker.fetch(new Request("https://dekhocampus.com/about-us"), pagesEnv, context);
+    const missing = await worker.fetch(new Request("https://dekhocampus.com/not-a-real-page"), pagesEnv, context);
+    const missingFile = await worker.fetch(new Request("https://dekhocampus.com/assets/missing.js"), pagesEnv, context);
+    expect(valid.status).toBe(200);
+    expect(missing.status).toBe(404);
+    expect(missingFile.status).toBe(404);
+    expect(missingFile.headers.get("cache-control")).not.toContain("immutable");
   });
   it.each(["/not-a-real-page", "/about-us/not-a-real-page", "/news/not-a-real-page/extra"])('returns a real, navigable HTML 404 for unknown routes: %s', async (route) => {
     const response = await serve(route);
