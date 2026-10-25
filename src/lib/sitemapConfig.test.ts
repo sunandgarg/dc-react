@@ -45,8 +45,11 @@ describe("sitemap configuration", () => {
     expect(paths.some((path) => path.startsWith("/admin") || path.startsWith("/dashboard") || path === "/auth")).toBe(false);
   });
 
-  it("lists only distinct detail pages, not whole-page section aliases", () => {
-    expect(COLLEGE_DETAIL_TABS).toEqual([]);
+  it("re-lists supported college sections without retired review/contact routes", () => {
+    expect(COLLEGE_DETAIL_TABS).toHaveLength(16);
+    expect(COLLEGE_DETAIL_TABS).toContain("courses");
+    expect(COLLEGE_DETAIL_TABS).not.toContain("reviews");
+    expect(COLLEGE_DETAIL_TABS).not.toContain("contact");
     expect(COURSE_DETAIL_TABS).toEqual([]);
     expect(new Set(EXAM_DETAIL_TABS).size).toBe(EXAM_DETAIL_TABS.length);
     expect(EXAM_DETAIL_TABS).toContain("overview");

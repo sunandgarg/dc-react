@@ -174,7 +174,9 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.match(chunk, /\/courses\?group=MBA%2FPGDM&amp;mode=Full\+Time<\/loc>/);
   assert.match(chunk, /\/exams\?group=MBA%2FPGDM<\/loc>/);
   assert.doesNotMatch(chunk, /group=Unverified|state=Nowhere/);
-  assert.doesNotMatch(chunk, /\/colleges\/colleges-sample-101\//);
+  assert.match(chunk, /\/colleges\/colleges-sample-101\/courses<\/loc>/);
+  assert.equal((chunk.match(/\/colleges\/colleges-sample-101\/[^<]+<\/loc>/g) || []).length, 16);
+  assert.doesNotMatch(chunk, /\/colleges\/colleges-sample-101\/(?:reviews|contact)<\/loc>/);
   assert.doesNotMatch(chunk, /\/courses\/courses-sample-101\//);
   assert.match(chunk, /\/exams\/exams-sample-101\/answer-key/);
   assert.match(chunk, /\/exams\/exams-sample-101\/sample-paper/);
