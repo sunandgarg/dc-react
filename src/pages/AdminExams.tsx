@@ -459,9 +459,6 @@ export default function AdminExams() {
                   maxSizeMb={15}
                   itemLabelPlaceholder="Year e.g. 2024"
                 />
-                <div><label className="text-xs font-medium text-muted-foreground">Eligibility</label>
-                  <textarea value={editing.eligibility || ""} onChange={(e) => update("eligibility", e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm resize-none" />
-                </div>
                 <ImportantDatesEditor dates={editing.important_dates || []} onChange={(d) => update("important_dates", d)} />
               </AdminFormSection>
 
@@ -469,6 +466,7 @@ export default function AdminExams() {
               <AdminFormSection title="Detailed Content" icon={<BookOpen className="w-4 h-4 text-primary" />} defaultOpen={false}>
                 <PageSummaryField value={(editing as any).page_summary || ""} onChange={(v) => update("page_summary" as any, v)} />
                 <RichTextEditor label="Summary" value={editing.summary_content || ""} onChange={(v) => update("summary_content", v)} />
+                <RichTextEditor label="Eligibility Criteria" value={editing.eligibility || ""} onChange={(v) => update("eligibility", v)} />
                 <RichTextEditor label="Application Process" value={editing.application_process || ""} onChange={(v) => update("application_process", v)} />
                 <RichTextEditor label="Exam Pattern" value={editing.exam_pattern || ""} onChange={(v) => update("exam_pattern", v)} />
                 <RichTextEditor label="Cut Off" value={editing.cutoff_content || ""} onChange={(v) => update("cutoff_content", v)} />

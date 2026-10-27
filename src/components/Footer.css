@@ -1,0 +1,20 @@
+.footer-wordmark {
+  overflow: hidden;
+  margin-inline: clamp(24px, 4.5vw, 96px);
+  padding-top: clamp(20px, 3vw, 48px);
+}
+
+.footer-wordmark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  fill: hsl(220 10% 76%);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 210px;
+  font-weight: 700;
+  letter-spacing: -10px;
+}
+
+.footer-wordmark tspan {
+  fill: hsl(25 90% 55%);
+}

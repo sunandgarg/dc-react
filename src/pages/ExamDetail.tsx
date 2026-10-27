@@ -41,6 +41,7 @@ import { absoluteCanonical, absoluteSiteUrl } from "@/lib/constant";
 import { resolveExamLogo, resolveExamNames } from "@/lib/examBranding";
 import { ExamLogo } from "@/components/ExamLogo";
 import { formatExamDate } from "@/lib/examDateDisplay";
+import { stripMarkup } from "@/lib/displayText";
 
 const EXAM_SECTIONS: ScrollSection[] = [
   { id: "overview", label: "Overview" },
@@ -592,7 +593,7 @@ export default function ExamDetail() {
                   name: exam.name,
                   exam_date: (exam as any).exam_date,
                   conducting_authority: exam.conducting_authority,
-                  eligibility: (exam as any).eligibility,
+                  eligibility: stripMarkup(exam.eligibility),
                 })}
               />
             </section>
