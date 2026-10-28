@@ -4,7 +4,6 @@ import logo from "@/assets/dekhocampus-footer-logo.png";
 import dcLogo from "@/assets/dc-logo-small.webp";
 import { QuickLinksBar } from "@/components/QuickLinksBar";
 import { GlobalInternalAds } from "@/components/GlobalInternalAds";
-import "./Footer.css";
 
 const footerLinks = {
   explore: [
@@ -219,12 +218,6 @@ export function Footer() {
           </div>
         </div>
       </section>
-
-      <div id="footer-wordmark" className="footer-wordmark" aria-hidden="true">
-        <svg viewBox="0 0 1440 235" focusable="false">
-          <text x="0" y="184" textLength="1440" lengthAdjust="spacingAndGlyphs">dekho<tspan>campus</tspan></text>
-        </svg>
-      </div>
 
       {/* Bottom Bar */}
       <div className="border-t border-background/10">
