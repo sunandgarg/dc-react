@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsentCheckbox";
 import { isStrictIndianMobile, normalizeIndianMobile } from "@/lib/phone";
+import { LeadGateDialog } from "@/components/LeadGateDialog";
+import { isPdfUrl } from "@/lib/documentViewer";
 import { saveLeadPhase } from "@/lib/twoStepLead";
 
 const SOCIAL_HOSTS = [
@@ -29,14 +31,14 @@ export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onCo
     if (event.button !== 0 && event.button !== 1) return;
     if (siteWide && /^\/(?:admin|auth|dashboard|onboarding)(?:\/|$)/.test(window.location.pathname)) return;
     const anchor = (event.target as Element).closest?.('a[href]') as HTMLAnchorElement | null;
-    if (!anchor || (!siteWide && anchor.dataset.leadCapture !== "true")) return;
+    if (!anchor || (!siteWide && anchor.dataset.leadCapture !== "true" && !isPdfUrl(anchor.href))) return;
     if (!siteWide && !(event.currentTarget as HTMLDivElement).contains(anchor)) return;
     try {
       const url = new URL(anchor.getAttribute("href") || "", window.location.href);
       if (!["http:", "https:", "mailto:", "tel:"].includes(url.protocol) || url.username || url.password) return;
       if (["http:", "https:"].includes(url.protocol) && SOCIAL_HOSTS.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`))) return;
       if (siteWide && !["http:", "https:"].includes(url.protocol) && anchor.dataset.leadCapture !== "true") return;
-      if (siteWide && anchor.dataset.leadCapture !== "true" && (
+      if (siteWide && anchor.dataset.leadCapture !== "true" && !isPdfUrl(url.href) && (
         url.origin === window.location.origin || url.hostname === "dekhocampus.com" || url.hostname.endsWith(".dekhocampus.com")
       )) return;
       event.preventDefault();
@@ -58,7 +60,10 @@ export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onCo
 
   return <>
     {siteWide ? children : <div className="space-y-5" onClickCapture={capture} onAuxClickCapture={capture}>{children}</div>}
-    <Dialog open={Boolean(destination)} onOpenChange={(open) => { if (!open && !submitting.current) setDestination(null); }}>
+    {destination && isPdfUrl(destination) ? <LeadGateDialog open forceShow simple title="Open PDF document"
+      subtitle="Share your details and study preferences to continue to this PDF."
+      source={`pdf_link_${articleSlug}`} onOpenChange={(open) => { if (!open) setDestination(null); }}
+      onSuccess={(leadId) => { if (leadId) { onContinue(destination); setDestination(null); } }} /> : <Dialog open={Boolean(destination)} onOpenChange={(open) => { if (!open && !submitting.current) setDestination(null); }}>
       <DialogContent className="max-w-sm p-5">
         <DialogTitle className="text-lg">Continue to the link</DialogTitle>
         <DialogDescription className="text-xs">Share your details with DekhoCampus to continue to {destination ? new URL(destination).hostname || "this link" : "this link"}.</DialogDescription>
@@ -93,6 +98,6 @@ export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onCo
           <Button type="submit" className="w-full" disabled={busy || !consent}>{busy ? "Saving…" : "Save & continue"}</Button>
         </form>
       </DialogContent>
-    </Dialog>
+    </Dialog>}
   </>;
 }

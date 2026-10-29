@@ -21,6 +21,6 @@ export async function saveLeadPhase(payload: Record<string, unknown>) {
     body: JSON.stringify({ ...intentIdentity(), ...payload }),
   });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.message || body.error || "Could not save your details");
+  if (!response.ok || body.success !== true || !body.lead_id) throw new Error(body.message || body.error || "Could not save your details");
   return body as { success: true; lead_id: string; phase: "identity" | "complete"; existing_count?: number };
 }

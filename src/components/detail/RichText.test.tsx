@@ -7,7 +7,8 @@ describe("RichText", () => {
     const { container } = render(<RichText html='<h2>Eligibility</h2><div class="doc-viewer" data-pdf="/paper.pdf" data-title="Official brochure"><a href="/paper.pdf">PDF</a></div><p>Next steps</p>' />);
     expect(screen.getByRole("heading", { name: "Eligibility" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "View PDF document" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open or download PDF" })).toHaveAttribute("href", "/paper.pdf");
+    expect(screen.getByRole("button", { name: "Download PDF" })).toBeInTheDocument();
+    expect(container.querySelector('a[href="/paper.pdf"]')).toBeNull();
     expect(screen.getByText("Next steps")).toBeInTheDocument();
     expect(container.querySelector("iframe")).toBeNull();
   });

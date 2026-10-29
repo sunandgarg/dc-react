@@ -28,3 +28,8 @@ export function splitDocumentViewers(html: string): DocumentSegment[] {
   if (last < serialized.length) segments.push({ type: "html", value: serialized.slice(last) });
   return segments;
 }
+
+export function isPdfUrl(value: string): boolean {
+  try { return /\.pdf$/i.test(new URL(value, "https://dekhocampus.com").pathname); }
+  catch { return false; }
+}

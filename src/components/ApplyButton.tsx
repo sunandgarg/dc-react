@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { backendClient } from "@/integrations/backend/client";
 import { getPrefillCookie } from "@/components/CookieConsent";
+import { isPdfUrl } from "@/lib/documentViewer";
 import { trackEvent } from "@/lib/analytics";
 
 interface ApplyButtonProps {
@@ -116,6 +117,7 @@ export function ApplyButton({
         subtitle={formSubtitle || "Share your contact details, then choose your course and location."}
         source={`${source}_${collegeSlug}`}
         simple
+        forceShow={isPdfUrl(destination || "") || source === "brochure_download"}
         interestedCollegeSlug={collegeSlug}
         interestedCourseSlug={courseSlug || undefined}
         onSuccess={handleSuccess}

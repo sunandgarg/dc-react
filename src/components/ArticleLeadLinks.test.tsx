@@ -9,6 +9,7 @@ import { RichText } from "./detail/RichText";
 import { stripVisibleArticleSources } from "@/lib/articleContentSanitizer";
 import { saveLeadPhase } from "@/lib/twoStepLead";
 
+vi.mock("@/components/LeadGateDialog", () => ({ LeadGateDialog: ({ onSuccess, forceShow }: { onSuccess: (id?: string) => void; forceShow: boolean }) => <div role="dialog">{forceShow ? "PDF lead form" : "Silent"}<button onClick={() => onSuccess("pdf-lead")}>Complete PDF lead</button></div> }));
 vi.mock("@/lib/twoStepLead", () => ({ saveLeadPhase: vi.fn() }));
 const html = '<p><a href="https://example.org/apply" data-lead-capture="true">Apply here</a> <a href="/exams">Normal link</a></p>';
 const proceed = vi.fn();
@@ -75,6 +76,14 @@ describe("article lead links", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("link", { name: "Apply inside site" }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+  it.each(["/files/paper.PDF?download=1", "https://dekhocampus.com/paper.pdf", "https://media.dekhocampus.com/paper.pdf", "https://example.org/paper.pdf#page=2"])("always gates PDF link %s with the standard form", (url) => {
+    render(<><ArticleLeadLinks articleSlug="site" siteWide onContinue={proceed} /><a href={url}>PDF resource</a></>);
+    fireEvent.click(screen.getByRole("link", { name: "PDF resource" }));
+    expect(screen.getByRole("dialog")).toHaveTextContent("PDF lead form");
+    expect(proceed).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText("Complete PDF lead"));
+    expect(proceed).toHaveBeenCalledWith(new URL(url, window.location.href).href);
   });
   it("opens social destinations without a lead form, including opted-in links", () => {
     const socialUrls = [
