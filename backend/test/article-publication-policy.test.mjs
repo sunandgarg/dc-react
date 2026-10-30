@@ -29,3 +29,21 @@ test('translations need local-language public fields and dedicated translated FA
   await assert.rejects(assertArticlePublication(tx(), { ...hindi, faqs: [{question:'English?',answer:'English.'}] }), /Translate every FAQ/);
   await assertArticlePublication(tx(), { ...hindi, content: '', status: 'Draft', faqs: [] });
 });
+
+test('anonymous article reads expose language links while retaining publication and site filters', async () => {
+  const { handleRequest } = await import('../src/index.mjs');
+  const { prisma } = await import('../src/db.mjs');
+  const originalQuery = prisma.$queryRawUnsafe;
+  let statement, parameters;
+  prisma.$queryRawUnsafe = async (sql, ...params) => { statement = sql; parameters = params; return [{id:'root',language_code:'en',english_article_id:null}]; };
+  try {
+    const response = await handleRequest(new Request('https://aws-origin.dekhocampus.com/v1/rest/articles?status=eq.Draft&is_active=eq.false&or=(id.eq.root,english_article_id.eq.root)', {headers:{'cache-control':'no-store'}}));
+    assert.equal(response.status,200);
+    assert.match(statement,/`language_code`/);
+    assert.match(statement,/`english_article_id`/);
+    assert.ok(parameters.includes('Published'));
+    assert.ok(parameters.includes('dekhocampus'));
+    assert.ok(!parameters.includes('Draft'));
+    assert.equal((await response.json())[0].language_code,'en');
+  } finally { prisma.$queryRawUnsafe = originalQuery; }
+});
