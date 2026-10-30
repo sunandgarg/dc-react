@@ -1,3 +1,4 @@
+import { articleNewsLanguage } from "./article-languages.js";
 import { applyEdgeSeo, applyHomeCriticalCssDelivery, articleEdgeSeo, edgeSeoFor, entityEdgeSeo, newsListingEdgeSeo } from "./edge-seo.js";
 
 const API_ORIGIN = "https://aws-origin.dekhocampus.com";
@@ -261,8 +262,10 @@ async function serveAsset(request, env) {
     let metadata = edgeSeoFor(url);
     if (/^\/news\/?$/.test(url.pathname) && metadata.indexable) {
       const page = Number(url.searchParams.get("page") || 1);
+      const language = articleNewsLanguage(url.searchParams.get("category"), url.searchParams.get("language"));
       const query = new URLSearchParams({
         select: "slug,title,created_at",
+        language_code: language ? `eq.${language}` : "neq.en",
         site_scope: "eq.dekhocampus",
         status: "eq.Published",
         is_active: "eq.true",

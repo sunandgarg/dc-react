@@ -1,4 +1,4 @@
-import { articleAlternates, articleLanguage } from "./article-languages.js";
+import { ARTICLE_LANGUAGES, VERNACULAR_CATEGORY, articleAlternates, articleLanguage } from "./article-languages.js";
 
 const SITE_URL = "https://dekhocampus.com";
 
@@ -124,6 +124,12 @@ function isIndexableQuery(url, pathname) {
   if (pathname === "/news") {
     const keys = [...url.searchParams.keys()];
     const page = url.searchParams.get("page") || "";
+    if (url.searchParams.get("category") === VERNACULAR_CATEGORY) {
+      const language = url.searchParams.get("language");
+      return keys.every((key) => ["category", "language", "page"].includes(key))
+        && (!url.searchParams.has("page") || /^(?:[2-9]|[1-9]\d{1,2})$/.test(page))
+        && (!url.searchParams.has("language") || ARTICLE_LANGUAGES.some(({ code }) => code !== "en" && code === language));
+    }
     return keys.length === 1 && keys[0] === "page" && /^(?:[2-9]|[1-9]\d{1,2})$/.test(page);
   }
   const allowed = LISTING_QUERY_KEYS[pathname];
@@ -154,8 +160,8 @@ export function edgeSeoFor(input) {
 
   const metadata = pathname === "/news"
     ? {
-      title: `Latest Education News${url.searchParams.has("page") ? ` - Page ${url.searchParams.get("page")}` : ""} | DekhoCampus`,
-      description: "Read the latest verified exam, admission, college and education updates for students in India.",
+      title: `${url.searchParams.get("category") === VERNACULAR_CATEGORY ? `Vernacular Education News${url.searchParams.get("language") ? ` · ${articleLanguage(url.searchParams.get("language")).label}` : ""}` : "Latest Education News"}${url.searchParams.has("page") ? ` - Page ${url.searchParams.get("page")}` : ""} | DekhoCampus`,
+      description: url.searchParams.get("category") === VERNACULAR_CATEGORY ? "Read exam, admission and college updates in Hindi, Tamil, Telugu, Kannada, Malayalam, Gujarati, Marathi, Bengali and Punjabi." : "Read the latest verified exam, admission, college and education updates for students in India.",
     }
     : STATIC_METADATA.get(pathname) || (LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname));
   return { ...metadata, canonical, indexable, notFound: !privatePath && !publicPath };
@@ -171,11 +177,19 @@ export function newsListingEdgeSeo(articles, url, page = 1, hasNextPage = false)
     .filter((article) => article?.slug && article?.title)
     .map((article) => `<li><a href="/news/${encodeURIComponent(article.slug)}">${escapeHtml(article.title)}</a></li>`)
     .join("");
-  const previous = page > 1 ? `<a href="${page === 2 ? "/news" : `/news?page=${page - 1}`}">Newer articles</a>` : "";
-  const next = hasNextPage ? `<a href="/news?page=${page + 1}">Older articles</a>` : "";
+  const vernacular = url.searchParams.get("category") === VERNACULAR_CATEGORY;
+  const pageHref = (number) => {
+    const params = new URLSearchParams(url.searchParams);
+    if (number <= 1) params.delete("page"); else params.set("page", String(number));
+    const query = params.toString();
+    return `/news${query ? `?${query}` : ""}`;
+  };
+  const previous = page > 1 ? `<a href="${escapeHtml(pageHref(page - 1))}">Newer articles</a>` : "";
+  const next = hasNextPage ? `<a href="${escapeHtml(pageHref(page + 1))}">Older articles</a>` : "";
+  const languages = vernacular ? `<nav aria-label="Article languages">${ARTICLE_LANGUAGES.filter(({ code }) => code !== "en").map(({ code, label }) => `<a lang="${code}" href="/news?category=Vernacular&amp;language=${code}">${label}</a>`).join(" · ")}</nav>` : "";
   return {
     ...metadata,
-    prerenderHtml: `<main data-dc-edge-prerender style="max-width:1000px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827"><h1>Latest education news${page > 1 ? ` - Page ${page}` : ""}</h1><p>Exam, admission and college updates for students in India.</p><ul>${items}</ul><nav aria-label="News pages">${previous}${previous && next ? " | " : ""}${next}</nav></main>`,
+    prerenderHtml: `<main data-dc-edge-prerender style="max-width:1000px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827"><nav aria-label="News sections"><a href="/news">All News</a> · <a href="/news?category=Vernacular">Vernacular</a></nav><h1>${vernacular ? "Vernacular education news" : "Latest education news"}${page > 1 ? ` - Page ${page}` : ""}</h1><p>${escapeHtml(metadata.description)}</p>${languages}<ul>${items}</ul><nav aria-label="News pages">${previous}${previous && next ? " | " : ""}${next}</nav></main>`,
   };
 }
 

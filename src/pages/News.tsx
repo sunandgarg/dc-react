@@ -8,7 +8,7 @@ import { SEO } from "@/components/SEO";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { Link, useSearchParams, useParams, useNavigate } from "react-router-dom";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { DynamicAdBanner } from "@/components/DynamicAdBanner";
 import { GoogleAd } from "@/components/ads/GoogleAd";
@@ -17,16 +17,17 @@ import { buildExamHref } from "@/lib/entityUrls";
 import { NumberedPagination } from "@/components/NumberedPagination";
 import { normalizePage } from "@/lib/pagination";
 import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
+import { ARTICLE_LANGUAGES, VERNACULAR_CATEGORY, articleNewsLanguage, articleNewsCategories } from "../../public/article-languages.js";
 import { useArticleCategories } from "@/hooks/useArticleCategories";
 
 const categoryIcons = {
   admission: GraduationCap, trending: TrendingUp, "college-reviews": Building2,
   "exam-tips": FileText, scholarships: BookOpen, "career-guidance": Users,
-  "study-abroad": Globe, news: Newspaper,
+  "study-abroad": Globe, news: Newspaper, vernacular: Globe,
 };
 
 const PAGE_SIZE = 12;
-const ARTICLE_COLS = "id,slug,title,description,featured_image,category,tags,created_at,featured_rank";
+const ARTICLE_COLS = "id,slug,title,description,featured_image,category,tags,created_at,featured_rank,language_code";
 
 // Reuse one Intl formatter instead of re-instantiating on every render
 const dateFmtLong = new Intl.DateTimeFormat("en-IN", { month: "long", day: "numeric", year: "numeric" });
@@ -52,6 +53,7 @@ type Article = {
   tags: string[] | null;
   created_at: string;
   featured_rank: number | null;
+  language_code?: string;
 };
 
 // Memoized card components - prevents re-render storms when parent state changes
@@ -78,7 +80,7 @@ const LatestCard = memo(function LatestCard({ a, eager, live }: { a: Article; ea
         </div>
         <div className="min-w-0 flex-1 py-0.5">
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            {a.category && <Badge variant="secondary" className="text-xs">{a.category}</Badge>}
+            {a.category && <Badge variant="secondary" className="text-xs">{a.language_code && a.language_code !== "en" ? VERNACULAR_CATEGORY : a.category}</Badge>}
             {live && <LiveNewsBadge />}
             <span className="text-xs text-muted-foreground flex items-center gap-1">
               <Clock className="w-3 h-3" />{dateFmtShort.format(new Date(a.created_at))}
@@ -183,7 +185,7 @@ export default function News() {
   const { data: articleCategories } = useArticleCategories();
   const categories = [
     { label: "All News", icon: Newspaper, value: "" },
-    ...(Array.isArray(articleCategories) ? articleCategories : []).map((category) => ({
+    ...articleNewsCategories(Array.isArray(articleCategories) ? articleCategories : []).map((category) => ({
       label: category.name,
       icon: categoryIcons[category.slug as keyof typeof categoryIcons] || TagIcon,
       value: category.name,
@@ -205,6 +207,8 @@ export default function News() {
 
   const tagParam = (tagFromPath || queryTag || "").toLowerCase().trim();
   const [activeCategory, setActiveCategory] = useState(() => searchParams.get("category") || "");
+  const vernacular = activeCategory === VERNACULAR_CATEGORY;
+  const selectedLanguage = articleNewsLanguage(activeCategory, searchParams.get("language") || "");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounced(searchQuery.trim(), 350);
   const page = normalizePage(searchParams.get("page"));
@@ -242,6 +246,7 @@ export default function News() {
     if (value) next.set("category", value);
     else next.delete("category");
     next.delete("page");
+    next.delete("language");
     setSearchParams(next);
   };
 
@@ -257,7 +262,7 @@ export default function News() {
 
   // Pinned articles - separate, long-cached query. Doesn't depend on filters/page/search.
   const { data: pinnedData = [] } = useQuery<Article[]>({
-    queryKey: ["news-pinned"],
+    queryKey: ["news-pinned", "en"],
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     queryFn: async () => {
@@ -267,6 +272,7 @@ export default function News() {
         .eq("site_scope", "dekhocampus")
         .eq("status", "Published")
         .eq("is_active", true)
+        .eq("language_code", "en")
         .not("featured_rank", "is", null)
         .order("featured_rank", { ascending: true })
         .limit(5);
@@ -283,8 +289,11 @@ export default function News() {
 
   // Latest list uses an exact count so numbered pages remain stable and linkable.
   const { data: latestData, isLoading, isFetching } = useQuery({
-    queryKey: ["news-latest", { tagParam, activeCategory, debouncedSearch, page, excl: hasFilters ? [] : pinnedIds }],
-    placeholderData: keepPreviousData,
+    queryKey: ["news-latest", { tagParam, activeCategory, selectedLanguage, debouncedSearch, page, excl: hasFilters ? [] : pinnedIds }],
+    placeholderData: (previous, query) => {
+      const previousFilters = query?.queryKey[1] as { activeCategory?: string; selectedLanguage?: string | null } | undefined;
+      return previousFilters?.activeCategory === activeCategory && previousFilters?.selectedLanguage === selectedLanguage ? previous : undefined;
+    },
     staleTime: 60 * 1000,
     queryFn: async () => {
       let q = backendClient
@@ -296,7 +305,8 @@ export default function News() {
         .order("created_at", { ascending: false });
 
       if (tagParam) q = q.contains("tags", [tagParam]);
-      if (activeCategory) q = q.eq("category", activeCategory);
+      q = selectedLanguage ? q.eq("language_code", selectedLanguage) : q.neq("language_code", "en");
+      if (activeCategory && !vernacular) q = q.eq("category", activeCategory);
       if (debouncedSearch) q = q.or(`title.ilike.%${debouncedSearch}%,description.ilike.%${debouncedSearch}%`);
       // Exclude pinned IDs from the "latest" stream only on the unfiltered home view,
       // so pinned items don't appear twice. With filters active, show everything matching.
@@ -348,7 +358,7 @@ export default function News() {
 
   const latestSidebarArticles = useMemo(() => {
     const seen = new Set<string>();
-    return [...pinned, ...latest]
+    return [...(vernacular ? [] : pinned), ...latest]
       .filter((item) => {
         if (seen.has(item.id)) return false;
         seen.add(item.id);
@@ -361,7 +371,7 @@ export default function News() {
         meta: `${item.category || "Education"} · ${dateFmtShort.format(new Date(item.created_at))}`,
         isLive: liveArticleIds.has(item.id),
       }));
-  }, [latest, pinned, liveArticleIds]);
+  }, [latest, pinned, liveArticleIds, vernacular]);
 
   const admissionAlerts = useMemo(() => {
     const terms = /admission|application|counselling|counseling|seat allotment|registration|merit list/i;
@@ -395,19 +405,21 @@ export default function News() {
     ];
   }, [importantExams]);
 
-  const pageTitle = tagParam
+  const pageTitle = vernacular
+    ? `Vernacular Education News${selectedLanguage ? ` · ${ARTICLE_LANGUAGES.find(({ code }) => code === selectedLanguage)?.label}` : ""} | DekhoCampus`
+    : tagParam
     ? `${tagParam.replace(/-/g, " ")} News & Updates | DekhoCampus`
     : "Education News - Admissions, Exams & Career Updates | DekhoCampus";
   const canonicalPath = newsPageHref(page);
 
   const showSkeleton = isLoading && latest.length === 0;
-  const empty = !isLoading && latest.length === 0 && pinned.length === 0;
+  const empty = !isLoading && latest.length === 0 && (!showPinnedHero || pinned.length === 0);
 
   return (
     <div className="min-h-screen bg-background">
       <SEO
         title={page > 1 ? `${pageTitle} - Page ${page}` : pageTitle}
-        description={tagParam ? `Latest articles tagged ${tagParam} - admissions, tips, results, and updates.` : "Daily updates on admissions, entrance exams, results, scholarships and career opportunities."}
+        description={vernacular ? "Read education, admission and exam updates in Hindi, Tamil, Telugu, Kannada, Malayalam, Gujarati, Marathi, Bengali and Punjabi." : tagParam ? `Latest articles tagged ${tagParam} - admissions, tips, results, and updates.` : "Daily updates on admissions, entrance exams, results, scholarships and career opportunities."}
         canonical={canonicalPath}
       />
       {/* Preload the LCP image so the hero paints fast */}
@@ -418,10 +430,10 @@ export default function News() {
       <main className="container py-8 md:py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-5xl font-extrabold text-black dark:text-white">
-            {tagParam ? `${tagParam.replace(/-/g, " ")}` : "DekhoCampus News"}
+            {vernacular ? "Vernacular Education News" : tagParam ? `${tagParam.replace(/-/g, " ")}` : "DekhoCampus News"}
           </h1>
           <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-            {tagParam ? `Showing articles tagged with this topic.` : "Updates on the Latest Career Opportunities, Online Education, Online Universities, & more."}
+            {vernacular ? "Choose your language for exam, admission and college updates." : tagParam ? `Showing articles tagged with this topic.` : "Updates on the Latest Career Opportunities, Online Education, Online Universities, & more."}
           </p>
         </div>
 
@@ -440,6 +452,7 @@ export default function News() {
         <div className="flex gap-3 overflow-x-auto pb-4 mb-6 scrollbar-hide">
           {categories.map((cat) => (
             <button key={cat.label} onClick={() => changeCategory(cat.value)}
+              aria-pressed={activeCategory === cat.value}
               className={`flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl border min-w-[90px] transition-all text-center ${
                 activeCategory === cat.value ? "bg-primary/10 border-primary/30 text-primary" : "bg-card border-border hover:bg-muted text-muted-foreground"
               }`}>
@@ -448,6 +461,17 @@ export default function News() {
             </button>
           ))}
         </div>
+
+        {vernacular && <nav aria-label="Article languages" className="mb-6 flex flex-wrap gap-2">
+          {[{ code: "", label: "All languages" }, ...ARTICLE_LANGUAGES.filter(({ code }) => code !== "en")].map(({ code, label }) => {
+            const next = new URLSearchParams(searchParams);
+            next.delete("page");
+            if (code) next.set("language", code); else next.delete("language");
+            return <Link key={code} to={`/news?${next}`} lang={code || undefined}
+              aria-current={(selectedLanguage || "") === code ? "page" : undefined}
+              className="rounded-full border px-3 py-2 text-sm text-primary hover:bg-muted aria-[current=page]:bg-primary/10">{label}</Link>;
+          })}
+        </nav>}
 
         <div className="relative mb-8 max-w-2xl mx-auto">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

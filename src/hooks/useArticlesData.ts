@@ -43,7 +43,7 @@ export type DbArticle = {
 
 export function useDbArticles(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   return useQuery({
-    queryKey: ["db-articles", siteScope],
+    queryKey: ["db-articles", siteScope, "en"],
     queryFn: async () => {
       const { data, error } = await backendClient
         .from("articles")
@@ -51,6 +51,7 @@ export function useDbArticles(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
         .eq("site_scope", siteScope)
         .eq("is_active", true)
         .eq("status", "Published")
+        .eq("language_code", "en")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as DbArticle[];
@@ -68,7 +69,7 @@ export type ArticleSidebarSummary = Pick<
 export function useArticleSidebarArticles(limit = 36, siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
   const safeLimit = Math.min(60, Math.max(10, Math.floor(limit)));
   return useQuery({
-    queryKey: ["article-sidebar-feed", siteScope, safeLimit],
+    queryKey: ["article-sidebar-feed", siteScope, safeLimit, "en"],
     queryFn: async () => {
       const { data, error } = await backendClient
         .from("articles")
@@ -76,6 +77,7 @@ export function useArticleSidebarArticles(limit = 36, siteScope: SiteScope = DEF
         .eq("site_scope", siteScope)
         .eq("is_active", true)
         .eq("status", "Published")
+        .eq("language_code", "en")
         .order("created_at", { ascending: false })
         .limit(safeLimit);
       if (error) throw error;
@@ -100,7 +102,7 @@ type EntityNewsArticle = Pick<DbArticle, "id" | "title" | "slug" | "description"
 export async function fetchEntityNewsArticles({ entityName, entityType, entitySlug, category }: EntityNewsOptions): Promise<EntityNewsArticle[]> {
   const feed = () => backendClient.from("articles")
     .select("id,title,slug,description,vertical,category,author,featured_image,created_at")
-    .eq("site_scope", DEFAULT_SITE_SCOPE).eq("is_active", true).eq("status", "Published")
+    .eq("site_scope", DEFAULT_SITE_SCOPE).eq("is_active", true).eq("status", "Published").eq("language_code", "en")
     .order("created_at", { ascending: false }).limit(3);
 
   if (entitySlug) {

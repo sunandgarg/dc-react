@@ -1,5 +1,5 @@
 import { useArticleLanguages } from "@/hooks/useArticleLanguages";
-import { articleAlternates, articleLanguage } from "../../public/article-languages.js";
+import { articleAlternates, articleLanguage, articleNewsCategories, VERNACULAR_CATEGORY } from "../../public/article-languages.js";
 import { useParams, Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { Calendar, Tag, ArrowUp, Share2, Bookmark, ChevronDown, Eye, Clock, Link2, Play, Pause, List, Send, ArrowRight } from "lucide-react";
@@ -544,10 +544,10 @@ export default function ArticleDetail() {
       <div className="bg-card border-b border-border">
         <div className="container max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex gap-2 overflow-x-auto py-3 scrollbar-hide">
-            {[{ name: "All News" }, ...(Array.isArray(articleCategories) ? articleCategories : [])].map((c) => (
+            {[{ name: "All News" }, ...articleNewsCategories(Array.isArray(articleCategories) ? articleCategories : [])].map((c) => (
               <Link key={c.name} to={c.name !== "All News" ? `/news?category=${encodeURIComponent(c.name)}` : "/news"}
                 className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${
-                  article?.category === c.name
+                  (language.code !== "en" ? VERNACULAR_CATEGORY : article?.category) === c.name
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-primary"
                 }`}>

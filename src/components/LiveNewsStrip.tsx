@@ -26,6 +26,7 @@ export function LiveNewsStrip() {
         .eq("site_scope", "dekhocampus")
         .eq("status", "Published")
         .eq("is_active", true)
+        .eq("language_code", "en")
         .order("created_at", { ascending: false })
         .limit(20);
       setItems(data || []);

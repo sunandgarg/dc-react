@@ -28,6 +28,23 @@ describe("Cloudflare news archive rendering", () => {
     expect(apiUrl.searchParams.get("site_scope")).toBe("eq.dekhocampus");
     expect(apiUrl.searchParams.get("status")).toBe("eq.Published");
     expect(apiUrl.searchParams.get("offset")).toBe("0");
+    expect(apiUrl.searchParams.get("language_code")).toBe("eq.en");
+  });
+
+  it.each([["", "neq.en"], ["&language=ta", "eq.ta"]])("serves the independent vernacular archive %s with persistent pagination", async (language, filter) => {
+    const api = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify(
+      Array.from({ length: 13 }, (_, i) => ({ title: `தமிழ் செய்தி ${i}`, slug: `translated-${i}` })),
+    ), { headers: { "content-type": "application/json" } }));
+    const response = await worker.fetch(new Request(`https://dekhocampus.com/news?category=Vernacular${language}&page=2`), env, context);
+    const html = await response.text();
+    expect(response.status).toBe(200);
+    expect(html).toContain("Vernacular education news");
+    expect(html).toContain('content="index, follow');
+    expect(html).toContain(`href="/news?category=Vernacular${language.replace("&", "&amp;")}&amp;page=3"`);
+    expect(html).toContain('href="/news?category=Vernacular&amp;language=ta"');
+    const apiUrl = new URL(String(api.mock.calls[0][0]));
+    expect(apiUrl.searchParams.get("language_code")).toBe(filter);
+    expect(apiUrl.searchParams.get("offset")).toBe("12");
   });
 
   it("paginates the initial HTML and returns 404 beyond the end of the archive", async () => {

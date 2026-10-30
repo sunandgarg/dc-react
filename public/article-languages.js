@@ -11,6 +11,14 @@ export const ARTICLE_LANGUAGES = [
   { code: "bn", label: "বাংলা", faq: "প্রায়শই জিজ্ঞাসিত প্রশ্ন", script: "Bengali" },
   { code: "pa", label: "ਪੰਜਾਬੀ", faq: "ਅਕਸਰ ਪੁੱਛੇ ਜਾਣ ਵਾਲੇ ਸਵਾਲ", script: "Gurmukhi" },
 ];
+export const VERNACULAR_CATEGORY = "Vernacular";
+export function articleNewsLanguage(category = "", language = "") {
+  if (category !== VERNACULAR_CATEGORY) return "en";
+  return ARTICLE_LANGUAGES.some(({ code }) => code !== "en" && code === language) ? language : null;
+}
+export function articleNewsCategories(categories = []) {
+  return [{ slug: "vernacular", name: VERNACULAR_CATEGORY }, ...categories.filter(({ name }) => name !== VERNACULAR_CATEGORY)];
+}
 export function articleLanguage(code) {
   return ARTICLE_LANGUAGES.find((language) => language.code === code) || ARTICLE_LANGUAGES[0];
 }

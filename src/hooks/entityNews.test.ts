@@ -16,6 +16,7 @@ describe("bounded entity news feeds", () => {
     expect(url.searchParams.get("id")).toBe("in.(historic-linked)");
     expect(url.searchParams.get("limit")).toBe("3");
     expect(url.searchParams.get("status")).toBe("eq.Published");
+    expect(url.searchParams.get("language_code")).toBe("eq.en");
     expect(url.searchParams.get("site_scope")).toBe("eq.dekhocampus");
     expect(url.searchParams.get("select")?.split(",")).not.toContain("content");
   });
