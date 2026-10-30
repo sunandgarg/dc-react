@@ -45,6 +45,7 @@ import { NumberedPagination } from "@/components/NumberedPagination";
 import { ArticleScorePanel } from "@/components/admin/ArticleScorePanel";
 import { articleCreatedSince, sortArticleAuthors, type ArticleAuthorOption } from "@/lib/adminArticleFilters";
 import { useArticleCategories } from "@/hooks/useArticleCategories";
+import { ArticlePublicationDashboard } from "@/components/admin/ArticlePublicationDashboard";
 
 const STATUSES = ["Draft", "Published"];
 const VERTICALS = ["Engineering", "Medical", "Management", "Law", "Design", "Science", "General"];
@@ -280,6 +281,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
   return (
     <AdminLayout title={isSarkari ? (studioMode ? "Sarkari Job AI Studio" : "Sarkari Articles") : "Articles Manager"}>
+      {isAdmin && !studioMode && <ArticlePublicationDashboard siteScope={siteScope} authors={filterAuthors} />}
       {isSarkari && (
         <div className="mb-4 rounded-2xl border border-orange-200 bg-orange-50/80 p-4 text-sm text-orange-950">
           <p className="font-bold">Sarkari workspace</p>
