@@ -1,3 +1,5 @@
+import { useArticleLanguages } from "@/hooks/useArticleLanguages";
+import { articleAlternates, articleLanguage } from "../../public/article-languages.js";
 import { useParams, Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { Calendar, Tag, ArrowUp, Share2, Bookmark, ChevronDown, Eye, Clock, Link2, Play, Pause, List, Send, ArrowRight } from "lucide-react";
@@ -41,7 +43,7 @@ const FAQSection = lazyRetry(() => import("@/components/FAQSection").then(m => (
 const ArticleLinkedResources = lazyRetry(() => import("@/components/detail/ArticleLinkedResources").then(m => ({ default: m.ArticleLinkedResources })), "ArticleLinkedResources");
 
 function slugifyHeading(s: string) {
-  return s.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-").slice(0, 80);
+  return s.toLowerCase().replace(/[^\p{L}\p{M}\p{N}\s-]/gu, "").trim().replace(/\s+/g, "-").slice(0, 80);
 }
 function normalizeSlug(s: string) {
   if (/^[A-Za-z0-9-]+$/.test(s)) return s;
@@ -146,6 +148,9 @@ export default function ArticleDetail() {
   const needsRedirect = !!(rawSlug && cleanSlug && cleanSlug !== rawSlug && cleanSlug !== decoded);
 
   const { data: dbArticle, isLoading: dbLoading, isError: articleError, isFetching: articleFetching, refetch: refetchArticle } = useDbArticle(cleanSlug || rawSlug);
+  const { data: versions } = useArticleLanguages(dbArticle);
+  const languageVersions = versions || [];
+  const language = articleLanguage(dbArticle?.language_code);
   const { data: resolvedAuthor } = useQuery({
     queryKey: ["article-author", dbArticle?.author_id],
     enabled: !!dbArticle?.author_id,
@@ -203,6 +208,8 @@ export default function ArticleDetail() {
     canonical: article ? `/news/${article.slug}` : undefined,
     ogImage: article?.image,
     ogType: "article",
+    language: language.code,
+    alternates: articleAlternates(languageVersions),
     jsonLd: article && articleCanonical ? {
       "@context": "https://schema.org",
       "@graph": [
@@ -240,6 +247,7 @@ export default function ArticleDetail() {
         },
         {
           "@type": "NewsArticle",
+          inLanguage: language.code,
           "@id": `${articleCanonical}#article`,
           headline: article.title,
           description: article.excerpt || undefined,
@@ -494,6 +502,7 @@ export default function ArticleDetail() {
     }
     const text = `${article.title}. ${(article.excerpt || "").slice(0, 600)}`;
     const u = new SpeechSynthesisUtterance(text);
+    u.lang = `${language.code}-IN`;
     u.onend = () => setIsListening(false);
     u.onerror = () => setIsListening(false);
     window.speechSynthesis.speak(u);
@@ -613,6 +622,11 @@ export default function ArticleDetail() {
               <h1 className="w-full text-[22px] sm:text-[32px] lg:text-[38px] font-extrabold text-foreground leading-[1.1] break-words">
                 {article.title}
               </h1>
+              {languageVersions.length > 1 && <nav aria-label="Article languages" className="flex flex-wrap gap-2 my-4">
+                {languageVersions.map((version) => <Link key={version.id} to={`/news/${version.slug}`} lang={version.language_code} hrefLang={version.language_code}
+                  aria-current={version.id === dbArticle?.id ? "page" : undefined}
+                  className="rounded-full border px-3 py-1.5 text-sm text-primary hover:bg-muted aria-[current=page]:bg-muted">{articleLanguage(version.language_code).label}</Link>)}
+              </nav>}
 
               {article.excerpt && (
                 <p className="mt-4 max-w-4xl text-[16px] sm:text-[19px] leading-[1.8] text-slate-600">
@@ -754,12 +768,7 @@ export default function ArticleDetail() {
               <FAQSection
                 page="articles"
                 itemSlug={cleanSlug}
-                title="Frequently Asked Questions"
-                fallback={[
-                  { question: `What is this article "${article.title}" about?`, answer: article.excerpt || `Read this guide on DekhoCampus to understand ${article.title} in detail with the latest updates, eligibility, dates and expert tips.` },
-                  { question: `Who should read this article?`, answer: `Students, parents and aspirants planning their next academic step in ${article.category || "education"} will find this article useful.` },
-                  { question: `How can I get personalised guidance?`, answer: `Click any "Get Free Counselling" button on this page. A DekhoCampus expert will reach out within 24 hours.` },
-                ]}
+                title={language.faq}
               />
             </div>
           </DeferUntilVisible>

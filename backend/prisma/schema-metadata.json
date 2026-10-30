@@ -2468,6 +2468,25 @@
         "format": "text",
         "default": "never_checked",
         "foreignKey": null
+      },
+      "language_code": {
+        "type": "String",
+        "nullable": false,
+        "primaryKey": false,
+        "format": "text",
+        "default": "en",
+        "foreignKey": null
+      },
+      "english_article_id": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "uuid",
+        "default": null,
+        "foreignKey": [
+          "articles",
+          "id"
+        ]
       }
     },
     "ignored": false

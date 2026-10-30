@@ -30,8 +30,10 @@ import { AuthorPicker } from "@/components/admin/AuthorPicker";
 import { BulkEditToggle } from "@/components/admin/BulkEditToggle";
 import { FeaturedRankPicker } from "@/components/admin/FeaturedRankPicker";
 import { FeaturedRankPanel } from "@/components/admin/FeaturedRankPanel";
+import { ArticleLanguageEditor } from "@/components/admin/ArticleLanguageEditor";
+import { hasBodyFaqs } from "../../public/article-languages.js";
 import { ArticleFaqEditor } from "@/components/admin/ArticleFaqEditor";
-import { normalizeArticleFaqDrafts, validateArticleFaqs, type ArticleFaqDraft } from "@/lib/articleFaqs";
+import { extractBodyFaqs, normalizeArticleFaqDrafts, validateArticleFaqs, type ArticleFaqDraft } from "@/lib/articleFaqs";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { Link } from "react-router-dom";
@@ -54,7 +56,7 @@ type ArticleDraft = Partial<DbArticle> & { faqs?: ArticleFaqDraft[]; entity_link
 const emptyArticle: ArticleDraft = {
   slug: "", title: "", description: "", content: "", vertical: "", category: "", author: "",
   featured_image: "", source_logo: "", views: 0, tags: [], meta_title: "", meta_description: "", meta_keywords: "",
-  is_active: false, status: "Draft", faqs: [], entity_links: [],
+  is_active: false, status: "Draft", language_code: "en", english_article_id: null, faqs: [], entity_links: [],
 };
 
 const normalizeAdminArticleSearch = (value: unknown) =>
@@ -62,7 +64,7 @@ const normalizeAdminArticleSearch = (value: unknown) =>
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/<[^>]*>/g, " ")
-    .replace(/[^a-zA-Z0-9\s-]/g, " ")
+    .replace(/[^\p{L}\p{M}\p{N}\s-]/gu, " ")
     .replace(/\s+/g, " ")
     .trim()
     .toLowerCase();
@@ -610,8 +612,20 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                 ))}
               </AdminFormSection>
 
+              <AdminFormSection title="Language versions" defaultOpen={true}>
+                <ArticleLanguageEditor article={editing} canCreate={canCreate} onOpen={(version, isNew) => setEditing(isNew ? { ...version, faqs: [], entity_links: [] } : { ...version })} />
+              </AdminFormSection>
+
               {/* ── FAQs ── */}
-              <AdminFormSection title="FAQs (shown on article page)" icon={<HelpCircle className="w-4 h-4 text-primary" />} defaultOpen={false}>
+              <AdminFormSection title="FAQs (shown on article page)" icon={<HelpCircle className="w-4 h-4 text-primary" />} defaultOpen={true}>
+                <p className="text-xs text-muted-foreground">Write article-specific questions and answers here. Keep FAQs out of the main content.</p>
+                {hasBodyFaqs(editing.content) && <div role="alert" className="text-sm space-y-2">
+                  <p>This article has FAQs inside its main content. Move them here before publishing.</p>
+                  <Button type="button" variant="outline" disabled={faqsPending || saveArticle.isPending} onClick={() => {
+                    try { const moved = extractBodyFaqs(editing.content || "", editorFaqs || []); setEditing((current) => current ? { ...current, ...moved } : current); toast.success("FAQs moved into dedicated fields. Save the article to apply."); }
+                    catch (error) { toast.error(error instanceof Error ? error.message : "Move FAQs manually."); }
+                  }}>Move body FAQs to dedicated FAQs</Button>
+                </div>}
                 {faqsPending && (faqQuery.isError ? <div role="alert" className="text-xs text-destructive">
                   FAQs could not be loaded. Your existing FAQs have not been changed.
                   <Button type="button" size="sm" variant="outline" onClick={() => void faqQuery.refetch()}>Retry loading FAQs</Button>

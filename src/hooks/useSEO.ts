@@ -10,6 +10,8 @@ type SEOOptions = {
   ogImage?: string;
   ogType?: string;
   jsonLd?: object | object[];
+  language?: string;
+  alternates?: { language: string; href: string }[];
 };
 
 export function useSEO({
@@ -21,10 +23,22 @@ export function useSEO({
   ogImage,
   ogType = "website",
   jsonLd,
+  language = "en",
+  alternates = [],
 }: SEOOptions) {
+  const alternatesKey = JSON.stringify(alternates);
   const jsonLdKey = JSON.stringify(jsonLd ?? null);
 
   useEffect(() => {
+    document.documentElement.lang = language;
+    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach((link) => link.remove());
+    for (const alternate of JSON.parse(alternatesKey)) {
+      const link = document.createElement("link");
+      link.rel = "alternate";
+      link.hreflang = alternate.language;
+      link.href = absoluteCanonical(alternate.href);
+      document.head.appendChild(link);
+    }
     if (title) {
       document.title = exactTitle || title.includes("DekhoCampus") ? title : `${title} | DekhoCampus`;
     }
@@ -92,6 +106,8 @@ export function useSEO({
 
     return () => {
       document.title = "DekhoCampus - Find Your Dream College";
+      document.documentElement.lang = "en";
+      document.querySelectorAll('link[rel="alternate"][hreflang]').forEach((link) => link.remove());
     };
-  }, [title, exactTitle, description, keywords, canonical, ogImage, ogType, jsonLdKey]);
+  }, [title, exactTitle, description, keywords, canonical, ogImage, ogType, jsonLdKey, language, alternatesKey]);
 }

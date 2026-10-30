@@ -293,6 +293,15 @@ async function serveAsset(request, env) {
           console.error(JSON.stringify({ event: "article_author_lookup_failed", message: error instanceof Error ? error.message : String(error) }));
         }
       }
+      if (article?.language_code) {
+        const rootId = article.english_article_id || article.id;
+        try {
+          article.language_versions = await fetchPublicRows("articles", new URLSearchParams({
+            select: "id,title,slug,language_code", site_scope: "eq.dekhocampus", status: "eq.Published", is_active: "eq.true",
+            or: `(id.eq.${rootId},english_article_id.eq.${rootId})`, limit: "10",
+          }), 30);
+        } catch (error) { console.error("article_language_lookup_failed", String(error)); }
+      }
       metadata = article
         ? articleEdgeSeo(article, url)
         : { ...metadata, indexable: false, notFound: true };

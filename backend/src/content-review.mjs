@@ -1,3 +1,4 @@
+import { assertArticlePublication } from "./article-publication-policy.mjs";
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata } from "./db.mjs";
 import { assertArticleTopicsAvailable, withArticleWriteLock, blogStudioContentVersion, prepareStudioArticlePublication, commitStudioArticlePublication } from "./blog-ai.mjs";
@@ -284,6 +285,7 @@ export async function handleContentReviews(request, reviewerId) {
       if (status === "approved") {
         if (review.entity_type === "articles") {
           const state = await articleReviewState(tx, review);
+          await assertArticlePublication(tx, state.after, state.before);
           await commitStudioArticlePublication(tx, state.before, state.after, preparedStudioReview);
           const after = parseReviewJson(review.after_json, {});
           const before = parseReviewJson(review.before_json, null);
@@ -298,7 +300,7 @@ export async function handleContentReviews(request, reviewerId) {
             );
             if (current[0]?.id) excludeIds.push(String(current[0].id));
           }
-          await assertArticleTopicsAvailable([{ ...after, site_scope: siteScope }], {
+          if (!state.after.english_article_id) await assertArticleTopicsAvailable([{ ...after, site_scope: siteScope }], {
             client: tx,
             excludeIds,
             siteScope,

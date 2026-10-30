@@ -375,6 +375,8 @@ model article_links {
 }
 
 model articles {
+  language_code        String    @default("en") @db.VarChar(5)
+  english_article_id   String?   @db.Char(36)
   id                   String    @id @default(uuid()) @db.Char(36)
   site_scope           String    @default("dekhocampus") @db.VarChar(32)
   status               String    @db.LongText
@@ -408,6 +410,7 @@ model articles {
   data_last_checked_at DateTime? @db.DateTime(3)
   data_clean_state     String    @db.LongText
 
+  @@unique([site_scope, english_article_id, language_code], map: "uq_articles_site_scope_english_article_id_language_code")
   @@map("articles")
 }
 

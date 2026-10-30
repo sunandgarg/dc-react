@@ -1,3 +1,5 @@
+import { isFaqHeading } from "../../public/article-languages.js";
+
 export type ArticleFaqDraft = {
   id?: string;
   question: string;
@@ -23,4 +25,40 @@ export function validateArticleFaqs(faqs: ArticleFaqDraft[] | undefined) {
     if (faq.question.length > 2000 || faq.answer.length > 20000) return `FAQ ${index + 1} is too long.`;
   }
   return null;
+}
+
+export function extractBodyFaqs(content: string, existing: ArticleFaqDraft[] = []) {
+  const doc = new DOMParser().parseFromString(content, "text/html");
+  const heading = [...doc.body.querySelectorAll("h2,h3")].find((node) => isFaqHeading(node.textContent));
+  if (!heading || heading.parentElement !== doc.body) throw new Error("Move this FAQ section manually into the dedicated fields; its structure cannot be converted safely.");
+  const level = Number(heading.tagName.slice(1));
+  const nodes: Element[] = [heading];
+  const extracted: ArticleFaqDraft[] = [];
+  let current: ArticleFaqDraft | undefined;
+  for (let node = heading.nextElementSibling; node; node = node.nextElementSibling) {
+    const nextLevel = /^H[1-6]$/.test(node.tagName) ? Number(node.tagName.slice(1)) : 0;
+    if (nextLevel && nextLevel <= level) break;
+    if (nextLevel) {
+      current = { question: (node.textContent || "").trim(), answer: "", is_active: true };
+      extracted.push(current);
+    } else {
+      if (!current || !["P", "UL", "OL"].includes(node.tagName) || node.querySelector("img,iframe,table,video")) throw new Error("This FAQ block includes other content. Move it manually to preserve all details.");
+      const copy = node.cloneNode(true) as Element;
+      copy.querySelectorAll("a[href]").forEach((link) => { link.textContent = `${link.textContent} (${link.getAttribute("href")})`; });
+      copy.querySelectorAll("li,br").forEach((element) => element.append("\n"));
+      current.answer += `${current.answer ? "\n\n" : ""}${(copy.textContent || "").trim()}`;
+    }
+    nodes.push(node);
+  }
+  if (!extracted.length || extracted.some(({ question, answer }) => !question || !answer)) throw new Error("Each body FAQ needs a question heading and an answer before it can be moved.");
+  const faqs = [...existing];
+  for (const faq of extracted) {
+    const match = existing.find(({ question }) => question.trim().toLocaleLowerCase() === faq.question.toLocaleLowerCase());
+    if (match && match.answer.trim() !== faq.answer.trim()) throw new Error("A matching FAQ has a different saved answer. Resolve it manually before moving this section.");
+    if (!match) faqs.push(faq);
+  }
+  const error = validateArticleFaqs(faqs);
+  if (error) throw new Error(error);
+  nodes.forEach((node) => node.remove());
+  return { content: doc.body.innerHTML, faqs: faqs.map((faq, index) => ({ ...faq, display_order: index })) };
 }

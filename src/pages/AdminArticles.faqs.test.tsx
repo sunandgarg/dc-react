@@ -38,7 +38,7 @@ function mount() {
   clientList.push(client);
   return render(<QueryClientProvider client={client}><MemoryRouter><AdminArticles /></MemoryRouter></QueryClientProvider>);
 }
-function expandFaqs() { fireEvent.click(screen.getByRole("button", { name: "FAQs (shown on article page)" })); }
+function expandFaqs() { if (!screen.queryByRole("button", { name: "Add FAQ" })) fireEvent.click(screen.getByRole("button", { name: "FAQs (shown on article page)" })); }
 function addFaq() {
   fireEvent.click(screen.getByRole("button", { name: "Add FAQ" }));
   fireEvent.change(screen.getByRole("textbox", { name: "FAQ 1 question" }), { target: { value: "When do admissions open?" } });
@@ -51,7 +51,7 @@ beforeEach(() => {
     let write = false;
     const response = () => Promise.resolve(write ? { data: { id: "new-article", slug: draft.slug }, error: null, status: mocks.role === "content_head" ? 201 : 202 }
       : { data: table === "faqs" ? mocks.faqData : [], error: table === "faqs" ? mocks.faqError : null });
-    const chain = { select: () => chain, eq: () => chain, order: () => chain, limit: () => chain,
+    const chain = { select: () => chain, eq: () => chain, or: () => chain, order: () => chain, limit: () => chain,
       insert: (payload: unknown) => { write = true; mocks.writes.push(payload); return chain; },
       update: (payload: unknown) => { write = true; mocks.writes.push(payload); return chain; },
       maybeSingle: response, then: (resolve: (data: unknown) => unknown, reject: (error: unknown) => unknown) => response().then(resolve, reject) };

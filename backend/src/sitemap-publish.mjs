@@ -273,7 +273,7 @@ function newsSitemapEntries(articles, now = Date.now()) {
       const publishedAt = new Date(article.created_at || article.updated_at || 0);
       const title = String(article.title || "").trim();
       if (!article.slug || !title || Number.isNaN(publishedAt.getTime()) || publishedAt.getTime() < cutoff) return [];
-      return [{ path: `/news/${article.slug}`, title, publicationDate: publishedAt.toISOString() }];
+      return [{ path: `/news/${article.slug}`, title, language: article.language_code || "en", publicationDate: publishedAt.toISOString() }];
     })
     .sort((left, right) => right.publicationDate.localeCompare(left.publicationDate))
     .slice(0, NEWS_SITEMAP_LIMIT);
@@ -289,7 +289,7 @@ function newsSitemapXml(entries) {
       "    <news:news>",
       "      <news:publication>",
       "        <news:name>DekhoCampus</news:name>",
-      "        <news:language>en</news:language>",
+      `        <news:language>${escapeXml(entry.language || "en")}</news:language>`,
       "      </news:publication>",
       `      <news:publication_date>${escapeXml(entry.publicationDate)}</news:publication_date>`,
       `      <news:title>${escapeXml(entry.title)}</news:title>`,
@@ -482,7 +482,7 @@ export async function readPublishedSitemap(request, options = {}) {
         },
         orderBy: newsOnly ? [{ created_at: "desc" }, { id: "desc" }] : [{ updated_at: "desc" }, { id: "desc" }],
         take: newsOnly ? NEWS_SITEMAP_LIMIT : RECENT_ARTICLE_LIMIT,
-        select: { slug: true, title: true, created_at: true, updated_at: true },
+        select: { slug: true, title: true, language_code: true, created_at: true, updated_at: true },
       });
       const xml = newsOnly
         ? newsSitemapXml(newsSitemapEntries(articles, now))
@@ -757,7 +757,7 @@ async function dynamicEntries(prismaClient, now = Date.now()) {
     () => rows(prismaClient, "colleges", ["slug", "short_id", "updated_at", "name", "state", "city", "type", "category", "fees", "tags", "approvals", "naac_grade", "image", "logo", "carousel_images", "gallery_images"]),
     () => rows(prismaClient, "courses", ["slug", "short_id", "updated_at", "name", "full_name", "category", "mode", "duration", "specializations", "image"]),
     () => rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "categories", "image", "logo"]),
-    () => rows(prismaClient, "articles", ["slug", "title", "created_at", "updated_at", "tags", "featured_image", "content"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
+    () => rows(prismaClient, "articles", ["slug", "title", "language_code", "created_at", "updated_at", "tags", "featured_image", "content"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
     () => rows(prismaClient, "career_profiles", ["slug", "updated_at", "image"]),
     () => rows(prismaClient, "scholarships", ["slug", "updated_at", "image"]),
     () => rows(prismaClient, "landing_pages", ["slug", "updated_at", "logo_url", "og_image"]),

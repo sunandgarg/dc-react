@@ -37,6 +37,7 @@ const quote = (identifier) => `\`${String(identifier).replaceAll("`", "``")}\``;
 // cannot be represented by a normal MySQL unique index.
 const uniqueIndexes = [
   ["user_sessions", "session_id"], ["approval_bodies", "code"], ["college_programs", "slug"],
+  ["articles", "site_scope", "english_article_id", "language_code"],
   ["articles", "site_scope", "slug"], ["ai_providers", "provider_name"], ["legal_pages", "slug"],
   ["career_profiles", "slug"], ["companies", "name"], ["facilities_library", "name"],
   ["college_contacts", "college_slug"], ["study_boards", "slug"],
@@ -69,6 +70,7 @@ const foreignKeys = [
   ["ad_analytics_events", "ad_unit_id", "ad_units", "id", "CASCADE"],
   ["article_links", "article_id", "articles", "id", "CASCADE"],
   ["articles", "author_id", "authors", "id", "SET NULL"],
+  ["articles", "english_article_id", "articles", "id", "RESTRICT"],
   ["blog_auto_agent_runs", "entity_schedule_id", "entity_article_schedules", "id", "SET NULL"],
   ["career_profiles", "author_id", "authors", "id", "SET NULL"],
   ["cat_universe_cutoffs", "module_slug", "cat_universe_modules", "slug", "CASCADE"],
@@ -382,6 +384,8 @@ async function ensureSiteIsolationSchema(report) {
     ["leads", "consent_at", "DATETIME(3) NULL"],
     ["articles", "job_posting", "JSON NULL"],
     ["articles", "source_logo", "LONGTEXT NULL"],
+    ["articles", "language_code", "VARCHAR(5) NOT NULL DEFAULT 'en'"],
+    ["articles", "english_article_id", "CHAR(36) NULL"],
   ];
   for (const [table, column, definition] of columns) {
     if (await columnInfo(table, column)) continue;

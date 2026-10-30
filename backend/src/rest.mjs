@@ -1,3 +1,4 @@
+import { assertArticlePublication } from "./article-publication-policy.mjs";
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata, tableNames, jsonSafe } from "./db.mjs";
 import { recordContentReviews } from "./content-review.mjs";
@@ -284,6 +285,9 @@ export async function assertArticleBatchTopicsAvailable(candidates, {
   client = prisma,
   excludeIdsByCandidate = [],
 } = {}) {
+  const originals = candidates.map((candidate, index) => ({ candidate, ids: excludeIdsByCandidate[index] || [] })).filter(({ candidate }) => !candidate.english_article_id);
+  candidates = originals.map(({ candidate }) => candidate);
+  excludeIdsByCandidate = originals.map(({ ids }) => ids);
   if (!candidates.length) return true;
 
   // Check candidates against one another first, partitioned by their own
@@ -794,6 +798,7 @@ async function handlePost(table, request, url, context) {
       const saved = [];
       const candidates = prepareStagedArticleUpsertReviews(rows, prepared, existingByCandidate, conflictColumns).gateCandidates;
       for (let index = 0; index < prepared.length; index += 1) {
+        await assertArticlePublication(tx, candidates[index], existingByCandidate[index]?.[0] || null);
         await commitStudioArticlePublication(tx, existingByCandidate[index]?.[0] || null, candidates[index], studioReviews[index]);
         const article = await insertRow(table, rows[index], merge, conflictColumns, tx, prepared[index]);
         await saveArticleFaqs(tx, { ...article, ...(Object.hasOwn(rows[index], "faqs") ? { faqs: rows[index].faqs } : {}) }, {
@@ -869,6 +874,7 @@ async function handlePatch(table, request, url, context) {
       const lockedBefore = await tx.$queryRawUnsafe(`SELECT * FROM ${quote(table)}${where} FOR UPDATE`, ...whereParams);
       if (checkArticleScope) assertArticleSiteScopeUnchanged(input, lockedBefore);
       const nextRows = lockedBefore.map((row) => ({ ...row, ...input }));
+      for (let index = 0; index < nextRows.length; index += 1) await assertArticlePublication(tx, nextRows[index], lockedBefore[index]);
       if (checkArticleTopic) {
         const excludedIds = lockedBefore.map((row) => row.id).filter(Boolean);
         await assertArticleBatchTopicsAvailable(nextRows, {

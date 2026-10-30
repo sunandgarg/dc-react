@@ -11,8 +11,13 @@ function isPendingReview(response: { status?: number | null }) {
   return response.status === 202;
 }
 
+export type ArticleLanguageVersion = { id: string; title: string; slug: string; language_code: string; status?: string };
+
 export type DbArticle = {
   id: string;
+  language_code?: string;
+  english_article_id?: string | null;
+  language_versions?: ArticleLanguageVersion[];
   status: string;
   title: string;
   slug: string;
@@ -85,7 +90,7 @@ const normalizeArticleSearch = (value: string | undefined) =>
     .toString()
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9\s-]/g, " ")
+    .replace(/[^\p{L}\p{M}\p{N}\s-]/gu, " ")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -246,6 +251,8 @@ export function useSaveArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
       return { pendingReview, article: savedArticle };
     },
     onSuccess: (result) => {
+      qc.invalidateQueries({ queryKey: ["article-languages"] });
+      qc.invalidateQueries({ queryKey: ["admin-article-languages"] });
       qc.invalidateQueries({ queryKey: ["db-articles", siteScope] });
       qc.invalidateQueries({ queryKey: ["db-articles-admin", siteScope] });
       toast.success(result.pendingReview ? "Article submitted for admin review." : "Article saved!");

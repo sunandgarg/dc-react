@@ -1,3 +1,4 @@
+import { hasBodyFaqs, translationTextError } from "../../public/article-languages.js";
 import { slugify } from "@/lib/slugify";
 
 type ArticleSaveFields = {
@@ -6,6 +7,10 @@ type ArticleSaveFields = {
   description?: string | null;
   content?: string | null;
   status?: string | null;
+  language_code?: string;
+  english_article_id?: string | null;
+  meta_title?: string;
+  meta_description?: string;
 };
 
 export const normalizeArticleSlug = (value: string | null | undefined) => slugify(value || "");
@@ -33,5 +38,7 @@ export function validateArticleSave(article: ArticleSaveFields, canPublish: bool
   if (article.status !== "Published" && canPublish && !isWriter) return null;
   if (visibleArticleText(article.description).length < 10) return "Add a useful article description before publishing.";
   if (visibleArticleText(article.content).length < 20) return "Add article content before publishing.";
-  return null;
+  if (hasBodyFaqs(article.content)) return "Move body FAQs into the dedicated FAQ fields before publishing.";
+  if (article.language_code && article.language_code !== "en" && !article.english_article_id) return "Select the English original for this translation.";
+  return translationTextError(article);
 }

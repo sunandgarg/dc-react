@@ -1,3 +1,5 @@
+import { articleAlternates, articleLanguage } from "./article-languages.js";
+
 const SITE_URL = "https://dekhocampus.com";
 
 const PRIVATE_PREFIXES = [
@@ -456,6 +458,8 @@ export function entityEdgeSeo(entity, url, entityType) {
 }
 
 export function articleEdgeSeo(article, url) {
+  const language = articleLanguage(article.language_code);
+  const alternates = articleAlternates(article.language_versions);
   const canonical = `${SITE_URL}${cleanPath(url.pathname)}`;
   const title = String(article.meta_title || article.title || "Education News").trim();
   const description = articlePlainText(article.meta_description || article.description || "");
@@ -473,6 +477,8 @@ export function articleEdgeSeo(article, url) {
     : "";
   return {
     canonical,
+    language: language.code,
+    alternates,
     description,
     image,
     imageAlt,
@@ -490,6 +496,7 @@ export function articleEdgeSeo(article, url) {
         },
         {
           "@type": "WebPage",
+          inLanguage: language.code,
           "@id": `${canonical}#webpage`,
           url: canonical,
           name: String(article.title || title),
@@ -510,6 +517,7 @@ export function articleEdgeSeo(article, url) {
         },
         {
           "@type": "NewsArticle",
+          inLanguage: language.code,
           "@id": `${canonical}#article`,
           headline: String(article.title || title),
           description,
@@ -522,7 +530,7 @@ export function articleEdgeSeo(article, url) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.65;color:#111827"><p>By ${authorSlug ? `<a href="/author/${encodeURIComponent(authorSlug)}">${escapeHtml(authorName)}</a>` : escapeHtml(authorName)}${publicationLabel ? ` · <time datetime="${escapeHtml(publishedAt)}">${escapeHtml(publicationLabel)} IST</time>` : ""}</p><h1>${escapeHtml(article.title || title)}</h1>${excerpt ? `<p>${escapeHtml(excerpt)}</p>` : ""}${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1600" height="870" style="display:block;width:100%;height:auto;aspect-ratio:1600/870;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}${articlePrerenderBlocks(addCbseSamplePaperLinks(article.title, article.content))}</article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.65;color:#111827"><p>By ${authorSlug ? `<a href="/author/${encodeURIComponent(authorSlug)}">${escapeHtml(authorName)}</a>` : escapeHtml(authorName)}${publicationLabel ? ` · <time datetime="${escapeHtml(publishedAt)}">${escapeHtml(publicationLabel)} IST</time>` : ""}</p><h1>${escapeHtml(article.title || title)}</h1>${(article.language_versions || []).length > 1 ? `<nav aria-label="Article languages">${article.language_versions.map((version) => `<a href="/news/${escapeHtml(version.slug)}" hreflang="${escapeHtml(version.language_code || "en")}" lang="${escapeHtml(version.language_code || "en")}">${escapeHtml(articleLanguage(version.language_code).label)}</a>`).join(" · ")}</nav>` : ""}${excerpt ? `<p>${escapeHtml(excerpt)}</p>` : ""}${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1600" height="870" style="display:block;width:100%;height:auto;aspect-ratio:1600/870;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}${articlePrerenderBlocks(addCbseSamplePaperLinks(article.title, article.content))}</article>`,
   };
 }
 
@@ -535,6 +543,9 @@ export function applyEdgeSeo(html, metadata) {
     : "noindex, follow, noarchive";
 
   let output = replaceOrInsert(html, /<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
+  output = output.replace(/<html\b[^>]*>/i, (tag) => `${tag.replace(/\s+lang=["'][^"']*["']/i, "").slice(0, -1)} lang="${escapeHtml(metadata.language || "en")}">`);
+  output = output.replace(/<link\b(?=[^>]*\bhreflang=)[^>]*>/gi, "");
+  output = output.replace(/<\/head>/i, `${(metadata.alternates || []).map(({ language, href }) => `<link rel="alternate" hreflang="${escapeHtml(language)}" href="${escapeHtml(new URL(href, SITE_URL).href)}">`).join("\n")}</head>`);
   output = replaceOrInsert(output, /<meta\s+name=["']description["'][^>]*>/i, `<meta name="description" content="${description}">`);
   output = replaceOrInsert(output, /<meta\s+name=["']robots["'][^>]*>/i, `<meta name="robots" content="${robots}">`);
   output = replaceOrInsert(output, /<link\s+rel=["']canonical["'][^>]*>/i, `<link rel="canonical" href="${canonical}">`);
