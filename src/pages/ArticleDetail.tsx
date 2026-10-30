@@ -1,5 +1,5 @@
 import { useArticleLanguages } from "@/hooks/useArticleLanguages";
-import { articleAlternates, articleLanguage, articleNewsCategories, VERNACULAR_CATEGORY } from "../../public/article-languages.js";
+import { articleAlternates, orderedArticleVersions, articleLanguage, articleNewsCategories, VERNACULAR_CATEGORY } from "../../public/article-languages.js";
 import { useParams, Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { Calendar, Tag, ArrowUp, Share2, Bookmark, ChevronDown, Eye, Clock, Link2, Play, Pause, List, Send, ArrowRight } from "lucide-react";
@@ -149,7 +149,7 @@ export default function ArticleDetail() {
 
   const { data: dbArticle, isLoading: dbLoading, isError: articleError, isFetching: articleFetching, refetch: refetchArticle } = useDbArticle(cleanSlug || rawSlug);
   const { data: versions } = useArticleLanguages(dbArticle);
-  const languageVersions = versions || [];
+  const languageVersions = orderedArticleVersions(versions);
   const language = articleLanguage(dbArticle?.language_code);
   const { data: resolvedAuthor } = useQuery({
     queryKey: ["article-author", dbArticle?.author_id],

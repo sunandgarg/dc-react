@@ -45,6 +45,9 @@ export function translationTextError(article) {
   }
   return null;
 }
+export function orderedArticleVersions(versions = []) {
+  return [...(versions || [])].sort((a, b) => Number((b.language_code || "en") === "en") - Number((a.language_code || "en") === "en"));
+}
 export function articleAlternates(versions = []) {
   const result = (versions || []).filter((version) => version.slug && ARTICLE_LANGUAGES.some(({ code }) => code === (version.language_code || "en")))
     .map((version) => ({ language: version.language_code || "en", href: `/news/${version.slug}` }));

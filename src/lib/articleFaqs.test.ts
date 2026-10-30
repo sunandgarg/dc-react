@@ -33,3 +33,12 @@ it('renders self canonical, native language and reciprocal alternates in initial
   expect(html).toContain('हिन्दी');
   expect(html).toContain('"inLanguage":"hi"');
 });
+
+it('puts English first in the shared language navigation without mutating records', async () => {
+  const { orderedArticleVersions } = await import('../../public/article-languages.js');
+  const versions = [{id:'ta',slug:'exam-ta',language_code:'ta'}, {id:'en',slug:'exam',language_code:'en'}, {id:'hi',slug:'exam-hi',language_code:'hi'}];
+  expect(orderedArticleVersions(versions).map(v => v.language_code)).toEqual(['en', 'ta', 'hi']);
+  expect(versions[0].language_code).toBe('ta');
+  const html = articleEdgeSeo({title:'Exam', slug:'exam-ta', language_code:'ta', language_versions:versions}, new URL('https://dekhocampus.com/news/exam-ta')).prerenderHtml;
+  expect(html).toContain('<nav aria-label="Article languages"><a href="/news/exam" hreflang="en"');
+});

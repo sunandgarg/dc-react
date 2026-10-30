@@ -1,4 +1,4 @@
-import { ARTICLE_LANGUAGES, VERNACULAR_CATEGORY, articleAlternates, articleLanguage } from "./article-languages.js";
+import { ARTICLE_LANGUAGES, VERNACULAR_CATEGORY, articleAlternates, orderedArticleVersions, articleLanguage } from "./article-languages.js";
 
 const SITE_URL = "https://dekhocampus.com";
 
@@ -473,7 +473,8 @@ export function entityEdgeSeo(entity, url, entityType) {
 
 export function articleEdgeSeo(article, url) {
   const language = articleLanguage(article.language_code);
-  const alternates = articleAlternates(article.language_versions);
+  const languageVersions = orderedArticleVersions(article.language_versions);
+  const alternates = articleAlternates(languageVersions);
   const canonical = `${SITE_URL}${cleanPath(url.pathname)}`;
   const title = String(article.meta_title || article.title || "Education News").trim();
   const description = articlePlainText(article.meta_description || article.description || "");
@@ -544,7 +545,7 @@ export function articleEdgeSeo(article, url) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.65;color:#111827"><p>By ${authorSlug ? `<a href="/author/${encodeURIComponent(authorSlug)}">${escapeHtml(authorName)}</a>` : escapeHtml(authorName)}${publicationLabel ? ` · <time datetime="${escapeHtml(publishedAt)}">${escapeHtml(publicationLabel)} IST</time>` : ""}</p><h1>${escapeHtml(article.title || title)}</h1>${(article.language_versions || []).length > 1 ? `<nav aria-label="Article languages">${article.language_versions.map((version) => `<a href="/news/${escapeHtml(version.slug)}" hreflang="${escapeHtml(version.language_code || "en")}" lang="${escapeHtml(version.language_code || "en")}">${escapeHtml(articleLanguage(version.language_code).label)}</a>`).join(" · ")}</nav>` : ""}${excerpt ? `<p>${escapeHtml(excerpt)}</p>` : ""}${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1600" height="870" style="display:block;width:100%;height:auto;aspect-ratio:1600/870;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}${articlePrerenderBlocks(addCbseSamplePaperLinks(article.title, article.content))}</article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:860px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.65;color:#111827"><p>By ${authorSlug ? `<a href="/author/${encodeURIComponent(authorSlug)}">${escapeHtml(authorName)}</a>` : escapeHtml(authorName)}${publicationLabel ? ` · <time datetime="${escapeHtml(publishedAt)}">${escapeHtml(publicationLabel)} IST</time>` : ""}</p><h1>${escapeHtml(article.title || title)}</h1>${languageVersions.length > 1 ? `<nav aria-label="Article languages">${languageVersions.map((version) => `<a href="/news/${escapeHtml(version.slug)}" hreflang="${escapeHtml(version.language_code || "en")}" lang="${escapeHtml(version.language_code || "en")}">${escapeHtml(articleLanguage(version.language_code).label)}</a>`).join(" · ")}</nav>` : ""}${excerpt ? `<p>${escapeHtml(excerpt)}</p>` : ""}${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="1600" height="870" style="display:block;width:100%;height:auto;aspect-ratio:1600/870;object-fit:cover" loading="eager" fetchpriority="high" decoding="async">` : ""}${articlePrerenderBlocks(addCbseSamplePaperLinks(article.title, article.content))}</article>`,
   };
 }
 
