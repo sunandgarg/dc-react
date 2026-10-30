@@ -463,6 +463,7 @@ export default function News() {
         </div>
 
         {vernacular && <nav aria-label="Article languages" className="mb-6 flex flex-wrap gap-2">
+          <Link to="/news" lang="en" className="rounded-full border px-3 py-2 text-sm text-primary hover:bg-muted">English · All News</Link>
           {[{ code: "", label: "All languages" }, ...ARTICLE_LANGUAGES.filter(({ code }) => code !== "en")].map(({ code, label }) => {
             const next = new URLSearchParams(searchParams);
             next.delete("page");
@@ -472,6 +473,11 @@ export default function News() {
               className="rounded-full border px-3 py-2 text-sm text-primary hover:bg-muted aria-[current=page]:bg-primary/10">{label}</Link>;
           })}
         </nav>}
+
+        {!vernacular && <p className="mb-3 text-center text-sm text-muted-foreground">
+          All News shows English articles, newest first. Search to find older stories.
+          {" "}<Link to="/news?category=Vernacular" className="text-primary underline">Read in other languages</Link>
+        </p>}
 
         <div className="relative mb-8 max-w-2xl mx-auto">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
