@@ -1,3 +1,4 @@
+import { useMeasurementConsent, googleConsentCommand } from "@/lib/measurementConsent";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -45,6 +46,9 @@ interface LP {
 export default function LandingPage() {
   const { slug = "lp" } = useParams<{ slug: string }>();
   const [params] = useSearchParams();
+  const analyticsConsent = useMeasurementConsent("analytics");
+  const marketingConsent = useMeasurementConsent("marketing");
+  const trackingConsent = analyticsConsent && marketingConsent;
 
   const { data, isLoading } = useQuery({
     queryKey: ["landing_page", slug],
@@ -58,7 +62,8 @@ export default function LandingPage() {
 
   // Inject GA / GTM / Meta Pixel for this LP
   useEffect(() => {
-    if (!data) return;
+    if (!data || !trackingConsent) return;
+    googleConsentCommand("default");
     const cleanups: (() => void)[] = [];
     const inject = (id: string, html: string, src?: string) => {
       if (document.getElementById(id)) return;
@@ -68,18 +73,18 @@ export default function LandingPage() {
       document.head.appendChild(s);
       cleanups.push(() => s.remove());
     };
-    if (data.ga_id && !data.gtm_id) {
+    if (data.ga_id && data.ga_id !== "G-Y8E5HHTXLX" && !data.gtm_id) {
       inject(`ga-src-${data.ga_id}`, "", `https://www.googletagmanager.com/gtag/js?id=${data.ga_id}`);
       inject(`ga-init-${data.ga_id}`, `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${data.ga_id}',{anonymize_ip:true});`);
     }
-    if (data.gtm_id) {
+    if (data.gtm_id && data.gtm_id !== "GTM-5PF56SJF") {
       inject(`gtm-${data.gtm_id}`, `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${data.gtm_id}');`);
     }
-    if (data.meta_pixel_id) {
+    if (data.meta_pixel_id && data.meta_pixel_id !== "28062999866677764") {
       inject(`fbq-${data.meta_pixel_id}`, `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${data.meta_pixel_id}');fbq('track','PageView');`);
     }
     return () => cleanups.forEach((c) => c());
-  }, [data]);
+  }, [data, trackingConsent]);
 
   // Track LP view once per slug for funnel attribution
   useEffect(() => {

@@ -1,3 +1,4 @@
+import { measurementAllowed } from "@/lib/measurementConsent";
 /**
  * Intent-Based Lead Intelligence - client SDK
  *
@@ -12,7 +13,6 @@ import { backendClient } from "@/integrations/backend/client";
 
 const VISITOR_KEY  = "dc_intent_visitor_v1";
 const SESSION_KEY  = "dc_session_id";
-const CONSENT_KEY  = "dc_cookie_consent_v1";
 
 // ------------------------------------------------------------------
 // Event taxonomy (mirrors intent_event_weights.event_type)
@@ -39,13 +39,7 @@ export interface IntentProps {
 // ------------------------------------------------------------------
 // Consent + visitor id
 // ------------------------------------------------------------------
-function tracking_allowed(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    const c = localStorage.getItem(CONSENT_KEY);
-    return c !== "rejected"; // allow undecided + accepted (matches existing UserTracking)
-  } catch { return true; }
-}
+function tracking_allowed(): boolean { return measurementAllowed("analytics"); }
 
 function ensureUuid(): string {
   const u = (crypto as any)?.randomUUID?.();
@@ -187,6 +181,7 @@ export function autoTrackRoute(pathname: string) {
 // Anonymous → user merge (call on sign-in)
 // ------------------------------------------------------------------
 export async function mergeVisitorIntoUser(userId: string) {
+  if (!tracking_allowed()) return;
   const visitor = getVisitorId();
   if (!visitor || !userId) return;
   try {

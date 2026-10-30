@@ -1,3 +1,4 @@
+import { useMeasurementConsent } from "@/lib/measurementConsent";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -108,6 +109,8 @@ export function useAdScripts() {
 export function useAdsAllowed(pageKey?: string) {
   const { data: settings } = useAdsenseSettings();
   const { user } = useAuth();
+  const consent = useMeasurementConsent("marketing");
+  if (!consent) return false;
   if (!settings || !settings.ads_globally_enabled) return false;
   const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
   if (isMobile && !settings.enabled_on_mobile) return false;

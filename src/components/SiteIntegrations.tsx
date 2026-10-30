@@ -1,32 +1,23 @@
 import { useEffect } from "react";
+import { useMeasurementConsent, googleConsentCommand } from "@/lib/measurementConsent";
+import { useLocation } from "react-router-dom";
 import { backendClient } from "@/integrations/backend/client";
 
 export function SiteIntegrations() {
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith("/admin");
+  const analytics = useMeasurementConsent("analytics");
+  const marketing = useMeasurementConsent("marketing");
   useEffect(() => {
+    googleConsentCommand("default");
+    // This container includes Meta and Clarity as well as GA4.
+    if (!analytics || !marketing || isAdmin) return;
     let cancelled = false;
-    const cleanupFns: Array<() => void> = [];
     (async () => {
       const { data } = await backendClient.from("site_integrations").select("key,value,enabled");
       if (cancelled || !data) return;
       const map: Record<string, string> = {};
       for (const r of data) if (r.enabled && r.value) map[r.key] = r.value;
-
-      // Analytics pixels are non-critical. Start them after interaction, with a
-      // fallback for visitors who stay on a static page.
-      await new Promise<void>((resolve) => {
-        let settled = false;
-        const events: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "scroll"];
-        const finish = () => {
-          if (settled) return;
-          settled = true;
-          events.forEach((event) => window.removeEventListener(event, finish));
-          window.clearTimeout(timer);
-          resolve();
-        };
-        events.forEach((event) => window.addEventListener(event, finish, { once: true, passive: true }));
-        const timer = window.setTimeout(finish, 15_000);
-      });
-      if (cancelled) return;
 
       const inject = (id: string, html: string) => {
         if (document.getElementById(id)) return;
@@ -38,6 +29,7 @@ export function SiteIntegrations() {
         if (document.getElementById(id)) return;
         const s = document.createElement("script");
         s.id = id; s.src = src; s.async = async;
+        if (id === "ga4-lib") s.onload = () => { (window as any).dcMeasurementReady = true; window.dispatchEvent(new Event("dc:measurement-ready")); };
         document.head.appendChild(s);
       };
       const inline = (id: string, code: string) => {
@@ -46,7 +38,8 @@ export function SiteIntegrations() {
         s.id = id; s.text = code;
         document.head.appendChild(s);
       };
-      const gtmContainerId = map.gtm_container_id || "GTM-5PF56SJF";
+      const configuredGtm = data.find((row) => row.key === "gtm_container_id");
+      const gtmContainerId = configuredGtm ? map.gtm_container_id : "GTM-5PF56SJF";
       const hasGtm = Boolean(gtmContainerId);
       // GA4 is intentionally managed by GTM. Only fall back to direct gtag
       // when an installation explicitly removes the GTM container.
@@ -67,7 +60,7 @@ export function SiteIntegrations() {
       }
       // GTM
       if (gtmContainerId) {
-        inline("gtm-init", `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmContainerId}');`);
+        inline("gtm-init", `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.onload=function(){w.dcMeasurementReady=true;w.dispatchEvent(new Event('dc:measurement-ready'));};j.src='https://www.googletagmanager.com/gtm.js?id='+i;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmContainerId}');`);
       }
       // GSC
       if (map.gsc_verification && !document.querySelector('meta[name="google-site-verification"]')) {
@@ -104,7 +97,7 @@ export function SiteIntegrations() {
         document.head.appendChild(s);
       }
     })();
-    return () => { cancelled = true; cleanupFns.forEach((fn) => fn()); };
-  }, []);
+    return () => { cancelled = true; };
+  }, [analytics, marketing, isAdmin]);
   return null;
 }

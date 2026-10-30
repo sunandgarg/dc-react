@@ -4,6 +4,8 @@ import { Cookie, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { COOKIE_CONSENT_KEY, signalCookieResolved } from "@/lib/promptSequence";
 
+import { googleConsentCommand } from "@/lib/measurementConsent";
+
 const COOKIE_KEY = COOKIE_CONSENT_KEY;             // "accepted" | "essential" | "rejected"
 const PROFILE_KEY = "dc_user_prefill_v1";
 const PREFS_KEY = "dc_cookie_prefs_v1";          // JSON {essential:true, prefill:bool, analytics:bool, marketing:bool}
@@ -66,6 +68,7 @@ export function CookieConsent() {
     localStorage.setItem(PREFS_KEY, JSON.stringify(finalPrefs));
     if (consent === "rejected") localStorage.removeItem(PROFILE_KEY);
     setOpen(false);
+    googleConsentCommand("update");
     signalCookieResolved();
     // Log opt-in choice (best-effort, anonymous)
     try {

@@ -186,14 +186,14 @@ function StatsTab() {
         .select("event_type, ad_unit_id")
         .gte("created_at", since);
       const events = data || [];
-      const impressions = events.filter((e: any) => e.event_type === "impression").length;
+      const impressions = events.filter((e: any) => ["ad_attempt", "impression"].includes(e.event_type)).length;
       const clicks = events.filter((e: any) => e.event_type === "click").length;
       const ctr = impressions ? (clicks / impressions) * 100 : 0;
       const byUnit: Record<string, { impressions: number; clicks: number }> = {};
       events.forEach((e: any) => {
         if (!e.ad_unit_id) return;
         byUnit[e.ad_unit_id] = byUnit[e.ad_unit_id] || { impressions: 0, clicks: 0 };
-        if (e.event_type === "impression") byUnit[e.ad_unit_id].impressions++;
+        if (["ad_attempt", "impression"].includes(e.event_type)) byUnit[e.ad_unit_id].impressions++;
         else if (e.event_type === "click") byUnit[e.ad_unit_id].clicks++;
       });
       const ids = Object.keys(byUnit);
@@ -213,9 +213,9 @@ function StatsTab() {
   if (!stats) return <div className="text-sm text-muted-foreground">Loading…</div>;
 
   const tiles = [
-    { label: "Impressions (30 days)", value: stats.impressions, icon: Eye },
-    { label: "Clicks (30 days)", value: stats.clicks, icon: MousePointerClick },
-    { label: "Click rate", value: `${stats.ctr.toFixed(2)}%`, icon: TrendingUp },
+    { label: "Slot attempts (30 days)", value: stats.impressions, icon: Eye },
+    { label: "Slot interactions (30 days)", value: stats.clicks, icon: MousePointerClick },
+    { label: "Interaction rate", value: `${stats.ctr.toFixed(2)}%`, icon: TrendingUp },
   ];
 
   return (
@@ -231,19 +231,19 @@ function StatsTab() {
       <Card className="p-4">
         <h3 className="font-semibold mb-3">Top ad slots</h3>
         {stats.top.length === 0 ? (
-          <div className="text-sm text-muted-foreground">No data yet - stats appear once ads start showing.</div>
+          <div className="text-sm text-muted-foreground">No slot attempts recorded yet.</div>
         ) : (
           <div className="space-y-2">
             {stats.top.map((u) => (
               <div key={u.id} className="flex items-center justify-between text-sm border-b py-2 last:border-0">
                 <span className="font-medium">{u.name}</span>
-                <span className="text-muted-foreground">{u.impressions} views · {u.clicks} clicks</span>
+                <span className="text-muted-foreground">{u.impressions} attempts · {u.clicks} interactions</span>
               </div>
             ))}
           </div>
         )}
         <p className="text-xs text-muted-foreground mt-4">
-          Need official earnings data? Sign in to{" "}
+          These internal counts include legacy slot attempts, not confirmed ad impressions or billable clicks. For official impressions, clicks and earnings, sign in to{" "}
           <a href="https://www.google.com/adsense" target="_blank" rel="noopener noreferrer" className="underline">Google AdSense</a>.
         </p>
       </Card>
