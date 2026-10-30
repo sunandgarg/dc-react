@@ -1,4 +1,3 @@
-import { measurementAllowed } from "@/lib/measurementConsent";
 /**
  * Lightweight analytics helper that fans events out to GA4 (gtag),
  * GTM (dataLayer) and Meta Pixel (fbq) when those are loaded by
@@ -32,10 +31,8 @@ function ensureGtag() {
   };
   analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
   if (!analyticsWindow.gtag) {
-    analyticsWindow.gtag = function () {
-      // Google commands require an Arguments object, not an Array.
-      // eslint-disable-next-line prefer-rest-params
-      analyticsWindow.dataLayer!.push(arguments);
+    analyticsWindow.gtag = (...args: unknown[]) => {
+      analyticsWindow.dataLayer!.push(args);
     };
   }
   return analyticsWindow.gtag;
@@ -53,13 +50,13 @@ export function getUtmParams(): AnalyticsParams {
 }
 
 export function trackEvent(name: LpEventName | string, params: AnalyticsParams = {}) {
-  if (!measurementAllowed("analytics")) return;
+  if (typeof window === "undefined") return;
   const payload = { ...getUtmParams(), ...params, event_time: Date.now() };
   try {
     ensureGtag()("event", name, payload);
   } catch {/* noop */}
   try {
-    if (measurementAllowed("marketing")) (window as any).fbq?.("trackCustom", name, payload);
+    (window as any).fbq?.("trackCustom", name, payload);
   } catch {/* noop */}
   try {
     (window as any).dataLayer = (window as any).dataLayer || [];
@@ -124,9 +121,9 @@ export function trackEvent(name: LpEventName | string, params: AnalyticsParams =
 
 /** Lead/Conversion shortcut - also fires the standard generate_lead/Lead events. */
 export function trackLeadConversion(params: AnalyticsParams = {}) {
-  if (!measurementAllowed("analytics")) return;
+  if (typeof window === "undefined") return;
   try { (window as any).gtag?.("event", "generate_lead", { value: 1, currency: "INR", ...params }); } catch {/* noop */}
-  try { if (measurementAllowed("marketing")) (window as any).fbq?.("track", "Lead", params); } catch {/* noop */}
-  try { if (measurementAllowed("marketing")) (window as any).fireGoogleAdsConversion?.(params); } catch {/* noop */}
+  try { (window as any).fbq?.("track", "Lead", params); } catch {/* noop */}
+  try { (window as any).fireGoogleAdsConversion?.(params); } catch {/* noop */}
   trackEvent("lp_lead_submit", params);
 }

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useAdsenseSettings, useAdScripts, useAdsAllowed } from "@/hooks/useAdsense";
+import { useAdsenseSettings, useAdScripts } from "@/hooks/useAdsense";
 
 /**
  * Globally injects Google AdSense Auto Ads script + admin-managed custom
@@ -9,7 +9,6 @@ import { useAdsenseSettings, useAdScripts, useAdsAllowed } from "@/hooks/useAdse
  */
 export function AdsenseLoader() {
   const { pathname } = useLocation();
-  const allowed = useAdsAllowed(pathname);
   const { data: settings } = useAdsenseSettings();
   const { data: scripts } = useAdScripts();
 
@@ -32,7 +31,7 @@ export function AdsenseLoader() {
   }, [isHomepage]);
 
   useEffect(() => {
-    if (!allowed || isAdmin || isHomepage || !settings || !settings.ads_globally_enabled) return;
+    if (isAdmin || isHomepage || !settings || !settings.ads_globally_enabled) return;
 
     // Load during the first idle window, with a short fallback so reserved
     // ad slots fill promptly without competing with the LCP image.
@@ -68,7 +67,7 @@ export function AdsenseLoader() {
         wrap.id = id;
         wrap.innerHTML = html;
         const dest = target === "head" ? document.head : document.body;
-        dest.appendChild(wrap);
+        Array.from(wrap.childNodes).forEach((n) => dest.appendChild(n));
         created.push(wrap);
       };
 
@@ -136,7 +135,7 @@ export function AdsenseLoader() {
       else window.clearTimeout(handle);
       created.forEach((el) => el.parentNode?.removeChild(el));
     };
-  }, [allowed, allowAutoAds, isAdmin, isHomepage, settings, scripts]);
+  }, [allowAutoAds, isAdmin, isHomepage, settings, scripts]);
 
   return null;
 }

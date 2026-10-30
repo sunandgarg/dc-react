@@ -55,14 +55,14 @@ export function GoogleAd({
       } catch {
         /* noop */
       }
-      // A slot attempt is not proof that Google returned or displayed an ad.
+      // Impression event
       try {
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
         (backendClient as any)
           .from("ad_analytics_events")
           .insert({
             ad_unit_id: unit.id,
-            event_type: "ad_attempt",
+            event_type: "impression",
             device: isMobile ? "mobile" : "desktop",
             page_url: window.location.pathname,
           })

@@ -1,4 +1,3 @@
-import { measurementAllowed } from "@/lib/measurementConsent";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { backendClient } from "@/integrations/backend/client";
@@ -9,11 +8,21 @@ import { COOKIE_RESOLVED_EVENT } from "@/lib/promptSequence";
 const SESSION_KEY = "dc_session_id";
 const SESSION_STARTED_KEY = "dc_session_started";
 const ENTRY_KEY = "dc_session_entry";
+const CONSENT_KEY = "dc_cookie_consent_v1";
 const PREFS_KEY = "dc_cookie_prefs_v1";
 const PROFILE_KEY = "dc_user_prefill_v1";
 const SESSION_TTL_MS = 30 * 60 * 1000;
 
-function analyticsEnabled(): boolean { return measurementAllowed("analytics"); }
+function analyticsEnabled(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const consent = localStorage.getItem(CONSENT_KEY);
+    if (!consent) return false; // no decision yet - be safe
+    if (consent === "rejected") return false;
+    const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    return prefs.analytics !== false;
+  } catch { return false; }
+}
 
 function getOrCreateSession(): string {
   if (typeof window === "undefined") return "ssr";
@@ -70,7 +79,6 @@ function enqueue(event: any) {
 
 async function flush() {
   flushTimer = null;
-  if (!analyticsEnabled()) { queue.length = 0; return; }
   if (!queue.length) return;
   const batch = queue.splice(0, queue.length);
   try { await (backendClient as any).from("user_events").insert(batch); } catch {}
@@ -92,8 +100,7 @@ export function UserTrackingProvider({ children }: { children: React.ReactNode }
   const location = useLocation();
   const { user } = useAuth();
   const [consentRevision, setConsentRevision] = useState(0);
-  const [measurementReady, setMeasurementReady] = useState(() => Boolean((window as any).dcMeasurementReady));
-  const sessionIdRef = useRef<string>("");
+  const sessionIdRef = useRef<string>(getOrCreateSession());
   const pageStartRef = useRef<number>(Date.now());
   const lastPathRef = useRef<string>("");
   const maxScrollRef = useRef<number>(0);
@@ -108,15 +115,9 @@ export function UserTrackingProvider({ children }: { children: React.ReactNode }
     return () => window.removeEventListener(COOKIE_RESOLVED_EVENT, handleConsentResolved);
   }, []);
 
+  // Queue route views immediately. GTM owns the first page load; subsequent
+  // client-side navigations are sent directly once its scripts become ready.
   useEffect(() => {
-    const ready = () => setMeasurementReady(true);
-    window.addEventListener("dc:measurement-ready", ready);
-    return () => window.removeEventListener("dc:measurement-ready", ready);
-  }, []);
-
-  // GTM owns the first page load; send subsequent routes only after it loads.
-  useEffect(() => {
-    if (!analyticsEnabled() || !measurementReady) { analyticsPathRef.current = null; return; }
     const analyticsWindow = window as Window & {
       dataLayer?: unknown[];
       gtag?: (...args: unknown[]) => void;
@@ -132,26 +133,23 @@ export function UserTrackingProvider({ children }: { children: React.ReactNode }
     });
     if (analyticsPathRef.current && analyticsPathRef.current !== pagePath) {
       if (!analyticsWindow.gtag) {
-        analyticsWindow.gtag = function () {
-          // eslint-disable-next-line prefer-rest-params -- Google command queue protocol
-          analyticsWindow.dataLayer!.push(arguments);
+        analyticsWindow.gtag = (...args: unknown[]) => {
+          analyticsWindow.dataLayer!.push(args);
         };
       }
       analyticsWindow.gtag("event", "page_view", {
         page_location: window.location.href,
         page_path: pagePath,
         page_title: document.title,
-        page_referrer: new URL(analyticsPathRef.current, window.location.origin).href,
       });
-      if (measurementAllowed("marketing")) analyticsWindow.fbq?.("track", "PageView");
+      analyticsWindow.fbq?.("track", "PageView");
     }
     analyticsPathRef.current = pagePath;
-  }, [location.pathname, location.search, consentRevision, measurementReady]);
+  }, [location.pathname, location.search]);
 
   // Page navigation tracking
   useEffect(() => {
     if (!analyticsEnabled()) return;
-    sessionIdRef.current = getOrCreateSession();
     const path = location.pathname + location.search;
 
     if (lastPathRef.current && lastPathRef.current !== path) {

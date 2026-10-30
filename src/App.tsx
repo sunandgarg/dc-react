@@ -135,6 +135,7 @@ function DeferredGlobalUi() {
   return (
     <Suspense fallback={null}>
       <DeploymentUpdateCoordinator />
+      <SiteIntegrations />
       <AdsenseLoader />
       <CompareFloatingBar />
       <LockTargetFloatingPromo />
@@ -358,7 +359,6 @@ const App = () => (
             <ArticleLeadLinks articleSlug="site" siteWide />
             <ScrollToTop />
             <ScrollLockGuard />
-            <Suspense fallback={null}><SiteIntegrations /></Suspense>
             <UserTrackingProvider>{null}</UserTrackingProvider>
             <ChunkErrorBoundary>
             <Suspense fallback={<PageLoader />}>
