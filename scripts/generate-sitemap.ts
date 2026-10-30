@@ -473,7 +473,7 @@ function newsSitemapXml(articles: any[]) {
     const publishedAt = new Date(article.created_at || article.updated_at || 0);
     const title = String(article.title || "").trim();
     if (!article.slug || !title || Number.isNaN(publishedAt.getTime()) || publishedAt.getTime() < cutoff) return [];
-    return [{ slug: article.slug, title, publicationDate: publishedAt.toISOString() }];
+    return [{ slug: article.slug, title, language: article.language_code || "en", publicationDate: publishedAt.toISOString() }];
   }).sort((left, right) => right.publicationDate.localeCompare(left.publicationDate)).slice(0, NEWS_SITEMAP_LIMIT);
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
@@ -484,7 +484,7 @@ function newsSitemapXml(articles: any[]) {
       "    <news:news>",
       "      <news:publication>",
       "        <news:name>DekhoCampus</news:name>",
-      "        <news:language>en</news:language>",
+      `        <news:language>${escapeXml(entry.language)}</news:language>`,
       "      </news:publication>",
       `      <news:publication_date>${escapeXml(entry.publicationDate)}</news:publication_date>`,
       `      <news:title>${escapeXml(entry.title)}</news:title>`,
@@ -561,7 +561,7 @@ function writeSitemaps(entries: SitemapEntry[], articles: any[]) {
     fetchRows("exams", "slug,short_id,updated_at,image,logo", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("career_profiles", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("scholarships", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("articles", "slug,title,created_at,updated_at,tags,featured_image", (q) => q.eq("site_scope", "dekhocampus").eq("is_active", true).eq("status", "Published").not("slug", "is", null)),
+    fetchRows("articles", "slug,title,language_code,created_at,updated_at,tags,featured_image", (q) => q.eq("site_scope", "dekhocampus").eq("is_active", true).eq("status", "Published").not("slug", "is", null)),
     fetchRows("landing_pages", "slug,updated_at,logo_url,og_image", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("cat_universe_modules", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("promoted_programs", "slug,updated_at,image_url,hero_image,certificate_image,degree_image,institute_logo", (q) => q.eq("is_active", true).not("slug", "is", null)),
