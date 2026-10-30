@@ -6,7 +6,7 @@ import { ArticlePublicationDashboard, fetchPublicationRows } from "./ArticlePubl
 const mocks = vi.hoisted(() => ({ from: vi.fn() }));
 vi.mock("@/integrations/backend/client", () => ({ backendClient: { from: mocks.from } }));
 const rows = [{ id: "a", title: "English guide", slug: "guide", author: "Writer A", author_id: "a", language_code: "en", created_at: "2026-10-30T12:00:00Z" },
-  { id: "b", title: "हिन्दी गाइड", slug: "guide-hi", author: "Writer B", author_id: "b", language_code: "hi", created_at: "2026-10-30T12:00:00Z" }];
+  { id: "b", title: "हिन्दी गाइड", slug: "guide-hi", author: "", author_id: "b", language_code: "hi", created_at: "2026-10-30T12:00:00Z" }];
 function mockRows(pages = [rows], error: Error | null = null) {
   let call = 0;
   const filters: unknown[][] = [];
@@ -34,6 +34,7 @@ describe("publication dashboard", () => {
     await screen.findByRole("link", { name: /English guide/ });
     fireEvent.click(screen.getByRole("button", { name: "Writer B" }));
     expect(screen.queryByRole("link", { name: /English guide/ })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Unassigned writer/)).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /हिन्दी गाइड/ })).toHaveAttribute("href", "/news/guide-hi");
     expect(within(screen.getByRole("table")).getByRole("button", { name: "Writer B" })).toHaveAttribute("aria-pressed", "true");
     fireEvent.click(screen.getByRole("button", { name: "Show all writers" }));
