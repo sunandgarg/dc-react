@@ -26,6 +26,9 @@ describe("Cloudflare edge SEO", () => {
     expect(edgeSeoFor("https://dekhocampus.com/not-a-real-page").indexable).toBe(false);
     expect(edgeSeoFor("https://dekhocampus.com/not-a-real-page").notFound).toBe(true);
     expect(edgeSeoFor("https://dekhocampus.com/admin/colleges").notFound).toBe(false);
+    expect(edgeSeoFor("https://dekhocampus.com/ad/jee-main-2027").indexable).toBe(false);
+    expect(edgeSeoFor("https://dekhocampus.com/ad/jee-main-2027").notFound).toBe(false);
+    expect(edgeSeoFor("https://dekhocampus.com/ad/not-a-real-page").notFound).toBe(true);
     expect(edgeSeoFor("https://dekhocampus.com/colleges?q=lpu").notFound).toBe(false);
     expect(edgeSeoFor("https://dekhocampus.com/about-us/not-a-page").notFound).toBe(true);
     expect(edgeSeoFor("https://dekhocampus.com/news/story/extra").notFound).toBe(true);

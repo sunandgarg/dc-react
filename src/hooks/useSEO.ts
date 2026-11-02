@@ -12,6 +12,7 @@ type SEOOptions = {
   jsonLd?: object | object[];
   language?: string;
   alternates?: { language: string; href: string }[];
+  robots?: string;
 };
 
 export function useSEO({
@@ -25,6 +26,7 @@ export function useSEO({
   jsonLd,
   language = "en",
   alternates = [],
+  robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
 }: SEOOptions) {
   const alternatesKey = JSON.stringify(alternates);
   const jsonLdKey = JSON.stringify(jsonLd ?? null);
@@ -69,7 +71,7 @@ export function useSEO({
     const imageUrl = absoluteCanonical(ogImage);
     setNameMeta("description", description);
     setNameMeta("keywords", keywords);
-    setNameMeta("robots", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+    setNameMeta("robots", robots);
     setNameMeta("twitter:card", imageUrl ? "summary_large_image" : "summary");
     setNameMeta("twitter:title", title);
     setNameMeta("twitter:description", description);
@@ -109,5 +111,5 @@ export function useSEO({
       document.documentElement.lang = "en";
       document.querySelectorAll('link[rel="alternate"][hreflang]').forEach((link) => link.remove());
     };
-  }, [title, exactTitle, description, keywords, canonical, ogImage, ogType, jsonLdKey, language, alternatesKey]);
+  }, [title, exactTitle, description, keywords, canonical, ogImage, ogType, jsonLdKey, language, alternatesKey, robots]);
 }

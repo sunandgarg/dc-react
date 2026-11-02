@@ -23,6 +23,14 @@ const LISTING_QUERY_KEYS = {
 };
 
 const STATIC_METADATA = new Map([
+  ["/ad/jee-main-2027", {
+    title: "JEE Main 2027 Application Guide | DekhoCampus",
+    description: "Check the official NTA application route, Session 1 deadlines, confirmation page and correction rules before you submit your JEE Main 2027 form.",
+  }],
+  ["/ad/jee-main-2027-hi", {
+    title: "JEE Main 2027 आवेदन मार्गदर्शिका | DekhoCampus",
+    description: "JEE Main 2027 Session 1 का आवेदन केवल NTA पोर्टल पर करें। अंतिम तारीख, फीस, पुष्टि पृष्ठ और सुधार के नियम समझें।",
+  }],
   ["/cat-universe/cat-2026-preparation-kit", {
     title: "Free CAT 2026 Preparation Kit, Papers and AI Coach | DekhoCampus",
     description: "Download a free CAT 2026 preparation kit with actual papers, solutions, practice banks, short methods and a practical preparation roadmap.",
@@ -141,7 +149,7 @@ function isIndexableQuery(url, pathname) {
 export function edgeSeoFor(input) {
   const url = input instanceof URL ? input : new URL(input);
   const pathname = cleanPath(url.pathname);
-  const privatePath = PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  const privatePath = pathname === "/ad/jee-main-2027" || pathname === "/ad/jee-main-2027-hi" || PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
   const publicPath = isPublicPath(pathname);
   const indexable = !privatePath && publicPath && isIndexableQuery(url, pathname);
   const fullPageAlias = pathname.match(/^\/(colleges|courses)\/([^/]+)\/[^/]+$/);

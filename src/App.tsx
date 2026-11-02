@@ -37,7 +37,7 @@ const IntentTrackingProvider = lazyRetry(() => import("@/components/IntentTracki
 
 function GlobalWhatsApp() {
   const { pathname } = useLocation();
-  if (pathname.startsWith("/admin")) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/ad/")) return null;
   return <WhatsAppButton />;
 }
 
@@ -45,7 +45,7 @@ function GlobalDiya() {
   const { pathname } = useLocation();
   const isNews = pathname === "/news" || pathname.startsWith("/news/") || pathname === "/articles" || pathname.startsWith("/articles/");
   const isUpgradeYourself = pathname === "/premium-programs" || pathname.startsWith("/premium-programs/");
-  const hidden = pathname.startsWith("/admin") || pathname.startsWith("/auth") || isNews || isUpgradeYourself;
+  const hidden = pathname.startsWith("/admin") || pathname.startsWith("/auth") || pathname.startsWith("/ad/") || isNews || isUpgradeYourself;
 
   useEffect(() => {
     if (hidden || window.sessionStorage.getItem("dc:open-diya-after-navigation") !== "footer") return;
@@ -60,14 +60,14 @@ function GlobalDiya() {
 
 function GlobalMobileNavigation() {
   const { pathname } = useLocation();
-  if (pathname.startsWith("/admin") || pathname.startsWith("/lp") || pathname.startsWith("/landing/")) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/lp") || pathname.startsWith("/ad/") || pathname.startsWith("/landing/")) return null;
   return <HomeMobileBottomNav />;
 }
 
 function RouteSeoPolicy() {
   const { pathname } = useLocation();
   useEffect(() => {
-    const privateRoute = pathname.startsWith("/admin") || pathname.startsWith("/dashboard") || pathname === "/auth" || pathname === "/onboarding" || pathname.startsWith("/target-dashboard") || pathname.startsWith("/my-targets");
+    const privateRoute = pathname.startsWith("/admin") || pathname.startsWith("/ad/") || pathname.startsWith("/dashboard") || pathname === "/auth" || pathname === "/onboarding" || pathname.startsWith("/target-dashboard") || pathname.startsWith("/my-targets");
     let robots = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
     if (!robots) {
       robots = document.createElement("meta");
@@ -157,6 +157,7 @@ const CollegeDetail = lazyRetry(() => import("./pages/CollegeDetail"), "CollegeD
 const CourseDetail = lazyRetry(() => import("./pages/CourseDetail"), "CourseDetail");
 const ExamDetail = lazyRetry(() => import("./pages/ExamDetail"), "ExamDetail");
 const ArticleDetail = lazyRetry(() => import("./pages/ArticleDetail"), "ArticleDetail");
+const JeeMainAdPage = lazyRetry(() => import("./pages/JeeMainAdPage"), "JeeMainAdPage");
 const Auth = lazyRetry(() => import("./pages/Auth"), "Auth");
 const AdminDashboard = lazyRetry(() => import("./pages/AdminDashboard"), "AdminDashboard");
 const AdminAds = lazyRetry(() => import("./pages/AdminAds"), "AdminAds");
@@ -382,6 +383,7 @@ const App = () => (
               <Route path="/news" element={<News />} />
               <Route path="/news/tag/:tag" element={<News />} />
               <Route path="/news/:slug" element={<ArticleDetail />} />
+              <Route path="/ad/:slug" element={<JeeMainAdPage />} />
               <Route path="/exam-calendar-2026" element={<ExamCalendar />} />
               <Route path="/exam-calendar" element={<ExamCalendar />} />
               <Route path="/eligibility-checker" element={<EligibilityChecker />} />

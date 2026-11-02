@@ -85,24 +85,6 @@ function ArticleSidebarAd({ slug }: { slug: string }) {
   );
 }
 
-function JeeMain2027Inline({ languageCode }: { languageCode: string }) {
-  const hindi = languageCode === "hi";
-  const applicationVideoCurrent = Date.now() < Date.parse("2026-11-26T18:20:00Z");
-  return <div className="my-6 space-y-5">
-    <section aria-label={hindi ? "DekhoCampus से जेईई मेन अपडेट" : "DekhoCampus JEE Main updates"}>
-      <p className="mb-2 text-xs leading-5 text-slate-600">{hindi ? "यह DekhoCampus का वैकल्पिक मार्गदर्शन फॉर्म है। जेईई मेन का आवेदन केवल NTA पोर्टल पर करें।" : "This optional guidance form belongs to DekhoCampus. Apply for JEE Main only on the NTA portal."}</p>
-      <LeadCaptureForm variant="card" title={hindi ? "DekhoCampus से जेईई मेन अपडेट पाएँ" : "Get JEE Main updates from DekhoCampus"} subtitle={hindi ? "यह NTA का आवेदन फॉर्म नहीं है।" : "This is not the NTA application form."} source={`jee_main_2027_article_${languageCode}`} interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} simple />
-    </section>
-    {applicationVideoCurrent && <section className="rounded-xl border border-border bg-card p-4 sm:p-5" aria-label={hindi ? "आवेदन का संक्षिप्त वीडियो" : "Application video guide"}>
-      <h2 className="mb-3 text-lg font-bold text-foreground">{hindi ? "आवेदन का संक्षिप्त वीडियो" : "Short application video guide"}</h2>
-      <video className="aspect-video w-full rounded-lg bg-slate-950" controls playsInline preload="metadata" aria-label={hindi ? "जेईई मेन 2027 आवेदन की DekhoCampus दृश्य मार्गदर्शिका" : "DekhoCampus visual guide to JEE Main 2027 applications"}>
-        <source src={`/videos/jee-main-2027-application-${hindi ? "hi" : "en"}.mp4`} type="video/mp4" />
-      </video>
-      <p className="mt-2 text-xs leading-5 text-muted-foreground">{hindi ? "यह DekhoCampus की दृश्य मार्गदर्शिका है। अंतिम तारीख और नियम NTA की मूल सूचना से मिलाएँ।" : "DekhoCampus visual guide. Confirm current dates and rules in the original NTA notices."}</p>
-    </section>}
-  </div>;
-}
-
 function ArticleMarkdown({ content }: { content: string }) {
   if (!content.trim()) return null;
   return (
@@ -217,7 +199,6 @@ export default function ArticleDetail() {
   const [isListening, setIsListening] = useState(false);
   const [saved, setSaved] = useState(false);
   const articleUsesRichHtml = containsRichArticleHtml(article?.content);
-  const jeeMain2027Guide = article?.category === "JEE Main 2027" && (language.code === "en" || language.code === "hi");
   const articleCanonical = article ? absoluteSiteUrl(`/news/${article.slug}`) : undefined;
   const organizationId = `${absoluteSiteUrl("/")}#organization`;
   useSEO({
@@ -653,13 +634,6 @@ export default function ArticleDetail() {
                 </p>
               )}
 
-              {jeeMain2027Guide && <div className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4">
-                <a href="https://jeemain.nta.nic.in/" target="_blank" rel="noopener noreferrer" className="inline-flex rounded-lg bg-blue-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-800">
-                  {language.code === "hi" ? "NTA के आधिकारिक आवेदन पोर्टल पर जाएँ" : "Open the official NTA application portal"}
-                </a>
-                <p className="mt-2 text-xs leading-5 text-slate-700">{language.code === "hi" ? "जेईई मेन का आवेदन केवल NTA के पोर्टल पर जमा होता है। नीचे दिया गया DekhoCampus फॉर्म केवल वैकल्पिक अपडेट और मार्गदर्शन के लिए है।" : "Only the NTA portal accepts JEE Main applications. The DekhoCampus form below is for optional updates and guidance."}</p>
-              </div>}
-
               <figure className="mt-6 mb-6 overflow-hidden rounded-[24px] border border-border bg-gradient-to-br from-slate-50 via-white to-orange-50 shadow-[0_22px_55px_rgba(15,23,42,0.09)]">
                 <div className="aspect-[16/8.7] overflow-hidden bg-slate-100">
                   <img
@@ -696,10 +670,7 @@ export default function ArticleDetail() {
                         <Fragment key={`${seg.type}-${i}`}>
                           <RichText html={seg.value} demoteH1 className="article-prose article-prose--news max-w-none" />
                           {i === Math.max(0, Math.ceil(displayContentSegments.length / 2) - 1) && (
-                            <>
-                              {jeeMain2027Guide && <JeeMain2027Inline languageCode={language.code} />}
-                              <ArticleLeaderboardAd position="middle" />
-                            </>
+                            <ArticleLeaderboardAd position="middle" />
                           )}
                         </Fragment>
                       ))}
@@ -707,14 +678,12 @@ export default function ArticleDetail() {
                   ) : (
                     <>
                       <RichText html={htmlContent} demoteH1 className="article-prose article-prose--news max-w-none" />
-                      {jeeMain2027Guide && <JeeMain2027Inline languageCode={language.code} />}
                       <ArticleLeaderboardAd position="middle" />
                     </>
                   )
                 ) : (
                   <>
                     <ArticleMarkdown content={markdownContentParts[0]} />
-                    {jeeMain2027Guide && <JeeMain2027Inline languageCode={language.code} />}
                     <ArticleLeaderboardAd position="middle" />
                     <ArticleMarkdown content={markdownContentParts[1]} />
                   </>
@@ -722,9 +691,9 @@ export default function ArticleDetail() {
               </div>
 
               {/* Mid-content lead capture - lighter spacing */}
-              {!jeeMain2027Guide && <div className="my-5 sm:my-7">
+              <div className="my-5 sm:my-7">
                 <LeadCaptureForm variant="inline" title="💬 Have questions about this topic?" subtitle="Get personalized advice from our experts - free." source={`article_mid_${article.slug}`} />
-              </div>}
+              </div>
 
               {/* Tags - compressed with show more/less */}
               {article.tags.length > 0 && (
