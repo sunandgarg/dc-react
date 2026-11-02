@@ -17,6 +17,8 @@ describe("JEE Main ad pages", () => {
   it("keeps the English guidance form separate from the official application", () => {
     open("jee-main-2027");
     expect(screen.getByRole("link", { name: "Go to the official NTA application portal" })).toHaveAttribute("href", "https://jeemain.nta.nic.in/");
+    expect(screen.getByRole("img", { name: "National Testing Agency logo" }).closest("section")).toHaveAttribute("aria-label", "Official NTA application link");
+    expect(screen.getByRole("link", { name: "Get free guidance" })).toHaveAttribute("href", "#jee-guidance-form");
     expect(screen.getByText("This optional DekhoCampus form is for guidance and updates. It is not an NTA application form.")).toBeInTheDocument();
     expect(screen.getByRole("img", { name: /NTA notice dated 30 October 2026/ })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "JEE Main 2027 application questions" })).toBeInTheDocument();

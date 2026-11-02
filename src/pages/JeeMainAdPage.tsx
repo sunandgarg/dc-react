@@ -95,7 +95,7 @@ const copy = {
 } as const;
 
 function EnglishAdPage() {
-  return <div className="min-h-screen bg-white text-slate-900" lang="en">
+  return <div className="min-h-screen bg-white pb-16 text-slate-900 sm:pb-0" lang="en">
     <header className="border-b border-slate-200 bg-white">
       <nav aria-label="Main navigation" className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <Link to="/" aria-label="DekhoCampus home"><img src={logo} alt="DekhoCampus" className="h-10 w-auto max-w-[165px] object-contain" /></Link>
@@ -115,14 +115,18 @@ function EnglishAdPage() {
 
       <div className="mt-7 grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
         <article className="min-w-0 space-y-9">
-          <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5 sm:p-7">
+          <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5 sm:p-7" aria-label="Official NTA application link">
             <p className="text-sm font-bold uppercase tracking-wide text-blue-900">Application link is active for Session 1</p>
             <p className="mt-2 leading-7 text-slate-800">Apply only at NTA. DekhoCampus offers independent guidance and cannot submit or process your examination form.</p>
+            <a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex max-w-full items-center gap-3 rounded-lg border border-blue-200 bg-white p-3 hover:border-blue-400" aria-label="Visit the official NTA JEE Main portal">
+              <img src="/assets/nta-logo-official-link.png" alt="National Testing Agency logo" className="h-auto w-36 object-contain sm:w-48" />
+              <span className="text-sm font-semibold text-blue-900 underline">Official NTA website ↗</span>
+            </a>
             <a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex max-w-full rounded-lg bg-orange-600 px-6 py-3 text-center font-bold text-white hover:bg-orange-700">Go to the official NTA application portal</a>
             <p className="mt-3 text-sm text-slate-600">Check the portal for any newer notice before paying.</p>
           </section>
 
-          <section className="rounded-2xl border border-blue-200 bg-[#e9f3ff] p-5 sm:p-7" aria-label="DekhoCampus JEE Main guidance form">
+          <section id="jee-guidance-form" className="scroll-mt-6 rounded-2xl border border-blue-200 bg-[#e9f3ff] p-5 sm:p-7" aria-label="DekhoCampus JEE Main guidance form">
             <h2 className="text-2xl font-bold">Get JEE Main guidance and updates</h2>
             <p className="mt-2 leading-7 text-slate-700">Questions about the process? Leave your details for DekhoCampus guidance.</p>
             <p className="mt-2 text-sm font-semibold text-slate-800">This optional DekhoCampus form is for guidance and updates. It is not an NTA application form.</p>
@@ -181,7 +185,8 @@ function EnglishAdPage() {
       </div>
     </main>
 
-    <footer className="mt-12 border-t border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm leading-7 text-slate-600"><p>Independent student guidance by DekhoCampus. Official exam applications are handled by NTA.</p><p className="mt-2"><Link to="/about-us" className="underline">About DekhoCampus</Link> · <Link to="/legal/privacy-policy" className="underline">Privacy Policy</Link></p></footer>
+    <footer className="mt-12 border-t border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm leading-7 text-slate-600"><p>Independent student guidance by DekhoCampus. Official exam applications are handled by NTA.</p><a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block rounded-lg bg-orange-600 px-6 py-3 font-bold text-white hover:bg-orange-700">Apply at NTA's official website ↗</a><p className="mt-3"><Link to="/about-us" className="underline">About DekhoCampus</Link> · <Link to="/legal/privacy-policy" className="underline">Privacy Policy</Link></p></footer>
+    <nav aria-label="JEE Main quick actions" className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-slate-200 bg-white p-2 shadow-lg sm:hidden"><a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" className="flex-1 rounded-lg bg-orange-600 px-2 py-3 text-center text-sm font-bold text-white">Apply at NTA ↗</a><a href="#jee-guidance-form" className="flex-1 rounded-lg border border-blue-700 px-2 py-3 text-center text-sm font-bold text-blue-800">Get free guidance</a></nav>
   </div>;
 }
 
