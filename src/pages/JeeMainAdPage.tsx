@@ -119,7 +119,7 @@ function EnglishAdPage() {
             <p className="text-sm font-bold uppercase tracking-wide text-blue-900">Application link is active for Session 1</p>
             <p className="mt-2 leading-7 text-slate-800">Apply only at NTA. DekhoCampus offers independent guidance and cannot submit or process your examination form.</p>
             <a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex max-w-full items-center gap-3 rounded-lg border border-blue-200 bg-white p-3 hover:border-blue-400" aria-label="Visit the official NTA JEE Main portal">
-              <img src="/assets/nta-logo-official-link.png" alt="National Testing Agency logo" className="h-auto w-36 object-contain sm:w-48" />
+              <img src="/assets/nta-logo-official-link.png?v=20261102" alt="National Testing Agency logo" className="h-auto w-36 object-contain sm:w-48" />
               <span className="text-sm font-semibold text-blue-900 underline">Official NTA website ↗</span>
             </a>
             <a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex max-w-full rounded-lg bg-orange-600 px-6 py-3 text-center font-bold text-white hover:bg-orange-700">Go to the official NTA application portal</a>
