@@ -7,6 +7,7 @@ import logo from "@/assets/dekhocampus-logo-small.webp";
 const NTA_PORTAL = "https://jeemain.nta.nic.in/";
 const APPLICATION_NOTICE = "https://nta.ac.in/Download/Notice/Notice_20261024220013.pdf";
 const FRESH_FORM_NOTICE = "https://nta.ac.in/Download/Notice/Notice_20261030202143.pdf";
+const BULLETIN = "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2026/10/202610241890224107.pdf";
 const NOTICE_IMAGE = "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/editor/1793377152584-fljho1.webp";
 const VIDEO_CLOSES = Date.parse("2026-11-26T18:20:00Z");
 
@@ -93,6 +94,97 @@ const copy = {
   },
 } as const;
 
+function EnglishAdPage() {
+  return <div className="min-h-screen bg-white text-slate-900" lang="en">
+    <header className="border-b border-slate-200 bg-white">
+      <nav aria-label="Main navigation" className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
+        <Link to="/" aria-label="DekhoCampus home"><img src={logo} alt="DekhoCampus" className="h-10 w-auto max-w-[165px] object-contain" /></Link>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold text-slate-700">
+          <Link to="/" className="hover:text-orange-700">Home</Link>
+          <Link to="/exams/jee-main" className="hover:text-orange-700">JEE Main</Link>
+          <Link to="/news" className="hover:text-orange-700">News</Link>
+          <Link to="/ad/jee-main-2027-hi" lang="hi" className="hover:text-orange-700">हिन्दी</Link>
+        </div>
+      </nav>
+    </header>
+
+    <main className="mx-auto max-w-6xl px-4 py-7 sm:px-6 sm:py-10">
+      <nav aria-label="Breadcrumb" className="text-sm text-slate-500"><Link to="/" className="hover:underline">Home</Link> / JEE Main 2027 application</nav>
+      <h1 className="mt-6 max-w-5xl text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">JEE Main 2027 Session 1 application: official link, dates and form steps</h1>
+      <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-700">NTA is accepting Session 1 applications on its official portal. The regular application and payment window ends on 22 November 2026 at 11:50 pm IST. Here is what to prepare and how to finish with a confirmation page.</p>
+
+      <div className="mt-7 grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <article className="min-w-0 space-y-9">
+          <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5 sm:p-7">
+            <p className="text-sm font-bold uppercase tracking-wide text-blue-900">Application link is active for Session 1</p>
+            <p className="mt-2 leading-7 text-slate-800">Apply only at NTA. DekhoCampus offers independent guidance and cannot submit or process your examination form.</p>
+            <a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex max-w-full rounded-lg bg-orange-600 px-6 py-3 text-center font-bold text-white hover:bg-orange-700">Go to the official NTA application portal</a>
+            <p className="mt-3 text-sm text-slate-600">Check the portal for any newer notice before paying.</p>
+          </section>
+
+          <section className="rounded-2xl border border-blue-200 bg-[#e9f3ff] p-5 sm:p-7" aria-label="DekhoCampus JEE Main guidance form">
+            <h2 className="text-2xl font-bold">Get JEE Main guidance and updates</h2>
+            <p className="mt-2 leading-7 text-slate-700">Questions about the process? Leave your details for DekhoCampus guidance.</p>
+            <p className="mt-2 text-sm font-semibold text-slate-800">This optional DekhoCampus form is for guidance and updates. It is not an NTA application form.</p>
+            <div className="mt-4 max-w-xl"><LeadCaptureForm variant="card" title="Get JEE Main guidance from DekhoCampus" subtitle="Complete your exam application separately on the official NTA portal." source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} simple /></div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold">JEE Main 2027 application dates</h2>
+            <p className="mt-2 leading-7 text-slate-700">NTA's Session 1 notice sets these dates. The extra ₹500 late fee is payable in addition to the examination fee.</p>
+            <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200"><table className="w-full min-w-[520px] text-left text-sm"><thead className="bg-slate-100 text-slate-900"><tr><th className="px-4 py-3">Stage</th><th className="px-4 py-3">NTA date</th></tr></thead><tbody className="divide-y divide-slate-200"><tr><td className="px-4 py-3">Regular application and fee payment</td><td className="px-4 py-3">24 October to 22 November 2026, 11:50 pm IST</td></tr><tr><td className="px-4 py-3">Application with late fee</td><td className="px-4 py-3">23 to 26 November 2026, 11:50 pm IST</td></tr><tr><td className="px-4 py-3">Correction facility</td><td className="px-4 py-3">27 to 29 November 2026, 11:50 pm IST</td></tr></tbody></table></div>
+            <a href={APPLICATION_NOTICE} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block font-semibold text-blue-800 underline">Read NTA's dated application notice</a>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold">Prepare these documents before you start</h2>
+            <p className="mt-2 leading-7 text-slate-700">The 2027 information bulletin asks candidates to capture a live photograph and upload a recent scanned colour photograph, signature and Class 10 certificate or marksheet. A disability or UDID certificate and a non-Indian passport are required only where applicable. Keep access to the mobile number and email address you use for registration.</p>
+            <ul className="mt-4 grid gap-3 sm:grid-cols-2">{["Live photograph and recent scanned photo", "Scanned signature", "Class 10 certificate or marksheet", "Applicable disability or passport document"].map(item => <li key={item} className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold">{item}</li>)}</ul>
+            <p className="mt-3 text-sm text-slate-600">Check the bulletin for accepted file formats and sizes before uploading.</p>
+            <a href={BULLETIN} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block font-semibold text-blue-800 underline">Open NTA's 2027 information bulletin</a>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold">Application fee for one paper at an Indian centre</h2>
+            <p className="mt-2 leading-7 text-slate-700">The amount depends on category and gender. The table below covers one paper at a centre in India; combined papers and centres outside India have different fees.</p>
+            <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200"><table className="w-full min-w-[520px] text-left text-sm"><thead className="bg-slate-100"><tr><th className="px-4 py-3">Category</th><th className="px-4 py-3">Male</th><th className="px-4 py-3">Female</th></tr></thead><tbody className="divide-y divide-slate-200"><tr><td className="px-4 py-3">General</td><td className="px-4 py-3">₹1,000</td><td className="px-4 py-3">₹800</td></tr><tr><td className="px-4 py-3">Gen-EWS or OBC-NCL</td><td className="px-4 py-3">₹900</td><td className="px-4 py-3">₹800</td></tr><tr><td className="px-4 py-3">SC, ST, PwD or PwBD</td><td className="px-4 py-3">₹500</td><td className="px-4 py-3">₹500</td></tr></tbody></table></div>
+            <p className="mt-3 text-sm text-slate-600">Third gender candidates pay ₹500 for one paper at an Indian centre. Bank processing charges and GST may be extra. Use the <a href={BULLETIN} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">official fee table</a> for your exact choice.</p>
+          </section>
+
+          {Date.now() < VIDEO_CLOSES && <section>
+            <h2 className="text-2xl font-bold">Watch the form steps</h2>
+            <p className="mt-2 leading-7 text-slate-700">This DekhoCampus video shows the overall flow. Follow the portal and NTA's latest instructions when you fill the form.</p>
+            <video className="mt-4 aspect-video w-full rounded-xl bg-slate-950" controls playsInline preload="metadata" aria-label="DekhoCampus JEE Main application video"><source src="/videos/jee-main-2027-application-en.mp4" type="video/mp4" /></video>
+          </section>}
+
+          <section>
+            <h2 className="text-2xl font-bold">Who can appear in JEE Main 2027?</h2>
+            <p className="mt-2 leading-7 text-slate-700">NTA's bulletin has no age limit for appearing in the exam. Students who passed Class 12 or an equivalent exam in 2025 or 2026, and those appearing in 2027, can appear. Students who first passed in 2024 or earlier are not eligible for JEE Main 2027. Admission to a particular institute may have additional rules, so check those separately.</p>
+            <a href={BULLETIN} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block font-semibold text-blue-800 underline">Read the official eligibility chapter</a>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold">How to complete the application</h2>
+            <ol className="mt-4 space-y-3 leading-7 text-slate-700"><li><strong>1. Register:</strong> Open the Session 1 link on the NTA portal and keep the application number and password.</li><li><strong>2. Fill and upload:</strong> Enter the personal, academic, paper and exam city details. Upload the documents NTA requests.</li><li><strong>3. Pay and save:</strong> Review the preview, pay through an approved online method, then download the confirmation page. An application number alone is not proof of completion.</li></ol>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold">Need to correct or restart a form?</h2>
+            <p className="mt-2 leading-7 text-slate-700">NTA's 30 October clarification permits a fresh Session 1 form. Only the latest form with successful fee payment and a generated confirmation page is valid. If a new form remains incomplete, the earlier completed form stays valid. The earlier fee is not refunded or adjusted against a fresh form, so use the correction window when it covers the detail you need to change.</p>
+            <figure className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50"><img src={NOTICE_IMAGE} alt="NTA notice dated 30 October 2026 on valid JEE Main applications, previous fees and correction" loading="lazy" className="h-auto w-full" /><figcaption className="p-3 text-sm leading-6 text-slate-600">National Testing Agency public notice, 30 October 2026. <a href={FRESH_FORM_NOTICE} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">Read the original PDF</a>.</figcaption></figure>
+          </section>
+
+          <FAQSection page="ad" itemSlug="jee-main-2027" title="JEE Main 2027 application questions" fallback={[...copy.en.faqs]} compact />
+        </article>
+
+        <aside className="hidden lg:block"><div className="sticky top-6 rounded-2xl border border-slate-200 bg-slate-50 p-5"><h2 className="text-lg font-bold">Application essentials</h2><p className="mt-3 text-sm leading-6">Regular deadline: <strong>22 November 2026</strong></p><p className="mt-2 text-sm leading-6">Late fee window ends: <strong>26 November 2026</strong></p><a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" className="mt-5 block rounded-lg bg-orange-600 px-4 py-3 text-center text-sm font-bold text-white hover:bg-orange-700">Apply at NTA</a><p className="mt-3 text-xs leading-5 text-slate-600">The DekhoCampus form on this page is for guidance only.</p></div></aside>
+      </div>
+    </main>
+
+    <footer className="mt-12 border-t border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm leading-7 text-slate-600"><p>Independent student guidance by DekhoCampus. Official exam applications are handled by NTA.</p><p className="mt-2"><Link to="/about-us" className="underline">About DekhoCampus</Link> · <Link to="/legal/privacy-policy" className="underline">Privacy Policy</Link></p></footer>
+  </div>;
+}
+
 export default function JeeMainAdPage() {
   const { slug } = useParams<{ slug: string }>();
   const hindi = slug === "jee-main-2027-hi";
@@ -102,6 +194,7 @@ export default function JeeMainAdPage() {
   useSEO({ title: c.title, exactTitle: true, description: c.meta, canonical: `/ad/${slug}`, language, robots: "noindex, follow, noarchive" });
 
   if (!valid) return <main className="mx-auto max-w-3xl px-5 py-20"><h1>Page not found</h1><Link to="/">Go to DekhoCampus</Link></main>;
+  if (!hindi) return <EnglishAdPage />;
 
   return <div className="min-h-screen bg-[#f5f7fb] text-slate-900" lang={language}>
     <header className="border-b border-slate-200 bg-white">
