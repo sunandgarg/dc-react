@@ -13,6 +13,8 @@ vi.mock("@/hooks/useSEO", () => ({ useSEO: vi.fn() }));
 vi.mock("@/data/articles", () => ({ articles: [] }));
 vi.mock("@/components/Navbar", () => ({ Navbar: () => <nav>Navigation</nav> }));
 vi.mock("@/components/Footer", () => ({ Footer: () => <footer>Footer</footer> }));
+vi.mock("@/components/LeadCaptureForm", () => ({ LeadCaptureForm: ({ subtitle }: { subtitle?: string }) => <div data-testid="lead-form">{subtitle}</div> }));
+vi.mock("@/lib/lazyRetry", () => ({ lazyRetry: () => () => null }));
 
 function openArticle() {
   return render(<MemoryRouter initialEntries={["/news/test-article"]}><Routes><Route path="/news/:slug" element={<ArticleDetail />} /></Routes></MemoryRouter>);
@@ -44,5 +46,17 @@ describe("article availability", () => {
     expect(screen.getByRole("heading", { name: "Article Not Found" })).toBeInTheDocument();
     expect(screen.queryByText("Article temporarily unavailable")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Browse News" })).toHaveAttribute("href", "/news");
+  });
+
+  it("keeps the official application link separate from the JEE guidance form", () => {
+    mocks.query.data = {
+      id: "jee-article", slug: "test-article", title: "JEE Main 2027 form help",
+      category: "JEE Main 2027", language_code: "en", author: "Geethika Reddy",
+      created_at: "2026-11-01T05:00:00Z", description: "Choose your application route.",
+      content: "<h2>Choose your route</h2><p>Use the official portal to apply.</p>", tags: [],
+    };
+    openArticle();
+    expect(screen.getByRole("link", { name: "Open the official NTA application portal" })).toHaveAttribute("href", "https://jeemain.nta.nic.in/");
+    expect(screen.getByText("This is not the NTA application form.")).toBeInTheDocument();
   });
 });
