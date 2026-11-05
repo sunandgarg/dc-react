@@ -30,6 +30,12 @@ describe("JEE Main ad pages", () => {
     expect(screen.getByRole("heading", { name: "JEE Main 2027 application questions" })).toBeInTheDocument();
     expect(screen.getByText("Get JEE Main guidance from DekhoCampus").closest("[data-source]")).toHaveAttribute("data-source", "JEE-paid");
     expect(screen.getByRole("heading", { name: "Application fee for one paper at an Indian centre" })).toBeInTheDocument();
+    const article = screen.getByRole("article");
+    const form = within(article).getByRole("region", { name: "DekhoCampus JEE Main guidance form" });
+    const papers = within(article).getByRole("region", { name: "JEE Main question papers: last 5 years" });
+    const documents = within(article).getByRole("heading", { name: "Prepare these documents before you start" });
+    expect(papers.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(form.compareDocumentPosition(documents) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("uses the shared site layout and opens the NTA-branded lead form before the application handoff", () => {
