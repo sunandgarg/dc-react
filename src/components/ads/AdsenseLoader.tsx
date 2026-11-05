@@ -5,7 +5,7 @@ import { useAdsenseSettings, useAdScripts } from "@/hooks/useAdsense";
 /**
  * Globally injects Google AdSense Auto Ads script + admin-managed custom
  * head/body/footer scripts and custom CSS/JS. Mounted once in App.tsx.
- * Admin routes are excluded.
+ * Admin, homepage and campaign landing routes are excluded.
  */
 export function AdsenseLoader() {
   const { pathname } = useLocation();
@@ -14,24 +14,25 @@ export function AdsenseLoader() {
 
   const isAdmin = pathname.startsWith("/admin");
   const isHomepage = pathname === "/";
+  const isAdFreePage = isHomepage || pathname.startsWith("/ad/");
   const allowAutoAds = settings?.auto_ads_enabled && !pathname.startsWith("/news/");
 
   useEffect(() => {
-    if (!isHomepage) return;
-    const removeHomepageAds = () => {
+    if (!isAdFreePage) return;
+    const removeAds = () => {
       document.querySelectorAll("#global-internal-ad-top-anchor, .google-auto-placed, .adsbygoogle-noablate, ins.adsbygoogle, iframe[src*='googleads.g.doubleclick.net'], iframe[id^='aswift_'], script[src*='pagead2.googlesyndication.com/pagead/js']")
         .forEach((element) => element.remove());
       document.getElementById("adsbygoogle-lib")?.remove();
       document.getElementById("adsbygoogle-autoads")?.remove();
     };
-    removeHomepageAds();
-    const observer = new MutationObserver(removeHomepageAds);
+    removeAds();
+    const observer = new MutationObserver(removeAds);
     observer.observe(document.documentElement, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [isHomepage]);
+  }, [isAdFreePage]);
 
   useEffect(() => {
-    if (isAdmin || isHomepage || !settings || !settings.ads_globally_enabled) return;
+    if (isAdmin || isAdFreePage || !settings || !settings.ads_globally_enabled) return;
 
     // Load during the first idle window, with a short fallback so reserved
     // ad slots fill promptly without competing with the LCP image.
@@ -135,7 +136,7 @@ export function AdsenseLoader() {
       else window.clearTimeout(handle);
       created.forEach((el) => el.parentNode?.removeChild(el));
     };
-  }, [allowAutoAds, isAdmin, isHomepage, settings, scripts]);
+  }, [allowAutoAds, isAdmin, isAdFreePage, settings, scripts]);
 
   return null;
 }

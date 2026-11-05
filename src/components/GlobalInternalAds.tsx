@@ -11,7 +11,7 @@ export interface InternalAdContext {
 }
 
 export function shouldShowTopGoogleAd(pathname: string) {
-  return pathname !== "/";
+  return pathname !== "/" && !pathname.startsWith("/ad/");
 }
 
 const NON_ITEM_COLLEGE_PREFIX = "top-";
@@ -27,6 +27,7 @@ export function getInternalAdContext(pathname: string): InternalAdContext {
     pathname.startsWith("/target-with-ai") ||
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/lp") ||
+    pathname.startsWith("/ad/") ||
     pathname.startsWith("/landing/")
   ) {
     return { isPublic: false };

@@ -10,6 +10,12 @@ vi.mock("./GlobalSearchBar", () => ({ GlobalSearchBar: () => null }));
 vi.mock("./MegaMenu", () => ({ MegaMenu: () => <span>Desktop categories</span>, MobileMegaMenu: ({ onNavigate }: { onNavigate: () => void }) => <button onClick={onNavigate}>Mobile categories</button> }));
 afterEach(() => vi.restoreAllMocks());
 
+it("keeps the shared header without reserving an ad space on the JEE landing page", () => {
+  render(<MemoryRouter initialEntries={["/ad/jee-main-2027"]}><Navbar /></MemoryRouter>);
+  expect(screen.getByRole("button", { name: "Toggle menu" })).toBeInTheDocument();
+  expect(document.getElementById("global-internal-ad-top-anchor")).toBeNull();
+});
+
 it("loads mobile categories on opening and enables desktop categories after resizing", async () => {
   let resize: () => void = () => undefined;
   const media = { matches: false, addEventListener: (_: string, listener: () => void) => { resize = listener; }, removeEventListener: vi.fn() };

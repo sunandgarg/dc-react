@@ -18,8 +18,12 @@ describe("global internal ad route targeting", () => {
     expect(getInternalAdContext("/dashboard").isPublic).toBe(false);
   });
 
-  it("removes the top Google slot from the homepage only", () => {
+  it("keeps the homepage and campaign landing pages free of the top Google slot", () => {
     expect(shouldShowTopGoogleAd("/")).toBe(false);
+    for (const path of ["/ad/jee-main-2027", "/ad/jee-main-2027-application", "/ad/jee-main-2027-hi"]) {
+      expect(shouldShowTopGoogleAd(path)).toBe(false);
+      expect(getInternalAdContext(path).isPublic).toBe(false);
+    }
     expect(shouldShowTopGoogleAd("/news")).toBe(true);
     expect(shouldShowTopGoogleAd("/colleges")).toBe(true);
   });
