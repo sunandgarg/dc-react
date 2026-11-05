@@ -6,6 +6,16 @@ import { RichText } from "@/components/detail/RichText";
 import { prepareArticleContent } from "./articleContentSanitizer";
 
 describe("Cloudflare edge SEO", () => {
+  it("serves the JEE application alias with the landing page canonical and edited metadata", () => {
+    const main = edgeSeoFor("https://dekhocampus.com/ad/jee-main-2027");
+    const alias = edgeSeoFor("https://dekhocampus.com/ad/jee-main-2027-application");
+    expect(alias.notFound).toBe(false);
+    expect(alias.indexable).toBe(false);
+    expect(alias.canonical).toBe("https://dekhocampus.com/ad/jee-main-2027");
+    expect(alias.title).toBe(main.title);
+    expect(alias.description).toBe(main.description);
+    expect(alias.title).toBe("JEE Main 2027 Application: Dates, Fees & Official Form");
+  });
   it("prioritizes an exam's logo rather than downloading its unused wide banner", () => {
     const metadata = entityEdgeSeo({ name: "VSAT", logo: "/exam-logo.svg", image: "/exam-banner.webp" }, new URL("https://dekhocampus.com/exams/vsat-30475"), "exams");
     expect(metadata.prerenderHtml).toContain('width="96" height="96"');

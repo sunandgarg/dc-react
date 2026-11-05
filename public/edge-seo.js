@@ -24,11 +24,11 @@ const LISTING_QUERY_KEYS = {
 
 const STATIC_METADATA = new Map([
   ["/ad/jee-main-2027", {
-    title: "JEE Main 2027 Application Guide | DekhoCampus",
-    description: "Check the official NTA application route, Session 1 deadlines, confirmation page and correction rules before you submit your JEE Main 2027 form.",
+    title: "JEE Main 2027 Application: Dates, Fees & Official Form",
+    description: "Apply through NTA's JEE Main 2027 portal. Find Session 1 deadlines, fees, documents and official question papers from 2022 to 2026.",
   }],
   ["/ad/jee-main-2027-hi", {
-    title: "JEE Main 2027 आवेदन मार्गदर्शिका | DekhoCampus",
+    title: "JEE Main 2027 आवेदन: तारीखें और आधिकारिक फॉर्म",
     description: "JEE Main 2027 Session 1 का आवेदन केवल NTA पोर्टल पर करें। अंतिम तारीख, फीस, पुष्टि पृष्ठ और सुधार के नियम समझें।",
   }],
   ["/cat-universe/cat-2026-preparation-kit", {
@@ -149,11 +149,12 @@ function isIndexableQuery(url, pathname) {
 export function edgeSeoFor(input) {
   const url = input instanceof URL ? input : new URL(input);
   const pathname = cleanPath(url.pathname);
-  const privatePath = pathname === "/ad/jee-main-2027" || pathname === "/ad/jee-main-2027-hi" || PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  const landingPath = pathname === "/ad/jee-main-2027-application" ? "/ad/jee-main-2027" : pathname;
+  const privatePath = landingPath === "/ad/jee-main-2027" || landingPath === "/ad/jee-main-2027-hi" || PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
   const publicPath = isPublicPath(pathname);
   const indexable = !privatePath && publicPath && isIndexableQuery(url, pathname);
   const fullPageAlias = pathname.match(/^\/(colleges|courses)\/([^/]+)\/[^/]+$/);
-  const canonicalBase = fullPageAlias ? `/${fullPageAlias[1]}/${fullPageAlias[2]}` : pathname;
+  const canonicalBase = fullPageAlias ? `/${fullPageAlias[1]}/${fullPageAlias[2]}` : landingPath;
   const canonicalPath = indexable && url.search ? `${canonicalBase}${url.search}` : canonicalBase;
   const canonical = `${SITE_URL}${canonicalPath === "/" ? "" : canonicalPath}`;
 
@@ -171,7 +172,7 @@ export function edgeSeoFor(input) {
       title: `${url.searchParams.get("category") === VERNACULAR_CATEGORY ? `Vernacular Education News${url.searchParams.get("language") ? ` · ${articleLanguage(url.searchParams.get("language")).label}` : ""}` : "Latest Education News"}${url.searchParams.has("page") ? ` - Page ${url.searchParams.get("page")}` : ""} | DekhoCampus`,
       description: url.searchParams.get("category") === VERNACULAR_CATEGORY ? "Read exam, admission and college updates in Hindi, Tamil, Telugu, Kannada, Malayalam, Gujarati, Marathi, Bengali and Punjabi." : "Read the latest verified exam, admission, college and education updates for students in India.",
     }
-    : STATIC_METADATA.get(pathname) || (LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname));
+    : STATIC_METADATA.get(landingPath) || (LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname));
   return { ...metadata, canonical, indexable, notFound: !privatePath && !publicPath };
 }
 
