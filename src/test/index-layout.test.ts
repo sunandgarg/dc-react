@@ -123,11 +123,12 @@ describe("Index page layout (static source assertions)", () => {
 
   it("keeps the homepage completely free of Google ad slots", () => {
     expect(belowFoldSrc).not.toMatch(/GoogleAd|placement="homepage"/);
-    expect(adsenseLoaderSrc).toMatch(/isHomepage \|\| !settings/);
+    expect(adsenseLoaderSrc).toMatch(/const isAdFreePage = isHomepage \|\| pathname\.startsWith\("\/ad\/"\)/);
+    expect(adsenseLoaderSrc).toMatch(/isAdFreePage \|\| !settings/);
     expect(adsenseLoaderSrc).toMatch(/google-auto-placed/);
     expect(adsenseLoaderSrc).toContain("script[src*='pagead2.googlesyndication.com/pagead/js']");
     expect(adsenseLoaderSrc).toMatch(/observer\.observe\(document\.documentElement/);
-    expect(navbarSrc).toMatch(/pathname !== "\/" && <div id="global-internal-ad-top-anchor"/);
+    expect(navbarSrc).toMatch(/pathname !== "\/" && !pathname\.startsWith\("\/ad\/"\) && <div id="global-internal-ad-top-anchor"/);
     expect(globalAdsSrc).toMatch(/if \(pathname === "\/"\) return null/);
     expect(readFileSync(resolve(process.cwd(), "src/components/ads/GoogleAd.tsx"), "utf8")).toMatch(/pathname === "\/" \|\| !allowed/);
   });
@@ -202,7 +203,7 @@ describe("Index page layout (static source assertions)", () => {
     expect(adminAdsSrc).not.toMatch(/absolute inset-x-0 top-0 flex h-1/);
   });
 
-  it("reserves the top Google slot on public pages except the homepage", () => {
+  it("reserves the top Google slot on public pages except the homepage and campaign pages", () => {
     expect(navbarSrc).toMatch(/global-internal-ad-top-anchor[\s\S]*GlobalSearchBar/);
     expect(globalAdsSrc).toMatch(/shouldShowTopGoogleAd\(pathname\)/);
     expect(globalAdsSrc).toMatch(/return pathname !== "\/"/);
