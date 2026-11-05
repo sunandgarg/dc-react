@@ -37,6 +37,7 @@ export function LockTargetFloatingPromo() {
     pathname.startsWith("/target-dashboard") ||
     pathname.startsWith("/my-targets") ||
     pathname.startsWith("/target-with-ai") ||
+    pathname.startsWith("/ad/") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/auth")
   ) {

@@ -31,6 +31,7 @@ interface LeadGateDialogProps {
   theme?: "default" | "cat-kit";
   brandLogoUrl?: string;
   brandName?: string;
+  className?: string;
 }
 
 
@@ -52,6 +53,7 @@ export function LeadGateDialog({
   theme = "default",
   brandLogoUrl,
   brandName,
+  className = "",
 }: LeadGateDialogProps) {
   const { user } = useAuth();
   const { data: profile } = useUserProfile();
@@ -121,7 +123,7 @@ export function LeadGateDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className={`${theme === "cat-kit" ? "max-w-lg" : "max-w-md"} w-[calc(100vw-2rem)] sm:w-full mx-auto p-0 gap-0 rounded-2xl border-0 bg-transparent shadow-none overflow-visible [&_h3]:pr-8 [&_h3+p]:pr-8`}
+        className={`${theme === "cat-kit" ? "max-w-lg" : "max-w-md"} w-[calc(100vw-2rem)] sm:w-full mx-auto p-0 gap-0 rounded-2xl border-0 bg-transparent shadow-none overflow-visible [&_h3]:pr-8 [&_h3+p]:pr-8 ${className}`}
         aria-describedby={undefined}
         onPointerDownOutside={(e) => { if ((e.target as HTMLElement)?.closest?.('#searchable-select-portal-active')) e.preventDefault(); }}
         onInteractOutside={(e) => { if ((e.target as HTMLElement)?.closest?.('#searchable-select-portal-active')) e.preventDefault(); }}
