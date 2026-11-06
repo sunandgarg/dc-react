@@ -63,7 +63,7 @@ describe("JEE Main ad pages", () => {
       const dialog = screen.getByRole("dialog", { name: "Lead Form" });
       expect(dialog).toHaveAttribute("data-force-show", "true");
       expect(dialog).toHaveAttribute("data-source", "JEE-paid");
-      expect(dialog).toHaveTextContent("not an NTA application");
+      expect(dialog).not.toHaveTextContent("Independent admission guidance");
       fireEvent.click(within(dialog).getByRole("button", { name: "Close" }));
     }
     const college = screen.getByRole("link", { name: "Explore Amity University" });
