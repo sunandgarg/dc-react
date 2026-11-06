@@ -8,9 +8,11 @@ import { Footer } from "@/components/Footer";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { useSEO } from "@/hooks/useSEO";
 import { CarouselControls, useCarouselNav } from "@/components/CarouselControls";
-import { useTrustedPartners } from "@/hooks/useTrustedPartners";
-import { InstitutionLogo } from "@/components/InstitutionLogo";
-import { buildCollegeHref } from "@/lib/entityUrls";
+
+const COLLEGE_APPLICATIONS = [
+  { slug: "lovely-professional-university", name: "Lovely Professional University", logo_url: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/ea/eaa5565056636a93d2e1c8fe856429dd3d691dc660dbfad6ca1ddd61dd225e23.webp", href: "https://www.lpu.in/landing-pages/brand/?utm_source=dekhocampus" },
+  { slug: "amity-university-noida", name: "Amity University", logo_url: "/assets/amity-noida-admissions-logo.png", href: "https://noida.amity.edu/admission-open/?utm_source=dekhocampus&utm_medium=jee&utm_campaign=jeep" },
+];
 
 const NTA_PORTAL = "https://jeemain.nta.nic.in/";
 const OFFICIAL_FORM = "https://jeemain.nta.nic.in/online-application-form-for-jee-main-2027-session-1/";
@@ -126,14 +128,12 @@ function JeeGuidanceForm({ id }: { id: string }) {
 
 function AdmissionCarousel() {
   const carousel = useCarouselNav();
-  const { data: partners = [] } = useTrustedPartners();
-  const colleges = partners.filter(partner => partner.is_active && partner.logo_url && partner.college_slug);
   return <section aria-labelledby="admission-options-title" className="min-w-0">
     <h2 id="admission-options-title" className="font-bold text-blue-900">Apply directly. Explore <span className="text-orange-600">up to 100% scholarships.</span></h2>
-    <p className="mt-2 text-xs leading-5 text-slate-600">Explore early application options. <a href="https://www.cuchd.in/scholarship/" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">CUCET scholarships</a> are subject to merit, eligibility and renewal conditions; early application does not guarantee an award.</p>
+    <p className="mt-2 text-xs leading-5 text-slate-600">Explore early application options. <a href="https://www.amity.edu/scholarships/" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">Amity scholarships</a> are subject to the applicable admission year, merit, eligibility and renewal conditions; early application does not guarantee an award.</p>
     <div ref={carousel.ref} onScroll={carousel.recompute} className="mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2" aria-label="College logos">
-      {colleges.map(college => <a key={college.id} href={buildCollegeHref({ slug: college.college_slug })} data-college-destination aria-label={`Explore ${college.name}`} className="flex h-24 w-32 shrink-0 snap-start items-center justify-center rounded-lg border border-slate-200 bg-white p-3 transition hover:border-blue-500 focus-visible:outline-blue-600 sm:h-28 sm:w-36">
-        <InstitutionLogo src={college.logo_url} alt={`${college.name} logo`} className="h-full w-full" />
+      {COLLEGE_APPLICATIONS.map(college => <a key={college.slug} href={college.href} data-college-destination aria-label={`Explore ${college.name}`} className="flex h-24 w-32 shrink-0 snap-start items-center justify-center rounded-lg border border-slate-200 bg-white p-3 transition hover:border-blue-500 focus-visible:outline-blue-600 sm:h-28 sm:w-36">
+        <img src={college.logo_url} alt={`${college.name} logo`} className="h-full w-full object-contain" loading="lazy" decoding="async" />
       </a>)}
     </div>
     <CarouselControls pages={carousel.pages} active={carousel.active} canLeft={carousel.canLeft} canRight={carousel.canRight} onPrev={() => carousel.scrollByDir("left")} onNext={() => carousel.scrollByDir("right")} onDot={carousel.goToPage} label="college logos" />

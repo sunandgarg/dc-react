@@ -5,11 +5,6 @@ import { ArticleLeadLinks } from "@/components/ArticleLeadLinks";
 import JeeMainAdPage from "./JeeMainAdPage";
 import { useSEO } from "@/hooks/useSEO";
 
-vi.mock("@/hooks/useTrustedPartners", () => ({ useTrustedPartners: () => ({ data: [
-  { id: "cu", name: "Chandigarh University", college_slug: "chandigarh-university", logo_url: "/cu.png", is_active: true },
-  { id: "lpu", name: "LPU", college_slug: "lovely-professional-university", logo_url: "/lpu.png", is_active: true },
-  { id: "hidden", name: "Hidden college", college_slug: "hidden", logo_url: "/hidden.png", is_active: false },
-] }) }));
 vi.mock("@/hooks/useSEO", () => ({ useSEO: vi.fn() }));
 vi.mock("@/components/AuthorByline", () => ({ AuthorByline: () => <p>Written by Geethika Reddy</p> }));
 vi.mock("@/components/Navbar", () => ({ Navbar: () => <header><div>Shared announcement bar</div><nav aria-label="Homepage navigation">DekhoCampus navigation</nav></header> }));
@@ -46,6 +41,9 @@ describe("JEE Main ad pages", () => {
     const logos = carousel.querySelector('[aria-label="College logos"]')!;
     expect(within(logos as HTMLElement).getAllByRole("link")).toHaveLength(2);
     expect(logos.textContent).toBe("");
+    expect(within(logos as HTMLElement).getByRole("link", { name: "Explore Lovely Professional University" })).toHaveAttribute("href", "https://www.lpu.in/landing-pages/brand/?utm_source=dekhocampus");
+    expect(within(logos as HTMLElement).getByRole("link", { name: "Explore Amity University" })).toHaveAttribute("href", "https://noida.amity.edu/admission-open/?utm_source=dekhocampus&utm_medium=jee&utm_campaign=jeep");
+    expect(within(logos as HTMLElement).queryByRole("link", { name: "Explore Chandigarh University" })).not.toBeInTheDocument();
     expect(within(logos as HTMLElement).getAllByRole("img")).toHaveLength(2);
     expect(carousel).not.toHaveTextContent("Hidden college");
     expect(carousel).toHaveTextContent("early application does not guarantee an award");
@@ -64,7 +62,7 @@ describe("JEE Main ad pages", () => {
       expect(dialog).toHaveTextContent("not an NTA application");
       fireEvent.click(within(dialog).getByRole("button", { name: "Close" }));
     }
-    const college = screen.getByRole("link", { name: "Explore Chandigarh University" });
+    const college = screen.getByRole("link", { name: "Explore Amity University" });
     expect(fireEvent.click(college)).toBe(false);
     const assign = vi.fn();
     const originalWindow = window;
