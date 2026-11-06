@@ -20,6 +20,8 @@ supabase/.temp/
 reports/legacy-csv-mapped/
 reports/legacy-csv-*.json
 reports/legacy-asset-*.json
+reports/seo-traffic-drop-2026-10-10/
+reports/seo-traffic-drop-2026-10-12/
 .seo-cache/
 tmp/
 .tmp/exam-official-logos/

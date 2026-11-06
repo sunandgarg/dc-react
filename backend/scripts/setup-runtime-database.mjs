@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { PrismaClient } from "@prisma/client";
 import "../src/database-url.mjs";
 import { ensureContentReviewTable } from "../src/content-review.mjs";
+import { ensureArticleTranslationQueue } from "../src/article-translation-queue.mjs";
 import { provisionExistingContentHead } from "../src/editor-access.mjs";
 import { prisma as appPrisma } from "../src/db.mjs";
 
@@ -35,6 +36,7 @@ run(process.execPath, ["scripts/normalize-delhi-ncr.mjs"]);
 // Fail the deploy before reloading the serving API if required setup cannot finish.
 try {
   await ensureContentReviewTable();
+  await ensureArticleTranslationQueue(appPrisma);
   await provisionExistingContentHead();
 } finally {
   await appPrisma.$disconnect();

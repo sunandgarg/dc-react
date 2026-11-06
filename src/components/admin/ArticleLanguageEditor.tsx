@@ -29,18 +29,36 @@ export function ArticleLanguageEditor({ article, canCreate, onOpen }: {
     },
   });
   const original = versions.data?.find((version) => version.id === rootId);
+  const translationQueue = useQuery({
+    queryKey: ["admin-article-languages", rootId, article.site_scope, "queue"],
+    enabled: Boolean(rootId) && (article.site_scope || "dekhocampus") === "dekhocampus",
+    queryFn: async () => {
+      const { data, error } = await backendClient.functions.invoke("article-translation-queue", {
+        body: { article_id: rootId, site_scope: "dekhocampus" },
+      });
+      if (error) throw error;
+      return data as { engine_status: "not_connected"; slots: { language_code: string; status: "waiting_engine" | "paused_original" | "published" | "existing_draft" }[] };
+    },
+  });
   return <div className="space-y-3">
     <p className="text-sm">Article language: <strong>{articleLanguage(article.language_code).label}</strong></p>
     {article.english_article_id && <p className="text-xs text-muted-foreground">English original: {original?.title || "Loading…"}</p>}
+    {(article.site_scope || "dekhocampus") === "dekhocampus" && <p className="text-sm text-muted-foreground">
+      Publishing a new English article queues Hindi, Tamil, Telugu, Kannada, Malayalam, Gujarati, Marathi, Bengali and Punjabi versions automatically.
+      Translation is paused until a free or self-hosted engine is connected. No API credits are used. You can still add or finish translations manually.
+    </p>}
     {!rootId ? <p className="text-xs text-muted-foreground">Save this English article first to add linked translations.</p> : <>
       <p className="text-xs text-muted-foreground">Save your changes before opening another version. Each translation has its own title, content, metadata and FAQs. Only published versions appear to readers.</p>
+      {translationQueue.isError && <p role="alert" className="text-sm">Translation queue could not be loaded. <Button type="button" variant="outline" onClick={() => void translationQueue.refetch()}>Retry queue</Button></p>}
       {versions.isError ? <p role="alert">Language versions could not be loaded. <Button variant="outline" onClick={() => void versions.refetch()}>Retry</Button></p> :
         <div className="flex flex-wrap gap-2">{ARTICLE_LANGUAGES.map(({ code, label }) => {
           const existing = versions.data?.find((version) => (version.language_code || "en") === code);
+          const slot = translationQueue.data?.slots.find((slot) => slot.language_code === code);
+          const queueLabel = slot?.status === "waiting_engine" ? "Queued · awaiting engine" : slot?.status === "paused_original" ? "Paused · English unpublished" : "Add";
           return <Button key={code} type="button" size="sm" variant={code === (article.language_code || "en") ? "secondary" : "outline"}
             disabled={versions.isFetching || !original || existing?.id === article.id || (!existing && (!canCreate || code === "en"))}
             onClick={() => onOpen(existing || newTranslationDraft(original!, code), !existing)}>
-            {label}{existing ? ` · ${existing.status}` : " · Add"}
+            {label}{existing ? ` · ${existing.status}${existing.is_active === false ? " (inactive)" : ""}` : ` · ${queueLabel}`}
           </Button>;
         })}</div>}
     </>}

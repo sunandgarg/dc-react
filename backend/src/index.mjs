@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { handleRest, handleRpc } from "./rest.mjs";
+import { articleTranslationQueueStatus } from "./article-translation-queue.mjs";
 import { prisma } from "./db.mjs";
 import { auditImpersonatedWrite, handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp, verifyLeadOtpProof } from "./auth.mjs";
 import { handleStorage } from "./storage.mjs";
@@ -859,6 +860,17 @@ export async function handleRequest(request) {
         const authorization = request.headers.get("authorization");
         await authorizeRest("articles", new Request(request.url, { method: "POST", headers: authorization ? { authorization } : {} }));
         return json(200, await handleArticleCover(request), requestId, request, { "cache-control": "private, no-store" });
+      }
+      if (functionMatch[1] === "article-translation-queue") {
+        if (request.method !== "POST") throw new HttpError(405, "METHOD_NOT_ALLOWED", "Use POST to read the translation queue.");
+        const identity = await resolveIdentity(request);
+        if (!identity) throw new HttpError(401, "AUTH_REQUIRED", "A valid user session is required");
+        const roles = await prisma.$queryRawUnsafe("SELECT role FROM user_roles WHERE user_id = ? AND role IN ('admin','manager','content_head','content','content_writer')", identity.id);
+        const permissions = roles.length ? [] : await prisma.$queryRawUnsafe("SELECT 1 FROM user_permissions WHERE user_id = ? AND (resource = 'articles' OR module = 'articles') AND (can_view = 1 OR can_create = 1) LIMIT 1", identity.id);
+        if (!roles.length && !permissions.length) throw new HttpError(403, "PERMISSION_DENIED", "Article editor access is required");
+        const access = { actorUserId: identity.id, restrictToOwnDrafts: !roles.some(({ role }) => ["admin", "manager", "content_head"].includes(role)) };
+        const body = await request.json().catch(() => null);
+        return json(200, await articleTranslationQueueStatus(prisma, body, access), requestId, request, { "cache-control": "private, no-store" });
       }
       if (functionMatch[1] === "admin-ai-usage-summary") {
         const identity = await resolveIdentity(request);

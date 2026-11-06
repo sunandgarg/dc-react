@@ -1,4 +1,5 @@
 import { assertArticlePublication } from "./article-publication-policy.mjs";
+import { queueArticleTranslations } from "./article-translation-queue.mjs";
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata } from "./db.mjs";
 import { assertArticleTopicsAvailable, withArticleWriteLock, blogStudioContentVersion, prepareStudioArticlePublication, commitStudioArticlePublication } from "./blog-ai.mjs";
@@ -283,8 +284,10 @@ export async function handleContentReviews(request, reviewerId) {
         throw Object.assign(new Error("The proposed Studio review changed. Reload Content Review before approving."), { status: 409, code: "STUDIO_REVIEW_STALE" });
       }
       if (status === "approved") {
+        let articleState;
         if (review.entity_type === "articles") {
           const state = await articleReviewState(tx, review);
+          articleState = state;
           await assertArticlePublication(tx, state.after, state.before);
           await commitStudioArticlePublication(tx, state.before, state.after, preparedStudioReview);
           const after = parseReviewJson(review.after_json, {});
@@ -307,6 +310,7 @@ export async function handleContentReviews(request, reviewerId) {
           });
         }
         await applyApprovedReview(tx, review);
+        if (articleState) await queueArticleTranslations(tx, articleState.after, articleState.before);
         if (review.entity_type === "articles") {
           const after = parseReviewJson(review.after_json, {});
           if (after.site_scope === "dekhocampus" && after.status === "Published" && after.is_active !== false && after.slug) {

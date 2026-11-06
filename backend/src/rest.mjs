@@ -1,4 +1,5 @@
 import { assertArticlePublication } from "./article-publication-policy.mjs";
+import { queueArticleTranslations } from "./article-translation-queue.mjs";
 import { randomUUID } from "node:crypto";
 import { prisma, quote, schemaMetadata, tableNames, jsonSafe } from "./db.mjs";
 import { recordContentReviews } from "./content-review.mjs";
@@ -808,6 +809,7 @@ async function handlePost(table, request, url, context) {
         });
         if (existingByCandidate[index]?.length) await replaceArticleEntityLinks(tx, { ...article, entity_links: rows[index].entity_links });
         else await saveNewArticleEntityLinks(tx, { ...article, entity_links: rows[index].entity_links });
+        await queueArticleTranslations(tx, article, existingByCandidate[index]?.[0] || null);
         saved.push(article);
       }
       return saved;
@@ -890,6 +892,7 @@ async function handlePatch(table, request, url, context) {
           allowDelete: Boolean(context.allowArticleFaqDelete),
         });
         await replaceArticleEntityLinks(tx, nextRows[index]);
+        await queueArticleTranslations(tx, nextRows[index], lockedBefore[index]);
       }
       return { before: lockedBefore, body: nextRows };
     }, ["dekhocampus", "sarkari"]));

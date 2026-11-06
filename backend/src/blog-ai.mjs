@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
+import { queueArticleTranslations } from "./article-translation-queue.mjs";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -2726,6 +2727,7 @@ async function publishBlogStudioDraft(body, userId) {
     for (const link of uniqueLinks) {
       await tx.article_links.create({ data: { id: randomUUID(), article_id: created.id, ...link } });
     }
+    await queueArticleTranslations(tx, created);
     const metadata = { ...(evidence.record?.metadata || {}), site_scope: siteScope, evidence: evidenceSignals, saved_article_id: created.id, reviewed_content_version: requestedStatus === "Published" ? contentVersion : null, reviewed_at: requestedStatus === "Published" ? new Date().toISOString() : null, article_status: requestedStatus, human_review_required: saved.human_review_required };
     if (evidence.record) await tx.ai_usage_events.update({ where: { id: evidence.record.id }, data: { metadata } });
     else await tx.ai_usage_events.create({ data: { id: randomUUID(), user_id: userId, provider: "draft", model: saved.text_model, feature: "blog-studio", operation: "editorial-evidence", metadata } });
@@ -2945,6 +2947,7 @@ async function saveGeneratedArticle(topic, settings, signals, entityContext = nu
         await tx.article_links.create({ data: { id: randomUUID(), article_id: created.id, entity_type: schedule.entity_type.replace(/s$/, ""), entity_slug: schedule.entity_slug } });
         await tx.entity_article_publications.create({ data: { id: randomUUID(), schedule_id: schedule.id, article_id: created.id, entity_type: schedule.entity_type, entity_slug: schedule.entity_slug, topic_kind: "researched_update", generated_for_date: new Date() } });
       }
+      await queueArticleTranslations(tx, created);
       return created;
     }, siteScope);
   } catch (error) {
