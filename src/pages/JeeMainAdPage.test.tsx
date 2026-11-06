@@ -29,7 +29,9 @@ describe("JEE Main ad pages", () => {
     const registration = screen.getByRole("heading", { name: "JEE Main 2027 registration: Session 1" });
     const papers = screen.getByRole("region", { name: "JEE Main question papers: last 5 years" });
     const carousel = screen.getByRole("region", { name: "Apply directly. Explore up to 100% scholarships." });
-    const ordered = [registration, forms[0], papers, carousel, forms[1]];
+    const portalImage = screen.getByRole("img", { name: /official portal showing new registration/ });
+    expect(portalImage).toHaveAttribute("src", "/assets/jee-main-2027-registration-portal.png");
+    const ordered = [registration, portalImage, forms[0], papers, carousel, forms[1]];
     ordered.slice(1).forEach((element, i) => expect(ordered[i].compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy());
     expect(screen.queryByText(/Session 1 applications are submitted online through NTA/)).not.toBeInTheDocument();
     expect(screen.queryByText("Get JEE Main guidance from DekhoCampus")).not.toBeInTheDocument();
@@ -47,7 +49,9 @@ describe("JEE Main ad pages", () => {
     expect(within(logos as HTMLElement).getAllByRole("img")).toHaveLength(2);
     expect(carousel).not.toHaveTextContent("Hidden college");
     expect(carousel).toHaveTextContent("early application does not guarantee an award");
-    expect(within(screen.getByRole("region", { name: "Official NTA application link" })).getByRole("img", { name: "National Testing Agency logo" })).toBeInTheDocument();
+    expect(screen.queryByText("Get JEE Main guidance and updates")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Questions about the process/)).not.toBeInTheDocument();
+    expect(forms[0]).toHaveTextContent("Independent guidance only.");
   });
 
   it("opens the guidance form for every external resource and preserves the selected destination", () => {

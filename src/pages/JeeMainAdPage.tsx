@@ -117,11 +117,8 @@ const copy = {
 
 function JeeGuidanceForm({ id }: { id: string }) {
   return <section id={id} className="rounded border border-blue-100 bg-[#e9f3ff] p-4 sm:p-5" aria-label="JEE Main guidance form">
-    <h2 className="text-center font-bold">Get JEE Main guidance and updates</h2>
-    <p className="mt-2 text-center text-sm leading-6 text-slate-700">Questions about the process? Leave your details for guidance.</p>
-    <p className="mt-2 text-center text-xs font-semibold leading-5 text-slate-800">This optional form is for independent guidance and updates. It is not an NTA application form.</p>
-    <div className="mx-auto mt-4 max-w-xl [&_img]:h-auto [&_img]:w-40 [&>div>div:first-child>div]:w-full [&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center">
-      <LeadCaptureForm variant="card" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" title="Get JEE Main guidance" subtitle="Complete your exam application separately on the official NTA portal." source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} unbrandedConsent simple />
+    <div className="mx-auto max-w-xl [&_img]:h-auto [&_img]:w-40 [&>div>div:first-child>div]:w-full [&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center">
+      <LeadCaptureForm variant="card" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" title="Enter your details for JEE Main guidance" subtitle="Independent guidance only. Complete your exam application separately on the official NTA portal." source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} unbrandedConsent simple />
     </div>
   </section>;
 }
@@ -165,11 +162,11 @@ function EnglishAdPage() {
         <article className="min-w-0 space-y-7 rounded-lg border border-slate-200 bg-white p-4 text-[15px] leading-7 sm:p-7 [&_section]:scroll-mt-40 [&_section>h2]:text-[22px] [&_section>h2]:leading-snug">
           <section id="registration">
             <h2 className="font-bold">JEE Main 2027 registration: Session 1</h2>
-            {Date.now() < VIDEO_CLOSES && <p className="mt-3"><mark className="bg-yellow-100 px-1">JEE Main 2027 Session 1 registration is available on the NTA portal.</mark> <button type="button" onClick={openApplication} className="font-semibold text-blue-800 underline">Open the official form</button> to begin.</p>}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded border border-blue-100 bg-blue-50 p-3" role="region" aria-label="Official NTA application link">
-              <p className="max-w-sm text-sm leading-6">DekhoCampus offers independent guidance. Only NTA can accept your exam form.</p>
-              <a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" aria-label="Visit the official NTA JEE Main portal" className="flex items-center gap-3 text-sm font-semibold text-blue-800 underline"><img src="/assets/nta-logo-official-link.png?v=20261102" alt="National Testing Agency logo" className="h-auto w-32 object-contain" /><span>Official NTA website ↗</span></a>
-            </div>
+            {Date.now() < VIDEO_CLOSES && <p className="mt-2 text-sm font-semibold text-red-600">Registration open on the NTA portal</p>}
+            <p className="mt-2 text-sm"><button type="button" onClick={openApplication} className="font-semibold text-blue-800 underline">Open the official form</button> at jeemain.nta.nic.in.</p>
+            <a href={OFFICIAL_FORM} target="_blank" rel="noopener noreferrer" aria-label="View the official JEE Main Session 1 registration portal" className="mt-4 block overflow-hidden rounded border border-slate-200 focus-visible:outline-blue-600">
+              <img src="/assets/jee-main-2027-registration-portal.png" alt="JEE Main 2027 Session 1 official portal showing new registration, application steps and candidate login" width="2048" height="807" className="h-auto w-full" loading="eager" />
+            </a>
           </section>
 
           <JeeGuidanceForm id="jee-registration-form" />
