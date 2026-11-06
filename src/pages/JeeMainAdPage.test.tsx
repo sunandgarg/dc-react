@@ -38,7 +38,8 @@ describe("JEE Main ad pages", () => {
     for (const form of forms) {
       expect(form).not.toHaveTextContent("DekhoCampus");
       expect(within(form).getByRole("img", { name: "National Testing Agency logo" })).toBeInTheDocument();
-      expect(form).toHaveTextContent("Complete your exam application separately on the official NTA portal.");
+      expect(form).not.toHaveTextContent("Enter your details for JEE Main guidance");
+      expect(form).not.toHaveTextContent("Complete your exam application separately on the official NTA portal.");
     }
     const logos = carousel.querySelector('[aria-label="College logos"]')!;
     expect(within(logos as HTMLElement).getAllByRole("link")).toHaveLength(2);
@@ -51,7 +52,7 @@ describe("JEE Main ad pages", () => {
     expect(carousel).toHaveTextContent("early application does not guarantee an award");
     expect(screen.queryByText("Get JEE Main guidance and updates")).not.toBeInTheDocument();
     expect(screen.queryByText(/Questions about the process/)).not.toBeInTheDocument();
-    expect(forms[0]).toHaveTextContent("Independent guidance only.");
+    expect(forms[0]).not.toHaveTextContent("Independent guidance only.");
   });
 
   it("opens the guidance form for every external resource and preserves the selected destination", () => {

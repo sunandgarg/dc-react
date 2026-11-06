@@ -118,7 +118,7 @@ const copy = {
 function JeeGuidanceForm({ id }: { id: string }) {
   return <section id={id} className="rounded border border-blue-100 bg-[#e9f3ff] p-4 sm:p-5" aria-label="JEE Main guidance form">
     <div className="mx-auto max-w-xl [&_img]:h-auto [&_img]:w-40 [&>div>div:first-child>div]:w-full [&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center">
-      <LeadCaptureForm variant="card" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" title="Enter your details for JEE Main guidance" subtitle="Independent guidance only. Complete your exam application separately on the official NTA portal." source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} unbrandedConsent simple />
+      <LeadCaptureForm variant="card" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" title="" subtitle="" source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} unbrandedConsent simple />
     </div>
   </section>;
 }
