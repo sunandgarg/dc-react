@@ -8,11 +8,9 @@ import { Footer } from "@/components/Footer";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { useSEO } from "@/hooks/useSEO";
 import { CarouselControls, useCarouselNav } from "@/components/CarouselControls";
-import applicationImage from "@/assets/cat-application-small.webp";
-import collegeImage from "@/assets/cat-college-small.webp";
-import courseImage from "@/assets/cat-course-small.webp";
-import examImage from "@/assets/cat-exam-small.webp";
-import guidanceLogo from "@/assets/graduate-hat.png";
+import { useTrustedPartners } from "@/hooks/useTrustedPartners";
+import { InstitutionLogo } from "@/components/InstitutionLogo";
+import { buildCollegeHref } from "@/lib/entityUrls";
 
 const NTA_PORTAL = "https://jeemain.nta.nic.in/";
 const OFFICIAL_FORM = "https://jeemain.nta.nic.in/online-application-form-for-jee-main-2027-session-1/";
@@ -116,32 +114,29 @@ const copy = {
 } as const;
 
 function JeeGuidanceForm({ id }: { id: string }) {
-  return <section id={id} className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4 sm:p-5" aria-label="JEE Main guidance form">
-    <div className="mx-auto max-w-xl [&_h3]:text-lg [&_h3+p]:text-sm [&_h3+p]:leading-5 [&>div>div:first-child>div]:w-full [&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center">
-      <LeadCaptureForm variant="card" brandLogoUrl={guidanceLogo} brandName="Study guidance" title="Get JEE Main guidance" subtitle="Application, college and scholarship guidance. This is not an NTA exam form." source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} unbrandedConsent simple />
+  return <section id={id} className="rounded border border-blue-100 bg-[#e9f3ff] p-4 sm:p-5" aria-label="JEE Main guidance form">
+    <h2 className="text-center font-bold">Get JEE Main guidance and updates</h2>
+    <p className="mt-2 text-center text-sm leading-6 text-slate-700">Questions about the process? Leave your details for guidance.</p>
+    <p className="mt-2 text-center text-xs font-semibold leading-5 text-slate-800">This optional form is for independent guidance and updates. It is not an NTA application form.</p>
+    <div className="mx-auto mt-4 max-w-xl [&_img]:h-auto [&_img]:w-40 [&>div>div:first-child>div]:w-full [&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center">
+      <LeadCaptureForm variant="card" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" title="Get JEE Main guidance" subtitle="Complete your exam application separately on the official NTA portal." source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} unbrandedConsent simple />
     </div>
-    <p className="mt-3 text-center text-xs leading-5 text-slate-600">Independent guidance provided by DekhoCampus. Submit your exam application separately on NTA's official portal.</p>
   </section>;
 }
 
 function AdmissionCarousel() {
   const carousel = useCarouselNav();
-  const cards = [
-    { title: "Apply directly", detail: "JEE Main's official application", image: applicationImage, href: OFFICIAL_FORM, badge: "NTA portal" },
-    { title: "Up to 100% scholarship", detail: "Chandigarh University · CUCET 2027", image: collegeImage, href: "https://www.cuchd.in/scholarship/", badge: "Merit based" },
-    { title: "Start your college application", detail: "CUCET 2027 registration", image: courseImage, href: "https://cucet.cuchd.in/", badge: "Plan early" },
-    { title: "Prepare with past papers", detail: "Official JEE Main question papers", image: examImage, href: "https://nta.ac.in/Downloads", badge: "Practice resources" },
-  ];
+  const { data: partners = [] } = useTrustedPartners();
+  const colleges = partners.filter(partner => partner.is_active && partner.logo_url && partner.college_slug);
   return <section aria-labelledby="admission-options-title" className="min-w-0">
-    <div className="flex items-end justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-wider text-orange-700">Your next step</p><h2 id="admission-options-title" className="mt-1 text-xl font-bold">Apply early. Explore your options.</h2></div><span className="text-xs text-slate-500">Swipe to explore →</span></div>
-    <div ref={carousel.ref} className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2" aria-label="Application and scholarship options">
-      {cards.map(card => <a key={card.title} href={card.href} target="_blank" rel="noopener noreferrer" className="w-48 shrink-0 snap-start overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-blue-400 focus-visible:outline-blue-600 sm:w-52">
-        <div className="flex h-24 items-center justify-center bg-blue-50"><img src={card.image} alt="" loading="lazy" width="80" height="80" className="h-20 w-20 object-contain" /></div>
-        <div className="p-3"><span className="text-[10px] font-bold uppercase tracking-wide text-orange-700">{card.badge}</span><h3 className="mt-1 text-base font-bold leading-5 text-slate-900">{card.title}</h3><p className="mt-2 text-xs leading-5 text-slate-600">{card.detail}</p><span className="mt-3 block text-xs font-bold text-blue-700">View details ↗</span></div>
+    <h2 id="admission-options-title" className="font-bold text-blue-900">Apply directly. Explore <span className="text-orange-600">up to 100% scholarships.</span></h2>
+    <p className="mt-2 text-xs leading-5 text-slate-600">Explore early application options. <a href="https://www.cuchd.in/scholarship/" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">CUCET scholarships</a> are subject to merit, eligibility and renewal conditions; early application does not guarantee an award.</p>
+    <div ref={carousel.ref} onScroll={carousel.recompute} className="mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2" aria-label="College logos">
+      {colleges.map(college => <a key={college.id} href={buildCollegeHref({ slug: college.college_slug })} data-college-destination aria-label={`Explore ${college.name}`} className="flex h-24 w-32 shrink-0 snap-start items-center justify-center rounded-lg border border-slate-200 bg-white p-3 transition hover:border-blue-500 focus-visible:outline-blue-600 sm:h-28 sm:w-36">
+        <InstitutionLogo src={college.logo_url} alt={`${college.name} logo`} className="h-full w-full" />
       </a>)}
     </div>
-    <CarouselControls pages={carousel.pages} active={carousel.active} canLeft={carousel.canLeft} canRight={carousel.canRight} onPrev={() => carousel.scrollByDir("left")} onNext={() => carousel.scrollByDir("right")} onDot={carousel.goToPage} label="admission options" />
-    <p className="mt-3 text-xs leading-5 text-slate-600">CUCET scholarships depend on merit and the university's eligibility, programme and renewal conditions. Applying early does not guarantee a scholarship or admission. College applications are separate from JEE Main registration.</p>
+    <CarouselControls pages={carousel.pages} active={carousel.active} canLeft={carousel.canLeft} canRight={carousel.canRight} onPrev={() => carousel.scrollByDir("left")} onNext={() => carousel.scrollByDir("right")} onDot={carousel.goToPage} label="college logos" />
   </section>;
 }
 
@@ -152,7 +147,7 @@ function EnglishAdPage() {
     const anchor = (event.target as HTMLElement).closest("a[href]");
     if (!(anchor instanceof HTMLAnchorElement)) return;
     const url = new URL(anchor.href);
-    if (!["https:", "http:"].includes(url.protocol) || url.origin === window.location.origin) return;
+    if (!["https:", "http:"].includes(url.protocol) || (url.origin === window.location.origin && !anchor.hasAttribute("data-college-destination"))) return;
     event.preventDefault();
     setDestination({ url: url.href, label: anchor.getAttribute("aria-label") || anchor.textContent?.trim() || "Selected resource" });
   };
@@ -168,9 +163,7 @@ function EnglishAdPage() {
 
       <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1fr)_260px]">
         <article className="min-w-0 space-y-7 rounded-lg border border-slate-200 bg-white p-4 text-[15px] leading-7 sm:p-7 [&_section]:scroll-mt-40 [&_section>h2]:text-[22px] [&_section>h2]:leading-snug">
-          <JeeGuidanceForm id="registration" />
-
-          <section id="registration-details">
+          <section id="registration">
             <h2 className="font-bold">JEE Main 2027 registration: Session 1</h2>
             {Date.now() < VIDEO_CLOSES && <p className="mt-3"><mark className="bg-yellow-100 px-1">JEE Main 2027 Session 1 registration is available on the NTA portal.</mark> <button type="button" onClick={openApplication} className="font-semibold text-blue-800 underline">Open the official form</button> to begin.</p>}
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded border border-blue-100 bg-blue-50 p-3" role="region" aria-label="Official NTA application link">
@@ -270,7 +263,7 @@ function EnglishAdPage() {
     </main>
 
     <Footer />
-    <LeadGateDialog className="max-h-[calc(100dvh-2rem)] overflow-y-auto" open={!!destination} onOpenChange={open => { if (!open) setDestination(null); }} forceShow simple unbrandedConsent title="Get JEE Main guidance" subtitle={`Independent admission guidance, not an NTA application. After completing your request, continue to: ${destination?.label || "your selected resource"}.`} source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl={guidanceLogo} brandName="Study guidance" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={() => { if (destination) { window.location.assign(destination.url); setDestination(null); } }} />
+    <LeadGateDialog className="max-h-[calc(100dvh-2rem)] overflow-y-auto [&_img]:h-auto [&_img]:w-32" open={!!destination} onOpenChange={open => { if (!open) setDestination(null); }} forceShow simple unbrandedConsent title="Get JEE Main guidance" subtitle={`Independent admission guidance, not an NTA application. After completing your request, continue to: ${destination?.label || "your selected resource"}.`} source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={() => { if (destination) { window.location.assign(destination.url); setDestination(null); } }} />
     <nav aria-label="JEE Main quick actions" className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-slate-200 bg-white p-2 shadow-lg sm:hidden"><button type="button" onClick={openApplication} className="flex-1 rounded-lg bg-orange-600 px-2 py-3 text-center text-sm font-bold text-white">Open the official form</button><a href="#jee-guidance-form" className="flex-1 rounded-lg border border-blue-700 px-2 py-3 text-center text-sm font-bold text-blue-800">Get free guidance</a></nav>
   </div>;
 }
