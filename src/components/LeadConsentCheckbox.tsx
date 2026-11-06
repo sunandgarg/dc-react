@@ -8,6 +8,7 @@ interface LeadConsentCheckboxProps {
   textClassName?: string;
   compact?: boolean;
   dark?: boolean;
+  unbranded?: boolean;
 }
 
 export function LeadConsentCheckbox({
@@ -17,6 +18,7 @@ export function LeadConsentCheckbox({
   textClassName = "",
   compact = false,
   dark = false,
+  unbranded = false,
 }: LeadConsentCheckboxProps) {
   const linkClass = dark ? "underline text-white" : "underline text-primary";
 
@@ -29,7 +31,7 @@ export function LeadConsentCheckbox({
         aria-label="Privacy and terms consent"
       />
       <span className={`${compact ? "text-[10px] leading-4" : "text-[11px] leading-tight"} ${dark ? "text-white/75" : "text-muted-foreground"} ${textClassName}`}>
-        I agree to DekhoCampus{" "}
+        I agree to{unbranded ? " the" : " DekhoCampus"}{" "}
         <a href="/legal/privacy-policy" className={linkClass} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
           Privacy Policy
         </a>{" "}

@@ -31,6 +31,7 @@ interface LeadGateDialogProps {
   theme?: "default" | "cat-kit";
   brandLogoUrl?: string;
   brandName?: string;
+  unbrandedConsent?: boolean;
   className?: string;
 }
 
@@ -53,6 +54,7 @@ export function LeadGateDialog({
   theme = "default",
   brandLogoUrl,
   brandName,
+  unbrandedConsent = false,
   className = "",
 }: LeadGateDialogProps) {
   const { user } = useAuth();
@@ -147,6 +149,7 @@ export function LeadGateDialog({
           interestedExamSlug={interestedExamSlug}
           brandLogoUrl={brandLogoUrl}
           brandName={brandName}
+          unbrandedConsent={unbrandedConsent}
           theme={theme}
         />
       </DialogContent>

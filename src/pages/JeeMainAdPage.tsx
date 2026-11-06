@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { FAQSection } from "@/components/FAQSection";
@@ -7,6 +7,12 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { useSEO } from "@/hooks/useSEO";
+import { CarouselControls, useCarouselNav } from "@/components/CarouselControls";
+import applicationImage from "@/assets/cat-application-small.webp";
+import collegeImage from "@/assets/cat-college-small.webp";
+import courseImage from "@/assets/cat-course-small.webp";
+import examImage from "@/assets/cat-exam-small.webp";
+import guidanceLogo from "@/assets/graduate-hat.png";
 
 const NTA_PORTAL = "https://jeemain.nta.nic.in/";
 const OFFICIAL_FORM = "https://jeemain.nta.nic.in/online-application-form-for-jee-main-2027-session-1/";
@@ -62,7 +68,7 @@ const copy = {
       { question: "Is an application number enough to complete registration?", answer: "No. Complete the applicable payment and save the confirmation page from the NTA portal." },
       { question: "Will a previous fee transfer if I start a fresh form?", answer: "No. NTA's 30 October clarification says the earlier fee is neither refunded nor adjusted against a fresh application." },
       { question: "Which JEE Main paper should an engineering applicant choose?", answer: "Paper 1 is for B.E. and B.Tech. Paper 2A is for B.Arch, while Paper 2B is for B.Planning. Choose the paper that matches your intended course." },
-      { question: "Are the previous-year question papers free to open?", answer: "Yes. The links on this page open PDFs hosted by NTA or its official government document service. You don't need to submit the DekhoCampus guidance form to access them." },
+      { question: "Are the previous-year question papers free to open?", answer: "Yes. The links on this page open PDFs hosted by NTA or its official government document service. Selecting a link opens the guidance form. Complete the request to continue to your selected PDF; the PDF itself is free." },
       { question: "Does completing JEE Main registration secure a college seat?", answer: "No. Registration lets you apply for the examination. Admission depends on the institution's eligibility rules and the applicable counselling or selection process." },
     ],
     footer: "Independent student guidance by DekhoCampus. Official exam applications are handled by NTA.",
@@ -109,9 +115,48 @@ const copy = {
   },
 } as const;
 
+function JeeGuidanceForm({ id }: { id: string }) {
+  return <section id={id} className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4 sm:p-5" aria-label="JEE Main guidance form">
+    <div className="mx-auto max-w-xl [&_h3]:text-lg [&_h3+p]:text-sm [&_h3+p]:leading-5 [&>div>div:first-child>div]:w-full [&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center">
+      <LeadCaptureForm variant="card" brandLogoUrl={guidanceLogo} brandName="Study guidance" title="Get JEE Main guidance" subtitle="Application, college and scholarship guidance. This is not an NTA exam form." source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} unbrandedConsent simple />
+    </div>
+    <p className="mt-3 text-center text-xs leading-5 text-slate-600">Independent guidance provided by DekhoCampus. Submit your exam application separately on NTA's official portal.</p>
+  </section>;
+}
+
+function AdmissionCarousel() {
+  const carousel = useCarouselNav();
+  const cards = [
+    { title: "Apply directly", detail: "JEE Main's official application", image: applicationImage, href: OFFICIAL_FORM, badge: "NTA portal" },
+    { title: "Up to 100% scholarship", detail: "Chandigarh University · CUCET 2027", image: collegeImage, href: "https://www.cuchd.in/scholarship/", badge: "Merit based" },
+    { title: "Start your college application", detail: "CUCET 2027 registration", image: courseImage, href: "https://cucet.cuchd.in/", badge: "Plan early" },
+    { title: "Prepare with past papers", detail: "Official JEE Main question papers", image: examImage, href: "https://nta.ac.in/Downloads", badge: "Practice resources" },
+  ];
+  return <section aria-labelledby="admission-options-title" className="min-w-0">
+    <div className="flex items-end justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-wider text-orange-700">Your next step</p><h2 id="admission-options-title" className="mt-1 text-xl font-bold">Apply early. Explore your options.</h2></div><span className="text-xs text-slate-500">Swipe to explore →</span></div>
+    <div ref={carousel.ref} className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2" aria-label="Application and scholarship options">
+      {cards.map(card => <a key={card.title} href={card.href} target="_blank" rel="noopener noreferrer" className="w-48 shrink-0 snap-start overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-blue-400 focus-visible:outline-blue-600 sm:w-52">
+        <div className="flex h-24 items-center justify-center bg-blue-50"><img src={card.image} alt="" loading="lazy" width="80" height="80" className="h-20 w-20 object-contain" /></div>
+        <div className="p-3"><span className="text-[10px] font-bold uppercase tracking-wide text-orange-700">{card.badge}</span><h3 className="mt-1 text-base font-bold leading-5 text-slate-900">{card.title}</h3><p className="mt-2 text-xs leading-5 text-slate-600">{card.detail}</p><span className="mt-3 block text-xs font-bold text-blue-700">View details ↗</span></div>
+      </a>)}
+    </div>
+    <CarouselControls pages={carousel.pages} active={carousel.active} canLeft={carousel.canLeft} canRight={carousel.canRight} onPrev={() => carousel.scrollByDir("left")} onNext={() => carousel.scrollByDir("right")} onDot={carousel.goToPage} label="admission options" />
+    <p className="mt-3 text-xs leading-5 text-slate-600">CUCET scholarships depend on merit and the university's eligibility, programme and renewal conditions. Applying early does not guarantee a scholarship or admission. College applications are separate from JEE Main registration.</p>
+  </section>;
+}
+
 function EnglishAdPage() {
-  const [formOpen, setFormOpen] = useState(false);
-  return <div className="min-h-screen bg-[#f7f8fb] pb-16 text-slate-900 sm:pb-0" lang="en">
+  const [destination, setDestination] = useState<{ url: string; label: string } | null>(null);
+  const openApplication = () => setDestination({ url: OFFICIAL_FORM, label: "NTA application page" });
+  const gateExternalLink = (event: MouseEvent<HTMLDivElement>) => {
+    const anchor = (event.target as HTMLElement).closest("a[href]");
+    if (!(anchor instanceof HTMLAnchorElement)) return;
+    const url = new URL(anchor.href);
+    if (!["https:", "http:"].includes(url.protocol) || url.origin === window.location.origin) return;
+    event.preventDefault();
+    setDestination({ url: url.href, label: anchor.getAttribute("aria-label") || anchor.textContent?.trim() || "Selected resource" });
+  };
+  return <div className="min-h-screen bg-[#f7f8fb] pb-16 text-slate-900 sm:pb-0" lang="en" data-lead-link-handler="jee-main" onClick={gateExternalLink} onAuxClick={event => { if (event.button === 1) gateExternalLink(event); }}>
     <Navbar />
 
     <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
@@ -123,25 +168,23 @@ function EnglishAdPage() {
 
       <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1fr)_260px]">
         <article className="min-w-0 space-y-7 rounded-lg border border-slate-200 bg-white p-4 text-[15px] leading-7 sm:p-7 [&_section]:scroll-mt-40 [&_section>h2]:text-[22px] [&_section>h2]:leading-snug">
-          <div>
-            <p><strong>JEE Main 2027 Session 1 applications are submitted online through NTA.</strong> Paper 1 is for B.E. and B.Tech, Paper 2A is for B.Arch, and Paper 2B is for B.Planning. Choose the paper that matches the course you want to study.</p>
-            <p className="mt-3">The regular application and fee-payment deadline is <strong>22 November 2026 at 11:50 pm IST</strong>. An application number alone does not complete the process. Finish the payment and download the confirmation page from NTA's portal.</p>
-            <div className="mt-4 text-center"><button type="button" onClick={() => setFormOpen(true)} className="rounded bg-orange-600 px-5 py-2 text-sm font-bold text-white hover:bg-orange-700">Open the official form</button><a href="#jee-guidance-form" className="ml-4 inline-block text-sm font-semibold text-blue-800 underline">Get free guidance</a></div>
-          </div>
+          <JeeGuidanceForm id="registration" />
 
-          <section id="registration">
+          <section id="registration-details">
             <h2 className="font-bold">JEE Main 2027 registration: Session 1</h2>
-            {Date.now() < VIDEO_CLOSES && <p className="mt-3"><mark className="bg-yellow-100 px-1">JEE Main 2027 Session 1 registration is available on the NTA portal.</mark> <button type="button" onClick={() => setFormOpen(true)} className="font-semibold text-blue-800 underline">Open the official form</button> to begin.</p>}
+            {Date.now() < VIDEO_CLOSES && <p className="mt-3"><mark className="bg-yellow-100 px-1">JEE Main 2027 Session 1 registration is available on the NTA portal.</mark> <button type="button" onClick={openApplication} className="font-semibold text-blue-800 underline">Open the official form</button> to begin.</p>}
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded border border-blue-100 bg-blue-50 p-3" role="region" aria-label="Official NTA application link">
               <p className="max-w-sm text-sm leading-6">DekhoCampus offers independent guidance. Only NTA can accept your exam form.</p>
               <a href={NTA_PORTAL} target="_blank" rel="noopener noreferrer" aria-label="Visit the official NTA JEE Main portal" className="flex items-center gap-3 text-sm font-semibold text-blue-800 underline"><img src="/assets/nta-logo-official-link.png?v=20261102" alt="National Testing Agency logo" className="h-auto w-32 object-contain" /><span>Official NTA website ↗</span></a>
             </div>
           </section>
 
+          <JeeGuidanceForm id="jee-registration-form" />
+
           <section id="question-papers" aria-labelledby="papers-title" className="rounded-md border border-blue-100 border-t-[3px] border-t-blue-700 bg-[#f7fafc] p-3 sm:p-5">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">Official NTA PDFs</p>
             <h2 id="papers-title" className="mt-1 font-bold">JEE Main question papers: last 5 years</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700">Practise with selected B.E. / B.Tech (Paper 1) papers from 2022 to 2026. Both shifts below are free to open. No guidance request is needed.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">Practise with selected B.E. / B.Tech (Paper 1) papers from 2022 to 2026. Both shifts below are free resources. Select a link to open the guidance form, then continue to your chosen PDF.</p>
             <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-5 sm:gap-2">
               {QUESTION_PAPERS.map(({ year, date, papers }) => <div key={year} className="group overflow-hidden rounded border border-blue-100 bg-white first:col-span-2 first:grid first:grid-cols-2 sm:first:col-span-1 sm:first:block">
                 <div className="flex flex-col justify-center px-1 py-3 text-center"><h3 className="text-2xl font-extrabold leading-8 text-orange-600">{year}</h3><p className="mt-1 text-[11px] leading-5 text-slate-500">{date}</p></div>
@@ -153,12 +196,8 @@ function EnglishAdPage() {
             <p className="mt-3 text-xs leading-5 text-slate-600">For other dates, languages or papers, use <a href="https://nta.ac.in/Downloads" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">NTA's full question-paper archive</a>. Select the year, JEE-Main and your paper, then Search. Older papers may follow a different exam pattern.</p>
           </section>
 
-          <section id="jee-guidance-form" className="rounded border border-blue-100 bg-[#e9f3ff] p-4 sm:p-5" aria-label="DekhoCampus JEE Main guidance form">
-            <h2 className="text-center font-bold">Get JEE Main guidance and updates</h2>
-            <p className="mt-2 text-center text-sm leading-6 text-slate-700">Questions about the process? Leave your details for DekhoCampus guidance.</p>
-            <p className="mt-2 text-center text-xs font-semibold leading-5 text-slate-800">This optional DekhoCampus form is for guidance and updates. It is not an NTA application form.</p>
-            <div className="mx-auto mt-4 max-w-xl [&_img]:h-auto [&_img]:w-40 [&>div>div:first-child>div]:w-full [&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center"><LeadCaptureForm variant="card" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" title="Get JEE Main guidance from DekhoCampus" subtitle="Complete your exam application separately on the official NTA portal." source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} simple /></div>
-          </section>
+          <AdmissionCarousel />
+          <JeeGuidanceForm id="jee-guidance-form" />
 
           <nav aria-label="JEE Main official resources" className="overflow-hidden rounded border border-slate-200 text-sm">
             <h2 className="bg-slate-100 px-3 py-2 text-base font-bold">JEE Main 2027: official application resources</h2>
@@ -231,8 +270,8 @@ function EnglishAdPage() {
     </main>
 
     <Footer />
-    <LeadGateDialog className="max-h-[calc(100dvh-2rem)] overflow-y-auto [&_img]:h-auto [&_img]:w-32" open={formOpen} onOpenChange={setFormOpen} forceShow simple title="JEE Main application guidance" subtitle="Independent guidance from DekhoCampus, not an NTA registration form. Complete your request to continue to NTA's official application page." source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={() => { setFormOpen(false); window.location.assign(OFFICIAL_FORM); }} />
-    <nav aria-label="JEE Main quick actions" className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-slate-200 bg-white p-2 shadow-lg sm:hidden"><button type="button" onClick={() => setFormOpen(true)} className="flex-1 rounded-lg bg-orange-600 px-2 py-3 text-center text-sm font-bold text-white">Open the official form</button><a href="#jee-guidance-form" className="flex-1 rounded-lg border border-blue-700 px-2 py-3 text-center text-sm font-bold text-blue-800">Get free guidance</a></nav>
+    <LeadGateDialog className="max-h-[calc(100dvh-2rem)] overflow-y-auto" open={!!destination} onOpenChange={open => { if (!open) setDestination(null); }} forceShow simple unbrandedConsent title="Get JEE Main guidance" subtitle={`Independent admission guidance, not an NTA application. After completing your request, continue to: ${destination?.label || "your selected resource"}.`} source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl={guidanceLogo} brandName="Study guidance" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={() => { if (destination) { window.location.assign(destination.url); setDestination(null); } }} />
+    <nav aria-label="JEE Main quick actions" className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-slate-200 bg-white p-2 shadow-lg sm:hidden"><button type="button" onClick={openApplication} className="flex-1 rounded-lg bg-orange-600 px-2 py-3 text-center text-sm font-bold text-white">Open the official form</button><a href="#jee-guidance-form" className="flex-1 rounded-lg border border-blue-700 px-2 py-3 text-center text-sm font-bold text-blue-800">Get free guidance</a></nav>
   </div>;
 }
 

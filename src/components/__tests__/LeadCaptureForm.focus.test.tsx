@@ -1,5 +1,6 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { saveLeadPhase } from "@/lib/twoStepLead";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 
 vi.mock("framer-motion", () => ({
@@ -22,7 +23,7 @@ vi.mock("@/components/LeadInlineOtp", () => ({
 vi.mock("@/components/ProgramModeToggle", () => ({ ProgramModeToggle: () => null }));
 vi.mock("@/components/LeadConsentCheckbox", () => ({
   LeadConsentCheckbox: () => null,
-  LEAD_CONSENT_TEXT: "Consent",
+  LEAD_CONSENT_TEXT: "I agree to DekhoCampus Privacy Policy",
 }));
 vi.mock("@/lib/leadCapture", () => ({ markLeadSubmitted: vi.fn() }));
 vi.mock("@/lib/leadTracking", () => ({ detectDeviceType: () => "desktop", inferSourceCategory: () => "website" }));
@@ -60,5 +61,18 @@ describe.each(["card", "banner", "sidebar", "inline", "article-sidebar"] as cons
     expect(logo).toHaveAttribute("src", "https://example.com/college-logo.png");
     fireEvent.error(logo);
     expect(screen.getByRole("img", { name: "DekhoCampus logo" })).toHaveAttribute("src", expect.stringContaining("dc-lead-logo"));
+  });
+});
+
+
+describe("page-specific consent", () => {
+  it.each([false, true])("saves the exact consent wording with unbranded=%s", async (unbrandedConsent) => {
+    vi.mocked(saveLeadPhase).mockResolvedValue({ lead_id: "test-lead" } as Awaited<ReturnType<typeof saveLeadPhase>>);
+    render(<LeadCaptureForm unbrandedConsent={unbrandedConsent} />);
+    fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: "Test Student" } });
+    fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: "test@example.com" } });
+    fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: "9876543210" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
+    await waitFor(() => expect(saveLeadPhase).toHaveBeenLastCalledWith(expect.objectContaining({ consent_text: unbrandedConsent ? "I agree to the Privacy Policy" : "I agree to DekhoCampus Privacy Policy" })));
   });
 });

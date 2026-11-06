@@ -39,6 +39,7 @@ interface LeadCaptureFormProps {
   theme?: "default" | "cat-kit";
   brandLogoUrl?: string;
   brandName?: string;
+  unbrandedConsent?: boolean;
 }
 
 function FormBrandLogo({ url, name, className }: { url?: string; name?: string; className?: string }) {
@@ -84,7 +85,9 @@ export function LeadCaptureForm({
   theme = "default",
   brandLogoUrl,
   brandName,
+  unbrandedConsent = false,
 }: LeadCaptureFormProps) {
+  const consentText = unbrandedConsent ? LEAD_CONSENT_TEXT.replace("DekhoCampus", "the") : LEAD_CONSENT_TEXT;
   const interestPrompt = interestLabel === "Course" ? "Interested Course" : interestLabel;
   const [formData, setFormData] = useState({
     name: "", email: "", phone: "", course: "", state: "", city: "",
@@ -162,7 +165,7 @@ export function LeadCaptureForm({
     device_type: detectDeviceType(),
     source_category: inferSourceCategory(source),
     consent_terms_accepted: authorized,
-    consent_text: LEAD_CONSENT_TEXT,
+    consent_text: consentText,
     consent_at: new Date().toISOString(),
   });
 
@@ -186,7 +189,7 @@ export function LeadCaptureForm({
         device_type: detectDeviceType(),
         source_category: inferSourceCategory(source),
         consent_terms_accepted: authorized,
-        consent_text: LEAD_CONSENT_TEXT,
+        consent_text: consentText,
         consent_at: new Date().toISOString(),
       });
       setIsSubmitted(true);
@@ -324,7 +327,7 @@ export function LeadCaptureForm({
             {formData.phone.length > 0 && !isValidIndianMobile(formData.phone) && <p className={`text-xs ${dark ? "text-white" : "text-destructive"}`}>{PHONE_HINT}</p>}
             {otp.verifyBlock && <div className={dark ? "rounded-xl bg-white p-2 text-slate-900" : ""}>{otp.verifyBlock}</div>}
           </div>
-          <LeadConsentCheckbox checked={authorized} onCheckedChange={setAuthorized} compact={compact} dark={dark} />
+          <LeadConsentCheckbox unbranded={unbrandedConsent} checked={authorized} onCheckedChange={setAuthorized} compact={compact} dark={dark} />
         </>
       ) : (
         <>

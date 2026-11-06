@@ -31,6 +31,8 @@ export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onCo
     if (event.button !== 0 && event.button !== 1) return;
     if (siteWide && /^\/(?:admin|auth|dashboard|onboarding)(?:\/|$)/.test(window.location.pathname)) return;
     const anchor = (event.target as Element).closest?.('a[href]') as HTMLAnchorElement | null;
+    // This campaign owns its destination-aware form for both PDFs and other links.
+    if (siteWide && anchor?.closest('[data-lead-link-handler="jee-main"]')) return;
     if (!anchor || (!siteWide && anchor.dataset.leadCapture !== "true" && !isPdfUrl(anchor.href))) return;
     if (!siteWide && !(event.currentTarget as HTMLDivElement).contains(anchor)) return;
     try {
