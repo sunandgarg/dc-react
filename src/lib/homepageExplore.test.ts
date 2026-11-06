@@ -36,21 +36,30 @@ describe("homepage category recommendations", () => {
 
   it("fetches curated courses by active real slugs even when category tags are wrong or the category result is capped", async () => {
     const picks = HOMEPAGE_COURSE_PICKS.Science;
-    responses.push({ data: [row("Other science course")], error: null },
-      { data: picks.map(({ slug, label }) => row(label, { slug })).reverse(), error: null });
+    responses.push({ data: picks.map(({ slug, label }) => row(label, { slug })).reverse(), error: null });
     const result = await fetchHomepageExplore("courses", "Science", "id,slug,name,show_in_explore_by_category,explore_by_category_checked_at");
     expect(result.map(({ slug }) => slug)).toEqual(picks.map(({ slug }) => slug));
-    expect(requests[1].in).toEqual(["slug", picks.map(({ slug }) => slug)]);
-    expect(requests[1].filters).toContainEqual(["is_active", true]);
-    expect(requests[1].select).toBe("id,slug,name");
+    expect(requests).toHaveLength(1);
+    expect(requests[0].in).toEqual(["slug", picks.map(({ slug }) => slug)]);
+    expect(requests[0].filters).toContainEqual(["is_active", true]);
+    expect(requests[0].select).toBe("id,slug,name");
   });
 
   it("fills unavailable curated picks only with returned category candidates and deduplicates records", async () => {
     const pick = row("Btech Computer Science", { slug: "btech-computer-science", show_in_explore_by_category: true });
-    responses.push({ data: [pick, row("Related engineering course")], error: null },
-      { data: [{ ...pick, show_in_explore_by_category: undefined }], error: null });
+    responses.push({ data: [{ ...pick, show_in_explore_by_category: undefined }], error: null },
+      { data: [pick, row("Related engineering course")], error: null });
     const result = await fetchHomepageExplore("courses", "Engineering", "id,slug,name");
     expect(result.map(({ slug }) => slug)).toEqual(["btech-computer-science", "Related engineering course"]);
+  });
+
+  it("still fills the section when five curated rows contain duplicate course names", async () => {
+    const picks = HOMEPAGE_COURSE_PICKS.Science;
+    responses.push({ data: picks.map(({ slug }) => row("Same course", { id: slug, slug })), error: null },
+      { data: [row("Fallback course")], error: null });
+    const result = await fetchHomepageExplore("courses", "Science", "id,slug,name");
+    expect(requests).toHaveLength(2);
+    expect(result.map(({ name }) => name)).toEqual(["Same course", "Fallback course"]);
   });
 
   it("does not present public sample courses as trending recommendations", () => {
@@ -59,7 +68,7 @@ describe("homepage category recommendations", () => {
   });
 
   it("reports errors in the exact course query rather than silently reverting to alphabetic picks", async () => {
-    responses.push({ data: [row("Other course")], error: null }, { data: null, error: new Error("Featured courses unavailable") });
+    responses.push({ data: null, error: new Error("Featured courses unavailable") });
     await expect(fetchHomepageExplore("courses", "Engineering", "id,slug,name")).rejects.toThrow("Featured courses unavailable");
   });
 
@@ -87,9 +96,10 @@ describe("homepage category recommendations", () => {
   });
 
   it("fetches requested Engineering colleges even with incomplete legacy category tags", async () => {
-    responses.push({ data: [], error: null }, { data: ENGINEERING_COLLEGE_SLUGS.map((slug) => row(slug)), error: null });
+    responses.push({ data: ENGINEERING_COLLEGE_SLUGS.map((slug) => row(slug)), error: null });
     expect((await fetchHomepageExplore("colleges", "Engineering", "id,slug,name,category,categories")).map((item) => item.slug)).toEqual(ENGINEERING_COLLEGE_SLUGS);
-    expect(requests[1].in).toEqual(["slug", ENGINEERING_COLLEGE_SLUGS]);
+    expect(requests).toHaveLength(1);
+    expect(requests[0].in).toEqual(["slug", ENGINEERING_COLLEGE_SLUGS]);
   });
 
   it("reports API errors instead of silently showing unrelated results", async () => {
@@ -104,12 +114,12 @@ describe("homepage category recommendations", () => {
 
   it.each(["Commerce and Banking", "Hotel Management", "Information Technology", "Pharmacy"])("finds relevant %s courses despite broad legacy tags", async (category) => {
     await fetchHomepageExplore("courses", category, "id,slug,name");
-    expect(requests[0].or).toContain("name.ilike.");
+    expect(requests[1].or).toContain("name.ilike.");
   });
 
   it("supports older schemas missing the homepage selection columns", async () => {
-    responses.push({ data: null, error: { message: "Unknown column show_in_explore_by_category" } }, { data: [row("Law Course")], error: null });
+    responses.push({ data: [], error: null }, { data: null, error: { message: "Unknown column show_in_explore_by_category" } }, { data: [row("Law Course")], error: null });
     expect(await fetchHomepageExplore("courses", "Law", "id,slug,name,show_in_explore_by_category,explore_by_category_checked_at")).toHaveLength(1);
-    expect(requests[1].select).toBe("id,slug,name");
+    expect(requests[2].select).toBe("id,slug,name");
   });
 });

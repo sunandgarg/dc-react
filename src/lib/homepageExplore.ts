@@ -90,6 +90,19 @@ export function rankHomepageExplore<T extends ExploreRow>(rows: T[], category: s
 }
 
 export async function fetchHomepageExplore<T extends ExploreRow>(table: "colleges" | "courses" | "exams", category: string, select: string): Promise<T[]> {
+  // Complete curated picks already outrank every fallback; avoid scanning the catalogue.
+  const featuredSlugs = table === "courses"
+    ? (HOMEPAGE_COURSE_PICKS[category] || []).map(({ slug }) => slug)
+    : table === "colleges" && category === "Engineering" ? ENGINEERING_COLLEGE_SLUGS : [];
+  let featuredRows: T[] = [];
+  if (featuredSlugs.length) {
+    const fields = select.split(",").filter((field) => !["show_in_explore_by_category", "explore_by_category_checked_at"].includes(field)).join(",");
+    const featured = await backendClient.from(table).select(fields).eq("is_active", true).in("slug", featuredSlugs);
+    if (featured.error) throw featured.error;
+    featuredRows = (featured.data || []) as T[];
+    const ranked = rankHomepageExplore(featuredRows, category, table);
+    if (ranked.length >= 5) return ranked.slice(0, 5);
+  }
   const aliases = [category, ...(CATEGORY_ALIASES[category] || [])];
   const filters = aliases.flatMap((alias) => [
     `category.ilike.%${alias}%`,
@@ -113,16 +126,6 @@ export async function fetchHomepageExplore<T extends ExploreRow>(table: "college
     result = await query(select.split(",").filter((field) => !["show_in_explore_by_category", "explore_by_category_checked_at"].includes(field)).join(","));
   }
   if (result.error) throw result.error;
-  const rows = (result.data || []) as T[];
-  // Exact picks must survive broad legacy tags and the category query's 200-row cap.
-  const featuredSlugs = table === "courses"
-    ? (HOMEPAGE_COURSE_PICKS[category] || []).map(({ slug }) => slug)
-    : table === "colleges" && category === "Engineering" ? ENGINEERING_COLLEGE_SLUGS : [];
-  if (featuredSlugs.length) {
-    const fields = select.split(",").filter((field) => !["show_in_explore_by_category", "explore_by_category_checked_at"].includes(field)).join(",");
-    const featured = await backendClient.from(table).select(fields).eq("is_active", true).in("slug", featuredSlugs);
-    if (featured.error) throw featured.error;
-    rows.push(...(featured.data || []) as T[]);
-  }
+  const rows = [...(result.data || []) as T[], ...featuredRows];
   return rankHomepageExplore(rows, category, table).slice(0, 5);
 }
