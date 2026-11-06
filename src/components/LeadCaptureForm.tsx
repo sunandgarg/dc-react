@@ -212,6 +212,7 @@ export function LeadCaptureForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
     trackEvent("lead_form_submit_attempt", { source, variant });
 
     const newErrors: { name?: string; email?: string; course?: string; state?: string; city?: string } = {};
@@ -255,14 +256,16 @@ export function LeadCaptureForm({
     }
     if (step === 1) {
       setIsLoading(true);
+      // Let students fill the next fields while retaining the durable-save gate.
+      setStep(2);
       try {
         const saved = await saveLeadPhase(identityPayload());
         setLeadId(saved.lead_id);
         setLeadConsentPreference(authorized);
         savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone });
-        setStep(2);
         trackEvent("lead_form_identity_saved", { source, variant, returning: Boolean(saved.existing_count) });
       } catch (error) {
+        setStep(1);
         toast.error(error instanceof Error ? error.message : "Could not save your details");
       } finally {
         setIsLoading(false);
@@ -344,8 +347,8 @@ export function LeadCaptureForm({
           <ProgramModeToggle value={programMode} onChange={setProgramMode} compact={compact} />
         </>
       )}
-      <Button type="submit" className={`w-full rounded-xl ${compact ? "h-9" : "h-10"} ${dark ? "bg-white text-primary hover:bg-slate-100" : "bg-primary text-primary-foreground hover:bg-primary/90"}`} disabled={isLoading}>
-        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : step === 1 ? "Save & continue" : "Complete request"}
+      <Button type="submit" aria-live="polite" className={`w-full rounded-xl ${compact ? "h-9" : "h-10"} ${dark ? "bg-white text-primary hover:bg-slate-100" : "bg-primary text-primary-foreground hover:bg-primary/90"}`} disabled={isLoading}>
+        {isLoading ? <><Loader2 className="h-4 w-4 animate-spin" /><span>{leadId ? "Submitting request…" : "Saving details…"}</span></> : step === 1 ? "Save & continue" : "Complete request"}
       </Button>
     </>
   );

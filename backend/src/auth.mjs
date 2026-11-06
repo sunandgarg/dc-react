@@ -197,6 +197,7 @@ async function sendFast2SmsOtp(phone, otp) {
 
   const response = await fetch(`${String(provider.base_url || "https://www.fast2sms.com").replace(/\/$/, "")}/dev/otp/send`, {
     method: "POST",
+    signal: AbortSignal.timeout(8_000),
     headers: { authorization: apiKey, accept: "application/json", "content-type": "application/json" },
     body: JSON.stringify({
       mobile,
@@ -335,16 +336,27 @@ export async function sendPhoneOtp(request) {
   const recent = await prisma.app_auth_otps.findFirst({ where: { phone, created_at: { gt: new Date(Date.now() - 45_000) } }, orderBy: { created_at: "desc" } });
   if (recent) throw Object.assign(new Error("Please wait before requesting another OTP"), { status: 429, code: "OTP_RATE_LIMIT" });
   const otp = String(randomInt(100000, 1000000));
-  const webhook = String(process.env.SMS_WEBHOOK_URL || "").trim();
-  if (webhook) {
-    const response = await fetch(webhook, { method: "POST", headers: { "content-type": "application/json", ...(process.env.SMS_WEBHOOK_BEARER_TOKEN ? { authorization: `Bearer ${process.env.SMS_WEBHOOK_BEARER_TOKEN}` } : {}) }, body: JSON.stringify({ phone, message: `Your DekhoCampus verification code is ${otp}. It expires in 10 minutes.` }) });
-    if (!response.ok) throw Object.assign(new Error("SMS provider rejected the OTP request"), { status: 502, code: "SMS_DELIVERY_FAILED" });
-  } else if (await sendFast2SmsOtp(phone, otp)) {
-    // The active provider configuration lives in MySQL; the API credential is injected from Secrets Manager.
-  } else if (process.env.NODE_ENV === "production") {
-    throw Object.assign(new Error("SMS provider is not configured"), { status: 503, code: "SMS_NOT_CONFIGURED" });
+  // Persist before delivery so a received code is already verifiable.
+  const challengeId = randomUUID();
+  await prisma.app_auth_otps.create({ data: { id: challengeId, phone, otp_hash: otpDigest(phone, otp), expires_at: new Date(Date.now() + 10 * 60_000) } });
+  try {
+    const webhook = String(process.env.SMS_WEBHOOK_URL || "").trim();
+    if (webhook) {
+      const response = await fetch(webhook, { method: "POST", signal: AbortSignal.timeout(8_000), headers: { "content-type": "application/json", ...(process.env.SMS_WEBHOOK_BEARER_TOKEN ? { authorization: `Bearer ${process.env.SMS_WEBHOOK_BEARER_TOKEN}` } : {}) }, body: JSON.stringify({ phone, message: `Your DekhoCampus verification code is ${otp}. It expires in 10 minutes.` }) });
+      if (!response.ok) throw Object.assign(new Error("SMS provider rejected the OTP request"), { status: 502, code: "SMS_DELIVERY_FAILED" });
+    } else if (await sendFast2SmsOtp(phone, otp)) {
+      // The active provider configuration lives in MySQL; the API credential is injected from Secrets Manager.
+    } else if (process.env.NODE_ENV === "production") {
+      throw Object.assign(new Error("SMS provider is not configured"), { status: 503, code: "SMS_NOT_CONFIGURED" });
+    }
+  } catch (error) {
+    if (error?.name === "TimeoutError") {
+      // A timeout is ambiguous: the provider may still deliver this code.
+      throw Object.assign(new Error("The SMS provider took too long. Please wait before requesting another code."), { status: 504, code: "SMS_DELIVERY_TIMEOUT" });
+    }
+    await prisma.app_auth_otps.updateMany({ where: { id: challengeId, consumed_at: null }, data: { consumed_at: new Date() } });
+    throw error;
   }
-  await prisma.app_auth_otps.create({ data: { id: randomUUID(), phone, otp_hash: otpDigest(phone, otp), expires_at: new Date(Date.now() + 10 * 60_000) } });
   return { success: true, ...(process.env.NODE_ENV === "production" ? {} : { development_otp: otp }) };
 }
 

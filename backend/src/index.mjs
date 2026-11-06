@@ -594,9 +594,10 @@ async function saveLead(request) {
       return updated;
     });
     if (!result.count) throw new HttpError(404, "LEAD_NOT_FOUND", "The saved lead could not be updated");
-    const intentLinked = await linkSavedLeadIntent(input, leadId, siteScope);
+    // Intent enrichment is best-effort; the committed lead must not wait for analytics scans.
+    setImmediate(() => void linkSavedLeadIntent(input, leadId, siteScope));
     if (siteScope === "dekhocampus") wakeLeadOutboxWorker();
-    return { success: true, lead_id: leadId, phase: "complete", site_scope: siteScope, ...(intentLinked === undefined ? {} : { intent_linked: intentLinked }) };
+    return { success: true, lead_id: leadId, phase: "complete", site_scope: siteScope };
   }
   const existingCount = await prisma.leads.count({ where: { site_scope: siteScope, OR: [{ phone }, { email }] } });
   const lead = await prisma.$transaction(async (tx) => {
@@ -630,9 +631,9 @@ async function saveLead(request) {
     if (phase === "complete" && siteScope === "dekhocampus") await enqueueLeadAutomation(tx, created.id);
     return created;
   });
-  const intentLinked = await linkSavedLeadIntent(input, lead.id, siteScope);
+  setImmediate(() => void linkSavedLeadIntent(input, lead.id, siteScope));
   if (phase === "complete" && siteScope === "dekhocampus") wakeLeadOutboxWorker();
-  return { success: true, lead_id: lead.id, phase, existing_count: existingCount, site_scope: siteScope, ...(intentLinked === undefined ? {} : { intent_linked: intentLinked }) };
+  return { success: true, lead_id: lead.id, phase, existing_count: existingCount, site_scope: siteScope };
 }
 
 async function sharedTargetRoadmap(request) {

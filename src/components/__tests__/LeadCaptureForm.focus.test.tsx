@@ -76,3 +76,34 @@ describe("page-specific consent", () => {
     await waitFor(() => expect(saveLeadPhase).toHaveBeenLastCalledWith(expect.objectContaining({ consent_text: unbrandedConsent ? "I agree to the Privacy Policy" : "I agree to DekhoCampus Privacy Policy" })));
   });
 });
+
+describe("slow identity saves", () => {
+  it("opens step two immediately but cannot complete before the durable acknowledgement", async () => {
+    let finish!: (value: any) => void;
+    vi.mocked(saveLeadPhase).mockClear().mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    render(<LeadCaptureForm source="JEE-paid" simple interestLabel="Programme" interestOptions={["B.Tech / B.E."]} />);
+    fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: "Test Student" } });
+    fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: "test@example.com" } });
+    fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: "9876543210" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
+    expect(screen.getByRole("combobox")).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Saving details…" })).toBeDisabled();
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "B.Tech / B.E." } });
+    fireEvent.submit(screen.getByRole("combobox").closest("form")!);
+    expect(saveLeadPhase).toHaveBeenCalledTimes(1);
+    finish({ success: true, lead_id: "saved", phase: "identity" });
+    await waitFor(() => expect(screen.getByRole("button", { name: "Complete request" })).toBeEnabled());
+    expect(screen.getByRole("combobox")).toHaveValue("B.Tech / B.E.");
+  });
+
+  it("returns to the filled identity fields when persistence fails", async () => {
+    vi.mocked(saveLeadPhase).mockRejectedValueOnce(new Error("Database unavailable"));
+    render(<LeadCaptureForm source="JEE-paid" simple />);
+    fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: "Test Student" } });
+    fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: "test@example.com" } });
+    fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: "9876543210" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Save & continue" })).toBeEnabled());
+    expect(screen.getByPlaceholderText("Email address *")).toHaveValue("test@example.com");
+  });
+});

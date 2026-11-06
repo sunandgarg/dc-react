@@ -39,6 +39,7 @@ export function useInlineOtp(phone: string, formKey: string) {
   const [requested, setRequested] = useState(false);
   const [requestedPhone, setRequestedPhone] = useState("");
   const [sending, setSending] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [code, setCode] = useState("");
   const [verified, setVerified] = useState(false);
   const [verificationToken, setVerificationToken] = useState("");
@@ -119,6 +120,7 @@ export function useInlineOtp(phone: string, formKey: string) {
     try {
       const res = await fetch(SEND_OTP_URL, {
         method: "POST",
+        signal: AbortSignal.timeout(20_000),
         headers: {
           "Content-Type": "application/json",
         },
@@ -129,20 +131,23 @@ export function useInlineOtp(phone: string, formKey: string) {
         }),
       });
       const body = await res.json().catch(() => ({}));
-      if (!res.ok || !body.success || body.skipped) throw new Error(body.error || "Failed to send OTP");
+      if (body.code === "SMS_DELIVERY_TIMEOUT") throw new DOMException(body.message, "TimeoutError");
+      if (!res.ok || !body.success || body.skipped) throw new Error(body.message || body.error || "Failed to send OTP");
       if (latestPhoneRef.current !== phoneAtSend) return;
       toast.success(`OTP sent via SMS to +91 ${phoneAtSend.slice(0, 5)}*****`);
     } catch (e: unknown) {
-      if (!wasRequested && latestPhoneRef.current === phoneAtSend) {
+      const timedOut = (e instanceof Error || e instanceof DOMException) && e.name === "TimeoutError";
+      if (!wasRequested && !timedOut && latestPhoneRef.current === phoneAtSend) {
         resetVerification();
       }
-      toast.error(e instanceof Error ? e.message : "Could not send OTP. Try again.");
+      toast.error(timedOut ? "SMS confirmation is taking longer than expected. If a code arrives, try it; otherwise resend after the countdown." : e instanceof Error ? e.message : "Could not send OTP. Try again.");
     } finally {
       setSending(false);
     }
   };
 
   const verify = async () => {
+    if (verifying || sending) return;
     if (!requestedPhone || normalizedPhone !== requestedPhone) {
       resetVerification();
       toast.error("Phone number changed. Please request a new OTP.");
@@ -152,9 +157,12 @@ export function useInlineOtp(phone: string, formKey: string) {
       toast.error(`Enter the ${OTP_LENGTH}-digit code`);
       return;
     }
+    const phoneAtVerify = normalizedPhone;
+    setVerifying(true);
     try {
       const res = await fetch(SEND_OTP_URL, {
         method: "POST",
+        signal: AbortSignal.timeout(20_000),
         headers: {
           "Content-Type": "application/json",
         },
@@ -166,6 +174,7 @@ export function useInlineOtp(phone: string, formKey: string) {
         }),
       });
       const body = await res.json().catch(() => ({}));
+      if (latestPhoneRef.current !== phoneAtVerify) return;
       if (res.ok && body.verified && body.verification_token) {
         setVerificationToken(String(body.verification_token));
         setVerified(true);
@@ -173,9 +182,11 @@ export function useInlineOtp(phone: string, formKey: string) {
         toast.success("Mobile verified ✓");
         return;
       }
-      toast.error(body.error || "Incorrect OTP");
+      toast.error(body.message || body.error || "Incorrect OTP");
     } catch {
-      toast.error("Incorrect OTP");
+      toast.error("Verification could not finish. Check your connection and try again.");
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -183,7 +194,7 @@ export function useInlineOtp(phone: string, formKey: string) {
     <Button
       type="button"
       onClick={() => sendOtp()}
-      disabled={sending || !phoneOk || verified || cooldown > 0}
+      disabled={sending || verifying || !phoneOk || verified || cooldown > 0}
       className="h-10 shrink-0 whitespace-nowrap rounded-xl bg-primary px-2.5 text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground min-[390px]:px-4"
     >
       {sending ? (
@@ -222,10 +233,10 @@ export function useInlineOtp(phone: string, formKey: string) {
           type="button"
           size="sm"
           onClick={verify}
-          disabled={sending || code.length !== OTP_LENGTH}
+          disabled={sending || verifying || code.length !== OTP_LENGTH}
           className="h-9 shrink-0 whitespace-nowrap rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          Verify
+          {verifying ? "Verifying…" : "Verify"}
         </Button>
       </div>
       <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -245,7 +256,7 @@ export function useInlineOtp(phone: string, formKey: string) {
               size="sm"
               variant="outline"
               onClick={() => sendOtp()}
-              disabled={sending}
+              disabled={sending || verifying}
               className="h-7 whitespace-nowrap rounded-md border-primary/40 px-2.5 text-[11px] text-primary hover:bg-primary/10"
             >
               Resend SMS

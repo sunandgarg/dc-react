@@ -31,6 +31,7 @@ export function LeadOtpVerify({ phone, onVerified, onCancel, formKey }: LeadOtpV
     try {
       const res = await fetch(SEND_OTP_URL, {
         method: "POST",
+        signal: AbortSignal.timeout(20_000),
         headers: {
           "Content-Type": "application/json",
         },
@@ -41,7 +42,7 @@ export function LeadOtpVerify({ phone, onVerified, onCancel, formKey }: LeadOtpV
         }),
       });
       const body = await res.json().catch(() => ({}));
-      if (!res.ok || !body.success) throw new Error(body.error || "Failed to send OTP");
+      if (!res.ok || !body.success) throw new Error(body.message || body.error || "Failed to send OTP");
       toast.success(`OTP sent to +91 ${phone.slice(0, 5)}*****`);
       setCooldown(RESEND_COOLDOWN);
     } catch (e: any) {
@@ -101,6 +102,7 @@ export function LeadOtpVerify({ phone, onVerified, onCancel, formKey }: LeadOtpV
     try {
       const res = await fetch(SEND_OTP_URL, {
         method: "POST",
+        signal: AbortSignal.timeout(20_000),
         headers: {
           "Content-Type": "application/json",
         },
@@ -117,6 +119,8 @@ export function LeadOtpVerify({ phone, onVerified, onCancel, formKey }: LeadOtpV
         return;
       }
       onVerified();
+    } catch {
+      toast.error("Verification could not finish. Check your connection and try again.");
     } finally {
       setVerifying(false);
     }

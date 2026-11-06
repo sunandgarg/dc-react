@@ -20,6 +20,8 @@ function OtpHarness({ phone }: { phone: string }) {
 
 describe("useInlineOtp phone corrections", () => {
   beforeEach(() => {
+    // jsdom 20 predates the browser's AbortSignal.timeout API.
+    vi.stubGlobal("AbortSignal", { timeout: () => new AbortController().signal });
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ success: true, results: [{ provider: "fast2sms", channel: "sms" }] }),
@@ -74,5 +76,29 @@ describe("useInlineOtp phone corrections", () => {
       json: async () => ({ success: true, results: [{ provider: "fast2sms", channel: "sms" }] }),
     });
     await waitFor(() => expect(screen.queryByText(/Sending OTP to/)).not.toBeInTheDocument());
+  });
+
+  it("keeps the resend cooldown after a timeout and releases the sending state", async () => {
+    vi.mocked(fetch).mockRejectedValueOnce(new DOMException("Timed out", "TimeoutError"));
+    render(<OtpHarness phone="9876543210" />);
+    fireEvent.click(screen.getByRole("button", { name: "Get OTP" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "45s" })).toBeDisabled());
+    expect(screen.getByTestId("otp-state")).toHaveTextContent("true:false");
+    expect(vi.mocked(fetch).mock.calls[0][1]?.signal).toBeDefined();
+  });
+
+  it("ignores a verification response for a phone that was edited while pending", async () => {
+    const { rerender } = render(<OtpHarness phone="9876543210" />);
+    fireEvent.click(screen.getByRole("button", { name: "Get OTP" }));
+    await waitFor(() => expect(screen.queryByText(/Sending OTP to/)).not.toBeInTheDocument());
+    let finish!: (value: unknown) => void;
+    vi.mocked(fetch).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }) as Promise<Response>);
+    fireEvent.change(screen.getByPlaceholderText("Enter 6-digit OTP sent via SMS"), { target: { value: "123456" } });
+    fireEvent.click(screen.getByRole("button", { name: "Verify" }));
+    expect(screen.getByRole("button", { name: "Verifying…" })).toBeDisabled();
+    rerender(<OtpHarness phone="9876543211" />);
+    finish({ ok: true, json: async () => ({ verified: true, verification_token: "old-phone-proof" }) });
+    await waitFor(() => expect(screen.getByRole("button", { name: "Get OTP" })).toBeEnabled());
+    expect(screen.getByTestId("otp-state")).toHaveTextContent("false:false");
   });
 });
