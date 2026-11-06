@@ -74,7 +74,7 @@ export function Navbar() {
       <nav className="border-b border-border bg-white/[0.98]">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-3 px-4 md:px-8 xl:h-[72px]">
           <Link to="/" className="flex shrink-0 items-center" aria-label="DekhoCampus Home">
-            <img src={logo} alt="DekhoCampus" className="h-auto w-[145px] 2xl:w-[170px]" />
+            <img src={logo} alt="DekhoCampus" className={`h-auto w-[145px] 2xl:w-[170px] ${pathname === "/ad/jee-main-2027" ? "grayscale" : ""}`} />
           </Link>
 
           {desktopMenu && <Suspense fallback={null}><MegaMenu /></Suspense>}
