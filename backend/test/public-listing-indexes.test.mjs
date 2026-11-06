@@ -9,10 +9,9 @@ test("public listing index migration is idempotent and preserves mixed sort dire
   const statements = [];
   const report = { createdReferenceIndexes: [] };
   await migrate(async () => false, { $executeRawUnsafe: async sql => statements.push(sql) }, report);
-  assert.equal(statements.length, 3);
+  assert.equal(statements.length, 2);
   assert.match(statements[0], /`is_active`, `is_partner`, `priority`, `featured_rank`, `rating` DESC/);
   assert.match(statements[1], /`site_scope`, `featured_rank`/);
-  assert.match(statements[2], /`is_active`, `priority`, `name`/);
   await migrate(async () => true, { $executeRawUnsafe: async () => assert.fail("Existing indexes must not be rebuilt") }, report);
-  assert.equal(report.createdReferenceIndexes.length, 3);
+  assert.equal(report.createdReferenceIndexes.length, 2);
 });
