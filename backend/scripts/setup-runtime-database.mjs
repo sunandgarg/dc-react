@@ -32,7 +32,7 @@ if (!existingSchema.length) {
   run(process.execPath, ["./node_modules/prisma/build/index.js", "db", "push"]);
 }
 run(process.execPath, ["scripts/apply-mysql-parity.mjs"]);
-run(process.execPath, ["scripts/normalize-delhi-ncr.mjs"]);
+// Run data cleanup explicitly; repeated full-table updates delay the serving database.
 // Fail the deploy before reloading the serving API if required setup cannot finish.
 try {
   await ensureContentReviewTable();

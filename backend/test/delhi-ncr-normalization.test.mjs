@@ -5,7 +5,7 @@ import test from "node:test";
 const scriptUrl = new URL("../scripts/normalize-delhi-ncr.mjs", import.meta.url);
 const setupUrl = new URL("../scripts/setup-runtime-database.mjs", import.meta.url);
 
-test("runtime database setup canonicalizes college state aliases with an exact verification", async () => {
+test("explicit state cleanup verifies its result without running on every deployment", async () => {
   const [script, setup] = await Promise.all([
     readFile(scriptUrl, "utf8"),
     readFile(setupUrl, "utf8"),
@@ -18,5 +18,5 @@ test("runtime database setup canonicalizes college state aliases with an exact v
   assert.match(script, /'delhi ncr'/);
   assert.match(script, /BINARY state <> BINARY 'Delhi NCR'/);
   assert.doesNotMatch(script, /information_schema/);
-  assert.match(setup, /scripts\/normalize-delhi-ncr\.mjs/);
+  assert.doesNotMatch(setup, /scripts\/normalize-delhi-ncr\.mjs/);
 });
