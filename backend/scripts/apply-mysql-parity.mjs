@@ -236,6 +236,18 @@ async function ensureHomepageExploreSchema(report) {
   }
 }
 
+async function ensurePublicListingPerformanceIndexes(report) {
+  // These public reads otherwise hold API connections while sorting the full catalog.
+  if (!await indexExists("colleges", "ix_colleges_partner_order")) {
+    await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_partner_order` ON `colleges` (`is_active`, `is_partner`, `priority`, `featured_rank`, `rating` DESC)");
+    report.createdReferenceIndexes.push("ix_colleges_partner_order");
+  }
+  if (!await indexExists("articles", "ix_articles_scope_featured")) {
+    await prisma.$executeRawUnsafe("CREATE INDEX `ix_articles_scope_featured` ON `articles` (`site_scope`, `featured_rank`)");
+    report.createdReferenceIndexes.push("ix_articles_scope_featured");
+  }
+}
+
 async function ensureExamAuthoritySchema(report) {
   if (await columnInfo("exams", "conducting_authority")) {
     report.existing.push("exams.conducting_authority");
@@ -679,6 +691,7 @@ try {
   await ensureExamAuthoritySchema(report);
   await ensureExamListingFilterSchema(report);
   await ensureHomepageExploreSchema(report);
+  await ensurePublicListingPerformanceIndexes(report);
   await ensureCourseFeeGroupingSchema(report);
   await ensureLeadAutomationAuditSchema(report);
   await ensureAuthorAvatarSchema(report);
