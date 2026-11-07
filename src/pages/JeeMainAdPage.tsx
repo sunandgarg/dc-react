@@ -174,7 +174,10 @@ function EnglishAdPage() {
           <section id="question-papers" aria-labelledby="papers-title" className="rounded-md border border-blue-100 border-t-[3px] border-t-blue-700 bg-[#f7fafc] p-3 sm:p-5">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">Official NTA PDFs</p>
             <h2 id="papers-title" className="mt-1 font-bold">JEE Main question papers: last 5 years</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700">Practise with selected B.E. / B.Tech (Paper 1) papers from 2022 to 2026. Both shifts below are free resources. Select a link to open the guidance form, then continue to your chosen PDF.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">Practise with selected B.E. / B.Tech (Paper 1) papers from 2022 to 2026. Download both shifts for all five dates in one ZIP, or choose an individual PDF. Complete the guidance form to continue to your free download.</p>
+            <button type="button" onClick={() => setDestination({ url: "/docs/jee-main-paper-1-2022-2026.zip", label: "All 10 JEE Main question papers (ZIP)" })} className="mt-4 flex min-h-11 w-full items-center justify-center rounded border border-blue-800 bg-blue-800 px-3 py-2 text-center text-sm font-bold text-white hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800">
+              Download all 10 papers (.zip)
+            </button>
             <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-5 sm:gap-2">
               {QUESTION_PAPERS.map(({ year, date, papers }) => <div key={year} className="group overflow-hidden rounded border border-blue-100 bg-white first:col-span-2 first:grid first:grid-cols-2 sm:first:col-span-1 sm:first:block">
                 <div className="flex flex-col justify-center px-1 py-3 text-center"><h3 className="text-2xl font-extrabold leading-8 text-orange-600">{year}</h3><p className="mt-1 text-[11px] leading-5 text-slate-500">{date}</p></div>

@@ -85,6 +85,25 @@ describe("JEE Main ad pages", () => {
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
+  it("offers the ten-paper ZIP before the 2026 card and downloads it only after the form succeeds", () => {
+    open("jee-main-2027");
+    const section = within(screen.getByRole("region", { name: "JEE Main question papers: last 5 years" }));
+    const download = section.getByRole("button", { name: "Download all 10 papers (.zip)" });
+    expect(download.compareDocumentPosition(section.getByRole("heading", { name: "2026" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const assign = vi.fn();
+    const testWindow = Object.create(window);
+    Object.defineProperty(testWindow, "location", { value: { origin: window.location.origin, assign } });
+    vi.stubGlobal("window", testWindow);
+    try {
+      fireEvent.click(download);
+      fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close" }));
+      expect(assign).not.toHaveBeenCalled();
+      fireEvent.click(download);
+      fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Complete request" }));
+      expect(assign).toHaveBeenCalledExactlyOnceWith("/docs/jee-main-paper-1-2022-2026.zip");
+    } finally { vi.unstubAllGlobals(); }
+  });
+
   it("keeps both shifts for all five years and supports middle-click gating", () => {
     open("jee-main-2027");
     const papers = screen.getByRole("region", { name: "JEE Main question papers: last 5 years" });

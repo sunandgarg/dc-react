@@ -9,3 +9,7 @@
 # rule scoped avoids Cloudflare combining no-cache with immutable asset headers.
 /version.json
   Cache-Control: no-cache, no-store, must-revalidate
+
+/docs/jee-main-paper-1-2022-2026.zip
+  Content-Type: application/zip
+  Content-Disposition: attachment; filename="jee-main-paper-1-2022-2026.zip"
