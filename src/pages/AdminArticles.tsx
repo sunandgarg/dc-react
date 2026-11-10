@@ -1,3 +1,4 @@
+import { useCatalogEditor } from "@/hooks/useAdminCatalog";
 import { PermGate } from "@/components/PermGate";
 import { BlogStudioDialog } from "@/components/admin/BlogStudioDialog";
 import { BlogAutoAgentPanel } from "@/components/admin/BlogAutoAgentPanel";
@@ -182,6 +183,8 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const canPublish = isAdmin || can("articles", "publish");
   const canCreate = isAdmin || can("articles", "create");
   const canEdit = isAdmin || can("articles", "edit");
+  const { openRecord } = useCatalogEditor("articles", canEdit, setEditing, siteScope);
+  const [showTools, setShowTools] = useState(false);
 
   const bulkUpdate = async (updates: Record<string, unknown>, label: string, ids = Array.from(selectedIds)) => {
     if (!ids.length) return toast.error("Select at least one article");
@@ -281,7 +284,8 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
   return (
     <AdminLayout title={isSarkari ? (studioMode ? "Sarkari Job AI Studio" : "Sarkari Articles") : "Articles Manager"}>
-      {isAdmin && !studioMode && <ArticlePublicationDashboard siteScope={siteScope} authors={filterAuthors} />}
+      {isAdmin && !studioMode && <Button variant="outline" aria-expanded={showTools} onClick={() => setShowTools(!showTools)}>{showTools ? "Hide editorial tools" : "Show editorial tools"}</Button>}
+      {isAdmin && showTools && !studioMode && <ArticlePublicationDashboard siteScope={siteScope} authors={filterAuthors} />}
       {isSarkari && (
         <div className="mb-4 rounded-2xl border border-orange-200 bg-orange-50/80 p-4 text-sm text-orange-950">
           <p className="font-bold">Sarkari workspace</p>
@@ -303,8 +307,8 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           </a>
         </Button>
       </div>}
-      {isAdmin && !isSarkari && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />}
-      {isAdmin && !isSarkari && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
+      {isAdmin && showTools && !isSarkari && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />}
+      {isAdmin && showTools && !isSarkari && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -415,7 +419,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
         />
       </div>}
 
-      {isAdmin && <FeaturedRankPanel table="articles" siteScope={siteScope} detailPath={(slug) => isSarkari ? `https://sarkari.dekhocampus.com/news/${slug}` : `/news/${slug}`} />}
+      {isAdmin && showTools && <FeaturedRankPanel table="articles" siteScope={siteScope} detailPath={(slug) => isSarkari ? `https://sarkari.dekhocampus.com/news/${slug}` : `/news/${slug}`} />}
 
       {articlesError ? <div role="alert" className="py-6 text-center text-destructive">Could not load articles. <button type="button" className="underline" onClick={() => void refetchArticles()}>Try again</button></div> : isLoading ? (
         <div className="text-center py-12 text-muted-foreground">Loading...</div>
@@ -442,7 +446,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               </div>
               <div className="flex gap-1">
                 <a href={isSarkari ? `https://sarkari.dekhocampus.com/news/${a.slug}` : `/news/${a.slug}`} target="_blank" rel="noopener noreferrer" title="Open public page" className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted text-muted-foreground hover:text-primary"><ExternalLink className="w-3.5 h-3.5" /></a>
-                {canEdit && <Button variant="ghost" size="icon" aria-label={`Edit ${a.title}`} onClick={() => setEditing({ ...a })} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
+                {canEdit && <Button variant="ghost" size="icon" aria-label={`Edit ${a.title}`} onClick={() => openRecord(a.id)} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="articles" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteArticle.mutate(a.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
             </div>

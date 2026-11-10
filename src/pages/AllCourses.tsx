@@ -104,8 +104,9 @@ export default function AllCourses() {
 
   const courseGroupSearch = useMemo(() => getCourseGroupSearchTerms(selectedCourseGroups), [selectedCourseGroups]);
 
-  const { items: courses, sentinelRef, isLoading, isFetchingMore, hasMore, error: coursesError } = useInfiniteData({
+  const { items: courses, loadMore, isLoading, isFetchingMore, hasMore, error: coursesError } = useInfiniteData({
     table: "courses",
+    columns: "id,slug,short_id,name,full_name,category,mode,level,specializations,duration,growth,avg_salary,image,priority",
     queryKey: ["infinite-courses"],
     orderBy: "priority",
     ascending: true,
@@ -270,7 +271,7 @@ export default function AllCourses() {
               )}
             </div>
 
-            <div ref={sentinelRef} className="h-4" />
+            {hasMore && <button type="button" className="mx-auto my-4 block rounded-lg border px-4 py-2" disabled={isFetchingMore} onClick={() => void loadMore()}>Show more courses</button>}
             {coursesError && <p className="text-center text-sm text-destructive py-5">Courses could not be loaded. Please retry.</p>}
             {!isLoading && !coursesError && filtered.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">No courses match these filters.</p>}
             {isFetchingMore && (

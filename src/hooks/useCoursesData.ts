@@ -94,18 +94,18 @@ export function useHomepageCategoryCourses(category: string) {
   });
 }
 
-export function useAllDbCourses() {
+export function useAllDbCourses(enabled = true) {
   return useQuery({
     queryKey: ["db-courses-all"],
-    queryFn: async () => {
-      const { data, error } = await backendClient
-        .from("courses")
-        .select("*")
-        .order("priority", { ascending: true, nullsFirst: false })
-        .order("updated_at", { ascending: false, nullsFirst: false })
-        .order("name");
-      if (error) throw error;
-      return data as DbCourse[];
+    enabled,
+    queryFn: async ({ signal }) => {
+      const rows: DbCourse[] = [];
+      for (let offset = 0; ; offset += 1000) {
+        const { data, error } = await backendClient.from("courses").select("category,status,is_active").order("id").range(offset, offset + 999).abortSignal(signal);
+        if (error) throw error;
+        rows.push(...data);
+        if (data.length < 1000) return rows;
+      }
     },
     staleTime: 2 * 60 * 1000,
   });
@@ -160,6 +160,8 @@ export function useSaveCourse() {
       return { pendingReview };
     },
     onSuccess: (result) => {
+      qc.invalidateQueries({ queryKey: ["admin-catalog-names"] });
+      qc.invalidateQueries({ queryKey: ["db-courses-all"] });
       qc.invalidateQueries({ queryKey: ["db-courses"] });
       qc.invalidateQueries({ queryKey: ["homepage-category-courses"] });
       toast.success(result.pendingReview ? "Course submitted for admin review." : "Course saved!");
@@ -176,6 +178,8 @@ export function useDeleteCourse() {
       if (error) throw error;
     },
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-catalog-names"] });
+      qc.invalidateQueries({ queryKey: ["db-courses-all"] });
       qc.invalidateQueries({ queryKey: ["db-courses"] });
       toast.success("Course deleted!");
     },

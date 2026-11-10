@@ -1,3 +1,4 @@
+import { useCatalogEditor } from "@/hooks/useAdminCatalog";
 import { PermGate } from "@/components/PermGate";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
 import { useCallback, useDeferredValue, useState } from "react";
@@ -32,7 +33,7 @@ import { FeaturedRankPicker } from "@/components/admin/FeaturedRankPicker";
 import { FeaturedRankPanel } from "@/components/admin/FeaturedRankPanel";
 import { AdminPageSizePicker } from "@/components/admin/AdminPageSizePicker";
 import { OfficialDataFillButton } from "@/components/admin/OfficialDataFillButton";
-import { backendClient } from "@/integrations/backend/client";
+
 import { slugify } from "@/lib/slugify";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -78,7 +79,6 @@ export default function AdminColleges() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
   const [pageSize, setPageSizeState] = useState<number>(() => {
     const saved = parseInt(localStorage.getItem("admin_page_size_colleges") || "", 10);
     return saved > 0 ? Math.min(saved, 100) : 50;
@@ -105,14 +105,10 @@ export default function AdminColleges() {
     setPage(1);
   };
 
-  const openEditor = async (id: string) => {
-    setLoadingEditId(id);
-    const { data, error } = await backendClient.from("colleges").select("*").eq("id", id).single();
-    setLoadingEditId(null);
-    if (error) { toast.error(`Could not open college: ${error.message}`); return; }
+  const { loadingEditId, openRecord: openEditor } = useCatalogEditor("colleges", canEdit, data => {
     setEditingBaseline(JSON.stringify(data));
     setEditing(data as DbCollege);
-  };
+  });
 
   const openNewEditor = () => {
     const value = { ...emptyCollege, status: canPublish ? "Published" : "Draft" };

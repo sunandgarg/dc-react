@@ -473,6 +473,7 @@ export function useSaveCollege() {
     onSuccess: (result) => {
       // Invalidate every cached colleges query so changes (priority, featured rank,
       // status, etc.) reflect everywhere without a hard refresh.
+      qc.invalidateQueries({ queryKey: ["admin-catalog-names"] });
       qc.invalidateQueries({ predicate: (q) => {
         const k = q.queryKey?.[0];
         return typeof k === "string" && (k.startsWith("db-college") || k.startsWith("admin-colleges") || k.startsWith("infinite-college") || k === "featured-colleges" || k.startsWith("homepage-category-colleges"));
@@ -491,6 +492,7 @@ export function useDeleteCollege() {
       if (error) throw error;
     },
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-catalog-names"] });
       qc.invalidateQueries({ predicate: (q) => {
         const k = q.queryKey?.[0];
         return typeof k === "string" && (k.startsWith("db-college") || k.startsWith("admin-colleges") || k.startsWith("infinite-college") || k === "featured-colleges");

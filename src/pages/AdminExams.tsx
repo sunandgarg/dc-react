@@ -1,10 +1,11 @@
+import { fetchCatalogRecord, useAdminCatalogList, useCatalogEditor } from "@/hooks/useAdminCatalog";
 import { PermGate } from "@/components/PermGate";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { CSVTools } from "@/components/CSVTools";
 import { RowDataIO } from "@/components/admin/RowDataIO";
-import { useAllDbExams, useSaveExam, useDeleteExam, type DbExam, type ExamImportantDate } from "@/hooks/useExamsData";
+import { mapExam, useAllDbExams, useSaveExam, useDeleteExam, type DbExam, type ExamImportantDate } from "@/hooks/useExamsData";
 import { AdminFormSection } from "@/components/AdminFormSection";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { compactDisplayText } from "@/lib/displayText";
@@ -108,7 +109,8 @@ function ImportantDatesEditor({ dates, onChange }: { dates: ExamImportantDate[];
 }
 
 export default function AdminExams() {
-  const { data: exams, isLoading } = useAllDbExams();
+  const [showStats, setShowStats] = useState(false);
+  const { data: exams } = useAllDbExams(showStats);
   const saveExam = useSaveExam();
   const deleteExam = useDeleteExam();
   const { can, isAdmin, roles } = useAuth();
@@ -122,10 +124,10 @@ export default function AdminExams() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [visibleCount, setVisibleCount] = useState<number>(() => {
     const saved = parseInt(localStorage.getItem("admin_page_size_exams") || "", 10);
-    return saved > 0 ? saved : 50;
+    return saved > 0 ? Math.min(saved, 100) : 50;
   });
   const setPageSize = (n: number) => {
-    setVisibleCount(n);
+    setVisibleCount(Math.max(1, Math.min(n, 100)));
     try { localStorage.setItem("admin_page_size_exams", String(n)); } catch {}
   };
 
@@ -140,19 +142,9 @@ export default function AdminExams() {
     return { total: all.length, open, upcoming, closed, topCat, missingFilters };
   }, [exams]);
 
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    return (exams ?? []).filter((e) => {
-      if (statusFilter === "__missing_filters" && e.listing_category && e.exam_streams?.length && e.course_groups?.length && e.education_levels?.length) return false;
-      if (statusFilter !== "all" && statusFilter !== "__missing_filters" && e.status !== statusFilter) return false;
-      if (!q) return true;
-      return e.name.toLowerCase().includes(q)
-        || e.slug.toLowerCase().includes(q)
-        || (e.full_name || "").toLowerCase().includes(q);
-    });
-  }, [exams, search, statusFilter]);
-
-  const visible = filtered.slice(0, visibleCount);
+  const list = useAdminCatalogList("exams", visibleCount, useDeferredValue(search.trim()), statusFilter);
+  const visible = list.data?.pages.flatMap(page => page.rows) ?? [];
+  const total = list.data?.pages[0]?.total ?? 0;
 
   const handleSave = () => {
     if (!editing?.slug || !editing?.name) { toast.error("Slug and Name required"); return; }
@@ -173,12 +165,14 @@ export default function AdminExams() {
     setEditingBaseline(JSON.stringify(next));
     setEditing(next);
   };
+  const { openRecord } = useCatalogEditor("exams", canEdit, row => openEditor(mapExam(row)));
   const hasEditingChanges = Boolean(editing && JSON.stringify(editing) !== editingBaseline);
 
   return (
     <AdminLayout title="Exams Manager">
       {isAdmin && <div className="mb-3"><AIGenerateDialog entityType="exams" table="exams" /></div>}
-      <AdminStatsBar
+      <Button variant="outline" onClick={() => setShowStats(!showStats)}>{showStats ? "Hide statistics" : "Show statistics"}</Button>
+      {showStats && <AdminStatsBar
         stats={[
           { label: "Total", value: stats.total, icon: FileText, tone: "primary" },
           { label: "Apps Open", value: stats.open, icon: CheckCircle2, tone: "success" },
@@ -186,7 +180,7 @@ export default function AdminExams() {
           { label: "Closed/Over", value: stats.closed, icon: Eye, tone: "muted" },
           { label: "Top Category", value: stats.topCat, icon: CircleDot, tone: "primary" },
         ]}
-      />
+      />}
 
       {isAdmin && <div className="mb-3">
         <CSVTools
@@ -227,16 +221,17 @@ export default function AdminExams() {
         value={statusFilter as any}
         onChange={(v) => { setStatusFilter(v); setVisibleCount(50); }}
         options={[
-          { label: "All", value: "all", count: stats.total },
-          { label: "Apps Open", value: "Applications Open", count: stats.open },
-          { label: "Upcoming", value: "Upcoming", count: stats.upcoming },
+          { label: "All", value: "all", count: showStats ? stats.total : undefined },
+          { label: "Apps Open", value: "Applications Open", count: showStats ? stats.open : undefined },
+          { label: "Upcoming", value: "Upcoming", count: showStats ? stats.upcoming : undefined },
           { label: "Apps Closed", value: "Applications Closed" },
           { label: "Exam Over", value: "Exam Over" },
-          { label: "Missing Filters", value: "__missing_filters", count: stats.missingFilters },
+          { label: "Missing Filters", value: "__missing_filters", count: showStats ? stats.missingFilters : undefined },
         ]}
       />
 
-      {isLoading ? (
+      {list.isError && <p role="alert">Could not load exams. <button onClick={() => void list.refetch()}>Retry</button></p>}
+      {list.isLoading ? (
         <div className="text-center py-12 text-muted-foreground">Loading...</div>
       ) : (
         <div className="space-y-2">
@@ -244,7 +239,7 @@ export default function AdminExams() {
             <AdminPageSizePicker
               value={visibleCount}
               onChange={setPageSize}
-              totalLabel={`Showing ${Math.min(visible.length, filtered.length)} of ${filtered.length}`}
+              totalLabel={`Showing ${visible.length} of ${total}`}
             />
           </div>
           {visible.map((e) => (
@@ -263,17 +258,17 @@ export default function AdminExams() {
               </div>
               <div className="flex gap-1">
                 <a href={`/exams/${e.slug}`} target="_blank" rel="noreferrer"><Button variant="ghost" size="icon" className="w-8 h-8" title="Open public page"><ExternalLink className="w-3.5 h-3.5" /></Button></a>
-                {isAdmin && <RowDataIO row={e} base="exam" columns="*" />}
-                {canEdit && <Button variant="ghost" size="icon" onClick={() => openEditor(e)} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
+                {isAdmin && <RowDataIO loadRow={() => fetchCatalogRecord("exams", e.id)} row={e} base="exam" columns="*" />}
+                {canEdit && <Button variant="ghost" size="icon" onClick={() => openRecord(e.id)} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="exams" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteExam.mutate(e.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
             </div>
           ))}
-          {filtered.length === 0 && <div className="text-center py-12 text-muted-foreground">No exams found</div>}
-          {visible.length < filtered.length && (
+          {!list.isError && visible.length === 0 && <div className="text-center py-12 text-muted-foreground">No exams found</div>}
+          {list.hasNextPage && (
             <div className="flex justify-center pt-2">
-              <Button variant="outline" onClick={() => setVisibleCount((n) => n + visibleCount)} className="rounded-xl">
-                Load {visibleCount} more ({filtered.length - visible.length} left)
+              <Button variant="outline" disabled={list.isFetching} onClick={() => void list.fetchNextPage({ cancelRefetch: false })} className="rounded-xl">
+                Show more exams ({total - visible.length} left)
               </Button>
             </div>
           )}

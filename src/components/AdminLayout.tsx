@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Module } from "@/lib/rbac";
 import { CommandPalette } from "@/components/admin/CommandPalette";
-import { Badge } from "@/components/ui/badge";
+
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CleanDataShortcut } from "@/components/admin/CleanDataShortcut";
@@ -177,13 +177,15 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     if (isRestrictedModuleUser) return Boolean(it.module && canAccess(it.module));
     return !it.module || isAdmin || canAccess(it.module);
   }, [isAdmin, isLeadPushOnly, isContentHead, isContentWriter, isRestrictedModuleUser, canAccess]);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [recordQuery, setRecordQuery] = useState("");
   const qc = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
       await qc.invalidateQueries();
-      await qc.refetchQueries({ type: "active" });
+
       toast.success("Content refreshed");
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : "Refresh failed");
@@ -244,7 +246,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
           <input
             value={navSearch}
             onChange={(event) => setNavSearch(event.target.value)}
-            placeholder="Find a tool..."
+            placeholder="Find tools or records..."
             aria-label="Search admin tools"
             className="h-10 w-full rounded-xl border border-border/70 bg-muted/45 pl-9 pr-3 text-sm text-foreground outline-none transition focus:border-primary/40 focus:bg-background focus:ring-2 focus:ring-primary/10"
           />
@@ -252,6 +254,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-3" aria-label="Admin navigation">
+        {navSearch.trim() && <button className="p-2 text-sm text-primary" onClick={() => { setRecordQuery(navSearch); setSearchOpen(true); setMobileNavOpen(false); }}>Search records for “{navSearch}”</button>}
         {navigationGroups.map((group) => {
           const isOpen = navSearch.trim() ? true : open[group.label];
           const containsActive = group.items.some((item) => item.href === activeHref);
@@ -354,8 +357,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
               <span className="hidden sm:inline">Refresh</span>
             </Button>
-            <Badge variant="outline" className="text-[10px] hidden md:inline-flex">⌘K / Ctrl+K</Badge>
-            <Badge variant="outline" className="text-[10px] md:hidden">⌘K</Badge>
+            <Button size="sm" variant="outline" onClick={() => { setRecordQuery(""); setSearchOpen(true); }}><Search className="h-4 w-4" /> Search records</Button>
           </div>
         </header>
 
@@ -365,7 +367,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             {children}
           </div>
         </main>
-        <CommandPalette />
+        <CommandPalette open={searchOpen} setOpen={setSearchOpen} query={recordQuery} setQuery={setRecordQuery} includeSarkari={visible({ label: "Sarkari Articles", href: "/admin/sarkari/articles", icon: Search, module: "articles" })} />
       </div>
     </div>
   );

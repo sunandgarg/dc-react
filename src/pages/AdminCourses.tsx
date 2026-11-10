@@ -1,6 +1,7 @@
+import { fetchCatalogRecord, useAdminCatalogList, useCatalogEditor } from "@/hooks/useAdminCatalog";
 import { PermGate } from "@/components/PermGate";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { CSVTools } from "@/components/CSVTools";
 import { RowDataIO } from "@/components/admin/RowDataIO";
@@ -56,7 +57,8 @@ const emptyCourse: Partial<DbCourse> = {
 };
 
 export default function AdminCourses() {
-  const { data: courses, isLoading } = useAllDbCourses();
+  const [showStats, setShowStats] = useState(false);
+  const { data: courses } = useAllDbCourses(showStats);
   const saveCourse = useSaveCourse();
   const deleteCourse = useDeleteCourse();
   const { can, isAdmin, roles } = useAuth();
@@ -70,10 +72,10 @@ export default function AdminCourses() {
   const [statusFilter, setStatusFilter] = useState<"all" | "Published" | "Draft">("all");
   const [visibleCount, setVisibleCount] = useState<number>(() => {
     const saved = parseInt(localStorage.getItem("admin_page_size_courses") || "", 10);
-    return saved > 0 ? saved : 50;
+    return saved > 0 ? Math.min(saved, 100) : 50;
   });
   const setPageSize = (n: number) => {
-    setVisibleCount(n);
+    setVisibleCount(Math.max(1, Math.min(n, 100)));
     try { localStorage.setItem("admin_page_size_courses", String(n)); } catch {}
   };
 
@@ -87,18 +89,9 @@ export default function AdminCourses() {
     return { total: all.length, published, draft, inactive, topCat };
   }, [courses]);
 
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    return (courses ?? []).filter((c) => {
-      if (statusFilter !== "all" && c.status !== statusFilter) return false;
-      if (!q) return true;
-      return c.name.toLowerCase().includes(q)
-        || c.slug.toLowerCase().includes(q)
-        || (c.full_name || "").toLowerCase().includes(q);
-    });
-  }, [courses, search, statusFilter]);
-
-  const visible = filtered.slice(0, visibleCount);
+  const list = useAdminCatalogList("courses", visibleCount, useDeferredValue(search.trim()), statusFilter);
+  const visible = list.data?.pages.flatMap(page => page.rows) ?? [];
+  const total = list.data?.pages[0]?.total ?? 0;
 
   const handleSave = () => {
     if (!editing?.slug || !editing?.name) { toast.error("Slug and Name required"); return; }
@@ -116,12 +109,14 @@ export default function AdminCourses() {
     setEditingBaseline(JSON.stringify(next));
     setEditing(next);
   };
+  const { openRecord } = useCatalogEditor("courses", canEdit, openEditor);
   const hasEditingChanges = Boolean(editing && JSON.stringify(editing) !== editingBaseline);
 
   return (
     <AdminLayout title="Courses Manager">
       {isAdmin && <div className="mb-3"><AIGenerateDialog entityType="courses" table="courses" /></div>}
-      <AdminStatsBar
+      <Button variant="outline" onClick={() => setShowStats(!showStats)}>{showStats ? "Hide statistics" : "Show statistics"}</Button>
+      {showStats && <AdminStatsBar
         stats={[
           { label: "Total", value: stats.total, icon: BookOpen, tone: "primary" },
           { label: "Published", value: stats.published, icon: CheckCircle2, tone: "success" },
@@ -129,7 +124,7 @@ export default function AdminCourses() {
           { label: "Inactive", value: stats.inactive, icon: Eye, tone: "muted" },
           { label: "Top Category", value: stats.topCat, icon: CircleDot, tone: "primary" },
         ]}
-      />
+      />}
 
       {isAdmin && <div className="mb-3">
         <CSVTools
@@ -169,13 +164,14 @@ export default function AdminCourses() {
         value={statusFilter}
         onChange={(v) => { setStatusFilter(v); setVisibleCount(50); }}
         options={[
-          { label: "All", value: "all", count: stats.total },
-          { label: "Published", value: "Published", count: stats.published },
-          { label: "Drafts", value: "Draft", count: stats.draft },
+          { label: "All", value: "all", count: showStats ? stats.total : undefined },
+          { label: "Published", value: "Published", count: showStats ? stats.published : undefined },
+          { label: "Drafts", value: "Draft", count: showStats ? stats.draft : undefined },
         ]}
       />
 
-      {isLoading ? (
+      {list.isError && <p role="alert">Could not load courses. <button onClick={() => void list.refetch()}>Retry</button></p>}
+      {list.isLoading ? (
         <div className="text-center py-12 text-muted-foreground">Loading...</div>
       ) : (
         <div className="space-y-2">
@@ -183,7 +179,7 @@ export default function AdminCourses() {
             <AdminPageSizePicker
               value={visibleCount}
               onChange={setPageSize}
-              totalLabel={`Showing ${Math.min(visible.length, filtered.length)} of ${filtered.length}`}
+              totalLabel={`Showing ${visible.length} of ${total}`}
             />
           </div>
           {visible.map((c) => (
@@ -200,17 +196,17 @@ export default function AdminCourses() {
               </div>
               <div className="flex gap-1">
                 <a href={`/courses/${c.slug}`} target="_blank" rel="noreferrer"><Button variant="ghost" size="icon" className="w-8 h-8" title="Open public page"><ExternalLink className="w-3.5 h-3.5" /></Button></a>
-                {isAdmin && <RowDataIO row={c} base="course" columns="*" />}
-                {canEdit && <Button variant="ghost" size="icon" onClick={() => openEditor(c)} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
+                {isAdmin && <RowDataIO loadRow={() => fetchCatalogRecord("courses", c.id)} row={c} base="course" columns="*" />}
+                {canEdit && <Button variant="ghost" size="icon" onClick={() => openRecord(c.id)} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="courses" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteCourse.mutate(c.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
             </div>
           ))}
-          {filtered.length === 0 && <div className="text-center py-12 text-muted-foreground">No courses found</div>}
-          {visible.length < filtered.length && (
+          {!list.isError && visible.length === 0 && <div className="text-center py-12 text-muted-foreground">No courses found</div>}
+          {list.hasNextPage && (
             <div className="flex justify-center pt-2">
-              <Button variant="outline" onClick={() => setVisibleCount((n) => n + visibleCount)} className="rounded-xl">
-                Load {visibleCount} more ({filtered.length - visible.length} left)
+              <Button variant="outline" disabled={list.isFetching} onClick={() => void list.fetchNextPage({ cancelRefetch: false })} className="rounded-xl">
+                Show more courses ({total - visible.length} left)
               </Button>
             </div>
           )}

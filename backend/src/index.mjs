@@ -318,7 +318,17 @@ async function authorizeRest(table, request) {
     const safeSelection = publicReadSelections.get(table);
     if (!safeSelection) return { request: publicRequest, actorUserId: null, publicAccess: true };
     const url = new URL(publicRequest.url);
-    url.searchParams.set("select", safeSelection);
+    let selection = safeSelection;
+    if (table === "articles") {
+      const requested = (url.searchParams.get("select") || "*").trim();
+      if (requested !== "*") {
+        const allowed = new Set(safeSelection.split(","));
+        const fields = requested.split(",").map(field => field.trim()).filter(field => allowed.has(field));
+        if (!fields.length) throw new HttpError(400, "INVALID_SELECTION", "No public article fields requested");
+        selection = [...new Set(fields)].join(",");
+      }
+    }
+    url.searchParams.set("select", selection);
     return { request: new Request(url, publicRequest), actorUserId: null, publicAccess: true };
   }
   if (publicWriteTables.has(table) && request.method === "POST") {

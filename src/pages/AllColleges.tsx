@@ -381,7 +381,7 @@ export default function AllColleges() {
                   disabled={isFetchingNextPage}
                   className="rounded-xl border border-primary/25 bg-card px-5 py-2 text-sm font-semibold text-primary hover:bg-primary/5 disabled:opacity-60"
                 >
-                  {isFetchingNextPage ? "Loading more colleges…" : "Load more colleges"}
+                  {isFetchingNextPage ? "Loading more colleges…" : "Show more colleges"}
                 </button>
               )}
             </div>
