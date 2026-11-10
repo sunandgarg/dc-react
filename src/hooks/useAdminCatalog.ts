@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import { useQueries, useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { backendClient } from "@/integrations/backend/client";
@@ -8,32 +8,61 @@ import { useAuth } from "@/hooks/useAuth";
 export const catalogTables = ["exams", "courses", "colleges", "articles"] as const;
 type Table = typeof catalogTables[number];
 type Entry = { id: string; name: string; table: Table; scope?: string };
+function namesQuery(table: Table, includeSarkari: boolean) {
+  let q = backendClient.from(table).select(table === "articles" ? "id,title,site_scope" : "id,name");
+  if (table === "articles" && !includeSarkari) q = q.eq("site_scope", "dekhocampus");
+  return q;
+}
+function nameEntries(table: Table, rows: Array<{ id: string; name?: string; title?: string; site_scope?: string }>): Entry[] {
+  return rows.map(row => ({ id: row.id, name: row.name || row.title || "", table, scope: row.site_scope }));
+}
+
 export async function fetchCatalogNames(tables: readonly Table[], signal: AbortSignal, includeSarkari = false) {
   const rows: Entry[] = [];
   for (const table of tables) {
     for (let offset = 0; ; offset += 1000) {
-      let query = backendClient.from(table)
-        .select(table === "articles" ? "id,title,site_scope" : "id,name")
-        .order("id").range(offset, offset + 999).abortSignal(signal);
-      if (table === "articles" && !includeSarkari) query = query.eq("site_scope", "dekhocampus");
-      const { data, error } = await query;
+      const { data, error } = await namesQuery(table, includeSarkari).order("id").range(offset, offset + 999).abortSignal(signal);
       if (error) throw error;
-      for (const row of data) rows.push({ id: row.id, name: row.name || row.title, table, scope: row.site_scope });
+      rows.push(...nameEntries(table, data));
       if (data.length < 1000) break;
     }
   }
   return rows;
 }
 
-export function useAdminCatalog(includeSarkari: boolean) {
+export function useAdminCatalog(includeSarkari: boolean, search: string) {
   const { user, isAdmin, canAccess, roles } = useAuth();
   const tables = catalogTables.filter(t => isAdmin || canAccess(t));
-  return useQuery({
+  const catalog = useQuery({
     queryKey: ["admin-catalog-names", user?.id, roles, tables, includeSarkari],
     enabled: !!user && tables.length > 0,
     queryFn: ({ signal }) => fetchCatalogNames(tables, signal, includeSarkari),
     staleTime: 10 * 60_000,
   });
+  // Large catalogs can take time on a cold session. Search the same name fields
+  // directly until the shared index is available, including if a batch failed.
+  const term = search.trim();
+  const [settled, setSettled] = useState("");
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSettled(term), 300);
+    return () => window.clearTimeout(timer);
+  }, [term]);
+  const lookup = useQueries({ queries: tables.map(table => ({
+    queryKey: ["admin-catalog-lookup", user?.id, roles, includeSarkari, table, settled],
+    enabled: !!user && !catalog.data && !!settled && settled === term,
+    queryFn: async ({ signal }: { signal: AbortSignal }) => {
+      const column = table === "articles" ? "title" : "name";
+      const { data, error } = await namesQuery(table, includeSarkari).ilike(column, "%" + settled + "%")
+        .order(column).order("id").limit(20).abortSignal(signal);
+      if (error) throw error;
+      return nameEntries(table, data);
+    },
+    staleTime: 60_000,
+    retry: false,
+  })) });
+  const data = catalog.data || (settled === term ? lookup.flatMap(q => q.data || []) : []);
+  return { data, isError: !catalog.data && lookup.some(q => q.isError),
+    isFetching: !catalog.data && (settled !== term || lookup.some(q => q.isFetching)) };
 }
 
 export async function fetchCatalogRecord(table: Table, id: string, scope?: string, signal?: AbortSignal) {
