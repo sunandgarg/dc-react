@@ -50,8 +50,8 @@ beforeEach(() => {
   mocks.from.mockImplementation((table: string) => {
     let write = false;
     const response = () => Promise.resolve(write ? { data: { id: "new-article", slug: draft.slug }, error: null, status: mocks.role === "content_head" ? 201 : 202 }
-      : { data: table === "faqs" ? mocks.faqData : [], error: table === "faqs" ? mocks.faqError : null });
-    const chain = { single: () => Promise.resolve({ data: mocks.articles[0], error: null }), abortSignal: () => chain, select: () => chain, eq: () => chain, or: () => chain, order: () => chain, limit: () => chain,
+      : { count: 13, data: table === "faqs" ? mocks.faqData : [], error: table === "faqs" ? mocks.faqError : null });
+    const chain = { gte: () => chain, lt: () => chain, single: () => Promise.resolve({ data: mocks.articles[0], error: null }), abortSignal: () => chain, select: () => chain, eq: () => chain, or: () => chain, order: () => chain, limit: () => chain,
       insert: (payload: unknown) => { write = true; mocks.writes.push(payload); return chain; },
       update: (payload: unknown) => { write = true; mocks.writes.push(payload); return chain; },
       maybeSingle: response, then: (resolve: (data: unknown) => unknown, reject: (error: unknown) => unknown) => response().then(resolve, reject) };
@@ -61,6 +61,12 @@ beforeEach(() => {
 afterEach(() => { cleanup(); clientList.splice(0).forEach((client) => client.clear()); });
 
 describe("article FAQ workflow", () => {
+  it("shows the daily published count without opening editorial tools", async () => {
+    mount();
+    expect(screen.getByText("Published today (IST)")).toBeInTheDocument();
+    expect(await screen.findByText("13", { selector: "strong" })).toBeInTheDocument();
+  });
+
   for (const role of ["content_writer", "content"]) {
     it(`${role} can choose an exam tag on a new article and submit it for review`, async () => {
       mocks.role = role;

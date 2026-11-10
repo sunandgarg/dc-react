@@ -20,11 +20,15 @@ function nameEntries(table: Table, rows: Array<{ id: string; name?: string; titl
 export async function fetchCatalogNames(tables: readonly Table[], signal: AbortSignal, includeSarkari = false) {
   const rows: Entry[] = [];
   for (const table of tables) {
-    for (let offset = 0; ; offset += 1000) {
-      const { data, error } = await namesQuery(table, includeSarkari).order("id").range(offset, offset + 999).abortSignal(signal);
+    let after: string | undefined;
+    for (;;) {
+      let query = namesQuery(table, includeSarkari).order("id").limit(1000);
+      if (after) query = query.gt("id", after);
+      const { data, error } = await query.abortSignal(signal);
       if (error) throw error;
       rows.push(...nameEntries(table, data));
       if (data.length < 1000) break;
+      after = data[data.length - 1].id;
     }
   }
   return rows;
@@ -38,6 +42,8 @@ export function useAdminCatalog(includeSarkari: boolean, search: string) {
     enabled: !!user && tables.length > 0,
     queryFn: ({ signal }) => fetchCatalogNames(tables, signal, includeSarkari),
     staleTime: 10 * 60_000,
+    gcTime: 10 * 60_000,
+    retry: false,
   });
   // Large catalogs can take time on a cold session. Search the same name fields
   // directly until the shared index is available, including if a batch failed.

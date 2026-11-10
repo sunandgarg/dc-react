@@ -3,7 +3,7 @@ import { PermGate } from "@/components/PermGate";
 import { BlogStudioDialog } from "@/components/admin/BlogStudioDialog";
 import { BlogAutoAgentPanel } from "@/components/admin/BlogAutoAgentPanel";
 import { EntityResearchBlogPanel } from "@/components/admin/EntityResearchBlogPanel";
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAdminArticles, useSaveArticle, useDeleteArticle, type DbArticle } from "@/hooks/useArticlesData";
 import { AdminFormSection } from "@/components/AdminFormSection";
@@ -42,6 +42,7 @@ import { useDraftState } from "@/hooks/useDraftState";
 import { syncAutoSlug } from "@/lib/slugify";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 import { normalizeArticleSlug, validateArticleSave } from "@/lib/articleEditor";
+import { indiaDate, publicationBounds } from "@/lib/articlePublicationDashboard";
 import { NumberedPagination } from "@/components/NumberedPagination";
 import { ArticleScorePanel } from "@/components/admin/ArticleScorePanel";
 import { articleCreatedSince, sortArticleAuthors, type ArticleAuthorOption } from "@/lib/adminArticleFilters";
@@ -87,7 +88,31 @@ interface AdminArticlesProps {
 export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMode = false }: AdminArticlesProps) {
   const isSarkari = siteScope === "sarkari";
   const [search, setSearch] = useState("");
-  const deferredSearch = useDeferredValue(search);
+  const [deferredSearch, setDeferredSearch] = useState("");
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDeferredSearch(search), 350);
+    return () => window.clearTimeout(timer);
+  }, [search]);
+  const [today, setToday] = useState(indiaDate);
+  useEffect(() => {
+    const timer = window.setInterval(() => setToday(indiaDate()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  const daily = useQuery({
+    queryKey: ["db-articles-admin", siteScope, "published-today", today],
+    queryFn: async ({ signal }) => {
+      const { from, until } = publicationBounds(today, today)!;
+      const { count, error } = await backendClient.from("articles")
+        .select("id", { head: true, count: "exact" })
+        .eq("site_scope", siteScope).eq("status", "Published").eq("is_active", true)
+        .gte("created_at", from).lt("created_at", until).abortSignal(signal);
+      if (error || count == null) throw error || new Error("Publication count unavailable");
+      return Number(count);
+    },
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    retry: false,
+  });
   const [dateFilter, setDateFilter] = useState("");
   const [authorFilter, setAuthorFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -167,7 +192,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const standardPageSizes = ARTICLE_PAGE_SIZE_PRESETS;
 
   useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [normalizedSearch, pageSize, siteScope, dateFilter, authorFilter, statusFilter, categoryFilter]);
-  useEffect(() => { if (page > totalPages) setPage(totalPages); }, [page, totalPages]);
+  useEffect(() => { if (articlePage && page > totalPages) setPage(totalPages); }, [articlePage, page, totalPages]);
   useEffect(() => {
     window.localStorage.setItem(`admin.articles.page-size.${siteScope}`, String(pageSize));
   }, [pageSize, siteScope]);
@@ -197,7 +222,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     if (error) return toast.error(error.message);
     toast.success(`${label}: ${ids.length} article(s)`);
     setSelectedIds(new Set());
-    void refetchArticles();
+    void refetchArticles(); void daily.refetch();
   };
 
   const bulkApplyFields = async () => {
@@ -224,7 +249,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     if (error) return toast.error(error.message);
     toast.success(`Deleted ${ids.length} article(s)`);
     setSelectedIds(new Set());
-    void refetchArticles();
+    void refetchArticles(); void daily.refetch();
   };
 
   const handleSave = (requestHumanReview = false) => {
@@ -284,6 +309,12 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
   return (
     <AdminLayout title={isSarkari ? (studioMode ? "Sarkari Job AI Studio" : "Sarkari Articles") : "Articles Manager"}>
+      {!studioMode && <div className="mb-3 flex items-center gap-3 rounded-xl border bg-card px-4 py-3">
+        <span>Published today (IST)</span>
+        <strong aria-live="polite">{daily.data ?? (daily.isError ? "Unavailable" : "Loading…")}</strong>
+        {daily.isError && <span className="text-xs text-muted-foreground">{daily.data != null ? "Last known count" : "Count could not be loaded"}</span>}
+        <Button variant="ghost" size="sm" disabled={daily.isFetching} onClick={() => void daily.refetch()}>Refresh count</Button>
+      </div>}
       {isAdmin && !studioMode && <Button variant="outline" aria-expanded={showTools} onClick={() => setShowTools(!showTools)}>{showTools ? "Hide editorial tools" : "Show editorial tools"}</Button>}
       {isAdmin && showTools && !studioMode && <ArticlePublicationDashboard siteScope={siteScope} authors={filterAuthors} />}
       {isSarkari && (
@@ -293,7 +324,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
         </div>
       )}
       {isAdmin && <div className="mb-3 flex flex-wrap gap-2">
-        <BlogStudioDialog siteScope={siteScope} initiallyOpen={studioMode} onSaved={() => { void refetchArticles(); }} />
+        <BlogStudioDialog siteScope={siteScope} initiallyOpen={studioMode} onSaved={() => { void refetchArticles(); void daily.refetch(); }} />
         {!isSarkari && (
           <Button asChild variant="outline" className="gap-2 rounded-xl">
             <Link to="/news" target="_blank" rel="noopener noreferrer">
@@ -307,8 +338,8 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           </a>
         </Button>
       </div>}
-      {isAdmin && showTools && !isSarkari && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); }} />}
-      {isAdmin && showTools && !isSarkari && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); }} />}
+      {isAdmin && showTools && !isSarkari && <BlogAutoAgentPanel onArticlesCreated={() => { void refetchArticles(); void daily.refetch(); }} />}
+      {isAdmin && showTools && !isSarkari && <EntityResearchBlogPanel onArticlesCreated={() => { void refetchArticles(); void daily.refetch(); }} />}
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -415,7 +446,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
           columns="*"
           typeHints={{ tags: "array", views: "number", is_active: "boolean" }}
           scope={{ column: "site_scope", value: siteScope }}
-          onImported={() => { void refetchArticles(); }}
+          onImported={() => { void refetchArticles(); void daily.refetch(); }}
         />
       </div>}
 
@@ -457,7 +488,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
 
       <div className="mt-4 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-muted-foreground">
-          {totalArticles ? `${(page - 1) * pageSize + 1}-${Math.min(page * pageSize, totalArticles)} of ${totalArticles}` : "0 articles"}
+          {!articlePage ? (articlesError ? "Article total unavailable" : "Loading article total…") : totalArticles ? `${(page - 1) * pageSize + 1}-${Math.min(page * pageSize, totalArticles)} of ${totalArticles}` : "0 articles"}
         </p>
         <div className="flex flex-wrap items-center gap-2">
           <label className="text-xs font-medium text-muted-foreground" htmlFor="article-page-size">Rows</label>
