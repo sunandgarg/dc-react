@@ -95,8 +95,9 @@ export default function AllExams() {
     return f;
   }, [selectedCategories, selectedScopes]);
 
-  const { items: exams, totalCount, sentinelRef, isLoading, isFetchingMore, hasMore, error: examsError } = useInfiniteData({
+  const { items: exams, totalCount, loadMore, isLoading, isFetchingMore, hasMore, error: examsError } = useInfiniteData({
     table: "exams",
+    columns: "id,slug,short_id,name,short_name,full_name,logo,priority,status,category,level,duration,mode,exam_type,language,frequency,application_mode,registration_url,listing_category,exam_streams,course_groups,education_levels",
     queryKey: ["infinite-exams"],
     orderBy: "priority",
     ascending: true,
@@ -263,7 +264,7 @@ export default function AllExams() {
               )}
             </div>
 
-            <div ref={sentinelRef} className="h-4" />
+            {hasMore && <button type="button" className="mx-auto my-4 block rounded-lg border px-4 py-2" disabled={isFetchingMore} onClick={() => void loadMore()}>Show more exams</button>}
             {examsError && <p className="text-center text-sm text-destructive py-5">Exams could not be loaded. Please retry.</p>}
             {!isLoading && !examsError && filtered.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">No exams match these filters.</p>}
             {isFetchingMore && (

@@ -149,7 +149,7 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
     queryFn: async () => {
       let query = backendClient
         .from("articles")
-        .select("*", { count: "exact" })
+        .select("id,title,slug,featured_image,category,status,author,views,created_at", { count: "exact" })
         .eq("site_scope", siteScope)
         .order("created_at", { ascending: false });
 
@@ -256,6 +256,7 @@ export function useSaveArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
       qc.invalidateQueries({ queryKey: ["article-languages"] });
       qc.invalidateQueries({ queryKey: ["admin-article-languages"] });
       qc.invalidateQueries({ queryKey: ["db-articles", siteScope] });
+      qc.invalidateQueries({ queryKey: ["admin-catalog-names"] });
       qc.invalidateQueries({ queryKey: ["db-articles-admin", siteScope] });
       toast.success(result.pendingReview ? "Article submitted for admin review." : "Article saved!");
       if (!result.pendingReview) {
@@ -277,6 +278,7 @@ export function useDeleteArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["db-articles", siteScope] });
+      qc.invalidateQueries({ queryKey: ["admin-catalog-names"] });
       qc.invalidateQueries({ queryKey: ["db-articles-admin", siteScope] });
       toast.success("Article deleted!");
     },

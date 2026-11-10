@@ -15,6 +15,7 @@ vi.mock("@tanstack/react-query", async () => {
   const actual = await vi.importActual<any>("@tanstack/react-query");
   return {
     ...actual,
+    useInfiniteQuery: () => ({ data: { pages: [] } }),
     useQuery: () => ({ data: { rows: [], count: 0 }, isLoading: false }),
     keepPreviousData: undefined,
   };

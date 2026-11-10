@@ -136,19 +136,18 @@ export function useHomepageCategoryExams(category: string) {
   });
 }
 
-export function useAllDbExams() {
+export function useAllDbExams(enabled = true) {
   return useQuery({
     queryKey: ["db-exams-all"],
-    queryFn: async () => {
-      const { data, error } = await backendClient
-        .from("exams")
-        .select("*")
-        .order("priority", { ascending: true, nullsFirst: false })
-        .order("updated_at", { ascending: false, nullsFirst: false })
-        .order("name")
-        .limit(1000);
-      if (error) throw error;
-      return (data ?? []).map(mapExam);
+    enabled,
+    queryFn: async ({ signal }) => {
+      const rows: DbExam[] = [];
+      for (let offset = 0; ; offset += 1000) {
+        const { data, error } = await backendClient.from("exams").select("category,status,listing_category,exam_streams,course_groups,education_levels").order("id").range(offset, offset + 999).abortSignal(signal);
+        if (error) throw error;
+        rows.push(...data);
+        if (data.length < 1000) return rows;
+      }
     },
     staleTime: 2 * 60 * 1000,
   });
@@ -183,7 +182,7 @@ export function useDbExam(slugOrSlugId: string | undefined) {
   });
 }
 
-function mapExam(row: any): DbExam {
+export function mapExam(row: any): DbExam {
   return {
     ...row,
     conducting_authority: typeof row.conducting_authority === "string" && row.conducting_authority.trim()
@@ -257,6 +256,7 @@ export function useSaveExam() {
       return { pendingReview };
     },
     onSuccess: (result) => {
+      qc.invalidateQueries({ queryKey: ["admin-catalog-names"] });
       qc.invalidateQueries({ queryKey: ["db-exams"] });
       qc.invalidateQueries({ queryKey: ["db-exams-all"] });
       qc.invalidateQueries({ queryKey: ["homepage-category-exams"] });
@@ -274,6 +274,7 @@ export function useDeleteExam() {
       if (error) throw error;
     },
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-catalog-names"] });
       qc.invalidateQueries({ queryKey: ["db-exams"] });
       qc.invalidateQueries({ queryKey: ["db-exams-all"] });
       toast.success("Exam deleted!");

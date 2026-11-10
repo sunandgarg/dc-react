@@ -3,10 +3,10 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import AllExams from "./AllExams";
 
-const { query } = vi.hoisted(() => ({ query: vi.fn() }));
+const { query, loadMore } = vi.hoisted(() => ({ query: vi.fn(), loadMore: vi.fn() }));
 vi.mock("@/hooks/useInfiniteData", () => ({ useInfiniteData: (config: unknown) => {
   query(config);
-  return { items: [], totalCount: 0, sentinelRef: { current: null }, isLoading: false, isFetchingMore: false, hasMore: false, error: null };
+  return { items: [], totalCount: 0, loadMore, isLoading: false, isFetchingMore: false, hasMore: true, error: null };
 } }));
 vi.mock("@/hooks/useSEO", () => ({ useSEO: () => undefined }));
 vi.mock("@/hooks/useCanonical", () => ({ useCanonical: () => undefined }));
@@ -27,6 +27,14 @@ const renderRoute = (route: string) => render(<MemoryRouter initialEntries={[rou
 const lastQuery = () => query.mock.calls.at(-1)![0];
 
 describe("Exam scope and educational-level listing parity", () => {
+  it("only requests another page after Show more is clicked", () => {
+    renderRoute("/exams");
+    fireEvent.scroll(window);
+    expect(loadMore).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Show more exams" }));
+    expect(loadMore).toHaveBeenCalledTimes(1);
+  });
+
   it.each(["national", "state"])("queries %s curated scope without sending it as an education level", (scope) => {
     renderRoute(`/exams/top-${scope}-entrance-exams-in-india`);
     expect(lastQuery().filters.level).toEqual([scope === "national" ? "National" : "State"]);

@@ -8,7 +8,7 @@ import { SEO } from "@/components/SEO";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { Link, useSearchParams, useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { DynamicAdBanner } from "@/components/DynamicAdBanner";
 import { GoogleAd } from "@/components/ads/GoogleAd";
@@ -261,7 +261,7 @@ export default function News() {
   const clearTag = () => navigate("/news", { replace: true });
 
   // Pinned articles - separate, long-cached query. Doesn't depend on filters/page/search.
-  const { data: pinnedData = [] } = useQuery<Article[]>({
+  const { data: pinnedData = [], isLoading: loadingPinned } = useQuery<Article[]>({
     queryKey: ["news-pinned", "en"],
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
@@ -288,21 +288,20 @@ export default function News() {
   const hasFilters = !!(tagParam || activeCategory || debouncedSearch);
 
   // Latest list uses an exact count so numbered pages remain stable and linkable.
-  const { data: latestData, isLoading, isFetching } = useQuery({
+  const { data: latestData, isLoading, isFetching, fetchNextPage, hasNextPage, isFetchNextPageError } = useInfiniteQuery({
     queryKey: ["news-latest", { tagParam, activeCategory, selectedLanguage, debouncedSearch, page, excl: hasFilters ? [] : pinnedIds }],
-    placeholderData: (previous, query) => {
-      const previousFilters = query?.queryKey[1] as { activeCategory?: string; selectedLanguage?: string | null } | undefined;
-      return previousFilters?.activeCategory === activeCategory && previousFilters?.selectedLanguage === selectedLanguage ? previous : undefined;
-    },
+    enabled: hasFilters || !loadingPinned,
+    initialPageParam: page,
+    getNextPageParam: (last: { rows: Article[]; page: number; total: number }) => last.rows.length > 0 && last.page * PAGE_SIZE < last.total ? last.page + 1 : undefined,
     staleTime: 60 * 1000,
-    queryFn: async () => {
+    queryFn: async ({ pageParam }) => {
       let q = backendClient
         .from("articles")
         .select(ARTICLE_COLS, { count: "exact" })
         .eq("site_scope", "dekhocampus")
         .eq("status", "Published")
         .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false }).order("id");
 
       if (tagParam) q = q.contains("tags", [tagParam]);
       q = selectedLanguage ? q.eq("language_code", selectedLanguage) : q.neq("language_code", "en");
@@ -314,17 +313,17 @@ export default function News() {
         q = q.not("id", "in", `(${pinnedIds.join(",")})`);
       }
 
-      const from = (page - 1) * PAGE_SIZE;
+      const from = (pageParam - 1) * PAGE_SIZE;
       q = q.range(from, from + PAGE_SIZE - 1);
 
       const { data, error, count } = await q;
       if (error) throw error;
-      return { rows: (data || []) as Article[], total: count ?? 0 };
+      return { page: pageParam, rows: (data || []) as Article[], total: count ?? 0 };
     },
   });
 
-  const latest = useMemo(() => latestData?.rows || [], [latestData?.rows]);
-  const totalArticles = latestData?.total ?? 0;
+  const latest = useMemo(() => latestData?.pages.flatMap(p => p.rows) || [], [latestData]);
+  const totalArticles = latestData?.pages[0]?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalArticles / PAGE_SIZE));
 
   useEffect(() => {
@@ -552,6 +551,7 @@ export default function News() {
                       </Fragment>
                     ))}
                   </div>
+                  {hasNextPage && <button className="mx-auto mt-6 block rounded-lg border px-4 py-2" disabled={isFetching} onClick={() => void fetchNextPage({ cancelRefetch: false })}>{isFetchNextPageError ? "Retry loading more articles" : "Show more articles"}</button>}
                   {totalPages > 1 && (
                     <NumberedPagination
                       page={page}

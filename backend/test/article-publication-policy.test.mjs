@@ -45,5 +45,10 @@ test('anonymous article reads expose language links while retaining publication 
     assert.ok(parameters.includes('dekhocampus'));
     assert.ok(!parameters.includes('Draft'));
     assert.equal((await response.json())[0].language_code,'en');
+    const summary = await handleRequest(new Request('https://aws-origin.dekhocampus.com/v1/rest/articles?select=id,title,private_field&status=eq.Draft', {headers:{'cache-control':'no-store'}}));
+    assert.equal(summary.status,200);
+    assert.match(statement,/^SELECT `id`,`title` FROM `articles`/);
+    assert.ok(parameters.includes('Published'));
+    assert.ok(!parameters.includes('Draft'));
   } finally { prisma.$queryRawUnsafe = originalQuery; }
 });

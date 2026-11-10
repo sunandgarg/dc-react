@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import News from "@/pages/News";
 
-const queries = vi.hoisted(() => [] as Array<{ queryKey: unknown[]; queryFn: () => Promise<unknown> }>);
+const queries = vi.hoisted(() => [] as Array<{ queryKey: unknown[]; queryFn: (args: { pageParam: number }) => Promise<unknown> }>);
 beforeEach(() => { queries.length = 0; });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
@@ -18,7 +18,7 @@ vi.mock("@/hooks/useArticleCategories", () => ({
 }));
 vi.mock("@tanstack/react-query", async () => {
   const actual = await vi.importActual<typeof import("@tanstack/react-query")>("@tanstack/react-query");
-  return { ...actual, useQuery: (options: typeof queries[number]) => { queries.push(options); return { data: { rows: [], total: 36 }, isLoading: false }; } };
+  return { ...actual, useQuery: () => ({ data: [] }), useInfiniteQuery: (options: typeof queries[number]) => { queries.push(options); return { data: { pages: [{ rows: [], total: 36 }] }, isLoading: false }; } };
 });
 
 function LocationProbe() {
@@ -35,7 +35,7 @@ describe("public news categories", () => {
   ])("filters %s before counting or paginating", async (url, languageFilter) => {
     const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("[]", { headers: { "content-type": "application/json", "content-range": "*/0" } }));
     render(<MemoryRouter initialEntries={[url]}><News /></MemoryRouter>);
-    await queries.find(({ queryKey }) => queryKey[0] === "news-latest")!.queryFn();
+    await queries.find(({ queryKey }) => queryKey[0] === "news-latest")!.queryFn({ pageParam: 1 });
     const query = new URL(String(fetcher.mock.calls.at(-1)![0])).searchParams;
     expect(query.get("language_code")).toBe(languageFilter);
     expect(query.get("category")).toBe(url.includes("category=News") ? "eq.News" : null);
@@ -60,7 +60,7 @@ describe("public news categories", () => {
     expect(screen.getByTestId("search").textContent).toBe("");
     expect(screen.getByRole("button", { name: "All News" })).toHaveAttribute("aria-pressed", "true");
     const latestQuery = queries.filter(({ queryKey }) => queryKey[0] === "news-latest").at(-1)!;
-    await latestQuery.queryFn();
+    await latestQuery.queryFn({ pageParam: 1 });
     const query = new URL(String(fetcher.mock.calls.at(-1)![0])).searchParams;
     expect(query.get("language_code")).toBe("eq.en");
     expect(query.get("category")).toBeNull();

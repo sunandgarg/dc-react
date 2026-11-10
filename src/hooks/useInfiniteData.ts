@@ -1,11 +1,3 @@
-/**
- * useInfiniteData - Cursor-based infinite scroll hook
- * 
- * Implements cursor pagination using IntersectionObserver.
- * Each page fetches BATCH_SIZE items ordered by a cursor field.
- * The sentinel element triggers the next fetch at 300px margin.
- */
-import { useRef, useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import type { SearchGroup } from "@/lib/listingFilters";
@@ -13,7 +5,8 @@ import type { SearchGroup } from "@/lib/listingFilters";
 const BATCH_SIZE = 18;
 
 interface InfiniteConfig {
-  table: "colleges" | "courses" | "exams" | "articles";
+  table: "courses" | "exams";
+  columns: string;
   queryKey: string[];
   orderBy?: string;
   ascending?: boolean;
@@ -31,7 +24,7 @@ interface InfiniteConfig {
 }
 
 export function useInfiniteData({
-  table,
+  table, columns,
   queryKey,
   orderBy = "rating",
   ascending = false,
@@ -45,11 +38,11 @@ export function useInfiniteData({
   includeCount = false,
   enabled = true,
 }: InfiniteConfig) {
-  const sentinelRef = useRef<HTMLDivElement>(null);
+
 
   const query = useInfiniteQuery({
     queryKey: [
-      ...queryKey,
+      ...queryKey, columns,
       orderBy,
       ascending,
       nullsFirst,
@@ -60,16 +53,16 @@ export function useInfiniteData({
       JSON.stringify(extraOrders),
       includeCount,
     ],
-    queryFn: async ({ pageParam = 0 }) => {
+    queryFn: async ({ pageParam = 0, signal }) => {
       let q: any = backendClient
         .from(table)
-        .select("*", includeCount ? { count: "exact" } : {})
+        .select(columns, includeCount && pageParam === 0 ? { count: "exact" } : {})
         .eq("is_active", true)
         .order(orderBy, { ascending, nullsFirst });
       for (const o of extraOrders) {
         q = q.order(o.column, { ascending: o.ascending ?? false, nullsFirst: o.nullsFirst });
       }
-      q = q.range(pageParam, pageParam + BATCH_SIZE - 1);
+      q = q.order("id").range(pageParam, pageParam + BATCH_SIZE - 1);
 
       // Apply filters
       for (const [key, value] of Object.entries(filters)) {
@@ -101,13 +94,14 @@ export function useInfiniteData({
         if (orClause) q = q.or(orClause);
       }
 
-      const { data, error, count } = await q;
+      const { data, error, count } = await q.abortSignal(signal);
       if (error) throw error;
       return { items: data ?? [], offset: pageParam, totalCount: count };
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => {
-      if (typeof lastPage.totalCount === "number" && lastPage.offset + lastPage.items.length >= lastPage.totalCount) return undefined;
+    getNextPageParam: (lastPage, pages) => {
+      const total = pages[0].totalCount;
+      if (typeof total === "number" && lastPage.offset + lastPage.items.length >= total) return undefined;
       if (lastPage.items.length < BATCH_SIZE) return undefined;
       return lastPage.offset + BATCH_SIZE;
     },
@@ -115,33 +109,13 @@ export function useInfiniteData({
     staleTime: 5 * 60 * 1000,
     placeholderData: undefined,
   });
-  const { fetchNextPage, hasNextPage, isFetchingNextPage } = query;
-
-  // IntersectionObserver for infinite scroll
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          void fetchNextPage();
-        }
-      },
-      { rootMargin: "300px" }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
   const items = query.data?.pages.flatMap(p => p.items) ?? [];
   const totalCount = query.data?.pages[0]?.totalCount ?? items.length;
 
   return {
     items,
     totalCount,
-    sentinelRef,
+    loadMore: () => query.fetchNextPage({ cancelRefetch: false }),
     isLoading: query.isLoading,
     isFetchingMore: query.isFetchingNextPage,
     hasMore: query.hasNextPage ?? false,

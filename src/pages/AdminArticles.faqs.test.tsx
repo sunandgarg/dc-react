@@ -51,7 +51,7 @@ beforeEach(() => {
     let write = false;
     const response = () => Promise.resolve(write ? { data: { id: "new-article", slug: draft.slug }, error: null, status: mocks.role === "content_head" ? 201 : 202 }
       : { data: table === "faqs" ? mocks.faqData : [], error: table === "faqs" ? mocks.faqError : null });
-    const chain = { select: () => chain, eq: () => chain, or: () => chain, order: () => chain, limit: () => chain,
+    const chain = { single: () => Promise.resolve({ data: mocks.articles[0], error: null }), abortSignal: () => chain, select: () => chain, eq: () => chain, or: () => chain, order: () => chain, limit: () => chain,
       insert: (payload: unknown) => { write = true; mocks.writes.push(payload); return chain; },
       update: (payload: unknown) => { write = true; mocks.writes.push(payload); return chain; },
       maybeSingle: response, then: (resolve: (data: unknown) => unknown, reject: (error: unknown) => unknown) => response().then(resolve, reject) };
@@ -165,6 +165,7 @@ describe("article FAQ workflow", () => {
       mocks.faqData = [{ id: "saved-faq", question: "Existing question?", answer: "Existing answer", is_active: 1 }];
       mount();
       fireEvent.click(screen.getByRole("button", { name: "Edit Admission guide" }));
+      await screen.findByRole("dialog");
       expandFaqs();
       await waitFor(() => expect(screen.getByRole("textbox", { name: "FAQ 1 question" })).toHaveValue("Existing question?"));
       fireEvent.click(screen.getByRole("button", { name: role === "admin" ? "Save Draft" : "Submit for approval" }));
