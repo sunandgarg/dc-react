@@ -35,7 +35,7 @@ const ITEMS: Array<{ label: string; href: string; module?: Module; keywords?: st
 ];
 
 export function CommandPalette({ open, setOpen, query, setQuery, includeSarkari }: { open: boolean; setOpen: (value: boolean) => void; query: string; setQuery: (value: string) => void; includeSarkari: boolean }) {
-  const catalog = useAdminCatalog(includeSarkari);
+  const catalog = useAdminCatalog(includeSarkari, open ? query : "");
   const [preview, setPreview] = useState<{ name: string; description: string } | null>(null);
   const navigate = useNavigate();
   const { isAdmin, canAccess, can } = useAuth();
