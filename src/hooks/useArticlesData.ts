@@ -146,7 +146,7 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
 
   return useQuery({
     queryKey: ["db-articles-admin", siteScope, normalizedSearch, safePage, safePageSize, filters],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       let query = backendClient
         .from("articles")
         .select("id,title,slug,featured_image,category,status,author,views,created_at", { count: "exact" })
@@ -177,7 +177,7 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
       if (filters.category) query = query.eq("category", filters.category);
 
       const from = (safePage - 1) * safePageSize;
-      const { data, error, count } = await query.range(from, from + safePageSize - 1);
+      const { data, error, count } = await query.range(from, from + safePageSize - 1).abortSignal(signal);
       if (error) throw error;
       return { rows: (data || []) as DbArticle[], total: count ?? 0 };
     },
