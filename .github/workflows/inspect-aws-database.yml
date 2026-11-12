@@ -3,6 +3,10 @@ name: Inspect AWS production database
 on:
   workflow_dispatch:
     inputs:
+      finish_featured_index:
+        description: Apply the online featured-college index and clean the isolated brochure test draft
+        type: boolean
+        default: false
       release_commit:
         description: Verified main commit to activate after database migration
         type: string
@@ -32,7 +36,7 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     environment: production
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: aws-actions/configure-aws-credentials@v6
         with:
@@ -75,7 +79,7 @@ jobs:
           chmod 600 /tmp/key
           SSH_USER=$(jq -r '.accessDetails.username' /tmp/access.json)
           SSH_IP=$(jq -r '.accessDetails.ipAddress' /tmp/access.json)
-          timeout 300 ssh -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/key "$SSH_USER@$SSH_IP" "sudo REPAIR_INDEX=$REPAIR_INDEX bash -s" <<'REMOTE' 
+          timeout 1200 ssh -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/key "$SSH_USER@$SSH_IP" "sudo REPAIR_INDEX=$REPAIR_INDEX bash -s" <<'REMOTE' 
           set -euo pipefail
           if [ "${{ inputs.restart_services }}" = true ]; then
             pm2 restart dc-react-api --update-env
@@ -163,6 +167,16 @@ jobs:
               if (!migration.length) break;
               await new Promise(resolve=>setTimeout(resolve,10000));
             }
+          }
+          if ("${{ inputs.finish_featured_index }}" === "true") {
+            const [existing]=await db.query("SHOW INDEX FROM colleges WHERE Key_name='ix_colleges_featured'");
+            if (!existing.length) await db.query("CREATE INDEX ix_colleges_featured ON colleges (featured_rank) ALGORITHM=INPLACE LOCK=NONE");
+            console.log("featured_index_ready");
+            const start=Date.now();
+            const [featured]=await db.query("SELECT id,slug,name,image,featured_rank FROM colleges WHERE featured_rank IS NOT NULL ORDER BY featured_rank ASC LIMIT 1000");
+            console.log(JSON.stringify({featured_ms:Date.now()-start,rows:featured.length}));
+            const [removed]=await db.query("DELETE FROM colleges WHERE slug=? AND name=? AND status='Draft'", ['dc-brochure-verification-20261112','DC brochure verification 20261112']);
+            console.log("brochure_test_drafts_removed",removed.affectedRows);
           }
           const [active] = await db.query("SELECT ID,TIME,STATE,INFO AS shape FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep' AND INFO IS NOT NULL");
           console.log(JSON.stringify(active.map(r=>({...r,shape:r.shape.startsWith("SELECT ") ? r.shape.replace(/'[^']*'/g,"?").slice(0,3000) : r.shape.split(" ")[0]}))));
