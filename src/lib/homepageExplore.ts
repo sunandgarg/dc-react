@@ -97,7 +97,7 @@ export async function fetchHomepageExplore<T extends ExploreRow>(table: "college
   let featuredRows: T[] = [];
   if (featuredSlugs.length) {
     const fields = select.split(",").filter((field) => !["show_in_explore_by_category", "explore_by_category_checked_at"].includes(field)).join(",");
-    const featured = await backendClient.from(table).select(fields).eq("is_active", true).in("slug", featuredSlugs);
+    const featured = await backendClient.from(table, { publicRead: true }).select(fields).eq("is_active", true).in("slug", featuredSlugs);
     if (featured.error) throw featured.error;
     featuredRows = (featured.data || []) as T[];
     const ranked = rankHomepageExplore(featuredRows, category, table);
@@ -117,7 +117,7 @@ export async function fetchHomepageExplore<T extends ExploreRow>(table: "college
     filters.push(...(COURSE_NAME_TERMS[category] || []).map((term) => `name.ilike.%${term}%`));
   }
   const query = (fields: string) => {
-    let request = backendClient.from(table).select(fields).eq("is_active", true);
+    let request = backendClient.from(table, { publicRead: true }).select(fields).eq("is_active", true);
     if (table === "exams") request = request.neq("listing_category", "Sarkari");
     return request.or(filters.join(",")).order("priority", { ascending: true, nullsFirst: false }).order("name").limit(200);
   };

@@ -10,12 +10,34 @@ import { useHomepageCategoryExams } from "@/hooks/useExamsData";
 
 import { useStreamCategories } from "@/hooks/useStreamCategories";
 import { displayRating } from "@/lib/ratings";
-import { FEATURED_COLLEGE_NAMES } from "@/lib/homepageExplore";
-import { FEATURED_COURSE_NAMES } from "@/lib/homepageCoursePicks";
+import { ENGINEERING_COLLEGE_SLUGS, FEATURED_COLLEGE_NAMES } from "@/lib/homepageExplore";
+import { HOMEPAGE_COURSE_PICKS, FEATURED_COURSE_NAMES } from "@/lib/homepageCoursePicks";
 
 const DEFAULT_CATEGORY = "Engineering";
 const panelClass = "bg-card rounded-2xl border border-border p-4 md:p-5 flex flex-col flex-shrink-0 w-[85vw] max-w-sm lg:w-auto lg:max-w-none snap-start";
 const rowClass = "group flex min-h-[76px] items-center gap-3 p-2.5 rounded-xl hover:bg-muted/50 transition-colors";
+
+// These public directory links remain usable while the live card details load.
+const engineeringCollegeLinks = ENGINEERING_COLLEGE_SLUGS.map(slug => ({
+  slug,
+  label: FEATURED_COLLEGE_NAMES[slug],
+}));
+
+const engineeringExamLinks = [
+  { slug: "jee-advanced", label: "JEE Advanced" },
+  { slug: "viteee", label: "VITEEE" },
+  { slug: "srmjeee", label: "SRMJEEE" },
+  { slug: "bitsat", label: "BITSAT" },
+];
+
+function DirectoryLinks({ section, picks }: { section: string; picks: { slug: string; label: string }[] }) {
+  return picks.map(({ slug, label }) => (
+    <Link key={slug} to={`/${section}/${slug}`} className={rowClass}>
+      <span className="flex-1 text-sm font-semibold">{label}</span>
+      <ArrowRight className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+    </Link>
+  ));
+}
 
 function CollegeLogo({
   name,
@@ -169,7 +191,9 @@ export function CategorySection() {
               </Link>
             </div>
             <div className="grid auto-rows-fr gap-3 flex-1">
-              {colleges.length === 0 && <p role="status" className="text-xs text-muted-foreground">{collegesLoading ? "Loading colleges…" : collegesError ? "Colleges could not be loaded. Please try again." : "No colleges listed in this category yet."}</p>}
+              {colleges.length === 0 && ((collegesLoading || collegesError) && activeCategory === DEFAULT_CATEGORY
+                ? <DirectoryLinks section="colleges" picks={engineeringCollegeLinks} />
+                : <p role="status" className="text-xs text-muted-foreground">{collegesLoading ? "Loading colleges…" : collegesError ? "Colleges could not be loaded. Please try again." : "No colleges listed in this category yet."}</p>)}
               {colleges.slice(0, 5).map((college) => (
                 <Link key={college.slug} to={`/colleges/${college.slug}`} className={rowClass}>
                   <div className="relative flex-shrink-0">
@@ -205,7 +229,9 @@ export function CategorySection() {
               </Link>
             </div>
             <div className="grid auto-rows-fr gap-3 flex-1">
-              {courses.length === 0 && <p role="status" className="text-xs text-muted-foreground">{coursesLoading ? "Loading courses…" : coursesError ? "Courses could not be loaded. Please try again." : "No courses listed in this category yet."}</p>}
+              {courses.length === 0 && ((coursesLoading || coursesError) && HOMEPAGE_COURSE_PICKS[activeCategory]?.length
+                ? <DirectoryLinks section="courses" picks={HOMEPAGE_COURSE_PICKS[activeCategory]} />
+                : <p role="status" className="text-xs text-muted-foreground">{coursesLoading ? "Loading courses…" : coursesError ? "Courses could not be loaded. Please try again." : "No courses listed in this category yet."}</p>)}
               {courses.slice(0, 5).map((course) => (
                 <Link key={course.slug} to={`/courses/${course.slug}`} className={rowClass}>
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/15 bg-primary/5 text-primary" aria-hidden="true">
@@ -239,7 +265,9 @@ export function CategorySection() {
               </Link>
             </div>
             <div className="grid auto-rows-fr gap-3 flex-1">
-              {exams.length === 0 && <p role="status" className="text-xs text-muted-foreground">{examsLoading ? "Loading exams…" : examsError ? "Exams could not be loaded. Please try again." : "No exams listed in this category yet."}</p>}
+              {exams.length === 0 && ((examsLoading || examsError) && activeCategory === DEFAULT_CATEGORY
+                ? <DirectoryLinks section="exams" picks={engineeringExamLinks} />
+                : <p role="status" className="text-xs text-muted-foreground">{examsLoading ? "Loading exams…" : examsError ? "Exams could not be loaded. Please try again." : "No exams listed in this category yet."}</p>)}
               {exams.slice(0, 5).map((exam) => (
                 <Link key={exam.slug} to={`/exams/${exam.slug}`} className={rowClass}>
                   <div className="min-w-0 flex-1">
