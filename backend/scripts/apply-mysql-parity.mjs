@@ -1,3 +1,4 @@
+import { ensureEntitySearchIndex } from "../src/entity-search-index.mjs";
 #!/usr/bin/env node
 
 import { readFile } from "node:fs/promises";
@@ -697,6 +698,7 @@ try {
   await ensureExamListingFilterSchema(report);
   await ensureHomepageExploreSchema(report);
   await ensurePublicListingPerformanceIndexes(report);
+  await ensureEntitySearchIndex(prisma);
   await ensureCourseFeeGroupingSchema(report);
   await ensureLeadAutomationAuditSchema(report);
   await ensureAuthorAvatarSchema(report);

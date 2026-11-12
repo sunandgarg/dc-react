@@ -1,3 +1,4 @@
+import { searchFields, searchFilterSource } from "./entity-search-index.mjs";
 import { assertArticlePublication } from "./article-publication-policy.mjs";
 import { queueArticleTranslations } from "./article-translation-queue.mjs";
 import { randomUUID } from "node:crypto";
@@ -392,7 +393,7 @@ function columnFor(table, rawColumn) {
   return column;
 }
 
-function filterSql(table, rawColumn, expression, params) {
+function filterSql(table, rawColumn, expression, params, searchIndex = false) {
   const column = columnFor(table, rawColumn);
   const field = schemaMetadata[table].fields[column];
   let value = String(expression);
@@ -420,7 +421,9 @@ function filterSql(table, rawColumn, expression, params) {
   }
   if (["like", "ilike"].includes(operator)) {
     params.push(rawValue.replaceAll("*", "%"));
-    return wrap(operator === "ilike" ? `LOWER(${sqlColumn}) LIKE LOWER(?)` : `${sqlColumn} LIKE ?`);
+    const comparison = operator === "ilike" ? `LOWER(${sqlColumn}) LIKE LOWER(?)` : `${sqlColumn} LIKE ?`;
+    const source = searchIndex && !negate && searchFilterSource(table, column);
+    return wrap(source ? `id IN (${source}${comparison})` : comparison);
   }
   if (["fts", "plfts", "phfts", "wfts"].includes(operator)) {
     params.push(`%${rawValue}%`);
@@ -437,23 +440,23 @@ function filterSql(table, rawColumn, expression, params) {
   return wrap(`${sqlColumn} ${sqlOperator} ?`);
 }
 
-function booleanGroupSql(table, value, joiner, params) {
+function booleanGroupSql(table, value, joiner, params, searchIndex = false) {
   const body = String(value).replace(/^\(|\)$/g, "");
   const clauses = splitDepth(body).map((clause) => {
     const first = clause.indexOf(".");
     if (first < 0) throw new Error(`Invalid ${joiner} filter`);
-    return filterSql(table, clause.slice(0, first), clause.slice(first + 1), params);
+    return filterSql(table, clause.slice(0, first), clause.slice(first + 1), params, searchIndex);
   });
   return clauses.length ? `(${clauses.join(` ${joiner} `)})` : "1=1";
 }
 
-function buildWhere(table, url, params) {
+function buildWhere(table, url, params, searchIndex = false) {
   const clauses = [];
   for (const [key, value] of url.searchParams.entries()) {
     if (CONTROL_PARAMS.has(key)) continue;
-    if (key === "or") clauses.push(booleanGroupSql(table, value, "OR", params));
-    else if (key === "and") clauses.push(booleanGroupSql(table, value, "AND", params));
-    else clauses.push(filterSql(table, key, value, params));
+    if (key === "or") clauses.push(booleanGroupSql(table, value, "OR", params, searchIndex));
+    else if (key === "and") clauses.push(booleanGroupSql(table, value, "AND", params, searchIndex));
+    else clauses.push(filterSql(table, key, value, params, searchIndex));
   }
   return clauses.length ? ` WHERE ${clauses.join(" AND ")}` : "";
 }
@@ -557,17 +560,26 @@ async function handleGet(table, request, url, context) {
   const selectingAll = requestedFields.has("*") || requestedFields.size === 0;
   const hiddenRelationFields = selectingAll ? [] : relationSourceFields(table, nodes).filter((field) => !requestedFields.has(field));
   const params = [];
-  const where = buildWhere(table, url, params);
+  const nameFields = new Set(["id", ...(searchFields[table] || [])]);
+  const nameFiltersOnly = [...url.searchParams.keys()].every(key =>
+    CONTROL_PARAMS.has(key) || nameFields.has(key)) &&
+    (url.searchParams.get("order") || "").split(",").every(order => !order || nameFields.has(order.split(".")[0]));
+  const namesOnly = !!context.actorUserId && nameFiltersOnly && !selectingAll && !nodes.some(node => node.kind === "relation") &&
+    [...requestedFields].every(field => field === "id" || searchFields[table]?.includes(field));
+  const source = namesOnly && searchFields[table]
+    ? `(SELECT * FROM entity_search_names WHERE entity_table='${table}') AS search_names`
+    : quote(table);
+  const where = buildWhere(table, url, params, !namesOnly);
   const wantsCount = /(?:^|,)\s*count=(?:exact|planned|estimated)(?:,|$)/i.test(request.headers.get("prefer") || "");
   const total = wantsCount
-    ? Number((await prisma.$queryRawUnsafe(`SELECT COUNT(*) AS total FROM ${quote(table)}${where}`, ...params))[0]?.total || 0)
+    ? Number((await prisma.$queryRawUnsafe(`SELECT COUNT(*) AS total FROM ${source}${where}`, ...params))[0]?.total || 0)
     : null;
   const range = request.headers.get("range")?.split("-").map(Number);
   const offset = Number(url.searchParams.get("offset") ?? range?.[0] ?? 0);
   const requestedLimit = Number(url.searchParams.get("limit") ?? (range ? range[1] - range[0] + 1 : 1000));
   const limit = Math.max(0, Math.min(1000, Number.isFinite(requestedLimit) ? requestedLimit : 1000));
   const selection = [selectSql(table, nodes), ...hiddenRelationFields.map(quote)].join(",");
-  const query = `SELECT ${selection} FROM ${quote(table)}${where}${orderSql(table, url.searchParams.get("order"))} LIMIT ${limit} OFFSET ${Math.max(0, offset)}`;
+  const query = `SELECT ${selection} FROM ${source}${where}${orderSql(table, url.searchParams.get("order"))} LIMIT ${limit} OFFSET ${Math.max(0, offset)}`;
   let rows = request.method === "HEAD" ? [] : await prisma.$queryRawUnsafe(query, ...params);
   rows = rows.map((row) => decodeRow(table, row));
   if (table === "articles" && context.publicAccess) {
