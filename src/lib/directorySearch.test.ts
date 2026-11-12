@@ -31,21 +31,10 @@ describe("exam directory branding", () => {
     }
   });
 
-  it("also repairs the fallback query path for CSEET without changing college logos", async () => {
+  it("does not run broad catalog scans when the search endpoint fails", async () => {
     rpc.mockResolvedValue({ error: new Error("RPC unavailable") });
-    from.mockImplementation((table: string) => {
-      const builder = { select: vi.fn(), eq: vi.fn(), or: vi.fn(), limit: vi.fn() };
-      builder.select.mockReturnValue(builder);
-      builder.eq.mockReturnValue(builder);
-      builder.or.mockReturnValue(builder);
-      builder.limit.mockResolvedValue({ data: table === "exams" ? [{
-        slug: "cseet-icsi", name: "CSEET", logo: "/exam-logos-v2/cseet-icsi.webp", image: "banner.webp",
-      }] : table === "colleges" ? [{ slug: "test-college", name: "Test College", logo: "https://example.com/logo.webp" }] : [] });
-      return builder;
-    });
-    const results = await searchDirectory("cseet");
-    expect(results.find((row) => row.entity_type === "Exam")?.logo_url).toBe(identities["cseet-icsi"].logo);
-    expect(results.find((row) => row.entity_type === "College")?.logo_url).toBe("https://example.com/logo.webp");
+    await expect(searchDirectory("cseet")).rejects.toThrow("RPC unavailable");
+    expect(from).not.toHaveBeenCalled();
   });
 
   it("retains custom exam logos and leaves unknown exams without invented logos", async () => {

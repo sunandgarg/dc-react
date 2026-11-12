@@ -12,7 +12,7 @@ it("combines search and all filters on the server before counting and paginating
   const filters = { createdSince: "2026-09-25T12:00:00.000Z", author: { id: "neha-id", name: "Neha" }, status: "Draft", category: "Exams" };
   const result = useAdminArticles("admission", 2, 20, "dekhocampus", filters) as unknown as { queryFn: (context: { signal: AbortSignal }) => Promise<unknown>; queryKey: unknown[] };
   expect(await result.queryFn({ signal: new AbortController().signal })).toEqual({ rows: [{ id: "one" }], total: 45 });
-  expect(chain.select).toHaveBeenCalledWith("id,title,slug,featured_image,category,status,author,views,created_at", { count: "exact" });
+  expect(chain.select).toHaveBeenCalledWith("id,title,slug,featured_image,category,status,author,created_by,views,created_at", { count: "exact" });
   expect(chain.eq).toHaveBeenCalledWith("site_scope", "dekhocampus");
   expect(chain.eq).toHaveBeenCalledWith("status", "Draft");
   expect(chain.eq).toHaveBeenCalledWith("category", "Exams");

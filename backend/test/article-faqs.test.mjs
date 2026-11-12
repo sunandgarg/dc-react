@@ -81,7 +81,7 @@ test("writer byline stamps retain the FAQ bundle without granting global FAQ rig
   assert.deepEqual(stamped.faqs, [faq]);
   assert.equal(stamped.author_id, "neha-author");
   assert.equal(canContentWriterAccess("faqs", "create"), false);
-  assert.equal(canContentWriterAccess("articles", "edit"), false);
+  assert.equal(canContentWriterAccess("articles", "edit"), true);
 });
 
 test("writer and manager submissions retain FAQs in approval, with no orphan writes", async () => {

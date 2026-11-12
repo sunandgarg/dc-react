@@ -9,6 +9,7 @@ import { startDataCleanerWorker, stopDataCleanerWorker } from "./data-cleaner.mj
 import { prisma } from "./db.mjs";
 import { createDatabasePoolWatchdog, databaseEndpointReachable } from "./database-pool-watchdog.mjs";
 import { publicContentCache } from "./public-content-cache.mjs";
+import { warmDirectorySearchCache } from "./directory-search.mjs";
 
 const port = Number(process.env.PORT || 8787);
 const host = process.env.HOST || "0.0.0.0";
@@ -59,6 +60,7 @@ const server = http.createServer(async (req, res) => {
 }).listen(port, host, () => console.log(`DekhoCampus Node/Prisma backend listening on http://${host}:${port}`));
 
 // Serving requests must not wait for startup maintenance or a queue drain.
+setTimeout(() => startBackgroundTask("Directory search cache", warmDirectorySearchCache), 5_000).unref();
 startBackgroundTask("AI model sync", ensureSupportedAiModels);
 if (backgroundWorkersEnabled) {
   startBackgroundTask("Lead outbox", startLeadOutboxWorker);

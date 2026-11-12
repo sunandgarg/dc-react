@@ -61,13 +61,13 @@ test("Content Head can delete FAQs but not their parent content", () => {
   assert.equal(canContentHeadAccess("leads", "view"), false);
 });
 
-test("Content Writer has create-only access and approval by default", () => {
+test("Content Writer can read content and edit only their own article drafts, with approval by default", () => {
   assert.deepEqual([...CONTENT_WRITER_RESOURCES].sort(), ["articles", "colleges", "courses", "exams"]);
   for (const resource of CONTENT_WRITER_RESOURCES) {
     assert.equal(canContentWriterAccess(resource, "create"), true);
-    for (const action of ["view", "edit", "delete", "publish"]) {
-      assert.equal(canContentWriterAccess(resource, action), false);
-    }
+    assert.equal(canContentWriterAccess(resource, "view"), true);
+    assert.equal(canContentWriterAccess(resource, "edit"), resource === "articles");
+    for (const action of ["delete", "publish"]) assert.equal(canContentWriterAccess(resource, action), false);
   }
   assert.equal(canContentWriterAccess("leads", "create"), false);
   assert.equal(contentWriterPermissions().every((permission) => permission.can_create && !permission.can_publish && !permission.can_edit && !permission.can_delete), true);
@@ -95,7 +95,7 @@ test("Content Head sessions and article edits preserve browser independence", as
 test("Content Head can reopen private article drafts while public reads remain published-only", async () => {
   const apiSource = await readFile(new URL("../src/index.mjs", import.meta.url), "utf8");
   const editorSource = await readFile(new URL("../../src/pages/AdminArticles.tsx", import.meta.url), "utf8");
-  assert.match(apiSource, /identity && table === "articles"[\s\S]*?role` IN \('content_head','manager'\)[\s\S]*?return \{ request, actorUserId: identity\.id \}/);
+  assert.match(apiSource, /identity && table === "articles"[\s\S]*?role` IN \('content_head','manager','content','content_writer'\)[\s\S]*?return \{ request, actorUserId: identity\.id \}/);
   assert.match(apiSource, /table === "articles" \? enforcePublicArticlePolicy\(request\) : request/);
   assert.match(editorSource, /is_active: false, status: "Draft"/);
   assert.doesNotMatch(editorSource, /Save draft to add FAQs/);
@@ -108,8 +108,9 @@ test("manager can publish articles and higher editorial roles take precedence ov
   const apiSource = await readFile(new URL("../src/index.mjs", import.meta.url), "utf8");
   const authorization = apiSource.slice(apiSource.indexOf("async function authorizeRest("), apiSource.indexOf("async function authorizeRest(") + 9000);
   assert.match(authorization, /role === "manager"[\s\S]*?table === "articles"[\s\S]*?actorUserId: null/);
-  assert.ok(authorization.indexOf('role === "manager"') < authorization.indexOf('role === "content_writer"'));
-  assert.ok(authorization.indexOf('role === "content_head"') < authorization.indexOf('role === "content_writer"'));
+  const writerWriteBranch = authorization.lastIndexOf('role === "content_writer"');
+  assert.ok(authorization.indexOf('role === "manager"') < writerWriteBranch);
+  assert.ok(authorization.indexOf('role === "content_head"') < writerWriteBranch);
 });
 
 test("non-publishing editors are forced into draft state by the server", () => {

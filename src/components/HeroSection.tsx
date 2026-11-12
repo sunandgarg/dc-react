@@ -61,6 +61,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [dbResults, setDbResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState(false);
   const [rotatingWordIndex, setRotatingWordIndex] = useState(0);
   const requestId = useRef(0);
   const navigate = useNavigate();
@@ -94,6 +95,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
   useEffect(() => {
     const q = searchQuery.trim();
     const currentRequest = ++requestId.current;
+    setSearchError(false);
     if (!q || q.length < 2) {
       setDbResults([]);
       setIsSearching(false);
@@ -114,7 +116,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
           logo: row.logo_url,
         })));
       } catch {
-        /* skip */
+        if (requestId.current === currentRequest) { setDbResults([]); setSearchError(true); }
       } finally {
         if (requestId.current === currentRequest) setIsSearching(false);
       }
@@ -341,7 +343,8 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
                       {isSearching && !dbResults.length && (
                         <div className="flex min-h-[72px] items-center px-4 py-3 text-sm text-muted-foreground">Searching...</div>
                       )}
-                      {!isSearching && !dbResults.length && (
+                      {!isSearching && searchError && <div role="alert" className="px-4 py-5 text-sm text-muted-foreground">Search is unavailable. Edit your search to retry.</div>}
+                      {!isSearching && !searchError && !dbResults.length && (
                         <button
                           type="button"
                           onMouseDown={handleAskAI as any}

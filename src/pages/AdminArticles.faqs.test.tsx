@@ -7,7 +7,7 @@ import AdminArticles from "./AdminArticles";
 const mocks = vi.hoisted(() => ({ role: "content_writer", writes: [] as unknown[], articles: [] as unknown[], faqData: [] as unknown[], faqError: null as Error | null,
   toastError: vi.fn(), from: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: mocks.toastError } }));
-vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ isAdmin: mocks.role === "admin", roles: [mocks.role], can: (resource: string, action: string) =>
+vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ user: { id: "writer-1" }, isAdmin: mocks.role === "admin", roles: [mocks.role], can: (resource: string, action: string) =>
   mocks.role === "admin" || action === "create" || (mocks.role !== "content_writer" && ["view", "edit"].includes(action)) || (mocks.role === "content_head" && (action === "publish" || (resource === "faqs" && action === "delete"))) }) }));
 vi.mock("@/integrations/backend/client", () => ({ backendClient: { from: mocks.from } }));
 vi.mock("@/hooks/useArticlesData", async (importOriginal) => ({ ...await importOriginal<typeof import("@/hooks/useArticlesData")>(),
@@ -61,6 +61,13 @@ beforeEach(() => {
 afterEach(() => { cleanup(); clientList.splice(0).forEach((client) => client.clear()); });
 
 describe("article FAQ workflow", () => {
+  it("lets a writer save an incomplete private draft before submitting it", async () => {
+    mount();
+    fireEvent.click(screen.getByRole("button", { name: "Add Article" }));
+    fireEvent.change(screen.getByRole("textbox", { name: /title/i }), { target: { value: "Working admission draft" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save Draft" }));
+    await waitFor(() => expect(mocks.writes[0]).toMatchObject({ title: "Working admission draft", status: "Draft", is_active: false }));
+  });
   it("shows the daily published count without opening editorial tools", async () => {
     mount();
     expect(screen.getByText("Published today (IST)")).toBeInTheDocument();
@@ -99,7 +106,7 @@ describe("article FAQ workflow", () => {
       expect(screen.getByRole("textbox", { name: "FAQ 1 answer" })).toHaveValue("Check the official admission schedule.");
       fireEvent.click(screen.getByRole("button", { name: role === "content_head" ? "Save Draft" : "Submit for approval" }));
       await waitFor(() => expect(mocks.writes).toHaveLength(1));
-      expect(mocks.writes[0]).toMatchObject({ status: "Draft", is_active: false, faqs: entered.faqs });
+      expect(mocks.writes[0]).toMatchObject({ status: role === "content_writer" ? "Published" : "Draft", is_active: role === "content_writer", faqs: entered.faqs });
       await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     }, 15_000);
   }
