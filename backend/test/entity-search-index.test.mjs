@@ -8,7 +8,7 @@ test("builds a compact name projection with insert/update/delete synchronization
     $executeRawUnsafe: async (...args) => { writes.push(args); },
     $queryRawUnsafe: async () => [],
   };
-  await ensureEntitySearchIndex(db);
+  await ensureEntitySearchIndex(db, async sql => writes.push([sql]));
   assert.equal(writes.filter(([s]) => s.startsWith("CREATE TRIGGER")).length, 12);
   assert.equal(writes.filter(([s]) => s.includes("SELECT 'colleges',id")).length, 1);
   assert.equal(writes.filter(([s]) => s.includes("VALUES ('_ready',?)")).length, 4);
@@ -16,7 +16,7 @@ test("builds a compact name projection with insert/update/delete synchronization
   assert.ok(writes.some(([s]) => s.includes("AFTER DELETE") && s.includes("OLD.id")));
   assert.ok(writes.every(([s]) => !s.includes("NEW.content")));
   const ready = [];
-  await ensureEntitySearchIndex({ $executeRawUnsafe: async s=>ready.push(s), $queryRawUnsafe: async ()=>[{}] });
+  await ensureEntitySearchIndex({ $executeRawUnsafe: async s=>ready.push(s), $queryRawUnsafe: async ()=>[{}] }, async () => assert.fail("Existing triggers must not be rebuilt"));
   assert.equal(ready.length, 1); // Only the harmless CREATE TABLE IF NOT EXISTS runs again.
 });
 

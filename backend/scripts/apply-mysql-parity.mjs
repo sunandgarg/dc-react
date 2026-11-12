@@ -698,7 +698,7 @@ try {
   await ensureExamListingFilterSchema(report);
   await ensureHomepageExploreSchema(report);
   await ensurePublicListingPerformanceIndexes(report);
-  await ensureEntitySearchIndex(prisma);
+  await ensureEntitySearchIndex(prisma, sql => mysqlConnection.query(sql));
   await ensureCourseFeeGroupingSchema(report);
   await ensureLeadAutomationAuditSchema(report);
   await ensureAuthorAvatarSchema(report);
