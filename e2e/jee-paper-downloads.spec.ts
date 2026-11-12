@@ -7,6 +7,7 @@ const resources = papers.flatMap(year => year.dates.flatMap(date => [date.mornin
 async function openDownloads(browser: Browser) {
   const context = await browser.newContext({ ...devices["iPhone 13"], baseURL: process.env.E2E_BASE_URL || "http://localhost:8080" });
   const page = await context.newPage();
+  page.setDefaultTimeout(15_000);
   const writes: any[] = [];
   const bundleRequests: any[] = [];
   // Isolate writes and SMS while testing the real form and navigation code.
@@ -39,9 +40,14 @@ async function openDownloads(browser: Browser) {
 test("all 106 PDFs download directly without a form on mobile", async ({ browser }) => {
   test.setTimeout(600_000);
   const { context, page, writes, requested } = await openDownloads(browser);
-  await page.locator("#question-papers details").evaluateAll(details => details.forEach(detail => { (detail as HTMLDetailsElement).open = true; }));
+  let selectedYear = "";
   for (const url of resources) {
-    const downloading = page.waitForEvent("download");
+    const year = /JEE_Main_(\d{4})/.exec(url)![1];
+    if (year !== selectedYear) {
+      await page.getByRole("button", { name: new RegExp(`^${year} \\d+ papers$`) }).click();
+      selectedYear = year;
+    }
+    const downloading = page.waitForEvent("download", { timeout: 15_000 });
     await page.locator(`#question-papers a[href="${url}"]`).click();
     const download = await downloading; expect(download.url()).toBe(url); await download.delete();
     await expect(page.getByRole("dialog")).not.toBeVisible();
@@ -78,7 +84,7 @@ test("ZIP requires verified OTP before form completion and signed download", asy
   await page.locator("#searchable-select-portal-active").getByRole("button", { name: "Haryana", exact: true }).click();
   await dialog.getByRole("button", { name: "City *", exact: true }).click();
   await page.locator("#searchable-select-portal-active").getByRole("button", { name: "Gurugram", exact: true }).click();
-  const downloading = page.waitForEvent("download");
+  const downloading = page.waitForEvent("download", { timeout: 15_000 });
   await dialog.getByRole("button", { name: "Complete request" }).click();
   const download = await downloading; expect(download.url()).toBe(signed); await download.delete();
   expect(writes).toHaveLength(2);
