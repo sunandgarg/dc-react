@@ -39,7 +39,7 @@ export function useHeroSettings() {
   return useQuery({
     queryKey: ["hero_settings"],
     queryFn: async (): Promise<HeroSettings | null> => {
-      const boot = await ensureBootstrap();
+      const boot = await ensureBootstrap("hero_settings");
       if (boot && "hero_settings" in boot) {
         return normalizeHeroSettings((boot.hero_settings ?? null) as HeroSettings | null);
       }

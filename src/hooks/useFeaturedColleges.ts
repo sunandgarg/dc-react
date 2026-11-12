@@ -29,7 +29,7 @@ export function useFeaturedColleges(category?: string, state?: string) {
   return useQuery({
     queryKey: ["featured-colleges", category, state],
     queryFn: async () => {
-      const boot = await ensureBootstrap();
+      const boot = await ensureBootstrap("featured_colleges");
       if (boot?.featured_colleges) return uniqueFeatured(boot.featured_colleges as FeaturedCollege[], true);
       const { data, error } = await backendClient
         .from("featured_colleges")

@@ -21,8 +21,9 @@ interface StateCity {
  * otherwise falls back to the bundled full India dataset so filters always
  * show every state/city.
  */
-export function useStatesAndCities() {
+export function useStatesAndCities(enabled = true) {
   return useQuery({
+    enabled,
     queryKey: ["states-cities"],
     queryFn: async () => {
       const { data, error } = await backendClient

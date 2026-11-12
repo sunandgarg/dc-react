@@ -15,7 +15,7 @@ const Footer = lazyRetry(() => import("@/components/Footer").then((module) => ({
 
 const section = (name: string, content: ReactNode, minHeight: number) => (
   <OptionalSectionBoundary name={name} minHeight={minHeight}>
-    <DeferredRender minHeight={minHeight}>
+    <DeferredRender minHeight={minHeight} rootMargin="0px">
       <Suspense fallback={<div style={{ minHeight }} aria-hidden="true" />}>{content}</Suspense>
     </DeferredRender>
   </OptionalSectionBoundary>

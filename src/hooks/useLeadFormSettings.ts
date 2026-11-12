@@ -29,7 +29,7 @@ export function useLeadFormSettings() {
   return useQuery({
     queryKey: ["lead-form-settings"],
     queryFn: async () => {
-      const boot = await ensureBootstrap();
+      const boot = await ensureBootstrap("lead_form_settings");
       if (boot && "lead_form_settings" in boot) {
         return (boot.lead_form_settings ?? DEFAULT) as LeadFormSettings;
       }

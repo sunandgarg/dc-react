@@ -17,7 +17,7 @@ export function useTrustedPartners() {
   return useQuery({
     queryKey: ["trusted-partners"],
     queryFn: async () => {
-      const boot = await ensureBootstrap();
+      const boot = await ensureBootstrap("trusted_partners");
       if (boot?.trusted_partners) return boot.trusted_partners as TrustedPartner[];
       const { data, error } = await backendClient
         .from("trusted_partners" as any)

@@ -37,7 +37,7 @@ export default function Index() {
     <main id="main-content">
       <div id="hero"><HeroSection onOpenChat={handleOpenChat} /></div>
       <OptionalSectionBoundary name="home-below-fold" minHeight={900}>
-        <DeferredRender minHeight={900} rootMargin="400px 0px">
+        <DeferredRender minHeight={900} rootMargin="0px">
           <Suspense fallback={<div className="min-h-[900px]" aria-hidden="true" />}><HomeBelowFold /></Suspense>
         </DeferredRender>
       </OptionalSectionBoundary>

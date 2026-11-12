@@ -488,12 +488,12 @@ async function authorizeRpc(name, request) {
   throw new HttpError(403, "RPC_ACCESS_DENIED", "This operation requires administrator access");
 }
 
-async function bootstrapPayload() {
+async function bootstrapPayload(section) {
   const rows = async (table, where = "") => prisma.$queryRawUnsafe(`SELECT * FROM \`${table}\` ${where}`);
-  const [heroBanners, heroSettings, featuredColleges, trustedPartners, leadFormSettings, featureToggles, ads, siteIntegrations] = await Promise.all([
-    rows("hero_banners", "WHERE `is_active` = 1 ORDER BY `display_order` ASC"),
-    rows("hero_settings", "LIMIT 1"),
-    rows("featured_colleges", `AS featured
+  const loaders = {
+    hero_banners: () => rows("hero_banners", "WHERE `is_active` = 1 ORDER BY `display_order` ASC"),
+    hero_settings: () => rows("hero_settings", "LIMIT 1").then(rows => rows[0] || null),
+    featured_colleges: () => rows("featured_colleges", `AS featured
       INNER JOIN (
         SELECT \`college_slug\`, MAX(\`updated_at\`) AS \`latest_updated_at\`
           FROM \`featured_colleges\`
@@ -503,7 +503,7 @@ async function bootstrapPayload() {
        AND latest.\`latest_updated_at\` = featured.\`updated_at\`
       WHERE featured.\`is_active\` = 1
       ORDER BY featured.\`display_order\` ASC`),
-    prisma.$queryRawUnsafe(`
+    trusted_partners: () => prisma.$queryRawUnsafe(`
       SELECT partner.\`id\`,
              partner.\`college_slug\`,
              partner.\`name\`,
@@ -523,21 +523,14 @@ async function bootstrapPayload() {
        WHERE partner.\`is_active\` = 1
        ORDER BY partner.\`display_order\` ASC
     `),
-    rows("lead_form_settings", "LIMIT 1"),
-    rows("feature_toggles"),
-    rows("ads", "WHERE `is_active` = 1"),
-    rows("site_integrations", "WHERE `enabled` = 1"),
-  ]);
-  return {
-    hero_banners: heroBanners,
-    hero_settings: heroSettings[0] || null,
-    featured_colleges: featuredColleges,
-    trusted_partners: trustedPartners,
-    lead_form_settings: leadFormSettings[0] || null,
-    feature_toggles: featureToggles,
-    ads,
-    site_integrations: siteIntegrations.map(({ key, value, enabled }) => ({ key, value, enabled: Boolean(enabled) })),
+    lead_form_settings: () => rows("lead_form_settings", "LIMIT 1").then(rows => rows[0] || null),
+    feature_toggles: () => rows("feature_toggles"),
+    ads: () => rows("ads", "WHERE `is_active` = 1"),
+    site_integrations: () => rows("site_integrations", "WHERE `enabled` = 1").then(rows => rows.map(({ key, value, enabled }) => ({ key, value, enabled: Boolean(enabled) }))),
   };
+  const keys = section === null ? Object.keys(loaders) : [section];
+  if (section !== null && !Object.hasOwn(loaders, section)) throw new HttpError(400, "INVALID_SECTION", "Unknown homepage section");
+  return Object.fromEntries(await Promise.all(keys.map(async key => [key, await loaders[key]()])));
 }
 
 async function linkSavedLeadIntent(input, leadId, siteScope) {
@@ -814,7 +807,7 @@ export async function handleRequest(request) {
       }
       if (functionMatch[1] === "send-otp") return json(200, await sendPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
-      if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(), requestId, request, { "cache-control": "public, max-age=30, stale-while-revalidate=60" });
+      if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(url.searchParams.get("section")), requestId, request, { "cache-control": "public, max-age=30, stale-while-revalidate=60" });
       if (functionMatch[1] === "save-lead") return json(200, await saveLead(request), requestId, request);
       if (functionMatch[1] === "cat-experience") {
         return json(200, await handleCatExperience(request), requestId, request, { "cache-control": "private, no-store" });
