@@ -252,6 +252,10 @@ async function ensurePublicListingPerformanceIndexes(report) {
     await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_admin_order` ON `colleges` (`priority`, `featured_rank`, `updated_at` DESC, `id`) ALGORITHM=INPLACE LOCK=NONE");
     report.createdReferenceIndexes.push("ix_colleges_admin_order");
   }
+  if (!await indexExists("colleges", "ix_colleges_directory_order")) {
+    await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_directory_order` ON `colleges` (`is_active`, `priority`, `featured_rank`, `rating` DESC, `id`) ALGORITHM=INPLACE LOCK=NONE");
+    report.createdReferenceIndexes.push("ix_colleges_directory_order");
+  }
   if (!await indexExists("colleges", "ix_colleges_featured")) {
     await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_featured` ON `colleges` (`featured_rank`) ALGORITHM=INPLACE LOCK=NONE");
     report.createdReferenceIndexes.push("ix_colleges_featured");

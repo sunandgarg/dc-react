@@ -13,7 +13,7 @@ vi.mock("@/integrations/backend/client", () => ({ backendClient: {
       neq: (...args: any[]) => { request.filters.push(["neq", ...args]); return chain; },
       or: (filter: string) => { request.or = filter; return chain; },
       order: () => chain,
-      limit: () => chain,
+      limit: (limit: number) => { request.limit = limit; return chain; },
       in: (field: string, slugs: string[]) => { request.in = [field, slugs]; return chain; },
       then: (resolve: any, reject: any) => Promise.resolve(responses.shift() || { data: [], error: null }).then(resolve, reject),
     };
@@ -130,4 +130,12 @@ describe("homepage category recommendations", () => {
     expect(await fetchHomepageExplore("courses", "Law", "id,slug,name,show_in_explore_by_category,explore_by_category_checked_at")).toHaveLength(1);
     expect(requests[2].select).toBe("id,slug,name");
   });
+});
+
+it("bounds homepage fallback candidates instead of fetching the catalogue", async () => {
+  responses.push({ data: Array.from({length:30},(_,i)=>row(`College ${i}`)), error:null });
+  const result = await fetchHomepageExplore("colleges", "Medical", "id,name,slug");
+  expect(requests).toHaveLength(1);
+  expect(requests[0].limit).toBe(30);
+  expect(result).toHaveLength(5);
 });

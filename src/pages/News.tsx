@@ -26,7 +26,7 @@ const categoryIcons = {
   "study-abroad": Globe, news: Newspaper, vernacular: Globe,
 };
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 10;
 const ARTICLE_COLS = "id,slug,title,description,featured_image,category,tags,created_at,featured_rank,language_code";
 
 // Reuse one Intl formatter instead of re-instantiating on every render
@@ -294,6 +294,9 @@ export default function News() {
     initialPageParam: page,
     getNextPageParam: (last: { rows: Article[]; page: number; total: number }) => last.rows.length > 0 && last.page * PAGE_SIZE < last.total ? last.page + 1 : undefined,
     staleTime: 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
     queryFn: async ({ pageParam }) => {
       let q = backendClient
         .from("articles")

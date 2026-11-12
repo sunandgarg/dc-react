@@ -6,7 +6,7 @@ export const COLLEGE_DIRECTORY_SELECT = "id,short_id,slug,name,short_name,locati
 // Keep the first paint and every subsequent "load more" interaction small.
 // Fifty rich cards created thousands of DOM nodes and dozens of composited
 // layers at once, which caused visible hitching while the directory scrolled.
-export const COLLEGE_DIRECTORY_PAGE_SIZE = 24;
+export const COLLEGE_DIRECTORY_PAGE_SIZE = 10;
 
 export type CollegeDirectoryItem = Pick<DbCollege, "id" | "slug" | "name" | "short_name" | "location" | "city" | "state" | "type" | "category" | "rating" | "reviews" | "fees" | "image" | "logo" | "tags" | "approvals" | "naac_grade" | "established" | "priority" | "featured_rank" | "is_partner" | "affiliation_kind" | "parent_university_slug"> & { short_id?: number | null };
 
@@ -25,7 +25,7 @@ function cleanSearch(value = "") {
   return value.trim().replace(/[,%()]/g, " ").replace(/\s+/g, " ").slice(0, 100);
 }
 
-async function fetchDirectoryPage(filters: CollegeDirectoryFilters, page: number) {
+async function fetchDirectoryPage(filters: CollegeDirectoryFilters, page: number, signal: AbortSignal) {
   const from = page * COLLEGE_DIRECTORY_PAGE_SIZE;
   const search = cleanSearch(filters.search);
 
@@ -49,27 +49,26 @@ async function fetchDirectoryPage(filters: CollegeDirectoryFilters, page: number
     .order("priority", { ascending: true, nullsFirst: false })
     .order("featured_rank", { ascending: true, nullsFirst: false })
     .order("rating", { ascending: false, nullsFirst: false })
-    .order("name", { ascending: true })
     .order("id", { ascending: true })
-    .range(from, from + COLLEGE_DIRECTORY_PAGE_SIZE - 1);
+    .range(from, from + COLLEGE_DIRECTORY_PAGE_SIZE - 1).abortSignal(signal);
 
   if (error) throw error;
   return (data ?? []) as CollegeDirectoryItem[];
 }
 
 /**
- * Ranked, server-filtered directory pages. The browser receives the first 50
- * cards immediately and asks for later pages only as the visitor scrolls.
+ * Ranked, server-filtered directory pages. Later chunks load only on Show more.
  */
 export function useCollegeDirectory(filters: CollegeDirectoryFilters = {}) {
   return useInfiniteQuery({
     queryKey: ["colleges-directory", "v3", filters],
     initialPageParam: 0,
-    queryFn: ({ pageParam }) => fetchDirectoryPage(filters, pageParam),
+    queryFn: ({ pageParam, signal }) => fetchDirectoryPage(filters, pageParam, signal),
     getNextPageParam: (lastPage, pages) => lastPage.length === COLLEGE_DIRECTORY_PAGE_SIZE ? pages.length : undefined,
     staleTime: 30 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
     refetchOnReconnect: false,
     placeholderData: undefined,
   });
