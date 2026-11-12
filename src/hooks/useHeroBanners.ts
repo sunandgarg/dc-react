@@ -19,7 +19,7 @@ export function useHeroBanners() {
   return useQuery({
     queryKey: ["hero-banners"],
     queryFn: async () => {
-      const boot = await ensureBootstrap();
+      const boot = await ensureBootstrap("hero_banners");
       if (boot?.hero_banners) return boot.hero_banners as HeroBanner[];
       const { data, error } = await backendClient
         .from("hero_banners" as any)

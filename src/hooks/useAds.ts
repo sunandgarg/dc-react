@@ -125,7 +125,7 @@ export function selectBestAd(allAds: Ad[], options: AdSelectionOptions = {}): Ad
 }
 
 async function fetchActiveAds() {
-  const boot = await ensureBootstrap();
+  const boot = await ensureBootstrap("ads");
   if (boot?.ads) return boot.ads as Ad[];
   const { data, error } = await backendClient
     .from("ads")

@@ -2,7 +2,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { hydrateBootstrap } from "@/lib/bootstrap";
 import { Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
@@ -322,15 +321,6 @@ const queryClient = new QueryClient({
   },
 });
 
-function BootstrapHydrator() {
-  useEffect(() => {
-    // Bootstrap fetch is already kicked off at module import.
-    // This just ensures any cache seeding ran before paint.
-    hydrateBootstrap(queryClient);
-  }, []);
-  return null;
-}
-
 const firstPagePath = window.location.pathname;
 const hasFirstPageHtml = Boolean(document.querySelector("#dc-edge-fallback > [data-dc-edge-prerender]"));
 
@@ -347,7 +337,6 @@ function PageLoader() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BootstrapHydrator />
 
     <AuthProvider>
       <AdminActionGuard />

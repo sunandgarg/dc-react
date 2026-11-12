@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useArticleSidebarArticles } from "@/hooks/useArticlesData";
@@ -7,11 +6,7 @@ import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBad
 const NEWS_LIMIT = 6;
 
 export function HomeNewsSection() {
-  const { data: articles = [], isLoading } = useArticleSidebarArticles(60);
-  const items = useMemo(() => {
-    return articles
-      .slice(0, NEWS_LIMIT);
-  }, [articles]);
+  const { data: items = [], isLoading } = useArticleSidebarArticles(NEWS_LIMIT);
 
   if (!isLoading && items.length === 0) return null;
 

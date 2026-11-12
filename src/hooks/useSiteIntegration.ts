@@ -7,7 +7,7 @@ type Row = { key: string; value: string | null; enabled: boolean };
 const ALL_KEY = ["site-integrations", "all"] as const;
 
 async function fetchAll(): Promise<Row[]> {
-  const boot = await ensureBootstrap();
+  const boot = await ensureBootstrap("site_integrations");
   if (boot?.site_integrations) return boot.site_integrations as Row[];
   const { data } = await (backendClient as any)
     .from("site_integrations")

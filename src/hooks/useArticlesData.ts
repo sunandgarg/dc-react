@@ -67,7 +67,7 @@ export type ArticleSidebarSummary = Pick<
 
 /** Compact recent feed for article-side navigation without loading article bodies. */
 export function useArticleSidebarArticles(limit = 36, siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
-  const safeLimit = Math.min(60, Math.max(10, Math.floor(limit)));
+  const safeLimit = Math.min(60, Math.max(1, Math.floor(limit)));
   return useQuery({
     queryKey: ["article-sidebar-feed", siteScope, safeLimit, "en"],
     queryFn: async () => {

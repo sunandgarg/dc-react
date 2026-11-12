@@ -100,7 +100,7 @@ export function LeadCaptureForm({
   const [step, setStep] = useState<1 | 2>(1);
   const [leadId, setLeadId] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(true);
-  const { data: locations } = useStatesAndCities();
+  const { data: locations } = useStatesAndCities(step === 2);
   const { data: profile } = useUserProfile();
 
   // Derive form key from source so admin per-form OTP channel override applies.
