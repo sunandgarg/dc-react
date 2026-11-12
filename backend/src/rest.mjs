@@ -431,8 +431,10 @@ function filterSql(table, rawColumn, expression, params, searchIndex = false) {
   }
   if (["cs", "cd", "ov"].includes(operator)) {
     params.push(rawValue);
-    if (operator === "ov") return wrap(`JSON_OVERLAPS(${sqlColumn}, ?)`);
-    return wrap(operator === "cd" ? `JSON_CONTAINS(?, ${sqlColumn})` : `JSON_CONTAINS(${sqlColumn}, ?)`);
+    const comparison = operator === "ov" ? `JSON_OVERLAPS(${sqlColumn}, ?)`
+      : operator === "cd" ? `JSON_CONTAINS(?, ${sqlColumn})` : `JSON_CONTAINS(${sqlColumn}, ?)`;
+    const source = searchIndex && !negate && searchFilterSource(table, column);
+    return wrap(source ? `id IN (${source}${comparison})` : comparison);
   }
   const sqlOperator = { eq: "=", neq: "!=", gt: ">", gte: ">=", lt: "<", lte: "<=" }[operator];
   if (!sqlOperator) throw new Error(`Unsupported filter operator: ${operator}`);

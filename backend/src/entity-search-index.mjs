@@ -1,10 +1,10 @@
 import { quote } from "./db.mjs";
 
 export const searchFields = {
-  colleges: ["name", "slug", "short_name", "city", "state"],
+  colleges: ["name", "slug", "short_name", "city", "state", "related_exams", "related_courses"],
   courses: ["name", "slug", "full_name"],
   exams: ["name", "slug", "short_name", "full_name"],
-  articles: ["title", "slug", "description", "category", "vertical", "site_scope"],
+  articles: ["title", "slug", "description", "category", "vertical", "site_scope", "tags"],
 };
 export const searchColumns = [...new Set(Object.values(searchFields).flat())];
 
@@ -14,24 +14,33 @@ export async function ensureEntitySearchIndex(db, executeDdl) {
     ${searchColumns.map(field => `${quote(field)} LONGTEXT NULL`).join(",")},
     PRIMARY KEY(entity_table,id)
   ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
+  const columns = await db.$queryRawUnsafe("SHOW COLUMNS FROM entity_search_names");
+  for (const field of searchColumns) {
+    if (!columns.some(column => column.Field === field)) {
+      await db.$executeRawUnsafe(`ALTER TABLE entity_search_names ADD COLUMN ${quote(field)} LONGTEXT NULL`);
+    }
+  }
   for (const [table, fields] of Object.entries(searchFields)) {
     const columns = ["entity_table", "id", ...fields].map(quote).join(",");
     const values = [`'${table}'`, "NEW.id", ...fields.map(field => `NEW.${quote(field)}`)].join(",");
     const updates = fields.map(field => `${quote(field)}=VALUES(${quote(field)})`).join(",");
     // Triggers keep imports and writes through every existing entry point in sync.
     for (const event of ["INSERT", "UPDATE", "DELETE"]) {
-      const name = `dc_search_${table}_${event.toLowerCase()}`;
+      const name = `dc_search_v2_${table}_${event.toLowerCase()}`;
       const existing = await db.$queryRawUnsafe("SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME=?", name);
+      const oldName = `dc_search_${table}_${event.toLowerCase()}`;
+      const old = await db.$queryRawUnsafe("SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME=?", oldName);
+      if (old.length) await executeDdl(`DROP TRIGGER ${quote(oldName)}`);
       if (existing.length) continue;
       const action = event === "DELETE"
         ? `DELETE FROM entity_search_names WHERE entity_table='${table}' AND id=OLD.id`
         : `INSERT INTO entity_search_names (${columns}) VALUES (${values}) ON DUPLICATE KEY UPDATE ${updates}`;
       await executeDdl(`CREATE TRIGGER ${quote(name)} AFTER ${event} ON ${quote(table)} FOR EACH ROW ${action}`);
     }
-    const marker = await db.$queryRawUnsafe("SELECT 1 FROM entity_search_names WHERE entity_table='_ready' AND id=? LIMIT 1", table);
+    const marker = await db.$queryRawUnsafe("SELECT 1 FROM entity_search_names WHERE entity_table='_ready' AND id=? LIMIT 1", "v2_" + table);
     if (!marker.length) {
       await db.$executeRawUnsafe(`INSERT INTO entity_search_names (${columns}) SELECT '${table}',id,${fields.map(quote).join(",")} FROM ${quote(table)} ON DUPLICATE KEY UPDATE ${updates}`);
-      await db.$executeRawUnsafe("INSERT INTO entity_search_names (entity_table,id) VALUES ('_ready',?)", table);
+      await db.$executeRawUnsafe("INSERT INTO entity_search_names (entity_table,id) VALUES ('_ready',?)", "v2_" + table);
     }
   }
 }
