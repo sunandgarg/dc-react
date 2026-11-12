@@ -177,7 +177,7 @@ function EnglishAdPage() {
             <p className="mt-5 text-base leading-7"><strong>{regularOpen ? "Last date without late fee:" : "Last date with late fee:"}</strong>{" "}<time dateTime={regularOpen ? "2026-11-22T23:50:00+05:30" : "2026-11-26T23:50:00+05:30"}>{regularOpen ? "22 November 2026" : "26 November 2026"}, 11:50 PM IST</time>.</p>
             <p className="mt-5 text-sm leading-6 text-slate-700"><strong>{registrationOpen ? "Ready to apply?" : "Need the latest status?"}</strong> Use the official NTA portal below.</p>
             <div className="my-5 text-center">
-              <a href={OFFICIAL_FORM} target="_blank" rel="noopener noreferrer" className="mx-auto inline-flex min-h-14 w-full max-w-xl items-center justify-center gap-3 rounded-md bg-orange-700 px-4 py-4 text-base font-bold leading-6 text-white shadow-sm transition-colors hover:bg-orange-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-700 sm:text-lg">
+              <a href={OFFICIAL_FORM} target="_blank" rel="noopener noreferrer" className="mx-auto inline-flex min-h-11 w-full max-w-xl items-center justify-center gap-2 rounded-md bg-orange-700 px-3 py-2 text-sm font-semibold leading-5 text-white shadow-sm transition-colors hover:bg-orange-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-700">
                 <span className="min-w-0">{registrationOpen ? "Apply online at jeemain.nta.nic.in" : "Check official NTA application updates"}</span><ArrowRight aria-hidden="true" className="h-5 w-5 shrink-0" />
               </a>
             </div>
@@ -212,7 +212,6 @@ function EnglishAdPage() {
                   </tr>)}</tbody>
                 </table></div>
             </div>)}
-            <p className="mt-3 text-xs leading-5 text-slate-600">For other dates, languages or papers, use <a href="https://nta.ac.in/Downloads" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">NTA's full question-paper archive</a>. Select the year, JEE-Main and your paper, then Search. Older papers may follow a different exam pattern.</p>
           </section>
 
           <AdmissionCarousel />
