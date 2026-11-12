@@ -36,6 +36,11 @@ jobs:
       - name: Inspect API host and database workload
         run: |
           set -euo pipefail
+          RUNNER_IP=$(curl -fsS https://checkip.amazonaws.com | tr -d '[:space:]')
+          [[ "$RUNNER_IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]
+          PORT_INFO=$(jq -nc --arg cidr "$RUNNER_IP/32" '{fromPort:22,toPort:22,protocol:"tcp",cidrs:[$cidr]}')
+          trap 'aws lightsail close-instance-public-ports --instance-name dc-react-api-lightsail --port-info "$PORT_INFO" >/dev/null' EXIT
+          aws lightsail open-instance-public-ports --instance-name dc-react-api-lightsail --port-info "$PORT_INFO" >/dev/null
           aws lightsail get-instance-access-details --instance-name dc-react-api-lightsail --protocol ssh > /tmp/access.json
           jq -r '.accessDetails.privateKey' /tmp/access.json > /tmp/key
           jq -r '.accessDetails.certKey' /tmp/access.json > /tmp/key-cert.pub
