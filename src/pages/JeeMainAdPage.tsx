@@ -175,7 +175,7 @@ function EnglishAdPage() {
               Download all 106 papers (.zip)
             </button>
             <div className="mt-4 space-y-3">
-              {QUESTION_PAPERS.map(({ year, dates }) => <details key={year} open={year === 2026} className="rounded border border-blue-100 bg-white">
+              {QUESTION_PAPERS.map(({ year, dates }) => <details key={year} className="rounded border border-blue-100 bg-white">
                 <summary className="cursor-pointer px-4 py-3 font-bold text-blue-900">{year} · {dates.reduce((count, date) => count + Number(!!date.morning) + Number(!!date.evening), 0)} papers</summary>
                 <div className="overflow-x-auto"><table className="w-full text-left text-sm">
                   <thead className="bg-blue-50"><tr><th className="px-3 py-2">Exam date</th><th className="px-3 py-2">Morning shift</th><th className="px-3 py-2">Evening shift</th></tr></thead>
