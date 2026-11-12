@@ -68,24 +68,20 @@ export function rankDirectoryRow(query, row) {
 
 async function loadDirectoryRows() {
   const rows = await prisma.$queryRawUnsafe(`
-    SELECT entity_type, name, slug, subtitle, image_url, logo_url, search_alias
-    FROM (
-      SELECT 'College' AS entity_type, name, slug, COALESCE(NULLIF(city, ''), NULLIF(state, ''), '') AS subtitle,
-             COALESCE(NULLIF(image, ''), logo, '') AS image_url, COALESCE(NULLIF(logo, ''), image, '') AS logo_url,
-             COALESCE(short_name, '') AS search_alias
-      FROM colleges WHERE is_active = 1
-      UNION ALL
-      SELECT 'Course', name, slug, COALESCE(NULLIF(level, ''), NULLIF(category, ''), 'Course'),
-             COALESCE(image, ''), COALESCE(image, ''), COALESCE(full_name, '')
-      FROM courses WHERE is_active = 1
-      UNION ALL
-      SELECT 'Exam', name, slug, COALESCE(NULLIF(exam_type, ''), NULLIF(category, ''), 'Exam'),
-             COALESCE(NULLIF(logo, ''), image, ''), COALESCE(NULLIF(logo, ''), image, ''), CONCAT_WS(' ', short_name, full_name)
-      FROM exams WHERE is_active = 1
-      UNION ALL
-      SELECT 'Career', name, slug, COALESCE(domain, 'Career'), COALESCE(image, ''), COALESCE(image, ''), ''
-      FROM career_profiles WHERE is_active = 1
-    ) directory
+    SELECT 'College' AS entity_type, name, slug, COALESCE(NULLIF(city, ''), NULLIF(state, ''), '') AS subtitle,
+           short_name AS search_alias, '' AS image_url, '' AS logo_url
+    FROM colleges WHERE is_active = 1
+    UNION ALL
+    SELECT 'Course', name, slug, COALESCE(NULLIF(level, ''), NULLIF(category, ''), 'Course'),
+           full_name, '', ''
+    FROM courses WHERE is_active = 1
+    UNION ALL
+    SELECT 'Exam', name, slug, COALESCE(NULLIF(exam_type, ''), NULLIF(category, ''), 'Exam'),
+           CONCAT_WS(' ', short_name, full_name), '', ''
+    FROM exams WHERE is_active = 1
+    UNION ALL
+    SELECT 'Career', name, slug, COALESCE(domain, 'Career'), '', '', ''
+    FROM career_profiles WHERE is_active = 1
   `);
   directoryRows = jsonSafe(rows).map(prepareRow);
   loadedAt = Date.now();
