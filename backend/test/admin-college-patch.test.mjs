@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import test from 'node:test';
+
+test('college edits preserve untouched placement and submit explicit clears', async () => {
+  const source = await readFile(new URL('../../src/pages/AdminColleges.tsx', import.meta.url), 'utf8');
+  const block = source.match(/    if \(baseline\) \{([\s\S]*?)\n    \}\n    saveCollege/)[1];
+  const apply = new Function('payload', 'baseline', block);
+  const baseline = {id:'college', placement:'12 LPA', brochure_url:'old.pdf', highlights:['One']};
+  const payload = {...baseline, brochure_url:'new.pdf'};
+  apply(payload, baseline);
+  assert.deepEqual(payload, {id:'college', brochure_url:'new.pdf'});
+  const clear = {...baseline, placement:''};
+  apply(clear, baseline);
+  assert.deepEqual(clear, {id:'college', placement:''});
+});

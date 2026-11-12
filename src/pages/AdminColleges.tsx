@@ -1,7 +1,7 @@
 import { useCatalogEditor } from "@/hooks/useAdminCatalog";
 import { PermGate } from "@/components/PermGate";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
-import { useCallback, useDeferredValue, useState } from "react";
+import { useCallback, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAdminCollegeList, useAdminCollegeStats, useSaveCollege, useDeleteCollege, type DbCollege } from "@/hooks/useCollegesData";
 import { AdminFormSection } from "@/components/AdminFormSection";
@@ -74,22 +74,19 @@ export default function AdminColleges() {
   const [editing, setEditing] = useDraftState<Partial<DbCollege> | null>('admin.colleges.editing.v1', null);
   const [editingBaseline, setEditingBaseline] = useState("");
   const [search, setSearch] = useState("");
-  const deferredSearch = useDeferredValue(search);
+  const [submittedSearch, setSubmittedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "Published" | "Draft">("all");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSizeState] = useState<number>(() => {
-    const saved = parseInt(localStorage.getItem("admin_page_size_colleges") || "", 10);
-    return saved > 0 ? Math.min(saved, 100) : 50;
-  });
+  const [pageSize, setPageSizeState] = useState<number>(10);
   const setPageSize = (n: number) => {
     const next = Math.max(10, Math.min(n, 100));
     setPageSizeState(next);
     setPage(1);
     try { localStorage.setItem("admin_page_size_colleges", String(next)); } catch {}
   };
-  const listQuery = useAdminCollegeList({ page, pageSize, search: deferredSearch, status: statusFilter, category: categoryFilter, state: stateFilter });
+  const listQuery = useAdminCollegeList({ page, pageSize, search: submittedSearch, status: statusFilter, category: categoryFilter, state: stateFilter });
   const statsQuery = useAdminCollegeStats();
   const rows = listQuery.data?.rows ?? [];
   const total = listQuery.data?.total ?? 0;
@@ -99,6 +96,7 @@ export default function AdminColleges() {
 
   const resetFilters = () => {
     setSearch("");
+    setSubmittedSearch("");
     setStatusFilter("all");
     setCategoryFilter("");
     setStateFilter("");
@@ -119,27 +117,33 @@ export default function AdminColleges() {
 
   const handleSave = () => {
     if (!editing?.slug || !editing?.name) { toast.error("Slug and Name required"); return; }
+    const baseline = editing.id && editingBaseline ? JSON.parse(editingBaseline) : null;
     // Hard clamp priority into 1..100 - out-of-range values are rejected before
     // hitting the DB so a stray "0" or "999" can never break sort order.
     const rawPriority = (editing as any).priority;
     const priorityNum = Number.isFinite(Number(rawPriority)) ? Math.round(Number(rawPriority)) : 50;
-    if (priorityNum < 1 || priorityNum > 100) {
+    if ((!baseline || editing.priority !== baseline.priority) && (priorityNum < 1 || priorityNum > 100)) {
       toast.error("Priority must be between 1 and 100");
       return;
     }
     const rating = Number(editing.rating);
-    if (!Number.isFinite(rating) || rating < 0 || rating > 5) {
+    if ((!baseline || editing.rating !== baseline.rating) && (!Number.isFinite(rating) || rating < 0 || rating > 5)) {
       toast.error("Rating must be a number between 0 and 5 (decimals are allowed)");
       return;
     }
     const desiredRank = (editing as any).featured_rank ?? null;
-    if (desiredRank != null && (desiredRank < 1 || desiredRank > 5)) {
+    if ((!baseline || desiredRank !== baseline.featured_rank) && desiredRank != null && (desiredRank < 1 || desiredRank > 5)) {
       toast.error("Featured slot must be 1-5 or empty");
       return;
     }
     const payload = { ...(editing as any) };
-    payload.priority = priorityNum;
-    payload.rating = rating;
+    if (!baseline || editing.priority !== baseline.priority) payload.priority = priorityNum;
+    if (!baseline || editing.rating !== baseline.rating) payload.rating = rating;
+    if (baseline) {
+      for (const key of Object.keys(payload)) {
+        if (key !== "id" && JSON.stringify(payload[key]) === JSON.stringify(baseline[key])) delete payload[key];
+      }
+    }
     saveCollege.mutate(payload, {
       onSuccess: () => {
         setEditing(null);
@@ -221,7 +225,7 @@ export default function AdminColleges() {
         <div className="grid gap-2 md:grid-cols-[minmax(260px,1fr)_180px_180px_auto]">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Search name, slug, city or state..." className="h-10 rounded-xl pl-10" />
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { setSubmittedSearch(search.trim()); setPage(1); } }} placeholder="Search name, slug, city or state..." className="h-10 rounded-xl pl-10" />
           </div>
           <select value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }} className="h-10 rounded-xl border border-border bg-background px-3 text-sm">
             <option value="">All categories</option>
@@ -660,7 +664,7 @@ export default function AdminColleges() {
 
               {/* ── Placement ── */}
               <AdminFormSection title="Placement" icon={<BarChart className="w-4 h-4 text-primary" />} defaultOpen={false}>
-                <div><label className="text-xs font-medium text-muted-foreground">Placement Summary</label><Input value={editing.placement || ""} onChange={(e) => update("placement", e.target.value)} placeholder="₹25 LPA avg" className="rounded-lg h-9 text-sm" /></div>
+                <div><label className="text-xs font-medium text-muted-foreground">Placement Summary</label><Input value={editing.placement || ""} onChange={(e) => update("placement", e.target.value)} placeholder="Enter a verified placement summary (optional)" className="rounded-lg h-9 text-sm" /></div>
                 <RichTextEditor label="Placement Content" value={editing.placement_content || ""} onChange={(v) => update("placement_content", v)} />
                 <ArrayFieldEditor label="Top Recruiters" values={editing.top_recruiters || []} onChange={(v) => update("top_recruiters", v)} suggestions={["Google","Microsoft","Amazon","TCS","Infosys","Wipro","Flipkart","Goldman Sachs","JP Morgan","Deloitte","McKinsey","Accenture"]} />
               </AdminFormSection>

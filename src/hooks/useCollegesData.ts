@@ -286,7 +286,7 @@ function applyCollegeFallbacks(c: DbCollege | null): DbCollege | null {
     reviews: c.reviews ?? 0,
     courses_count: c.courses_count ?? 25,
     fees: c.fees || "₹50,000 - ₹2,50,000 / year (approx.)",
-    placement: c.placement || "₹4 - 8 LPA (avg.)",
+    placement: c.placement || "",
     ranking: c.ranking || "Emerging",
     image: c.image || "/placeholder.svg",
     tags: c.tags?.length ? c.tags : ["Admissions Open", `Session ${yr}`],
