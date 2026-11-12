@@ -32,3 +32,17 @@ jobs:
             --relational-database-name "$DATABASE_NAME" \
             --query 'relationalDatabase.{name:name,state:state,engine:engine,engineVersion:engineVersion,availabilityZone:location.availabilityZone,publiclyAccessible:publiclyAccessible,pendingMaintenanceActions:pendingMaintenanceActions}' \
             --output json
+
+      - name: Report the last hour of database load
+        run: |
+          set -euo pipefail
+          start=$(date -u -d '1 hour ago' +%FT%TZ)
+          end=$(date -u +%FT%TZ)
+          for item in CPUUtilization:Percent DatabaseConnections:Count DiskQueueDepth:Count FreeStorageSpace:Bytes; do
+            metric=${item%:*}
+            echo "$metric (five-minute averages and peaks)"
+            aws lightsail get-relational-database-metric-data \
+              --relational-database-name "$DATABASE_NAME" --metric-name "$metric" \
+              --start-time "$start" --end-time "$end" --period 300 --unit "${item#*:}" \
+              --statistics Average Maximum --query 'sort_by(metricData,&timestamp)[*].[timestamp,average,maximum]' --output text
+          done
