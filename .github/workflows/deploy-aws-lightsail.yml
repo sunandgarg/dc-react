@@ -3,6 +3,11 @@ name: Deploy AWS Lightsail production
 on:
   workflow_dispatch:
     inputs:
+      skip_sitemap:
+        description: Skip the full sitemap rebuild for an API-only hotfix with no route changes
+        required: false
+        default: false
+        type: boolean
       budget_email:
         description: Email address for AWS budget alerts
         required: true
@@ -972,6 +977,7 @@ jobs:
           REMOTE
 
       - name: Publish complete MySQL sitemap generation
+        if: ${{ !inputs.skip_sitemap }}
         run: |
           aws lightsail get-instance-access-details \
             --instance-name "$INSTANCE_NAME" \
