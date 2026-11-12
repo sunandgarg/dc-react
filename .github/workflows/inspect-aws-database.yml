@@ -134,30 +134,16 @@ jobs:
               console.log("affiliation_index_created");
             }
           }
+          const [active] = await db.query("SELECT ID,TIME,STATE,LEFT(INFO,180) AS shape FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep' AND INFO IS NOT NULL");
+          console.log(JSON.stringify(active));
           for (const sql of [
             "SELECT EVENT_NAME,WORK_COMPLETED,WORK_ESTIMATED FROM performance_schema.events_stages_current",
-            "SELECT NAME,COUNT FROM information_schema.INNODB_METRICS WHERE NAME IN ('dml_reads','dml_inserts','buffer_data_written')",
-            "SHOW GLOBAL STATUS WHERE Variable_name IN ('Threads_connected','Threads_running','Max_used_connections','Slow_queries','Aborted_connects','Innodb_buffer_pool_reads','Innodb_buffer_pool_read_requests','Uptime')",
-            "SHOW VARIABLES WHERE Variable_name IN ('max_connections','innodb_buffer_pool_size')",
-            "SELECT COMMAND, STATE, COUNT(*) AS connections, MAX(TIME) AS max_seconds FROM information_schema.PROCESSLIST GROUP BY COMMAND, STATE",
-            "SELECT DIGEST_TEXT, COUNT_STAR, ROUND(SUM_TIMER_WAIT/1000000000000,2) AS total_seconds, ROUND(MAX_TIMER_WAIT/1000000000000,2) AS max_seconds FROM performance_schema.events_statements_summary_by_digest ORDER BY SUM_TIMER_WAIT DESC LIMIT 8",
-            "EXPLAIN SELECT slug,name FROM colleges WHERE parent_university_slug = 'delhi-university' AND is_active=1 ORDER BY name LIMIT 24",
-            "EXPLAIN SELECT id,name FROM colleges WHERE name LIKE '%Delhi%' ORDER BY name,id LIMIT 20"
+            "SELECT OBJECT_TYPE,OBJECT_NAME,LOCK_TYPE,LOCK_DURATION,LOCK_STATUS,OWNER_THREAD_ID FROM performance_schema.metadata_locks WHERE OBJECT_NAME='colleges'",
+            "SHOW GLOBAL STATUS WHERE Variable_name IN ('Threads_running','Innodb_rows_inserted','Innodb_data_written')"
           ]) {
-            const before=Date.now();
-            const [rows]=await db.query(sql);
-            console.log(JSON.stringify({sql,ms:Date.now()-before,rows}));
+            try { const [rows]=await db.query(sql); console.log(JSON.stringify({sql,rows})); }
+            catch(e) { console.log(e.code); }
           }
-          const [active] = await db.query("SELECT TIME, STATE, INFO FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep' AND INFO IS NOT NULL");
-          console.log(JSON.stringify(active.map(r=>({seconds:r.TIME,state:r.STATE,shape:r.INFO.replace(/'[^']*'/g,"?").slice(0,1800)}))));
-          const [sizes] = await db.query("SELECT TABLE_NAME, TABLE_ROWS, ROUND(DATA_LENGTH/1048576) AS data_mb, ROUND(INDEX_LENGTH/1048576) AS index_mb FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() ORDER BY DATA_LENGTH DESC LIMIT 8");
-          console.log(JSON.stringify(sizes));
-          for (const sql of [
-            "SELECT entity_table,COUNT(*) AS rows_count FROM entity_search_names GROUP BY entity_table",
-            "SELECT TABLE_NAME,COLUMN_NAME,COLLATION_NAME,COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ('colleges','entity_search_names') AND COLUMN_NAME='id'",
-            "EXPLAIN SELECT id,name FROM colleges WHERE id IN (SELECT id FROM entity_search_names WHERE entity_table='colleges' AND LOWER(name) LIKE LOWER('%Delhi%')) ORDER BY name LIMIT 20",
-            "EXPLAIN SELECT slug,name FROM colleges WHERE id IN (SELECT id FROM entity_search_names WHERE entity_table='colleges' AND JSON_CONTAINS(related_exams,'[\"jee-main\"]')) AND is_active=1 ORDER BY priority LIMIT 12"
-          ]) { const [rows]=await db.query(sql); console.log(JSON.stringify({sql,rows})); }
           await db.end();
           JS
           REMOTE
