@@ -308,11 +308,16 @@ async function authorizeRest(table, request) {
     const identity = bearerToken(request) ? await resolveIdentity(request) : null;
     if (identity && await isAdmin(identity.id)) return { request, actorUserId: identity.id };
     if (identity && table === "articles") {
-      const contentHeadRoles = await prisma.$queryRawUnsafe(
-        "SELECT 1 FROM `user_roles` WHERE `user_id` = ? AND `role` IN ('content_head','manager') LIMIT 1",
+      const editorialRoles = await prisma.$queryRawUnsafe(
+        "SELECT `role` FROM `user_roles` WHERE `user_id` = ? AND `role` IN ('content_head','manager','content','content_writer')",
         identity.id,
       );
-      if (contentHeadRoles.length) return { request, actorUserId: identity.id };
+      if (editorialRoles.some((row) => row.role !== "content_writer")) return { request, actorUserId: identity.id };
+      if (editorialRoles.some((row) => row.role === "content_writer")) {
+        const url = new URL(request.url);
+        url.searchParams.set("site_scope", "eq.dekhocampus");
+        return { request: new Request(url, request), actorUserId: identity.id };
+      }
     }
     const publicRequest = table === "articles" ? enforcePublicArticlePolicy(request) : request;
     const safeSelection = publicReadSelections.get(table);
@@ -398,10 +403,16 @@ async function authorizeRest(table, request) {
     }
     if (editorialRoles.some((row) => row.role === "content_writer")) {
       if (!canContentWriterAccess(table, action)) {
-        throw new HttpError(403, "WRITER_CREATE_ONLY", "Content writers can only create new articles, colleges, courses and exams");
+        throw new HttpError(403, "WRITER_ACCESS_DENIED", "Content writers can only read assigned content, create new records, and edit their own article drafts");
       }
       if (table === "articles" && siteScopeForRequest(request) !== "dekhocampus") {
         throw new HttpError(403, "WRITER_SITE_SCOPE", "This writer account is limited to DekhoCampus articles");
+      }
+      if (action === "view") {
+        if (table !== "articles") return { request, actorUserId: null };
+        const url = new URL(request.url);
+        url.searchParams.set("site_scope", "eq.dekhocampus");
+        return { request: new Request(url, request), actorUserId: null };
       }
       if (table === "articles") {
         const input = await request.clone().json().catch(() => ({}));
@@ -416,6 +427,14 @@ async function authorizeRest(table, request) {
       );
       if (!rows.length) throw new HttpError(403, "WRITER_PERMISSION_MISSING", "Writer access has not been activated for this content type");
       const directPublish = Boolean(rows[0].can_publish);
+      if (action === "edit") {
+        const id = new URL(request.url).searchParams.get("id")?.match(/^eq\.([a-f0-9-]{36})$/i)?.[1];
+        const owned = id && await prisma.$queryRawUnsafe(
+          "SELECT 1 FROM `articles` WHERE `id` = ? AND `created_by` = ? AND `site_scope` = 'dekhocampus' AND `status` = 'Draft' LIMIT 1",
+          id, identity.id,
+        );
+        if (!owned?.length) throw new HttpError(403, "WRITER_DRAFT_ONLY", "You can edit only your own article drafts");
+      }
       let writerRequest = request;
       if (table === "url_mappings") {
         const input = await request.clone().json().catch(() => null);
@@ -426,17 +445,29 @@ async function authorizeRest(table, request) {
       } else {
         const author = await ensureWriterAuthorProfile(prisma, identity.id);
         const input = await request.clone().json().catch(() => null);
-        const row = stampWriterByline(table, input, author, identity.id);
+        if (action === "edit" && (!input || typeof input !== "object" || Array.isArray(input))) {
+          throw new HttpError(400, "INVALID_WRITER_ARTICLE", "Submit one article draft at a time");
+        }
+        const row = action === "edit"
+          ? { ...input, author: author.name, author_id: author.id, created_by: identity.id }
+          : stampWriterByline(table, input, author, identity.id);
         const headers = new Headers(request.headers);
         headers.set("content-type", "application/json");
-        writerRequest = new Request(request.url, { method: request.method, headers, body: JSON.stringify(row) });
+        const writerUrl = new URL(request.url);
+        if (action === "edit") {
+          writerUrl.searchParams.set("created_by", `eq.${identity.id}`);
+          writerUrl.searchParams.set("status", "eq.Draft");
+          writerUrl.searchParams.set("site_scope", "eq.dekhocampus");
+        }
+        writerRequest = new Request(writerUrl, { method: request.method, headers, body: JSON.stringify(row) });
       }
+      const saveDraft = table === "articles" && action !== "view" && (await writerRequest.clone().json()).status === "Draft";
       return {
         request: await validateSiteScopeWriteRequest(table, writerRequest),
-        actorUserId: directPublish ? null : identity.id,
-        stageReview: !directPublish,
+        actorUserId: directPublish || saveDraft ? null : identity.id,
+        stageReview: !directPublish && !saveDraft,
         forceDraft: false,
-        publishOnApproval: !directPublish,
+        publishOnApproval: !directPublish && !saveDraft,
       };
     }
     const permission = await prisma.$queryRawUnsafe(

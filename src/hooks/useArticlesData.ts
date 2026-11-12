@@ -27,6 +27,7 @@ export type DbArticle = {
   category: string;
   author: string;
   author_id?: string | null;
+  created_by?: string | null;
   featured_image: string;
   source_logo?: string | null;
   views: number;
@@ -149,7 +150,7 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
     queryFn: async ({ signal }) => {
       let query = backendClient
         .from("articles")
-        .select("id,title,slug,featured_image,category,status,author,views,created_at", { count: "exact" })
+        .select("id,title,slug,featured_image,category,status,author,created_by,views,created_at", { count: "exact" })
         .eq("site_scope", siteScope)
         .order("created_at", { ascending: false });
 
@@ -229,6 +230,7 @@ export function useSaveArticle(siteScope: SiteScope = DEFAULT_SITE_SCOPE) {
         if (error) throw error;
         pendingReview = isPendingReview(response);
         savedArticle = data as Pick<DbArticle, "id" | "slug"> | null;
+        if (!pendingReview && !savedArticle) throw new Error("Article was not updated. Reload it before saving again.");
       } else {
         const { id, created_at, updated_at, ...rest } = normalized;
         const response = await backendClient.from("articles").insert(rest).select("id,slug").maybeSingle();

@@ -488,7 +488,11 @@ export default function CollegeDetail() {
                                 </button>
                               </td>
                               <td className="px-2 py-4 text-muted-foreground sm:px-3">
-                                {group.specializationCount} specialization{group.specializationCount === 1 ? "" : "s"}
+                                <button type="button" onClick={() => toggleCourseGroup(group.key)} aria-expanded={expanded}
+                                  aria-label={`${expanded ? "Hide" : "Show"} ${group.label} specializations`}
+                                  className="text-left hover:text-primary hover:underline">
+                                  {group.specializationCount} specialization{group.specializationCount === 1 ? "" : "s"}
+                                </button>
                               </td>
                               <td className="px-2 py-4 sm:px-3">
                                 <div className="font-semibold text-foreground">{formatFeeRange(group)}</div>

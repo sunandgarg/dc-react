@@ -23,12 +23,14 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
   const [results, setResults] = useState<DirectorySearchResult[]>([]);
   const [focused, setFocused] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [searchError, setSearchError] = useState(false);
   const requestId = useRef(0);
   const normalizedQuery = query.trim().toLowerCase();
   const isHero = variant === "hero";
 
   useEffect(() => {
     const currentRequest = ++requestId.current;
+    setSearchError(false);
     if (normalizedQuery.length < 2) {
       setResults([]);
       setLoading(false);
@@ -41,7 +43,7 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
         const nextResults = await searchDirectory(normalizedQuery, 10);
         if (requestId.current === currentRequest) setResults(nextResults);
       } catch {
-        if (requestId.current === currentRequest) setResults([]);
+        if (requestId.current === currentRequest) { setResults([]); setSearchError(true); }
       } finally {
         if (requestId.current === currentRequest) setLoading(false);
       }
@@ -109,7 +111,8 @@ export function GlobalSearchBar({ variant = "header", onAskAI }: GlobalSearchBar
         <div className="absolute inset-x-0 top-full z-[80] mt-2 overflow-hidden rounded-2xl border border-border bg-white shadow-2xl">
           <div className="max-h-[min(65vh,430px)] overflow-y-auto p-1.5">
             {loading && !results.length && <p className="px-3 py-5 text-center text-sm text-muted-foreground">Searching…</p>}
-            {!loading && !results.length && (
+            {!loading && searchError && <p role="alert" className="px-3 py-5 text-center text-sm text-muted-foreground">Search is unavailable. Edit your search to retry.</p>}
+            {!loading && !searchError && !results.length && (
               <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={askDiya}
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left hover:bg-slate-50">
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary"><CircleDot className="h-4 w-4" /></span>

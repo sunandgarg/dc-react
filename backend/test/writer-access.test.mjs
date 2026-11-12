@@ -1,17 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHmac } from "node:crypto";
 import { canContentWriterAccess } from "../src/editor-access.mjs";
+import { handleRequest } from "../src/index.mjs";
+import { prisma } from "../src/db.mjs";
 import { createWriterShortLink } from "../src/writer-links.mjs";
 import { ensureWriterAuthorProfile, handleWriterProfile, stampWriterByline } from "../src/writer-profile.mjs";
 
 const userId = "11111111-2222-4333-8444-555555555555";
 
-test("writer may only create four content types and new short links", () => {
+test("writer can read content and edit article drafts, but cannot edit other content", () => {
   for (const resource of ["articles", "colleges", "courses", "exams", "url_mappings"]) {
     assert.equal(canContentWriterAccess(resource, "create"), true);
-    for (const action of ["view", "edit", "delete", "publish"]) {
-      assert.equal(canContentWriterAccess(resource, action), false);
-    }
+    assert.equal(canContentWriterAccess(resource, "view"), resource !== "url_mappings");
+    assert.equal(canContentWriterAccess(resource, "edit"), resource === "articles");
+    for (const action of ["delete", "publish"]) assert.equal(canContentWriterAccess(resource, action), false);
   }
   assert.equal(canContentWriterAccess("users", "create"), false);
   assert.equal(canContentWriterAccess("authors", "create"), false);
@@ -30,6 +33,7 @@ test("server stamps the signed-in writer's ID and author profile on every submit
   }
   assert.throws(() => stampWriterByline("articles", [{ title: "A" }, { title: "B" }], author, userId), /one new item/);
   assert.throws(() => stampWriterByline("articles", { title: "Incomplete", slug: "incomplete", content: "Short" }, author, userId), /useful description/);
+  assert.equal(stampWriterByline("articles", { title: "Working draft", slug: "working-draft", status: "Draft", content: "Short" }, author, userId).status, "Draft");
 });
 
 test("writer short links use server-owned identity, code and domain", () => {
@@ -80,4 +84,39 @@ test("writer can save only their own byline profile", async () => {
 
   const badRequest = new Request("https://example.com/v1/functions/writer-profile", { method: "POST", body: JSON.stringify({ avatar_style: "not-a-style" }) });
   await assert.rejects(() => handleWriterProfile(badRequest, userId, database), /valid writer avatar style/);
+});
+
+test("writer can load DekhoCampus articles but cannot update another writer's draft", async () => {
+  const previousSecret = process.env.AUTH_JWT_SECRET;
+  const previousUser = prisma.app_auth_users.findUnique;
+  const previousQuery = prisma.$queryRawUnsafe;
+  const secret = "synthetic-writer-test-secret-not-a-real-credential";
+  process.env.AUTH_JWT_SECRET = secret;
+  const encode = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
+  const now = Math.floor(Date.now() / 1000);
+  const payload = `${encode({ alg: "HS256", typ: "JWT" })}.${encode({ sub: userId, iat: now, exp: now + 3600 })}`;
+  const token = `${payload}.${createHmac("sha256", secret).update(payload).digest("base64url")}`;
+  const sqlSeen = [];
+  prisma.app_auth_users.findUnique = async () => ({ id: userId, user_metadata: {}, created_at: new Date(), updated_at: new Date() });
+  prisma.$queryRawUnsafe = async (sql, ...params) => {
+    sqlSeen.push({ sql, params });
+    if (sql.includes("FROM `user_roles`")) return sql.includes("`role` = 'admin'") ? [] : [{ role: "content_writer" }];
+    if (sql.includes("FROM `user_permissions`")) return [{ can_publish: 0 }];
+    if (sql.includes("COUNT(*)")) return [{ total: 0 }];
+    return [];
+  };
+  const headers = { authorization: `Bearer ${token}`, "content-type": "application/json" };
+  try {
+    const read = await handleRequest(new Request("http://localhost/v1/rest/articles?select=id,title&site_scope=eq.sarkari&limit=10", { headers }));
+    assert.equal(read.status, 200, await read.text());
+    assert.ok(sqlSeen.some(({ sql, params }) => sql.includes("site_scope") && params.includes("dekhocampus")), JSON.stringify(sqlSeen));
+    const denied = await handleRequest(new Request(`http://localhost/v1/rest/articles?id=eq.11111111-2222-4333-8444-666666666666`, {
+      method: "PATCH", headers, body: JSON.stringify({ title: "Takeover", status: "Draft" }),
+    }));
+    assert.equal(denied.status, 403, await denied.text());
+  } finally {
+    if (previousSecret === undefined) delete process.env.AUTH_JWT_SECRET; else process.env.AUTH_JWT_SECRET = previousSecret;
+    prisma.app_auth_users.findUnique = previousUser;
+    prisma.$queryRawUnsafe = previousQuery;
+  }
 });

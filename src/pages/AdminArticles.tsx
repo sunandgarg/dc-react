@@ -198,12 +198,12 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     setPageSize(next);
   };
 
-  const { can, isAdmin, roles } = useAuth();
+  const { can, isAdmin, roles, user } = useAuth();
   const isWriter = !isAdmin && roles.includes("content_writer");
   const canPublish = isAdmin || can("articles", "publish");
   const canCreate = isAdmin || can("articles", "create");
   const canEdit = isAdmin || can("articles", "edit");
-  const { openRecord } = useCatalogEditor("articles", canEdit, setEditing, siteScope);
+  const { openRecord } = useCatalogEditor("articles", canEdit || isWriter, setEditing, siteScope);
   const [showTools, setShowTools] = useState(false);
 
   const bulkUpdate = async (updates: Record<string, unknown>, label: string, ids = Array.from(selectedIds)) => {
@@ -254,7 +254,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     const faqError = validateArticleFaqs(editorFaqs);
     if (faqError) { toast.error(faqError); return; }
     const normalizedSlug = normalizeArticleSlug(editing.slug);
-    const validationError = validateArticleSave({ ...editing, slug: normalizedSlug, ...(requestHumanReview ? { status: "Published" } : {}) }, canPublish, isWriter);
+    const validationError = validateArticleSave({ ...editing, slug: normalizedSlug, ...(requestHumanReview ? { status: "Published" } : {}) }, canPublish || (isWriter && requestHumanReview), isWriter);
     if (validationError) { toast.error(validationError); return; }
     const rawRank = (editing as any).featured_rank ?? null;
     const desiredRank = rawRank == null ? null : Number(rawRank);
@@ -273,7 +273,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
       payload.author = payload.author || "Sarkari DekhoCampus Desk";
     }
     if (requestHumanReview) {
-      if (!canPublish || !editing.id) { toast.error("Only an editor with publish permission can request this publication review."); return; }
+      if ((!canPublish && !isWriter) || (canPublish && !editing.id)) { toast.error("This article cannot be submitted for review."); return; }
       payload.status = "Published";
       payload.is_active = true;
       payload._request_human_review = true;
@@ -473,7 +473,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               </div>
               <div className="flex gap-1">
                 <a href={isSarkari ? `https://sarkari.dekhocampus.com/news/${a.slug}` : `/news/${a.slug}`} target="_blank" rel="noopener noreferrer" title="Open public page" className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted text-muted-foreground hover:text-primary"><ExternalLink className="w-3.5 h-3.5" /></a>
-                {canEdit && <Button variant="ghost" size="icon" aria-label={`Edit ${a.title}`} onClick={() => openRecord(a.id)} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
+                {(canEdit || (isWriter && a.created_by === user?.id && a.status === "Draft")) && <Button variant="ghost" size="icon" aria-label={`Edit ${a.title}`} onClick={() => openRecord(a.id)} className="w-8 h-8"><Pencil className="w-3.5 h-3.5" /></Button>}
                 <PermGate module="articles" action="delete"><Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete?")) deleteArticle.mutate(a.id); }} className="w-8 h-8 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button></PermGate>
               </div>
             </div>
@@ -571,7 +571,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                     </select>
                   </div>
                   {isWriter ? <p className="text-xs text-muted-foreground">Your own writer profile is attached automatically when you submit.</p> : <div><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>}
-                  <div><label className="text-xs font-medium text-muted-foreground">Title *</label><Input value={editing.title || ""} onChange={(e) => update("title", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
+                  <div><label htmlFor="article-editor-title" className="text-xs font-medium text-muted-foreground">Title *</label><Input id="article-editor-title" value={editing.title || ""} onChange={(e) => update("title", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="my-article-slug" className="rounded-lg h-9 text-sm" /></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Views</label><Input type="number" value={editing.views ?? 0} onChange={(e) => update("views", parseInt(e.target.value) || 0)} className="rounded-lg h-9 text-sm" /></div>
                   <div className="sm:col-span-2 lg:col-span-3"><FeaturedRankPicker value={(editing as any).featured_rank} onChange={(v) => update("featured_rank" as any, v)} label={isSarkari ? "Pin to Sarkari homepage top" : "Pin to News page top"} maxSlots={4} slotLabel={(r) => `#${r}${r === 1 ? " (Big Hero)" : ` (Small ${r - 1})`}`} helpText={isSarkari ? "Controls the four highlighted Sarkari update slots. Rankings are isolated from DekhoCampus news." : "#1 = big hero card on /news. #2-4 = the three small cards beside it. Picking a slot pushes existing pinned items down; anything beyond #4 unpins automatically."} /></div>
@@ -722,8 +722,9 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               <div className="ml-auto flex items-center gap-2">
                 <Button variant="outline" onClick={() => setEditing(null)} className="rounded-lg">Cancel</Button>
                 {canPublish && editing.id && <Button variant="outline" onClick={() => handleSave(true)} disabled={saveArticle.isPending || faqsPending || linksPending} className="rounded-lg">Submit for human review</Button>}
+                {isWriter && editing.status === "Draft" && <Button variant="outline" onClick={() => handleSave(true)} disabled={saveArticle.isPending || faqsPending || linksPending} className="rounded-lg">Submit for approval</Button>}
                 <Button onClick={() => handleSave()} disabled={saveArticle.isPending || faqsPending || linksPending} className="rounded-lg">
-                  {saveArticle.isPending ? "Saving..." : editing.status === "Draft" && canPublish ? "Save Draft" : canPublish ? "Save Article" : "Submit for approval"}
+                  {saveArticle.isPending ? "Saving..." : editing.status === "Draft" && (canPublish || isWriter) ? "Save Draft" : canPublish ? "Save Article" : "Submit for approval"}
                 </Button>
               </div>
             </div>

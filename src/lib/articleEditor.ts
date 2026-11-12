@@ -35,7 +35,7 @@ export function validateArticleSave(article: ArticleSaveFields, canPublish: bool
   if (!normalizeArticleSlug(article.slug)) return "Add a valid article slug.";
   if (article.status === "Published" && !canPublish) return "You do not have permission to publish this article.";
   // Review submissions are published on approval, so they need the same body checks.
-  if (article.status !== "Published" && canPublish && !isWriter) return null;
+  if (article.status !== "Published") return null;
   if (visibleArticleText(article.description).length < 10) return "Add a useful article description before publishing.";
   if (visibleArticleText(article.content).length < 20) return "Add article content before publishing.";
   if (hasBodyFaqs(article.content)) return "Move body FAQs into the dedicated FAQ fields before publishing.";

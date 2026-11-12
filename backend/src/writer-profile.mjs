@@ -99,7 +99,7 @@ export function stampWriterByline(table, input, author, userId) {
   }
   if (table === "articles") {
     const visible = (value) => String(value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-    if (visible(row.description).length < 10 || visible(row.content).length < 20) {
+    if (row.status !== "Draft" && (visible(row.description).length < 10 || visible(row.content).length < 20)) {
       throw inputError("Add a useful description and article body before submitting for approval");
     }
   }

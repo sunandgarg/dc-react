@@ -39,7 +39,8 @@ export function canContentHeadAccess(resource, action) {
 
 export function canContentWriterAccess(resource, action) {
   return (CONTENT_WRITER_RESOURCES.has(String(resource || "")) || resource === CONTENT_WRITER_LINK_RESOURCE)
-    && action === "create";
+    && (action === "create" || (action === "view" && resource !== CONTENT_WRITER_LINK_RESOURCE)
+      || (action === "edit" && resource === "articles"));
 }
 
 export function contentWriterPermissions(directPublish = false) {
