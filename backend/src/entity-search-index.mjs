@@ -30,12 +30,11 @@ export async function ensureEntitySearchIndex(db, executeDdl) {
       const existing = await db.$queryRawUnsafe("SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME=?", name);
       const oldName = `dc_search_${table}_${event.toLowerCase()}`;
       const old = await db.$queryRawUnsafe("SELECT 1 FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME=?", oldName);
-      if (old.length) await executeDdl(`DROP TRIGGER ${quote(oldName)}`);
-      if (existing.length) continue;
       const action = event === "DELETE"
         ? `DELETE FROM entity_search_names WHERE entity_table='${table}' AND id=OLD.id`
         : `INSERT INTO entity_search_names (${columns}) VALUES (${values}) ON DUPLICATE KEY UPDATE ${updates}`;
-      await executeDdl(`CREATE TRIGGER ${quote(name)} AFTER ${event} ON ${quote(table)} FOR EACH ROW ${action}`);
+      if (!existing.length) await executeDdl(`CREATE TRIGGER ${quote(name)} AFTER ${event} ON ${quote(table)} FOR EACH ROW ${action}`);
+      if (old.length) await executeDdl(`DROP TRIGGER ${quote(oldName)}`);
     }
     const marker = await db.$queryRawUnsafe("SELECT 1 FROM entity_search_names WHERE entity_table='_ready' AND id=? LIMIT 1", "v2_" + table);
     if (!marker.length) {
