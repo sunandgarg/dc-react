@@ -85,11 +85,11 @@ describe("JEE Main ad pages", () => {
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
-  it("offers the ten-paper ZIP before the 2026 card and downloads it only after the form succeeds", () => {
+  it("offers the 106-paper ZIP before the 2026 group and downloads it only after the form succeeds", () => {
     open("jee-main-2027");
     const section = within(screen.getByRole("region", { name: "JEE Main question papers: last 5 years" }));
-    const download = section.getByRole("button", { name: "Download all 10 papers (.zip)" });
-    expect(download.compareDocumentPosition(section.getByRole("heading", { name: "2026" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const download = section.getByRole("button", { name: "Download all 106 papers (.zip)" });
+    expect(download.compareDocumentPosition(section.getByText("2026 · 19 papers")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     const assign = vi.fn();
     const testWindow = Object.create(window);
     Object.defineProperty(testWindow, "location", { value: { origin: window.location.origin, assign } });
@@ -100,19 +100,19 @@ describe("JEE Main ad pages", () => {
       expect(assign).not.toHaveBeenCalled();
       fireEvent.click(download);
       fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Complete request" }));
-      expect(assign).toHaveBeenCalledExactlyOnceWith("/docs/jee-main-paper-1-2022-2026.zip");
+      expect(assign).toHaveBeenCalledExactlyOnceWith("https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2022-2026/DekhoCampus_JEE_Main_2022_2026_All_106_Papers.zip");
     } finally { vi.unstubAllGlobals(); }
   });
 
   it("keeps both shifts for all five years and supports middle-click gating", () => {
     open("jee-main-2027");
     const papers = screen.getByRole("region", { name: "JEE Main question papers: last 5 years" });
-    const pdfLinks = within(papers).getAllByRole("link", { name: /question paper PDF$/ });
-    expect(pdfLinks).toHaveLength(10);
-    for (const year of [2026, 2025, 2024, 2023, 2022]) expect(pdfLinks.filter(link => link.getAttribute("aria-label")?.includes(String(year)))).toHaveLength(2);
+    const pdfLinks = within(papers).getAllByRole("link", { name: /question paper PDF$/, hidden: true });
+    expect(pdfLinks).toHaveLength(106);
+    for (const [year, count] of [[2026, 19], [2025, 19], [2024, 20], [2023, 24], [2022, 24]]) expect(pdfLinks.filter(link => link.getAttribute("aria-label")?.includes(String(year)))).toHaveLength(count);
     for (const link of pdfLinks) {
       const url = new URL(link.getAttribute("href")!);
-      expect(["nta.ac.in", "cdnbbsr.s3waas.gov.in"]).toContain(url.hostname);
+      expect(url.hostname).toBe("aws-origin.dekhocampus.com");
       expect(url.pathname.endsWith(".pdf")).toBe(true);
     }
     fireEvent(pdfLinks[0], new MouseEvent("auxclick", { bubbles: true, cancelable: true, button: 1 }));

@@ -1,3 +1,4 @@
+import QUESTION_PAPERS from "@/data/jeeMainPapers.json";
 import { useState, type MouseEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
@@ -21,13 +22,7 @@ const FRESH_FORM_NOTICE = "https://nta.ac.in/Download/Notice/Notice_202610302021
 const BULLETIN = "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2026/10/202610241890224107.pdf";
 const NOTICE_IMAGE = "https://aws-origin.dekhocampus.com/storage/v1/object/public/admin-uploads/editor/1793377152584-fljho1.webp";
 const VIDEO_CLOSES = Date.parse("2026-11-26T18:20:00Z");
-const QUESTION_PAPERS = [
-  { year: 2026, date: "2 April", papers: ["https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2026/04/202604092096865379.pdf", "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2026/04/20260409481957146.pdf"] },
-  { year: 2025, date: "23 January", papers: ["https://nta.ac.in/Download/ExamPaper/Paper_20250715180122.pdf", "https://nta.ac.in/Download/ExamPaper/Paper_20250715180027.pdf"] },
-  { year: 2024, date: "30 January", papers: ["https://nta.ac.in/Download/ExamPaper/Paper_20250910120036.pdf", "https://nta.ac.in/Download/ExamPaper/Paper_20250910120131.pdf"] },
-  { year: 2023, date: "10 April", papers: ["https://nta.ac.in/Download/ExamPaper/Paper_20230926122347.pdf", "https://nta.ac.in/Download/ExamPaper/Paper_20230926122409.pdf"] },
-  { year: 2022, date: "28 June", papers: ["https://nta.ac.in/Download/ExamPaper/Paper_20230321125442.pdf", "https://nta.ac.in/Download/ExamPaper/Paper_20230322124511.pdf"] },
-];
+const PAPERS_ZIP = "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2022-2026/DekhoCampus_JEE_Main_2022_2026_All_106_Papers.zip";
 
 const copy = {
   en: {
@@ -68,7 +63,7 @@ const copy = {
       { question: "Is an application number enough to complete registration?", answer: "No. Complete the applicable payment and save the confirmation page from the NTA portal." },
       { question: "Will a previous fee transfer if I start a fresh form?", answer: "No. NTA's 30 October clarification says the earlier fee is neither refunded nor adjusted against a fresh application." },
       { question: "Which JEE Main paper should an engineering applicant choose?", answer: "Paper 1 is for B.E. and B.Tech. Paper 2A is for B.Arch, while Paper 2B is for B.Planning. Choose the paper that matches your intended course." },
-      { question: "Are the previous-year question papers free to open?", answer: "Yes. The links on this page open PDFs hosted by NTA or its official government document service. Selecting a link opens the guidance form. Complete the request to continue to your selected PDF; the PDF itself is free." },
+      { question: "Are the previous-year question papers free to open?", answer: "Yes. The 106-paper collection and individual PDFs are hosted by DekhoCampus. Selecting a link opens the guidance form. Complete the request to continue to your selected PDF; the PDF itself is free." },
       { question: "Does completing JEE Main registration secure a college seat?", answer: "No. Registration lets you apply for the examination. Admission depends on the institution's eligibility rules and the applicable counselling or selection process." },
     ],
     footer: "Independent student guidance by DekhoCampus. Official exam applications are handled by NTA.",
@@ -172,19 +167,23 @@ function EnglishAdPage() {
           <JeeGuidanceForm id="jee-registration-form" />
 
           <section id="question-papers" aria-labelledby="papers-title" className="rounded-md border border-blue-100 border-t-[3px] border-t-blue-700 bg-[#f7fafc] p-3 sm:p-5">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">Official NTA PDFs</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">DekhoCampus paper collection</p>
             <h2 id="papers-title" className="mt-1 font-bold">JEE Main question papers: last 5 years</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700">Practise with selected B.E. / B.Tech (Paper 1) papers from 2022 to 2026. Download both shifts for all five dates in one ZIP, or choose an individual PDF. Complete the guidance form to continue to your free download.</p>
-            <button type="button" onClick={() => setDestination({ url: "/docs/jee-main-paper-1-2022-2026.zip", label: "All 10 JEE Main question papers (ZIP)" })} className="mt-4 flex min-h-11 w-full items-center justify-center rounded border border-blue-800 bg-blue-800 px-3 py-2 text-center text-sm font-bold text-white hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800">
-              Download all 10 papers (.zip)
+            <p className="mt-2 text-sm leading-6 text-slate-700">Download all 106 papers from 2022 to 2026 in one ZIP, or open a year below and choose an exam date and morning or evening shift. Complete the guidance form to continue to your free download.</p>
+            <button type="button" onClick={() => setDestination({ url: PAPERS_ZIP, label: "All 106 JEE Main question papers (ZIP)" })} className="mt-4 flex min-h-11 w-full items-center justify-center rounded border border-blue-800 bg-blue-800 px-3 py-2 text-center text-sm font-bold text-white hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800">
+              Download all 106 papers (.zip)
             </button>
-            <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-5 sm:gap-2">
-              {QUESTION_PAPERS.map(({ year, date, papers }) => <div key={year} className="group overflow-hidden rounded border border-blue-100 bg-white first:col-span-2 first:grid first:grid-cols-2 sm:first:col-span-1 sm:first:block">
-                <div className="flex flex-col justify-center px-1 py-3 text-center"><h3 className="text-2xl font-extrabold leading-8 text-orange-600">{year}</h3><p className="mt-1 text-[11px] leading-5 text-slate-500">{date}</p></div>
-                <div className="divide-y divide-blue-50 border-t border-blue-50 group-first:border-l group-first:border-t-0 sm:group-first:border-l-0 sm:group-first:border-t">
-                  {papers.map((href, shift) => <a key={href} href={href} target="_blank" rel="noopener noreferrer" aria-label={`JEE Main ${year}, ${date}, Shift ${shift + 1} question paper PDF`} className="flex min-h-11 items-center justify-center gap-1.5 px-1 py-2 text-xs font-semibold text-blue-800 hover:bg-blue-50">Shift {shift + 1}<span className="rounded-sm border border-blue-100 px-1 text-[8px] leading-4">PDF</span><span aria-hidden="true">↗</span></a>)}
-                </div>
-              </div>)}
+            <div className="mt-4 space-y-3">
+              {QUESTION_PAPERS.map(({ year, dates }) => <details key={year} open={year === 2026} className="rounded border border-blue-100 bg-white">
+                <summary className="cursor-pointer px-4 py-3 font-bold text-blue-900">{year} · {dates.reduce((count, date) => count + Number(!!date.morning) + Number(!!date.evening), 0)} papers</summary>
+                <div className="overflow-x-auto"><table className="w-full text-left text-sm">
+                  <thead className="bg-blue-50"><tr><th className="px-3 py-2">Exam date</th><th className="px-3 py-2">Morning shift</th><th className="px-3 py-2">Evening shift</th></tr></thead>
+                  <tbody className="divide-y divide-blue-50">{dates.map(date => <tr key={date.date}>
+                    <th scope="row" className="px-3 py-2 font-medium">{date.date} {year}</th>
+                    {(["morning", "evening"] as const).map(shift => <td key={shift} className="px-3 py-2">{date[shift] ? <a href={date[shift]} target="_blank" rel="noopener noreferrer" aria-label={`JEE Main ${year}, ${date.date}, ${shift} shift question paper PDF`} className="inline-flex min-h-11 items-center font-semibold text-blue-800 underline">Download PDF</a> : <span className="text-slate-500">Not in collection</span>}</td>)}
+                  </tr>)}</tbody>
+                </table></div>
+              </details>)}
             </div>
             <p className="mt-3 text-xs leading-5 text-slate-600">For other dates, languages or papers, use <a href="https://nta.ac.in/Downloads" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">NTA's full question-paper archive</a>. Select the year, JEE-Main and your paper, then Search. Older papers may follow a different exam pattern.</p>
           </section>
