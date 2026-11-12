@@ -164,8 +164,8 @@ jobs:
               await new Promise(resolve=>setTimeout(resolve,10000));
             }
           }
-          const [active] = await db.query("SELECT ID,TIME,STATE,LEFT(INFO,180) AS shape FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep' AND INFO IS NOT NULL");
-          console.log(JSON.stringify(active));
+          const [active] = await db.query("SELECT ID,TIME,STATE,INFO AS shape FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep' AND INFO IS NOT NULL");
+          console.log(JSON.stringify(active.map(r=>({...r,shape:r.shape.startsWith("SELECT ") ? r.shape.replace(/'[^']*'/g,"?").slice(0,3000) : r.shape.split(" ")[0]}))));
           for (const sql of [
             "SELECT EVENT_NAME,WORK_COMPLETED,WORK_ESTIMATED FROM performance_schema.events_stages_current",
             "SELECT OBJECT_TYPE,OBJECT_NAME,LOCK_TYPE,LOCK_DURATION,LOCK_STATUS,OWNER_THREAD_ID FROM performance_schema.metadata_locks WHERE OBJECT_NAME='colleges'",
