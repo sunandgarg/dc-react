@@ -21,3 +21,10 @@ for (const page of ['AdminCourses', 'AdminExams']) {
     assert.match(source, /useAdminCatalogList\("(?:courses|exams)", visibleCount, submittedSearch, statusFilter\)/);
   });
 }
+
+test('admin article search uses titles and slugs without scanning bodies', async () => {
+  const source = await readFile(new URL('../../src/hooks/useArticlesData.ts', import.meta.url), 'utf8');
+  const query = source.slice(source.indexOf('export function useAdminArticles'), source.indexOf('export function useAdminArticles') + 2200);
+  assert.ok(query.includes('title.ilike.${ilikeTerm},slug.ilike.${ilikeTerm}'));
+  assert.ok(!query.includes('content.ilike'));
+});

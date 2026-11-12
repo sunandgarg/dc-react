@@ -155,20 +155,7 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
 
       if (normalizedSearch) {
         const ilikeTerm = `%${normalizedSearch.replace(/\s+/g, "%")}%`;
-        query = query.or(
-          [
-            `title.ilike.${ilikeTerm}`,
-            `slug.ilike.${ilikeTerm}`,
-            `author.ilike.${ilikeTerm}`,
-            `category.ilike.${ilikeTerm}`,
-            `vertical.ilike.${ilikeTerm}`,
-            `description.ilike.${ilikeTerm}`,
-            `content.ilike.${ilikeTerm}`,
-            `meta_title.ilike.${ilikeTerm}`,
-            `meta_description.ilike.${ilikeTerm}`,
-            `meta_keywords.ilike.${ilikeTerm}`,
-          ].join(",")
-        );
+        query = query.or(`title.ilike.${ilikeTerm},slug.ilike.${ilikeTerm}`);
       }
 
       if (filters.createdSince) query = query.gte("created_at", filters.createdSince);
