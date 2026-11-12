@@ -3,6 +3,10 @@ name: Inspect AWS production database
 on:
   workflow_dispatch:
     inputs:
+      release_commit:
+        description: Verified main commit to activate after database migration
+        type: string
+        default: ''
       pause_for_migration:
         description: Briefly pause API traffic while the existing migration completes
         type: boolean
@@ -81,6 +85,16 @@ jobs:
           if [ "${{ inputs.pause_for_migration }}" = true ]; then
             trap 'pm2 restart dc-react-api --update-env >/dev/null' EXIT
             pm2 stop dc-react-api
+          fi
+          RELEASE_COMMIT="${{ inputs.release_commit }}"
+          if [ -n "$RELEASE_COMMIT" ]; then
+            [[ "$RELEASE_COMMIT" =~ ^[a-f0-9]{40}$ ]]
+            cd /opt/dc-react/app
+            git fetch --no-tags origin "$RELEASE_COMMIT"
+            git reset --hard "$RELEASE_COMMIT"
+            node --check backend/src/index.mjs
+            pm2 reload dc-react-api --update-env
+            pm2 save
           fi
           uptime
           free -m
