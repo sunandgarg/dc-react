@@ -73,12 +73,32 @@ jobs:
           if (process.env.REPAIR_INDEX === "true") {
             const [existing] = await db.query("SHOW INDEX FROM colleges WHERE Key_name='ix_colleges_parent_active'");
             if (!existing.length) {
-              await db.query("SET SESSION lock_wait_timeout=15");
-              const [running] = await db.query("SELECT ID, INFO FROM information_schema.PROCESSLIST WHERE COMMAND='Execute' AND TIME>15");
-              for (const r of running) {
-                if (/^SELECT .* FROM `colleges` WHERE `parent_university_slug` = /s.test(r.INFO || "")) await db.query("KILL QUERY " + Number(r.ID));
+              await db.query("SET SESSION lock_wait_timeout=120");
+              const monitor = await mysql.createConnection(process.env.DATABASE_URL);
+              const cancelSlowReads = async () => {
+                const [running] = await monitor.query("SELECT ID, INFO FROM information_schema.PROCESSLIST WHERE DB=DATABASE() AND COMMAND='Execute' AND TIME>10");
+                for (const r of running) {
+                  if (/^SELECT .* FROM `colleges` /s.test(r.INFO || "")) {
+                    try { await monitor.query("KILL QUERY " + Number(r.ID)); } catch (e) { if (e.code !== "ER_NO_SUCH_THREAD") throw e; }
+                  }
+                }
+              };
+              await cancelSlowReads();
+              let stopping = false;
+              const drain = async () => {
+                while (!stopping) {
+                  await cancelSlowReads();
+                  await new Promise(resolve=>setTimeout(resolve,2000));
+                }
+              };
+              const draining = drain();
+              try {
+                await db.query("CREATE INDEX ix_colleges_parent_active ON colleges (parent_university_slug(191), is_active) ALGORITHM=INPLACE LOCK=NONE");
+              } finally {
+                stopping=true;
+                await draining;
+                await monitor.end();
               }
-              await db.query("CREATE INDEX ix_colleges_parent_active ON colleges (parent_university_slug(191), is_active) ALGORITHM=INPLACE LOCK=NONE");
               console.log("affiliation_index_created");
             }
           }
