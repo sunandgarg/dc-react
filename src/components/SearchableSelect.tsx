@@ -13,7 +13,7 @@ interface SearchableSelectProps {
 export function SearchableSelect({ options, value, onChange, placeholder, className = "" }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [rect, setRect] = useState<{ top: number; left: number; width: number } | null>(null);
+  const [rect, setRect] = useState<{ top: number; left: number; width: number; height: number; above: boolean } | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -38,14 +38,25 @@ export function SearchableSelect({ options, value, onChange, placeholder, classN
     if (!isOpen || !btnRef.current) return;
     const update = () => {
       const r = btnRef.current!.getBoundingClientRect();
-      setRect({ top: r.bottom + 4, left: r.left, width: r.width });
+      const viewport = window.visualViewport;
+      const viewportTop = viewport?.offsetTop || 0;
+      const viewportBottom = viewportTop + (viewport?.height || window.innerHeight);
+      const below = Math.max(0, viewportBottom - r.bottom - 8);
+      const above = Math.max(0, r.top - viewportTop - 8);
+      const openAbove = below < 320 && above > below;
+      const height = Math.min(320, openAbove ? above : below);
+      setRect({ top: openAbove ? r.top - 4 : r.bottom + 4, left: r.left, width: r.width, height, above: openAbove });
     };
     update();
     window.addEventListener("scroll", update, true);
     window.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("scroll", update);
     return () => {
       window.removeEventListener("scroll", update, true);
       window.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("scroll", update);
     };
   }, [isOpen]);
 
@@ -64,10 +75,10 @@ export function SearchableSelect({ options, value, onChange, placeholder, classN
       {isOpen && rect && createPortal(
         <div
           id="searchable-select-portal-active"
-          style={{ position: "fixed", top: rect.top, left: rect.left, width: rect.width, zIndex: 9999, pointerEvents: "auto" }}
-          className="bg-card border border-border rounded-xl shadow-xl overflow-hidden"
+          style={{ position: "fixed", top: rect.top, left: rect.left, width: rect.width, maxHeight: rect.height, transform: rect.above ? "translateY(-100%)" : undefined, zIndex: 9999, pointerEvents: "auto" }}
+          className="flex flex-col bg-card border border-border rounded-xl shadow-xl overflow-hidden"
         >
-          <div className="p-2 border-b border-border">
+          <div className="shrink-0 p-2 border-b border-border">
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
               <input
@@ -85,7 +96,7 @@ export function SearchableSelect({ options, value, onChange, placeholder, classN
             </div>
           </div>
           <div
-            className="max-h-64 overflow-y-auto overscroll-contain"
+            className="min-h-0 max-h-64 overflow-y-auto overscroll-contain"
             style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" }}
             onWheel={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
