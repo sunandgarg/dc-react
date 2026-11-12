@@ -244,7 +244,7 @@ async function ensurePublicListingPerformanceIndexes(report) {
   }
   // Affiliation lookups otherwise scan the large college content rows for every detail view.
   if (!await indexExists("colleges", "ix_colleges_parent_active")) {
-    await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_parent_active` ON `colleges` (`parent_university_slug`(191), `is_active`), ALGORITHM=INPLACE, LOCK=NONE");
+    await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_parent_active` ON `colleges` (`parent_university_slug`(191), `is_active`) ALGORITHM=INPLACE LOCK=NONE");
     report.createdReferenceIndexes.push("ix_colleges_parent_active");
   }
   if (!await indexExists("articles", "ix_articles_scope_featured")) {

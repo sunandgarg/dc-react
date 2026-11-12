@@ -78,7 +78,7 @@ jobs:
               for (const r of running) {
                 if (/^SELECT .* FROM `colleges` WHERE `parent_university_slug` = /s.test(r.INFO || "")) await db.query("KILL QUERY " + Number(r.ID));
               }
-              await db.query("CREATE INDEX ix_colleges_parent_active ON colleges (parent_university_slug(191), is_active), ALGORITHM=INPLACE, LOCK=NONE");
+              await db.query("CREATE INDEX ix_colleges_parent_active ON colleges (parent_university_slug(191), is_active) ALGORITHM=INPLACE LOCK=NONE");
               console.log("affiliation_index_created");
             }
           }
