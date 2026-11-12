@@ -573,12 +573,19 @@ async function handleGet(table, request, url, context) {
     : quote(table);
   const jsonLookup = !namesOnly && [...url.searchParams].find(([field, expression]) =>
     searchFields[table]?.includes(field) && schemaMetadata[table].fields[field]?.type === "Json" && expression.startsWith("cs."));
-  if (jsonLookup) {
-    const [field, expression] = jsonLookup;
-    params.push(expression.slice(3));
-    // MySQL otherwise prefers the priority index and reads every large college row before testing the JSON link.
-    // GROUP BY materializes the small matching ID set before STRAIGHT_JOIN fetches full rows by primary key.
-    source = `(SELECT id AS matched_id FROM entity_search_names WHERE entity_table='${table}' AND JSON_CONTAINS(${quote(field)}, ?) GROUP BY id) AS matched STRAIGHT_JOIN ${quote(table)} ON ${quote(table)}.id=matched.matched_id`;
+  const orFilter = url.searchParams.get("or");
+  const compactOr = !namesOnly && orFilter && splitDepth(orFilter.replace(/^\(|\)$/g, "")).every(clause =>
+    searchFields[table]?.includes(clause.slice(0, clause.indexOf("."))));
+  if (jsonLookup || compactOr) {
+    let condition;
+    if (compactOr) condition = booleanGroupSql(table, orFilter, "OR", params);
+    else {
+      const [field, expression] = jsonLookup;
+      params.push(expression.slice(3));
+      condition = `JSON_CONTAINS(${quote(field)}, ?)`;
+    }
+    // Materialize matches before sorting content rows; the priority index otherwise drives a full content scan.
+    source = `(SELECT id AS matched_id FROM entity_search_names WHERE entity_table='${table}' AND ${condition} GROUP BY id) AS matched STRAIGHT_JOIN ${quote(table)} ON ${quote(table)}.id=matched.matched_id`;
   }
   const where = buildWhere(table, url, params, !namesOnly);
   const wantsCount = /(?:^|,)\s*count=(?:exact|planned|estimated)(?:,|$)/i.test(request.headers.get("prefer") || "");
