@@ -568,9 +568,18 @@ async function handleGet(table, request, url, context) {
     (url.searchParams.get("order") || "").split(",").every(order => !order || nameFields.has(order.split(".")[0]));
   const namesOnly = !!context.actorUserId && nameFiltersOnly && !selectingAll && !nodes.some(node => node.kind === "relation") &&
     [...requestedFields].every(field => field === "id" || searchFields[table]?.includes(field));
-  const source = namesOnly && searchFields[table]
+  let source = namesOnly && searchFields[table]
     ? `(SELECT * FROM entity_search_names WHERE entity_table='${table}') AS search_names`
     : quote(table);
+  const jsonLookup = !namesOnly && [...url.searchParams].find(([field, expression]) =>
+    searchFields[table]?.includes(field) && schemaMetadata[table].fields[field]?.type === "Json" && expression.startsWith("cs."));
+  if (jsonLookup) {
+    const [field, expression] = jsonLookup;
+    params.push(expression.slice(3));
+    // MySQL otherwise prefers the priority index and reads every large college row before testing the JSON link.
+    // GROUP BY materializes the small matching ID set before STRAIGHT_JOIN fetches full rows by primary key.
+    source = `(SELECT id AS matched_id FROM entity_search_names WHERE entity_table='${table}' AND JSON_CONTAINS(${quote(field)}, ?) GROUP BY id) AS matched STRAIGHT_JOIN ${quote(table)} ON ${quote(table)}.id=matched.matched_id`;
+  }
   const where = buildWhere(table, url, params, !namesOnly);
   const wantsCount = /(?:^|,)\s*count=(?:exact|planned|estimated)(?:,|$)/i.test(request.headers.get("prefer") || "");
   const total = wantsCount
