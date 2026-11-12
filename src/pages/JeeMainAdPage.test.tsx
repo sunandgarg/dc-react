@@ -20,10 +20,46 @@ function open(slug: string) {
 afterEach(() => vi.restoreAllMocks());
 
 describe("JEE Main ad pages", () => {
+  it("puts the live registration notice, deadline and guidance CTA above the first form", () => {
+    vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-11-13T06:00:00Z"));
+    open("jee-main-2027");
+    const notice = screen.getByRole("region", { name: "JEE Main registration update" });
+    expect(notice).toHaveTextContent("JEE Main 2027 registration is now LIVE!");
+    expect(notice).toHaveTextContent("Last date without late fee: 22 November 2026, 11:50 PM IST");
+    expect(notice.querySelector("time")).toHaveAttribute("dateTime", "2026-11-22T23:50:00+05:30");
+    expect(notice.compareDocumentPosition(screen.getAllByRole("region", { name: "JEE Main guidance form" })[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const apply = within(notice).getByRole("link", { name: "Apply online at jeemain.nta.nic.in" });
+    expect(apply).toHaveAttribute("href", "https://jeemain.nta.nic.in/online-application-form-for-jee-main-2027-session-1/");
+    expect(apply).toHaveAttribute("target", "_blank");
+    expect(apply).toHaveClass("bg-orange-700");
+    expect(fireEvent.click(apply)).toBe(false);
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(fireEvent.click(within(notice).getByRole("link", { name: "Source: NTA Session 1 application notice" }))).toBe(true);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(notice).toHaveTextContent("DekhoCampus is an independent guidance website");
+  });
+
+  it.each([
+    ["2026-11-22T18:21:00Z", "JEE Main 2027 regular registration has closed.", "Check official NTA application updates"],
+    ["2026-11-23T06:00:00Z", "JEE Main 2027 late-fee registration is open.", "Apply online at jeemain.nta.nic.in"],
+    ["2026-11-26T18:21:00Z", "JEE Main 2027 regular registration has closed.", "Check official NTA application updates"],
+  ])("shows the correct registration phase at %s", (time, status, action) => {
+    vi.spyOn(Date, "now").mockReturnValue(Date.parse(time));
+    open("jee-main-2027");
+    const notice = screen.getByRole("region", { name: "JEE Main registration update" });
+    expect(notice).toHaveTextContent(status);
+    expect(notice).not.toHaveTextContent("now LIVE!");
+    expect(notice).toHaveTextContent("26 November 2026, 11:50 PM IST");
+    expect(within(notice).getByRole("link", { name: action })).toBeInTheDocument();
+    if (Date.now() > Date.parse("2026-11-26T18:20:00Z")) expect(notice).toHaveTextContent("application window ended");
+    else expect(notice).toHaveTextContent("additional fee of ₹500");
+  });
+
   it("preserves two forms after registration and papers, with only linked college logos above the lower form", () => {
     open("jee-main-2027");
     const forms = screen.getAllByRole("region", { name: "JEE Main guidance form" });
-    expect(forms).toHaveLength(2);
+    expect(forms).toHaveLength(3);
     expect(forms[0]).toHaveAttribute("id", "jee-registration-form");
     expect(forms[1]).toHaveAttribute("id", "jee-guidance-form");
     const registration = screen.getByRole("heading", { name: "JEE Main 2027 registration: Session 1" });
@@ -36,7 +72,7 @@ describe("JEE Main ad pages", () => {
     expect(screen.queryByText(/Session 1 applications are submitted online through NTA/)).not.toBeInTheDocument();
     expect(screen.queryByText("Get JEE Main guidance from DekhoCampus")).not.toBeInTheDocument();
     for (const form of forms) {
-      expect(form).not.toHaveTextContent("DekhoCampus");
+      expect(form).toHaveTextContent("Optional DekhoCampus guidance form");
       expect(within(form).getByRole("img", { name: "National Testing Agency logo" })).toBeInTheDocument();
       expect(form).not.toHaveTextContent("Enter your details for JEE Main guidance");
       expect(form).not.toHaveTextContent("Complete your exam application separately on the official NTA portal.");
@@ -55,9 +91,9 @@ describe("JEE Main ad pages", () => {
     expect(forms[0]).not.toHaveTextContent("Independent guidance only.");
   });
 
-  it("opens the guidance form for every external resource and preserves the selected destination", () => {
+  it("opens the guidance form for other external resources and preserves the selected destination", () => {
     open("jee-main-2027");
-    const external = screen.getAllByRole("link").filter(link => link.getAttribute("href")?.startsWith("https://") && !link.hasAttribute("data-paper-download"));
+    const external = screen.getAllByRole("link").filter(link => link.getAttribute("href")?.startsWith("https://") && !link.hasAttribute("data-paper-download") && !link.hasAttribute("data-official-resource") && !link.closest('[aria-label="Share this page"]'));
     expect(external.length).toBeGreaterThan(10);
     for (const link of external) {
       expect(fireEvent.click(link)).toBe(false);
@@ -89,7 +125,7 @@ describe("JEE Main ad pages", () => {
     open("jee-main-2027");
     const section = within(screen.getByRole("region", { name: "JEE Main question papers: last 5 years" }));
     const download = section.getByRole("button", { name: "Download all 106 papers (.zip)" });
-    expect(download.compareDocumentPosition(section.getByText("2026 · 19 papers")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(download.compareDocumentPosition(section.getByRole("button", { name: "2026 19 papers" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     const assign = vi.fn();
     const testWindow = Object.create(window);
     Object.defineProperty(testWindow, "location", { value: { origin: window.location.origin, assign } });
@@ -103,6 +139,22 @@ describe("JEE Main ad pages", () => {
       fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Complete request" }));
       expect(assign).toHaveBeenCalledExactlyOnceWith("https://downloads.example/verified.zip");
     } finally { vi.unstubAllGlobals(); }
+  });
+
+  it("starts with collapsed year cards and opens only the selected download list", () => {
+    open("jee-main-2027");
+    const section = screen.getByRole("region", { name: "JEE Main question papers: last 5 years" });
+    const year = within(section).getByRole("button", { name: "2026 19 papers" });
+    expect(year).toHaveAttribute("aria-expanded", "false");
+    expect(section.querySelectorAll('div[id^="papers-"]:not([hidden])')).toHaveLength(0);
+    fireEvent.click(year);
+    expect(year).toHaveAttribute("aria-expanded", "true");
+    expect(within(section).getAllByRole("link", { name: /question paper PDF$/ })).toHaveLength(19);
+    fireEvent.click(within(section).getByRole("button", { name: "2023 24 papers" }));
+    expect(year).toHaveAttribute("aria-expanded", "false");
+    expect(within(section).getAllByRole("link", { name: /question paper PDF$/ })).toHaveLength(24);
+    fireEvent.click(within(section).getByRole("button", { name: "2023 24 papers" }));
+    expect(section.querySelectorAll('div[id^="papers-"]:not([hidden])')).toHaveLength(0);
   });
 
   it("keeps both shifts for all five years and supports middle-click gating", () => {
