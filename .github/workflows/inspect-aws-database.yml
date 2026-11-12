@@ -3,6 +3,10 @@ name: Inspect AWS production database
 on:
   workflow_dispatch:
     inputs:
+      pause_for_migration:
+        description: Briefly pause API traffic while the existing migration completes
+        type: boolean
+        default: false
       restart_services:
         description: Restart the DekhoCampus API and nginx services
         type: boolean
@@ -74,6 +78,10 @@ jobs:
             systemctl restart nginx
             systemctl is-active nginx
           fi
+          if [ "${{ inputs.pause_for_migration }}" = true ]; then
+            trap 'pm2 restart dc-react-api --update-env >/dev/null' EXIT
+            pm2 stop dc-react-api
+          fi
           uptime
           free -m
           df -h /
@@ -132,6 +140,14 @@ jobs:
                 await monitor.end();
               }
               console.log("affiliation_index_created");
+            }
+          }
+          if ("${{ inputs.pause_for_migration }}" === "true") {
+            for (let i=0;i<20;i++) {
+              const [migration]=await db.query("SELECT TIME,STATE FROM information_schema.PROCESSLIST WHERE INFO LIKE 'ALTER TABLE `colleges` MODIFY `status`%' ");
+              console.log(JSON.stringify({migration}));
+              if (!migration.length) break;
+              await new Promise(resolve=>setTimeout(resolve,10000));
             }
           }
           const [active] = await db.query("SELECT ID,TIME,STATE,LEFT(INFO,180) AS shape FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep' AND INFO IS NOT NULL");
