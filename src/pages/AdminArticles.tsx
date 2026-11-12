@@ -76,8 +76,7 @@ const clampArticlePageSize = (value: unknown) => Math.min(500, Math.max(1, Math.
 const ARTICLE_PAGE_SIZE_PRESETS = [10, 20, 50, 100, 200];
 
 const storedArticlePageSize = (siteScope: SiteScope) => {
-  if (typeof window === "undefined") return 20;
-  return clampArticlePageSize(window.localStorage.getItem(`admin.articles.page-size.${siteScope}`));
+  return 10;
 };
 
 interface AdminArticlesProps {
@@ -89,10 +88,6 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const isSarkari = siteScope === "sarkari";
   const [search, setSearch] = useState("");
   const [deferredSearch, setDeferredSearch] = useState("");
-  useEffect(() => {
-    const timer = window.setTimeout(() => setDeferredSearch(search), 350);
-    return () => window.clearTimeout(timer);
-  }, [search]);
   const [today, setToday] = useState(indiaDate);
   useEffect(() => {
     const timer = window.setInterval(() => setToday(indiaDate()), 60_000);
@@ -293,6 +288,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
         setEditing(null);
         if (payload.status === "Draft" && !result.pendingReview) {
           setSearch(normalizedSlug);
+          setDeferredSearch(normalizedSlug);
           setPage(1);
         }
       },
@@ -343,7 +339,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search articles..." className="pl-10 rounded-xl h-10" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { setDeferredSearch(search.trim()); setPage(1); } }} placeholder="Search articles, then press Enter..." className="pl-10 rounded-xl h-10" />
         </div>
         {canCreate && <Button onClick={() => setEditing({ ...emptyArticle, site_scope: siteScope, vertical: isSarkari ? "Government Jobs" : "", category: isSarkari ? "Latest Jobs" : "", author: isSarkari ? "Sarkari DekhoCampus Desk" : "" })} className="rounded-xl gap-2">
           <Plus className="w-4 h-4" /> Add {isSarkari ? "Sarkari Article" : "Article"}
@@ -386,7 +382,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               <option value="">All categories</option>{CATEGORIES.map((category) => <option key={category.slug} value={category.name}>{category.name}</option>)}
             </select>
           </label>
-          <Button variant="outline" className="self-end" onClick={() => { setDateFilter(""); setAuthorFilter(""); setStatusFilter(""); setCategoryFilter(""); setSearch(""); }}>Clear filters</Button>
+          <Button variant="outline" className="self-end" onClick={() => { setDateFilter(""); setAuthorFilter(""); setStatusFilter(""); setCategoryFilter(""); setSearch(""); setDeferredSearch(""); }}>Clear filters</Button>
         </div>
         <p className="mt-2 text-xs text-muted-foreground">Date ranges use article creation time: the past 24 hours, 48 hours or 7 days. Filters apply across all pages.</p>
         {authorsError && <p role="alert" className="mt-2 text-xs text-destructive">Author options could not be loaded. Refresh to try again.</p>}

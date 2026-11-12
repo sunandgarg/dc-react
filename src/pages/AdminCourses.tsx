@@ -1,7 +1,7 @@
 import { fetchCatalogRecord, useAdminCatalogList, useCatalogEditor } from "@/hooks/useAdminCatalog";
 import { PermGate } from "@/components/PermGate";
 import { AIGenerateDialog } from "@/components/admin/AIGenerateDialog";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { CSVTools } from "@/components/CSVTools";
 import { RowDataIO } from "@/components/admin/RowDataIO";
@@ -69,11 +69,9 @@ export default function AdminCourses() {
   const [editing, setEditing] = useDraftState<Partial<DbCourse> | null>('admin.courses.editing.v1', null);
   const [editingBaseline, setEditingBaseline] = useState("");
   const [search, setSearch] = useState("");
+  const [submittedSearch, setSubmittedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "Published" | "Draft">("all");
-  const [visibleCount, setVisibleCount] = useState<number>(() => {
-    const saved = parseInt(localStorage.getItem("admin_page_size_courses") || "", 10);
-    return saved > 0 ? Math.min(saved, 100) : 50;
-  });
+  const [visibleCount, setVisibleCount] = useState<number>(10);
   const setPageSize = (n: number) => {
     setVisibleCount(Math.max(1, Math.min(n, 100)));
     try { localStorage.setItem("admin_page_size_courses", String(n)); } catch {}
@@ -89,7 +87,7 @@ export default function AdminCourses() {
     return { total: all.length, published, draft, inactive, topCat };
   }, [courses]);
 
-  const list = useAdminCatalogList("courses", visibleCount, useDeferredValue(search.trim()), statusFilter);
+  const list = useAdminCatalogList("courses", visibleCount(search.trim()), statusFilter);
   const visible = list.data?.pages.flatMap(page => page.rows) ?? [];
   const total = list.data?.pages[0]?.total ?? 0;
 
@@ -138,7 +136,7 @@ export default function AdminCourses() {
       <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={(e) => { setSearch(e.target.value); setVisibleCount(50); }} placeholder="Search courses by name, slug or full name..." className="pl-10 rounded-xl h-10" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") setSubmittedSearch(search.trim()); }} placeholder="Search courses by name, slug or full name..." className="pl-10 rounded-xl h-10" />
         </div>
         {canCreate && <Button onClick={() => openEditor({ ...emptyCourse, status: canPublish ? "Published" : "Draft" })} className="rounded-xl gap-2">
           <Plus className="w-4 h-4" /> Add Course
