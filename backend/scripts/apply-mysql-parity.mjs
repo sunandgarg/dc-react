@@ -1,3 +1,4 @@
+import { ensureEntitySearchIndex } from "../src/entity-search-index.mjs";
 #!/usr/bin/env node
 
 import { readFile } from "node:fs/promises";
@@ -241,6 +242,11 @@ async function ensurePublicListingPerformanceIndexes(report) {
   if (!await indexExists("colleges", "ix_colleges_partner_order")) {
     await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_partner_order` ON `colleges` (`is_active`, `is_partner`, `priority`, `featured_rank`, `rating` DESC)");
     report.createdReferenceIndexes.push("ix_colleges_partner_order");
+  }
+  // Affiliation lookups otherwise scan the large college content rows for every detail view.
+  if (!await indexExists("colleges", "ix_colleges_parent_active")) {
+    await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_parent_active` ON `colleges` (`parent_university_slug`(191), `is_active`) ALGORITHM=INPLACE LOCK=NONE");
+    report.createdReferenceIndexes.push("ix_colleges_parent_active");
   }
   if (!await indexExists("articles", "ix_articles_scope_featured")) {
     await prisma.$executeRawUnsafe("CREATE INDEX `ix_articles_scope_featured` ON `articles` (`site_scope`, `featured_rank`)");
@@ -692,6 +698,7 @@ try {
   await ensureExamListingFilterSchema(report);
   await ensureHomepageExploreSchema(report);
   await ensurePublicListingPerformanceIndexes(report);
+  await ensureEntitySearchIndex(prisma);
   await ensureCourseFeeGroupingSchema(report);
   await ensureLeadAutomationAuditSchema(report);
   await ensureAuthorAvatarSchema(report);

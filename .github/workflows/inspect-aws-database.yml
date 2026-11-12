@@ -2,6 +2,11 @@ name: Inspect AWS production database
 
 on:
   workflow_dispatch:
+    inputs:
+      repair_affiliation_index:
+        description: Add the missing nonunique affiliation lookup index
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -32,3 +37,87 @@ jobs:
             --relational-database-name "$DATABASE_NAME" \
             --query 'relationalDatabase.{name:name,state:state,engine:engine,engineVersion:engineVersion,availabilityZone:location.availabilityZone,publiclyAccessible:publiclyAccessible,pendingMaintenanceActions:pendingMaintenanceActions}' \
             --output json
+
+      - name: Inspect API host and database workload
+        run: |
+          set -euo pipefail
+          export REPAIR_INDEX="${{ inputs.repair_affiliation_index }}"
+          RUNNER_IP=$(curl -fsS https://checkip.amazonaws.com | tr -d '[:space:]')
+          [[ "$RUNNER_IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]
+          PORT_INFO=$(jq -nc --arg cidr "$RUNNER_IP/32" '{fromPort:22,toPort:22,protocol:"tcp",cidrs:[$cidr]}')
+          trap 'aws lightsail close-instance-public-ports --instance-name dc-react-api-lightsail --port-info "$PORT_INFO" >/dev/null' EXIT
+          aws lightsail open-instance-public-ports --instance-name dc-react-api-lightsail --port-info "$PORT_INFO" >/dev/null
+          aws lightsail get-instance-access-details --instance-name dc-react-api-lightsail --protocol ssh > /tmp/access.json
+          jq -r '.accessDetails.privateKey' /tmp/access.json > /tmp/key
+          jq -r '.accessDetails.certKey' /tmp/access.json > /tmp/key-cert.pub
+          chmod 600 /tmp/key
+          SSH_USER=$(jq -r '.accessDetails.username' /tmp/access.json)
+          SSH_IP=$(jq -r '.accessDetails.ipAddress' /tmp/access.json)
+          timeout 300 ssh -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/key "$SSH_USER@$SSH_IP" "sudo REPAIR_INDEX=$REPAIR_INDEX bash -s" <<'REMOTE' 
+          set -euo pipefail
+          uptime
+          free -m
+          df -h /
+          ps -eo comm,rss,pcpu --sort=-rss | head -12
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app/backend
+          node --input-type=module <<'JS'
+          import "./src/database-url.mjs";
+          import mysql from "mysql2/promise";
+          const start = Date.now();
+          console.log("starting_mysql_inspection");
+          const db = await mysql.createConnection(process.env.DATABASE_URL);
+          console.log("mysql_connect_ms", Date.now()-start);
+          if (process.env.REPAIR_INDEX === "true") {
+            const [existing] = await db.query("SHOW INDEX FROM colleges WHERE Key_name='ix_colleges_parent_active'");
+            if (!existing.length) {
+              await db.query("SET SESSION lock_wait_timeout=120");
+              const monitor = await mysql.createConnection(process.env.DATABASE_URL);
+              const cancelSlowReads = async () => {
+                const [running] = await monitor.query("SELECT ID, INFO FROM information_schema.PROCESSLIST WHERE DB=DATABASE() AND COMMAND='Execute' AND TIME>10");
+                for (const r of running) {
+                  if (/^SELECT .* FROM `colleges` /s.test(r.INFO || "")) {
+                    try { await monitor.query("KILL QUERY " + Number(r.ID)); } catch (e) { if (e.code !== "ER_NO_SUCH_THREAD") throw e; }
+                  }
+                }
+              };
+              await cancelSlowReads();
+              let stopping = false;
+              const drain = async () => {
+                while (!stopping) {
+                  await cancelSlowReads();
+                  await new Promise(resolve=>setTimeout(resolve,2000));
+                }
+              };
+              const draining = drain();
+              try {
+                await db.query("CREATE INDEX ix_colleges_parent_active ON colleges (parent_university_slug(191), is_active) ALGORITHM=INPLACE LOCK=NONE");
+              } finally {
+                stopping=true;
+                await draining;
+                await monitor.end();
+              }
+              console.log("affiliation_index_created");
+            }
+          }
+          for (const sql of [
+            "SHOW GLOBAL STATUS WHERE Variable_name IN ('Threads_connected','Threads_running','Max_used_connections','Slow_queries','Aborted_connects','Innodb_buffer_pool_reads','Innodb_buffer_pool_read_requests','Uptime')",
+            "SHOW VARIABLES WHERE Variable_name IN ('max_connections','innodb_buffer_pool_size')",
+            "SELECT COMMAND, STATE, COUNT(*) AS connections, MAX(TIME) AS max_seconds FROM information_schema.PROCESSLIST GROUP BY COMMAND, STATE",
+            "SELECT DIGEST_TEXT, COUNT_STAR, ROUND(SUM_TIMER_WAIT/1000000000000,2) AS total_seconds, ROUND(MAX_TIMER_WAIT/1000000000000,2) AS max_seconds FROM performance_schema.events_statements_summary_by_digest ORDER BY SUM_TIMER_WAIT DESC LIMIT 8",
+            "EXPLAIN SELECT slug,name FROM colleges WHERE parent_university_slug = 'delhi-university' AND is_active=1 ORDER BY name LIMIT 24",
+            "EXPLAIN SELECT id,name FROM colleges WHERE name LIKE '%Delhi%' ORDER BY name,id LIMIT 20"
+          ]) {
+            const before=Date.now();
+            const [rows]=await db.query(sql);
+            console.log(JSON.stringify({sql,ms:Date.now()-before,rows}));
+          }
+          const [active] = await db.query("SELECT TIME, STATE, INFO FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep' AND INFO IS NOT NULL");
+          console.log(JSON.stringify(active.map(r=>({seconds:r.TIME,state:r.STATE,shape:r.INFO.replace(/'[^']*'/g,"?").slice(0,1800)}))));
+          const [sizes] = await db.query("SELECT TABLE_NAME, TABLE_ROWS, ROUND(DATA_LENGTH/1048576) AS data_mb, ROUND(INDEX_LENGTH/1048576) AS index_mb FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() ORDER BY DATA_LENGTH DESC LIMIT 8");
+          console.log(JSON.stringify(sizes));
+          await db.end();
+          JS
+          REMOTE
