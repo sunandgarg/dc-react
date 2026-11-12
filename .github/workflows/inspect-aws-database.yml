@@ -39,6 +39,7 @@ jobs:
             --output json
 
       - name: Inspect database cache settings and CPU
+        continue-on-error: true
         run: |
           aws lightsail get-relational-database-parameters --relational-database-name "$DATABASE_NAME" --query "parameters[?parameterName=='innodb_buffer_pool_size'].{name:parameterName,value:parameterValue,modifiable:isModifiable,applyType:applyType,allowedValues:allowedValues}" --output json
           for metric in CPUUtilization DiskQueueDepth; do
