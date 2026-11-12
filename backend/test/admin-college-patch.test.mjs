@@ -14,3 +14,10 @@ test('college edits preserve untouched placement and submit explicit clears', as
   apply(clear, baseline);
   assert.deepEqual(clear, {id:'college', placement:''});
 });
+
+for (const page of ['AdminCourses', 'AdminExams']) {
+  test(`${page} passes page size and submitted search separately`, async () => {
+    const source = await readFile(new URL(`../../src/pages/${page}.tsx`, import.meta.url), 'utf8');
+    assert.match(source, /useAdminCatalogList\("(?:courses|exams)", visibleCount, submittedSearch, statusFilter\)/);
+  });
+}

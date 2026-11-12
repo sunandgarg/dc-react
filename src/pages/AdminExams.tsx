@@ -140,7 +140,7 @@ export default function AdminExams() {
     return { total: all.length, open, upcoming, closed, topCat, missingFilters };
   }, [exams]);
 
-  const list = useAdminCatalogList("exams", visibleCount(search.trim()), statusFilter);
+  const list = useAdminCatalogList("exams", visibleCount, submittedSearch, statusFilter);
   const visible = list.data?.pages.flatMap(page => page.rows) ?? [];
   const total = list.data?.pages[0]?.total ?? 0;
 

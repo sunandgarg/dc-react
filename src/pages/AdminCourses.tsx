@@ -87,7 +87,7 @@ export default function AdminCourses() {
     return { total: all.length, published, draft, inactive, topCat };
   }, [courses]);
 
-  const list = useAdminCatalogList("courses", visibleCount(search.trim()), statusFilter);
+  const list = useAdminCatalogList("courses", visibleCount, submittedSearch, statusFilter);
   const visible = list.data?.pages.flatMap(page => page.rows) ?? [];
   const total = list.data?.pages[0]?.total ?? 0;
 
