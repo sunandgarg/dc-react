@@ -1,7 +1,7 @@
 import QUESTION_PAPERS from "@/data/jeeMainPapers.json";
 import { useState, type MouseEvent } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Info } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { FAQSection } from "@/components/FAQSection";
 import { AuthorByline } from "@/components/AuthorByline";
@@ -168,7 +168,7 @@ function EnglishAdPage() {
         <article className="min-w-0 space-y-7 rounded-lg border border-slate-200 bg-white p-4 text-[15px] leading-7 sm:p-7 [&_section]:scroll-mt-40 [&_section>h2]:text-[22px] [&_section>h2]:leading-snug">
           <section id="registration" aria-label="JEE Main registration update">
             <div className="flex items-start gap-3">
-              {registrationOpen ? <CheckCircle2 aria-hidden="true" className="mt-1 h-9 w-9 shrink-0 text-green-600 sm:h-11 sm:w-11" /> : <Info aria-hidden="true" className="mt-1 h-9 w-9 shrink-0 text-slate-500 sm:h-11 sm:w-11" />}
+              {registrationOpen ? <img src="/assets/nta-registration-symbol.png" alt="National Testing Agency" width="44" height="44" className="mt-1 h-9 w-9 shrink-0 object-contain sm:h-11 sm:w-11" /> : <Info aria-hidden="true" className="mt-1 h-9 w-9 shrink-0 text-slate-500 sm:h-11 sm:w-11" />}
               <p className="min-w-0 text-base leading-7">
                 <strong>{regularOpen ? "JEE Main 2027 registration is now LIVE!" : lateOpen ? "JEE Main 2027 late-fee registration is open." : "JEE Main 2027 regular registration has closed."}</strong>{" "}
                 {regularOpen ? "NTA is accepting Session 1 applications for the January attempt. Complete your application on the official portal before the deadline." : now <= VIDEO_CLOSES ? "The announced late-fee window runs from 23 to 26 November 2026, with an additional fee of ₹500." : "The announced Session 1 application window ended on 26 November 2026. Check NTA for any further updates."}
