@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { backendClient } from "@/integrations/backend/client";
-import * as Icons from "lucide-react";
-import { CircleDot } from "lucide-react";
+import { Award, BookOpen, Brain, Calendar, CheckCircle2, CircleDot, Compass, FileText, GraduationCap, Target, TrendingUp } from "lucide-react";
 import { currentYear } from "@/lib/currentYear";
 import { useCarouselNav, CarouselControls } from "@/components/CarouselControls";
 
@@ -28,9 +27,12 @@ type Module = {
   enabled: boolean;
 };
 
+// A namespace import forces every Lucide icon into the public page's dependency graph.
+const moduleIcons = { Award, BookOpen, Brain, Calendar, CheckCircle2, CircleDot, Compass, FileText, GraduationCap, Target, TrendingUp };
+
 function resolveIcon(name?: string | null) {
   if (!name || /sparkles?|stars?/i.test(name)) return CircleDot;
-  const Cmp = (Icons as any)[name];
+  const Cmp = moduleIcons[name as keyof typeof moduleIcons];
   return Cmp || CircleDot;
 }
 
