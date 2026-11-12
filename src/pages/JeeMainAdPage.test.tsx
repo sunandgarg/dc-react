@@ -9,7 +9,7 @@ vi.mock("@/hooks/useSEO", () => ({ useSEO: vi.fn() }));
 vi.mock("@/components/AuthorByline", () => ({ AuthorByline: () => <p>Written by Geethika Reddy</p> }));
 vi.mock("@/components/Navbar", () => ({ Navbar: () => <header><div>Shared announcement bar</div><nav aria-label="Homepage navigation">DekhoCampus navigation</nav></header> }));
 vi.mock("@/components/Footer", () => ({ Footer: () => <footer>Shared DekhoCampus footer</footer> }));
-vi.mock("@/components/LeadGateDialog", () => ({ LeadGateDialog: ({ open, onOpenChange, forceShow, subtitle, brandLogoUrl, brandName, source, onSuccess }: { onSuccess: () => void; open: boolean; onOpenChange: (open: boolean) => void; forceShow: boolean; subtitle: string; brandLogoUrl: string; brandName: string; source: string }) => open ? <div role="dialog" aria-label="Lead Form" data-source={source} data-force-show={forceShow}><img src={brandLogoUrl} alt={`${brandName} logo`} /><p>{subtitle}</p><button onClick={() => onOpenChange(false)}>Close</button><button onClick={onSuccess}>Complete request</button></div> : null }));
+vi.mock("@/components/LeadGateDialog", () => ({ LeadGateDialog: ({ open, onOpenChange, forceShow, subtitle, brandLogoUrl, brandName, source, otpDownload, onSuccess }: { otpDownload?: string; onSuccess: (id?: string, url?: string) => void; open: boolean; onOpenChange: (open: boolean) => void; forceShow: boolean; subtitle: string; brandLogoUrl: string; brandName: string; source: string }) => open ? <div role="dialog" aria-label="Lead Form" data-source={source} data-otp-download={otpDownload} data-force-show={forceShow}><img src={brandLogoUrl} alt={`${brandName} logo`} /><p>{subtitle}</p><button onClick={() => onOpenChange(false)}>Close</button><button onClick={() => onSuccess("saved", otpDownload ? "https://downloads.example/verified.zip" : undefined)}>Complete request</button></div> : null }));
 vi.mock("@/components/LeadCaptureForm", () => ({ LeadCaptureForm: ({ title, subtitle, source, brandLogoUrl, brandName }: { title: string; subtitle: string; source: string; brandLogoUrl?: string; brandName?: string }) => <div data-source={source}>{brandLogoUrl && <img src={brandLogoUrl} alt={`${brandName} logo`} />}{title}<p>{subtitle}</p></div> }));
 vi.mock("@/components/FAQSection", () => ({ FAQSection: ({ title, fallback }: { title: string; fallback: { question: string; answer: string }[] }) => <section aria-label="Dedicated FAQs"><h2>{title}</h2>{fallback.map(faq => <details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}</section> }));
 
@@ -57,8 +57,8 @@ describe("JEE Main ad pages", () => {
 
   it("opens the guidance form for every external resource and preserves the selected destination", () => {
     open("jee-main-2027");
-    const external = screen.getAllByRole("link").filter(link => link.getAttribute("href")?.startsWith("https://"));
-    expect(external.length).toBeGreaterThan(15);
+    const external = screen.getAllByRole("link").filter(link => link.getAttribute("href")?.startsWith("https://") && !link.hasAttribute("data-paper-download"));
+    expect(external.length).toBeGreaterThan(10);
     for (const link of external) {
       expect(fireEvent.click(link)).toBe(false);
       const dialog = screen.getByRole("dialog", { name: "Lead Form" });
@@ -99,8 +99,9 @@ describe("JEE Main ad pages", () => {
       fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close" }));
       expect(assign).not.toHaveBeenCalled();
       fireEvent.click(download);
+      expect(screen.getByRole("dialog")).toHaveAttribute("data-otp-download", "jee-main-106-papers");
       fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Complete request" }));
-      expect(assign).toHaveBeenCalledExactlyOnceWith("https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2022-2026/DekhoCampus_JEE_Main_2022_2026_All_106_Papers.zip");
+      expect(assign).toHaveBeenCalledExactlyOnceWith("https://downloads.example/verified.zip");
     } finally { vi.unstubAllGlobals(); }
   });
 
@@ -115,8 +116,9 @@ describe("JEE Main ad pages", () => {
       expect(url.hostname).toBe("aws-origin.dekhocampus.com");
       expect(url.pathname.endsWith(".pdf")).toBe(true);
     }
-    fireEvent(pdfLinks[0], new MouseEvent("auxclick", { bubbles: true, cancelable: true, button: 1 }));
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    for (const link of pdfLinks) expect(link).toHaveAttribute("data-paper-download");
+    expect(fireEvent(pdfLinks[0], new MouseEvent("auxclick", { bubbles: true, cancelable: true, button: 1 }))).toBe(true);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("uses the application alias with the existing canonical and dedicated edited FAQs", () => {

@@ -272,5 +272,5 @@ export function useInlineOtp(phone: string, formKey: string) {
   // don't break, but new code should use getOtpButton + verifyBlock.
   const block = verifyBlock;
 
-  return { block, getOtpButton, verifyBlock, verified, verificationToken, requested, markMissing, clearMissing, missing };
+  return { block, getOtpButton, verifyBlock, verified, verificationToken, requested, markMissing, clearMissing, missing, resetVerification };
 }

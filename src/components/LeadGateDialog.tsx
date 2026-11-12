@@ -18,7 +18,8 @@ interface LeadGateDialogProps {
   title?: string;
   subtitle?: string;
   source?: string;
-  onSuccess?: (leadId?: string) => void;
+  onSuccess?: (leadId?: string, downloadUrl?: string) => void;
+  otpDownload?: "jee-main-106-papers";
   /** When true, always show the lead form even if the user is already known (skips silent save). Use for high-intent CTAs like Apply / Brochure where we need fresh program-specific intent. */
   forceShow?: boolean;
   /** Strip counselling/slots urgency for clean Apply/Brochure forms. */
@@ -44,6 +45,7 @@ export function LeadGateDialog({
   subtitle = "Share a few details and our team will guide you.",
   source = "lead_gate",
   onSuccess,
+  otpDownload,
   forceShow = false,
   simple = false,
   interestLabel,
@@ -75,10 +77,10 @@ export function LeadGateDialog({
     }
   }, [open, source]);
 
-  const handleSuccess = (leadId?: string) => {
+  const handleSuccess = (leadId?: string, downloadUrl?: string) => {
     successRef.current = true;
     trackEvent("lp_popup_submit", { source });
-    onSuccess?.(leadId);
+    onSuccess?.(leadId, downloadUrl);
   };
 
   // UI/UX 2026: if user is already known (logged-in OR has prefill cookie OR
@@ -86,7 +88,7 @@ export function LeadGateDialog({
   // Save the lead silently in the background and continue.
   useEffect(() => {
     if (!open) { silentRef.current = false; return; }
-    if (forceShow) return; // high-intent: always show the form
+    if (forceShow || otpDownload) return; // high-intent: always show the form
     const knownByAuth = !!(user && profile?.phone);
     const knownByCookie = hasPrefillIdentity();
     const knownByRecent = isWithinSilentWindow();
@@ -114,10 +116,10 @@ export function LeadGateDialog({
       onSuccess?.();
       onOpenChange(false);
     })();
-  }, [open, user, profile, source, onOpenChange, onSuccess, forceShow, interestedCollegeSlug, interestedCourseSlug, interestedExamSlug]);
+  }, [open, user, profile, source, onOpenChange, onSuccess, forceShow, otpDownload, interestedCollegeSlug, interestedCourseSlug, interestedExamSlug]);
 
   // Don't render the dialog at all for already-known users (silent save above) - unless forceShow.
-  if (!forceShow && open && (
+  if (!forceShow && !otpDownload && open && (
     (user && profile?.phone) || hasPrefillIdentity() || isWithinSilentWindow()
   )) return null;
 
@@ -141,6 +143,7 @@ export function LeadGateDialog({
           subtitle={subtitle}
           source={source}
           onSuccess={handleSuccess}
+          otpDownload={otpDownload}
           simple={simple}
           interestLabel={interestLabel}
           interestOptions={interestOptions}

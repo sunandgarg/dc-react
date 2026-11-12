@@ -18,6 +18,7 @@ import { detectDeviceType, inferSourceCategory } from "@/lib/leadTracking";
 import { trackEvent, trackLeadConversion } from "@/lib/analytics";
 import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsentCheckbox";
 import { setLeadConsentPreference } from "@/lib/leadConsent";
+import { invokeNodeFunction } from "@/lib/backendMode";
 import { saveLeadPhase } from "@/lib/twoStepLead";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,7 +31,8 @@ interface LeadCaptureFormProps {
   interestedCollegeSlug?: string;
   interestedCourseSlug?: string;
   interestedExamSlug?: string;
-  onSuccess?: (leadId?: string) => void;
+  onSuccess?: (leadId?: string, downloadUrl?: string) => void;
+  otpDownload?: "jee-main-106-papers";
   /** Optional context-specific replacement for the default course interest. */
   interestLabel?: string;
   interestOptions?: string[];
@@ -79,6 +81,7 @@ export function LeadCaptureForm({
   interestedCourseSlug,
   interestedExamSlug,
   onSuccess,
+  otpDownload,
   interestLabel = "Course",
   interestOptions = courseOptions,
   simple = false,
@@ -192,6 +195,16 @@ export function LeadCaptureForm({
         consent_text: consentText,
         consent_at: new Date().toISOString(),
       });
+      let downloadUrl: string | undefined;
+      if (otpDownload) {
+        const result = await invokeNodeFunction<{ download_url: string }>("jee-paper-bundle", { body: { phone: formData.phone, otp_verification_token: otp.verificationToken } });
+        if (result.error || !result.data?.download_url) {
+          otp.resetVerification();
+          setStep(1);
+          throw result.error || new Error("Could not prepare your download. Please retry.");
+        }
+        downloadUrl = result.data.download_url;
+      }
       setIsSubmitted(true);
       toast.success("Thank you! Our counselor will contact you soon.");
       setLeadConsentPreference(authorized);
@@ -200,11 +213,11 @@ export function LeadCaptureForm({
       try { (window as any).fireGoogleAdsConversion?.({ value: 1, currency: "INR", source }); } catch {}
       trackLeadConversion({ source, variant, has_email: !!formData.email, has_phone: !!formData.phone });
       trackEvent("lead_form_submit_success", { source, variant });
-      onSuccess?.(saved.lead_id);
+      onSuccess?.(saved.lead_id, downloadUrl);
     } catch (error) {
       console.error("Lead submission error:", error);
       trackEvent("lead_form_submit_error", { source, variant });
-      toast.error("Failed to submit. Please try again.");
+      toast.error(error instanceof Error ? error.message : "Failed to submit. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -249,8 +262,9 @@ export function LeadCaptureForm({
     setErrors({});
     // OTP rule: if user pressed Get OTP they MUST verify before save.
     // If they never pressed Get OTP, save anyway with otp_verified=false.
-    if (step === 1 && otp.requested && !otp.verified) {
+    if ((otpDownload || (step === 1 && otp.requested)) && !otp.verified) {
       otp.markMissing();
+      if (otpDownload) toast.error("Verify your mobile number with OTP to download the ZIP.");
       trackEvent("lead_form_validation_error", { source, variant, fields: "otp" });
       return;
     }
@@ -330,6 +344,7 @@ export function LeadCaptureForm({
             {formData.phone.length > 0 && !isValidIndianMobile(formData.phone) && <p className={`text-xs ${dark ? "text-white" : "text-destructive"}`}>{PHONE_HINT}</p>}
             {otp.verifyBlock && <div className={dark ? "rounded-xl bg-white p-2 text-slate-900" : ""}>{otp.verifyBlock}</div>}
           </div>
+          {otpDownload && <p className="text-xs font-medium text-primary">OTP verification is required to download all 106 papers.</p>}
           <LeadConsentCheckbox unbranded={unbrandedConsent} checked={authorized} onCheckedChange={setAuthorized} compact={compact} dark={dark} />
         </>
       ) : (

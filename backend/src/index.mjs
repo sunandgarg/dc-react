@@ -3,7 +3,7 @@ import { handleRest, handleRpc } from "./rest.mjs";
 import { articleTranslationQueueStatus } from "./article-translation-queue.mjs";
 import { prisma } from "./db.mjs";
 import { auditImpersonatedWrite, handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp, verifyLeadOtpProof } from "./auth.mjs";
-import { handleStorage } from "./storage.mjs";
+import { JEE_PAPERS_ZIP_PATH, signStorageDownload, handleStorage } from "./storage.mjs";
 import { enqueueLeadAutomation, wakeLeadOutboxWorker } from "./lead-outbox.mjs";
 import { dispatchLead, previewLeadAutomation } from "./lead-automation.mjs";
 import { integrationStatus } from "./integration-status.mjs";
@@ -839,6 +839,14 @@ export async function handleRequest(request) {
       if (functionMatch[1] === "send-otp") return json(200, await sendPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(url.searchParams.get("section")), requestId, request, { "cache-control": "public, max-age=30, stale-while-revalidate=60" });
+      if (functionMatch[1] === "jee-paper-bundle") {
+        if (request.method !== "POST") throw new HttpError(405, "METHOD_NOT_ALLOWED", "Use POST to request the ZIP");
+        const input = await readRateLimitedPublicJson(request, "save-lead", 4096);
+        const phone = String(input.phone || "").replace(/\D/g, "").slice(-10);
+        if (!/^[6-9]\d{9}$/.test(phone) || !verifyLeadOtpProof(input.otp_verification_token, `+91${phone}`)) throw new HttpError(403, "OTP_REQUIRED", "Verify your mobile number with OTP to download the ZIP");
+        const downloadUrl = await signStorageDownload("study-material", JEE_PAPERS_ZIP_PATH, { expiresIn: 300, downloadName: "DekhoCampus_JEE_Main_2022_2026_All_106_Papers.zip" });
+        return json(200, { download_url: downloadUrl }, requestId, request, { "cache-control": "private, no-store" });
+      }
       if (functionMatch[1] === "save-lead") return json(200, await saveLead(request), requestId, request);
       if (functionMatch[1] === "cat-experience") {
         return json(200, await handleCatExperience(request), requestId, request, { "cache-control": "private, no-store" });
