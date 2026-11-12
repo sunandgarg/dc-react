@@ -171,8 +171,8 @@ export function useFeaturedCollegeCards(slugs: string[]) {
     queryFn: async () => {
       if (!orderedSlugs.length) return [] as DbCollege[];
       const { data, error } = await backendClient
-        .from("colleges")
-        .select(PUBLIC_COLLEGE_CARD_SELECT)
+        .from("colleges", { publicRead: true })
+        .select("slug,short_id,name,short_name,image")
         .eq("is_active", true)
         .in("slug", orderedSlugs);
 

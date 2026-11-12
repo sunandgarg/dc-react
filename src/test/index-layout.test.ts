@@ -197,7 +197,7 @@ describe("Index page layout (static source assertions)", () => {
     expect(announcementSrc).toMatch(/const ads = configuredAds/);
     expect(announcementSrc).toMatch(/isLoading \|\| ads\.length === 0/);
     expect(bootstrapSrc).toMatch(/BOOTSTRAP_TTL = 30_000/);
-    expect(bootstrapSrc).toMatch(/cache: "no-cache"/);
+    expect(bootstrapSrc).toMatch(/cache: requestRevision \? "no-cache" : "default"/);
     expect(backendIndexSrc).toMatch(/bootstrap[\s\S]*?max-age=30, stale-while-revalidate=60/);
     expect(adminAdsSrc).toMatch(/border-neutral-800 bg-black/);
     expect(adminAdsSrc).not.toMatch(/absolute inset-x-0 top-0 flex h-1/);

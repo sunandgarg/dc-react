@@ -31,7 +31,7 @@ export function ensureBootstrap(): Promise<BootstrapPayload | null> {
       const endpoint = new URL(functionUrl("bootstrap"));
       endpoint.searchParams.set("v", BOOTSTRAP_CACHE_VERSION);
       endpoint.searchParams.set("revision", String(requestRevision));
-      const res = await fetch(endpoint.toString(), { cache: "no-cache" });
+      const res = await fetch(endpoint.toString(), { cache: requestRevision ? "no-cache" : "default" });
       if (!res.ok) return null;
       return (await res.json()) as BootstrapPayload;
     } catch {

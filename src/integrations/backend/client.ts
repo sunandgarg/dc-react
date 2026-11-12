@@ -195,7 +195,7 @@ class BackendQuery implements PromiseLike<ClientResult<any>> {
   private conflictColumns?: string;
   private shouldThrow = false;
 
-  constructor(private readonly table: string) {}
+  constructor(private readonly table: string, private readonly publicRead = false) {}
 
   select(columns = "*", options: { count?: string; head?: boolean } = {}) {
     this.columns = columns || "*";
@@ -259,7 +259,8 @@ class BackendQuery implements PromiseLike<ClientResult<any>> {
     if (this.conflictColumns) url.searchParams.set("on_conflict", this.conflictColumns);
 
     const method = this.headOnly ? "HEAD" : ({ read: "GET", insert: "POST", upsert: "POST", update: "PATCH", delete: "DELETE" } as const)[this.operation];
-    const headers = await authorizedHeaders();
+    const anonymous = this.publicRead && this.operation === "read";
+    const headers = anonymous ? new Headers() : await authorizedHeaders();
     const preferences: string[] = [];
     if (this.countMode) preferences.push(`count=${this.countMode}`);
     if (this.operation === "upsert") preferences.push("resolution=merge-duplicates");
@@ -272,6 +273,7 @@ class BackendQuery implements PromiseLike<ClientResult<any>> {
       const response = earlyResponse ?? await fetch(url, {
         method,
         headers,
+        credentials: anonymous ? "omit" : undefined,
         signal: this.signal,
         body: this.body === undefined ? undefined : normalizeJsonRequestBody(JSON.stringify(this.body)),
       });
@@ -472,7 +474,7 @@ const storage = {
 };
 
 export const backendClient: any = {
-  from: (table: string) => new BackendQuery(table),
+  from: (table: string, options?: { publicRead: boolean }) => new BackendQuery(table, options?.publicRead),
   rpc: (name: string, args: Record<string, unknown> = {}) => requestJson(`${restUrl(`rpc/${encodeURIComponent(name)}`)}`, { method: "POST", body: JSON.stringify(args) }),
   functions: {
     invoke: (name: string, options: { body?: unknown; headers?: HeadersInit; method?: string } = {}) => requestJson(functionUrl(name), {

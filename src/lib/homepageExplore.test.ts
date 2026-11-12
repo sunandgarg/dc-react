@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ENGINEERING_COLLEGE_SLUGS, fetchHomepageExplore, rankHomepageExplore } from "./homepageExplore";
+import { ENGINEERING_EXAM_LINKS, ENGINEERING_COLLEGE_SLUGS, fetchHomepageExplore, rankHomepageExplore } from "./homepageExplore";
 import { HOMEPAGE_COURSE_PICKS } from "./homepageCoursePicks";
 
 const { requests, responses } = vi.hoisted(() => ({ requests: [] as any[], responses: [] as any[] }));
@@ -75,6 +75,14 @@ describe("homepage category recommendations", () => {
   it("keeps the five requested Engineering colleges first, with stable real slugs", () => {
     const rows = [row("Other", { show_in_explore_by_category: true }), ...ENGINEERING_COLLEGE_SLUGS.map((slug) => row(slug))].reverse();
     expect(rankHomepageExplore(rows, "Engineering", "colleges").slice(0, 5).map((item) => item.slug)).toEqual(ENGINEERING_COLLEGE_SLUGS);
+  });
+
+  it("requests only five active engineering exam slugs when all editorial choices are available", async () => {
+    responses.push({ data: ENGINEERING_EXAM_LINKS.map(({ slug, label }) => row(label, { slug })).reverse(), error: null });
+    const result = await fetchHomepageExplore("exams", "Engineering", "id,name,slug,short_name");
+    expect(result.map(item => item.slug)).toEqual(ENGINEERING_EXAM_LINKS.map(item => item.slug));
+    expect(requests).toHaveLength(1);
+    expect(requests[0].filters).toContainEqual(["neq", "listing_category", "Sarkari"]);
   });
 
   it("orders JEE Main, JEE Advanced, VITEEE and SRMJEEE before other Engineering exams", () => {
