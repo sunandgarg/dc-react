@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ensureEntitySearchIndex, searchFilterSource } from "../src/entity-search-index.mjs";
+import { ensureEntitySearchIndex, searchFilterSource, searchColumns } from "../src/entity-search-index.mjs";
 
 test("builds a compact name projection with insert/update/delete synchronization and an explicit ready marker", async () => {
   const writes = [];
   const db = {
     $executeRawUnsafe: async (...args) => { writes.push(args); },
-    $queryRawUnsafe: async () => [],
+    $queryRawUnsafe: async sql => sql.startsWith("SHOW COLUMNS") ? searchColumns.map(Field=>({Field})) : [],
   };
   await ensureEntitySearchIndex(db, async sql => writes.push([sql]));
   assert.equal(writes.filter(([s]) => s.startsWith("CREATE TRIGGER")).length, 12);
@@ -16,7 +16,7 @@ test("builds a compact name projection with insert/update/delete synchronization
   assert.ok(writes.some(([s]) => s.includes("AFTER DELETE") && s.includes("OLD.id")));
   assert.ok(writes.every(([s]) => !s.includes("NEW.content")));
   const ready = [];
-  await ensureEntitySearchIndex({ $executeRawUnsafe: async s=>ready.push(s), $queryRawUnsafe: async ()=>[{}] }, async () => assert.fail("Existing triggers must not be rebuilt"));
+  await ensureEntitySearchIndex({ $executeRawUnsafe: async s=>ready.push(s), $queryRawUnsafe: async (sql,name)=>sql.startsWith("SHOW COLUMNS") ? searchColumns.map(Field=>({Field})) : sql.includes("TRIGGERS") ? name.startsWith("dc_search_v2_") ? [{}] : [] : [{}] }, async () => assert.fail("Existing triggers must not be rebuilt"));
   assert.equal(ready.length, 1); // Only the harmless CREATE TABLE IF NOT EXISTS runs again.
 });
 
@@ -40,6 +40,9 @@ test("REST keeps scope, filters, ordering and parameters when using the compact 
     await handleRest("colleges",new Request("https://example.com/v1/rest/colleges?select=id,name&is_active=eq.true&name=ilike.%25Delhi%25"), {publicAccess:true});
     assert.match(queries.at(-1).sql,/FROM `colleges` WHERE `is_active` = \? AND id IN \(SELECT id FROM entity_search_names/);
     assert.deepEqual(queries.at(-1).params,[1,"%Delhi%"]);
+    await handleRest("colleges",new Request("https://example.com/v1/rest/colleges?select=slug,name,priority&related_exams=cs.%5B%22jee-main%22%5D&is_active=eq.true"), {publicAccess:true});
+    assert.match(queries.at(-1).sql,/id IN \(SELECT id FROM entity_search_names.*JSON_CONTAINS/);
+    assert.deepEqual(queries.at(-1).params,['["jee-main"]',1]);
     await handleRest("colleges",new Request("https://example.com/v1/rest/colleges?select=id,name&name=not.ilike.%25Delhi%25"), {publicAccess:true});
     assert.match(queries.at(-1).sql,/NOT \(LOWER\(`name`\) LIKE LOWER\(\?\)\)/);
   } finally { prisma.$queryRawUnsafe=original; }
