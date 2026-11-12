@@ -107,3 +107,15 @@ describe("slow identity saves", () => {
     expect(screen.getByPlaceholderText("Email address *")).toHaveValue("test@example.com");
   });
 });
+
+
+it("requires OTP for the ZIP before saving any identity", async () => {
+  vi.mocked(saveLeadPhase).mockClear();
+  render(<LeadCaptureForm otpDownload="jee-main-106-papers" />);
+  fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: "Test Student" } });
+  fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: "test@example.com" } });
+  fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: "9876543210" } });
+  fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
+  expect(saveLeadPhase).not.toHaveBeenCalled();
+  expect(screen.getByPlaceholderText("Mobile number *")).toBeVisible();
+});

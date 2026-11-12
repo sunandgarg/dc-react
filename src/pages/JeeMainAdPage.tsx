@@ -63,7 +63,7 @@ const copy = {
       { question: "Is an application number enough to complete registration?", answer: "No. Complete the applicable payment and save the confirmation page from the NTA portal." },
       { question: "Will a previous fee transfer if I start a fresh form?", answer: "No. NTA's 30 October clarification says the earlier fee is neither refunded nor adjusted against a fresh application." },
       { question: "Which JEE Main paper should an engineering applicant choose?", answer: "Paper 1 is for B.E. and B.Tech. Paper 2A is for B.Arch, while Paper 2B is for B.Planning. Choose the paper that matches your intended course." },
-      { question: "Are the previous-year question papers free to open?", answer: "Yes. The 106-paper collection and individual PDFs are hosted by DekhoCampus. Selecting a link opens the guidance form. Complete the request to continue to your selected PDF; the PDF itself is free." },
+      { question: "Are the previous-year question papers free to open?", answer: "Yes. The 106-paper collection and individual PDFs are hosted by DekhoCampus. Individual PDFs open directly without OTP. The complete ZIP requires mobile OTP verification and form completion." },
       { question: "Does completing JEE Main registration secure a college seat?", answer: "No. Registration lets you apply for the examination. Admission depends on the institution's eligibility rules and the applicable counselling or selection process." },
     ],
     footer: "Independent student guidance by DekhoCampus. Official exam applications are handled by NTA.",
@@ -138,6 +138,7 @@ function EnglishAdPage() {
   const gateExternalLink = (event: MouseEvent<HTMLDivElement>) => {
     const anchor = (event.target as HTMLElement).closest("a[href]");
     if (!(anchor instanceof HTMLAnchorElement)) return;
+    if (anchor.hasAttribute("data-paper-download")) return;
     const url = new URL(anchor.href);
     if (!["https:", "http:"].includes(url.protocol) || (url.origin === window.location.origin && !anchor.hasAttribute("data-college-destination"))) return;
     event.preventDefault();
@@ -169,7 +170,7 @@ function EnglishAdPage() {
           <section id="question-papers" aria-labelledby="papers-title" className="rounded-md border border-blue-100 border-t-[3px] border-t-blue-700 bg-[#f7fafc] p-3 sm:p-5">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">DekhoCampus paper collection</p>
             <h2 id="papers-title" className="mt-1 font-bold">JEE Main question papers: last 5 years</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700">Download all 106 papers from 2022 to 2026 in one ZIP, or open a year below and choose an exam date and morning or evening shift. Complete the guidance form to continue to your free download.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">Download all 106 papers from 2022 to 2026 in one ZIP, or open a year below and choose an exam date and morning or evening shift. Verify your mobile number with OTP and complete the form for the ZIP. Individual PDFs open directly without OTP.</p>
             <button type="button" onClick={() => setDestination({ url: PAPERS_ZIP, label: "All 106 JEE Main question papers (ZIP)" })} className="mt-4 flex min-h-11 w-full items-center justify-center rounded border border-blue-800 bg-blue-800 px-3 py-2 text-center text-sm font-bold text-white hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800">
               Download all 106 papers (.zip)
             </button>
@@ -180,7 +181,7 @@ function EnglishAdPage() {
                   <thead className="bg-blue-50"><tr><th className="px-3 py-2">Exam date</th><th className="px-3 py-2">Morning shift</th><th className="px-3 py-2">Evening shift</th></tr></thead>
                   <tbody className="divide-y divide-blue-50">{dates.map(date => <tr key={date.date}>
                     <th scope="row" className="px-3 py-2 font-medium">{date.date} {year}</th>
-                    {(["morning", "evening"] as const).map(shift => <td key={shift} className="px-3 py-2">{date[shift] ? <a href={date[shift]} target="_blank" rel="noopener noreferrer" aria-label={`JEE Main ${year}, ${date.date}, ${shift} shift question paper PDF`} className="inline-flex min-h-11 items-center font-semibold text-blue-800 underline">Download PDF</a> : <span className="text-slate-500">Not in collection</span>}</td>)}
+                    {(["morning", "evening"] as const).map(shift => <td key={shift} className="px-3 py-2">{date[shift] ? <a data-paper-download href={date[shift]} target="_blank" rel="noopener noreferrer" aria-label={`JEE Main ${year}, ${date.date}, ${shift} shift question paper PDF`} className="inline-flex min-h-11 items-center font-semibold text-blue-800 underline">Download PDF</a> : <span className="text-slate-500">Not in collection</span>}</td>)}
                   </tr>)}</tbody>
                 </table></div>
               </details>)}
@@ -262,7 +263,7 @@ function EnglishAdPage() {
     </main>
 
     <Footer />
-    <LeadGateDialog className="max-h-[calc(100dvh-2rem)] overflow-y-auto [&_img]:h-auto [&_img]:w-32" open={!!destination} onOpenChange={open => { if (!open) setDestination(null); }} forceShow simple unbrandedConsent title="" subtitle="" source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={() => { if (destination) { window.location.assign(destination.url); setDestination(null); } }} />
+    <LeadGateDialog className="max-h-[calc(100dvh-2rem)] overflow-y-auto [&_img]:h-auto [&_img]:w-32" otpDownload={destination?.url === PAPERS_ZIP ? "jee-main-106-papers" : undefined} open={!!destination} onOpenChange={open => { if (!open) setDestination(null); }} forceShow simple unbrandedConsent title="" subtitle="" source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={(_leadId, downloadUrl) => { if (destination) { if (destination.url === PAPERS_ZIP && !downloadUrl) return; window.location.assign(downloadUrl || destination.url); setDestination(null); } }} />
     <nav aria-label="JEE Main quick actions" className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-slate-200 bg-white p-2 shadow-lg sm:hidden"><button type="button" onClick={openApplication} className="flex-1 rounded-lg bg-orange-600 px-2 py-3 text-center text-sm font-bold text-white">Open the official form</button><a href="#jee-guidance-form" className="flex-1 rounded-lg border border-blue-700 px-2 py-3 text-center text-sm font-bold text-blue-800">Get free guidance</a></nav>
   </div>;
 }
