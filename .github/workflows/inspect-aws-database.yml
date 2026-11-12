@@ -135,6 +135,8 @@ jobs:
             }
           }
           for (const sql of [
+            "SELECT EVENT_NAME,WORK_COMPLETED,WORK_ESTIMATED FROM performance_schema.events_stages_current",
+            "SELECT NAME,COUNT FROM information_schema.INNODB_METRICS WHERE NAME IN ('dml_reads','dml_inserts','buffer_data_written')",
             "SHOW GLOBAL STATUS WHERE Variable_name IN ('Threads_connected','Threads_running','Max_used_connections','Slow_queries','Aborted_connects','Innodb_buffer_pool_reads','Innodb_buffer_pool_read_requests','Uptime')",
             "SHOW VARIABLES WHERE Variable_name IN ('max_connections','innodb_buffer_pool_size')",
             "SELECT COMMAND, STATE, COUNT(*) AS connections, MAX(TIME) AS max_seconds FROM information_schema.PROCESSLIST GROUP BY COMMAND, STATE",
