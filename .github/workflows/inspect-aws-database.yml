@@ -32,3 +32,43 @@ jobs:
             --relational-database-name "$DATABASE_NAME" \
             --query 'relationalDatabase.{name:name,state:state,engine:engine,engineVersion:engineVersion,availabilityZone:location.availabilityZone,publiclyAccessible:publiclyAccessible,pendingMaintenanceActions:pendingMaintenanceActions}' \
             --output json
+
+      - name: Inspect API host and database workload
+        run: |
+          set -euo pipefail
+          aws lightsail get-instance-access-details --instance-name dc-react-api-lightsail --protocol ssh > /tmp/access.json
+          jq -r '.accessDetails.privateKey' /tmp/access.json > /tmp/key
+          jq -r '.accessDetails.certKey' /tmp/access.json > /tmp/key-cert.pub
+          chmod 600 /tmp/key
+          SSH_USER=$(jq -r '.accessDetails.username' /tmp/access.json)
+          SSH_IP=$(jq -r '.accessDetails.ipAddress' /tmp/access.json)
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/key "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
+          set -euo pipefail
+          uptime
+          free -m
+          df -h /
+          ps -eo comm,rss,pcpu --sort=-rss | head -12
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app/backend
+          node --input-type=module <<'JS'
+          import "./src/database-url.mjs";
+          import mysql from "mysql2/promise";
+          const start = Date.now();
+          const db = await mysql.createConnection(process.env.DATABASE_URL);
+          console.log("mysql_connect_ms", Date.now()-start);
+          for (const sql of [
+            "SHOW GLOBAL STATUS WHERE Variable_name IN ('Threads_connected','Threads_running','Max_used_connections','Slow_queries','Aborted_connects','Innodb_buffer_pool_reads','Innodb_buffer_pool_read_requests','Uptime')",
+            "SHOW VARIABLES WHERE Variable_name IN ('max_connections','innodb_buffer_pool_size')",
+            "SELECT COMMAND, STATE, COUNT(*) AS connections, MAX(TIME) AS max_seconds FROM information_schema.PROCESSLIST GROUP BY COMMAND, STATE",
+            "SELECT DIGEST_TEXT, COUNT_STAR, ROUND(SUM_TIMER_WAIT/1000000000000,2) AS total_seconds, ROUND(MAX_TIMER_WAIT/1000000000000,2) AS max_seconds FROM performance_schema.events_statements_summary_by_digest ORDER BY SUM_TIMER_WAIT DESC LIMIT 8",
+            "EXPLAIN SELECT id,name FROM colleges WHERE name LIKE '%Delhi%' ORDER BY name,id LIMIT 20"
+          ]) {
+            const before=Date.now();
+            const [rows]=await db.query(sql);
+            console.log(JSON.stringify({sql,ms:Date.now()-before,rows}));
+          }
+          await db.end();
+          JS
+          REMOTE
