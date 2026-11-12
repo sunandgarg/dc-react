@@ -253,7 +253,7 @@ async function serveAsset(request, env) {
   // can validate them and serve either the real page or a real HTTP 404.
   const looksLikeFile = /\/[^/]+\.[a-z0-9]{1,10}$/i.test(url.pathname);
   if (response.status === 404 && request.method === "GET" && !looksLikeFile) {
-    response = await env.ASSETS.fetch(new Request(new URL("/index.html", url)));
+    response = await env.ASSETS.fetch(new Request(new URL("/", url)));
   }
 
   if (request.method === "GET" && response.ok && response.headers.get("content-type")?.includes("text/html")) {

@@ -23,10 +23,12 @@ describe("Cloudflare serving failure classification", () => {
   });
   it("recovers valid document routes when Pages has a static 404 fallback", async () => {
     const fallback = readFileSync("public/404.html", "utf8");
-    const pagesEnv = { ASSETS: { fetch: async (request: Request) => new URL(request.url).pathname === "/index.html"
+    const pagesEnv = { ASSETS: { fetch: async (request: Request) => new URL(request.url).pathname === "/"
       ? new Response(shellHtml, { headers: { "content-type": "text/html" } })
       : new Response(fallback, { status: 404, headers: { "content-type": "text/html" } }) } };
     const valid = await worker.fetch(new Request("https://dekhocampus.com/about-us"), pagesEnv, context);
+    const landing = await worker.fetch(new Request("https://dekhocampus.com/ad/jee-main-2027"), pagesEnv, context);
+    expect(landing.status).toBe(200);
     const missing = await worker.fetch(new Request("https://dekhocampus.com/not-a-real-page"), pagesEnv, context);
     const missingFile = await worker.fetch(new Request("https://dekhocampus.com/assets/missing.js"), pagesEnv, context);
     expect(valid.status).toBe(200);
