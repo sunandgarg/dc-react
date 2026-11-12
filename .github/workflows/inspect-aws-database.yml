@@ -3,6 +3,10 @@ name: Inspect AWS production database
 on:
   workflow_dispatch:
     inputs:
+      finish_public_index:
+        description: Apply and measure the online public college directory ordering index
+        type: boolean
+        default: false
       finish_featured_index:
         description: Apply the online featured-college index and clean the isolated brochure test draft
         type: boolean
@@ -177,6 +181,15 @@ jobs:
             console.log(JSON.stringify({featured_ms:Date.now()-start,rows:featured.length}));
             const [removed]=await db.query("DELETE FROM colleges WHERE slug=? AND name=? AND status='Draft'", ['dc-brochure-verification-20261112','DC brochure verification 20261112']);
             console.log("brochure_test_drafts_removed",removed.affectedRows);
+          }
+          if ("${{ inputs.finish_public_index }}" === "true") {
+            const [existing]=await db.query("SHOW INDEX FROM colleges WHERE Key_name='ix_colleges_directory_order'");
+            if (!existing.length) await db.query("CREATE INDEX ix_colleges_directory_order ON colleges (is_active,priority,featured_rank,rating DESC,id) ALGORITHM=INPLACE LOCK=NONE");
+            const sql="SELECT id,slug,name,short_name,location,city,state,type,category,rating,reviews,fees,image,logo,tags,approvals,naac_grade,established,priority,featured_rank,is_partner,affiliation_kind,parent_university_slug FROM colleges WHERE is_active=1 ORDER BY priority,featured_rank,rating DESC,id LIMIT 10";
+            const start=Date.now();
+            const [rows]=await db.query(sql);
+            const [plan]=await db.query("EXPLAIN "+sql);
+            console.log(JSON.stringify({public_directory_ms:Date.now()-start,rows:rows.length,plan}));
           }
           const [active] = await db.query("SELECT ID,TIME,STATE,INFO AS shape FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep' AND INFO IS NOT NULL");
           console.log(JSON.stringify(active.map(r=>({...r,shape:r.shape.startsWith("SELECT ") ? r.shape.replace(/'[^']*'/g,"?").slice(0,3000) : r.shape.split(" ")[0]}))));
