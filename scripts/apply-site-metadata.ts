@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
+import { applyEdgeSeo, edgeSeoFor } from "../public/edge-seo.js";
 import { SITE_CONFIG, SITE_URL, absoluteSiteUrl } from "../src/lib/constant";
 
 const distDir = resolve("dist");
@@ -141,6 +142,15 @@ function writeLlms() {
 
 mkdirSync(distDir, { recursive: true });
 updateIndexHtml();
+// Real HTML files keep these routes available when Pages Functions fail open.
+const shell = readFileSync(indexPath, "utf8");
+for (const route of ["/ad/jee-main-2027", "/ad/jee-main-2027-application", "/about-us"]) {
+  const output = resolve(distDir, `.${route}.html`);
+  mkdirSync(resolve(output, ".."), { recursive: true });
+  const html = applyEdgeSeo(shell, edgeSeoFor(new URL(route, SITE_URL)));
+  if (!html.includes('type="module"') || !html.includes('rel="canonical"')) throw new Error(`Missing application shell for ${route}`);
+  writeFileSync(output, html);
+}
 writeRobots();
 writeLlms();
 console.log(`[site-metadata] applied for ${SITE_URL}`);
