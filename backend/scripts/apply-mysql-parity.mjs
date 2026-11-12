@@ -252,6 +252,11 @@ async function ensurePublicListingPerformanceIndexes(report) {
     await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_admin_order` ON `colleges` (`priority`, `featured_rank`, `updated_at` DESC, `id`) ALGORITHM=INPLACE LOCK=NONE");
     report.createdReferenceIndexes.push("ix_colleges_admin_order");
   }
+  if (!await indexExists("colleges", "ix_colleges_status")) {
+    if (!await ensureVarchar191("colleges", "status")) throw new Error("College status exceeds the safe indexed length");
+    await prisma.$executeRawUnsafe("CREATE INDEX `ix_colleges_status` ON `colleges` (`status`)");
+    report.createdReferenceIndexes.push("ix_colleges_status");
+  }
   if (!await indexExists("articles", "ix_articles_scope_featured")) {
     await prisma.$executeRawUnsafe("CREATE INDEX `ix_articles_scope_featured` ON `articles` (`site_scope`, `featured_rank`)");
     report.createdReferenceIndexes.push("ix_articles_scope_featured");
