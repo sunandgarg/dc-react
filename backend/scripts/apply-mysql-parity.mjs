@@ -1,4 +1,3 @@
-import { ensureEntitySearchIndex } from "../src/entity-search-index.mjs";
 #!/usr/bin/env node
 import { ensureEntitySearchIndex } from "../src/entity-search-index.mjs";
 
