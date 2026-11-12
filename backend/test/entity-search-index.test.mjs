@@ -44,6 +44,9 @@ test("REST keeps scope, filters, ordering and parameters when using the compact 
     assert.match(queries.at(-1).sql,/id IN \(SELECT id FROM entity_search_names.*JSON_CONTAINS/);
     assert.match(queries.at(-1).sql,/GROUP BY id\) AS matched STRAIGHT_JOIN `colleges` ON `colleges`.id=matched.matched_id/);
     assert.deepEqual(queries.at(-1).params,['["jee-main"]','["jee-main"]',1]);
+    await handleRest("colleges",new Request("https://example.com/v1/rest/colleges?select=id,name,priority&or=(name.ilike.%25Delhi%25,city.ilike.%25Delhi%25)&order=priority"), {actorUserId:"admin"});
+    assert.match(queries.at(-1).sql,/LOWER\(`name`\).* OR LOWER\(`city`\).*GROUP BY id\) AS matched STRAIGHT_JOIN/);
+    assert.deepEqual(queries.at(-1).params,["%Delhi%","%Delhi%","%Delhi%","%Delhi%"]);
     await handleRest("colleges",new Request("https://example.com/v1/rest/colleges?select=id,name&name=not.ilike.%25Delhi%25"), {publicAccess:true});
     assert.match(queries.at(-1).sql,/NOT \(LOWER\(`name`\) LIKE LOWER\(\?\)\)/);
   } finally { prisma.$queryRawUnsafe=original; }
