@@ -2,6 +2,11 @@ name: Inspect AWS production database
 
 on:
   workflow_dispatch:
+    inputs:
+      repair_affiliation_index:
+        description: Add the missing nonunique affiliation lookup index
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -36,6 +41,7 @@ jobs:
       - name: Inspect API host and database workload
         run: |
           set -euo pipefail
+          export REPAIR_INDEX="${{ inputs.repair_affiliation_index }}"
           RUNNER_IP=$(curl -fsS https://checkip.amazonaws.com | tr -d '[:space:]')
           [[ "$RUNNER_IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]
           PORT_INFO=$(jq -nc --arg cidr "$RUNNER_IP/32" '{fromPort:22,toPort:22,protocol:"tcp",cidrs:[$cidr]}')
@@ -47,7 +53,7 @@ jobs:
           chmod 600 /tmp/key
           SSH_USER=$(jq -r '.accessDetails.username' /tmp/access.json)
           SSH_IP=$(jq -r '.accessDetails.ipAddress' /tmp/access.json)
-          timeout 90 ssh -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/key "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
+          timeout 300 ssh -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/key "$SSH_USER@$SSH_IP" "sudo REPAIR_INDEX=$REPAIR_INDEX bash -s" <<'REMOTE' 
           set -euo pipefail
           uptime
           free -m
@@ -64,11 +70,24 @@ jobs:
           console.log("starting_mysql_inspection");
           const db = await mysql.createConnection(process.env.DATABASE_URL);
           console.log("mysql_connect_ms", Date.now()-start);
+          if (process.env.REPAIR_INDEX === "true") {
+            const [existing] = await db.query("SHOW INDEX FROM colleges WHERE Key_name='ix_colleges_parent_active'");
+            if (!existing.length) {
+              await db.query("SET SESSION lock_wait_timeout=15");
+              const [running] = await db.query("SELECT ID, INFO FROM information_schema.PROCESSLIST WHERE COMMAND='Execute' AND TIME>15");
+              for (const r of running) {
+                if (/^SELECT .* FROM `colleges` WHERE `parent_university_slug` = /s.test(r.INFO || "")) await db.query("KILL QUERY " + Number(r.ID));
+              }
+              await db.query("CREATE INDEX ix_colleges_parent_active ON colleges (parent_university_slug(191), is_active), ALGORITHM=INPLACE, LOCK=NONE");
+              console.log("affiliation_index_created");
+            }
+          }
           for (const sql of [
             "SHOW GLOBAL STATUS WHERE Variable_name IN ('Threads_connected','Threads_running','Max_used_connections','Slow_queries','Aborted_connects','Innodb_buffer_pool_reads','Innodb_buffer_pool_read_requests','Uptime')",
             "SHOW VARIABLES WHERE Variable_name IN ('max_connections','innodb_buffer_pool_size')",
             "SELECT COMMAND, STATE, COUNT(*) AS connections, MAX(TIME) AS max_seconds FROM information_schema.PROCESSLIST GROUP BY COMMAND, STATE",
             "SELECT DIGEST_TEXT, COUNT_STAR, ROUND(SUM_TIMER_WAIT/1000000000000,2) AS total_seconds, ROUND(MAX_TIMER_WAIT/1000000000000,2) AS max_seconds FROM performance_schema.events_statements_summary_by_digest ORDER BY SUM_TIMER_WAIT DESC LIMIT 8",
+            "EXPLAIN SELECT slug,name FROM colleges WHERE parent_university_slug = 'delhi-university' AND is_active=1 ORDER BY name LIMIT 24",
             "EXPLAIN SELECT id,name FROM colleges WHERE name LIKE '%Delhi%' ORDER BY name,id LIMIT 20"
           ]) {
             const before=Date.now();
