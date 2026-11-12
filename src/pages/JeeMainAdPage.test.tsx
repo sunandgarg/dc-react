@@ -25,6 +25,7 @@ describe("JEE Main ad pages", () => {
     open("jee-main-2027");
     const notice = screen.getByRole("region", { name: "JEE Main registration update" });
     expect(notice).toHaveTextContent("JEE Main 2027 registration is now LIVE!");
+    expect(within(notice).getByRole("img", { name: "National Testing Agency", exact: true })).toHaveAttribute("src", "/assets/nta-registration-symbol.png");
     expect(notice).toHaveTextContent("Last date without late fee: 22 November 2026, 11:50 PM IST");
     expect(notice.querySelector("time")).toHaveAttribute("dateTime", "2026-11-22T23:50:00+05:30");
     expect(notice.compareDocumentPosition(screen.getAllByRole("region", { name: "JEE Main guidance form" })[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
