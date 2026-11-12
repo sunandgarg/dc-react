@@ -273,7 +273,7 @@ function corsHeaders(request) {
   const allowedOrigin = origin && (allowedOrigins.includes(origin) || origin === requestOrigin) ? origin : allowedOrigins[0] || "null";
   return {
     "access-control-allow-origin": allowedOrigin,
-    "access-control-allow-headers": "accept, accept-profile, authorization, apikey, content-profile, content-type, prefer, range, range-unit, x-client-info, x-request-id, x-upsert",
+    "access-control-allow-headers": "accept, accept-profile, authorization, apikey, cache-control, content-profile, content-type, prefer, range, range-unit, x-client-info, x-request-id, x-upsert",
     "access-control-expose-headers": "accept-ranges, content-length, content-range, range-unit, retry-after, x-request-id",
     "access-control-allow-methods": "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS",
     vary: "Origin",
