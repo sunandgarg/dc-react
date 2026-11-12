@@ -38,6 +38,13 @@ jobs:
             --query 'relationalDatabase.{name:name,state:state,engine:engine,engineVersion:engineVersion,availabilityZone:location.availabilityZone,publiclyAccessible:publiclyAccessible,pendingMaintenanceActions:pendingMaintenanceActions}' \
             --output json
 
+      - name: Inspect database cache settings and CPU
+        run: |
+          aws lightsail get-relational-database-parameters --relational-database-name "$DATABASE_NAME" --query "parameters[?parameterName=='innodb_buffer_pool_size'].{name:parameterName,value:parameterValue,modifiable:isModifiable,applyType:applyType,allowedValues:allowedValues}" --output json
+          for metric in CPUUtilization DiskQueueDepth; do
+            aws lightsail get-relational-database-metric-data --relational-database-name "$DATABASE_NAME" --metric-name "$metric" --period 300 --start-time "$(date -u -d '20 minutes ago' +%FT%TZ)" --end-time "$(date -u +%FT%TZ)" --unit None --statistics Average --query metricData --output json
+          done
+
       - name: Inspect API host and database workload
         run: |
           set -euo pipefail
