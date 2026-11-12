@@ -3,6 +3,10 @@ name: Inspect AWS production database
 on:
   workflow_dispatch:
     inputs:
+      restart_services:
+        description: Restart the DekhoCampus API and nginx services
+        type: boolean
+        default: false
       repair_affiliation_index:
         description: Add the missing nonunique affiliation lookup index
         type: boolean
@@ -65,6 +69,11 @@ jobs:
           SSH_IP=$(jq -r '.accessDetails.ipAddress' /tmp/access.json)
           timeout 300 ssh -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/key "$SSH_USER@$SSH_IP" "sudo REPAIR_INDEX=$REPAIR_INDEX bash -s" <<'REMOTE' 
           set -euo pipefail
+          if [ "${{ inputs.restart_services }}" = true ]; then
+            pm2 restart dc-react-api --update-env
+            systemctl restart nginx
+            systemctl is-active nginx
+          fi
           uptime
           free -m
           df -h /
