@@ -39,7 +39,7 @@ describe("public news categories", () => {
     const query = new URL(String(fetcher.mock.calls.at(-1)![0])).searchParams;
     expect(query.get("language_code")).toBe(languageFilter);
     expect(query.get("category")).toBe(url.includes("category=News") ? "eq.News" : null);
-    expect(query.get("limit")).toBe("12");
+    expect(query.get("limit")).toBe("10");
     expect(screen.getByRole("button", { name: "Vernacular" })).toBeInTheDocument();
     if (url.includes("Vernacular")) expect(screen.getByRole("link", { name: "தமிழ்" })).toHaveAttribute("href", "/news?category=Vernacular&language=ta");
   });

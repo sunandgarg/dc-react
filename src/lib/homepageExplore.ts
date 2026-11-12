@@ -130,7 +130,7 @@ export async function fetchHomepageExplore<T extends ExploreRow>(table: "college
   const query = (fields: string) => {
     let request = backendClient.from(table, { publicRead: true }).select(fields).eq("is_active", true);
     if (table === "exams") request = request.neq("listing_category", "Sarkari");
-    return request.or(filters.join(",")).order("priority", { ascending: true, nullsFirst: false }).order("name").limit(200);
+    return request.or(filters.join(",")).order("priority", { ascending: true, nullsFirst: false }).order("name").limit(30);
   };
   let result = await query(select);
   if (isMissingExploreSelectionColumn(result.error)) {

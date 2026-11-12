@@ -12,7 +12,7 @@ const getDisplayName = (name: string) =>
 
 export function TopRankedColleges() {
   const { data: featuredSlugs } = useFeaturedColleges();
-  const { data: featuredColleges, isLoading } = useFeaturedCollegeCards(featuredSlugs ?? []);
+  const { data: featuredColleges, isLoading } = useFeaturedCollegeCards((featuredSlugs ?? []).slice(0, 6));
   const colleges = featuredColleges?.slice(0, 6) ?? [];
 
   if (!isLoading && colleges.length === 0) return null;

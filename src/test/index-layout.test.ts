@@ -327,7 +327,7 @@ describe("Index page layout (static source assertions)", () => {
   });
 
   it("keeps the college directory scroll path lightweight", () => {
-    expect(directoryHookSrc).toMatch(/COLLEGE_DIRECTORY_PAGE_SIZE = 24/);
+    expect(directoryHookSrc).toMatch(/COLLEGE_DIRECTORY_PAGE_SIZE = 10/);
     expect(allCollegesSrc).not.toMatch(/new IntersectionObserver/);
     expect(collegeCardSrc).not.toMatch(/framer-motion|<motion\./);
     expect(collegeCardSrc).toMatch(/college-directory-card/);

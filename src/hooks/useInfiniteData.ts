@@ -2,7 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import type { SearchGroup } from "@/lib/listingFilters";
 
-const BATCH_SIZE = 18;
+const BATCH_SIZE = 10;
 
 interface InfiniteConfig {
   table: "courses" | "exams";
@@ -107,6 +107,9 @@ export function useInfiniteData({
     },
     enabled,
     staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
     placeholderData: undefined,
   });
   const items = query.data?.pages.flatMap(p => p.items) ?? [];
