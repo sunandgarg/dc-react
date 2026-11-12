@@ -20,6 +20,14 @@ export const FEATURED_COLLEGE_NAMES: Record<string, string> = {
   "kr-mangalam-university-gurgaon": "KRMU",
 };
 
+export const ENGINEERING_EXAM_LINKS = [
+  { slug: "jee-mains", label: "JEE Main" },
+  { slug: "jee-advanced", label: "JEE Advanced" },
+  { slug: "viteee", label: "VITEEE" },
+  { slug: "srmjeee", label: "SRMJEEE" },
+  { slug: "bitsat", label: "BITSAT" },
+];
+
 const EXAM_PREFERENCES: Record<string, string[]> = {
   Engineering: ["JEE Main", "JEE Advanced", "VITEEE", "SRMJEEE", "BITSAT", "GATE", "MHT CET", "WBJEE"],
   Management: ["CAT", "XAT", "CMAT", "MAT", "NMAT", "SNAP"],
@@ -93,11 +101,14 @@ export async function fetchHomepageExplore<T extends ExploreRow>(table: "college
   // Complete curated picks already outrank every fallback; avoid scanning the catalogue.
   const featuredSlugs = table === "courses"
     ? (HOMEPAGE_COURSE_PICKS[category] || []).map(({ slug }) => slug)
-    : table === "colleges" && category === "Engineering" ? ENGINEERING_COLLEGE_SLUGS : [];
+    : table === "colleges" && category === "Engineering" ? ENGINEERING_COLLEGE_SLUGS
+    : table === "exams" && category === "Engineering" ? ENGINEERING_EXAM_LINKS.map(item => item.slug) : [];
   let featuredRows: T[] = [];
   if (featuredSlugs.length) {
     const fields = select.split(",").filter((field) => !["show_in_explore_by_category", "explore_by_category_checked_at"].includes(field)).join(",");
-    const featured = await backendClient.from(table, { publicRead: true }).select(fields).eq("is_active", true).in("slug", featuredSlugs);
+    let request = backendClient.from(table, { publicRead: true }).select(fields).eq("is_active", true).in("slug", featuredSlugs);
+    if (table === "exams") request = request.neq("listing_category", "Sarkari");
+    const featured = await request;
     if (featured.error) throw featured.error;
     featuredRows = (featured.data || []) as T[];
     const ranked = rankHomepageExplore(featuredRows, category, table);

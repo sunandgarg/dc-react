@@ -10,7 +10,7 @@ import { useHomepageCategoryExams } from "@/hooks/useExamsData";
 
 import { useStreamCategories } from "@/hooks/useStreamCategories";
 import { displayRating } from "@/lib/ratings";
-import { ENGINEERING_COLLEGE_SLUGS, FEATURED_COLLEGE_NAMES } from "@/lib/homepageExplore";
+import { ENGINEERING_EXAM_LINKS, ENGINEERING_COLLEGE_SLUGS, FEATURED_COLLEGE_NAMES } from "@/lib/homepageExplore";
 import { HOMEPAGE_COURSE_PICKS, FEATURED_COURSE_NAMES } from "@/lib/homepageCoursePicks";
 
 const DEFAULT_CATEGORY = "Engineering";
@@ -22,13 +22,6 @@ const engineeringCollegeLinks = ENGINEERING_COLLEGE_SLUGS.map(slug => ({
   slug,
   label: FEATURED_COLLEGE_NAMES[slug],
 }));
-
-const engineeringExamLinks = [
-  { slug: "jee-advanced", label: "JEE Advanced" },
-  { slug: "viteee", label: "VITEEE" },
-  { slug: "srmjeee", label: "SRMJEEE" },
-  { slug: "bitsat", label: "BITSAT" },
-];
 
 function DirectoryLinks({ section, picks }: { section: string; picks: { slug: string; label: string }[] }) {
   return picks.map(({ slug, label }) => (
@@ -266,7 +259,7 @@ export function CategorySection() {
             </div>
             <div className="grid auto-rows-fr gap-3 flex-1">
               {exams.length === 0 && ((examsLoading || examsError) && activeCategory === DEFAULT_CATEGORY
-                ? <DirectoryLinks section="exams" picks={engineeringExamLinks} />
+                ? <DirectoryLinks section="exams" picks={ENGINEERING_EXAM_LINKS} />
                 : <p role="status" className="text-xs text-muted-foreground">{examsLoading ? "Loading exams…" : examsError ? "Exams could not be loaded. Please try again." : "No exams listed in this category yet."}</p>)}
               {exams.slice(0, 5).map((exam) => (
                 <Link key={exam.slug} to={`/exams/${exam.slug}`} className={rowClass}>
