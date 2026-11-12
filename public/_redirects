@@ -2,3 +2,8 @@
 /college/* /colleges/:splat 301
 /articles/* /news/:splat 301
 /articles /news 301
+
+# Keep the JEE landing page available when Pages Functions fail open.
+/ad/jee-main-2027 /index.html 200
+/ad/jee-main-2027-application /index.html 200
+/about-us /index.html 200
