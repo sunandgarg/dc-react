@@ -8,7 +8,7 @@ export const searchFields = {
 };
 export const searchColumns = [...new Set(Object.values(searchFields).flat())];
 
-export async function ensureEntitySearchIndex(db) {
+export async function ensureEntitySearchIndex(db, executeDdl) {
   await db.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS entity_search_names (
     entity_table VARCHAR(16) NOT NULL, id CHAR(36) NOT NULL,
     ${searchColumns.map(field => `${quote(field)} LONGTEXT NULL`).join(",")},
@@ -26,7 +26,7 @@ export async function ensureEntitySearchIndex(db) {
       const action = event === "DELETE"
         ? `DELETE FROM entity_search_names WHERE entity_table='${table}' AND id=OLD.id`
         : `INSERT INTO entity_search_names (${columns}) VALUES (${values}) ON DUPLICATE KEY UPDATE ${updates}`;
-      await db.$executeRawUnsafe(`CREATE TRIGGER ${quote(name)} AFTER ${event} ON ${quote(table)} FOR EACH ROW ${action}`);
+      await executeDdl(`CREATE TRIGGER ${quote(name)} AFTER ${event} ON ${quote(table)} FOR EACH ROW ${action}`);
     }
     const marker = await db.$queryRawUnsafe("SELECT 1 FROM entity_search_names WHERE entity_table='_ready' AND id=? LIMIT 1", table);
     if (!marker.length) {
