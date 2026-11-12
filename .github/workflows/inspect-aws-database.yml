@@ -42,7 +42,9 @@ jobs:
         run: |
           aws lightsail get-relational-database-parameters --relational-database-name "$DATABASE_NAME" --query "parameters[?parameterName=='innodb_buffer_pool_size'].{name:parameterName,value:parameterValue,modifiable:isModifiable,applyType:applyType,allowedValues:allowedValues}" --output json
           for metric in CPUUtilization DiskQueueDepth; do
-            aws lightsail get-relational-database-metric-data --relational-database-name "$DATABASE_NAME" --metric-name "$metric" --period 300 --start-time "$(date -u -d '20 minutes ago' +%FT%TZ)" --end-time "$(date -u +%FT%TZ)" --unit None --statistics Average --query metricData --output json
+            unit=Count
+            if [ "$metric" = CPUUtilization ]; then unit=Percent; fi
+            aws lightsail get-relational-database-metric-data --relational-database-name "$DATABASE_NAME" --metric-name "$metric" --period 300 --start-time "$(date -u -d '20 minutes ago' +%FT%TZ)" --end-time "$(date -u +%FT%TZ)" --unit "$unit" --statistics Average --query metricData --output json
           done
 
       - name: Inspect API host and database workload
@@ -78,6 +80,14 @@ jobs:
           const db = await mysql.createConnection(process.env.DATABASE_URL);
           console.log("mysql_connect_ms", Date.now()-start);
           if (process.env.REPAIR_INDEX === "true") {
+            const [staleReads] = await db.query("SELECT ID,INFO FROM information_schema.PROCESSLIST WHERE DB=DATABASE() AND COMMAND='Execute' AND TIME>10");
+            let drained=0;
+            for (const row of staleReads) {
+              if (/^SELECT .* FROM `colleges` /s.test(row.INFO || "")) {
+                try { await db.query("KILL QUERY " + Number(row.ID)); drained++; } catch (error) { if (error.code !== "ER_NO_SUCH_THREAD") throw error; }
+              }
+            }
+            console.log("drained_long_college_reads",drained);
             const [existing] = await db.query("SHOW INDEX FROM colleges WHERE Key_name='ix_colleges_parent_active'");
             if (!existing.length) {
               await db.query("SET SESSION lock_wait_timeout=120");
