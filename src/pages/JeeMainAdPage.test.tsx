@@ -35,9 +35,11 @@ describe("JEE Main ad pages", () => {
     expect(fireEvent.click(apply)).toBe(false);
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
-    expect(fireEvent.click(within(notice).getByRole("link", { name: "Source: NTA Session 1 application notice" }))).toBe(true);
+    expect(within(notice).queryByText("Source: NTA Session 1 application notice")).not.toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(notice).toHaveTextContent("DekhoCampus is an independent guidance website");
+    expect(notice).not.toHaveTextContent("Complete the optional guidance form to continue to NTA");
+    expect(notice.closest('[lang="en"]')).not.toHaveClass("[--primary:24_94%_40%]");
+    expect(screen.queryByRole("region", { name: "Share this page" })).not.toBeInTheDocument();
   });
 
   it.each([
@@ -59,7 +61,7 @@ describe("JEE Main ad pages", () => {
   it("preserves two forms after registration and papers, with only linked college logos above the lower form", () => {
     open("jee-main-2027");
     const forms = screen.getAllByRole("region", { name: "JEE Main guidance form" });
-    expect(forms).toHaveLength(3);
+    expect(forms).toHaveLength(2);
     expect(forms[0]).toHaveAttribute("id", "jee-registration-form");
     expect(forms[1]).toHaveAttribute("id", "jee-guidance-form");
     const registration = screen.getByRole("heading", { name: "JEE Main 2027 registration: Session 1" });
