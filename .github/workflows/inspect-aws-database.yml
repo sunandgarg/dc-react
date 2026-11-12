@@ -75,6 +75,10 @@ jobs:
             const [rows]=await db.query(sql);
             console.log(JSON.stringify({sql,ms:Date.now()-before,rows}));
           }
+          const [active] = await db.query("SELECT TIME, STATE, INFO FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep' AND INFO IS NOT NULL");
+          console.log(JSON.stringify(active.map(r=>({seconds:r.TIME,state:r.STATE,shape:r.INFO.replace(/'[^']*'/g,"?").slice(0,1800)}))));
+          const [sizes] = await db.query("SELECT TABLE_NAME, TABLE_ROWS, ROUND(DATA_LENGTH/1048576) AS data_mb, ROUND(INDEX_LENGTH/1048576) AS index_mb FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() ORDER BY DATA_LENGTH DESC LIMIT 8");
+          console.log(JSON.stringify(sizes));
           await db.end();
           JS
           REMOTE
