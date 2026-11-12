@@ -89,6 +89,11 @@ jobs:
               }
             }
             console.log("drained_long_college_reads",drained);
+            const [adminOrder] = await db.query("SHOW INDEX FROM colleges WHERE Key_name='ix_colleges_admin_order'");
+            if (!adminOrder.length) {
+              await db.query("CREATE INDEX ix_colleges_admin_order ON colleges (priority,featured_rank,updated_at DESC,id) ALGORITHM=INPLACE LOCK=NONE");
+              console.log("admin_order_index_created");
+            }
             const [existing] = await db.query("SHOW INDEX FROM colleges WHERE Key_name='ix_colleges_parent_active'");
             if (!existing.length) {
               await db.query("SET SESSION lock_wait_timeout=120");
