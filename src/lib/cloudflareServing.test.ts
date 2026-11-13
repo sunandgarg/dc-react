@@ -13,9 +13,9 @@ const rowsResponse = (rows: unknown) => new Response(JSON.stringify(rows), { hea
 afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
 
 describe("Cloudflare serving failure classification", () => {
-  it("routes public content HTML through the Worker without routing assets", () => {
-    expect(routeConfig.include).toContain("/*");
-    expect(routeConfig.exclude).toEqual(expect.arrayContaining(["/", "/assets/*", "/fonts/*", "/college/*", "/articles/*"]));
+  it("limits Worker invocations and rewrites direct app links to the static shell", () => {
+    expect(routeConfig.include).toEqual(["/api/blog-agent-cron", "/sitemap-0.xml", "/news-sitemap.xml"]);
+    expect(readFileSync("public/_redirects", "utf8")).toContain("/* /index.html 200");
     const fallback = readFileSync("public/404.html", "utf8");
     expect(fallback).toContain('content="noindex, follow"');
     expect(fallback).toContain("<header>");
