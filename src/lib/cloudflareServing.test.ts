@@ -15,11 +15,11 @@ afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
 describe("Cloudflare serving failure classification", () => {
   it("limits Worker invocations and rewrites direct app links to the static shell", () => {
     expect(routeConfig.include).toEqual(["/api/blog-agent-cron", "/sitemap-0.xml", "/news-sitemap.xml"]);
-    expect(readFileSync("public/_redirects", "utf8")).not.toContain("/* /index.html 200");
+    expect(readFileSync("public/_redirects", "utf8")).toContain("/courses/* /index.html 200");
     expect(routeConfig.exclude).toEqual([]);
   });
   it("recovers valid document routes when Pages has a static 404 fallback", async () => {
-    const fallback = shellHtml;
+    const fallback = readFileSync("public/404.html", "utf8");
     const pagesEnv = { ASSETS: { fetch: async (request: Request) => new URL(request.url).pathname === "/"
       ? new Response(shellHtml, { headers: { "content-type": "text/html" } })
       : new Response(fallback, { status: 404, headers: { "content-type": "text/html" } }) } };
