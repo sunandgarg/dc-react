@@ -72,6 +72,7 @@ export default function AdminColleges() {
   const canCreate = isAdmin || can("colleges", "create");
   const canEdit = isAdmin || can("colleges", "edit");
   const [editing, setEditing] = useDraftState<Partial<DbCollege> | null>('admin.colleges.editing.v1', null);
+  const [contactCollegeSlug, setContactCollegeSlug] = useState("");
   const [editingBaseline, setEditingBaseline] = useState("");
   const [search, setSearch] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
@@ -315,6 +316,7 @@ export default function AdminColleges() {
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
                     <OpenOnSiteButton href={`/colleges/${college.slug}`} />
+                    {isWriter && <Button variant="outline" size="sm" onClick={() => setContactCollegeSlug(college.slug)}>Contact details</Button>}
                     {canEdit && <Button variant="ghost" size="icon" disabled={loadingEditId === college.id} onClick={() => openEditor(college.id)} className="h-8 w-8" aria-label={`Edit ${college.name}`}>
                       {loadingEditId === college.id ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Pencil className="h-3.5 w-3.5" />}
                     </Button>}
@@ -335,6 +337,17 @@ export default function AdminColleges() {
         </div>
       </section>
 
+      <Dialog open={!!contactCollegeSlug} onOpenChange={(open) => !open && setContactCollegeSlug("")}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>College contact details</DialogTitle></DialogHeader>
+          <SlugScopedTableEditor
+            table="college_contacts" scopeColumn="college_slug" scopeValue={contactCollegeSlug}
+            titleKey="address" subtitleKey="phone"
+            defaultValues={{ address: "", phone: "", email: "", website: "", map_embed: "" }}
+            fields={[{ key: "address", label: "Address" }, { key: "phone", label: "Phone" }, { key: "email", label: "Email" }, { key: "website", label: "Website" }, { key: "map_embed", label: "Google Maps embed URL" }]}
+          />
+        </DialogContent>
+      </Dialog>
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent className="max-h-[92vh] max-w-5xl overflow-y-auto">
           <DialogHeader>

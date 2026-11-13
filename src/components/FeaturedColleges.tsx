@@ -46,10 +46,10 @@ export function FeaturedColleges() {
     if (slugs.length > 0) {
       const slugSet = new Set(slugs);
       const featured = allColleges.filter((c) => slugSet.has(c.slug));
-      return featured.slice(0, 6);
+      return featured.sort((a, b) => (a.priority ?? 50) - (b.priority ?? 50)).slice(0, 6);
     }
     // Fallback: show top rated
-    return allColleges.slice(0, 6);
+    return allColleges.sort((a, b) => (a.priority ?? 50) - (b.priority ?? 50)).slice(0, 6);
   }, [dbColleges, featuredRows, featuredSlugs]);
 
   return (

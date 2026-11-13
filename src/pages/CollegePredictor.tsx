@@ -42,6 +42,7 @@ export default function CollegePredictor() {
   const navigate = useNavigate();
 
   const [examSlug, setExamSlug] = useState<string>("");
+  const [examSearch, setExamSearch] = useState("");
   const [rank, setRank] = useState<string>("");
   const [category, setCategory] = useState<string>("General");
   const [state, setState] = useState<string>("");
@@ -210,10 +211,11 @@ export default function CollegePredictor() {
             <form onSubmit={onPredict} className="mt-5 space-y-4">
               <div>
                 <label className="block text-xs font-bold text-foreground mb-2 uppercase tracking-wider">Which exam?</label>
+                <Input value={examSearch} onChange={(event) => setExamSearch(event.target.value)} placeholder="Search exams" aria-label="Search exams" className="mb-2 h-11 rounded-xl text-base" />
                 <select value={examSlug} onChange={(e) => setExamSlug(e.target.value)}
                   className="w-full h-11 px-3 rounded-xl border border-border bg-background text-base text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
                   <option value="">Select an exam…</option>
-                  {exams.map((e) => (
+                  {exams.filter((exam) => `${exam.name} ${exam.short_name || ""}`.toLowerCase().includes(examSearch.toLowerCase())).map((e) => (
                     <option key={e.slug} value={e.slug}>
                       {e.short_name || e.name}{e.category ? ` · ${e.category}` : ""}
                     </option>

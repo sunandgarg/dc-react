@@ -237,7 +237,7 @@ export default function ExamDetail() {
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.category}</Badge>
               <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.level}</Badge>
-              <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.status}</Badge>
+              {exam.status && !/^(draft|published)$/i.test(exam.status) && <Badge variant="outline" className={HERO_BADGE_CLASS}>{exam.status}</Badge>}
             </div>
             <h1 data-h className="text-xl md:text-2xl font-bold text-foreground mb-1 break-words">{shortName}</h1>
             {fullName && <p className="text-sm leading-relaxed text-muted-foreground mb-2">{fullName}</p>}

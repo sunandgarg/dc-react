@@ -16,7 +16,7 @@ interface Props {
  */
 export function LatestNewsSection({ entityName, entityType, entitySlug, sectionId = "latest-news" }: Props) {
   const { data: articles = [] } = useEntityNewsArticles({ entityName, entityType, entitySlug });
-  const items = articles.slice(0, 2);
+  const items = articles.slice(0, entityType === "course" ? 3 : 2);
 
   if (!items.length) return null;
 

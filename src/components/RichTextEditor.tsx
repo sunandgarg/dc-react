@@ -245,7 +245,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
   if (!editor) return null;
 
   return (
-    <div ref={wrapperRef} className={fullscreen ? "fixed inset-0 z-[100] bg-background p-4 flex flex-col" : ""}>
+    <div ref={wrapperRef} data-editor-fullscreen={fullscreen || undefined} className={fullscreen ? "fixed inset-0 z-[100] bg-background p-4 flex flex-col" : ""}>
       {label && !bare && <label className="text-xs font-medium text-muted-foreground">{label}</label>}
       <div className={`mt-1 overflow-hidden rounded-lg border border-border bg-card focus-within:ring-2 focus-within:ring-ring/40 ${fullscreen ? "flex-1 flex flex-col" : ""}`}>
         <Toolbar editor={editor} fullscreen={fullscreen} setFullscreen={setFullscreen} previewMode={previewMode} setPreviewMode={setPreviewMode} allowLeadLinks={allowLeadLinks} />

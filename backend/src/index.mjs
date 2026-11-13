@@ -402,6 +402,14 @@ async function authorizeRest(table, request) {
       return { request: await validateSiteScopeWriteRequest(table, request), actorUserId: identity.id, stageReview: action !== "view", forceDraft: action !== "view" };
     }
     if (editorialRoles.some((row) => row.role === "content_writer")) {
+      if (table === "college_contacts" && ["view", "create", "edit"].includes(action)) {
+        const permission = await prisma.$queryRawUnsafe(
+          "SELECT 1 FROM `user_permissions` WHERE `user_id` = ? AND `resource` = 'colleges' AND `can_create` = 1 LIMIT 1",
+          identity.id,
+        );
+        if (!permission.length) throw new HttpError(403, "WRITER_PERMISSION_MISSING", "College contact access is not enabled");
+        return { request, actorUserId: null };
+      }
       if (!canContentWriterAccess(table, action)) {
         throw new HttpError(403, "WRITER_ACCESS_DENIED", "Content writers can only read assigned content, create new records, and edit their own article drafts");
       }

@@ -23,7 +23,7 @@ export function CollegeHeroCard({ college }: Props) {
   const tags: string[] = (college.tags || [])
     .filter((tag: string) => {
       const normalized = String(tag || "").toLowerCase();
-      return normalized && !normalized.includes("legacy") && !normalized.includes("csv") && !normalized.includes("import");
+      return normalized && !normalized.includes("legacy") && !normalized.includes("csv") && !normalized.includes("import") && !normalized.startsWith("naac");
     })
     .slice(0, 3);
   const heroBadgeClass = "border border-primary/20 bg-primary/10 text-primary hover:bg-primary/10 text-xs";
@@ -84,6 +84,7 @@ export function CollegeHeroCard({ college }: Props) {
           {college.established && (
             <span className="inline-flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />Estd. {college.established}</span>
           )}
+          {Number(college.courses_count) > 0 && <span>{college.courses_count} courses</span>}
           {college.naac_grade && (
             <span className="inline-flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" />NAAC {college.naac_grade}</span>
           )}

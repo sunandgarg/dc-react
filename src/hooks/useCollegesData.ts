@@ -284,7 +284,7 @@ function applyCollegeFallbacks(c: DbCollege | null): DbCollege | null {
     category: c.category || "General",
     rating: c.rating ?? 4.2,
     reviews: c.reviews ?? 0,
-    courses_count: c.courses_count ?? 25,
+    courses_count: c.courses_count ?? 0,
     fees: c.fees || "₹50,000 - ₹2,50,000 / year (approx.)",
     placement: c.placement || "",
     ranking: c.ranking || "Emerging",

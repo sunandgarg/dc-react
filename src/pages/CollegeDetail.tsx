@@ -34,7 +34,7 @@ import { YouTubeVideoButton } from "@/components/YouTubeVideoButton";
 import { ApplyButton } from "@/components/ApplyButton";
 import { FacultySection } from "@/components/detail/FacultySection";
 import { GalleryCarousel } from "@/components/detail/GalleryCarousel";
-import { currentYear } from "@/lib/currentYear";
+import { currentYear, admissionSessionYear } from "@/lib/currentYear";
 import { PlacementCompaniesSection } from "@/components/detail/PlacementCompaniesSection";
 import { CollegeContactSection } from "@/components/detail/CollegeContactSection";
 import { LatestNewsSection } from "@/components/detail/LatestNewsSection";
@@ -173,8 +173,8 @@ export default function CollegeDetail() {
   };
 
   useSEO({
-    title: college ? (detailTab ? `${college.name} ${detailTab.label} ${currentYear()}` : (college.meta_title || `${college.name} - Admissions, Fees, Placements ${currentYear()}`)) : undefined,
-    description: college ? (detailTab ? `Explore ${college.name} ${detailTab.label.toLowerCase()} details for ${currentYear()}, with verified information and related admission guidance.` : (college.meta_description || `${college.name} - admissions, fees, placements, courses, ranking details for ${currentYear()}`)) : undefined,
+    title: college ? (detailTab ? `${college.name} ${detailTab.label} ${detailTab.id === "admissions" ? admissionSessionYear() : currentYear()}` : (college.meta_title || `${college.name} - Admissions, Fees, Placements ${admissionSessionYear()}`)) : undefined,
+    description: college ? (detailTab ? `Explore ${college.name} ${detailTab.label.toLowerCase()} details for ${detailTab.id === "admissions" ? admissionSessionYear() : currentYear()}, with related admission guidance.` : (college.meta_description || `${college.name} - admissions, fees, placements, courses, ranking details for ${admissionSessionYear()}`)) : undefined,
     keywords: college?.meta_keywords || undefined,
     canonical: college ? buildCollegeHref(college as any) : undefined,
     ogImage: college?.image || undefined,
@@ -602,7 +602,7 @@ export default function CollegeDetail() {
             {/* Admissions */}
             <RichSection
               id="admissions"
-              title={<>Admission Process {currentYear()}</>}
+              title={<>Admission Process {admissionSessionYear()}</>}
               defaultOpen
             >
               {/*

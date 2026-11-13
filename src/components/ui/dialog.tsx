@@ -64,6 +64,7 @@ const DialogContent = React.forwardRef<
             isAdminDialog &&
               isFullscreen &&
               "!inset-0 !left-0 !top-0 !h-dvh !max-h-dvh !w-screen !max-w-none !translate-x-0 !translate-y-0 !overflow-y-auto !rounded-none",
+            isAdminDialog && "[&:has([data-editor-fullscreen])]:!inset-0 [&:has([data-editor-fullscreen])]:!h-dvh [&:has([data-editor-fullscreen])]:!max-h-dvh [&:has([data-editor-fullscreen])]:!w-screen [&:has([data-editor-fullscreen])]:!max-w-none [&:has([data-editor-fullscreen])]:!translate-x-0 [&:has([data-editor-fullscreen])]:!translate-y-0",
           )}
           onPointerDownOutside={(event) => {
             onPointerDownOutside?.(event);
