@@ -86,10 +86,11 @@ test("writer can save only their own byline profile", async () => {
   await assert.rejects(() => handleWriterProfile(badRequest, userId, database), /valid writer avatar style/);
 });
 
-test("writer can load DekhoCampus articles but cannot update another writer's draft", async () => {
+test("writer can load articles and save college contacts but cannot update another writer's draft", async () => {
   const previousSecret = process.env.AUTH_JWT_SECRET;
   const previousUser = prisma.app_auth_users.findUnique;
   const previousQuery = prisma.$queryRawUnsafe;
+  const previousExecute = prisma.$executeRawUnsafe;
   const secret = "synthetic-writer-test-secret-not-a-real-credential";
   process.env.AUTH_JWT_SECRET = secret;
   const encode = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -105,11 +106,19 @@ test("writer can load DekhoCampus articles but cannot update another writer's dr
     if (sql.includes("COUNT(*)")) return [{ total: 0 }];
     return [];
   };
+  prisma.$executeRawUnsafe = async (sql, ...params) => { sqlSeen.push({ sql, params }); return 1; };
   const headers = { authorization: `Bearer ${token}`, "content-type": "application/json" };
   try {
     const read = await handleRequest(new Request("http://localhost/v1/rest/articles?select=id,title&site_scope=eq.sarkari&limit=10", { headers }));
     assert.equal(read.status, 200, await read.text());
     assert.ok(sqlSeen.some(({ sql, params }) => sql.includes("site_scope") && params.includes("dekhocampus")), JSON.stringify(sqlSeen));
+    const contacts = await handleRequest(new Request("http://localhost/v1/rest/college_contacts?select=id,address&college_slug=eq.amity-university-noida", { headers }));
+    assert.equal(contacts.status, 200, await contacts.text());
+    const contactSave = await handleRequest(new Request("http://localhost/v1/rest/college_contacts?id=eq.11111111-2222-4333-8444-666666666666", {
+      method: "PATCH", headers, body: JSON.stringify({ address: "Noida, Uttar Pradesh" }),
+    }));
+    assert.equal(contactSave.status, 200, await contactSave.text());
+    assert.ok(sqlSeen.some(({ sql }) => sql.startsWith("UPDATE `college_contacts` SET")), JSON.stringify(sqlSeen));
     const denied = await handleRequest(new Request(`http://localhost/v1/rest/articles?id=eq.11111111-2222-4333-8444-666666666666`, {
       method: "PATCH", headers, body: JSON.stringify({ title: "Takeover", status: "Draft" }),
     }));
@@ -118,5 +127,6 @@ test("writer can load DekhoCampus articles but cannot update another writer's dr
     if (previousSecret === undefined) delete process.env.AUTH_JWT_SECRET; else process.env.AUTH_JWT_SECRET = previousSecret;
     prisma.app_auth_users.findUnique = previousUser;
     prisma.$queryRawUnsafe = previousQuery;
+    prisma.$executeRawUnsafe = previousExecute;
   }
 });
