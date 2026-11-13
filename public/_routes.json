@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "include": ["/*"],
-  "exclude": ["/", "/assets/*", "/fonts/*", "/brand/*", "/category-icons/*", "/docs/*", "/exam-logos/*", "/program-categories/*", "/founders/*", "/.well-known/*", "/college/*", "/articles", "/articles/*"]
+  "include": ["/api/blog-agent-cron", "/sitemap-0.xml", "/news-sitemap.xml"],
+  "exclude": []
 }
