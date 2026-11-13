@@ -1,3 +1,4 @@
+import { FiibAdmissionAd } from "@/components/ads/FiibAdmissionAd";
 import { AlsoCheckSection } from "@/components/AlsoCheckSection";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { buildCourseHref } from "@/lib/entityUrls";
@@ -240,6 +241,7 @@ export default function CourseDetail() {
   }
 
   const courseName = displayText(course.name, "Course");
+  const isPgdm = [courseName, seoFullName].some(name => /^(?:PGDM|Post Graduate Diploma in Management(?: \(PGDM\))?)$/i.test(name.trim()));
   const fullName = displayText(course.full_name);
   const category = compactDisplayText(course.category, "General", 36);
   const level = compactDisplayText(course.level, "Course", 32);
@@ -346,6 +348,8 @@ export default function CourseDetail() {
             <div className="mt-2"><AuthorByline authorId={(course as any).author_id} /></div>
           </div>
         </motion.div>
+
+        {isPgdm && <div className="lg:hidden"><FiibAdmissionAd wide /></div>}
 
         {/* Lead capture dialog for hero CTAs */}
         <Dialog open={leadOpen !== null} onOpenChange={(v) => !v && setLeadOpen(null)}>
@@ -742,6 +746,7 @@ export default function CourseDetail() {
 
           <EntityDetailSidebar
             pageKey="course-detail"
+            advertisement={isPgdm ? <FiibAdmissionAd /> : undefined}
             title={courseName}
             leadForm={<LeadCaptureForm variant="sidebar" title={`Explore ${courseName}`} subtitle="Free course and college guidance" source={`course_detail_sidebar_${course.slug}`} interestedCourseSlug={course.slug} />}
           >

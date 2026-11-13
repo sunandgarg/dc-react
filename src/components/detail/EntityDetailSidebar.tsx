@@ -6,11 +6,12 @@ import { GoogleAd } from "@/components/ads/GoogleAd";
 interface EntityDetailSidebarProps {
   pageKey: "college-detail" | "course-detail" | "exam-detail";
   title: string;
+  advertisement?: ReactNode;
   leadForm: ReactNode;
   children: ReactNode;
 }
 
-export function EntityDetailSidebar({ pageKey, title, leadForm, children }: EntityDetailSidebarProps) {
+export function EntityDetailSidebar({ pageKey, title, advertisement, leadForm, children }: EntityDetailSidebarProps) {
   const shareUrl = typeof window === "undefined" ? "" : window.location.href;
   const encodedUrl = encodeURIComponent(shareUrl);
   const encodedTitle = encodeURIComponent(title);
@@ -26,7 +27,7 @@ export function EntityDetailSidebar({ pageKey, title, leadForm, children }: Enti
 
   return (
     <aside className="hidden min-w-0 self-stretch lg:flex lg:flex-col" aria-label="Page actions and free guidance">
-      <section className="overflow-hidden rounded-2xl border border-border bg-card p-2" aria-label="Advertisement">
+      {advertisement ?? <section className="overflow-hidden rounded-2xl border border-border bg-card p-2" aria-label="Advertisement">
         <p className="pb-1 text-center text-[10px] font-medium uppercase text-muted-foreground">Advertisement</p>
         <GoogleAd
           placement="article"
@@ -37,7 +38,7 @@ export function EntityDetailSidebar({ pageKey, title, leadForm, children }: Enti
           reservedHeight={250}
           className="mx-auto h-[250px] w-full max-w-[336px]"
         />
-      </section>
+      </section>}
 
       <section className="mt-4 rounded-2xl border border-border bg-card p-4 shadow-sm" aria-label="Share this page">
         <div className="mb-3 flex items-center justify-between gap-3">
