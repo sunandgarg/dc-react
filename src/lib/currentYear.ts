@@ -8,3 +8,9 @@ export const admissionSessionYear = (date = new Date()): number => {
   const [year, month] = indiaDate.split("-").map(Number);
   return year + Number(month >= 11);
 };
+
+export const currentAdmissionTitle = (title: string, date = new Date()): string => {
+  const year = admissionSessionYear(date);
+  if (!/\badmissions?\b/i.test(title) || /\b(?:NIRF|ranking|result|cutoff)\b/i.test(title)) return title;
+  return title.replace(new RegExp(`\\b${year - 1}\\b(?=\\s*(?:\\||$))`), String(year));
+};

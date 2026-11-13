@@ -208,7 +208,7 @@ export function useAllDbColleges() {
 export function useAdminCollegeList(filters: AdminCollegeListFilters) {
   const page = Math.max(1, filters.page);
   const pageSize = Math.max(10, Math.min(100, filters.pageSize));
-  const search = (filters.search ?? "").trim().replace(/[,%()]/g, " ").replace(/\s+/g, " ");
+  const search = (filters.search ?? "").trim().replace(/[,%()]/g, " ").replace(/\s+/g, "%");
 
   return useQuery({
     queryKey: ["admin-colleges-list-v2", page, pageSize, search, filters.status ?? "all", filters.category ?? "", filters.state ?? ""],

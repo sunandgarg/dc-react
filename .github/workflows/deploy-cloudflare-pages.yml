@@ -26,7 +26,7 @@ jobs:
       - name: Build production frontend
         env:
           CF_PAGES: "1"
-          # Public content pages use the Pages Worker for crawlable first-response HTML.
+          # Static Pages routes stay outside the free Worker request quota.
           # The browser calls the CORS-restricted AWS API directly after hydration.
           VITE_API_URL: https://aws-origin.dekhocampus.com
           VITE_AWS_API_URL: https://aws-origin.dekhocampus.com

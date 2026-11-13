@@ -7,6 +7,7 @@ import { useTrustedPartners, type TrustedPartner } from "@/hooks/useTrustedPartn
 import { useSiteIntegration } from "@/hooks/useSiteIntegration";
 import { toast } from "sonner";
 import { InstitutionLogo } from "@/components/InstitutionLogo";
+import { admissionSessionYear } from "@/lib/currentYear";
 
 const onlineFeatures = [
   { icon: Monitor, label: "Live Classes", desc: "Interactive sessions" },
@@ -209,7 +210,7 @@ export function OnlineEducationSection() {
                 <div className="mb-5 rounded-2xl border border-primary/10 bg-primary/5 p-3">
                   <div className="mb-2 flex items-center justify-between">
                     <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">Popular study map</p>
-                    <span className="text-[10px] font-semibold text-muted-foreground">2026 intake focus</span>
+                    <span className="text-[10px] font-semibold text-muted-foreground">{admissionSessionYear()} intake focus</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     {[

@@ -1,4 +1,5 @@
 import { CircleDot } from "lucide-react";
+import { admissionSessionYear } from "@/lib/currentYear";
 
 interface Props {
   course: any;
@@ -18,7 +19,7 @@ export function CourseAIInsight({ course }: Props) {
       {course.level?.toLowerCase() || ""} program. Graduates earn an
       average of <span className="font-bold text-slate-900">{course.avg_salary || "-"}</span> with{" "}
       <span className="font-bold text-blue-600">{course.growth || "strong"} industry growth</span>. A{" "}
-      <span className="font-bold text-[#e85d3a]">smart pick</span> for {course.category?.toLowerCase() || "career-focused"} careers in 2026.
+      <span className="font-bold text-[#e85d3a]">smart pick</span> for {course.category?.toLowerCase() || "career-focused"} careers in {admissionSessionYear()}.
     </>
   );
 

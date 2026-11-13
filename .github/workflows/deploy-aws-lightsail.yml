@@ -1074,13 +1074,15 @@ jobs:
           refresh_ssh_access
           scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
             "$SSH_USER@$SSH_IP:/tmp/dc-core-entity-regression.json" /tmp/dc-core-create.json
-          PUBLIC_BASE_URL=https://dekhocampus.com node scripts/verify-core-entity-ui.mjs /tmp/dc-core-create.json create
+          # Free Pages serves detail routes as a SPA to stay below the 100k/day Worker limit.
+          # Verify hydrated content/metadata; initial HTML SEO remains a known limitation.
+          PUBLIC_BASE_URL=https://dekhocampus.com ALLOW_CLIENT_RENDERED_DETAIL=1 node scripts/verify-core-entity-ui.mjs /tmp/dc-core-create.json create
 
           run_core_phase edit
           refresh_ssh_access
           scp -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i /tmp/tempkey \
             "$SSH_USER@$SSH_IP:/tmp/dc-core-entity-regression.json" /tmp/dc-core-edit.json
-          PUBLIC_BASE_URL=https://dekhocampus.com node scripts/verify-core-entity-ui.mjs /tmp/dc-core-edit.json edit
+          PUBLIC_BASE_URL=https://dekhocampus.com ALLOW_CLIENT_RENDERED_DETAIL=1 node scripts/verify-core-entity-ui.mjs /tmp/dc-core-edit.json edit
 
           run_core_phase cleanup
           trap - EXIT
