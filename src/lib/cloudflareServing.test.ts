@@ -15,7 +15,7 @@ afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
 describe("Cloudflare serving failure classification", () => {
   it("limits Worker invocations and rewrites direct app links to the static shell", () => {
     expect(routeConfig.include).toEqual(["/api/blog-agent-cron", "/sitemap-0.xml", "/news-sitemap.xml"]);
-    expect(readFileSync("public/_redirects", "utf8")).toContain("/* /index.html 200");
+    expect(readFileSync("public/_redirects", "utf8")).not.toContain("/* /index.html 200");
     expect(routeConfig.exclude).toEqual([]);
   });
   it("recovers valid document routes when Pages has a static 404 fallback", async () => {

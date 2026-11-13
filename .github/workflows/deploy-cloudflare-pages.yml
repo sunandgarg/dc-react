@@ -95,7 +95,8 @@ jobs:
             https://dekhocampus-aws-candidate.pages.dev/about-us >/dev/null
           for path in courses/pgdm college-predictor colleges/amity-university-noida-14738/admissions; do
             curl --fail --silent --show-error --max-time 20 \
-              "https://dekhocampus-aws-candidate.pages.dev/$path" | grep -Fq '/assets/'
+              "https://dekhocampus-aws-candidate.pages.dev/$path" -o /tmp/dekhocampus-deep-link.html
+            grep -Fq '/assets/' /tmp/dekhocampus-deep-link.html
           done
           MISSING_STATUS=$(curl --silent --show-error --max-time 20 \
             --output /tmp/dekhocampus-404.html --write-out '%{http_code}' \
