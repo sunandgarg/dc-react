@@ -50,6 +50,21 @@ function normalizeSlug(s: string) {
   return s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+function FiibAdmissionAd({ wide = false }: { wide?: boolean }) {
+  return (
+    <section aria-label="FIIB advertisement" className={`relative isolate overflow-hidden rounded-xl bg-slate-950 text-white ${wide ? "mx-auto my-3 flex min-h-24 max-w-4xl items-center sm:min-h-28" : "flex min-h-36 items-end sm:min-h-48 lg:min-h-72"}`}>
+      <img src="/brand/fiib-campus.jpg" alt="FIIB campus" width="504" height="372"
+        className={`absolute inset-y-0 right-0 -z-20 h-full object-cover ${wide ? "w-1/2 object-center" : "w-full"}`} />
+      <div aria-hidden="true" className={`absolute inset-0 -z-10 ${wide ? "bg-gradient-to-r from-slate-950 via-slate-950 to-transparent" : "bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent"}`} />
+      <span className="absolute right-2 top-2 rounded bg-slate-950/85 px-2 py-1 text-[10px] text-white">Advertisement</span>
+      <div className="px-4 py-4 sm:px-6">
+        <p className="max-w-[18ch] text-xs font-medium text-white sm:max-w-none">Fortune Institute of International Business</p>
+        <p className="mt-1 text-xl font-bold leading-tight sm:text-3xl">FIIB <span className="text-amber-300">Admission 2027</span></p>
+      </div>
+    </section>
+  );
+}
+
 function ArticleLeaderboardAd({ position, eager = false }: { position: "top" | "middle"; eager?: boolean }) {
   return (
     <section className="my-3 min-h-[68px] overflow-hidden sm:my-4 sm:min-h-[108px]" aria-label="Advertisement">
@@ -145,6 +160,7 @@ export default function ArticleDetail() {
   const { slug: rawSlug } = useParams<{ slug: string }>();
   const decoded = decodeURIComponent(rawSlug || "");
   const cleanSlug = normalizeSlug(decoded);
+  const showFiib = cleanSlug === "december-mat-2026-paper-computer-test-dates-fee" || cleanSlug === "aeee-2027-registration-open-application-form-fees";
   const needsRedirect = !!(rawSlug && cleanSlug && cleanSlug !== rawSlug && cleanSlug !== decoded);
 
   const { data: dbArticle, isLoading: dbLoading, isError: articleError, isFetching: articleFetching, refetch: refetchArticle } = useDbArticle(cleanSlug || rawSlug);
@@ -560,7 +576,7 @@ export default function ArticleDetail() {
 
       <main className="pb-28 sm:pb-16">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6">
-          <ArticleLeaderboardAd position="top" eager />
+          {showFiib ? <FiibAdmissionAd wide /> : <ArticleLeaderboardAd position="top" eager />}
         </div>
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 mt-4 sm:mt-6 relative">
           <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
@@ -622,6 +638,7 @@ export default function ArticleDetail() {
               <h1 className="w-full text-[22px] sm:text-[32px] lg:text-[38px] font-extrabold text-foreground leading-[1.1] break-words">
                 {article.title}
               </h1>
+              {showFiib && <div className="mt-4 lg:hidden"><FiibAdmissionAd /></div>}
               {languageVersions.length > 1 && <nav aria-label="Article languages" className="flex flex-wrap gap-2 my-4">
                 {languageVersions.map((version) => <Link key={version.id} to={`/news/${version.slug}`} lang={version.language_code} hrefLang={version.language_code}
                   aria-current={version.id === dbArticle?.id ? "page" : undefined}
@@ -729,7 +746,7 @@ export default function ArticleDetail() {
             </article>
 
             <aside className="hidden space-y-5 lg:col-span-4 lg:block">
-              <ArticleSidebarAd slug={cleanSlug} />
+              {showFiib ? <FiibAdmissionAd /> : <ArticleSidebarAd slug={cleanSlug} />}
 
               <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
                 <div className="mb-4 flex items-center justify-between">
