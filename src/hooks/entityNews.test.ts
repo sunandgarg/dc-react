@@ -27,6 +27,14 @@ describe("bounded entity news feeds", () => {
     for (const [input] of fetcher.mock.calls.slice(1)) expect(new URL(String(input)).searchParams.get("limit")).toBe("3");
     expect(new URL(String(fetcher.mock.calls[1][0])).searchParams.get("or")).toContain("title.ilike.%VSAT%");
   });
+  it("fills a course feed to three with recent distinct articles", async () => {
+    vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(response([{ article_id: row.id }]))
+      .mockResolvedValueOnce(response([row]))
+      .mockResolvedValueOnce(response([row, { id: "new-1" }, { id: "new-2" }]));
+    const articles = await fetchEntityNewsArticles({ entityName: "PGDM", entityType: "course", entitySlug: "pgdm" });
+    expect(articles.map((article) => article.id)).toEqual(["historic-linked", "new-1", "new-2"]);
+  });
   it("reports API failures instead of treating them as an empty catalogue", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response('{"error":"Unavailable"}', { status: 503 }));
     await expect(fetchEntityNewsArticles(options)).rejects.toThrow("Unavailable");

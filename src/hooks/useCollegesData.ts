@@ -273,7 +273,6 @@ export function useAdminCollegeStats() {
 function applyCollegeFallbacks(c: DbCollege | null): DbCollege | null {
   if (!c) return c;
   const shortName = c.short_name || c.name;
-  const yr = new Date().getFullYear();
   return {
     ...c,
     short_name: shortName,
@@ -289,11 +288,11 @@ function applyCollegeFallbacks(c: DbCollege | null): DbCollege | null {
     placement: c.placement || "",
     ranking: c.ranking || "Emerging",
     image: c.image || "/placeholder.svg",
-    tags: c.tags?.length ? c.tags : ["Admissions Open", `Session ${yr}`],
+    tags: c.tags?.length ? c.tags : [],
     established: c.established || 2000,
     description:
       c.description ||
-      `<p>${shortName} is a recognised ${c.type || "private"} institution offering a wide range of programs across UG and PG streams. Admissions for the ${yr} academic session are now open. Read on for fees, placements, courses, ranking, scholarships and admission process.</p>`,
+      `<p>Explore courses, fees, placements and admission information for ${shortName}. Confirm current application dates and eligibility with the college before applying.</p>`,
     highlights: c.highlights?.length
       ? c.highlights
       : [
@@ -304,8 +303,8 @@ function applyCollegeFallbacks(c: DbCollege | null): DbCollege | null {
           `Scholarships available for eligible students`,
         ],
     facilities: c.facilities?.length ? c.facilities : ["Library", "Hostel", "Wi-Fi Campus", "Cafeteria", "Sports Complex", "Labs"],
-    approvals: c.approvals?.length ? c.approvals : ["UGC", "AICTE"],
-    naac_grade: c.naac_grade || "-",
+    approvals: c.approvals?.length ? c.approvals : [],
+    naac_grade: c.naac_grade || "",
     top_recruiters: c.top_recruiters?.length
       ? c.top_recruiters
       : ["TCS", "Infosys", "Wipro", "Accenture", "Cognizant", "HCL"],

@@ -114,7 +114,12 @@ export async function fetchEntityNewsArticles({ entityName, entityType, entitySl
     if (ids.length) {
       const { data, error: articleError } = await feed().in("id", ids);
       if (articleError) throw articleError;
-      if (data?.length) return data;
+      if (data?.length && entityType !== "course") return data;
+      if (data?.length && entityType === "course") {
+        const recent = await feed();
+        if (recent.error) throw recent.error;
+        return [...data, ...(recent.data || []).filter((article) => !data.some((linked) => linked.id === article.id))].slice(0, 3);
+      }
     }
   }
   const words = normalizeArticleSearch(entityName).split(/\s+/).filter((word) => word.length > 3).slice(0, 8);
