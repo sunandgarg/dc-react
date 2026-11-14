@@ -44,6 +44,8 @@ describe("save once and verify only for the ZIP", () => {
     render(<LeadCaptureForm contactOnly keepVisibleAfterSubmit source="JEE-paid" />);
     expect(screen.getByPlaceholderText("Mobile number *")).toHaveValue(identity.phone);
     expect(screen.queryByText("Thank You! 🎉")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 
   it("saves an ordinary one-step form without OTP and reuses it for another site's gate", async () => {

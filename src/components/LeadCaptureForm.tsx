@@ -20,7 +20,7 @@ import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsent
 import { setLeadConsentPreference } from "@/lib/leadConsent";
 import { invokeNodeFunction } from "@/lib/backendMode";
 import { saveLeadPhase } from "@/lib/twoStepLead";
-import { hasSubmittedLead, LEAD_SESSION_EVENT } from "@/lib/leadSession";
+import { getLeadSession, hasSubmittedLead, LEAD_SESSION_EVENT } from "@/lib/leadSession";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -280,6 +280,15 @@ export function LeadCaptureForm({
       if (otpDownload) toast.error("Verify your mobile number with OTP to download the ZIP.");
       trackEvent("lead_form_validation_error", { source, variant, fields: "otp" });
       return;
+    }
+    if (keepVisibleAfterSubmit && !otpDownload && hasSubmittedLead()) {
+      const saved = getLeadSession();
+      if (formData.name.trim() === saved.name?.trim()
+        && formData.email.trim().toLowerCase() === saved.email?.toLowerCase()
+        && sanitizeIndianMobile(formData.phone) === sanitizeIndianMobile(saved.phone || "")) {
+        toast.success("Your details are already saved.");
+        return;
+      }
     }
     if (contactOnly || otpDownload) {
       await submitLead();
