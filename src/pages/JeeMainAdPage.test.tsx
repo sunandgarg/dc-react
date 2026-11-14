@@ -13,7 +13,7 @@ vi.mock("@/components/AuthorByline", () => ({ AuthorByline: () => <p>Written by 
 vi.mock("@/components/Navbar", () => ({ Navbar: () => <header><div>Shared announcement bar</div><nav aria-label="Homepage navigation">DekhoCampus navigation</nav></header> }));
 vi.mock("@/components/Footer", () => ({ Footer: () => <footer>Shared DekhoCampus footer</footer> }));
 vi.mock("@/components/LeadGateDialog", () => ({ LeadGateDialog: ({ open, onOpenChange, forceShow, subtitle, brandLogoUrl, brandName, source, otpDownload, onSuccess }: { otpDownload?: string; onSuccess: (id?: string, url?: string) => void; open: boolean; onOpenChange: (open: boolean) => void; forceShow: boolean; subtitle: string; brandLogoUrl: string; brandName: string; source: string }) => open ? <div role="dialog" aria-label="Lead Form" data-source={source} data-otp-download={otpDownload} data-force-show={forceShow}><img src={brandLogoUrl} alt={`${brandName} logo`} /><p>{subtitle}</p><button onClick={() => onOpenChange(false)}>Close</button><button onClick={() => { rememberSubmittedLead({ name: "Test Student", email: "test@example.org", phone: "9876543210" }, "saved"); onSuccess("saved", otpDownload ? "https://downloads.example/verified.zip" : undefined); }}>Complete request</button></div> : null }));
-vi.mock("@/components/LeadCaptureForm", () => ({ LeadCaptureForm: ({ title, subtitle, source, brandLogoUrl, brandName }: { title: string; subtitle: string; source: string; brandLogoUrl?: string; brandName?: string }) => <div data-source={source}>{brandLogoUrl && <img src={brandLogoUrl} alt={`${brandName} logo`} />}{title}<p>{subtitle}</p></div> }));
+vi.mock("@/components/LeadCaptureForm", () => ({ LeadCaptureForm: ({ title, subtitle, source, brandLogoUrl, brandName, keepVisibleAfterSubmit }: { title: string; subtitle: string; source: string; brandLogoUrl?: string; brandName?: string; keepVisibleAfterSubmit?: boolean }) => <div data-source={source} data-keep-visible={keepVisibleAfterSubmit}>{brandLogoUrl && <img src={brandLogoUrl} alt={`${brandName} logo`} />}{title}<p>{subtitle}</p></div> }));
 vi.mock("@/components/FAQSection", () => ({ FAQSection: ({ title, fallback }: { title: string; fallback: { question: string; answer: string }[] }) => <section aria-label="Dedicated FAQs"><h2>{title}</h2>{fallback.map(faq => <details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}</section> }));
 
 function open(slug: string) {
@@ -70,6 +70,7 @@ describe("JEE Main ad pages", () => {
     open("jee-main-2027");
     const forms = screen.getAllByRole("region", { name: "JEE Main guidance form" });
     expect(forms).toHaveLength(2);
+    forms.forEach(form => expect(form.querySelector('[data-keep-visible="true"]')).toBeInTheDocument());
     expect(forms[0]).toHaveAttribute("id", "jee-registration-form");
     expect(forms[1]).toHaveAttribute("id", "jee-guidance-form");
     const registration = screen.getByRole("heading", { name: "JEE Main 2027 registration: Session 1" });

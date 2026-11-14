@@ -44,6 +44,7 @@ interface LeadCaptureFormProps {
   brandLogoUrl?: string;
   brandName?: string;
   unbrandedConsent?: boolean;
+  keepVisibleAfterSubmit?: boolean;
 }
 
 function FormBrandLogo({ url, name, className }: { url?: string; name?: string; className?: string }) {
@@ -92,6 +93,7 @@ export function LeadCaptureForm({
   brandLogoUrl,
   brandName,
   unbrandedConsent = false,
+  keepVisibleAfterSubmit = false,
 }: LeadCaptureFormProps) {
   const consentText = unbrandedConsent ? LEAD_CONSENT_TEXT.replace("DekhoCampus", "the") : LEAD_CONSENT_TEXT;
   const interestPrompt = interestLabel === "Course" ? "Interested Course" : interestLabel;
@@ -308,7 +310,7 @@ export function LeadCaptureForm({
 
 
 
-  if (isSubmitted || (sessionSubmitted && !otpDownload)) {
+  if (!keepVisibleAfterSubmit && (isSubmitted || (sessionSubmitted && !otpDownload))) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}

@@ -31,6 +31,21 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("save once and verify only for the ZIP", () => {
+  it("keeps the JEE lead card visible after saving and on revisit", async () => {
+    const first = render(<LeadCaptureForm contactOnly keepVisibleAfterSubmit source="JEE-paid" onSuccess={success} />);
+    fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: identity.name } });
+    fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: identity.email } });
+    fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: identity.phone } });
+    fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
+    await waitFor(() => expect(success).toHaveBeenCalledWith("saved", undefined));
+    expect(screen.getByPlaceholderText("Mobile number *")).toHaveValue(identity.phone);
+    expect(screen.queryByText("Thank You! 🎉")).not.toBeInTheDocument();
+    first.unmount();
+    render(<LeadCaptureForm contactOnly keepVisibleAfterSubmit source="JEE-paid" />);
+    expect(screen.getByPlaceholderText("Mobile number *")).toHaveValue(identity.phone);
+    expect(screen.queryByText("Thank You! 🎉")).not.toBeInTheDocument();
+  });
+
   it("saves an ordinary one-step form without OTP and reuses it for another site's gate", async () => {
     const first = render(<LeadCaptureForm contactOnly onSuccess={success} />);
     expect(screen.queryByRole("button", { name: "Get OTP" })).not.toBeInTheDocument();
