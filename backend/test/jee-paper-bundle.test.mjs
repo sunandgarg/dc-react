@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { handleRequest } from "../src/index.mjs";
 import { handleStorage, JEE_PAPERS_ZIP_PATH, LEGACY_JEE_PAPERS_ZIP_PATH } from "../src/storage.mjs";
 import { authSecurityInternals } from "../src/auth.mjs";
+import { S3Client } from "@aws-sdk/client-s3";
 
 const request = body => new Request("https://api.example/v1/functions/jee-paper-bundle", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
 
@@ -32,5 +33,23 @@ test("ZIP verification issues a five-minute signed S3 download without querying 
 test("both public ZIP URLs reject downloads without OTP", async () => {
   for (const path of [JEE_PAPERS_ZIP_PATH, LEGACY_JEE_PAPERS_ZIP_PATH]) {
     await assert.rejects(handleStorage(new Request(`https://api.example/storage/v1/object/public/study-material/${path}`)), e => e.status === 403 && e.code === "OTP_REQUIRED");
+  }
+});
+
+test("individual JEE papers download as attachments without OTP", async t => {
+  for (const [key, value] of Object.entries({ AWS_S3_BUCKET: "test-media-bucket", MEDIA_BASE_URL: "https://api.example/storage/v1/object/public" })) {
+    const previous = process.env[key]; process.env[key] = value;
+    t.after(() => { if (previous === undefined) delete process.env[key]; else process.env[key] = previous; });
+  }
+  const send = S3Client.prototype.send;
+  S3Client.prototype.send = async () => ({ ContentType: "application/pdf", ContentLength: 4, Body: { transformToWebStream: () => new ReadableStream({ start(controller) { controller.enqueue(new Uint8Array([37, 80, 68, 70])); controller.close(); } }) } });
+  t.after(() => { S3Client.prototype.send = send; });
+  for (const path of ["jee-main/2017-2021/older.pdf", "jee-main/2022-2026/newer.pdf"]) {
+    const url = `https://api.example/storage/v1/object/public/study-material/${path}`;
+    for (const method of ["GET", "HEAD"]) {
+      const response = await handleStorage(new Request(url, { method }));
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get("content-disposition"), "attachment");
+    }
   }
 });

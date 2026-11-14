@@ -311,6 +311,7 @@ async function s3Storage(request, route, config) {
     });
     if (result.ContentLength !== undefined) headers.set("content-length", String(result.ContentLength));
     if (result.ContentRange) headers.set("content-range", result.ContentRange);
+    if (route.bucket === "study-material" && /^jee-main\/(?:2017-2021|2022-2026)\/[^/]+\.pdf$/i.test(route.objectPath)) headers.set("content-disposition", "attachment");
     return new Response(request.method === "HEAD" ? null : result.Body?.transformToWebStream(), { status: result.ContentRange ? 206 : 200, headers });
   }
   return jsonResponse(405, { message: "Storage method is not supported" });
