@@ -4,6 +4,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { useAuth } from "@/hooks/useAuth";
 import { restUrl } from "@/lib/backendMode";
 import { COOKIE_RESOLVED_EVENT } from "@/lib/promptSequence";
+import { ensureGtag } from "@/lib/analytics";
 
 const SESSION_KEY = "dc_session_id";
 const SESSION_STARTED_KEY = "dc_session_started";
@@ -132,12 +133,7 @@ export function UserTrackingProvider({ children }: { children: React.ReactNode }
       page_title: document.title,
     });
     if (analyticsPathRef.current && analyticsPathRef.current !== pagePath) {
-      if (!analyticsWindow.gtag) {
-        analyticsWindow.gtag = (...args: unknown[]) => {
-          analyticsWindow.dataLayer!.push(args);
-        };
-      }
-      analyticsWindow.gtag("event", "page_view", {
+      ensureGtag()("event", "page_view", {
         page_location: window.location.href,
         page_path: pagePath,
         page_title: document.title,

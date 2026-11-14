@@ -9,6 +9,16 @@ beforeEach(() => {
 });
 
 describe("durable lead conversions", () => {
+  it("uses Google's Arguments queue format when gtag is not loaded yet", async () => {
+    delete (window as any).gtag;
+    const { configureGoogleAdsConversion, trackLeadConversion } = await import("./analytics");
+    configureGoogleAdsConversion("AW-17921423601", "FnxTCITPl7gdEPHxzOFC");
+    trackLeadConversion({ transaction_id: "queued-before-load", source: "JEE-paid" });
+    const commands = (window as any).dataLayer.filter((entry: unknown) => Object.prototype.toString.call(entry) === "[object Arguments]").map((entry: IArguments) => Array.from(entry));
+    expect(commands).toContainEqual(["config", "AW-17921423601"]);
+    expect(commands).toContainEqual(["event", "conversion", expect.objectContaining({ send_to: destination, transaction_id: "queued-before-load" })]);
+    expect((window as any).dataLayer.some((entry: unknown) => Array.isArray(entry))).toBe(false);
+  });
   it("queues a saved lead until the Ads destination is ready and records it once", async () => {
     const { trackLeadConversion, configureGoogleAdsConversion } = await import("./analytics");
     const params = { transaction_id: "saved-lead", source: "JEE-paid" };

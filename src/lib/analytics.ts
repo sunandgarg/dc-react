@@ -38,15 +38,16 @@ export function configureGoogleAdsConversion(id?: string, label?: string) {
   pendingGoogleAdsLeads.clear();
 }
 
-function ensureGtag() {
+export function ensureGtag() {
   const analyticsWindow = window as Window & {
     dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
   };
   analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
   if (!analyticsWindow.gtag) {
-    analyticsWindow.gtag = (...args: unknown[]) => {
-      analyticsWindow.dataLayer!.push(args);
+    analyticsWindow.gtag = function () {
+      // eslint-disable-next-line prefer-rest-params -- Google requires Arguments objects, not arrays.
+      analyticsWindow.dataLayer!.push(arguments);
     };
   }
   return analyticsWindow.gtag;
