@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { backendClient } from "@/integrations/backend/client";
-import { configureGoogleAdsConversion } from "@/lib/analytics";
+import { configureGa4LandingEvents, configureGoogleAdsConversion } from "@/lib/analytics";
 
 export function SiteIntegrations() {
   useEffect(() => {
@@ -12,6 +12,7 @@ export function SiteIntegrations() {
       const map: Record<string, string> = {};
       for (const r of data) if (r.enabled && r.value) map[r.key] = r.value;
       configureGoogleAdsConversion(map.google_ads_id, map.google_ads_conversion_label);
+      configureGa4LandingEvents(map.ga4_measurement_id);
 
       // Analytics pixels are non-critical. Start them after interaction, with a
       // fallback for visitors who stay on a static page.

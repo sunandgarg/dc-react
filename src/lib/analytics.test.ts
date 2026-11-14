@@ -3,12 +3,26 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const destination = "AW-17921423601/FnxTCITPl7gdEPHxzOFC";
 beforeEach(() => {
   vi.resetModules();
+  window.history.replaceState({}, "", "/");
+  document.getElementById("dc-ga4-landing-events")?.remove();
+  delete (window as any).dcGa4EventsLayer;
+  delete (window as any).dcGa4EventsTag;
   (window as any).gtag = vi.fn();
   (window as any).fbq = vi.fn();
   (window as any).dataLayer = [];
 });
 
 describe("durable lead conversions", () => {
+  it("sends JEE funnel events to GA4 without another page view", async () => {
+    window.history.replaceState({}, "", "/ad/jee-main-2027");
+    const { configureGa4LandingEvents, trackEvent } = await import("./analytics");
+    trackEvent("jee_main_year_open", { year: 2026 });
+    configureGa4LandingEvents("G-Y8E5HHTXLX");
+    const commands = (window as any).dcGa4EventsLayer.map((entry: IArguments) => Array.from(entry));
+    expect(commands).toContainEqual(["config", "G-Y8E5HHTXLX", { send_page_view: false }]);
+    expect(commands).toContainEqual(["event", "jee_main_year_open", expect.objectContaining({ year: 2026 })]);
+    expect(document.getElementById("dc-ga4-landing-events")).toHaveAttribute("src", "https://www.googletagmanager.com/gtag/js?id=G-Y8E5HHTXLX&l=dcGa4EventsLayer");
+  });
   it("uses Google's Arguments queue format when gtag is not loaded yet", async () => {
     delete (window as any).gtag;
     const { configureGoogleAdsConversion, trackLeadConversion } = await import("./analytics");

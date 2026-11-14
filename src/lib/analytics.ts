@@ -24,8 +24,45 @@ export type LpEventName =
 
 export type AnalyticsParams = Record<string, string | number | boolean | null | undefined>;
 let googleAdsDestination = "";
+let ga4LandingDestination = "";
+const pendingGa4LandingEvents: Array<[string, AnalyticsParams]> = [];
 const pendingGoogleAdsLeads = new Map<string, AnalyticsParams>();
 const recordedLeadIds = new Set<string>();
+
+function sendGa4LandingEvent(name: string, params: AnalyticsParams) {
+  if (!ga4LandingDestination || typeof window === "undefined") return;
+  const analyticsWindow = window as Window & {
+    dcGa4EventsLayer?: unknown[];
+    dcGa4EventsTag?: (...args: unknown[]) => void;
+  };
+  if (!analyticsWindow.dcGa4EventsLayer) {
+    analyticsWindow.dcGa4EventsLayer = [];
+    analyticsWindow.dcGa4EventsTag = function () {
+      // eslint-disable-next-line prefer-rest-params -- Google requires Arguments objects.
+      analyticsWindow.dcGa4EventsLayer!.push(arguments);
+    };
+    analyticsWindow.dcGa4EventsTag("js", new Date());
+    analyticsWindow.dcGa4EventsTag("config", ga4LandingDestination, { send_page_view: false });
+    const script = document.createElement("script");
+    script.id = "dc-ga4-landing-events";
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${ga4LandingDestination}&l=dcGa4EventsLayer`;
+    document.head.appendChild(script);
+  }
+  analyticsWindow.dcGa4EventsTag!("event", name, params);
+}
+
+export function configureGa4LandingEvents(id?: string) {
+  if (!/^G-[A-Z0-9]+$/.test(id || "")) return;
+  ga4LandingDestination = id!;
+  for (const [name, params] of pendingGa4LandingEvents.splice(0)) sendGa4LandingEvent(name, params);
+}
+
+function trackGa4LandingEvent(name: string, params: AnalyticsParams) {
+  if (!/^\/ad\/jee-main-2027(?:$|-)/.test(window.location.pathname)) return;
+  if (ga4LandingDestination) sendGa4LandingEvent(name, params);
+  else if (pendingGa4LandingEvents.length < 50) pendingGa4LandingEvents.push([name, params]);
+}
 
 export function configureGoogleAdsConversion(id?: string, label?: string) {
   if (!/^AW-\d+$/.test(id || "") || !/^[A-Za-z0-9_-]+$/.test(label || "")) return;
@@ -77,6 +114,7 @@ export function trackEvent(name: LpEventName | string, params: AnalyticsParams =
     (window as any).dataLayer = (window as any).dataLayer || [];
     (window as any).dataLayer.push({ event: name, ...payload });
   } catch {/* noop */}
+  trackGa4LandingEvent(name, payload);
   // Bridge CTA clicks into the intent-based scoring engine (zero-touch coverage).
   try {
     if (name === "cta_click") {
@@ -142,6 +180,7 @@ export function trackLeadConversion(params: AnalyticsParams = {}) {
   recordedLeadIds.add(leadId);
   const event = { transaction_id: leadId, source: params.source || "website_form", value: 1, currency: "INR" };
   try { ensureGtag()("event", "generate_lead", event); } catch {/* noop */}
+  trackGa4LandingEvent("generate_lead", event);
   try { (window as any).fbq?.("track", "Lead", event); } catch {/* noop */}
   if (googleAdsDestination) {
     try { ensureGtag()("event", "conversion", { ...event, send_to: googleAdsDestination }); } catch {/* noop */}
