@@ -7,6 +7,8 @@ import { isStrictIndianMobile, normalizeIndianMobile } from "@/lib/phone";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { isPdfUrl } from "@/lib/documentViewer";
 import { saveLeadPhase } from "@/lib/twoStepLead";
+import { hasSubmittedLead } from "@/lib/leadSession";
+import { silentSaveLead } from "@/lib/leadCapture";
 
 const SOCIAL_HOSTS = [
   "x.com", "twitter.com", "facebook.com", "instagram.com", "youtube.com", "youtu.be",
@@ -45,6 +47,11 @@ export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onCo
       )) return;
       event.preventDefault();
       event.stopPropagation();
+      if (hasSubmittedLead()) {
+        void silentSaveLead({ source: siteWide ? "site_link" : `article_link_${articleSlug}`, initial_query: `Requested link site: ${url.hostname || url.protocol}` });
+        onContinue(url.href);
+        return;
+      }
       setDestination(url.href);
       setError("");
     } catch { /* Invalid authored URLs never become navigation targets. */ }
@@ -62,8 +69,8 @@ export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onCo
 
   return <>
     {siteWide ? children : <div className="space-y-5" onClickCapture={capture} onAuxClickCapture={capture}>{children}</div>}
-    {destination && isPdfUrl(destination) ? <LeadGateDialog open forceShow simple title="Open PDF document"
-      subtitle="Share your details and study preferences to continue to this PDF."
+    {destination && isPdfUrl(destination) ? <LeadGateDialog open forceShow simple contactOnly title="Open PDF document"
+      subtitle="Share your name, mobile and email once to continue. No OTP is needed for individual PDFs."
       source={`pdf_link_${articleSlug}`} onOpenChange={(open) => { if (!open) setDestination(null); }}
       onSuccess={(leadId) => { if (leadId) { onContinue(destination); setDestination(null); } }} /> : <Dialog open={Boolean(destination)} onOpenChange={(open) => { if (!open && !submitting.current) setDestination(null); }}>
       <DialogContent className="max-w-sm p-5">

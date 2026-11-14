@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Cookie, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { COOKIE_CONSENT_KEY, signalCookieResolved } from "@/lib/promptSequence";
+import { getLeadSession, saveSessionPrefill } from "@/lib/leadSession";
 
 const COOKIE_KEY = COOKIE_CONSENT_KEY;             // "accepted" | "essential" | "rejected"
 const PROFILE_KEY = "dc_user_prefill_v1";
@@ -23,6 +24,7 @@ export interface PrefillCookie {
   state?: string;
   city?: string;
   className?: string;
+  course?: string;
 }
 
 function getPrefs(): Prefs {
@@ -33,16 +35,19 @@ function getPrefs(): Prefs {
 }
 
 export function getPrefillCookie(): PrefillCookie {
+  const session = getLeadSession();
   try {
     const consent = localStorage.getItem(COOKIE_KEY);
-    if (consent !== "accepted" && consent !== "essential") return {};
-    if (!getPrefs().prefill) return {};
+    if ((consent !== "accepted" && consent !== "essential") || !getPrefs().prefill) return session;
     const raw = localStorage.getItem(PROFILE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
+    const stored = raw ? JSON.parse(raw) : {};
+    if (session.phone && session.phone !== stored.phone) return session;
+    return { ...stored, ...session };
+  } catch { return session; }
 }
 
 export function savePrefillCookie(data: PrefillCookie) {
+  saveSessionPrefill(data);
   try {
     const consent = localStorage.getItem(COOKIE_KEY);
     if (consent !== "accepted" && consent !== "essential") return;

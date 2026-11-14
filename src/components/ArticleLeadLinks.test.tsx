@@ -8,6 +8,7 @@ import { applyEditorLink, RichTextEditor } from "./RichTextEditor";
 import { RichText } from "./detail/RichText";
 import { stripVisibleArticleSources } from "@/lib/articleContentSanitizer";
 import { saveLeadPhase } from "@/lib/twoStepLead";
+import { rememberSubmittedLead } from "@/lib/leadSession";
 
 vi.mock("@/components/LeadGateDialog", () => ({ LeadGateDialog: ({ onSuccess, forceShow }: { onSuccess: (id?: string) => void; forceShow: boolean }) => <div role="dialog">{forceShow ? "PDF lead form" : "Silent"}<button onClick={() => onSuccess("pdf-lead")}>Complete PDF lead</button></div> }));
 vi.mock("@/lib/twoStepLead", () => ({ saveLeadPhase: vi.fn() }));
@@ -23,7 +24,7 @@ function fill() {
   fireEvent.change(screen.getByLabelText("Email address"), { target: { value: "reader@example.org" } });
   fireEvent.click(screen.getByRole("checkbox", { name: "Privacy and terms consent" }));
 }
-beforeEach(() => { vi.clearAllMocks(); });
+beforeEach(() => { vi.clearAllMocks(); document.cookie = "dc_lead_session_v1=; Max-Age=0; Path=/"; });
 describe("article lead links", () => {
   it("round trips the opt-in attribute in the editor", () => {
     const editor = new Editor({ extensions: [StarterKit.configure({ link: false }), LeadCaptureLink], content: html });
@@ -66,6 +67,16 @@ describe("article lead links", () => {
     fireEvent.click(screen.getByRole("link", { name: "Normal link" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(saveLeadPhase).not.toHaveBeenCalled();
+  });
+  it("continues ordinary gated links and PDFs without another form for a saved session", () => {
+    rememberSubmittedLead({ name: "Reader", email: "reader@example.org", phone: "9876543210" }, "saved");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true }));
+    render(<ArticleLeadLinks articleSlug="test" onContinue={proceed}><a data-lead-capture="true" href="https://example.org/notice">Notice</a><a href="https://example.org/paper.pdf">Paper</a></ArticleLeadLinks>);
+    fireEvent.click(screen.getByRole("link", { name: "Notice" }));
+    fireEvent.click(screen.getByRole("link", { name: "Paper" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(proceed.mock.calls).toEqual([["https://example.org/notice"], ["https://example.org/paper.pdf"]]);
+    vi.unstubAllGlobals();
   });
   it("gates external links site-wide but leaves DekhoCampus links alone", () => {
     render(<><ArticleLeadLinks articleSlug="site" siteWide onContinue={proceed} /><a href="https://example.org/notice">Official notice</a><a href="https://sarkari.dekhocampus.com/jobs" onClick={(event) => event.preventDefault()}>Sarkari jobs</a><a href="/exams" data-lead-capture="true">Apply inside site</a></>);

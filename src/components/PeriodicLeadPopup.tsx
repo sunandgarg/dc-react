@@ -3,12 +3,13 @@ import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { trackEvent } from "@/lib/analytics";
 import { getLastLeadTs, LEAD_SILENT_WINDOW_MS, markLeadSubmitted } from "@/lib/leadCapture";
 import { GOOGLE_PROMO_RESOLVED_EVENT, hasGooglePromoResolved, scheduleAfterGate } from "@/lib/promptSequence";
+import { hasSubmittedLead, LEAD_SESSION_EVENT } from "@/lib/leadSession";
 
 /**
  * Persistent student-help lead popup.
  *  - First shows 15s after page load (longer if recently dismissed).
  *  - If the user submits ANY lead (here or anywhere else on the site),
- *    we go quiet for 30 minutes (LEAD_SILENT_WINDOW_MS), then resume.
+ *    we stay quiet for the browser session; the legacy timestamp retains its cooldown.
  *  - If dismissed, re-appears after 30s, 45s, 60s ... (increments of 15s).
  *  - Dismiss/submission state syncs across browser tabs via the `storage` event.
  */
@@ -44,6 +45,7 @@ export function PeriodicLeadPopup() {
   const schedule = (delay: number) => {
     clearTimer();
     timerRef.current = window.setTimeout(() => {
+      if (hasSubmittedLead()) return;
       const remaining = cooldownRemaining();
       if (remaining > 0) {
         // Still in 30-min cooldown after a recent submission - defer.
@@ -57,6 +59,7 @@ export function PeriodicLeadPopup() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (hasSubmittedLead()) return;
     const stored = parseInt(localStorage.getItem(PERSIST_DISMISS_COUNT) || "0", 10);
     dismissCountRef.current = Number.isFinite(stored) ? stored : 0;
     const baseDelay = BASE_DELAY_MS * (dismissCountRef.current + 1);
@@ -84,8 +87,11 @@ export function PeriodicLeadPopup() {
       }
     };
     window.addEventListener("storage", onStorage);
+    const onLeadSaved = () => { clearTimer(); setOpen(false); };
+    window.addEventListener(LEAD_SESSION_EVENT, onLeadSaved);
     return () => {
       window.removeEventListener("storage", onStorage);
+      window.removeEventListener(LEAD_SESSION_EVENT, onLeadSaved);
       stopGate();
       clearTimer();
     };

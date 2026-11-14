@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { isStrictIndianMobile, normalizeIndianMobile } from "@/lib/phone";
 import { functionUrl } from "@/lib/backendMode";
+import { clearSessionOtpProof, getSessionOtpProof, saveSessionOtpProof } from "@/lib/leadSession";
 
 const SEND_OTP_URL = functionUrl("send-otp");
 const OTP_LENGTH = 6;
@@ -64,6 +65,7 @@ export function useInlineOtp(phone: string, formKey: string) {
   };
 
   const resetVerification = () => {
+    clearSessionOtpProof();
     clearCooldown();
     setRequested(false);
     setRequestedPhone("");
@@ -77,6 +79,14 @@ export function useInlineOtp(phone: string, formKey: string) {
   // invalidate the old challenge immediately and restore the Get OTP action.
   useEffect(() => {
     if (requestedPhone && normalizedPhone !== requestedPhone) resetVerification();
+    else if (!requestedPhone) {
+      const saved = getSessionOtpProof(normalizedPhone);
+      if (saved) {
+        setVerificationToken(saved);
+        setVerified(true);
+        setRequestedPhone(normalizedPhone);
+      }
+    }
     // resetVerification intentionally operates on the current OTP state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [normalizedPhone, requestedPhone]);
@@ -176,6 +186,7 @@ export function useInlineOtp(phone: string, formKey: string) {
       const body = await res.json().catch(() => ({}));
       if (latestPhoneRef.current !== phoneAtVerify) return;
       if (res.ok && body.verified && body.verification_token) {
+        saveSessionOtpProof(String(body.verification_token));
         setVerificationToken(String(body.verification_token));
         setVerified(true);
         clearMissing();

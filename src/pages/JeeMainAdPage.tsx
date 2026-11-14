@@ -1,7 +1,8 @@
 import QUESTION_PAPERS from "@/data/jeeMainPapers.json";
 import { useState, type MouseEvent } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight, ChevronDown, Info } from "lucide-react";
+import { hasSubmittedLead } from "@/lib/leadSession";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { FAQSection } from "@/components/FAQSection";
 import { AuthorByline } from "@/components/AuthorByline";
@@ -139,20 +140,24 @@ function AdmissionCarousel() {
 }
 
 function EnglishAdPage() {
-  const [destination, setDestination] = useState<{ url: string; label: string } | null>(null);
+  const [destination, setDestination] = useState<{ url: string; label: string; year?: number } | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const years = useCarouselNav();
   const now = Date.now();
   const regularOpen = now <= REGULAR_APPLICATION_CLOSES;
   const lateOpen = now >= LATE_APPLICATION_OPENS && now <= VIDEO_CLOSES;
   const registrationOpen = regularOpen || lateOpen;
-  const openApplication = () => setDestination({ url: OFFICIAL_FORM, label: "NTA application page" });
+  const openApplication = () => {
+    if (hasSubmittedLead()) window.location.assign(OFFICIAL_FORM);
+    else setDestination({ url: OFFICIAL_FORM, label: "NTA application page" });
+  };
   const gateExternalLink = (event: MouseEvent<HTMLDivElement>) => {
     const anchor = (event.target as HTMLElement).closest("a[href]");
     if (!(anchor instanceof HTMLAnchorElement)) return;
-    if (anchor.closest('[aria-label="Share this page"]') || anchor.hasAttribute("data-paper-download") || anchor.hasAttribute("data-official-resource")) return;
+    if (anchor.closest('[aria-label="Share this page"]') || anchor.hasAttribute("data-official-resource")) return;
     const url = new URL(anchor.href);
     if (!["https:", "http:"].includes(url.protocol) || (url.origin === window.location.origin && !anchor.hasAttribute("data-college-destination"))) return;
+    if (hasSubmittedLead()) return;
     event.preventDefault();
     setDestination({ url: url.href, label: anchor.getAttribute("aria-label") || anchor.textContent?.trim() || "Selected resource" });
   };
@@ -176,14 +181,9 @@ function EnglishAdPage() {
                 {regularOpen ? "NTA is accepting Session 1 applications for the January attempt. Complete your application on the official portal before the deadline." : now <= VIDEO_CLOSES ? "The announced late-fee window runs from 23 to 26 November 2026, with an additional fee of ₹500." : "The announced Session 1 application window ended on 26 November 2026. Check NTA for any further updates."}
               </p>
             </div>
-            <p className="mt-5 text-base leading-7"><strong>{regularOpen ? "Last date without late fee:" : "Last date with late fee:"}</strong>{" "}<time dateTime={regularOpen ? "2026-11-22T23:50:00+05:30" : "2026-11-26T23:50:00+05:30"}>{regularOpen ? "22 November 2026" : "26 November 2026"}, 11:50 PM IST</time>.</p>
-            <p className="mt-5 text-sm leading-6 text-slate-700"><strong>{registrationOpen ? "Ready to apply?" : "Need the latest status?"}</strong> Use the official NTA portal below.</p>
-            <div className="my-5 text-center">
-              <a href={OFFICIAL_FORM} target="_blank" rel="noopener noreferrer" className="mx-auto inline-flex min-h-11 w-full max-w-xl items-center justify-center gap-2 rounded-md bg-orange-700 px-3 py-2 text-sm font-semibold leading-5 text-white shadow-sm transition-colors hover:bg-orange-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-700">
-                <span className="min-w-0">{registrationOpen ? "Apply online at jeemain.nta.nic.in" : "Check official NTA application updates"}</span><ArrowRight aria-hidden="true" className="h-5 w-5 shrink-0" />
-              </a>
-            </div>
-            <h2 className="border-t border-slate-200 pt-5 font-bold">JEE Main 2027 registration: <span className={registrationOpen ? "text-red-600" : "text-slate-600"}>Session 1</span></h2>
+            <p className="mt-5 rounded-md bg-red-700 px-4 py-3 text-base leading-7 text-white"><strong>{regularOpen ? "Last date without late fee:" : "Last date with late fee:"}</strong>{" "}<time dateTime={regularOpen ? "2026-11-22T23:50:00+05:30" : "2026-11-26T23:50:00+05:30"}>{regularOpen ? "22 November 2026" : "26 November 2026"}, 11:50 PM IST</time>.</p>
+            <p className="mt-5 text-sm leading-6 text-slate-700"><strong>{registrationOpen ? "Ready to apply?" : "Need the latest status?"}</strong>{" "}<a data-official-resource href={OFFICIAL_FORM} target="_blank" rel="noopener noreferrer" className="font-bold text-orange-700 underline hover:text-orange-800">Use the official NTA portal</a>.</p>
+            <h2 className="mt-5 border-t border-slate-200 pt-5 font-bold">JEE Main 2027 registration: <span className={registrationOpen ? "text-red-600" : "text-slate-600"}>Session 1</span></h2>
             <a href={OFFICIAL_FORM} target="_blank" rel="noopener noreferrer" aria-label="View the official JEE Main Session 1 registration portal" className="mt-4 block overflow-hidden rounded border border-slate-200 focus-visible:outline-blue-600">
               <img src="/assets/jee-main-2027-registration-portal.png" alt="JEE Main 2027 Session 1 official portal showing new registration, application steps and candidate login" width="2048" height="807" className="h-auto w-full" loading="eager" />
             </a>
@@ -194,13 +194,16 @@ function EnglishAdPage() {
           <section id="question-papers" aria-labelledby="papers-title" className="rounded-md border border-blue-100 border-t-[3px] border-t-blue-700 bg-[#f7fafc] p-3 sm:p-5">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">DekhoCampus paper collection</p>
             <h2 id="papers-title" className="mt-1 font-bold">JEE Main question papers: last 5 years</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700">Download all 106 papers from 2022 to 2026 in one ZIP, or open a year below and choose an exam date and morning or evening shift. Verify your mobile number with OTP and complete the form for the ZIP. Individual PDFs open directly without OTP.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">Download all 106 papers from 2022 to 2026 in one ZIP, or choose a year, exam date and shift. Share your name, mobile and email once to access individual papers without OTP. Your details are remembered for this session. Only the full ZIP requires mobile OTP verification.</p>
             <button type="button" onClick={() => setDestination({ url: PAPERS_ZIP, label: "All 106 JEE Main question papers (ZIP)" })} className="mt-4 flex min-h-11 w-full items-center justify-center rounded border border-blue-800 bg-blue-800 px-3 py-2 text-center text-sm font-bold text-white hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800">
               Download all 106 papers (.zip)
             </button>
             <div ref={years.ref} onScroll={years.recompute} aria-label="Choose a question-paper year" className="mt-4 grid auto-cols-[minmax(112px,1fr)] grid-flow-col gap-2 overflow-x-auto snap-x snap-mandatory pb-2">
-              {QUESTION_PAPERS.map(({ year, dates }) => <button key={year} type="button" aria-expanded={selectedYear === year} aria-controls={`papers-${year}`} onClick={() => setSelectedYear(selectedYear === year ? null : year)} className={`snap-start rounded-xl border px-3 py-4 text-center transition focus-visible:outline-blue-700 ${selectedYear === year ? "border-blue-700 bg-blue-700 text-white" : "border-blue-200 bg-white text-blue-900 hover:bg-blue-50"}`}>
-                <span className="block text-lg font-extrabold">{year}</span><span className="text-xs">{dates.reduce((count, date) => count + Number(!!date.morning) + Number(!!date.evening), 0)} papers</span>
+              {QUESTION_PAPERS.map(({ year, dates }) => <button key={year} type="button" aria-expanded={selectedYear === year} aria-controls={`papers-${year}`} onClick={() => {
+                if (selectedYear === year || hasSubmittedLead()) setSelectedYear(selectedYear === year ? null : year);
+                else setDestination({ url: "", label: `${year} JEE Main question papers`, year });
+              }} className={`snap-start rounded-xl border px-3 py-4 text-center transition focus-visible:outline-blue-700 ${selectedYear === year ? "border-blue-700 bg-blue-700 text-white" : "border-blue-200 bg-white text-blue-900 hover:bg-blue-50"}`}>
+                <span className="block text-lg font-extrabold">{year}</span><span className="inline-flex items-center justify-center gap-1 text-xs">{dates.reduce((count, date) => count + Number(!!date.morning) + Number(!!date.evening), 0)} papers<ChevronDown aria-hidden="true" className={`h-4 w-4 text-orange-600 transition-transform ${selectedYear === year ? "rotate-180" : ""}`} /></span>
               </button>)}
             </div>
             <CarouselControls pages={years.pages} active={years.active} canLeft={years.canLeft} canRight={years.canRight} onPrev={() => years.scrollByDir("left")} onNext={() => years.scrollByDir("right")} onDot={years.goToPage} label="paper years" />
@@ -290,7 +293,7 @@ function EnglishAdPage() {
     </main>
 
     <Footer />
-    <LeadGateDialog className="[&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center [&_h3]:pr-0 [&_h3+p]:pr-0 [&_input]:min-h-11 max-h-[calc(100dvh-2rem)] overflow-y-auto [&_img]:h-auto [&_img]:w-32" otpDownload={destination?.url === PAPERS_ZIP ? "jee-main-106-papers" : undefined} open={!!destination} onOpenChange={open => { if (!open) setDestination(null); }} forceShow simple unbrandedConsent title="JEE Main guidance" subtitle="Optional DekhoCampus form. Continue to NTA after completion; this is not an NTA application." source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={(_leadId, downloadUrl) => { if (destination) { if (destination.url === PAPERS_ZIP && !downloadUrl) return; window.location.assign(downloadUrl || destination.url); setDestination(null); } }} />
+    <LeadGateDialog className="[&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center [&_h3]:pr-0 [&_h3+p]:pr-0 [&_input]:min-h-11 max-h-[calc(100dvh-2rem)] overflow-y-auto [&_img]:h-auto [&_img]:w-32" otpDownload={destination?.url === PAPERS_ZIP ? "jee-main-106-papers" : undefined} open={!!destination} onOpenChange={open => { if (!open) setDestination(null); }} forceShow simple contactOnly unbrandedConsent title={destination?.url === PAPERS_ZIP ? "Verify your mobile to download the ZIP" : "Access JEE Main papers and resources"} subtitle={destination?.url === PAPERS_ZIP ? "Your saved details are prefilled. Verify your mobile once while your verification remains valid." : "Share your name, mobile and email once. No OTP is required. This is an optional DekhoCampus form, not an NTA application."} source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={(_leadId, downloadUrl) => { if (destination) { if (destination.year) setSelectedYear(destination.year); else { if (destination.url === PAPERS_ZIP && !downloadUrl) return; window.location.assign(downloadUrl || destination.url); } setDestination(null); } }} />
     <nav aria-label="JEE Main quick actions" className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-slate-200 bg-white p-2 shadow-lg sm:hidden"><button type="button" onClick={openApplication} className="flex-1 rounded-lg bg-blue-600 px-2 py-3 text-center text-sm font-bold text-white">Open the official form</button><a href="#jee-guidance-form" className="flex-1 rounded-lg border border-blue-700 px-2 py-3 text-center text-sm font-bold text-blue-800">Get free guidance</a></nav>
   </div>;
 }

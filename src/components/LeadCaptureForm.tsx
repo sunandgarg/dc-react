@@ -20,6 +20,7 @@ import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsent
 import { setLeadConsentPreference } from "@/lib/leadConsent";
 import { invokeNodeFunction } from "@/lib/backendMode";
 import { saveLeadPhase } from "@/lib/twoStepLead";
+import { hasSubmittedLead, LEAD_SESSION_EVENT } from "@/lib/leadSession";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -33,6 +34,7 @@ interface LeadCaptureFormProps {
   interestedExamSlug?: string;
   onSuccess?: (leadId?: string, downloadUrl?: string) => void;
   otpDownload?: "jee-main-106-papers";
+  contactOnly?: boolean;
   /** Optional context-specific replacement for the default course interest. */
   interestLabel?: string;
   interestOptions?: string[];
@@ -82,6 +84,7 @@ export function LeadCaptureForm({
   interestedExamSlug,
   onSuccess,
   otpDownload,
+  contactOnly = false,
   interestLabel = "Course",
   interestOptions = courseOptions,
   simple = false,
@@ -100,6 +103,7 @@ export function LeadCaptureForm({
   const [programMode, setProgramMode] = useState<ProgramMode>("regular");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [sessionSubmitted, setSessionSubmitted] = useState(hasSubmittedLead);
   const [step, setStep] = useState<1 | 2>(1);
   const [leadId, setLeadId] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(true);
@@ -118,17 +122,22 @@ export function LeadCaptureForm({
   })();
   const otp = useInlineOtp(formData.phone, formKey);
 
-  // Prefill from cookie first (instant), then from logged-in profile when ready.
   useEffect(() => {
-    const c = getPrefillCookie();
-    setFormData((prev) => ({
-      name: prev.name || c.name || "",
-      email: prev.email || c.email || "",
-      phone: prev.phone || sanitizeIndianMobile(c.phone || ""),
-      course: prev.course,
-      state: prev.state || c.state || "",
-      city: prev.city || c.city || "",
-    }));
+    const prefill = () => {
+      const c = getPrefillCookie();
+      setFormData((prev) => ({
+        name: prev.name || c.name || "",
+        email: prev.email || c.email || "",
+        phone: prev.phone || sanitizeIndianMobile(c.phone || ""),
+        course: prev.course || c.course || "",
+        state: prev.state || c.state || "",
+        city: prev.city || c.city || "",
+      }));
+      setSessionSubmitted(hasSubmittedLead());
+    };
+    prefill();
+    window.addEventListener(LEAD_SESSION_EVENT, prefill);
+    return () => window.removeEventListener(LEAD_SESSION_EVENT, prefill);
   }, []);
 
   useEffect(() => {
@@ -206,9 +215,9 @@ export function LeadCaptureForm({
         downloadUrl = result.data.download_url;
       }
       setIsSubmitted(true);
-      toast.success("Thank you! Our counselor will contact you soon.");
+      toast.success(contactOnly ? "Details saved. Continuing…" : "Thank you! Our counselor will contact you soon.");
       setLeadConsentPreference(authorized);
-      savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city });
+      savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city, course: formData.course });
       markLeadSubmitted();
       try { (window as any).fireGoogleAdsConversion?.({ value: 1, currency: "INR", source }); } catch {}
       trackLeadConversion({ source, variant, has_email: !!formData.email, has_phone: !!formData.phone });
@@ -260,12 +269,20 @@ export function LeadCaptureForm({
       return;
     }
     setErrors({});
+    if (!authorized) {
+      toast.error("Please accept the privacy and terms consent to continue.");
+      return;
+    }
     // OTP rule: if user pressed Get OTP they MUST verify before save.
     // If they never pressed Get OTP, save anyway with otp_verified=false.
-    if ((otpDownload || (step === 1 && otp.requested)) && !otp.verified) {
+    if ((otpDownload || (!contactOnly && step === 1 && otp.requested)) && !otp.verified) {
       otp.markMissing();
       if (otpDownload) toast.error("Verify your mobile number with OTP to download the ZIP.");
       trackEvent("lead_form_validation_error", { source, variant, fields: "otp" });
+      return;
+    }
+    if (contactOnly || otpDownload) {
+      await submitLead();
       return;
     }
     if (step === 1) {
@@ -293,7 +310,7 @@ export function LeadCaptureForm({
 
 
 
-  if (isSubmitted) {
+  if (isSubmitted || (sessionSubmitted && !otpDownload)) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -314,7 +331,7 @@ export function LeadCaptureForm({
             Thank You! 🎉
           </h3>
           <p className={`text-sm ${variant === "banner" ? "text-primary-foreground/90" : "text-muted-foreground"}`}>
-            Our expert counselor will call you within 24 hours
+            Your details are saved for this session. You can continue without filling another lead form.
           </p>
         </div>
         {otpPortal}
@@ -339,10 +356,10 @@ export function LeadCaptureForm({
           <div className="space-y-1">
             <div className="flex items-stretch gap-2">
               <Input value={formData.phone} onChange={e => update("phone", sanitizeIndianMobile(e.target.value))} placeholder="Mobile number *" type="tel" maxLength={10} className={`${compact ? "h-9" : "h-10"} min-w-0 flex-1 rounded-xl ${dark ? "border-white/15 bg-white/10 text-white placeholder:text-white/60" : ""}`} required />
-              <div className={dark ? "[&_button]:!bg-white [&_button]:!text-slate-900" : ""}>{otp.getOtpButton}</div>
+              {(!contactOnly || otpDownload) && <div className={dark ? "[&_button]:!bg-white [&_button]:!text-slate-900" : ""}>{otp.getOtpButton}</div>}
             </div>
             {formData.phone.length > 0 && !isValidIndianMobile(formData.phone) && <p className={`text-xs ${dark ? "text-white" : "text-destructive"}`}>{PHONE_HINT}</p>}
-            {otp.verifyBlock && <div className={dark ? "rounded-xl bg-white p-2 text-slate-900" : ""}>{otp.verifyBlock}</div>}
+            {(!contactOnly || otpDownload) && otp.verifyBlock && <div className={dark ? "rounded-xl bg-white p-2 text-slate-900" : ""}>{otp.verifyBlock}</div>}
           </div>
           {otpDownload && <p className="text-xs font-medium text-primary">OTP verification is required to download all 106 papers.</p>}
           <LeadConsentCheckbox unbranded={unbrandedConsent} checked={authorized} onCheckedChange={setAuthorized} compact={compact} dark={dark} />

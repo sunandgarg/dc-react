@@ -1,15 +1,16 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ArticleLeadLinks } from "@/components/ArticleLeadLinks";
 import JeeMainAdPage from "./JeeMainAdPage";
 import { useSEO } from "@/hooks/useSEO";
+import { rememberSubmittedLead } from "@/lib/leadSession";
 
 vi.mock("@/hooks/useSEO", () => ({ useSEO: vi.fn() }));
 vi.mock("@/components/AuthorByline", () => ({ AuthorByline: () => <p>Written by Geethika Reddy</p> }));
 vi.mock("@/components/Navbar", () => ({ Navbar: () => <header><div>Shared announcement bar</div><nav aria-label="Homepage navigation">DekhoCampus navigation</nav></header> }));
 vi.mock("@/components/Footer", () => ({ Footer: () => <footer>Shared DekhoCampus footer</footer> }));
-vi.mock("@/components/LeadGateDialog", () => ({ LeadGateDialog: ({ open, onOpenChange, forceShow, subtitle, brandLogoUrl, brandName, source, otpDownload, onSuccess }: { otpDownload?: string; onSuccess: (id?: string, url?: string) => void; open: boolean; onOpenChange: (open: boolean) => void; forceShow: boolean; subtitle: string; brandLogoUrl: string; brandName: string; source: string }) => open ? <div role="dialog" aria-label="Lead Form" data-source={source} data-otp-download={otpDownload} data-force-show={forceShow}><img src={brandLogoUrl} alt={`${brandName} logo`} /><p>{subtitle}</p><button onClick={() => onOpenChange(false)}>Close</button><button onClick={() => onSuccess("saved", otpDownload ? "https://downloads.example/verified.zip" : undefined)}>Complete request</button></div> : null }));
+vi.mock("@/components/LeadGateDialog", () => ({ LeadGateDialog: ({ open, onOpenChange, forceShow, subtitle, brandLogoUrl, brandName, source, otpDownload, onSuccess }: { otpDownload?: string; onSuccess: (id?: string, url?: string) => void; open: boolean; onOpenChange: (open: boolean) => void; forceShow: boolean; subtitle: string; brandLogoUrl: string; brandName: string; source: string }) => open ? <div role="dialog" aria-label="Lead Form" data-source={source} data-otp-download={otpDownload} data-force-show={forceShow}><img src={brandLogoUrl} alt={`${brandName} logo`} /><p>{subtitle}</p><button onClick={() => onOpenChange(false)}>Close</button><button onClick={() => { rememberSubmittedLead({ name: "Test Student", email: "test@example.org", phone: "9876543210" }, "saved"); onSuccess("saved", otpDownload ? "https://downloads.example/verified.zip" : undefined); }}>Complete request</button></div> : null }));
 vi.mock("@/components/LeadCaptureForm", () => ({ LeadCaptureForm: ({ title, subtitle, source, brandLogoUrl, brandName }: { title: string; subtitle: string; source: string; brandLogoUrl?: string; brandName?: string }) => <div data-source={source}>{brandLogoUrl && <img src={brandLogoUrl} alt={`${brandName} logo`} />}{title}<p>{subtitle}</p></div> }));
 vi.mock("@/components/FAQSection", () => ({ FAQSection: ({ title, fallback }: { title: string; fallback: { question: string; answer: string }[] }) => <section aria-label="Dedicated FAQs"><h2>{title}</h2>{fallback.map(faq => <details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}</section> }));
 
@@ -17,6 +18,7 @@ function open(slug: string) {
   render(<><ArticleLeadLinks siteWide articleSlug="site" /><MemoryRouter initialEntries={[`/ad/${slug}`]}><Routes><Route path="/ad/:slug" element={<JeeMainAdPage />} /></Routes></MemoryRouter></>);
 }
 
+beforeEach(() => { document.cookie = "dc_lead_session_v1=; Max-Age=0; Path=/"; });
 afterEach(() => vi.restoreAllMocks());
 
 describe("JEE Main ad pages", () => {
@@ -29,13 +31,15 @@ describe("JEE Main ad pages", () => {
     expect(notice).toHaveTextContent("Last date without late fee: 22 November 2026, 11:50 PM IST");
     expect(notice.querySelector("time")).toHaveAttribute("dateTime", "2026-11-22T23:50:00+05:30");
     expect(notice.compareDocumentPosition(screen.getAllByRole("region", { name: "JEE Main guidance form" })[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    const apply = within(notice).getByRole("link", { name: "Apply online at jeemain.nta.nic.in" });
+    const apply = within(notice).getByRole("link", { name: "Use the official NTA portal" });
     expect(apply).toHaveAttribute("href", "https://jeemain.nta.nic.in/online-application-form-for-jee-main-2027-session-1/");
     expect(apply).toHaveAttribute("target", "_blank");
-    expect(apply).toHaveClass("bg-orange-700");
-    expect(fireEvent.click(apply)).toBe(false);
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(apply).toHaveClass("text-orange-700", "font-bold");
+    expect(apply.getAttribute("rel")).not.toMatch(/nofollow|sponsored/);
+    expect(notice.querySelector("time")?.parentElement).toHaveClass("bg-red-700", "text-white");
+    expect(notice).not.toHaveTextContent("portal below");
+    expect(within(notice).queryByRole("link", { name: "Apply online at jeemain.nta.nic.in" })).not.toBeInTheDocument();
+    expect(fireEvent.click(apply)).toBe(true);
     expect(within(notice).queryByText("Source: NTA Session 1 application notice")).not.toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(notice).not.toHaveTextContent("Complete the optional guidance form to continue to NTA");
@@ -44,9 +48,9 @@ describe("JEE Main ad pages", () => {
   });
 
   it.each([
-    ["2026-11-22T18:21:00Z", "JEE Main 2027 regular registration has closed.", "Check official NTA application updates"],
-    ["2026-11-23T06:00:00Z", "JEE Main 2027 late-fee registration is open.", "Apply online at jeemain.nta.nic.in"],
-    ["2026-11-26T18:21:00Z", "JEE Main 2027 regular registration has closed.", "Check official NTA application updates"],
+    ["2026-11-22T18:21:00Z", "JEE Main 2027 regular registration has closed.", "Use the official NTA portal"],
+    ["2026-11-23T06:00:00Z", "JEE Main 2027 late-fee registration is open.", "Use the official NTA portal"],
+    ["2026-11-26T18:21:00Z", "JEE Main 2027 regular registration has closed.", "Use the official NTA portal"],
   ])("shows the correct registration phase at %s", (time, status, action) => {
     vi.spyOn(Date, "now").mockReturnValue(Date.parse(time));
     open("jee-main-2027");
@@ -120,8 +124,12 @@ describe("JEE Main ad pages", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     fireEvent.click(screen.getAllByRole("link", { name: "Get free guidance" })[0]);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    fireEvent.click(screen.getAllByRole("button", { name: "Open the official form", exact: true })[0]);
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    vi.stubGlobal("window", testWindow);
+    try {
+      fireEvent.click(screen.getAllByRole("button", { name: "Open the official form", exact: true })[0]);
+      expect(assign).toHaveBeenLastCalledWith("https://jeemain.nta.nic.in/online-application-form-for-jee-main-2027-session-1/");
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    } finally { vi.stubGlobal("window", originalWindow); }
   });
 
   it("offers the 106-paper ZIP before the 2026 group and downloads it only after the form succeeds", () => {
@@ -151,6 +159,9 @@ describe("JEE Main ad pages", () => {
     expect(year).toHaveAttribute("aria-expanded", "false");
     expect(section.querySelectorAll('div[id^="papers-"]:not([hidden])')).toHaveLength(0);
     fireEvent.click(year);
+    expect(year).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("dialog")).not.toHaveAttribute("data-otp-download");
+    fireEvent.click(screen.getByRole("button", { name: "Complete request" }));
     expect(year).toHaveAttribute("aria-expanded", "true");
     expect(within(section).getAllByRole("link", { name: /question paper PDF$/ })).toHaveLength(19);
     fireEvent.click(within(section).getByRole("button", { name: "2023 24 papers" }));
@@ -172,7 +183,14 @@ describe("JEE Main ad pages", () => {
       expect(url.pathname.endsWith(".pdf")).toBe(true);
     }
     for (const link of pdfLinks) expect(link).toHaveAttribute("data-paper-download");
-    expect(fireEvent(pdfLinks[0], new MouseEvent("auxclick", { bubbles: true, cancelable: true, button: 1 }))).toBe(true);
+    const cards = papers.querySelectorAll("button[aria-expanded]");
+    expect(cards).toHaveLength(5);
+    for (const card of cards) expect(card.querySelector("svg")).toHaveClass("text-orange-600");
+    expect(fireEvent(pdfLinks[0], new MouseEvent("auxclick", { bubbles: true, cancelable: true, button: 1 }))).toBe(false);
+    expect(screen.getByRole("dialog")).not.toHaveAttribute("data-otp-download");
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    rememberSubmittedLead({ name: "Test Student", email: "test@example.org", phone: "9876543210" }, "saved");
+    expect(fireEvent(pdfLinks[1], new MouseEvent("auxclick", { bubbles: true, cancelable: true, button: 1 }))).toBe(true);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
