@@ -66,7 +66,7 @@ describe("JEE Main ad pages", () => {
     else expect(notice).toHaveTextContent("additional fee of ₹500");
   });
 
-  it("preserves two forms after registration and papers, with only linked college logos above the lower form", () => {
+  it("preserves two forms after registration and papers without the college promotion", () => {
     open("jee-main-2027");
     const forms = screen.getAllByRole("region", { name: "JEE Main guidance form" });
     expect(forms).toHaveLength(2);
@@ -74,10 +74,9 @@ describe("JEE Main ad pages", () => {
     expect(forms[1]).toHaveAttribute("id", "jee-guidance-form");
     const registration = screen.getByRole("heading", { name: "JEE Main 2027 registration: Session 1" });
     const papers = screen.getByRole("region", { name: "JEE Main question papers: 2017 to 2026" });
-    const carousel = screen.getByRole("region", { name: "Apply directly. Explore up to 100% scholarships." });
     const portalImage = screen.getByRole("img", { name: /official portal showing new registration/ });
     expect(portalImage).toHaveAttribute("src", "/assets/jee-main-2027-registration-portal.png");
-    const ordered = [registration, portalImage, forms[0], papers, carousel, forms[1]];
+    const ordered = [registration, portalImage, forms[0], papers, forms[1]];
     ordered.slice(1).forEach((element, i) => expect(ordered[i].compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy());
     expect(screen.queryByText(/Session 1 applications are submitted online through NTA/)).not.toBeInTheDocument();
     expect(screen.queryByText("Get JEE Main guidance from DekhoCampus")).not.toBeInTheDocument();
@@ -87,15 +86,8 @@ describe("JEE Main ad pages", () => {
       expect(form).not.toHaveTextContent("Enter your details for JEE Main guidance");
       expect(form).not.toHaveTextContent("Complete your exam application separately on the official NTA portal.");
     }
-    const logos = carousel.querySelector('[aria-label="College logos"]')!;
-    expect(within(logos as HTMLElement).getAllByRole("link")).toHaveLength(2);
-    expect(logos.textContent).toBe("");
-    expect(within(logos as HTMLElement).getByRole("link", { name: "Explore Lovely Professional University" })).toHaveAttribute("href", "https://www.lpu.in/landing-pages/brand/?utm_source=dekhocampus");
-    expect(within(logos as HTMLElement).getByRole("link", { name: "Explore Amity University" })).toHaveAttribute("href", "https://noida.amity.edu/admission-open/?utm_source=dekhocampus&utm_medium=jee&utm_campaign=jeep");
-    expect(within(logos as HTMLElement).queryByRole("link", { name: "Explore Chandigarh University" })).not.toBeInTheDocument();
-    expect(within(logos as HTMLElement).getAllByRole("img")).toHaveLength(2);
-    expect(carousel).not.toHaveTextContent("Hidden college");
-    expect(carousel).toHaveTextContent("early application does not guarantee an award");
+    expect(screen.queryByRole("region", { name: "Apply directly. Explore up to 100% scholarships." })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("College logos")).not.toBeInTheDocument();
     expect(screen.queryByText("Get JEE Main guidance and updates")).not.toBeInTheDocument();
     expect(screen.queryByText(/Questions about the process/)).not.toBeInTheDocument();
     expect(forms[0]).not.toHaveTextContent("Independent guidance only.");
@@ -104,7 +96,7 @@ describe("JEE Main ad pages", () => {
   it("opens the guidance form for other external resources and preserves the selected destination", () => {
     open("jee-main-2027");
     const external = screen.getAllByRole("link").filter(link => link.getAttribute("href")?.startsWith("https://") && !link.hasAttribute("data-paper-download") && !link.hasAttribute("data-official-resource") && !link.closest('[aria-label="Share this page"]'));
-    expect(external.length).toBeGreaterThan(10);
+    expect(external.length).toBeGreaterThan(5);
     for (const link of external) {
       expect(fireEvent.click(link)).toBe(false);
       const dialog = screen.getByRole("dialog", { name: "Lead Form" });
@@ -113,8 +105,7 @@ describe("JEE Main ad pages", () => {
       expect(dialog).not.toHaveTextContent("Independent admission guidance");
       fireEvent.click(within(dialog).getByRole("button", { name: "Close" }));
     }
-    const college = screen.getByRole("link", { name: "Explore Amity University" });
-    expect(fireEvent.click(college)).toBe(false);
+    expect(fireEvent.click(external[0])).toBe(false);
     const assign = vi.fn();
     const originalWindow = window;
     const testWindow = Object.create(window);
@@ -122,7 +113,7 @@ describe("JEE Main ad pages", () => {
     vi.stubGlobal("window", testWindow);
     try {
       fireEvent.click(screen.getByRole("button", { name: "Complete request" }));
-      expect(assign).toHaveBeenCalledWith(new URL(college.getAttribute("href")!, window.location.origin).href);
+      expect(assign).toHaveBeenCalledWith(new URL(external[0].getAttribute("href")!, window.location.origin).href);
     } finally { vi.stubGlobal("window", originalWindow); }
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     fireEvent.click(screen.getAllByRole("link", { name: "Get free guidance" })[0]);

@@ -13,11 +13,6 @@ import { useSEO } from "@/hooks/useSEO";
 import { CarouselControls, useCarouselNav } from "@/components/CarouselControls";
 import { trackEvent } from "@/lib/analytics";
 
-const COLLEGE_APPLICATIONS = [
-  { slug: "lovely-professional-university", name: "Lovely Professional University", logo_url: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/ea/eaa5565056636a93d2e1c8fe856429dd3d691dc660dbfad6ca1ddd61dd225e23.webp", href: "https://www.lpu.in/landing-pages/brand/?utm_source=dekhocampus" },
-  { slug: "amity-university-noida", name: "Amity University", logo_url: "/assets/amity-noida-admissions-logo.png", href: "https://noida.amity.edu/admission-open/?utm_source=dekhocampus&utm_medium=jee&utm_campaign=jeep" },
-];
-
 const NTA_PORTAL = "https://jeemain.nta.nic.in/";
 const OFFICIAL_FORM = "https://jeemain.nta.nic.in/online-application-form-for-jee-main-2027-session-1/";
 const APPLICATION_NOTICE = "https://nta.ac.in/Download/Notice/Notice_20261024220013.pdf";
@@ -125,20 +120,6 @@ function JeeGuidanceForm({ id }: { id: string }) {
   </section>;
 }
 
-function AdmissionCarousel() {
-  const carousel = useCarouselNav();
-  return <section aria-labelledby="admission-options-title" className="min-w-0">
-    <h2 id="admission-options-title" className="font-bold text-blue-900">Apply directly. Explore <span className="text-orange-600">up to 100% scholarships.</span></h2>
-    <p className="mt-2 text-xs leading-5 text-slate-600">Explore early application options. <a href="https://www.amity.edu/scholarships/" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">Amity scholarships</a> are subject to the applicable admission year, merit, eligibility and renewal conditions; early application does not guarantee an award.</p>
-    <div ref={carousel.ref} onScroll={carousel.recompute} className="mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2" aria-label="College logos">
-      {COLLEGE_APPLICATIONS.map(college => <a key={college.slug} href={college.href} data-college-destination aria-label={`Explore ${college.name}`} className="flex h-24 w-32 shrink-0 snap-start items-center justify-center rounded-lg border border-slate-200 bg-white p-3 transition hover:border-blue-500 focus-visible:outline-blue-600 sm:h-28 sm:w-36">
-        <img src={college.logo_url} alt={`${college.name} logo`} className="h-full w-full object-contain" loading="lazy" decoding="async" />
-      </a>)}
-    </div>
-    <CarouselControls pages={carousel.pages} active={carousel.active} canLeft={carousel.canLeft} canRight={carousel.canRight} onPrev={() => carousel.scrollByDir("left")} onNext={() => carousel.scrollByDir("right")} onDot={carousel.goToPage} label="college logos" />
-  </section>;
-}
-
 function EnglishAdPage() {
   const [destination, setDestination] = useState<{ url: string; label: string } | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
@@ -162,7 +143,7 @@ function EnglishAdPage() {
     }
     if (anchor.closest('[aria-label="Share this page"]') || anchor.hasAttribute("data-official-resource")) return;
     const url = new URL(anchor.href);
-    if (!["https:", "http:"].includes(url.protocol) || (url.origin === window.location.origin && !anchor.hasAttribute("data-college-destination"))) return;
+    if (!["https:", "http:"].includes(url.protocol) || url.origin === window.location.origin) return;
     if (hasSubmittedLead()) return;
     event.preventDefault();
     setDestination({ url: url.href, label: anchor.getAttribute("aria-label") || anchor.textContent?.trim() || "Selected resource" });
@@ -224,7 +205,6 @@ function EnglishAdPage() {
             </div>)}
           </section>
 
-          <AdmissionCarousel />
           <JeeGuidanceForm id="jee-guidance-form" />
 
           <nav aria-label="JEE Main official resources" className="overflow-hidden rounded border border-slate-200 text-sm">

@@ -15,6 +15,8 @@ it("keeps the shared header without reserving an ad space on the JEE landing pag
   expect(screen.getByRole("img", { name: "DekhoCampus" })).toHaveClass("grayscale");
   expect(screen.getByRole("button", { name: "Toggle menu" })).toBeInTheDocument();
   expect(document.getElementById("global-internal-ad-top-anchor")).toBeNull();
+  expect(document.getElementById("site-header")).toHaveClass("relative");
+  expect(document.getElementById("site-header")).not.toHaveClass("sticky");
 });
 
 it("loads mobile categories on opening and enables desktop categories after resizing", async () => {
@@ -23,6 +25,7 @@ it("loads mobile categories on opening and enables desktop categories after resi
   vi.spyOn(window, "matchMedia").mockReturnValue(media as unknown as MediaQueryList);
   render(<MemoryRouter initialEntries={["/news/example"]}><Navbar /></MemoryRouter>);
   expect(screen.getByRole("img", { name: "DekhoCampus" })).not.toHaveClass("grayscale");
+  expect(document.getElementById("site-header")).toHaveClass("sticky");
   expect(document.getElementById("global-internal-ad-top-anchor")).toHaveClass("min-h-[62px]");
   expect(screen.queryByText("Mobile categories")).not.toBeInTheDocument();
   expect(screen.queryByText("Desktop categories")).not.toBeInTheDocument();
