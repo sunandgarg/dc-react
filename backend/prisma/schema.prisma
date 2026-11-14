@@ -1875,6 +1875,9 @@ model leads {
   state                   String?  @db.LongText
   initial_query           String?  @db.LongText
   source                  String?  @db.LongText
+  utm_source              String?  @db.VarChar(160)
+  utm_medium              String?  @db.VarChar(160)
+  utm_campaign            String?  @db.VarChar(160)
   created_at              DateTime @default(now()) @db.DateTime(3)
   updated_at              DateTime @default(now()) @db.DateTime(3)
   interested_college_slug String?  @db.LongText

@@ -5,8 +5,10 @@ import { ArticleLeadLinks } from "@/components/ArticleLeadLinks";
 import JeeMainAdPage from "./JeeMainAdPage";
 import { useSEO } from "@/hooks/useSEO";
 import { rememberSubmittedLead } from "@/lib/leadSession";
+import { trackEvent } from "@/lib/analytics";
 
 vi.mock("@/hooks/useSEO", () => ({ useSEO: vi.fn() }));
+vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn() }));
 vi.mock("@/components/AuthorByline", () => ({ AuthorByline: () => <p>Written by Geethika Reddy</p> }));
 vi.mock("@/components/Navbar", () => ({ Navbar: () => <header><div>Shared announcement bar</div><nav aria-label="Homepage navigation">DekhoCampus navigation</nav></header> }));
 vi.mock("@/components/Footer", () => ({ Footer: () => <footer>Shared DekhoCampus footer</footer> }));
@@ -18,7 +20,7 @@ function open(slug: string) {
   render(<><ArticleLeadLinks siteWide articleSlug="site" /><MemoryRouter initialEntries={[`/ad/${slug}`]}><Routes><Route path="/ad/:slug" element={<JeeMainAdPage />} /></Routes></MemoryRouter></>);
 }
 
-beforeEach(() => { document.cookie = "dc_lead_session_v1=; Max-Age=0; Path=/"; });
+beforeEach(() => { document.cookie = "dc_lead_session_v1=; Max-Age=0; Path=/"; vi.mocked(trackEvent).mockClear(); });
 afterEach(() => vi.restoreAllMocks());
 
 describe("JEE Main ad pages", () => {
@@ -160,6 +162,7 @@ describe("JEE Main ad pages", () => {
     expect(year).toHaveAttribute("aria-expanded", "false");
     expect(section.querySelectorAll('div[id^="papers-"]:not([hidden])')).toHaveLength(0);
     fireEvent.click(year);
+    expect(trackEvent).toHaveBeenCalledWith("jee_main_year_open", { year: 2026 });
     expect(year).toHaveAttribute("aria-expanded", "true");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(within(section).getAllByRole("link", { name: /question paper PDF$/ })).toHaveLength(19);
@@ -189,6 +192,7 @@ describe("JEE Main ad pages", () => {
     expect(cards).toHaveLength(10);
     for (const card of cards) expect(card.querySelector("svg")).toHaveClass("text-orange-600");
     expect(fireEvent(pdfLinks[0], new MouseEvent("auxclick", { bubbles: true, cancelable: true, button: 1 }))).toBe(false);
+    expect(trackEvent).toHaveBeenCalledWith("cta_click", expect.objectContaining({ page: "jee-main-2027", cta: "paper_pdf" }));
     expect(screen.getByRole("dialog")).not.toHaveAttribute("data-otp-download");
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     rememberSubmittedLead({ name: "Test Student", email: "test@example.org", phone: "9876543210" }, "saved");

@@ -122,6 +122,14 @@ async function columnInfo(table, column) {
   return rows[0] || null;
 }
 
+async function ensureLeadAttributionSchema(report) {
+  for (const column of ["utm_source", "utm_medium", "utm_campaign"]) {
+    if (await columnInfo("leads", column)) continue;
+    await prisma.$executeRawUnsafe(`ALTER TABLE \`leads\` ADD COLUMN ${quote(column)} VARCHAR(160) NULL`);
+    report.createdRuntimeColumns.push(`leads.${column}`);
+  }
+}
+
 async function ensureIntentRuntimeSchema(report) {
   const id = await columnInfo("intent_events", "id");
   if (!String(id?.extra || "").toLowerCase().includes("auto_increment")) {
@@ -709,6 +717,7 @@ async function createViews() {
 const report = { createdRuntimeColumns: [], createdRuntimeTables: [], createdUnique: [], createdReferenceIndexes: [], createdForeignKeyIndexes: [], createdForeignKeys: [], createdTriggers: [], createdCheckConstraints: [], droppedLegacyIndexes: [], existing: [], skipped: [], views: [] };
 try {
   await ensureSiteIsolationSchema(report);
+  await ensureLeadAttributionSchema(report);
   await ensureArticleWriteLockSchema(report);
   await ensureIntentRuntimeSchema(report);
   await ensureExamAuthoritySchema(report);

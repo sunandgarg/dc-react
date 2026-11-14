@@ -11,6 +11,7 @@ import { Footer } from "@/components/Footer";
 import { LeadGateDialog } from "@/components/LeadGateDialog";
 import { useSEO } from "@/hooks/useSEO";
 import { CarouselControls, useCarouselNav } from "@/components/CarouselControls";
+import { trackEvent } from "@/lib/analytics";
 
 const COLLEGE_APPLICATIONS = [
   { slug: "lovely-professional-university", name: "Lovely Professional University", logo_url: "https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/sanitized/bottom-12-v1/ea/eaa5565056636a93d2e1c8fe856429dd3d691dc660dbfad6ca1ddd61dd225e23.webp", href: "https://www.lpu.in/landing-pages/brand/?utm_source=dekhocampus" },
@@ -147,12 +148,18 @@ function EnglishAdPage() {
   const lateOpen = now >= LATE_APPLICATION_OPENS && now <= VIDEO_CLOSES;
   const registrationOpen = regularOpen || lateOpen;
   const openApplication = () => {
+    trackEvent("cta_click", { page: "jee-main-2027", cta: "official_application", exam_slug: "jee-main" });
     if (hasSubmittedLead()) window.location.assign(OFFICIAL_FORM);
     else setDestination({ url: OFFICIAL_FORM, label: "NTA application page" });
   };
   const gateExternalLink = (event: MouseEvent<HTMLDivElement>) => {
     const anchor = (event.target as HTMLElement).closest("a[href]");
     if (!(anchor instanceof HTMLAnchorElement)) return;
+    if (anchor.hasAttribute("data-paper-download")) {
+      trackEvent("cta_click", { page: "jee-main-2027", cta: "paper_pdf", exam_slug: "jee-main", paper: anchor.getAttribute("aria-label") || "" });
+    } else if (anchor.hasAttribute("data-official-resource") || anchor.href.startsWith(NTA_PORTAL)) {
+      trackEvent("cta_click", { page: "jee-main-2027", cta: "official_resource", exam_slug: "jee-main" });
+    }
     if (anchor.closest('[aria-label="Share this page"]') || anchor.hasAttribute("data-official-resource")) return;
     const url = new URL(anchor.href);
     if (!["https:", "http:"].includes(url.protocol) || (url.origin === window.location.origin && !anchor.hasAttribute("data-college-destination"))) return;
@@ -194,12 +201,12 @@ function EnglishAdPage() {
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">DekhoCampus paper collection</p>
             <h2 id="papers-title" className="mt-1 font-bold">JEE Main question papers: 2017 to 2026</h2>
             <p className="mt-2 text-sm leading-6 text-slate-700">Choose a year below to see its papers. Select a PDF to open the download form; no OTP is needed for a single paper. The complete ZIP covers all 171 papers from 2017 to 2026 and requires mobile OTP verification.</p>
-            <button type="button" onClick={() => setDestination({ url: PAPERS_ZIP, label: "All 171 JEE Main question papers (ZIP)" })} className="mt-4 flex min-h-11 w-full items-center justify-center rounded border border-blue-800 bg-blue-800 px-3 py-2 text-center text-sm font-bold text-white hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800">
+            <button type="button" onClick={() => { trackEvent("cta_click", { page: "jee-main-2027", cta: "all_papers_zip", exam_slug: "jee-main" }); setDestination({ url: PAPERS_ZIP, label: "All 171 JEE Main question papers (ZIP)" }); }} className="mt-4 flex min-h-11 w-full items-center justify-center rounded border border-blue-800 bg-blue-800 px-3 py-2 text-center text-sm font-bold text-white hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800">
               Download all 171 papers (.zip)
             </button>
             <div ref={years.ref} onScroll={years.recompute} aria-label="Choose a question-paper year" className="mt-4 overflow-x-auto snap-x snap-mandatory pb-2">
               <div className="grid min-w-[560px] grid-cols-5 gap-2">
-                {QUESTION_PAPERS.map(({ year, dates }) => <button key={year} type="button" aria-expanded={selectedYear === year} aria-controls={`papers-${year}`} onClick={() => setSelectedYear(current => current === year ? null : year)} className={`snap-start rounded-xl border px-2 py-4 text-center transition focus-visible:outline-blue-700 ${selectedYear === year ? "border-blue-700 bg-blue-700 text-white" : "border-blue-200 bg-white text-blue-900 hover:bg-blue-50"}`}>
+                {QUESTION_PAPERS.map(({ year, dates }) => <button key={year} type="button" aria-expanded={selectedYear === year} aria-controls={`papers-${year}`} onClick={() => { if (selectedYear !== year) trackEvent("jee_main_year_open", { year }); setSelectedYear(current => current === year ? null : year); }} className={`snap-start rounded-xl border px-2 py-4 text-center transition focus-visible:outline-blue-700 ${selectedYear === year ? "border-blue-700 bg-blue-700 text-white" : "border-blue-200 bg-white text-blue-900 hover:bg-blue-50"}`}>
                   <span className="block text-lg font-extrabold">{year}</span><span className="inline-flex items-center justify-center gap-1 text-xs">{dates.reduce((count, date) => count + Number(!!date.morning) + Number(!!date.evening) + Number("offline" in date && !!date.offline), 0)} papers<ChevronDown aria-hidden="true" className={`h-4 w-4 text-orange-600 transition-transform ${selectedYear === year ? "rotate-180" : ""}`} /></span>
                 </button>)}
               </div>
@@ -291,7 +298,7 @@ function EnglishAdPage() {
     </main>
 
     <Footer />
-    <LeadGateDialog className="[&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center [&_h3]:pr-0 [&_h3+p]:pr-0 [&_input]:min-h-11 max-h-[calc(100dvh-2rem)] overflow-y-auto [&_img]:h-auto [&_img]:w-32" otpDownload={destination?.url === PAPERS_ZIP ? "jee-main-171-papers" : undefined} open={!!destination} onOpenChange={open => { if (!open) setDestination(null); }} forceShow simple contactOnly unbrandedConsent title={destination?.url === PAPERS_ZIP ? "Download all 171 papers" : destination?.url.endsWith(".pdf") ? "Download question paper" : "JEE Main guidance"} subtitle="" source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={(_leadId, downloadUrl) => { if (destination) { if (destination.url === PAPERS_ZIP && !downloadUrl) return; window.location.assign(downloadUrl || destination.url); setDestination(null); } }} />
+    <LeadGateDialog className="[&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center [&_h3]:pr-0 [&_h3+p]:pr-0 [&_input]:min-h-11 max-h-[calc(100dvh-2rem)] overflow-y-auto [&_img]:h-auto [&_img]:w-32" otpDownload={destination?.url === PAPERS_ZIP ? "jee-main-171-papers" : undefined} open={!!destination} onOpenChange={open => { if (!open) setDestination(null); }} forceShow simple contactOnly unbrandedConsent title={destination?.url === PAPERS_ZIP ? "Download all 171 papers" : destination?.url.endsWith(".pdf") ? "Download question paper" : "JEE Main guidance"} subtitle="" source="JEE-paid" interestedExamSlug="jee-main" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} onSuccess={(_leadId, downloadUrl) => { if (destination) { if (destination.url === PAPERS_ZIP && !downloadUrl) return; trackEvent("jee_main_destination_open", { type: destination.url === PAPERS_ZIP ? "bundle" : destination.url.endsWith(".pdf") ? "paper" : "official_or_partner" }); window.location.assign(downloadUrl || destination.url); setDestination(null); } }} />
     <nav aria-label="JEE Main quick actions" className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-slate-200 bg-white p-2 shadow-lg sm:hidden"><button type="button" onClick={openApplication} className="flex-1 rounded-lg bg-blue-600 px-2 py-3 text-center text-sm font-bold text-white">Open the official form</button><a href="#jee-guidance-form" className="flex-1 rounded-lg border border-blue-700 px-2 py-3 text-center text-sm font-bold text-blue-800">Get free guidance</a></nav>
   </div>;
 }

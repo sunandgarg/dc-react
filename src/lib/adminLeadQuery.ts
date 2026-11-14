@@ -7,6 +7,9 @@ export const ADMIN_LEAD_BATCH_SIZE = 1_000;
 export type AdminLeadFilters = {
   search: string;
   source: string;
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
   city: string;
   state: string;
   college: string;
@@ -25,11 +28,13 @@ type LeadFilterQuery = {
   gte(column: string, value: unknown): LeadFilterQuery;
   lte(column: string, value: unknown): LeadFilterQuery;
   or(expression: string): LeadFilterQuery;
+  ilike(column: string, value: string): LeadFilterQuery;
 };
 
 const SERVER_SORT_COLUMNS = new Set([
   "name", "phone", "email", "state", "city", "current_situation", "source",
   "source_category", "device_type", "program_mode", "otp_verified",
+  "utm_source", "utm_medium", "utm_campaign",
   "consent_terms_accepted", "status", "interested_college_slug",
   "interested_exam_slug", "cta", "page_url", "initial_query", "created_at",
 ]);
@@ -92,6 +97,9 @@ export function applyAdminLeadFilters<T extends LeadFilterQuery>(
       `email.ilike.${search}`,
       `city.ilike.${search}`,
       `source.ilike.${search}`,
+      `utm_source.ilike.${search}`,
+      `utm_medium.ilike.${search}`,
+      `utm_campaign.ilike.${search}`,
     ].join(","));
   }
 
@@ -106,6 +114,14 @@ export function applyAdminLeadFilters<T extends LeadFilterQuery>(
   exactFilters.forEach(([column, value]) => {
     if (value && value !== "all") next = next.eq(column, value);
   });
+  for (const [column, value] of [
+    ["utm_source", filters.utmSource],
+    ["utm_medium", filters.utmMedium],
+    ["utm_campaign", filters.utmCampaign],
+  ]) {
+    const match = wildcard(value);
+    if (match) next = next.ilike(column, match);
+  }
 
   const course = wildcard(filters.course);
   if (filters.course !== "all" && course) {

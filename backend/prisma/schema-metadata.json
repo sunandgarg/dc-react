@@ -12099,6 +12099,30 @@
         "default": "chatbot",
         "foreignKey": null
       },
+      "utm_source": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "text",
+        "default": null,
+        "foreignKey": null
+      },
+      "utm_medium": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "text",
+        "default": null,
+        "foreignKey": null
+      },
+      "utm_campaign": {
+        "type": "String",
+        "nullable": true,
+        "primaryKey": false,
+        "format": "text",
+        "default": null,
+        "foreignKey": null
+      },
       "created_at": {
         "type": "DateTime",
         "nullable": false,

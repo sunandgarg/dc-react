@@ -11,6 +11,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   document.cookie = "dc_lead_session_v1=; Max-Age=0; Path=/";
   sessionStorage.clear(); localStorage.clear();
+  window.history.replaceState({}, "", "/");
 });
 afterEach(() => vi.unstubAllGlobals());
 describe("durable lead acknowledgement", () => {
@@ -23,6 +24,18 @@ describe("durable lead acknowledgement", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true, lead_id: "saved", phase: "complete" }) }));
     await expect(saveLeadPhase({ phase: "complete" })).resolves.toMatchObject({ lead_id: "saved" });
     expect(trackLeadConversion).toHaveBeenCalledExactlyOnceWith({ transaction_id: "saved", source: "website_form" });
+  });
+  it("keeps campaign attribution across navigation before a lead is saved", async () => {
+    window.history.replaceState({}, "", "/ad/jee-main-2027?utm_source=google&utm_medium=cpc&utm_campaign=jee_2027");
+    const { getLeadAttribution } = await import("./leadAttribution");
+    getLeadAttribution();
+    window.history.replaceState({}, "", "/colleges");
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true, lead_id: "saved", phase: "complete" }) });
+    vi.stubGlobal("fetch", fetchMock);
+    await saveLeadPhase({ ...identity, phase: "complete" });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toMatchObject({
+      utm_source: "google", utm_medium: "cpc", utm_campaign: "jee_2027",
+    });
   });
   it("remembers a completed lead without optional cookie consent", async () => {
     localStorage.setItem("dc_cookie_consent_v1", "rejected");

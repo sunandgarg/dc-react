@@ -13,6 +13,7 @@ import { getPrefillCookie, savePrefillCookie } from "@/components/CookieConsent"
 import { normalizeIndianMobile } from "@/lib/phone";
 import { functionUrl } from "@/lib/backendMode";
 import { getLeadConsentPreference, LEAD_CONSENT_TEXT } from "@/lib/leadConsent";
+import { getLeadAttribution } from "@/lib/leadAttribution";
 
 const LAST_LEAD_TS_KEY = "dc_last_lead_ts_v1";
 export const LEAD_SILENT_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
@@ -81,6 +82,7 @@ export async function silentSaveLead(payload: SilentLeadPayload): Promise<boolea
     current_situation: null,
     initial_query: payload.initial_query ?? null,
     source: payload.source,
+    ...getLeadAttribution(),
     cta: payload.cta ?? payload.source,
     page_url: payload.page_url ?? (typeof window !== "undefined" ? window.location.pathname + window.location.search : null),
     interested_college_slug: payload.interested_college_slug ?? null,

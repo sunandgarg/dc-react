@@ -153,6 +153,9 @@ export function LeadDetailDrawer({ lead, onClose, onChanged, siteScope = DEFAULT
             <Field label="City" value={lead.city || "-"} />
             <Field label="State" value={lead.state || "-"} />
             <Field label="Source" value={lead.source || "-"} />
+            <Field label="UTM Source" value={lead.utm_source || "-"} />
+            <Field label="UTM Medium" value={lead.utm_medium || "-"} />
+            <Field label="UTM Campaign" value={lead.utm_campaign || "-"} />
             <Field label="Consent" value={`Consent: ${leadConsentLabel(lead)}`} />
             <Field label="Mode" value={(lead.program_mode || "regular")} />
             <Field label="Interested College" value={lead.interested_college_slug || "-"} />

@@ -613,6 +613,11 @@ async function saveLead(request) {
     ...(hasConsentAccepted ? { consent_terms_accepted: consentAccepted, consent_at: consentAt } : {}),
     ...(hasConsentText ? { consent_text: consentText } : {}),
   };
+  const utm = Object.fromEntries(
+    ["utm_source", "utm_medium", "utm_campaign"]
+      .filter((key) => typeof input[key] === "string" && input[key].trim())
+      .map((key) => [key, input[key].trim().slice(0, 160)]),
+  );
   if (input.lead_id) {
     const leadId = String(input.lead_id);
     const result = await prisma.$transaction(async (tx) => {
@@ -629,6 +634,7 @@ async function saveLead(request) {
         program_mode: input.program_mode ? String(input.program_mode) : "unknown",
         status: "new",
         updated_at: new Date(),
+        ...utm,
         ...consentUpdate,
         },
       });
@@ -655,6 +661,7 @@ async function saveLead(request) {
       current_situation: phase === "complete" && input.current_situation ? String(input.current_situation) : null,
       initial_query: input.initial_query ? String(input.initial_query) : null,
       source: input.source ? String(input.source) : "website",
+      ...utm,
       cta: input.cta ? String(input.cta) : null,
       page_url: input.page_url ? String(input.page_url) : null,
       interested_college_slug: phase === "complete" && input.interested_college_slug ? String(input.interested_college_slug) : null,

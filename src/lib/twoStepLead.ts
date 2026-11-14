@@ -1,6 +1,7 @@
 import { functionUrl } from "@/lib/backendMode";
 import { rememberSubmittedLead, saveSessionOtpProof, saveSessionPrefill, type LeadSession } from "@/lib/leadSession";
 import { trackLeadConversion } from "@/lib/analytics";
+import { getLeadAttribution } from "@/lib/leadAttribution";
 
 const LEAD_URL = functionUrl("save-lead");
 
@@ -20,7 +21,7 @@ export async function saveLeadPhase(payload: Record<string, unknown>) {
   const response = await fetch(LEAD_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...intentIdentity(), ...payload }),
+    body: JSON.stringify({ ...intentIdentity(), ...getLeadAttribution(), ...payload }),
   });
   const body = await response.json().catch(() => ({}));
   if (!response.ok || body.success !== true || !body.lead_id) throw new Error(body.message || body.error || "Could not save your details");

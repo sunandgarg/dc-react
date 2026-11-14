@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { restUrl } from "@/lib/backendMode";
 import { COOKIE_RESOLVED_EVENT } from "@/lib/promptSequence";
 import { ensureGtag } from "@/lib/analytics";
+import { getLeadAttribution } from "@/lib/leadAttribution";
 
 const SESSION_KEY = "dc_session_id";
 const SESSION_STARTED_KEY = "dc_session_started";
@@ -119,6 +120,7 @@ export function UserTrackingProvider({ children }: { children: React.ReactNode }
   // Queue route views immediately. GTM owns the first page load; subsequent
   // client-side navigations are sent directly once its scripts become ready.
   useEffect(() => {
+    getLeadAttribution();
     const analyticsWindow = window as Window & {
       dataLayer?: unknown[];
       gtag?: (...args: unknown[]) => void;

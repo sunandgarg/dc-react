@@ -3793,6 +3793,9 @@ export type Database = {
           source: string | null
           source_category: string | null
           site_scope: string
+          utm_source: string | null
+          utm_medium: string | null
+          utm_campaign: string | null
           state: string | null
           status: string
           updated_at: string
@@ -3821,6 +3824,9 @@ export type Database = {
           source?: string | null
           source_category?: string | null
           site_scope?: string
+          utm_source?: string | null
+          utm_medium?: string | null
+          utm_campaign?: string | null
           state?: string | null
           status?: string
           updated_at?: string
@@ -3849,6 +3855,9 @@ export type Database = {
           source?: string | null
           source_category?: string | null
           site_scope?: string
+          utm_source?: string | null
+          utm_medium?: string | null
+          utm_campaign?: string | null
           state?: string | null
           status?: string
           updated_at?: string

@@ -9,7 +9,7 @@ import {
 } from "./adminLeadQuery";
 
 const defaults: AdminLeadFilters = {
-  search: "", source: "all", city: "all", state: "all", college: "all",
+  search: "", source: "all", utmSource: "", utmMedium: "", utmCampaign: "", city: "all", state: "all", college: "all",
   course: "all", mode: "all", category: "all", device: "all", status: "all",
   range: "all", customFrom: "", customTo: "",
 };
@@ -20,6 +20,7 @@ class QueryRecorder {
   gte(...args: unknown[]) { this.calls.push(["gte", ...args]); return this; }
   lte(...args: unknown[]) { this.calls.push(["lte", ...args]); return this; }
   or(...args: unknown[]) { this.calls.push(["or", ...args]); return this; }
+  ilike(...args: unknown[]) { this.calls.push(["ilike", ...args]); return this; }
 }
 
 describe("admin lead server query", () => {
@@ -52,6 +53,18 @@ describe("admin lead server query", () => {
     expect(leadCreatedAtRange({ range: "7d", customFrom: "", customTo: "" }, new Date("2026-09-11T00:00:00.000Z"))).toEqual({
       from: "2026-09-04T00:00:00.000Z",
     });
+  });
+
+  it("filters UTM fields on the server without losing tenant scope", () => {
+    const query = applyAdminLeadFilters(new QueryRecorder(), "dekhocampus", {
+      ...defaults, utmSource: "google", utmMedium: "paid", utmCampaign: "jee_2027",
+    });
+    expect(query.calls).toEqual([
+      ["eq", "site_scope", "dekhocampus"],
+      ["ilike", "utm_source", "*google*"],
+      ["ilike", "utm_medium", "*paid*"],
+      ["ilike", "utm_campaign", "*jee_2027*"],
+    ]);
   });
 
   it("clamps page sizes and rejects unknown sort columns", () => {

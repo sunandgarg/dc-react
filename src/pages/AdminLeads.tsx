@@ -83,6 +83,9 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
   const [sourceFilter, setSourceFilter] = useState<string>("all");
+  const [utmSourceFilter, setUtmSourceFilter] = useState("");
+  const [utmMediumFilter, setUtmMediumFilter] = useState("");
+  const [utmCampaignFilter, setUtmCampaignFilter] = useState("");
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [stateFilter, setStateFilter] = useState<string>("all");
   const [collegeFilter, setCollegeFilter] = useState<string>("all");
@@ -150,6 +153,9 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
     { key: "city", label: "City", defaultVisible: true },
     { key: "course", label: "Course / Interest", defaultVisible: true },
     { key: "source", label: "Source", defaultVisible: true },
+    { key: "utm_source", label: "UTM Source", defaultVisible: true },
+    { key: "utm_medium", label: "UTM Medium", defaultVisible: true },
+    { key: "utm_campaign", label: "UTM Campaign", defaultVisible: true },
     { key: "source_category", label: "Category", defaultVisible: false },
     { key: "device_type", label: "Device", defaultVisible: false },
     { key: "program_mode", label: "Mode", defaultVisible: false },
@@ -202,6 +208,9 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
     setExpanded(new Set());
     setSearch("");
     setSourceFilter("all");
+    setUtmSourceFilter("");
+    setUtmMediumFilter("");
+    setUtmCampaignFilter("");
     setCityFilter("all");
     setStateFilter("all");
     setCollegeFilter("all");
@@ -232,6 +241,9 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
   const leadFilters = useMemo<AdminLeadFilters>(() => ({
     search: deferredSearch,
     source: sourceFilter,
+    utmSource: utmSourceFilter,
+    utmMedium: utmMediumFilter,
+    utmCampaign: utmCampaignFilter,
     city: cityFilter,
     state: stateFilter,
     college: collegeFilter,
@@ -243,7 +255,7 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
     range: rangeFilter,
     customFrom,
     customTo,
-  }), [deferredSearch, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo]);
+  }), [deferredSearch, sourceFilter, utmSourceFilter, utmMediumFilter, utmCampaignFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo]);
   const effectivePageSize = normalizeAdminLeadPageSize(pageSize);
   const serverSort = normalizeAdminLeadSort(sortBy);
 
@@ -268,6 +280,10 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
       const pageOrder = new Map(pageRows.map((lead, index) => [lead.id, index]));
       const groups = groupLeadsByIdentity(mergedRows)
         .filter((group) => group.instances.some((lead) => pageIds.has(lead.id)))
+        .map((group) => {
+          const primary = group.instances.find((lead) => pageIds.has(lead.id))!;
+          return { ...group, primary, instances: [primary, ...group.instances.filter((lead) => lead.id !== primary.id)] };
+        })
         .sort((left, right) => {
           const leftIndex = Math.min(...left.instances.filter((lead) => pageIds.has(lead.id)).map((lead) => pageOrder.get(lead.id) ?? Number.MAX_SAFE_INTEGER));
           const rightIndex = Math.min(...right.instances.filter((lead) => pageIds.has(lead.id)).map((lead) => pageOrder.get(lead.id) ?? Number.MAX_SAFE_INTEGER));
@@ -325,7 +341,7 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
   };
 
   // Reset to page 1 whenever filters change
-  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, sortBy, sortDir, pageSize]);
+  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, sourceFilter, utmSourceFilter, utmMediumFilter, utmCampaignFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly, sortBy, sortDir, pageSize]);
 
   useEffect(() => { setSelectedIds(new Set()); setExpanded(new Set()); }, [page]);
   useEffect(() => {
@@ -395,7 +411,7 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
     try {
       const exported = await fetchFilteredRows("*");
       const groups = groupLeadsByIdentity(exported).filter((group) => !dupOnly || group.instances.length > 1);
-      const columns = ["Name", "Phone", "Email", "City", "State", "Source", "Mode", "OTP Verified", "Consent", "Query", "Latest Created", "Submission Count"];
+      const columns = ["Name", "Phone", "Email", "City", "State", "Source", "UTM Source", "UTM Medium", "UTM Campaign", "Mode", "OTP Verified", "Consent", "Query", "Latest Created", "Submission Count"];
       const rows = groups.map(({ primary: lead, instances }) => ({
         Name: lead.name,
         Phone: lead.phone,
@@ -403,6 +419,9 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
         City: lead.city,
         State: lead.state,
         Source: lead.source,
+        "UTM Source": lead.utm_source || "",
+        "UTM Medium": lead.utm_medium || "",
+        "UTM Campaign": lead.utm_campaign || "",
         Mode: lead.program_mode || "regular",
         "OTP Verified": lead.otp_verified ? "Yes" : "No",
         Consent: leadConsentLabel(lead),
@@ -447,6 +466,9 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
   // Active filter count for the "Advanced" toggle badge
   const activeAdvCount = [
     sourceFilter !== "all",
+    !!utmSourceFilter,
+    !!utmMediumFilter,
+    !!utmCampaignFilter,
     cityFilter !== "all",
     stateFilter !== "all",
     collegeFilter !== "all",
@@ -504,9 +526,9 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
           />
           <LeadFilterPresets
             siteScope={siteScope}
-            current={{ search, sourceFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly }}
+            current={{ search, sourceFilter, utmSourceFilter, utmMediumFilter, utmCampaignFilter, cityFilter, stateFilter, collegeFilter, courseFilter, modeFilter, categoryFilter, deviceFilter, statusFilter, rangeFilter, customFrom, customTo, dupOnly }}
             onApply={(f: any) => {
-              setSearch(f.search ?? ""); setSourceFilter(f.sourceFilter ?? "all"); setCityFilter(f.cityFilter ?? "all"); setStateFilter(f.stateFilter ?? "all");
+              setSearch(f.search ?? ""); setSourceFilter(f.sourceFilter ?? "all"); setUtmSourceFilter(f.utmSourceFilter ?? ""); setUtmMediumFilter(f.utmMediumFilter ?? ""); setUtmCampaignFilter(f.utmCampaignFilter ?? ""); setCityFilter(f.cityFilter ?? "all"); setStateFilter(f.stateFilter ?? "all");
               setCollegeFilter(f.collegeFilter ?? "all"); setCourseFilter(f.courseFilter ?? "all"); setModeFilter(f.modeFilter ?? "all"); setCategoryFilter(f.categoryFilter ?? "all");
               setDeviceFilter(f.deviceFilter ?? "all"); setStatusFilter(f.statusFilter ?? "all"); setRangeFilter(f.rangeFilter ?? "all");
               setCustomFrom(f.customFrom ?? ""); setCustomTo(f.customTo ?? ""); setDupOnly(!!f.dupOnly);
@@ -600,6 +622,9 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
 
         {filtersOpen && (
           <div className="mt-3 pt-3 border-t border-border grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <FilterField label="UTM Source"><Input value={utmSourceFilter} onChange={(event) => setUtmSourceFilter(event.target.value)} placeholder="Search source" aria-label="Filter UTM source" className="h-9 rounded-lg border-0 bg-transparent px-0 text-sm focus-visible:ring-0" /></FilterField>
+            <FilterField label="UTM Medium"><Input value={utmMediumFilter} onChange={(event) => setUtmMediumFilter(event.target.value)} placeholder="Search medium" aria-label="Filter UTM medium" className="h-9 rounded-lg border-0 bg-transparent px-0 text-sm focus-visible:ring-0" /></FilterField>
+            <FilterField label="UTM Campaign"><Input value={utmCampaignFilter} onChange={(event) => setUtmCampaignFilter(event.target.value)} placeholder="Search campaign" aria-label="Filter UTM campaign" className="h-9 rounded-lg border-0 bg-transparent px-0 text-sm focus-visible:ring-0" /></FilterField>
             {rangeFilter === "custom" && (
               <>
                 <FilterField label="From">
@@ -683,7 +708,7 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
             ))}
             {(activeAdvCount > 0 || rangeFilter !== "all" || search) && (
               <button
-                onClick={() => { setRangeFilter("all"); setCustomFrom(""); setCustomTo(""); setSourceFilter("all"); setCityFilter("all"); setStateFilter("all"); setCollegeFilter("all"); setCourseFilter("all"); setModeFilter("all"); setCategoryFilter("all"); setDeviceFilter("all"); setStatusFilter("all"); setDupOnly(false); setSearch(""); }}
+                onClick={() => { setRangeFilter("all"); setCustomFrom(""); setCustomTo(""); setSourceFilter("all"); setUtmSourceFilter(""); setUtmMediumFilter(""); setUtmCampaignFilter(""); setCityFilter("all"); setStateFilter("all"); setCollegeFilter("all"); setCourseFilter("all"); setModeFilter("all"); setCategoryFilter("all"); setDeviceFilter("all"); setStatusFilter("all"); setDupOnly(false); setSearch(""); }}
                 className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-dashed border-border text-muted-foreground hover:text-destructive hover:border-destructive/40"
               >
                 Reset all
@@ -809,6 +834,10 @@ export default function AdminLeads({ siteScope = DEFAULT_SITE_SCOPE }: AdminLead
                       return <span className="text-xs text-muted-foreground line-clamp-1 max-w-[200px]" title={lead.current_situation || ""}>{lead.current_situation || "-"}</span>;
                     case "source":
                       return <Badge className={`text-[10px] border ${sourceColor(lead.source || "")}`}>{lead.source || "unknown"}</Badge>;
+                    case "utm_source":
+                    case "utm_medium":
+                    case "utm_campaign":
+                      return <span className="inline-block max-w-[180px] truncate text-xs" title={lead[key] || ""}>{lead[key] || "-"}</span>;
                     case "source_category":
                       return <Badge variant="outline" className="text-[10px] capitalize">{(lead.source_category || "-").replace(/_/g, " ")}</Badge>;
                     case "device_type":
