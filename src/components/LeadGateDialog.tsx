@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { trackLeadConversion, trackEvent } from "@/lib/analytics";
+import { trackEvent } from "@/lib/analytics";
 import { X } from "lucide-react";
 import { silentSaveLead } from "@/lib/leadCapture";
 import { getPrefillCookie } from "@/components/CookieConsent";
@@ -135,7 +135,7 @@ export function LeadGateDialog({
           interested_course_slug: interestedCourseSlug || null,
           interested_exam_slug: interestedExamSlug || null,
         });
-        trackLeadConversion({ source: `${source}_silent`, silent: true });
+        trackEvent("lead_intent_click", { source: `${source}_silent` });
       } catch {/* ignore - UX must not block */}
       if (!lastOpenRef.current || continuation !== continuationRef.current) return;
       successRef.current = true;

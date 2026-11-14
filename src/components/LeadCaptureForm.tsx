@@ -15,7 +15,7 @@ import { markLeadSubmitted } from "@/lib/leadCapture";
 import { useInlineOtp, isValidIndianMobile, PHONE_HINT, sanitizeIndianMobile } from "@/components/LeadInlineOtp";
 import { ProgramModeToggle, type ProgramMode } from "@/components/ProgramModeToggle";
 import { detectDeviceType, inferSourceCategory } from "@/lib/leadTracking";
-import { trackEvent, trackLeadConversion } from "@/lib/analytics";
+import { trackEvent } from "@/lib/analytics";
 import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsentCheckbox";
 import { setLeadConsentPreference } from "@/lib/leadConsent";
 import { invokeNodeFunction } from "@/lib/backendMode";
@@ -219,8 +219,6 @@ export function LeadCaptureForm({
       setLeadConsentPreference(authorized);
       savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city, course: formData.course });
       markLeadSubmitted();
-      try { (window as any).fireGoogleAdsConversion?.({ value: 1, currency: "INR", source }); } catch {}
-      trackLeadConversion({ source, variant, has_email: !!formData.email, has_phone: !!formData.phone });
       trackEvent("lead_form_submit_success", { source, variant });
       onSuccess?.(saved.lead_id, downloadUrl);
     } catch (error) {

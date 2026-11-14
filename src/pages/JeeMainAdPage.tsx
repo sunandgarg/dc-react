@@ -119,7 +119,7 @@ function JeeGuidanceForm({ id }: { id: string }) {
     <div className="mx-auto max-w-xl [&_img]:h-auto [&_img]:w-40 [&>div>div:first-child>div]:w-full [&>div>div:first-child>div]:flex-col [&>div>div:first-child>div]:text-center">
       <h3 className="text-base font-bold text-blue-900 sm:text-lg">Free JEE Main papers and 2027 exam alerts</h3>
       <p className="mb-4 mt-2 text-sm leading-6 text-slate-700">Sign up with us for previous-year question papers and important updates on applications, admit cards and exam dates.</p>
-      <LeadCaptureForm variant="card" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" title="" subtitle="" source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} unbrandedConsent simple />
+      <LeadCaptureForm variant="card" brandLogoUrl="/assets/nta-logo-official-link.png?v=20261102" brandName="National Testing Agency" title="" subtitle="" source="JEE-paid" interestedExamSlug="jee-main" interestLabel="Programme" interestOptions={["B.Tech / B.E.", "B.Arch", "B.Planning"]} unbrandedConsent simple contactOnly />
     </div>
     <p className="mt-3 text-center text-xs leading-5 text-slate-600">Optional DekhoCampus guidance form. This does not submit an application to NTA.</p>
   </section>;

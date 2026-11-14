@@ -2,9 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { saveLeadPhase } from "./twoStepLead";
 import { getLeadSession, getSessionOtpProof, hasSubmittedLead, saveSessionOtpProof, saveSessionPrefill } from "./leadSession";
 import { getPrefillCookie } from "@/components/CookieConsent";
+import { trackLeadConversion } from "./analytics";
+
+vi.mock("./analytics", () => ({ trackLeadConversion: vi.fn() }));
 
 const identity = { name: "Test Student", email: "student@example.org", phone: "9876543210" };
 beforeEach(() => {
+  vi.clearAllMocks();
   document.cookie = "dc_lead_session_v1=; Max-Age=0; Path=/";
   sessionStorage.clear(); localStorage.clear();
 });
@@ -13,10 +17,12 @@ describe("durable lead acknowledgement", () => {
   it.each([{ success: false }, { success: true }, {}])("rejects incomplete acknowledgements %j", async body => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => body }));
     await expect(saveLeadPhase({ phase: "complete" })).rejects.toThrow();
+    expect(trackLeadConversion).not.toHaveBeenCalled();
   });
   it("accepts a saved lead", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true, lead_id: "saved", phase: "complete" }) }));
     await expect(saveLeadPhase({ phase: "complete" })).resolves.toMatchObject({ lead_id: "saved" });
+    expect(trackLeadConversion).toHaveBeenCalledExactlyOnceWith({ transaction_id: "saved", source: "website_form" });
   });
   it("remembers a completed lead without optional cookie consent", async () => {
     localStorage.setItem("dc_cookie_consent_v1", "rejected");
@@ -33,12 +39,14 @@ describe("durable lead acknowledgement", () => {
     await saveLeadPhase({ ...identity, phase: "identity" });
     expect(getLeadSession()).toMatchObject(identity);
     expect(hasSubmittedLead()).toBe(false);
+    expect(trackLeadConversion).not.toHaveBeenCalled();
   });
   it("does not remember a failed submission", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, json: async () => ({ error: "Unavailable" }) }));
     await expect(saveLeadPhase({ ...identity, phase: "complete" })).rejects.toThrow("Unavailable");
     expect(getLeadSession()).toEqual({});
     expect(hasSubmittedLead()).toBe(false);
+    expect(trackLeadConversion).not.toHaveBeenCalled();
   });
   it("does not carry a submitted lead ID to a different phone", () => {
     saveSessionPrefill({ ...identity, leadId: "saved" });

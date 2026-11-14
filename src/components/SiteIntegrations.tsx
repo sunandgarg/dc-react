@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { backendClient } from "@/integrations/backend/client";
+import { configureGoogleAdsConversion } from "@/lib/analytics";
 
 export function SiteIntegrations() {
   useEffect(() => {
@@ -10,6 +11,7 @@ export function SiteIntegrations() {
       if (cancelled || !data) return;
       const map: Record<string, string> = {};
       for (const r of data) if (r.enabled && r.value) map[r.key] = r.value;
+      configureGoogleAdsConversion(map.google_ads_id, map.google_ads_conversion_label);
 
       // Analytics pixels are non-critical. Start them after interaction, with a
       // fallback for visitors who stay on a static page.
@@ -54,16 +56,12 @@ export function SiteIntegrations() {
         script("ga4-lib", `https://www.googletagmanager.com/gtag/js?id=${map.ga4_measurement_id}`);
         inline("ga4-init", `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${map.ga4_measurement_id}');`);
       }
-      // Google Ads (gtag) - loads gtag.js and registers the AW-XXXX conversion id.
-      // Fire conversions anywhere via:  window.fireGoogleAdsConversion()  (uses stored label).
+      // Queue the destination before interaction; load a Google tag if GTM/GA4 hasn't supplied one.
       if (map.google_ads_id) {
-        if (!map.ga4_measurement_id) {
+        if (!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
           script("gads-lib", `https://www.googletagmanager.com/gtag/js?id=${map.google_ads_id}`);
-          inline("gads-init-base", `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());`);
+          inline("gads-init-base", `window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){dataLayer.push(arguments);};gtag('js',new Date());`);
         }
-        inline("gads-config", `gtag('config','${map.google_ads_id}');`);
-        const label = map.google_ads_conversion_label || "";
-        inline("gads-helper", `window.fireGoogleAdsConversion=function(extra){try{var l='${label}';if(!l)return;window.gtag&&window.gtag('event','conversion',Object.assign({send_to:'${map.google_ads_id}/'+l},extra||{}));}catch(e){}};`);
       }
       // GTM
       if (gtmContainerId) {

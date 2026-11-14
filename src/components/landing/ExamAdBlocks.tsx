@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { backendClient } from "@/integrations/backend/client";
 import { toast } from "sonner";
-import { trackEvent, trackLeadConversion } from "@/lib/analytics";
+import { trackEvent } from "@/lib/analytics";
 import { normalizeIndianMobile } from "@/lib/phone";
 import { functionUrl } from "@/lib/backendMode";
 import { LeadConsentCheckbox } from "@/components/LeadConsentCheckbox";
@@ -312,7 +312,6 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
       }
       setLeadConsentPreference(consentAccepted);
       trackEvent("lp_otp_verified", { lp_type: "exam_ad", lp_slug: slug, source });
-      trackLeadConversion({ lp_type: "exam_ad", lp_slug: slug, source, gate: "otp" });
       trackEvent("lp_unlock_success", { lp_type: "exam_ad", lp_slug: slug, source, gate: "otp" });
       onSuccess();
     } catch (error) {
@@ -341,7 +340,6 @@ function UnlockOverlay({ gate, slug, source, onSuccess, onClose }: { gate: GateM
             source={`exam_ad_${source}`}
             interestedExamSlug={slug}
             onSuccess={() => {
-              trackLeadConversion({ lp_type: "exam_ad", lp_slug: slug, source, gate: "form" });
               trackEvent("lp_unlock_success", { lp_type: "exam_ad", lp_slug: slug, source, gate: "form" });
               onSuccess();
             }}

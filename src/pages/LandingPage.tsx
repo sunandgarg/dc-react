@@ -11,7 +11,7 @@ import { Loader2, ChevronDown } from "lucide-react";
 import { MultipleCollegesBlock, type CollegeLite, type MultipleLayout } from "@/components/landing/MultipleCollegesBlock";
 import { ExamAdBlocks, type ExamAd } from "@/components/landing/ExamAdBlocks";
 import { LpComplianceFooter, LpComplianceHeader } from "@/components/landing/LpComplianceFooter";
-import { trackEvent, trackLeadConversion } from "@/lib/analytics";
+import { trackEvent } from "@/lib/analytics";
 import { isStrictIndianMobile, normalizeIndianMobile } from "@/lib/phone";
 import { LeadConsentCheckbox } from "@/components/LeadConsentCheckbox";
 import { setLeadConsentPreference } from "@/lib/leadConsent";
@@ -163,7 +163,6 @@ export default function LandingPage() {
     setSubmitting(false);
     setLeadConsentPreference(consentAccepted);
     toast.success("Thanks! Our advisor will call you within 24 hours.");
-    trackLeadConversion({ lp_type: data.lp_type || "general", lp_slug: slug, source: "lp_main_form" });
     setForm({ name: "", email: "", phone: "", city: "", state: "", course: "" });
     setLeadId(null);
     setFormStep(1);

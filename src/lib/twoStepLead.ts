@@ -1,5 +1,6 @@
 import { functionUrl } from "@/lib/backendMode";
 import { rememberSubmittedLead, saveSessionOtpProof, saveSessionPrefill, type LeadSession } from "@/lib/leadSession";
+import { trackLeadConversion } from "@/lib/analytics";
 
 const LEAD_URL = functionUrl("save-lead");
 
@@ -28,8 +29,10 @@ export async function saveLeadPhase(payload: Record<string, unknown>) {
     if (typeof payload[key] === "string") identity[key] = payload[key];
   }
   if (typeof payload.current_situation === "string") identity.course = payload.current_situation;
-  if (body.phase === "complete" || payload.phase === "complete") rememberSubmittedLead(identity, body.lead_id);
-  else saveSessionPrefill(identity);
+  if (body.phase === "complete" || payload.phase === "complete") {
+    rememberSubmittedLead(identity, body.lead_id);
+    trackLeadConversion({ transaction_id: body.lead_id, source: typeof payload.source === "string" ? payload.source : "website_form" });
+  } else saveSessionPrefill(identity);
   if (typeof payload.otp_verification_token === "string" && payload.otp_verification_token) saveSessionOtpProof(payload.otp_verification_token);
   return body as { success: true; lead_id: string; phase: "identity" | "complete"; existing_count?: number };
 }

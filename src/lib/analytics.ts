@@ -23,6 +23,20 @@ export type LpEventName =
   | "chunk_load_recovered";
 
 export type AnalyticsParams = Record<string, string | number | boolean | null | undefined>;
+let googleAdsDestination = "";
+const pendingGoogleAdsLeads = new Map<string, AnalyticsParams>();
+const recordedLeadIds = new Set<string>();
+
+export function configureGoogleAdsConversion(id?: string, label?: string) {
+  if (!/^AW-\d+$/.test(id || "") || !/^[A-Za-z0-9_-]+$/.test(label || "")) return;
+  const destination = `${id}/${label}`;
+  if (destination !== googleAdsDestination) ensureGtag()("config", id);
+  googleAdsDestination = destination;
+  for (const params of pendingGoogleAdsLeads.values()) {
+    ensureGtag()("event", "conversion", { ...params, send_to: destination });
+  }
+  pendingGoogleAdsLeads.clear();
+}
 
 function ensureGtag() {
   const analyticsWindow = window as Window & {
@@ -122,8 +136,14 @@ export function trackEvent(name: LpEventName | string, params: AnalyticsParams =
 /** Lead/Conversion shortcut - also fires the standard generate_lead/Lead events. */
 export function trackLeadConversion(params: AnalyticsParams = {}) {
   if (typeof window === "undefined") return;
-  try { (window as any).gtag?.("event", "generate_lead", { value: 1, currency: "INR", ...params }); } catch {/* noop */}
-  try { (window as any).fbq?.("track", "Lead", params); } catch {/* noop */}
-  try { (window as any).fireGoogleAdsConversion?.(params); } catch {/* noop */}
-  trackEvent("lp_lead_submit", params);
+  const leadId = typeof params.transaction_id === "string" ? params.transaction_id : "";
+  if (!leadId || params.silent || recordedLeadIds.has(leadId)) return;
+  recordedLeadIds.add(leadId);
+  const event = { transaction_id: leadId, source: params.source || "website_form", value: 1, currency: "INR" };
+  try { ensureGtag()("event", "generate_lead", event); } catch {/* noop */}
+  try { (window as any).fbq?.("track", "Lead", event); } catch {/* noop */}
+  if (googleAdsDestination) {
+    try { ensureGtag()("event", "conversion", { ...event, send_to: googleAdsDestination }); } catch {/* noop */}
+  } else pendingGoogleAdsLeads.set(leadId, event);
+  trackEvent("lp_lead_submit", event);
 }
