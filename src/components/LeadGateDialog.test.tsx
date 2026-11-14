@@ -16,7 +16,7 @@ const proof = (phone = identity.phone, expires = Date.now() + 900_000) => `heade
 const success = vi.fn();
 const close = vi.fn();
 const reply = (data: unknown, ok = true) => ({ ok, json: async () => data }) as Response;
-const zip = () => render(<LeadGateDialog open onOpenChange={close} onSuccess={success} forceShow simple contactOnly otpDownload="jee-main-106-papers" />);
+const zip = () => render(<LeadGateDialog open onOpenChange={close} onSuccess={success} forceShow simple contactOnly otpDownload="jee-main-171-papers" />);
 
 beforeEach(() => {
   document.cookie = "dc_lead_session_v1=; Max-Age=0; Path=/";
@@ -98,7 +98,7 @@ describe("save once and verify only for the ZIP", () => {
     let finish!: (response: Response) => void;
     vi.mocked(fetch).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
     const view = zip();
-    view.rerender(<LeadGateDialog open={false} onOpenChange={close} onSuccess={success} otpDownload="jee-main-106-papers" />);
+    view.rerender(<LeadGateDialog open={false} onOpenChange={close} onSuccess={success} otpDownload="jee-main-171-papers" />);
     await act(async () => finish(reply({ download_url: "https://downloads.example/late.zip" })));
     expect(success).not.toHaveBeenCalled();
   });
