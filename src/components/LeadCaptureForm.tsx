@@ -33,7 +33,7 @@ interface LeadCaptureFormProps {
   interestedCourseSlug?: string;
   interestedExamSlug?: string;
   onSuccess?: (leadId?: string, downloadUrl?: string) => void;
-  otpDownload?: "jee-main-106-papers";
+  otpDownload?: "jee-main-171-papers";
   contactOnly?: boolean;
   /** Optional context-specific replacement for the default course interest. */
   interestLabel?: string;
@@ -359,7 +359,7 @@ export function LeadCaptureForm({
             {formData.phone.length > 0 && !isValidIndianMobile(formData.phone) && <p className={`text-xs ${dark ? "text-white" : "text-destructive"}`}>{PHONE_HINT}</p>}
             {(!contactOnly || otpDownload) && otp.verifyBlock && <div className={dark ? "rounded-xl bg-white p-2 text-slate-900" : ""}>{otp.verifyBlock}</div>}
           </div>
-          {otpDownload && <p className="text-xs font-medium text-primary">OTP verification is required to download all 106 papers.</p>}
+          {otpDownload && <p className="text-xs font-medium text-primary">OTP verification is required to download all 171 papers.</p>}
           <LeadConsentCheckbox unbranded={unbrandedConsent} checked={authorized} onCheckedChange={setAuthorized} compact={compact} dark={dark} />
         </>
       ) : (

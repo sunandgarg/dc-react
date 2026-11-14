@@ -21,7 +21,7 @@ interface LeadGateDialogProps {
   subtitle?: string;
   source?: string;
   onSuccess?: (leadId?: string, downloadUrl?: string) => void;
-  otpDownload?: "jee-main-106-papers";
+  otpDownload?: "jee-main-171-papers";
   /** Require a form for profile-only visitors; a submitted session lead is reused. */
   forceShow?: boolean;
   contactOnly?: boolean;

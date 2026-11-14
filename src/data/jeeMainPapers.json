@@ -303,5 +303,212 @@
         "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2022-2026/DekhoCampus_JEE_Main_2022_online_30th_july_evening_shift.pdf"
       }
     ]
+  },
+  {
+    "year": 2017,
+    "dates": [
+      {
+        "date": "Offline exam",
+        "morning": null,
+        "evening": null,
+        "offline": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2017_Offline.pdf"
+      },
+      {
+        "date": "8 April",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2017-04-08_Morning_Slot.pdf",
+        "evening": null
+      },
+      {
+        "date": "9 April",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2017-04-09_Morning_Slot.pdf",
+        "evening": null
+      }
+    ]
+  },
+  {
+    "year": 2018,
+    "dates": [
+      {
+        "date": "Offline exam",
+        "morning": null,
+        "evening": null,
+        "offline": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2018_Offline.pdf"
+      },
+      {
+        "date": "15 April",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2018-04-15_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2018-04-15_Evening_Slot.pdf"
+      },
+      {
+        "date": "16 April",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2018-04-16_Morning_Slot.pdf",
+        "evening": null
+      }
+    ]
+  },
+  {
+    "year": 2019,
+    "dates": [
+      {
+        "date": "9 January",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-01-09_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-01-09_Evening_Slot.pdf"
+      },
+      {
+        "date": "10 January",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-01-10_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-01-10_Evening_Slot.pdf"
+      },
+      {
+        "date": "11 January",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-01-11_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-01-11_Evening_Slot.pdf"
+      },
+      {
+        "date": "12 January",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-01-12_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-01-12_Evening_Slot.pdf"
+      },
+      {
+        "date": "8 April",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-04-08_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-04-08_Evening_Slot.pdf"
+      },
+      {
+        "date": "9 April",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-04-09_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-04-09_Evening_Slot.pdf"
+      },
+      {
+        "date": "10 April",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-04-10_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-04-10_Evening_Slot.pdf"
+      },
+      {
+        "date": "12 April",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-04-12_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2019-04-12_Evening_Slot.pdf"
+      }
+    ]
+  },
+  {
+    "year": 2020,
+    "dates": [
+      {
+        "date": "7 January",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-01-07_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-01-07_Evening_Slot.pdf"
+      },
+      {
+        "date": "8 January",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-01-08_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-01-08_Evening_Slot.pdf"
+      },
+      {
+        "date": "9 January",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-01-09_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-01-09_Evening_Slot.pdf"
+      },
+      {
+        "date": "2 September",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-02_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-02_Evening_Slot.pdf"
+      },
+      {
+        "date": "3 September",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-03_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-03_Evening_Slot.pdf"
+      },
+      {
+        "date": "4 September",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-04_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-04_Evening_Slot.pdf"
+      },
+      {
+        "date": "5 September",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-05_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-05_Evening_Slot.pdf"
+      },
+      {
+        "date": "6 September",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-06_Morning_Slot.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2020-09-06_Evening_Slot.pdf"
+      }
+    ]
+  },
+  {
+    "year": 2021,
+    "dates": [
+      {
+        "date": "24 February",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-02-24_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-02-24_Evening_Shift.pdf"
+      },
+      {
+        "date": "25 February",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-02-25_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-02-25_Evening_Shift.pdf"
+      },
+      {
+        "date": "26 February",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-02-26_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-02-26_Evening_Shift.pdf"
+      },
+      {
+        "date": "16 March",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-03-16_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-03-16_Evening_Shift.pdf"
+      },
+      {
+        "date": "17 March",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-03-17_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-03-17_Evening_Shift.pdf"
+      },
+      {
+        "date": "18 March",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-03-18_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-03-18_Evening_Shift.pdf"
+      },
+      {
+        "date": "20 July",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-07-20_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-07-20_Evening_Shift.pdf"
+      },
+      {
+        "date": "22 July",
+        "morning": null,
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-07-22_Evening_Shift.pdf"
+      },
+      {
+        "date": "25 July",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-07-25_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-07-25_Evening_Shift.pdf"
+      },
+      {
+        "date": "27 July",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-07-27_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-07-27_Evening_Shift.pdf"
+      },
+      {
+        "date": "26 August",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-08-26_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-08-26_Evening_Shift.pdf"
+      },
+      {
+        "date": "27 August",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-08-27_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-08-27_Evening_Shift.pdf"
+      },
+      {
+        "date": "31 August",
+        "morning": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-08-31_Morning_Shift.pdf",
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-08-31_Evening_Shift.pdf"
+      },
+      {
+        "date": "1 September",
+        "morning": null,
+        "evening": "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material/jee-main/2017-2021/DekhoCampus_JEE_Main_2021-09-01_Evening_Shift.pdf"
+      }
+    ]
   }
 ]

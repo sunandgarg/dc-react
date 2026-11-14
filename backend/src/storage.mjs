@@ -12,7 +12,8 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-export const JEE_PAPERS_ZIP_PATH = "jee-main/2022-2026/DekhoCampus_JEE_Main_2022_2026_All_106_Papers.zip";
+export const JEE_PAPERS_ZIP_PATH = "jee-main/2017-2026/DekhoCampus_JEE_Main_2017_2026_All_171_Papers.zip";
+export const LEGACY_JEE_PAPERS_ZIP_PATH = "jee-main/2022-2026/DekhoCampus_JEE_Main_2022_2026_All_106_Papers.zip";
 
 const DEFAULT_MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 const USER_DOCUMENT_BUCKET = "user-documents";
@@ -335,7 +336,7 @@ export async function handleStorage(request) {
   if (route.modifier === "public" && !PUBLIC_READ_BUCKETS.has(route.bucket)) {
     throw Object.assign(new Error("This storage bucket is private"), { status: 403, code: "STORAGE_BUCKET_PRIVATE" });
   }
-  if (route.bucket === "study-material" && route.objectPath === JEE_PAPERS_ZIP_PATH && route.modifier === "public") {
+  if (route.bucket === "study-material" && [JEE_PAPERS_ZIP_PATH, LEGACY_JEE_PAPERS_ZIP_PATH].includes(route.objectPath) && route.modifier === "public") {
     throw Object.assign(new Error("Verify your mobile number on the JEE Main page to download this ZIP"), { status: 403, code: "OTP_REQUIRED" });
   }
   const isPublicRead = ["GET", "HEAD"].includes(request.method)

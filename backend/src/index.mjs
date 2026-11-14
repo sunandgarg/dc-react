@@ -852,7 +852,7 @@ export async function handleRequest(request) {
         const input = await readRateLimitedPublicJson(request, "save-lead", 4096);
         const phone = String(input.phone || "").replace(/\D/g, "").slice(-10);
         if (!/^[6-9]\d{9}$/.test(phone) || !verifyLeadOtpProof(input.otp_verification_token, `+91${phone}`)) throw new HttpError(403, "OTP_REQUIRED", "Verify your mobile number with OTP to download the ZIP");
-        const downloadUrl = await signStorageDownload("study-material", JEE_PAPERS_ZIP_PATH, { expiresIn: 300, downloadName: "DekhoCampus_JEE_Main_2022_2026_All_106_Papers.zip" });
+        const downloadUrl = await signStorageDownload("study-material", JEE_PAPERS_ZIP_PATH, { expiresIn: 300, downloadName: "DekhoCampus_JEE_Main_2017_2026_All_171_Papers.zip" });
         return json(200, { download_url: downloadUrl }, requestId, request, { "cache-control": "private, no-store" });
       }
       if (functionMatch[1] === "save-lead") return json(200, await saveLead(request), requestId, request);

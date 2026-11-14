@@ -30,13 +30,14 @@ describe("JEE Main ad pages", () => {
     expect(within(notice).getByRole("img", { name: "National Testing Agency", exact: true })).toHaveAttribute("src", "/assets/nta-registration-symbol.png");
     expect(notice).toHaveTextContent("Last date without late fee: 22 November 2026, 11:50 PM IST");
     expect(notice.querySelector("time")).toHaveAttribute("dateTime", "2026-11-22T23:50:00+05:30");
+    expect(notice.querySelector("time")?.parentElement).toHaveClass("bg-amber-100");
+    expect(notice.querySelector("time")?.parentElement).not.toHaveClass("rounded");
     expect(notice.compareDocumentPosition(screen.getAllByRole("region", { name: "JEE Main guidance form" })[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     const apply = within(notice).getByRole("link", { name: "Use the official NTA portal" });
     expect(apply).toHaveAttribute("href", "https://jeemain.nta.nic.in/online-application-form-for-jee-main-2027-session-1/");
     expect(apply).toHaveAttribute("target", "_blank");
     expect(apply).toHaveClass("text-orange-700", "font-bold");
     expect(apply.getAttribute("rel")).not.toMatch(/nofollow|sponsored/);
-    expect(notice.querySelector("time")?.parentElement).toHaveClass("bg-red-700", "text-white");
     expect(notice).not.toHaveTextContent("portal below");
     expect(within(notice).queryByRole("link", { name: "Apply online at jeemain.nta.nic.in" })).not.toBeInTheDocument();
     expect(fireEvent.click(apply)).toBe(true);
@@ -70,7 +71,7 @@ describe("JEE Main ad pages", () => {
     expect(forms[0]).toHaveAttribute("id", "jee-registration-form");
     expect(forms[1]).toHaveAttribute("id", "jee-guidance-form");
     const registration = screen.getByRole("heading", { name: "JEE Main 2027 registration: Session 1" });
-    const papers = screen.getByRole("region", { name: "JEE Main question papers: last 5 years" });
+    const papers = screen.getByRole("region", { name: "JEE Main question papers: 2017 to 2026" });
     const carousel = screen.getByRole("region", { name: "Apply directly. Explore up to 100% scholarships." });
     const portalImage = screen.getByRole("img", { name: /official portal showing new registration/ });
     expect(portalImage).toHaveAttribute("src", "/assets/jee-main-2027-registration-portal.png");
@@ -79,7 +80,7 @@ describe("JEE Main ad pages", () => {
     expect(screen.queryByText(/Session 1 applications are submitted online through NTA/)).not.toBeInTheDocument();
     expect(screen.queryByText("Get JEE Main guidance from DekhoCampus")).not.toBeInTheDocument();
     for (const form of forms) {
-      expect(form).toHaveTextContent("Optional DekhoCampus guidance form");
+      expect(form).not.toHaveTextContent("Optional DekhoCampus guidance form");
       expect(within(form).getByRole("img", { name: "National Testing Agency logo" })).toBeInTheDocument();
       expect(form).not.toHaveTextContent("Enter your details for JEE Main guidance");
       expect(form).not.toHaveTextContent("Complete your exam application separately on the official NTA portal.");
@@ -132,10 +133,10 @@ describe("JEE Main ad pages", () => {
     } finally { vi.stubGlobal("window", originalWindow); }
   });
 
-  it("offers the 106-paper ZIP before the 2026 group and downloads it only after the form succeeds", () => {
+  it("offers the 171-paper ZIP before the 2026 group and downloads it only after the form succeeds", () => {
     open("jee-main-2027");
-    const section = within(screen.getByRole("region", { name: "JEE Main question papers: last 5 years" }));
-    const download = section.getByRole("button", { name: "Download all 106 papers (.zip)" });
+    const section = within(screen.getByRole("region", { name: "JEE Main question papers: 2017 to 2026" }));
+    const download = section.getByRole("button", { name: "Download all 171 papers (.zip)" });
     expect(download.compareDocumentPosition(section.getByRole("button", { name: "2026 19 papers" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     const assign = vi.fn();
     const testWindow = Object.create(window);
@@ -146,7 +147,7 @@ describe("JEE Main ad pages", () => {
       fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close" }));
       expect(assign).not.toHaveBeenCalled();
       fireEvent.click(download);
-      expect(screen.getByRole("dialog")).toHaveAttribute("data-otp-download", "jee-main-106-papers");
+      expect(screen.getByRole("dialog")).toHaveAttribute("data-otp-download", "jee-main-171-papers");
       fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Complete request" }));
       expect(assign).toHaveBeenCalledExactlyOnceWith("https://downloads.example/verified.zip");
     } finally { vi.unstubAllGlobals(); }
@@ -154,15 +155,13 @@ describe("JEE Main ad pages", () => {
 
   it("starts with collapsed year cards and opens only the selected download list", () => {
     open("jee-main-2027");
-    const section = screen.getByRole("region", { name: "JEE Main question papers: last 5 years" });
+    const section = screen.getByRole("region", { name: "JEE Main question papers: 2017 to 2026" });
     const year = within(section).getByRole("button", { name: "2026 19 papers" });
     expect(year).toHaveAttribute("aria-expanded", "false");
     expect(section.querySelectorAll('div[id^="papers-"]:not([hidden])')).toHaveLength(0);
     fireEvent.click(year);
-    expect(year).toHaveAttribute("aria-expanded", "false");
-    expect(screen.getByRole("dialog")).not.toHaveAttribute("data-otp-download");
-    fireEvent.click(screen.getByRole("button", { name: "Complete request" }));
     expect(year).toHaveAttribute("aria-expanded", "true");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(within(section).getAllByRole("link", { name: /question paper PDF$/ })).toHaveLength(19);
     fireEvent.click(within(section).getByRole("button", { name: "2023 24 papers" }));
     expect(year).toHaveAttribute("aria-expanded", "false");
@@ -171,12 +170,15 @@ describe("JEE Main ad pages", () => {
     expect(section.querySelectorAll('div[id^="papers-"]:not([hidden])')).toHaveLength(0);
   });
 
-  it("keeps both shifts for all five years and supports middle-click gating", () => {
+  it("shows all 171 papers in the requested two-row order and gates a single PDF without OTP", () => {
     open("jee-main-2027");
-    const papers = screen.getByRole("region", { name: "JEE Main question papers: last 5 years" });
+    const papers = screen.getByRole("region", { name: "JEE Main question papers: 2017 to 2026" });
+    const years = within(papers).getByLabelText("Choose a question-paper year").firstElementChild!;
+    expect(Array.from(years.children, child => child.querySelector("span")?.textContent)).toEqual(["2026", "2025", "2024", "2023", "2022", "2017", "2018", "2019", "2020", "2021"]);
+    expect(years).toHaveClass("grid-cols-5");
     const pdfLinks = within(papers).getAllByRole("link", { name: /question paper PDF$/, hidden: true });
-    expect(pdfLinks).toHaveLength(106);
-    for (const [year, count] of [[2026, 19], [2025, 19], [2024, 20], [2023, 24], [2022, 24]]) expect(pdfLinks.filter(link => link.getAttribute("aria-label")?.includes(String(year)))).toHaveLength(count);
+    expect(pdfLinks).toHaveLength(171);
+    for (const [year, count] of [[2026, 19], [2025, 19], [2024, 20], [2023, 24], [2022, 24], [2017, 3], [2018, 4], [2019, 16], [2020, 16], [2021, 26]]) expect(pdfLinks.filter(link => link.getAttribute("aria-label")?.includes(String(year)))).toHaveLength(count);
     for (const link of pdfLinks) {
       const url = new URL(link.getAttribute("href")!);
       expect(url.hostname).toBe("aws-origin.dekhocampus.com");
@@ -184,7 +186,7 @@ describe("JEE Main ad pages", () => {
     }
     for (const link of pdfLinks) expect(link).toHaveAttribute("data-paper-download");
     const cards = papers.querySelectorAll("button[aria-expanded]");
-    expect(cards).toHaveLength(5);
+    expect(cards).toHaveLength(10);
     for (const card of cards) expect(card.querySelector("svg")).toHaveClass("text-orange-600");
     expect(fireEvent(pdfLinks[0], new MouseEvent("auxclick", { bubbles: true, cancelable: true, button: 1 }))).toBe(false);
     expect(screen.getByRole("dialog")).not.toHaveAttribute("data-otp-download");

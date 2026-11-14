@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { handleRequest } from "../src/index.mjs";
-import { handleStorage, JEE_PAPERS_ZIP_PATH } from "../src/storage.mjs";
+import { handleStorage, JEE_PAPERS_ZIP_PATH, LEGACY_JEE_PAPERS_ZIP_PATH } from "../src/storage.mjs";
 import { authSecurityInternals } from "../src/auth.mjs";
 
 const request = body => new Request("https://api.example/v1/functions/jee-paper-bundle", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
@@ -29,6 +29,8 @@ test("ZIP verification issues a five-minute signed S3 download without querying 
   assert.ok(url.searchParams.get("X-Amz-Signature"));
 });
 
-test("the old public ZIP URL cannot bypass OTP", async () => {
-  await assert.rejects(handleStorage(new Request(`https://api.example/storage/v1/object/public/study-material/${JEE_PAPERS_ZIP_PATH}`)), e => e.status === 403 && e.code === "OTP_REQUIRED");
+test("both public ZIP URLs reject downloads without OTP", async () => {
+  for (const path of [JEE_PAPERS_ZIP_PATH, LEGACY_JEE_PAPERS_ZIP_PATH]) {
+    await assert.rejects(handleStorage(new Request(`https://api.example/storage/v1/object/public/study-material/${path}`)), e => e.status === 403 && e.code === "OTP_REQUIRED");
+  }
 });

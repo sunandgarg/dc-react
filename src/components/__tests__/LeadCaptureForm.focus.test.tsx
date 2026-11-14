@@ -111,7 +111,7 @@ describe("slow identity saves", () => {
 
 it("requires OTP for the ZIP before saving any identity", async () => {
   vi.mocked(saveLeadPhase).mockClear();
-  render(<LeadCaptureForm otpDownload="jee-main-106-papers" />);
+  render(<LeadCaptureForm otpDownload="jee-main-171-papers" />);
   fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: "Test Student" } });
   fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: "test@example.com" } });
   fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: "9876543210" } });
