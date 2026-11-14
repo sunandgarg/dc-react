@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { ensureEntitySearchIndex } from "../src/entity-search-index.mjs";
+import { attributionFromPageUrl } from "./lead-attribution-backfill.mjs";
 
 import { readFile } from "node:fs/promises";
 import { PrismaClient } from "@prisma/client";
@@ -127,6 +128,27 @@ async function ensureLeadAttributionSchema(report) {
     if (await columnInfo("leads", column)) continue;
     await prisma.$executeRawUnsafe(`ALTER TABLE \`leads\` ADD COLUMN ${quote(column)} VARCHAR(160) NULL`);
     report.createdRuntimeColumns.push(`leads.${column}`);
+  }
+  let cursor = "";
+  while (true) {
+    const [rows] = await mysqlConnection.execute(`
+      SELECT id, page_url, utm_source, utm_medium, utm_campaign FROM leads
+      WHERE id > ? AND page_url LIKE '%utm_%'
+        AND (utm_source IS NULL OR utm_source = '' OR utm_medium IS NULL OR utm_medium = '' OR utm_campaign IS NULL OR utm_campaign = '')
+      ORDER BY id LIMIT 500
+    `, [cursor]);
+    if (!rows.length) break;
+    for (const row of rows) {
+      const parsed = attributionFromPageUrl(row.page_url);
+      const missing = Object.entries(parsed).filter(([field]) => !row[field]);
+      if (!missing.length) continue;
+      await mysqlConnection.execute(
+        `UPDATE leads SET ${missing.map(([field]) => `${quote(field)} = COALESCE(NULLIF(${quote(field)}, ''), ?)`).join(", ")} WHERE id = ?`,
+        [...missing.map(([, value]) => value), row.id],
+      );
+      report.backfilledLeadAttribution += 1;
+    }
+    cursor = rows.at(-1).id;
   }
 }
 
@@ -714,7 +736,7 @@ async function createViews() {
   `);
 }
 
-const report = { createdRuntimeColumns: [], createdRuntimeTables: [], createdUnique: [], createdReferenceIndexes: [], createdForeignKeyIndexes: [], createdForeignKeys: [], createdTriggers: [], createdCheckConstraints: [], droppedLegacyIndexes: [], existing: [], skipped: [], views: [] };
+const report = { createdRuntimeColumns: [], createdRuntimeTables: [], createdUnique: [], createdReferenceIndexes: [], createdForeignKeyIndexes: [], createdForeignKeys: [], createdTriggers: [], createdCheckConstraints: [], droppedLegacyIndexes: [], existing: [], skipped: [], views: [], backfilledLeadAttribution: 0 };
 try {
   await ensureSiteIsolationSchema(report);
   await ensureLeadAttributionSchema(report);
