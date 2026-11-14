@@ -164,7 +164,7 @@ describe("Index page layout (static source assertions)", () => {
     expect(announcementSrc).toMatch(/bg-black/);
     expect(announcementSrc).toMatch(/text-white/);
     expect(announcementSrc).toMatch(/h-11 min-h-11/);
-    expect(navbarSrc).toMatch(/<header[^>]*className=\{`sticky top-0/);
+    expect(navbarSrc).toMatch(/pathname\.startsWith\("\/ad\/jee-main-2027"\) \? "relative" : "sticky top-0"/);
     expect(navbarSrc).toMatch(/isMobileMenuOpen \? "z-\[130\]" : "z-\[70\]"/);
     expect(announcementSrc).not.toMatch(/DISMISSED_KEY|Close announcements|bg-blue-600|bg-orange-500/);
   });
