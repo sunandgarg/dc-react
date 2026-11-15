@@ -32,7 +32,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe("save once and verify only for the ZIP", () => {
   it("asks JEE visitors for state and city on step two and saves JEE without a course selector", async () => {
-    render(<LeadCaptureForm contactOnly requireLocation fixedCourse="JEE" source="JEE-paid" onSuccess={success} />);
+    render(<LeadCaptureForm contactOnly requireLocation fixedCourse="JEE" keepVisibleAfterSubmit source="JEE-paid" onSuccess={success} />);
     fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: identity.name } });
     fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: identity.email } });
     fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: identity.phone } });
@@ -49,6 +49,16 @@ describe("save once and verify only for the ZIP", () => {
     expect(requests).toHaveLength(2);
     expect(requests[0]).toMatchObject({ phase: "identity" });
     expect(requests[1]).toMatchObject({ phase: "complete", current_situation: "JEE", state: "Delhi NCR", city: "New Delhi" });
+    fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Complete request" })).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "Delhi NCR" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "New Delhi" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Complete request" }));
+    await waitFor(() => expect(success).toHaveBeenCalledTimes(2));
+    const repeatRequests = vi.mocked(fetch).mock.calls.map(([, options]) => JSON.parse(String(options?.body)));
+    expect(repeatRequests).toHaveLength(4);
+    expect(repeatRequests[2]).toMatchObject({ phase: "identity" });
+    expect(repeatRequests[3]).toMatchObject({ phase: "complete", current_situation: "JEE", state: "Delhi NCR", city: "New Delhi" });
   });
 
   it("keeps ZIP OTP verification and asks for location before releasing the download", async () => {
@@ -89,7 +99,7 @@ describe("save once and verify only for the ZIP", () => {
     expect(screen.getByPlaceholderText("Mobile number *")).toHaveValue(identity.phone);
     expect(screen.queryByText("Thank You! 🎉")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
-    expect(fetch).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
   });
 
   it("saves an ordinary one-step form without OTP and reuses it for another site's gate", async () => {

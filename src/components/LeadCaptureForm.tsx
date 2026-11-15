@@ -221,6 +221,10 @@ export function LeadCaptureForm({
         downloadUrl = result.data.download_url;
       }
       setIsSubmitted(true);
+      if (keepVisibleAfterSubmit) {
+        setStep(1);
+        setLeadId(null);
+      }
       toast.success(contactOnly ? "Details saved. Continuing…" : "Thank you! Our counselor will contact you soon.");
       setLeadConsentPreference(authorized);
       savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city, course: fixedCourse || formData.course });
@@ -284,16 +288,6 @@ export function LeadCaptureForm({
       if (otpDownload) toast.error("Verify your mobile number with OTP to download the ZIP.");
       trackEvent("lead_form_validation_error", { source, variant, fields: "otp" });
       return;
-    }
-    if (keepVisibleAfterSubmit && !otpDownload && hasSubmittedLead()) {
-      const saved = getLeadSession();
-      if (formData.name.trim() === saved.name?.trim()
-        && formData.email.trim().toLowerCase() === saved.email?.toLowerCase()
-        && sanitizeIndianMobile(formData.phone) === sanitizeIndianMobile(saved.phone || "")
-        && (!requireLocation || Boolean(saved.state && saved.city && saved.course === fixedCourse))) {
-        toast.success("Your details are already saved.");
-        return;
-      }
     }
     if (contactOnly && !requireLocation) {
       await submitLead();
