@@ -48,6 +48,7 @@ export interface SilentLeadPayload {
   interested_college_slug?: string | null;
   interested_course_slug?: string | null;
   interested_exam_slug?: string | null;
+  current_situation?: string | null;
   initial_query?: string | null;
   page_url?: string | null;
   // Optional explicit identity (overrides prefill cookie if provided)
@@ -79,7 +80,7 @@ export async function silentSaveLead(payload: SilentLeadPayload): Promise<boolea
     phone,
     city: payload.city ?? c.city ?? null,
     state: payload.state ?? c.state ?? null,
-    current_situation: null,
+    current_situation: payload.current_situation ?? null,
     initial_query: payload.initial_query ?? null,
     source: payload.source,
     ...getLeadAttribution(),

@@ -6,7 +6,7 @@ import { getSessionOtpProof, hasSubmittedLead, rememberSubmittedLead, saveSessio
 
 vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ user: null }) }));
 vi.mock("@/hooks/useUserProfile", () => ({ useUserProfile: () => ({ data: null }) }));
-vi.mock("@/hooks/useLocations", () => ({ useStatesAndCities: () => ({ data: { states: [], citiesByState: {} } }) }));
+vi.mock("@/hooks/useLocations", () => ({ useStatesAndCities: () => ({ data: { states: ["Delhi NCR"], citiesByState: { "Delhi NCR": ["New Delhi"] } } }) }));
 vi.mock("@/components/IITAlumniBadge", () => ({ IITAlumniBadge: () => null }));
 vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn(), trackLeadConversion: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
@@ -31,6 +31,50 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("save once and verify only for the ZIP", () => {
+  it("asks JEE visitors for state and city on step two and saves JEE without a course selector", async () => {
+    render(<LeadCaptureForm contactOnly requireLocation fixedCourse="JEE" source="JEE-paid" onSuccess={success} />);
+    fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: identity.name } });
+    fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: identity.email } });
+    fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: identity.phone } });
+    fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "State *" })).toBeInTheDocument());
+    expect(screen.queryByText("Interested Course *")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "State *" }));
+    fireEvent.click(screen.getByRole("button", { name: "Delhi NCR" }));
+    fireEvent.click(screen.getByRole("button", { name: "City *" }));
+    fireEvent.click(screen.getByRole("button", { name: "New Delhi" }));
+    fireEvent.click(screen.getByRole("button", { name: "Complete request" }));
+    await waitFor(() => expect(success).toHaveBeenCalledWith("saved", undefined));
+    const requests = vi.mocked(fetch).mock.calls.map(([, options]) => JSON.parse(String(options?.body)));
+    expect(requests).toHaveLength(2);
+    expect(requests[0]).toMatchObject({ phase: "identity" });
+    expect(requests[1]).toMatchObject({ phase: "complete", current_situation: "JEE", state: "Delhi NCR", city: "New Delhi" });
+  });
+
+  it("keeps ZIP OTP verification and asks for location before releasing the download", async () => {
+    render(<LeadGateDialog open onOpenChange={close} onSuccess={success} forceShow contactOnly requireLocation fixedCourse="JEE" otpDownload="jee-main-171-papers" />);
+    fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: identity.name } });
+    fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: identity.email } });
+    fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: identity.phone } });
+    fireEvent.click(screen.getByRole("button", { name: "Get OTP" }));
+    await waitFor(() => expect(screen.queryByText(/Sending OTP to/)).not.toBeInTheDocument());
+    fireEvent.change(screen.getByPlaceholderText("Enter 6-digit OTP sent via SMS"), { target: { value: "123456" } });
+    fireEvent.click(screen.getByRole("button", { name: "Verify" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Verified" })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "State *" })).toBeInTheDocument());
+    expect(success).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "State *" }));
+    fireEvent.click(screen.getByRole("button", { name: "Delhi NCR" }));
+    fireEvent.click(screen.getByRole("button", { name: "City *" }));
+    fireEvent.click(screen.getByRole("button", { name: "New Delhi" }));
+    fireEvent.click(screen.getByRole("button", { name: "Complete request" }));
+    await waitFor(() => expect(success).toHaveBeenCalledWith("saved", "https://downloads.example/signed.zip"));
+    const requests = vi.mocked(fetch).mock.calls.map(([, options]) => JSON.parse(String(options?.body)));
+    expect(requests.at(-2)).toMatchObject({ phase: "complete", current_situation: "JEE", state: "Delhi NCR", city: "New Delhi" });
+    expect(String(vi.mocked(fetch).mock.calls.at(-1)?.[0])).toMatch(/jee-paper-bundle$/);
+  });
+
   it("keeps the JEE lead card visible after saving and on revisit", async () => {
     const first = render(<LeadCaptureForm contactOnly keepVisibleAfterSubmit source="JEE-paid" onSuccess={success} />);
     fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: identity.name } });

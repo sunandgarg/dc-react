@@ -25,6 +25,8 @@ interface LeadGateDialogProps {
   /** Require a form for profile-only visitors; a submitted session lead is reused. */
   forceShow?: boolean;
   contactOnly?: boolean;
+  requireLocation?: boolean;
+  fixedCourse?: string;
   /** Strip counselling/slots urgency for clean Apply/Brochure forms. */
   simple?: boolean;
   interestLabel?: string;
@@ -51,6 +53,8 @@ export function LeadGateDialog({
   otpDownload,
   forceShow = false,
   contactOnly = false,
+  requireLocation = false,
+  fixedCourse,
   simple = false,
   interestLabel,
   interestOptions,
@@ -70,8 +74,9 @@ export function LeadGateDialog({
   const successRef = useRef(false);
   const continuationRef = useRef(0);
   const [checkingDownload, setCheckingDownload] = useState(false);
-  const knownBySession = hasSubmittedLead();
-  const knownByAuth = !forceShow && !!(user && profile?.phone);
+  const session = getLeadSession();
+  const knownBySession = hasSubmittedLead() && (!requireLocation || Boolean(session.state && session.city));
+  const knownByAuth = !forceShow && !!(user && profile?.phone) && (!requireLocation || Boolean(profile?.state && profile?.city));
   useEffect(() => () => { continuationRef.current += 1; silentRef.current = false; }, []);
 
   // Fire open/dismiss analytics whenever this dialog is shown anywhere on the site.
@@ -134,6 +139,7 @@ export function LeadGateDialog({
           interested_college_slug: interestedCollegeSlug || null,
           interested_course_slug: interestedCourseSlug || null,
           interested_exam_slug: interestedExamSlug || null,
+          current_situation: fixedCourse || null,
         });
         trackEvent("lead_intent_click", { source: `${source}_silent` });
       } catch {/* ignore - UX must not block */}
@@ -142,7 +148,7 @@ export function LeadGateDialog({
       onSuccess?.(getLeadSession().leadId);
       onOpenChange(false);
     })();
-  }, [open, user, profile, source, onOpenChange, onSuccess, knownByAuth, knownBySession, otpDownload, interestedCollegeSlug, interestedCourseSlug, interestedExamSlug]);
+  }, [open, user, profile, source, onOpenChange, onSuccess, knownByAuth, knownBySession, otpDownload, interestedCollegeSlug, interestedCourseSlug, interestedExamSlug, fixedCourse]);
 
   if (!otpDownload && open && (knownByAuth || knownBySession)) return null;
 
@@ -168,6 +174,8 @@ export function LeadGateDialog({
           onSuccess={handleSuccess}
           otpDownload={otpDownload}
           contactOnly={contactOnly}
+          requireLocation={requireLocation}
+          fixedCourse={fixedCourse}
           simple={simple}
           interestLabel={interestLabel}
           interestOptions={interestOptions}

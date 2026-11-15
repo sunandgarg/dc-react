@@ -35,6 +35,8 @@ interface LeadCaptureFormProps {
   onSuccess?: (leadId?: string, downloadUrl?: string) => void;
   otpDownload?: "jee-main-171-papers";
   contactOnly?: boolean;
+  requireLocation?: boolean;
+  fixedCourse?: string;
   /** Optional context-specific replacement for the default course interest. */
   interestLabel?: string;
   interestOptions?: string[];
@@ -86,6 +88,8 @@ export function LeadCaptureForm({
   onSuccess,
   otpDownload,
   contactOnly = false,
+  requireLocation = false,
+  fixedCourse,
   interestLabel = "Course",
   interestOptions = courseOptions,
   simple = false,
@@ -191,7 +195,7 @@ export function LeadCaptureForm({
         phase: "complete",
         lead_id: leadId,
         city: formData.city || null, state: formData.state || null,
-        current_situation: formData.course || null, source,
+        current_situation: fixedCourse || formData.course || null, source,
         cta: source,
         page_url: typeof window !== "undefined" ? window.location.pathname + window.location.search : null,
         interested_college_slug: interestedCollegeSlug || null,
@@ -219,7 +223,7 @@ export function LeadCaptureForm({
       setIsSubmitted(true);
       toast.success(contactOnly ? "Details saved. Continuing…" : "Thank you! Our counselor will contact you soon.");
       setLeadConsentPreference(authorized);
-      savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city, course: formData.course });
+      savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city, course: fixedCourse || formData.course });
       markLeadSubmitted();
       trackEvent("lead_form_submit_success", { source, variant });
       onSuccess?.(saved.lead_id, downloadUrl);
@@ -248,7 +252,7 @@ export function LeadCaptureForm({
     } else if (step === 1 && formData.email.trim() && !EMAIL_REGEX.test(formData.email.trim())) {
       newErrors.email = "Please enter a valid email address";
     }
-    if (step === 2 && !formData.course?.trim()) {
+    if (step === 2 && !fixedCourse && !formData.course?.trim()) {
       newErrors.course = `Please select your ${interestLabel.toLowerCase()}`;
     }
     if (step === 2 && !formData.state?.trim()) {
@@ -285,12 +289,13 @@ export function LeadCaptureForm({
       const saved = getLeadSession();
       if (formData.name.trim() === saved.name?.trim()
         && formData.email.trim().toLowerCase() === saved.email?.toLowerCase()
-        && sanitizeIndianMobile(formData.phone) === sanitizeIndianMobile(saved.phone || "")) {
+        && sanitizeIndianMobile(formData.phone) === sanitizeIndianMobile(saved.phone || "")
+        && (!requireLocation || Boolean(saved.state && saved.city && saved.course === fixedCourse))) {
         toast.success("Your details are already saved.");
         return;
       }
     }
-    if (contactOnly || otpDownload) {
+    if (contactOnly && !requireLocation) {
       await submitLead();
       return;
     }
@@ -319,7 +324,7 @@ export function LeadCaptureForm({
 
 
 
-  if (!keepVisibleAfterSubmit && (isSubmitted || (sessionSubmitted && !otpDownload))) {
+  if (!keepVisibleAfterSubmit && (isSubmitted || (sessionSubmitted && !otpDownload && (!requireLocation || Boolean(getLeadSession().state && getLeadSession().city))))) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -375,17 +380,17 @@ export function LeadCaptureForm({
         </>
       ) : (
         <>
-          <select value={formData.course} onChange={e => update("course", e.target.value)} className={`${selectCls} ${compact ? "h-9 py-1" : "h-10"} ${dark ? "border-white/15 bg-white/10 text-white [&>option]:text-slate-900" : ""} ${errors.course ? "border-destructive" : ""}`} required>
+          {!fixedCourse && <select value={formData.course} onChange={e => update("course", e.target.value)} className={`${selectCls} ${compact ? "h-9 py-1" : "h-10"} ${dark ? "border-white/15 bg-white/10 text-white [&>option]:text-slate-900" : ""} ${errors.course ? "border-destructive" : ""}`} required>
             <option value="">{interestPrompt} *</option>
             {interestOptions.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+          </select>}
           {errors.course && <p className={`text-xs ${dark ? "text-white" : "text-destructive"}`}>{errors.course}</p>}
           <div className="grid grid-cols-2 gap-2">
             <SearchableSelect options={locations?.states || []} value={formData.state} onChange={(v) => { update("state", v); update("city", ""); }} placeholder="State *" />
             <SearchableSelect options={formData.state ? (locations?.citiesByState[formData.state] || []) : []} value={formData.city} onChange={(v) => update("city", v)} placeholder={formData.state ? "City *" : "Select state"} />
           </div>
           {(errors.state || errors.city) && <p className={`text-xs ${dark ? "text-white" : "text-destructive"}`}>{errors.state || errors.city}</p>}
-          <ProgramModeToggle value={programMode} onChange={setProgramMode} compact={compact} />
+          {!requireLocation && <ProgramModeToggle value={programMode} onChange={setProgramMode} compact={compact} />}
         </>
       )}
       <Button type="submit" aria-live="polite" className={`w-full rounded-xl ${compact ? "h-9" : "h-10"} ${dark ? "bg-white text-primary hover:bg-slate-100" : "bg-primary text-primary-foreground hover:bg-primary/90"}`} disabled={isLoading}>
