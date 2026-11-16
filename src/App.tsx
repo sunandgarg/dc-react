@@ -151,6 +151,7 @@ const AllColleges = lazyRetry(() => import("./pages/AllColleges"), "AllColleges"
 const ComparePage = lazyRetry(() => import("./pages/ComparePage"), "compare");
 const AllCourses = lazyRetry(() => import("./pages/AllCourses"), "AllCourses");
 const AllExams = lazyRetry(() => import("./pages/AllExams"), "AllExams");
+const Questions = lazyRetry(() => import("./pages/Questions"), "Questions");
 const AllArticles = lazyRetry(() => import("./pages/AllArticles"), "AllArticles");
 const CollegeDetail = lazyRetry(() => import("./pages/CollegeDetail"), "CollegeDetail");
 const CourseDetail = lazyRetry(() => import("./pages/CourseDetail"), "CourseDetail");
@@ -365,6 +366,7 @@ const App = () => (
               <Route path="/courses/:slug" element={<CourseRoute />} />
               <Route path="/courses/:slug/:tab" element={<CourseNestedRoute />} />
               <Route path="/exams" element={<AllExams />} />
+              <Route path="/questions" element={<Questions />} />
               <Route path="/exams/:slug" element={<ExamRoute />} />
               <Route path="/exams/:slug/:tab" element={<ExamNestedRoute />} />
               <Route path="/articles" element={<LegacyArticlesRoute />} />

@@ -6,6 +6,13 @@ import { RichText } from "@/components/detail/RichText";
 import { prepareArticleContent } from "./articleContentSanitizer";
 
 describe("Cloudflare edge SEO", () => {
+  it("makes the questions directory indexable with its own canonical and title", () => {
+    const page = edgeSeoFor("https://dekhocampus.com/questions");
+    expect(page.indexable).toBe(true);
+    expect(page.notFound).toBe(false);
+    expect(page.canonical).toBe("https://dekhocampus.com/questions");
+    expect(page.title).toContain("Previous Year Question Papers");
+  });
   it("serves the JEE application alias with the landing page canonical and edited metadata", () => {
     const main = edgeSeoFor("https://dekhocampus.com/ad/jee-main-2027");
     const alias = edgeSeoFor("https://dekhocampus.com/ad/jee-main-2027-application");

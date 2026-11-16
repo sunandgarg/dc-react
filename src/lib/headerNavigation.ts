@@ -86,7 +86,7 @@ export function buildHeaderNavigation(data?: HeaderCatalog): HeaderSection[] {
         { label: "Sample Papers", href: "/news/tag/sample-papers" },
         { label: "Date Sheets", href: "/news/tag/date-sheet" },
         { label: "Chapter Notes", href: "/news/tag/notes" },
-        { label: "Previous Year Papers", href: "/news/tag/previous-papers" },
+        { label: "Previous Year Papers", href: "/questions" },
       ] },
       { title: "Student Tools", items: [
         { label: "Ask Diya AI", href: "#ask-diya" },

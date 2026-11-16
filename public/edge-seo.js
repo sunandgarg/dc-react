@@ -8,7 +8,7 @@ const PRIVATE_PREFIXES = [
 ];
 
 const PUBLIC_ROOTS = [
-  "/colleges", "/courses", "/exams", "/premium-programs", "/news", "/careers",
+  "/colleges", "/courses", "/exams", "/questions", "/premium-programs", "/news", "/careers",
   "/jobs", "/vacancies", "/scholarships", "/study-material", "/college-study-material",
   "/resources", "/tools", "/cat-universe", "/compare", "/eligibility-checker",
   "/college-predictor", "/exam-calendar", "/exam-calendar-2026", "/lock-target",
@@ -23,6 +23,10 @@ const LISTING_QUERY_KEYS = {
 };
 
 const STATIC_METADATA = new Map([
+  ["/questions", {
+    title: "Previous Year Question Papers by Exam | DekhoCampus",
+    description: "Find previous year question papers by exam. Browse the JEE Main PDF collection and explore exam resources for engineering, medical, government and board exams.",
+  }],
   ["/ad/jee-main-2027", {
     title: "JEE Main 2027 Application: Dates, Fees & Official Form",
     description: "Apply through NTA's JEE Main 2027 portal. Find Session 1 deadlines, fees, documents and official question papers from 2022 to 2026.",

@@ -6,6 +6,7 @@ const REQUIRED_PUBLIC_ROOTS = [
   "/colleges",
   "/courses",
   "/exams",
+  "/questions",
   "/premium-programs",
   "/news",
   "/careers",
