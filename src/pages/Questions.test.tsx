@@ -23,6 +23,7 @@ describe("questions directory", () => {
     render(<MemoryRouter><Questions /></MemoryRouter>);
     fireEvent.click(screen.getByRole("button", { name: "School boards" }));
     expect(screen.getByRole("link", { name: /CBSE Class 12: Official sample papers/ })).toHaveAttribute("href", "https://cbseacademic.nic.in/SQP_CLASSXII_2026-27.html");
+    expect(screen.getByRole("img", { name: "CBSE Class 12 logo" })).toHaveAttribute("src", "/exam-logos/official-v1/e87b6e234f2120e27c79719b.webp");
     expect(screen.queryByText("171 PDFs")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Engineering entrances" }));
     expect(screen.getByRole("link", { name: /WBJEE: Official paper archive/ })).toHaveAttribute("href", "https://wbjeeb.nic.in/old-question-paper-wbjee/");

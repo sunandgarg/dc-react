@@ -11,6 +11,7 @@ const root = fileURLToPath(new URL("../../", import.meta.url));
 const identities = JSON.parse(await readFile(path.join(root, "shared/exam-identities.json"), "utf8"));
 const slugs = ["jee-mains", "jee-advanced", "mht-cet", "bitsat", "comedk", "wbjee", "kcet", "viteee", "ap-eamcet", "ts-eamcet", "nest", "met", "national-eligibility-cum-entrance-test-neet", "gate", "ssc-cgl"];
 const assets = new Map();
+const cbseAsset = "e87b6e234f2120e27c79719b.webp";
 const replaceableLogo = (logo) => !logo || /(?:^|\/)(?:legacy-public-assets|exam-logos-v[123]|exam-logos-official-v1)\//.test(logo) || /\/exam-logos\/official-v1\//.test(logo);
 
 for (const slug of slugs) {
@@ -23,10 +24,12 @@ for (const slug of slugs) {
   if (meta.format !== "webp" || !meta.width || !meta.height || Math.max(meta.width, meta.height) > 700) throw new Error(`Invalid logo asset for ${slug}`);
   assets.set(filename, image);
 }
+const cbseImage = await readFile(path.join(root, "public/exam-logos/official-v1", cbseAsset));
+if ((await sharp(cbseImage).metadata()).format !== "webp") throw new Error("Invalid CBSE board mark");
 
 if (process.argv.includes("--check")) {
   if (!replaceableLogo("legacy-public-assets/old.webp") || !replaceableLogo("https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/old.webp") || replaceableLogo("https://example.com/custom.webp")) throw new Error("Logo replacement guard failed");
-  console.log(JSON.stringify({ checked_exam_slugs: slugs.length, checked_assets: assets.size }));
+  console.log(JSON.stringify({ checked_exam_slugs: slugs.length, checked_assets: assets.size, cbse_board_mark: cbseAsset }));
   process.exit(0);
 }
 if (!process.argv.includes("--apply")) throw new Error("Pass --check or --apply");
@@ -40,6 +43,7 @@ try {
   if (missing.length) throw new Error(`Exam rows missing: ${missing.join(", ")}`);
   const backup = Buffer.from(JSON.stringify({ saved_at: new Date().toISOString(), rows }));
   const backupResult = await uploadStorageObject("system-backups", `question-exam-logos/${Date.now()}.json`, backup, "application/json", { cacheControl: "private,no-store" });
+  const cbseUploaded = await uploadStorageObject("admin-uploads", `exam-logos-official-v1/${cbseAsset}`, cbseImage, "image/webp", { upsert: true });
   const uploaded = new Map();
   let updated = 0;
   let retainedCustom = 0;
@@ -59,7 +63,7 @@ try {
   }
   const live = await prisma.exams.findMany({ where: { slug: { in: slugs } }, select: { slug: true, logo: true } });
   if (live.some((row) => !row.logo)) throw new Error("One or more exam logos remain empty");
-  console.log(JSON.stringify({ backup_key: backupResult.key, examined: rows.length, s3_assets: uploaded.size, database_updated: updated, custom_retained: retainedCustom }));
+  console.log(JSON.stringify({ backup_key: backupResult.key, examined: rows.length, s3_assets: uploaded.size, cbse_board_mark_url: cbseUploaded.publicUrl, database_updated: updated, custom_retained: retainedCustom }));
 } finally {
   await prisma.$disconnect();
 }

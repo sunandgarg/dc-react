@@ -17,6 +17,8 @@ const groups = [
 const examSlugs: Record<string, string> = {
   "JEE Main": "jee-mains", "JEE Advanced": "jee-advanced", "MHT CET": "mht-cet", BITSAT: "bitsat", COMEDK: "comedk", WBJEE: "wbjee", KCET: "kcet", VITEEE: "viteee", "AP EAPCET": "ap-eamcet", "TS EAMCET": "ts-eamcet", "IISER IAT": "iiser-iat", NEST: "nest", MET: "met", "NEET UG": "national-eligibility-cum-entrance-test-neet", "UPSC Civil Services": "upsc-civil-services", NDA: "upsc-nda-na", "SSC CGL": "ssc-cgl", GATE: "gate",
 };
+// Board emblem from the CBSE main website: https://www.cbse.gov.in/images//logo.png
+const cbseLogo = "/exam-logos/official-v1/e87b6e234f2120e27c79719b.webp";
 
 const officialPapers: Record<string, { url: string; label: string }> = {
   "JEE Advanced": { url: "https://jeeadv.ac.in/archive.html", label: "Official paper archive" },
@@ -68,7 +70,7 @@ export default function Questions() {
               const paper = officialPapers[exam.startsWith("GATE ") ? "GATE" : exam];
               const href = jee ? "/ad/jee-main-2027#question-papers" : paper?.url || `/exams?search=${encodeURIComponent(exam.startsWith("GATE ") ? "GATE" : exam)}`;
               const label = jee ? "Browse question papers" : paper?.label || "Explore exam guide";
-              const content = <><div className="flex items-start justify-between gap-2"><ExamLogo exam={{ slug: exam === "UPSC Civil Services" || exam === "NDA" ? undefined : exam.startsWith("GATE ") ? "gate" : examSlugs[exam], name: exam }} className="h-12 w-12 border p-1" />{jee && <span className="rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-800">171 PDFs</span>}</div><div><h3 className="mt-4 text-lg font-bold text-foreground">{exam}</h3><span className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-primary">{label}<ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></div></>;
+              const content = <><div className="flex items-start justify-between gap-2"><ExamLogo exam={{ slug: exam === "UPSC Civil Services" || exam === "NDA" ? undefined : exam.startsWith("GATE ") ? "gate" : examSlugs[exam], logo: exam.startsWith("CBSE") ? cbseLogo : undefined, name: exam }} className="h-12 w-12 border p-1" />{jee && <span className="rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-800">171 PDFs</span>}</div><div><h3 className="mt-4 text-lg font-bold text-foreground">{exam}</h3><span className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-primary">{label}<ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></div></>;
               const className = "group flex min-h-36 flex-col justify-between rounded-2xl border bg-card p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary";
               return paper ? <a key={exam} href={href} target="_blank" rel="noopener noreferrer" className={className} aria-label={`${exam}: ${label} (opens official website)`}>{content}</a> : <Link key={exam} to={href} className={className} aria-label={`${exam}: ${label}`}>{content}</Link>;
             })}
