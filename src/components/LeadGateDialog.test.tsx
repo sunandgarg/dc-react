@@ -32,7 +32,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe("save once and verify only for the ZIP", () => {
   it("asks JEE visitors for state and city on step two and saves JEE without a course selector", async () => {
-    render(<LeadCaptureForm contactOnly requireLocation fixedCourse="JEE" keepVisibleAfterSubmit source="JEE-paid" onSuccess={success} />);
+    render(<LeadCaptureForm contactOnly requireLocation fixedCourse="JEE" source="JEE-paid" onSuccess={success} />);
     fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: identity.name } });
     fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: identity.email } });
     fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: identity.phone } });
@@ -86,7 +86,7 @@ describe("save once and verify only for the ZIP", () => {
   });
 
   it("keeps the JEE lead card visible after saving and on revisit", async () => {
-    const first = render(<LeadCaptureForm contactOnly keepVisibleAfterSubmit source="JEE-paid" onSuccess={success} />);
+    const first = render(<LeadCaptureForm contactOnly source="JEE-paid" onSuccess={success} />);
     fireEvent.change(screen.getByPlaceholderText("Your name *"), { target: { value: identity.name } });
     fireEvent.change(screen.getByPlaceholderText("Email address *"), { target: { value: identity.email } });
     fireEvent.change(screen.getByPlaceholderText("Mobile number *"), { target: { value: identity.phone } });
@@ -95,7 +95,7 @@ describe("save once and verify only for the ZIP", () => {
     expect(screen.getByPlaceholderText("Mobile number *")).toHaveValue(identity.phone);
     expect(screen.queryByText("Thank You! 🎉")).not.toBeInTheDocument();
     first.unmount();
-    render(<LeadCaptureForm contactOnly keepVisibleAfterSubmit source="JEE-paid" />);
+    render(<LeadCaptureForm contactOnly source="JEE-paid" />);
     expect(screen.getByPlaceholderText("Mobile number *")).toHaveValue(identity.phone);
     expect(screen.queryByText("Thank You! 🎉")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Save & continue" }));
@@ -113,7 +113,8 @@ describe("save once and verify only for the ZIP", () => {
     expect(hasSubmittedLead()).toBe(true);
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body))).toMatchObject({ phase: "complete", otp_verified: false });
-    expect(screen.queryByPlaceholderText("Mobile number *")).not.toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Mobile number *")).toHaveValue(identity.phone);
+    expect(screen.queryByText("Thank You! 🎉")).not.toBeInTheDocument();
     first.unmount(); success.mockClear();
     render(<LeadGateDialog open forceShow onOpenChange={close} onSuccess={success} source="apply_another_college" />);
     await waitFor(() => expect(success).toHaveBeenCalledWith("saved"));

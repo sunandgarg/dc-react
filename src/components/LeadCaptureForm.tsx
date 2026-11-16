@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, User, Mail, Phone, MapPin, Loader2, CheckCircle, BookOpen, GraduationCap } from "lucide-react";
+import { Send, User, Mail, Phone, MapPin, Loader2, BookOpen, GraduationCap } from "lucide-react";
 import { IITAlumniBadge } from "@/components/IITAlumniBadge";
 import { SearchableSelect } from "@/components/SearchableSelect";
 import { useStatesAndCities } from "@/hooks/useLocations";
@@ -20,7 +20,7 @@ import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsent
 import { setLeadConsentPreference } from "@/lib/leadConsent";
 import { invokeNodeFunction } from "@/lib/backendMode";
 import { saveLeadPhase } from "@/lib/twoStepLead";
-import { getLeadSession, hasSubmittedLead, LEAD_SESSION_EVENT } from "@/lib/leadSession";
+import { LEAD_SESSION_EVENT } from "@/lib/leadSession";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -46,7 +46,6 @@ interface LeadCaptureFormProps {
   brandLogoUrl?: string;
   brandName?: string;
   unbrandedConsent?: boolean;
-  keepVisibleAfterSubmit?: boolean;
 }
 
 function FormBrandLogo({ url, name, className }: { url?: string; name?: string; className?: string }) {
@@ -97,7 +96,6 @@ export function LeadCaptureForm({
   brandLogoUrl,
   brandName,
   unbrandedConsent = false,
-  keepVisibleAfterSubmit = false,
 }: LeadCaptureFormProps) {
   const consentText = unbrandedConsent ? LEAD_CONSENT_TEXT.replace("DekhoCampus", "the") : LEAD_CONSENT_TEXT;
   const interestPrompt = interestLabel === "Course" ? "Interested Course" : interestLabel;
@@ -108,8 +106,6 @@ export function LeadCaptureForm({
   const [filledTracked, setFilledTracked] = useState<{ name?: boolean; email?: boolean; phone?: boolean }>({});
   const [programMode, setProgramMode] = useState<ProgramMode>("regular");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [sessionSubmitted, setSessionSubmitted] = useState(hasSubmittedLead);
   const [step, setStep] = useState<1 | 2>(1);
   const [leadId, setLeadId] = useState<string | null>(null);
   const [authorized, setAuthorized] = useState(true);
@@ -139,7 +135,6 @@ export function LeadCaptureForm({
         state: prev.state || c.state || "",
         city: prev.city || c.city || "",
       }));
-      setSessionSubmitted(hasSubmittedLead());
     };
     prefill();
     window.addEventListener(LEAD_SESSION_EVENT, prefill);
@@ -220,11 +215,8 @@ export function LeadCaptureForm({
         }
         downloadUrl = result.data.download_url;
       }
-      setIsSubmitted(true);
-      if (keepVisibleAfterSubmit) {
-        setStep(1);
-        setLeadId(null);
-      }
+      setStep(1);
+      setLeadId(null);
       toast.success(contactOnly ? "Details saved. Continuing…" : "Thank you! Our counselor will contact you soon.");
       setLeadConsentPreference(authorized);
       savePrefillCookie({ name: formData.name, email: formData.email, phone: formData.phone, state: formData.state, city: formData.city, course: fixedCourse || formData.course });
@@ -317,35 +309,6 @@ export function LeadCaptureForm({
   const otpPortal: React.ReactNode = null;
 
 
-
-  if (!keepVisibleAfterSubmit && (isSubmitted || (sessionSubmitted && !otpDownload && (!requireLocation || Boolean(getLeadSession().state && getLeadSession().city))))) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className={`
-          ${variant === "card" ? "bg-card rounded-2xl border border-border p-5 shadow-soft" : ""}
-          ${variant === "banner" ? "bg-primary rounded-2xl p-5 text-primary-foreground" : ""}
-          ${variant === "sidebar" ? "bg-card rounded-2xl border border-border p-4" : ""}
-          ${variant === "article-sidebar" ? "bg-card rounded-lg border border-border p-4" : ""}
-          ${variant === "inline" ? "bg-muted/50 rounded-xl p-4" : ""}
-        `}
-      >
-        <div className="text-center py-4">
-          <div className="w-14 h-14 rounded-full bg-success/15 flex items-center justify-center mx-auto mb-3">
-            <CheckCircle className="w-7 h-7 text-success" />
-          </div>
-          <h3 className={`text-lg font-bold mb-2 ${variant === "banner" ? "text-primary-foreground" : "text-foreground"}`}>
-            Thank You! 🎉
-          </h3>
-          <p className={`text-sm ${variant === "banner" ? "text-primary-foreground/90" : "text-muted-foreground"}`}>
-            Your details are saved for this session. You can continue without filling another lead form.
-          </p>
-        </div>
-        {otpPortal}
-      </motion.div>
-    );
-  }
 
   const selectCls = "w-full px-3 py-2.5 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none";
 
