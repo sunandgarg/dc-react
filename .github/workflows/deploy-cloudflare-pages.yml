@@ -51,6 +51,7 @@ jobs:
           npm test
           npm run lint
           npm run build
+          grep -Fq '<link rel="canonical" href="https://dekhocampus.com/questions"' dist/questions.html
           test -s dist/_worker.js
           test -s dist/_routes.json
           test ! -e dist/404.html
