@@ -97,6 +97,11 @@ on:
         required: false
         default: false
         type: boolean
+      sync_question_exam_logos:
+        description: Upload reviewed question-directory exam marks to S3 and save their URLs in exam rows
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -707,6 +712,21 @@ jobs:
           set +a
           cd /opt/dc-react/app
           npm --prefix backend run sync:exam-catalog -- --apply --logos --assert-complete
+          REMOTE
+
+      - name: Sync reviewed question-directory exam logos
+        if: ${{ inputs.sync_question_exam_logos }}
+        run: |
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=240 \
+            -i /tmp/tempkey "$SSH_USER@$SSH_IP" 'sudo bash -s' <<'REMOTE'
+          set -euo pipefail
+          set -a
+          source /etc/dc-react.env
+          set +a
+          cd /opt/dc-react/app
+          node backend/scripts/sync-question-exam-logos.mjs --check
+          node backend/scripts/sync-question-exam-logos.mjs --apply
           REMOTE
 
       - name: Generate static sitemap seed and site metadata
