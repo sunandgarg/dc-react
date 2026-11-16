@@ -10,6 +10,8 @@ afterEach(cleanup);
 describe("questions directory", () => {
   it("filters exams immediately and links the available JEE archive", () => {
     render(<MemoryRouter><Questions /></MemoryRouter>);
+    expect(screen.getAllByRole("article")).toHaveLength(25);
+    expect(screen.getByRole("navigation", { name: "Exam categories" }).querySelector('a[href="#cbse"]')).toBeInTheDocument();
     fireEvent.change(screen.getByRole("searchbox"), { target: { value: "jee main" } });
     expect(screen.getByRole("heading", { name: "JEE Main" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "NEET UG" })).not.toBeInTheDocument();
