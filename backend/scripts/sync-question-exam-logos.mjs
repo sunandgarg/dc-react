@@ -11,6 +11,7 @@ const root = fileURLToPath(new URL("../../", import.meta.url));
 const identities = JSON.parse(await readFile(path.join(root, "shared/exam-identities.json"), "utf8"));
 const slugs = ["jee-mains", "jee-advanced", "mht-cet", "bitsat", "comedk", "wbjee", "kcet", "viteee", "ap-eamcet", "ts-eamcet", "nest", "met", "national-eligibility-cum-entrance-test-neet", "gate", "ssc-cgl"];
 const assets = new Map();
+const replaceableLogo = (logo) => !logo || /(?:^|\/)(?:legacy-public-assets|exam-logos-v[123]|exam-logos-official-v1)\//.test(logo) || /\/exam-logos\/official-v1\//.test(logo);
 
 for (const slug of slugs) {
   const identity = identities[slug];
@@ -24,6 +25,7 @@ for (const slug of slugs) {
 }
 
 if (process.argv.includes("--check")) {
+  if (!replaceableLogo("legacy-public-assets/old.webp") || !replaceableLogo("https://aws-origin.dekhocampus.com/storage/v1/object/public/legacy-public-assets/old.webp") || replaceableLogo("https://example.com/custom.webp")) throw new Error("Logo replacement guard failed");
   console.log(JSON.stringify({ checked_exam_slugs: slugs.length, checked_assets: assets.size }));
   process.exit(0);
 }
@@ -43,7 +45,7 @@ try {
   let retainedCustom = 0;
   for (const row of rows) {
     // Preserve an editor's custom logo; this job replaces only empty or generated marks.
-    if (row.logo && !/\/exam-logos(?:-v[123]|-official-v1)\//.test(row.logo) && !row.logo.includes("/admin-uploads/exam-logos-official-v1/") && !row.logo.includes("/legacy-public-assets/")) { retainedCustom++; continue; }
+    if (!replaceableLogo(row.logo)) { retainedCustom++; continue; }
     const filename = path.basename(identities[row.slug].logo);
     if (!uploaded.has(filename)) {
       const result = await uploadStorageObject("admin-uploads", `exam-logos-official-v1/${filename}`, assets.get(filename), "image/webp", { upsert: true });
