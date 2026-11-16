@@ -21,6 +21,7 @@ const examSlugs: Record<string, string> = {
 const officialPapers: Record<string, { url: string; label: string }> = {
   "JEE Advanced": { url: "https://jeeadv.ac.in/archive.html", label: "Official paper archive" },
   WBJEE: { url: "https://wbjeeb.nic.in/old-question-paper-wbjee/", label: "Official paper archive" },
+  "AP EAPCET": { url: "https://cets.apsche.ap.gov.in/EAPCET/EAPCET/EAPCET_ExamPapers.aspx", label: "Official 2026 papers" },
   "IISER IAT": { url: "https://info.iiseradmission.in/pages/faq.html", label: "Official past questions" },
   NEST: { url: "https://www.nestexam.in/", label: "Official question archive" },
   "NEET UG": { url: "https://neet.nta.nic.in/archive/", label: "Official paper archive" },

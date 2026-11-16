@@ -26,6 +26,7 @@ describe("questions directory", () => {
     expect(screen.queryByText("171 PDFs")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Engineering entrances" }));
     expect(screen.getByRole("link", { name: /WBJEE: Official paper archive/ })).toHaveAttribute("href", "https://wbjeeb.nic.in/old-question-paper-wbjee/");
+    expect(screen.getByRole("link", { name: /AP EAPCET: Official 2026 papers/ })).toHaveAttribute("href", "https://cets.apsche.ap.gov.in/EAPCET/EAPCET/EAPCET_ExamPapers.aspx");
     expect(screen.getByRole("link", { name: /BITSAT: Explore exam guide/ })).toHaveAttribute("href", "/exams?search=BITSAT");
   });
 });
