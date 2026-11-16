@@ -1,6 +1,6 @@
 # Exam identity and logo audit
 
-Checked 2026-09-23T15:17:57.730Z. All 485 canonical exams have separate short and full names.
+Checked 2026-11-16T20:59:17.517Z. All 485 canonical exams have separate short and full names.
 
 424 use visually reviewed marks from official exam/institution/authority sources, 51 retain existing catalog marks, and 10 remain unresolved. A conducting-authority crest is not presented as a newly invented exam logo.
 

@@ -9,7 +9,7 @@ import { uploadStorageObject } from "../src/storage.mjs";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const identities = JSON.parse(await readFile(path.join(root, "shared/exam-identities.json"), "utf8"));
-const slugs = ["jee-mains", "jee-advanced", "mht-cet", "bitsat", "comedk", "wbjee", "kcet", "viteee", "ap-eamcet", "ts-eamcet", "nest", "met", "national-eligibility-cum-entrance-test-neet", "gate", "ssc-cgl"];
+const slugs = ["jee-mains", "jee-advanced", "mht-cet", "bitsat", "comedk", "wbjee", "kcet", "viteee", "ap-eamcet", "ts-eamcet", "nest", "met", "national-eligibility-cum-entrance-test-neet", "gate", "ssc-cgl", ...Object.entries(identities).filter(([, row]) => row.source_url === "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png").map(([slug]) => slug)];
 const assets = new Map();
 const cbseAsset = "e87b6e234f2120e27c79719b.webp";
 const replaceableLogo = (logo) => !logo || /(?:^|\/)(?:legacy-public-assets|exam-logos-v[123]|exam-logos-official-v1)\//.test(logo) || /\/exam-logos\/official-v1\//.test(logo);

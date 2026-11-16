@@ -2416,10 +2416,10 @@
   "uspc-nda-and-na": {
     "short_name": "USPC NDA & NA",
     "full_name": "National Defence Academy and Naval Academy Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "nhtet": {
     "short_name": "NHTET",
@@ -3571,98 +3571,98 @@
   "upsc-capf-ac": {
     "short_name": "CAPF AC",
     "full_name": "Central Armed Police Forces Assistant Commandants Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-cds": {
     "short_name": "CDS",
     "full_name": "Combined Defence Services Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-civil-services": {
     "short_name": "UPSC CSE",
     "full_name": "Union Public Service Commission Civil Services Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-cms": {
     "short_name": "CMS",
     "full_name": "Combined Medical Services Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-combined-geo-scientist": {
     "short_name": "Geo-Scientist",
     "full_name": "Combined Geo-Scientist Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-ese": {
     "short_name": "UPSC ESE",
     "full_name": "UPSC Engineering Services Exam",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-engineering-services": {
     "short_name": "UPSC ESE",
     "full_name": "Engineering Services Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-epfo": {
     "short_name": "UPSC EPFO",
     "full_name": "UPSC EPFO EO/AO and APFC Recruitment Test",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-ies-iss": {
     "short_name": "IES/ISS",
     "full_name": "Indian Economic Service - Indian Statistical Service Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-ifs": {
     "short_name": "UPSC IFS",
     "full_name": "UPSC Indian Forest Service",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-indian-forest-service": {
     "short_name": "UPSC IFoS",
     "full_name": "Indian Forest Service Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "upsc-nda-na": {
     "short_name": "NDA & NA",
     "full_name": "National Defence Academy and Naval Academy Examination",
-    "logo": "/exam-logos/official-v1/6694825c2f3792caa3545f02.webp",
+    "logo": "/exam-logos/official-v1/22ece179a7cde53047c468fe.webp",
     "logo_status": "official_source_reviewed",
-    "source_url": "https://exams.nta.nic.in/wp-content/themes/sdo-theme/images/emblem.svg",
-    "source_page": "https://exams.nta.nic.in/aiapget/"
+    "source_url": "https://www.upsc.gov.in/sites/all/themes/upsc/images/logo-upsc.png",
+    "source_page": "https://www.upsc.gov.in/"
   },
   "uratpg": {
     "short_name": "URATPG",
