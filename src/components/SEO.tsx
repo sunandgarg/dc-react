@@ -10,6 +10,7 @@ interface SEOProps {
   ogType?: string;
   twitterCard?: string;
   jsonLd?: object | object[];
+  robots?: string;
 }
 
 /** Lightweight SEO updater - no extra deps. Sets document.title + meta tags + OG/Twitter + JSON-LD. */
@@ -22,6 +23,7 @@ export function SEO({
   ogType = "website",
   twitterCard = "summary_large_image",
   jsonLd,
+  robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
 }: SEOProps) {
   const jsonLdText = JSON.stringify(jsonLd ?? null);
 
@@ -54,7 +56,7 @@ export function SEO({
 
     if (description) setNameMeta("description", description);
     if (keywords) setNameMeta("keywords", keywords);
-    setNameMeta("robots", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+    setNameMeta("robots", robots);
 
     if (canonicalUrl) {
       let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
@@ -91,6 +93,6 @@ export function SEO({
       script.text = jsonLdText;
       document.head.appendChild(script);
     }
-  }, [title, description, keywords, canonical, ogImage, ogType, twitterCard, jsonLdText]);
+  }, [title, description, keywords, canonical, ogImage, ogType, twitterCard, jsonLdText, robots]);
   return null;
 }

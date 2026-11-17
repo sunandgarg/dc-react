@@ -8,7 +8,7 @@ const PRIVATE_PREFIXES = [
 ];
 
 const PUBLIC_ROOTS = [
-  "/colleges", "/courses", "/exams", "/questions", "/premium-programs", "/news", "/careers",
+  "/colleges", "/courses", "/exams", "/questions", "/pyq-pdfs", "/premium-programs", "/news", "/careers",
   "/jobs", "/vacancies", "/scholarships", "/study-material", "/college-study-material",
   "/resources", "/tools", "/cat-universe", "/compare", "/eligibility-checker",
   "/college-predictor", "/exam-calendar", "/exam-calendar-2026", "/lock-target",
@@ -122,6 +122,7 @@ function isPublicPath(pathname) {
   if (parts.length === 1) return !["/landing", "/author", "/legal"].includes(root);
   if (root === "/news") return parts.length === 2 || (parts.length === 3 && parts[1] === "tag");
   if (root === "/study-material" || root === "/college-study-material") return parts.length <= 5;
+  if (root === "/pyq-pdfs") return /^\/pyq-pdfs\/past-years\/(?:year-wise\/)?(?:jee|medical|gate|civil-services|defence|ssc|cbse)\/[a-z0-9-]+$/.test(pathname);
   if (["/colleges", "/courses", "/exams"].includes(root)) return parts.length <= 3;
   return parts.length === 2 && [
     "/premium-programs", "/careers", "/jobs", "/vacancies", "/scholarships",
@@ -156,7 +157,7 @@ export function edgeSeoFor(input) {
   const landingPath = pathname === "/ad/jee-main-2027-application" ? "/ad/jee-main-2027" : pathname;
   const privatePath = landingPath === "/ad/jee-main-2027" || landingPath === "/ad/jee-main-2027-hi" || PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
   const publicPath = isPublicPath(pathname);
-  const indexable = !privatePath && publicPath && isIndexableQuery(url, pathname);
+  const indexable = !privatePath && publicPath && isIndexableQuery(url, pathname) && (!pathname.startsWith("/pyq-pdfs/") || pathname === "/pyq-pdfs/past-years/year-wise/jee/jee-main");
   const fullPageAlias = pathname.match(/^\/(colleges|courses)\/([^/]+)\/[^/]+$/);
   const canonicalBase = fullPageAlias ? `/${fullPageAlias[1]}/${fullPageAlias[2]}` : landingPath;
   const canonicalPath = indexable && url.search ? `${canonicalBase}${url.search}` : canonicalBase;
@@ -176,7 +177,10 @@ export function edgeSeoFor(input) {
       title: `${url.searchParams.get("category") === VERNACULAR_CATEGORY ? `Vernacular Education News${url.searchParams.get("language") ? ` · ${articleLanguage(url.searchParams.get("language")).label}` : ""}` : "Latest Education News"}${url.searchParams.has("page") ? ` - Page ${url.searchParams.get("page")}` : ""} | DekhoCampus`,
       description: url.searchParams.get("category") === VERNACULAR_CATEGORY ? "Read exam, admission and college updates in Hindi, Tamil, Telugu, Kannada, Malayalam, Gujarati, Marathi, Bengali and Punjabi." : "Read the latest verified exam, admission, college and education updates for students in India.",
     }
-    : STATIC_METADATA.get(landingPath) || (LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname));
+    : pathname.startsWith("/pyq-pdfs/past-years/") ? {
+      title: `${titleCase(pathname.split("/").at(-1))} ${pathname.includes("/year-wise/") ? "Year-Wise Question Papers" : "Chapter-Wise Questions"} | DekhoCampus`,
+      description: pathname === "/pyq-pdfs/past-years/year-wise/jee/jee-main" ? "Browse 171 JEE Main papers from 2017 to 2026 by year, date and shift." : "Find available chapter and previous-year resources for this exam.",
+    } : STATIC_METADATA.get(landingPath) || (LISTING_QUERY_KEYS[pathname] ? listingMetadata(url, pathname) : detailMetadata(pathname));
   return { ...metadata, canonical, indexable, notFound: !privatePath && !publicPath };
 }
 

@@ -13,6 +13,16 @@ describe("Cloudflare edge SEO", () => {
     expect(page.canonical).toBe("https://dekhocampus.com/questions");
     expect(page.title).toContain("Previous Year Question Papers");
   });
+  it("indexes the owned JEE paper list and keeps thin navigation pages out of search", () => {
+    const papers = edgeSeoFor("https://dekhocampus.com/pyq-pdfs/past-years/year-wise/jee/jee-main");
+    const chapters = edgeSeoFor("https://dekhocampus.com/pyq-pdfs/past-years/jee/jee-main");
+    expect(papers.indexable).toBe(true);
+    expect(papers.notFound).toBe(false);
+    expect(papers.title).toContain("Year-Wise Question Papers");
+    expect(chapters.indexable).toBe(false);
+    expect(chapters.notFound).toBe(false);
+    expect(edgeSeoFor("https://dekhocampus.com/pyq-pdfs/not-a-collection").notFound).toBe(true);
+  });
   it("serves the JEE application alias with the landing page canonical and edited metadata", () => {
     const main = edgeSeoFor("https://dekhocampus.com/ad/jee-main-2027");
     const alias = edgeSeoFor("https://dekhocampus.com/ad/jee-main-2027-application");

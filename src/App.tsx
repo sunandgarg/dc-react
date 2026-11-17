@@ -73,7 +73,7 @@ function RouteSeoPolicy() {
       robots.name = "robots";
       document.head.appendChild(robots);
     }
-    robots.content = privateRoute ? "noindex, nofollow, noarchive" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+    robots.content = privateRoute ? "noindex, nofollow, noarchive" : pathname.startsWith("/pyq-pdfs/") && pathname !== "/pyq-pdfs/past-years/year-wise/jee/jee-main" ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 
     const canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     let canonicalPath = "";
@@ -152,6 +152,7 @@ const ComparePage = lazyRetry(() => import("./pages/ComparePage"), "compare");
 const AllCourses = lazyRetry(() => import("./pages/AllCourses"), "AllCourses");
 const AllExams = lazyRetry(() => import("./pages/AllExams"), "AllExams");
 const Questions = lazyRetry(() => import("./pages/Questions"), "Questions");
+const QuestionCollection = lazyRetry(() => import("./pages/Questions").then((module) => ({ default: module.QuestionCollection })), "QuestionCollection");
 const AllArticles = lazyRetry(() => import("./pages/AllArticles"), "AllArticles");
 const CollegeDetail = lazyRetry(() => import("./pages/CollegeDetail"), "CollegeDetail");
 const CourseDetail = lazyRetry(() => import("./pages/CourseDetail"), "CourseDetail");
@@ -367,6 +368,8 @@ const App = () => (
               <Route path="/courses/:slug/:tab" element={<CourseNestedRoute />} />
               <Route path="/exams" element={<AllExams />} />
               <Route path="/questions" element={<Questions />} />
+              <Route path="/pyq-pdfs/past-years/year-wise/:category/:exam" element={<QuestionCollection />} />
+              <Route path="/pyq-pdfs/past-years/:category/:exam" element={<QuestionCollection />} />
               <Route path="/exams/:slug" element={<ExamRoute />} />
               <Route path="/exams/:slug/:tab" element={<ExamNestedRoute />} />
               <Route path="/articles" element={<LegacyArticlesRoute />} />

@@ -17,6 +17,7 @@ export const STATIC_SITEMAP_ROUTES: SitemapRoute[] = [
   { path: "/courses", changefreq: "daily", priority: "0.9" },
   { path: "/exams", changefreq: "daily", priority: "0.9" },
   { path: "/questions", changefreq: "weekly", priority: "0.8" },
+  { path: "/pyq-pdfs/past-years/year-wise/jee/jee-main", changefreq: "monthly", priority: "0.75" },
   { path: "/premium-programs", changefreq: "daily", priority: "0.9" },
   { path: "/news", changefreq: "daily", priority: "0.85" },
   { path: "/careers", changefreq: "weekly", priority: "0.8" },

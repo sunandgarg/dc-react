@@ -1,18 +1,20 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowUpRight, BookOpen, ChevronRight, GraduationCap, Search } from "lucide-react";
+import { Link, Navigate, useLocation, useParams } from "react-router-dom";
+import { ArrowUpRight, BookOpen, FileText, GraduationCap, Search } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { ExamLogo } from "@/components/ExamLogo";
+import { LeadGateDialog } from "@/components/LeadGateDialog";
+import QUESTION_PAPERS from "@/data/jeeMainPapers.json";
 import logo from "@/assets/dekhocampus-logo-small.webp";
 
 const groups = [
-  { id: "jee", name: "Engineering entrances", short: "JEE", color: "#0754bf", exams: ["JEE Main", "JEE Advanced", "MHT CET", "BITSAT", "COMEDK", "WBJEE", "KCET", "VITEEE", "AP EAPCET", "TS EAMCET", "IISER IAT", "NEST", "MET"] },
-  { id: "medical", name: "Medical", short: "Medical", color: "#098866", exams: ["NEET UG"] },
-  { id: "gate", name: "Graduate engineering", short: "GATE", color: "#7453a9", exams: ["GATE CSE", "GATE ECE", "GATE EE", "GATE ME", "GATE CE", "GATE DA"] },
-  { id: "civil-services", name: "Civil Services", short: "Civil Services", color: "#b65a25", exams: ["UPSC Civil Services"] },
-  { id: "defence", name: "Defence", short: "Defence", color: "#266d76", exams: ["NDA"] },
-  { id: "ssc", name: "Staff Selection Commission", short: "SSC", color: "#85499a", exams: ["SSC CGL"] },
-  { id: "cbse", name: "CBSE & School Boards", short: "CBSE", color: "#245dbc", exams: ["CBSE Class 12", "CBSE Class 10"] },
+  { id: "jee", name: "Engineering entrances", short: "JEE", exams: ["JEE Main", "JEE Advanced", "MHT CET", "BITSAT", "COMEDK", "WBJEE", "KCET", "VITEEE", "AP EAPCET", "TS EAMCET", "IISER IAT", "NEST", "MET"] },
+  { id: "medical", name: "Medical", short: "Medical", exams: ["NEET UG"] },
+  { id: "gate", name: "Graduate engineering", short: "GATE", exams: ["GATE CSE", "GATE ECE", "GATE EE", "GATE ME", "GATE CE", "GATE DA"] },
+  { id: "civil-services", name: "Civil Services", short: "Civil Services", exams: ["UPSC Civil Services"] },
+  { id: "defence", name: "Defence", short: "Defence", exams: ["NDA"] },
+  { id: "ssc", name: "Staff Selection Commission", short: "SSC", exams: ["SSC CGL"] },
+  { id: "cbse", name: "CBSE & School Boards", short: "CBSE", exams: ["CBSE Class 12", "CBSE Class 10"] },
 ];
 
 const examSlugs: Record<string, string> = {
@@ -35,6 +37,17 @@ const officialPapers: Record<string, { url: string; label: string }> = {
   "CBSE Class 12": { url: "https://cbseacademic.nic.in/SQP_CLASSXII_2026-27.html", label: "Official sample papers" },
   "CBSE Class 10": { url: "https://cbseacademic.nic.in/SQP_CLASSX_2026-27.html", label: "Official sample papers" },
 };
+
+const paperSlugs: Record<string, string> = {
+  "JEE Main": "jee-main", "JEE Advanced": "jee-advanced", "MHT CET": "mht-cet", WBJEE: "wbjee", "AP EAPCET": "ap-eapcet", "TS EAMCET": "ts-eamcet", "IISER IAT": "iat", "NEET UG": "neet", "UPSC Civil Services": "upsc-prelims", "CBSE Class 12": "cbse-12", "CBSE Class 10": "cbse-10", "GATE DA": "gate-da",
+};
+const paperSlug = (exam: string) => paperSlugs[exam] || exam.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const collectionPath = (groupId: string, exam: string, mode: "chapter-wise" | "year-wise") => `/pyq-pdfs/past-years/${mode === "year-wise" ? "year-wise/" : ""}${groupId}/${paperSlug(exam)}`;
+const dekhoExamsPractice = (exam: string) => `https://dekhoexams.com/questions/${paperSlug(exam)}/practice`;
+const knownPractice = new Set(["JEE Main", "JEE Advanced", "MHT CET", "BITSAT", "COMEDK", "WBJEE", "KCET", "VITEEE", "AP EAPCET", "TS EAMCET", "IISER IAT", "NEET UG", "GATE CSE", "GATE ECE", "GATE EE", "GATE ME", "GATE CE", "GATE DA", "UPSC Civil Services", "NDA", "SSC CGL", "CBSE Class 12", "CBSE Class 10"]);
+const pdfChapters = new Set(["JEE Main", "JEE Advanced", "MHT CET", "BITSAT", "COMEDK", "WBJEE", "VITEEE", "AP EAPCET"]);
+const dekhoExamsChapter = (groupId: string, exam: string) => `https://dekhoexams.com/pyq-pdfs/past-years/${groupId}/${paperSlug(exam)}`;
+const dekhoExamsYear = (groupId: string, exam: string) => `https://dekhoexams.com/pyq-pdfs/past-years/year-wise/${groupId}/${paperSlug(exam)}`;
 
 export default function Questions() {
   const [query, setQuery] = useState("");
@@ -82,29 +95,27 @@ export default function Questions() {
       <section id="exams" className="scroll-mt-36 pt-10" aria-label="Browse exams">
         {visible.length ? visible.map((group) => <section key={group.id} id={group.id} className="mb-11 scroll-mt-36" aria-labelledby={`${group.id}-heading`}>
           <h2 id={`${group.id}-heading`} className="mb-5 flex items-baseline gap-2 text-xl font-extrabold">{group.name}<span className="text-sm font-normal text-slate-500">{group.exams.length} {group.exams.length === 1 ? "exam" : "exams"}</span></h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
             {group.exams.map((exam) => {
               const jee = exam === "JEE Main";
               const paper = officialPapers[exam.startsWith("GATE ") ? "GATE" : exam];
-              const href = jee ? "/ad/jee-main-2027#question-papers" : paper?.url || `/exams?search=${encodeURIComponent(exam.startsWith("GATE ") ? "GATE" : exam)}`;
-              const label = jee ? "Browse question papers" : paper?.label || "Exam overview";
-              const guide = (!jee && !paper) || exam.startsWith("CBSE") ? "/resources" : `/exams?search=${encodeURIComponent(exam.startsWith("GATE ") ? "GATE" : exam)}`;
-              const guideLabel = guide === "/resources" ? "Study resources" : "Exam overview";
-              const firstAction = jee ? "View papers" : exam.startsWith("CBSE") ? "Sample papers" : exam === "SSC CGL" ? "Response sheets" : exam === "IISER IAT" ? "Past questions" : paper ? "Paper archive" : "Exam overview";
-              const secondAction = guide === "/resources" ? "Study resources" : "Exam guide";
-              const pill = "inline-flex min-h-10 flex-1 items-center justify-center rounded-full px-3 text-center text-xs font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700";
-              return <article key={exam} className="rounded-[20px] border border-slate-300 border-t-4 bg-white p-5 shadow-sm transition hover:border-blue-600 hover:shadow-md" style={{ borderTopColor: group.color }}>
-                <div className="flex min-h-20 items-center gap-3">
-                  <ExamLogo exam={{ slug: exam.startsWith("GATE ") ? "gate" : examSlugs[exam], logo: exam.startsWith("CBSE") ? cbseLogo : undefined, short_name: exam === "UPSC Civil Services" || exam === "NDA" ? "UPSC" : undefined, name: exam }} className="h-14 w-14 border border-slate-200 p-1" />
-                  <div className="min-w-0"><h3 className="font-extrabold leading-snug">{exam}</h3><p className="mt-1 text-xs leading-5 text-slate-600">{jee ? "171 PDFs from 2017-2026" : paper ? paper.label : "Exam guide and study resources"}</p></div>
+              const guide = `/exams?search=${encodeURIComponent(exam.startsWith("GATE ") ? "GATE" : exam)}`;
+              const collection = pdfChapters.has(exam);
+              const pdfHref = jee ? "/ad/jee-main-2027#question-papers" : paper?.url || (collection ? collectionPath(group.id, exam, "year-wise") : guide);
+              const pill = "inline-flex min-h-11 flex-1 items-center justify-center rounded-full px-3 text-center text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700";
+              return <article key={exam} className="flex flex-col rounded-[28px] border-2 border-[#3450dc] border-t-[6px] bg-white p-5 shadow-[8px_8px_0_#8199ed] transition hover:-translate-y-1 hover:shadow-[8px_12px_0_#8199ed] sm:p-6">
+                <div className="flex min-h-24 items-start gap-4">
+                  <ExamLogo exam={{ slug: exam.startsWith("GATE ") ? "gate" : examSlugs[exam], logo: exam.startsWith("CBSE") ? cbseLogo : undefined, short_name: exam === "UPSC Civil Services" || exam === "NDA" ? "UPSC" : undefined, name: exam }} className="h-[72px] w-[72px] shrink-0 rounded-2xl border border-blue-200 bg-white p-2" />
+                  <div className="min-w-0"><h3 className="text-xl font-extrabold leading-snug">{exam}</h3><p className="mt-1 text-base leading-6 text-slate-600">{jee ? "171 previous-year papers from 2017 to 2026" : collection ? "Chapter-wise PDFs and previous-year papers" : paper ? paper.label : "Exam guide and practice resources"}</p></div>
                 </div>
-                <div className="mt-3 flex gap-2">
-                  {paper ? <a href={href} target="_blank" rel="noopener noreferrer" className={`${pill} bg-blue-700 text-white hover:bg-blue-800`} aria-label={`${exam}: ${label} (opens official website)`}>{firstAction}</a> : <Link to={href} className={`${pill} bg-blue-700 text-white hover:bg-blue-800`} aria-label={`${exam}: ${label}`}>{firstAction}</Link>}
-                  <Link to={guide} className={`${pill} border border-slate-300 bg-white hover:border-blue-700 hover:text-blue-700`} aria-label={`${exam}: ${guideLabel}`}>{secondAction}</Link>
+                <div className="mt-5 flex gap-3">
+                  <Link to={collectionPath(group.id, exam, "chapter-wise")} className={`${pill} bg-[#3450dc] text-white hover:bg-blue-800`} aria-label={`${exam}: Chapter-wise`}>Chapter-wise</Link>
+                  <Link to={collectionPath(group.id, exam, "year-wise")} className={`${pill} border-2 border-slate-300 bg-white hover:border-blue-700 hover:text-blue-700`} aria-label={`${exam}: Year-wise papers`}>Year-wise</Link>
                 </div>
-                <div className="mt-4 flex min-h-9 items-center justify-between gap-2 border-t border-slate-200 pt-3 text-xs text-slate-600">
-                  {jee ? <span>171 PDFs on DekhoCampus</span> : paper ? <span>Official source linked above</span> : <span>Paper collection unverified</span>}
-                  <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <div className="mt-5 grid grid-cols-2 gap-x-2 gap-y-3 border-t border-slate-200 pt-4 text-sm font-semibold sm:grid-cols-3">
+                  <a href={knownPractice.has(exam) ? dekhoExamsPractice(exam) : "https://dekhoexams.com/"} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-slate-600 hover:text-blue-700" aria-label={`${exam}: Timed practice on DekhoExams (opens new tab)`}>Timed practice <ArrowUpRight className="h-4 w-4 shrink-0" /></a>
+                  {paper ? <a href={pdfHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[#3450dc] hover:underline" aria-label={`${exam}: ${paper.label} (opens official website)`}><FileText className="h-4 w-4 shrink-0" />PYQ PDFs</a> : <Link to={pdfHref} className="inline-flex items-center gap-1 text-[#3450dc] hover:underline" aria-label={`${exam}: ${jee || collection ? "Browse question papers" : "Exam overview"}`}><FileText className="h-4 w-4 shrink-0" />{jee || collection ? "PYQ PDFs" : "Exam guide"}</Link>}
+                  <a href="https://dekhoexams.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-slate-600 hover:text-blue-700" aria-label={`${exam}: Mockers on DekhoExams (opens new tab)`}>Mockers <ArrowUpRight className="h-4 w-4 shrink-0" /></a>
                 </div>
               </article>;
             })}
@@ -120,5 +131,49 @@ export default function Questions() {
         <div><p className="mb-3 font-bold uppercase tracking-wide text-white">DekhoCampus</p><div className="grid gap-2"><Link to="/about-us" className="hover:text-white">About us</Link><Link to="/legal/privacy-policy" className="hover:text-white">Privacy</Link><Link to="/legal/editorial-policy" className="hover:text-white">Editorial policy <ArrowUpRight className="inline h-3 w-3" /></Link></div></div>
       </div>
     </footer>
+  </div>;
+}
+
+export function QuestionCollection() {
+  const { category, exam: slug } = useParams();
+  const { pathname } = useLocation();
+  const [selectedPdf, setSelectedPdf] = useState<string | null>(null);
+  const group = groups.find((item) => item.id === category);
+  const exam = group?.exams.find((item) => paperSlug(item) === slug);
+  if (!group || !exam) return <Navigate to="/questions" replace />;
+
+  const yearWise = pathname.includes("/year-wise/");
+  const jee = exam === "JEE Main";
+  const pdfCollection = pdfChapters.has(exam);
+  const official = officialPapers[exam.startsWith("GATE ") ? "GATE" : exam];
+  const external = pdfCollection
+    ? yearWise ? dekhoExamsYear(group.id, exam) : dekhoExamsChapter(group.id, exam)
+    : official?.url || (knownPractice.has(exam) ? `https://dekhoexams.com/questions/${paperSlug(exam)}${yearWise ? "/papers" : ""}` : null);
+  const externalLabel = pdfCollection ? `Open ${yearWise ? "year-wise" : "chapter-wise"} PDFs on DekhoExams` : official ? `Open ${official.label.toLowerCase()}` : external ? `Explore ${exam} on DekhoExams` : null;
+  const title = `${exam} ${yearWise ? "year-wise question papers" : "chapter-wise questions"}`;
+
+  return <div className="min-h-screen bg-[#f6f8fc] text-[#202329]" style={{ zoom: 1.3 }}>
+    <SEO title={`${title} | DekhoCampus`} description={jee && yearWise ? "Browse 171 JEE Main papers from 2017 to 2026 by year, date and shift, then choose an individual PDF." : `Find ${exam} ${yearWise ? "previous-year papers" : "chapter resources"} and follow the available verified collection.`} canonical={pathname} robots={jee && yearWise ? undefined : "noindex, follow"} />
+    <header className="border-b border-slate-200 bg-white"><div className="mx-auto flex max-w-[1000px] items-center justify-between gap-3 px-4 py-4"><Link to="/questions" aria-label="DekhoCampus Questions home"><img src={logo} alt="DekhoCampus" className="h-8 w-auto" /></Link><Link to="/questions" className="text-sm font-bold text-blue-700 hover:underline">All exams</Link></div></header>
+    <main className="mx-auto max-w-[1000px] px-4 py-8">
+      <nav aria-label="Breadcrumb" className="mb-5 text-xs text-slate-600"><Link to="/questions" className="hover:underline">Questions</Link> / {exam}</nav>
+      <section className="rounded-3xl border border-blue-200 bg-white p-6 shadow-sm sm:p-8">
+        <p className="text-xs font-extrabold uppercase tracking-widest text-blue-700">{exam} paper library</p>
+        <h1 className="mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">{title}</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">{jee && yearWise ? "Choose a year, then select the date and shift of the paper you need. The individual PDFs in this collection open after the DekhoCampus contact form." : pdfCollection ? "Browse the available collection by subject or year. Chapter PDF downloads are currently provided through DekhoExams." : "Use the available official papers or practice resources below. A chapter PDF collection is not currently hosted on DekhoCampus for this exam."}</p>
+        <div className="mt-6 flex flex-wrap gap-2"><Link to={collectionPath(group.id, exam, "chapter-wise")} aria-current={!yearWise ? "page" : undefined} className={`rounded-full px-4 py-2 text-sm font-bold ${!yearWise ? "bg-blue-700 text-white" : "border border-slate-300 hover:border-blue-700"}`}>Chapter-wise</Link><Link to={collectionPath(group.id, exam, "year-wise")} aria-current={yearWise ? "page" : undefined} className={`rounded-full px-4 py-2 text-sm font-bold ${yearWise ? "bg-blue-700 text-white" : "border border-slate-300 hover:border-blue-700"}`}>Year-wise</Link></div>
+      </section>
+
+      {jee && yearWise ? <section className="mt-7" aria-label="JEE Main papers by year">
+        <h2 className="mb-4 text-xl font-extrabold">2017 to 2026 papers</h2>
+        <div className="grid gap-3">{QUESTION_PAPERS.map(({ year, dates }) => <details key={year} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><summary className="flex cursor-pointer items-center justify-between gap-2 px-5 py-4 font-bold text-blue-900"><span>{year}</span><span className="text-xs font-medium text-slate-600">{dates.reduce((count, date) => count + Number(!!date.morning) + Number(!!date.evening) + Number("offline" in date && !!date.offline), 0)} papers</span></summary><div className="grid gap-3 border-t border-slate-100 p-4 sm:grid-cols-2">{dates.map((date) => <article key={date.date} className="rounded-xl border border-slate-200 p-4"><h3 className="font-bold">{date.date} {year}</h3><div className="mt-3 flex flex-wrap gap-2">{("offline" in date && date.offline ? [["Offline paper", date.offline]] : [["Morning shift", date.morning], ["Evening shift", date.evening]]).filter((entry): entry is [string, string] => Boolean(entry[1])).map(([label, url]) => <button key={label} type="button" onClick={() => setSelectedPdf(url)} className="rounded-full border border-blue-200 px-3 py-2 text-xs font-bold text-blue-800 hover:bg-blue-50">{label} PDF</button>)}</div></article>)}</div></details>)}</div>
+        <p className="mt-4 text-xs leading-5 text-slate-600">For the complete 171-paper ZIP, use the <Link className="font-bold text-blue-700 underline" to="/ad/jee-main-2027#question-papers">DekhoCampus download page</Link>. The ZIP requires mobile OTP verification.</p>
+      </section> : <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-xl font-extrabold">{pdfCollection && !yearWise && jee ? "Choose a subject" : "Available collection"}</h2>
+        {pdfCollection && !yearWise && jee ? <div className="mt-4 grid gap-3 sm:grid-cols-3">{["Physics", "Chemistry", "Mathematics"].map((subject) => <a key={subject} href={`${dekhoExamsChapter(group.id, exam)}#group-${subject.toLowerCase()}`} target="_blank" rel="noopener noreferrer" className="rounded-xl border border-blue-200 p-4 font-bold text-blue-800 hover:bg-blue-50">{subject} chapters <ArrowUpRight className="ml-1 inline h-4 w-4" /></a>)}</div> : external && externalLabel ? <a href={external} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-blue-700 px-5 text-sm font-bold text-white hover:bg-blue-800">{externalLabel} <ArrowUpRight className="h-4 w-4" /></a> : <p className="mt-3 text-sm text-slate-600">No dedicated collection is available yet. Check the exam guide for preparation resources.</p>}
+        <p className="mt-5 text-sm text-slate-600">Also see the <Link to={`/exams?search=${encodeURIComponent(exam.startsWith("GATE ") ? "GATE" : exam)}`} className="font-semibold text-blue-700 underline">{exam} exam guide</Link>.</p>
+      </section>}
+    </main>
+    <LeadGateDialog open={!!selectedPdf} onOpenChange={(open) => { if (!open) setSelectedPdf(null); }} onSuccess={() => { if (selectedPdf) window.location.assign(selectedPdf); setSelectedPdf(null); }} title="Download JEE Main question paper" subtitle="" source="JEE-questions" interestedExamSlug="jee-main" fixedCourse="JEE" requireLocation contactOnly simple forceShow unbrandedConsent />
   </div>;
 }
