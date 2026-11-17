@@ -5,12 +5,16 @@ import Questions, { QuestionCollection } from "./Questions";
 
 vi.mock("@/components/SEO", () => ({ SEO: () => null }));
 vi.mock("@/components/LeadGateDialog", () => ({ LeadGateDialog: ({ open }: { open: boolean }) => open ? <div role="dialog">Contact form</div> : null }));
+vi.mock("@/components/Navbar", () => ({ Navbar: () => <header data-testid="site-header">Site navigation</header> }));
+vi.mock("@/components/Footer", () => ({ Footer: () => <footer data-testid="site-footer">Site footer</footer> }));
 
 afterEach(cleanup);
 
 describe("questions directory", () => {
   it("filters exams immediately and links the available JEE archive", () => {
     render(<MemoryRouter><Questions /></MemoryRouter>);
+    expect(screen.getByTestId("site-header")).toBeInTheDocument();
+    expect(screen.getByTestId("site-footer")).toBeInTheDocument();
     expect(screen.getAllByRole("article")).toHaveLength(25);
     expect(screen.getByRole("navigation", { name: "Exam categories" }).querySelector('a[href="#cbse"]')).toBeInTheDocument();
     fireEvent.change(screen.getByRole("searchbox"), { target: { value: "jee main" } });
@@ -43,6 +47,8 @@ describe("questions directory", () => {
 
   it("shows owned JEE Main papers on the year-wise route", () => {
     render(<MemoryRouter initialEntries={["/pyq-pdfs/past-years/year-wise/jee/jee-main"]}><Routes><Route path="/pyq-pdfs/past-years/year-wise/:category/:exam" element={<QuestionCollection />} /></Routes></MemoryRouter>);
+    expect(screen.getByTestId("site-header")).toBeInTheDocument();
+    expect(screen.getByTestId("site-footer")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "JEE Main year-wise question papers" })).toBeInTheDocument();
     expect(screen.getByText("2026", { selector: "summary span" })).toBeInTheDocument();
     expect(screen.getByText(/complete 171-paper ZIP/)).toBeInTheDocument();
@@ -51,13 +57,10 @@ describe("questions directory", () => {
     expect(screen.getByRole("dialog", { name: "" })).toHaveTextContent("Contact form");
   });
 
-  it("shares the Questions header and footer on collection pages, including search", () => {
+  it("uses the shared site chrome on collection pages", () => {
     render(<MemoryRouter initialEntries={["/pyq-pdfs/past-years/jee/jee-main"]}><Routes><Route path="/pyq-pdfs/past-years/:category/:exam" element={<QuestionCollection />} /><Route path="/questions" element={<Questions />} /></Routes></MemoryRouter>);
     expect(screen.getByRole("navigation", { name: "Exam categories" })).toBeInTheDocument();
-    expect(screen.getByRole("contentinfo")).toHaveTextContent("Study resources");
-    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "NEET" } });
-    fireEvent.click(screen.getByRole("button", { name: "Search" }));
-    expect(screen.getByRole("heading", { name: "NEET UG" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "JEE Main" })).not.toBeInTheDocument();
+    expect(screen.getByTestId("site-header")).toBeInTheDocument();
+    expect(screen.getByTestId("site-footer")).toBeInTheDocument();
   });
 });
