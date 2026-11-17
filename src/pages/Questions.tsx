@@ -42,7 +42,7 @@ export default function Questions() {
     .map((group) => ({ ...group, exams: group.exams.filter((exam) => exam.toLowerCase().includes(query.trim().toLowerCase())) }))
     .filter((group) => group.exams.length), [query]);
 
-  return <div className="min-h-screen bg-white text-[#202329]">
+  return <div className="min-h-screen bg-white text-[#202329]" style={{ zoom: 1.3 }}>
     <SEO title="Previous Year Question Papers by Exam | DekhoCampus" description="Find previous year question papers by exam. Browse the verified JEE Main PDF collection and explore exam resources for engineering, medical, government and board exams." canonical="/questions" />
     <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">Skip to content</a>
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
