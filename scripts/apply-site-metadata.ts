@@ -65,6 +65,15 @@ Disallow: /auth$
 Disallow: /auth/
 Disallow: /onboarding
 
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 User-agent: ChatGPT-User
 Allow: /
 

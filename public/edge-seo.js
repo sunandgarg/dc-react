@@ -166,7 +166,7 @@ export function edgeSeoFor(input) {
   if (pathname === "/") {
     return {
       canonical: SITE_URL,
-      description: "Explore colleges, courses, entrance exams, scholarships and education news with DekhoCampus.",
+      description: "Compare colleges, courses, fees and entrance exams across India. Explore scholarships, admission updates and practical guidance to plan your next step with DekhoCampus.",
       indexable: true,
       title: "DekhoCampus - Find Your College, Course & Career",
     };
@@ -484,7 +484,7 @@ export function entityEdgeSeo(entity, url, entityType) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:1180px;margin:24px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="${entityType === "exams" ? 96 : 1200}" height="${entityType === "exams" ? 96 : 675}" style="display:block;${entityType === "exams" ? "width:96px;height:96px;object-fit:contain" : "width:100%;height:auto;aspect-ratio:16/9;object-fit:cover"}" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p></article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:1180px;margin:24px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="${entityType === "exams" ? 96 : 1200}" height="${entityType === "exams" ? 96 : 675}" style="display:block;${entityType === "exams" ? "width:96px;height:96px;object-fit:contain" : "width:100%;height:auto;aspect-ratio:16/9;object-fit:cover"}" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p>${[...(entityType === "colleges" ? ["admission_process", "course_fee_content", "placement_content", "facilities_content"] : entityType === "courses" ? ["about_content", "subjects_content", "scope_content", "placements_content"] : ["summary_content", "dates_content", "syllabus_content", "result_content"])].map((field) => articlePrerenderBlocks(entity[field])).join("")}</article>`,
   };
 }
 
@@ -607,6 +607,7 @@ export function applyEdgeSeo(html, metadata) {
   if (metadata.prerenderHtml) {
     // The static first-paint shell belongs to the homepage, not to article or archive HTML.
     output = output.replace(/<div id="dc-first-paint-shell"(?: hidden)?>(?:<\/div>|[\s\S]*?<\/main>\s*<\/div>)/i, "");
+    output = output.replace(/<div id="dc-edge-fallback" data-dc-home-fallback>[\s\S]*?<\/main>\s*<\/div>/i, "");
     // Keep crawlable content outside React's root so a failed client render cannot erase it.
     output = output.replace(/(<div\s+id=["']root["']\s*>\s*<\/div>)/i, `$1<div id="dc-edge-fallback">${metadata.prerenderHtml}</div>`);
   }

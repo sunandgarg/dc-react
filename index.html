@@ -164,12 +164,27 @@
         </main>
       </div>
     </div>
+    <div id="dc-edge-fallback" data-dc-home-fallback>
+      <main style="max-width:1100px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.65;color:#111827">
+        <h2>Explore colleges, courses and exams in India</h2>
+        <p>DekhoCampus brings college, course and entrance exam information together so you can compare options before applying. Start with the programme you want to study, then check the colleges that offer it, their eligibility rules, fees and admission routes. For an exam, read the current notice from its issuing authority before you rely on a date or application link.</p>
+        <h2>Find a college that fits your plan</h2>
+        <p>Browse the <a href="/colleges">college directory</a> to compare location, available courses, fees, facilities and placement information. A college page can help you make a shortlist, but confirm the latest admission requirements and costs with the institution. If you are still choosing a field, the <a href="/courses">course directory</a> explains study paths and points you towards related colleges.</p>
+        <h2>Follow official exam and admission updates</h2>
+        <p>The <a href="/exams">exam directory</a> helps you find entrance tests and their application, syllabus and preparation pages. <a href="/news">Education news</a> covers new notices, deadlines and results. Open an update for its source and check the official portal before submitting a form or paying a fee. Publication dates and any later corrections belong on each news article.</p>
+        <h2>Plan funding and preparation</h2>
+        <p>Explore <a href="/scholarships">scholarships</a> by programme and eligibility, then verify the current cycle with the sponsor before applying. The <a href="/careers">career directory</a> connects study choices to possible work. For revision, use <a href="/study-material">study material</a> and <a href="/questions">previous year questions</a> to see how an exam has tested its topics. Question papers from an older year may follow a different pattern, so compare them with the latest official bulletin.</p>
+      </main>
+    </div>
     <script>
       (() => {
         const shell = document.getElementById("dc-first-paint-shell");
         if (!shell) return;
         if (location.pathname === "/") shell.hidden = false;
-        else shell.remove();
+        else {
+          shell.remove();
+          document.querySelector("[data-dc-home-fallback]")?.remove();
+        }
       })();
     </script>
     <script>

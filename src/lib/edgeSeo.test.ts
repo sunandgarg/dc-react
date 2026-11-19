@@ -145,6 +145,15 @@ describe("Cloudflare edge SEO", () => {
     expect(output).toContain('<div id="root"></div><div id="dc-edge-fallback"><main data-dc-edge-prerender');
   });
 
+  it("replaces the homepage fallback with safe detail content", () => {
+    const metadata = entityEdgeSeo({ name: "Example College", description: "A college in India.", admission_process: "<h2>Admissions</h2><p>Check the current notice.</p><script>alert(1)</script>" }, new URL("https://dekhocampus.com/colleges/example-college-12345"), "colleges");
+    const html = '<html><head></head><body><div id="root"><div id="dc-first-paint-shell" hidden><main><h1>Home</h1></main></div></div><div id="dc-edge-fallback" data-dc-home-fallback><main><h2>Home fallback</h2></main></div></body></html>';
+    const output = applyEdgeSeo(html, metadata);
+    expect(output).toContain("Check the current notice.");
+    expect(output).not.toContain("Home fallback");
+    expect(output).not.toContain("alert(1)");
+  });
+
   it("prerenders published article content and NewsArticle schema", () => {
     const url = new URL("https://dekhocampus.com/news/neet-update-2026");
     const metadata = articleEdgeSeo({
