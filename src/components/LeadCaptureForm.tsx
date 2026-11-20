@@ -45,6 +45,7 @@ interface LeadCaptureFormProps {
   theme?: "default" | "cat-kit";
   brandLogoUrl?: string;
   brandName?: string;
+  brandLogoClassName?: string;
   unbrandedConsent?: boolean;
 }
 
@@ -95,6 +96,7 @@ export function LeadCaptureForm({
   theme = "default",
   brandLogoUrl,
   brandName,
+  brandLogoClassName,
   unbrandedConsent = false,
 }: LeadCaptureFormProps) {
   const consentText = unbrandedConsent ? LEAD_CONSENT_TEXT.replace("DekhoCampus", "the") : LEAD_CONSENT_TEXT;
@@ -383,7 +385,7 @@ export function LeadCaptureForm({
         )}
         <div className={`${isCatKit ? "px-5 pt-5" : ""} flex items-center justify-between mb-4`}>
           <div className="flex items-center gap-3">
-            <FormBrandLogo url={brandLogoUrl} name={brandName} className="w-10 h-10 shrink-0 rounded-lg bg-white object-contain" />
+            <FormBrandLogo url={brandLogoUrl} name={brandName} className={brandLogoClassName || "w-10 h-10 shrink-0 rounded-lg bg-white object-contain"} />
             <div>
               <h3 className="text-sm font-bold text-foreground">{title}</h3>
               {simple ? (

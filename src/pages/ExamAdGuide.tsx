@@ -41,15 +41,15 @@ export default function ExamAdGuide({ slug }: { slug: keyof typeof guides }) {
             <p className="mt-4 text-sm leading-6"><mark className="box-decoration-clone bg-amber-100 px-1 py-0.5 text-slate-900"><strong>{deadline.label}:</strong> <time dateTime={deadline.iso}>{deadline.date}</time></mark></p>
             <p className="mt-3 text-sm leading-6 text-slate-700">{guide.description}</p>
             <a data-official-resource href={guide.portal} target="_blank" rel="noopener noreferrer" onClick={trackPortal} className={`${portalButton} mt-4`}>{guide.portalLabel}<ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0" /></a>
-            {evidence && <figure className="mt-6 overflow-hidden rounded border border-slate-200 bg-slate-50">
-              <a data-official-resource href={evidence.url} target="_blank" rel="noopener noreferrer" className="block focus-visible:outline-blue-600"><img src={evidence.image} alt={evidence.alt} width={evidence.width} height={evidence.height} loading="eager" className="mx-auto block h-auto max-h-[440px] max-w-full bg-white object-contain" /></a>
-              <figcaption className="border-t border-slate-200 p-3 text-xs leading-5 text-slate-600">{evidence.caption} <a data-official-resource href={evidence.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">View the official source</a>.</figcaption>
-            </figure>}
+            <figure className="mt-6 overflow-hidden rounded border border-slate-200 bg-slate-50">
+              <a data-official-resource href={guide.portalScreenshot.url} target="_blank" rel="noopener noreferrer" className="block focus-visible:outline-blue-600" onClick={trackPortal} aria-label={`Open ${guide.name} official website`}><img src={guide.portalScreenshot.image} alt={guide.portalScreenshot.alt} width={guide.portalScreenshot.width} height={guide.portalScreenshot.height} loading="eager" decoding="async" className="block h-auto w-full" /></a>
+              <figcaption className="border-t border-slate-200 p-3 text-xs leading-5 text-slate-600">{guide.portalScreenshot.caption} <a data-official-resource href={guide.portalScreenshot.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline" onClick={trackPortal}>Open the live official website</a>.</figcaption>
+            </figure>
           </section>
 
           <section id="guidance-form" aria-label="DekhoCampus guidance form" className="rounded border border-blue-100 bg-[#e9f3ff] p-4 sm:p-5">
             <div className="mx-auto max-w-xl">
-              <LeadCaptureForm variant="card" title={`Get ${guide.name} updates`} subtitle="Optional DekhoCampus admission guidance." source={`ad_${slug.replaceAll("-", "_")}`} interestedExamSlug={guide.examSlug} fixedCourse={guide.course} requireLocation simple contactOnly />
+              <LeadCaptureForm variant="card" title={`Get ${guide.name} updates`} subtitle="Optional DekhoCampus admission guidance." brandLogoUrl={guide.logo} brandName={guide.issuer} brandLogoClassName={slug === "jee-advanced-2027" ? "h-12 w-12 shrink-0 rounded-full bg-[#c8102e] p-1 object-contain" : "h-12 w-24 shrink-0 rounded-lg bg-white object-contain"} source={`ad_${slug.replaceAll("-", "_")}`} interestedExamSlug={guide.examSlug} fixedCourse={guide.course} requireLocation simple contactOnly />
             </div>
           </section>
 
@@ -59,6 +59,10 @@ export default function ExamAdGuide({ slug }: { slug: keyof typeof guides }) {
               <thead className="bg-slate-100"><tr><th scope="col" className="px-3 py-2">Stage</th><th scope="col" className="px-3 py-2">Official details</th></tr></thead>
               <tbody className="divide-y divide-slate-200">{guide.dates.map(([label, value]) => <tr key={label}><th scope="row" className="px-3 py-2 font-semibold align-top">{label}</th><td className="px-3 py-2 align-top">{value}</td></tr>)}</tbody>
             </table>
+            {evidence && <figure className="mt-6 overflow-hidden rounded border border-slate-200 bg-slate-50">
+              <a data-official-resource href={evidence.url} target="_blank" rel="noopener noreferrer" className="block focus-visible:outline-blue-600"><img src={evidence.image} alt={evidence.alt} width={evidence.width} height={evidence.height} loading="lazy" decoding="async" className="mx-auto block h-auto max-h-[440px] max-w-full bg-white object-contain" /></a>
+              <figcaption className="border-t border-slate-200 p-3 text-xs leading-5 text-slate-600">{evidence.caption} <a data-official-resource href={evidence.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 underline">View the official source</a>.</figcaption>
+            </figure>}
           </section>
 
           <section id="next-steps">
