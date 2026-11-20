@@ -155,7 +155,8 @@ export function edgeSeoFor(input) {
   const url = input instanceof URL ? input : new URL(input);
   const pathname = cleanPath(url.pathname);
   const landingPath = pathname === "/ad/jee-main-2027-application" ? "/ad/jee-main-2027" : pathname;
-  const privatePath = landingPath === "/ad/jee-main-2027" || landingPath === "/ad/jee-main-2027-hi" || PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  const examAdPath = /^\/ad\/(?:jee-main|jee-advanced|srmjeee|clat|cuet|viteee)-2027$/.test(landingPath);
+  const privatePath = examAdPath || landingPath === "/ad/jee-main-2027-hi" || PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
   const publicPath = isPublicPath(pathname);
   const indexable = !privatePath && publicPath && isIndexableQuery(url, pathname) && (!pathname.startsWith("/pyq-pdfs/") || pathname === "/pyq-pdfs/past-years/year-wise/jee/jee-main");
   const fullPageAlias = pathname.match(/^\/(colleges|courses)\/([^/]+)\/[^/]+$/);

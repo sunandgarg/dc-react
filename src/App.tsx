@@ -159,6 +159,7 @@ const CourseDetail = lazyRetry(() => import("./pages/CourseDetail"), "CourseDeta
 const ExamDetail = lazyRetry(() => import("./pages/ExamDetail"), "ExamDetail");
 const ArticleDetail = lazyRetry(() => import("./pages/ArticleDetail"), "ArticleDetail");
 const JeeMainAdPage = lazyRetry(() => import("./pages/JeeMainAdPage"), "JeeMainAdPage");
+const ExamAdGuide = lazyRetry(() => import("./pages/ExamAdGuide"), "ExamAdGuide");
 const Auth = lazyRetry(() => import("./pages/Auth"), "Auth");
 const AdminDashboard = lazyRetry(() => import("./pages/AdminDashboard"), "AdminDashboard");
 const AdminAds = lazyRetry(() => import("./pages/AdminAds"), "AdminAds");
@@ -377,6 +378,11 @@ const App = () => (
               <Route path="/news" element={<News />} />
               <Route path="/news/tag/:tag" element={<News />} />
               <Route path="/news/:slug" element={<ArticleDetail />} />
+              <Route path="/ad/jee-advanced-2027" element={<ExamAdGuide key="jee-advanced-2027" slug="jee-advanced-2027" />} />
+              <Route path="/ad/srmjeee-2027" element={<ExamAdGuide key="srmjeee-2027" slug="srmjeee-2027" />} />
+              <Route path="/ad/clat-2027" element={<ExamAdGuide key="clat-2027" slug="clat-2027" />} />
+              <Route path="/ad/cuet-2027" element={<ExamAdGuide key="cuet-2027" slug="cuet-2027" />} />
+              <Route path="/ad/viteee-2027" element={<ExamAdGuide key="viteee-2027" slug="viteee-2027" />} />
               <Route path="/ad/:slug" element={<JeeMainAdPage />} />
               <Route path="/exam-calendar-2026" element={<ExamCalendar />} />
               <Route path="/exam-calendar" element={<ExamCalendar />} />

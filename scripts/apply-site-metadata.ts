@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { applyEdgeSeo, edgeSeoFor } from "../public/edge-seo.js";
 import { SITE_CONFIG, SITE_URL, absoluteSiteUrl } from "../src/lib/constant";
+import examAdGuides from "../shared/exam-ad-guides.json";
 
 const distDir = resolve("dist");
 const indexPath = resolve(distDir, "index.html");
@@ -163,3 +164,20 @@ for (const route of ["/ad/jee-main-2027", "/ad/jee-main-2027-application", "/abo
 writeRobots();
 writeLlms();
 console.log(`[site-metadata] applied for ${SITE_URL}`);
+
+const escapeHtml = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+for (const [slug, guide] of Object.entries(examAdGuides)) {
+  const route = `/ad/${slug}`;
+  const link = (label: string, url: string) => `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`;
+  const dates = guide.dates.map(([label, value]) => `<div><dt><strong>${escapeHtml(label)}</strong></dt><dd>${escapeHtml(value)}</dd></div>`).join("");
+  const steps = guide.steps.map(step => `<li>${escapeHtml(step)}</li>`).join("");
+  const resources = guide.resources.map(([label, url]) => `<li>${link(label, url)}</li>`).join("");
+  const faqs = guide.faqs.map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join("");
+  const evidence = "evidence" in guide ? guide.evidence : undefined;
+  const figure = evidence ? `<figure style="margin-inline:0"><img src="${escapeHtml(evidence.image)}" alt="${escapeHtml(evidence.alt)}" width="${evidence.width}" height="${evidence.height}" loading="lazy" style="max-width:100%;height:auto"><figcaption>${escapeHtml(evidence.caption)} ${link("View the official source", evidence.url)}.</figcaption></figure>` : "";
+  const prerenderHtml = `<main data-dc-edge-prerender style="max-width:780px;margin:32px auto;padding:0 20px;line-height:1.65"><p>DekhoCampus exam guide</p><h1>${escapeHtml(guide.title)}</h1><img src="${escapeHtml(guide.logo)}" alt="${escapeHtml(guide.issuer)} logo" width="80" height="64" style="object-fit:contain"><p>${escapeHtml(guide.description)}</p><p>${link(guide.portalLabel, guide.portal)}</p><h2>Important dates and details</h2><dl>${dates}</dl>${figure}<h2>${escapeHtml(guide.stepsTitle)}</h2><ol>${steps}</ol><h2>Official resources</h2><ul>${resources}</ul><h2>Questions</h2>${faqs}</main>`;
+  const html = applyEdgeSeo(shell, { ...edgeSeoFor(new URL(route, SITE_URL)), title: `${guide.title} | DekhoCampus`, description: guide.description, prerenderHtml });
+  const output = resolve(distDir, `.${route}.html`);
+  mkdirSync(resolve(output, ".."), { recursive: true });
+  writeFileSync(output, html);
+}

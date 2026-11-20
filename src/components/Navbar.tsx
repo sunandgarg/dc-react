@@ -13,7 +13,7 @@ const MegaMenu = lazyRetry(() => import("./MegaMenu").then(m => ({ default: m.Me
 const MobileMegaMenu = lazyRetry(() => import("./MegaMenu").then(m => ({ default: m.MobileMegaMenu })), "MobileMegaMenu");
 
 
-export function Navbar() {
+export function Navbar({ scrollAway = false }: { scrollAway?: boolean } = {}) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [desktopMenu, setDesktopMenu] = useState(() => window.matchMedia("(min-width: 1280px)").matches);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -69,7 +69,7 @@ export function Navbar() {
 
   return (
     <>
-    <header id="site-header" className={`${pathname.startsWith("/ad/jee-main-2027") ? "relative" : "sticky top-0"} isolate w-full has-[[data-menu][aria-expanded=true]]:z-[130] ${isMobileMenuOpen ? "z-[130]" : "z-[70]"}`}>
+    <header id="site-header" className={`${scrollAway || pathname.startsWith("/ad/jee-main-2027") ? "relative" : "sticky top-0"} isolate w-full has-[[data-menu][aria-expanded=true]]:z-[130] ${isMobileMenuOpen ? "z-[130]" : "z-[70]"}`}>
       <AnnouncementBar />
       <nav className="border-b border-border bg-white/[0.98]">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-3 px-4 md:px-8 xl:h-[72px]">
