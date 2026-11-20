@@ -19,6 +19,7 @@ import { normalizePage } from "@/lib/pagination";
 import { isArticlePublishedToday, LiveNewsBadge } from "@/components/LiveNewsBadge";
 import { ARTICLE_LANGUAGES, VERNACULAR_CATEGORY, articleNewsLanguage, articleNewsCategories } from "../../public/article-languages.js";
 import { useArticleCategories } from "@/hooks/useArticleCategories";
+import { initialNewsListingData } from "@/lib/initialPageData";
 
 const categoryIcons = {
   admission: GraduationCap, trending: TrendingUp, "college-reviews": Building2,
@@ -182,6 +183,7 @@ function GridSkeleton() {
 }
 
 export default function News() {
+  const initialNews = useMemo(() => initialNewsListingData<Article>(), []);
   const { data: articleCategories } = useArticleCategories();
   const categories = [
     { label: "All News", icon: Newspaper, value: "" },
@@ -263,6 +265,8 @@ export default function News() {
   // Pinned articles - separate, long-cached query. Doesn't depend on filters/page/search.
   const { data: pinnedData = [], isLoading: loadingPinned } = useQuery<Article[]>({
     queryKey: ["news-pinned", "en"],
+    initialData: initialNews?.pinned,
+    initialDataUpdatedAt: 0,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     queryFn: async () => {
@@ -290,13 +294,15 @@ export default function News() {
   // Latest list uses an exact count so numbered pages remain stable and linkable.
   const { data: latestData, isLoading, isFetching, fetchNextPage, hasNextPage, isFetchNextPageError } = useInfiniteQuery({
     queryKey: ["news-latest", { tagParam, activeCategory, selectedLanguage, debouncedSearch, page, excl: hasFilters ? [] : pinnedIds }],
+    initialData: !hasFilters && page === 1 && initialNews ? { pages: [{ page: 1, rows: initialNews.latest, total: initialNews.total }], pageParams: [1] } : undefined,
+    initialDataUpdatedAt: 0,
+    refetchOnMount: true,
     enabled: hasFilters || !loadingPinned,
     initialPageParam: page,
     getNextPageParam: (last: { rows: Article[]; page: number; total: number }) => last.rows.length > 0 && last.page * PAGE_SIZE < last.total ? last.page + 1 : undefined,
     staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    refetchOnMount: false,
     queryFn: async ({ pageParam }) => {
       let q = backendClient
         .from("articles")

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { initialPageData } from "./initialPageData";
+import { initialNewsListingData, initialPageData } from "./initialPageData";
 
 const article = { id: "a1", slug: "test-news", title: "News", is_active: true, status: "Published", site_scope: "dekhocampus" };
 function embed(row: unknown = article, table = "articles", routeSlug = "test-news") {
@@ -10,7 +10,10 @@ function embed(row: unknown = article, table = "articles", routeSlug = "test-new
   document.head.append(element);
   return element;
 }
-afterEach(() => document.getElementById("dc-initial-page-data")?.remove());
+afterEach(() => {
+  document.getElementById("dc-initial-page-data")?.remove();
+  window.history.replaceState({}, "", "/");
+});
 
 describe("public initial page data", () => {
   it("reuses only the matching detail, including numeric entity URLs", () => {
@@ -33,5 +36,16 @@ describe("public initial page data", () => {
     expect(initialPageData("articles", "test-news")).toBeUndefined();
     embed().textContent = "broken JSON";
     expect(initialPageData("articles", "test-news")).toBeUndefined();
+  });
+  it("seeds only the unfiltered news listing", () => {
+    window.history.replaceState({}, "", "/news");
+    const element = embed();
+    element.textContent = JSON.stringify({ table: "news-listing", pinned: [article], latest: [article], total: 42 });
+    expect(initialNewsListingData()).toMatchObject({ total: 42, latest: [article] });
+    window.history.replaceState({}, "", "/news?category=Admission");
+    expect(initialNewsListingData()).toBeUndefined();
+    window.history.replaceState({}, "", "/news");
+    element.textContent = JSON.stringify({ table: "news-listing", pinned: [], latest: [], total: "42" });
+    expect(initialNewsListingData()).toBeUndefined();
   });
 });

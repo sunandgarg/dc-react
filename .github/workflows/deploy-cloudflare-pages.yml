@@ -51,6 +51,12 @@ jobs:
           npm test
           npm run lint
           npm run build
+          grep -Fq 'data-dc-edge-prerender' dist/news.html
+          grep -Fq 'id="dc-initial-page-data"' dist/news.html
+          grep -Fq 'id="dc-initial-page-data"' dist/news/kalpana-chawla-scholarship-merit-list-2026-27-pdf.html
+          grep -Fq 'Kalpana Chawla' dist/news/kalpana-chawla-scholarship-merit-list-2026-27-pdf.html
+          grep -Fq 'sitemap-news-archive.xml' dist/sitemap.xml
+          grep -Fq '/news/kalpana-chawla-scholarship-merit-list-2026-27-pdf</loc>' dist/sitemap-news-archive.xml
           grep -Fq '<link rel="canonical" href="https://dekhocampus.com/questions"' dist/questions.html
           test -s dist/_worker.js
           test -s dist/_routes.json
@@ -94,11 +100,21 @@ jobs:
           curl --fail --silent --show-error --max-time 20 \
             https://dekhocampus-aws-candidate.pages.dev/sitemap.xml >/dev/null
           curl --fail --silent --show-error --max-time 20 \
+            https://dekhocampus-aws-candidate.pages.dev/sitemap-news-archive.xml \
+            -o /tmp/dekhocampus-news-archive.xml
+          grep -Fq '/news/kalpana-chawla-scholarship-merit-list-2026-27-pdf</loc>' /tmp/dekhocampus-news-archive.xml
+          curl --fail --silent --show-error --max-time 20 \
             https://dekhocampus-aws-candidate.pages.dev/about-us >/dev/null
           for path in courses/pgdm college-predictor colleges/amity-university-noida-14738/admissions; do
             curl --fail --silent --show-error --max-time 20 \
               "https://dekhocampus-aws-candidate.pages.dev/$path" -o /tmp/dekhocampus-deep-link.html
             grep -Fq '/assets/' /tmp/dekhocampus-deep-link.html
+          done
+          for path in news news/kalpana-chawla-scholarship-merit-list-2026-27-pdf; do
+            curl --fail --silent --show-error --max-time 20 \
+              "https://dekhocampus-aws-candidate.pages.dev/$path" -o /tmp/dekhocampus-news.html
+            grep -Fq 'data-dc-edge-prerender' /tmp/dekhocampus-news.html
+            grep -Fq 'id="dc-initial-page-data"' /tmp/dekhocampus-news.html
           done
           MISSING_STATUS=$(curl --silent --show-error --max-time 20 \
             --output /tmp/dekhocampus-404.html --write-out '%{http_code}' \

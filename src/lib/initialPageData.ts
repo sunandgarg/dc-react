@@ -12,3 +12,14 @@ export function initialPageData<T>(table: "articles" | "colleges" | "courses" | 
     return undefined;
   }
 }
+
+export function initialNewsListingData<T>(): { pinned: T[]; latest: T[]; total: number } | undefined {
+  if (typeof document === "undefined" || window.location.pathname !== "/news" || window.location.search) return undefined;
+  try {
+    const data = JSON.parse(document.getElementById("dc-initial-page-data")?.textContent || "null");
+    if (data?.table !== "news-listing" || !Array.isArray(data.pinned) || !Array.isArray(data.latest) || !Number.isFinite(data.total)) return undefined;
+    return { pinned: data.pinned, latest: data.latest, total: data.total };
+  } catch {
+    return undefined;
+  }
+}
