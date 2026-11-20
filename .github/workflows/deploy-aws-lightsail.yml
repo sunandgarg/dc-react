@@ -391,6 +391,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CLARITY_DATA_EXPORT_TOKEN: ${{ secrets.CLARITY_DATA_EXPORT_TOKEN }}
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}
+          MERITTO_SECRET_KEY: ${{ secrets.MERITTO_SECRET_KEY }}
+          MERITTO_ACCESS_KEY: ${{ secrets.MERITTO_ACCESS_KEY }}
         run: |
           CURRENT_RUNTIME_SECRET=$(aws secretsmanager get-secret-value \
             --secret-id "$PROJECT_NAME/lightsail/runtime" \
@@ -404,13 +406,17 @@ jobs:
             --arg openaiApiKey "$OPENAI_API_KEY" \
             --arg clarityDataExportToken "$CLARITY_DATA_EXPORT_TOKEN" \
             --arg cloudflarePagesDeployHookUrl "$CLOUDFLARE_PAGES_DEPLOY_HOOK_URL" \
+            --arg merittoSecretKey "$MERITTO_SECRET_KEY" \
+            --arg merittoAccessKey "$MERITTO_ACCESS_KEY" \
             '$current
               + (if $authJwtSecret != "" then {authJwtSecret:$authJwtSecret} else {} end)
               + (if $smsFast2smsApiKey != "" then {smsFast2smsApiKey:$smsFast2smsApiKey} else {} end)
               + (if $geminiApiKey != "" then {geminiApiKey:$geminiApiKey} else {} end)
               + (if $openaiApiKey != "" then {openaiApiKey:$openaiApiKey} else {} end)
               + (if $clarityDataExportToken != "" then {clarityDataExportToken:$clarityDataExportToken} else {} end)
-              + (if $cloudflarePagesDeployHookUrl != "" then {cloudflarePagesDeployHookUrl:$cloudflarePagesDeployHookUrl} else {} end)' \
+              + (if $cloudflarePagesDeployHookUrl != "" then {cloudflarePagesDeployHookUrl:$cloudflarePagesDeployHookUrl} else {} end)
+              + (if $merittoSecretKey != "" then {merittoSecretKey:$merittoSecretKey} else {} end)
+              + (if $merittoAccessKey != "" then {merittoAccessKey:$merittoAccessKey} else {} end)' \
             > /tmp/runtime-secret.json
           jq -e '.authJwtSecret | type == "string" and length >= 32' /tmp/runtime-secret.json >/dev/null
           aws secretsmanager put-secret-value \
@@ -632,6 +638,9 @@ jobs:
           OPENAI_API_KEY=$(jq -r .openaiApiKey <<<"$RUNTIME_SECRET")
           CLARITY_DATA_EXPORT_TOKEN=$(jq -r .clarityDataExportToken <<<"$RUNTIME_SECRET")
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r .cloudflarePagesDeployHookUrl <<<"$RUNTIME_SECRET")
+          MERITTO_SECRET_KEY=$(jq -r '.merittoSecretKey // empty' <<<"$RUNTIME_SECRET")
+          MERITTO_ACCESS_KEY=$(jq -r '.merittoAccessKey // empty' <<<"$RUNTIME_SECRET")
+          MERITTO_SYNC_ENABLED=$(if [[ -n "$MERITTO_SECRET_KEY" && -n "$MERITTO_ACCESS_KEY" ]]; then echo true; else echo false; fi)
           CORS_ORIGIN=https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com,https://sarkari-dekhocampus.pages.dev,https://sarkari.dekhocampus.com
           STORAGE_MAX_UPLOAD_BYTES=20971520
           REQUEST_LOG=yes

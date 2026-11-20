@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "./db.mjs";
 import { dispatchLead } from "./lead-automation.mjs";
+import { syncMerittoLead } from "./meritto-sync.mjs";
 
 const positiveNumber = (value, fallback, minimum) => {
   const parsed = Number(value);
@@ -101,7 +102,7 @@ export async function processLeadOutboxOnce() {
   const [job] = await claimJobs(1);
   if (!job) return false;
   try {
-    await dispatchLead(job.lead_id);
+    await deliverLead(job.lead_id);
     await finishJob(job);
   } catch (cause) {
     await retryJob(job, cause);
@@ -114,13 +115,19 @@ export async function processLeadOutboxBatch() {
   if (!jobs.length) return 0;
   await Promise.all(jobs.map(async (job) => {
     try {
-      await dispatchLead(job.lead_id);
+      await deliverLead(job.lead_id);
       await finishJob(job);
     } catch (cause) {
       await retryJob(job, cause);
     }
   }));
   return jobs.length;
+}
+
+async function deliverLead(leadId) {
+  const results = await Promise.allSettled([dispatchLead(leadId), syncMerittoLead(leadId)]);
+  const failed = results.filter((result) => result.status === "rejected");
+  if (failed.length) throw new Error(failed.map((result) => String(result.reason?.message || result.reason)).join("; "));
 }
 
 async function poll() {
