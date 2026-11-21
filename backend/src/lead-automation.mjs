@@ -59,7 +59,7 @@ export function isLeadReadyForAutomation(lead) {
 }
 
 export function isLeadAutomationAllowed(lead) {
-  return (lead?.site_scope || "dekhocampus") === "dekhocampus";
+  return (lead?.site_scope || "dekhocampus") === "dekhocampus" && lead?.consent_terms_accepted === true;
 }
 
 function leadData(lead) {

@@ -22,10 +22,11 @@ test("accepts a complete routing lead when its course is stored in the course sl
   assert.equal(isLeadReadyForAutomation({ city: "New Delhi", state: "Delhi" }), false);
 });
 
-test("keeps Sarkari leads out of DekhoCampus partner automation", () => {
-  assert.equal(isLeadAutomationAllowed({ site_scope: "dekhocampus" }), true);
-  assert.equal(isLeadAutomationAllowed({}), true);
-  assert.equal(isLeadAutomationAllowed({ site_scope: "sarkari" }), false);
+test("routes only consented DekhoCampus leads to partners", () => {
+  assert.equal(isLeadAutomationAllowed({ site_scope: "dekhocampus", consent_terms_accepted: true }), true);
+  assert.equal(isLeadAutomationAllowed({ consent_terms_accepted: true }), true);
+  assert.equal(isLeadAutomationAllowed({ site_scope: "dekhocampus", consent_terms_accepted: false }), false);
+  assert.equal(isLeadAutomationAllowed({ site_scope: "sarkari", consent_terms_accepted: true }), false);
 });
 
 test("runs every matching automation and sends a university only once", () => {

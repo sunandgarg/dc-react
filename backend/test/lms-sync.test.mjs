@@ -11,6 +11,7 @@ const lead = {
   interested_course_slug: "btech", interested_exam_slug: "jee-main", otp_verified: true,
   page_url: "https://dekhocampus.com/ad/jee-main-2027?utm_medium=cpc",
   created_at: new Date("2026-11-21T04:50:00.000Z"),
+  updated_at: new Date("2026-11-21T04:50:00.000Z"),
 };
 
 test("LMS payload keeps a stable submission ID and attribution", () => {
@@ -25,7 +26,7 @@ test("LMS payload keeps a stable submission ID and attribution", () => {
   assert.equal(buildLmsPayload({ ...lead, page_url: "https://other.example/page" }).landing_page, undefined);
 });
 
-test("LMS sync sends a consented lead with the same idempotency key on retries", async (t) => {
+test("LMS sync retries one revision and sends later updates with a new idempotency key", async (t) => {
   const previousEnabled = process.env.LMS_SYNC_ENABLED;
   const previousKey = process.env.LMS_GENERIC_LEAD_API_KEY;
   process.env.LMS_SYNC_ENABLED = "true";
@@ -35,17 +36,23 @@ test("LMS sync sends a consented lead with the same idempotency key on retries",
     if (previousKey === undefined) delete process.env.LMS_GENERIC_LEAD_API_KEY; else process.env.LMS_GENERIC_LEAD_API_KEY = previousKey;
   });
   const originalFindUnique = prisma.leads.findUnique;
-  prisma.leads.findUnique = async () => lead;
+  let currentLead = lead;
+  prisma.leads.findUnique = async () => currentLead;
   t.after(() => { prisma.leads.findUnique = originalFindUnique; });
   const request = t.mock.method(globalThis, "fetch", async (url, options) => {
     assert.equal(url, "https://lms.dekhocampus.com/api/inbound/generic-lead");
     assert.equal(options.headers.Authorization, "Bearer test-key");
-    assert.equal(options.headers["Idempotency-Key"], lead.id);
+    assert.equal(options.headers["Idempotency-Key"], `${lead.id}:${currentLead.updated_at.getTime()}`);
     assert.equal(JSON.parse(options.body).external_id, lead.id);
     return Response.json({ lead_id: "lms-id" }, { status: 202 });
   });
   assert.deepEqual(await syncLmsLead(lead.id), { synced: true });
-  assert.equal(request.mock.callCount(), 1);
+  assert.deepEqual(await syncLmsLead(lead.id), { synced: true });
+  currentLead = { ...lead, updated_at: new Date("2026-11-21T04:51:00.000Z"), state: "Delhi", city: "New Delhi" };
+  assert.deepEqual(await syncLmsLead(lead.id), { synced: true });
+  assert.equal(request.mock.callCount(), 3);
+  assert.equal(request.mock.calls[0].arguments[1].headers["Idempotency-Key"], request.mock.calls[1].arguments[1].headers["Idempotency-Key"]);
+  assert.notEqual(request.mock.calls[1].arguments[1].headers["Idempotency-Key"], request.mock.calls[2].arguments[1].headers["Idempotency-Key"]);
 });
 
 test("LMS sync omits unconsented leads and keeps API errors free of the key", async (t) => {

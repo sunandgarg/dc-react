@@ -677,11 +677,11 @@ async function saveLead(request) {
       consent_at: consentAt,
       },
     });
-    if (phase === "complete" && siteScope === "dekhocampus") await enqueueLeadAutomation(tx, created.id);
+    if (siteScope === "dekhocampus") await enqueueLeadAutomation(tx, created.id);
     return created;
   });
   setImmediate(() => void linkSavedLeadIntent(input, lead.id, siteScope));
-  if (phase === "complete" && siteScope === "dekhocampus") wakeLeadOutboxWorker();
+  if (siteScope === "dekhocampus") wakeLeadOutboxWorker();
   return { success: true, lead_id: lead.id, phase, existing_count: existingCount, site_scope: siteScope };
 }
 

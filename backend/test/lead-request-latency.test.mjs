@@ -13,26 +13,58 @@ function stubDelegate(t, delegate, method, implementation) {
 
 test("identity acknowledgement does not wait for intent enrichment", async (t) => {
   stubDelegate(t, prisma.leads, "count", async () => 0);
+  let enqueued = false;
   let committed = false;
   stubDelegate(t, prisma, "$transaction", async fn => {
-    const result = await fn({ leads: { create: async () => ({ id: "saved-id" }) } });
+    const result = await fn({
+      leads: { create: async () => ({ id: "saved-id" }) },
+      $executeRawUnsafe: async (_query, _id, leadId) => { enqueued = leadId === "saved-id"; },
+    });
     committed = true;
     return result;
   });
+  stubDelegate(t, prisma, "$executeRawUnsafe", async () => 1);
   let release;
-  stubDelegate(t, prisma, "$queryRawUnsafe", () => new Promise(resolve => { release = resolve; }));
+  stubDelegate(t, prisma, "$queryRawUnsafe", query => query.includes("FROM `leads`")
+    ? new Promise(resolve => { release = resolve; })
+    : Promise.resolve([]));
   const response = await handleRequest(new Request("https://example.com/v1/functions/save-lead", {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ name: "Test", email: "test@example.com", phone: "9876543210", phase: "identity", intent_visitor_id: "2c7c94ce-7ee9-42f7-b32d-790b8d7b183a" }),
   }));
   assert.equal(committed, true);
+  assert.equal(enqueued, true);
   assert.equal(response.status, 200);
   assert.equal((await response.json()).lead_id, "saved-id");
   await new Promise(setImmediate);
   assert.equal(typeof release, "function");
+  release([{ id: "saved-id", name: "Test", email: "test@example.com", phone: "9876543210" }]);
+  await new Promise(resolve => setTimeout(resolve, 20));
+});
+
+test("the second step updates and requeues the original lead", async (t) => {
+  let changed;
+  let queuedId;
+  stubDelegate(t, prisma, "$transaction", fn => fn({
+    leads: { updateMany: async ({ where, data }) => {
+      changed = { where, data };
+      return { count: 1 };
+    } },
+    $executeRawUnsafe: async (_query, _id, leadId) => { queuedId = leadId; },
+  }));
   stubDelegate(t, prisma, "$executeRawUnsafe", async () => 1);
-  release([{ id: "saved-id" }]);
-  await new Promise(setImmediate);
+  stubDelegate(t, prisma, "$queryRawUnsafe", async () => []);
+  const response = await handleRequest(new Request("https://example.com/v1/functions/save-lead", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ lead_id: "saved-id", name: "Test", email: "test@example.com", phone: "9876543210", phase: "complete", state: "Delhi", city: "New Delhi" }),
+  }));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).lead_id, "saved-id");
+  assert.deepEqual(changed.where, { id: "saved-id", phone: "9876543210", site_scope: "dekhocampus" });
+  assert.equal(changed.data.state, "Delhi");
+  assert.equal(changed.data.city, "New Delhi");
+  assert.equal(queuedId, "saved-id");
+  await new Promise(resolve => setTimeout(resolve, 20));
 });
 
 test("OTP is persisted before SMS and provider requests have an eight-second deadline", async (t) => {

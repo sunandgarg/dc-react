@@ -57,7 +57,7 @@ export async function enqueueLeadAutomation(db, leadId) {
      ON DUPLICATE KEY UPDATE
        \`status\`=IF(\`status\`='processing','processing','pending'),
        \`attempts\`=IF(\`status\`='processing',\`attempts\`,0),
-       \`available_at\`=IF(\`status\`='processing',\`available_at\`,NOW(3)),
+       \`available_at\`=IF(\`status\`='processing',DATE_ADD(NOW(3), INTERVAL 1 MILLISECOND),NOW(3)),
        \`completed_at\`=IF(\`status\`='processing',\`completed_at\`,NULL),
        \`last_error\`=IF(\`status\`='processing',\`last_error\`,NULL),
        \`updated_at\`=NOW(3)`,
@@ -84,7 +84,7 @@ async function claimJobs(limit = CONCURRENCY) {
 
 async function finishJob(job) {
   await prisma.$executeRawUnsafe(
-    "UPDATE `lead_automation_outbox` SET `status`='completed',`completed_at`=NOW(3),`worker_id`=NULL,`locked_at`=NULL,`last_error`=NULL WHERE `id`=? AND `worker_id`=?",
+    "UPDATE `lead_automation_outbox` SET `status`=IF(`available_at`>`locked_at`,'pending','completed'),`completed_at`=IF(`available_at`>`locked_at`,NULL,NOW(3)),`attempts`=IF(`available_at`>`locked_at`,0,`attempts`),`worker_id`=NULL,`locked_at`=NULL,`last_error`=NULL WHERE `id`=? AND `worker_id`=?",
     job.id, job.worker_id,
   );
 }

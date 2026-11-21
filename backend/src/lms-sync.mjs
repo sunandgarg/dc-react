@@ -45,7 +45,7 @@ export async function syncLmsLead(leadId) {
 
   const response = await fetch(ENDPOINT, {
     method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Idempotency-Key": lead.id },
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Idempotency-Key": `${lead.id}:${lead.updated_at?.getTime() ?? lead.created_at?.getTime()}` },
     body: JSON.stringify(buildLmsPayload(lead)),
     signal: AbortSignal.timeout(10_000),
   });
