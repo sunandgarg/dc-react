@@ -57,7 +57,7 @@ export async function enqueueLeadAutomation(db, leadId) {
      ON DUPLICATE KEY UPDATE
        \`status\`=IF(\`status\`='processing','processing','pending'),
        \`attempts\`=IF(\`status\`='processing',\`attempts\`,0),
-       \`available_at\`=IF(\`status\`='processing',DATE_ADD(NOW(3), INTERVAL 1 MILLISECOND),NOW(3)),
+       \`available_at\`=IF(\`status\`='processing',DATE_ADD(NOW(3), INTERVAL 1000 MICROSECOND),NOW(3)),
        \`completed_at\`=IF(\`status\`='processing',\`completed_at\`,NULL),
        \`last_error\`=IF(\`status\`='processing',\`last_error\`,NULL),
        \`updated_at\`=NOW(3)`,
