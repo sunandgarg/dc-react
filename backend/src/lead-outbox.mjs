@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "./db.mjs";
 import { dispatchLead } from "./lead-automation.mjs";
 import { syncMerittoLead } from "./meritto-sync.mjs";
+import { syncLmsLead } from "./lms-sync.mjs";
 
 const positiveNumber = (value, fallback, minimum) => {
   const parsed = Number(value);
@@ -125,7 +126,7 @@ export async function processLeadOutboxBatch() {
 }
 
 async function deliverLead(leadId) {
-  const results = await Promise.allSettled([dispatchLead(leadId), syncMerittoLead(leadId)]);
+  const results = await Promise.allSettled([dispatchLead(leadId), syncMerittoLead(leadId), syncLmsLead(leadId)]);
   const failed = results.filter((result) => result.status === "rejected");
   if (failed.length) throw new Error(failed.map((result) => String(result.reason?.message || result.reason)).join("; "));
 }

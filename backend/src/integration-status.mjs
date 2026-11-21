@@ -21,6 +21,7 @@ export async function integrationStatus() {
       sms: configured(process.env.SMS_WEBHOOK_URL) || configured(process.env.SMS_FAST2SMS_API_KEY),
       ses_email: String(process.env.SES_ENABLED || "").toLowerCase() === "true" && configured(process.env.SES_FROM_EMAIL),
       meritto_leads: process.env.MERITTO_SYNC_ENABLED === "true" && configured(process.env.MERITTO_SECRET_KEY) && configured(process.env.MERITTO_ACCESS_KEY),
+      lms_leads: process.env.LMS_SYNC_ENABLED === "true" && configured(process.env.LMS_GENERIC_LEAD_API_KEY),
     },
     site: siteRows.map((row) => ({ key: row.key, label: row.label, category: row.category, configured: configured(row.value), enabled: Boolean(row.enabled) })),
     ai: aiRows.map((row) => {
