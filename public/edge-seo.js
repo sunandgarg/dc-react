@@ -8,6 +8,7 @@ const PRIVATE_PREFIXES = [
 ];
 
 const PUBLIC_ROOTS = [
+  "/apply",
   "/colleges", "/courses", "/exams", "/questions", "/pyq-pdfs", "/premium-programs", "/news", "/careers",
   "/jobs", "/vacancies", "/scholarships", "/study-material", "/college-study-material",
   "/resources", "/tools", "/cat-universe", "/compare", "/eligibility-checker",
@@ -23,6 +24,10 @@ const LISTING_QUERY_KEYS = {
 };
 
 const STATIC_METADATA = new Map([
+  ["/apply", {
+    title: "Find Universities by State in India | Official Links | DekhoCampus",
+    description: "Choose a state on the India map to explore selected universities and open their official websites. Check the university's admission notice before applying.",
+  }],
   ["/questions", {
     title: "Previous Year Question Papers by Exam | DekhoCampus",
     description: "Find previous year question papers by exam. Browse the JEE Main PDF collection and explore exam resources for engineering, medical, government and board exams.",

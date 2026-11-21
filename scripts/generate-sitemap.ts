@@ -377,6 +377,7 @@ function decodeXml(value: string) {
 }
 
 const PUBLIC_ROUTE_ROOTS = [
+  "/apply",
   "/colleges", "/courses", "/exams", "/premium-programs", "/news", "/careers", "/jobs", "/vacancies",
   "/scholarships", "/study-material", "/college-study-material", "/resources", "/tools", "/cat-universe",
   "/compare", "/eligibility-checker", "/college-predictor", "/exam-calendar", "/exam-calendar-2026",

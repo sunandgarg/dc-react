@@ -90,7 +90,7 @@ export function GlobalInternalAds({ area }: { area: "top" | "bottom" }) {
     setTopAnchor(document.getElementById("global-internal-ad-top-anchor"));
   }, [area, pathname]);
 
-  if (!context.isPublic) return null;
+  if (!context.isPublic || pathname === "/apply") return null;
   const selectedState = new URLSearchParams(search).get("state") || undefined;
   const selectedCity = new URLSearchParams(search).get("city") || undefined;
 

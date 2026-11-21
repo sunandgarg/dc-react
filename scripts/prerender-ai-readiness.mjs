@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import auditPaths from "./ai-readiness-audit-paths.json" with { type: "json" };
+import applyUniversities from "../src/data/applyUniversities.json" with { type: "json" };
 import { applyEdgeSeo, articleEdgeSeo, edgeSeoFor, entityEdgeSeo, newsListingEdgeSeo } from "../public/edge-seo.js";
 
 if (process.env.CF_PAGES === "1") {
@@ -106,7 +107,9 @@ if (process.env.CF_PAGES === "1") {
     const url = new URL(path, "https://dekhocampus.com");
     const metadata = edgeSeoFor(url);
     const section = path.split("/")[1] || "";
-    metadata.prerenderHtml = `<main data-dc-edge-prerender style="max-width:900px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6"><h1>${escape(metadata.title.split(" | ")[0])}</h1><p>${escape(metadata.description)}</p><p><a href="/${escape(section)}">Explore ${escape(section.replace(/-/g, " "))}</a></p></main>`;
+    metadata.prerenderHtml = path === "/apply"
+      ? `<main data-dc-edge-prerender style="max-width:900px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6"><h1>Find universities by state in India</h1><p>Choose a state on the interactive map to browse selected universities and open their official websites. This is an editorial starting list, not a ranking or a complete register. Check the latest admission notice on each university website before applying.</p>${Object.entries(applyUniversities).map(([state, universities]) => `<section><h2>${escape(state)}</h2>${universities.length ? `<ul>${universities.map((university) => `<li><a href="${escape(university.url)}">${escape(university.name)}</a> · ${escape(university.city)}</li>`).join("")}</ul>` : `<p>Check the <a href="https://www.ugc.gov.in/universitydetails/">UGC university directory</a> for the latest recognised institutions.</p>`}</section>`).join("")}<p><a href="https://www.ugc.gov.in/universitydetails/">Full UGC university directory</a></p></main>`
+      : `<main data-dc-edge-prerender style="max-width:900px;margin:32px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6"><h1>${escape(metadata.title.split(" | ")[0])}</h1><p>${escape(metadata.description)}</p><p><a href="/${escape(section)}">Explore ${escape(section.replace(/-/g, " "))}</a></p></main>`;
     render(path, metadata);
     rendered.add(path);
   }

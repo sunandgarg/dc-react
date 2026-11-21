@@ -13,6 +13,7 @@ export const SITEMAP_CHUNK_SIZE = 3_000;
 
 export const STATIC_SITEMAP_ROUTES: SitemapRoute[] = [
   { path: "/", changefreq: "daily", priority: "1.0" },
+  { path: "/apply", changefreq: "monthly", priority: "0.8" },
   { path: "/colleges", changefreq: "daily", priority: "0.9" },
   { path: "/courses", changefreq: "daily", priority: "0.9" },
   { path: "/exams", changefreq: "daily", priority: "0.9" },
