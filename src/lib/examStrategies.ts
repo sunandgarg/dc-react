@@ -20,15 +20,15 @@ export const EXAM_STRATEGIES: ExamStrategy[] = [
   {
     key: "sample-paper", slug: "sample-paper",
     label: "Sample Paper", focusSection: "preparation",
-    h1: (n, y) => `${n} Sample Paper ${y} - Free PDF Download`,
-    intro: (n, y) => `Download the latest ${n} ${y} sample papers, model question papers and previous year solutions in PDF - curated by toppers and updated for the ${y} exam pattern.`,
-    metaTitle: (n, y) => `${n} Sample Paper ${y} PDF Download - Model Papers & Solutions`,
-    metaDescription: (n, y) => `Free ${n} ${y} sample paper PDFs with solutions. Latest pattern, topic-wise practice sets, mock tests and toppers' answer keys.`,
+    h1: (n, y) => `${n} Sample and Previous Year Papers ${y}`,
+    intro: (n, y) => `Check whether a ${n} paper is listed below. Compare any older paper with the exam authority's current ${y} pattern before practising.`,
+    metaTitle: (n, y) => `${n} Sample and Previous Year Papers ${y}`,
+    metaDescription: (n, y) => `Check for ${n} sample and previous year papers, and compare older PDFs with the current exam pattern before practising.`,
     bullets: (n) => [
-      `Latest ${n} pattern-based sample papers`,
-      `Subject-wise & full-length mock papers`,
-      `Detailed solutions and marking scheme`,
-      `Toppers' answer sheets for reference`,
+      `Check which ${n} PDFs are listed`,
+      `Compare older papers with the current pattern`,
+      `Practise the sections that need more time`,
+      `Confirm dates and rules on the official website`,
     ],
   },
   {

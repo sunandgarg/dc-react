@@ -85,7 +85,7 @@ export default function ExamDetail() {
       navigate(`${desired}${location.search}${location.hash}`, { replace: true });
     }
   }, [exam, strategy, detailTab, location.pathname, location.search, location.hash, navigate]);
-  const year = new Date().getFullYear();
+  const year = Number(String(exam?.meta_title || exam?.full_name || "").match(/\b20\d{2}\b/)?.[0]) || new Date().getFullYear();
 
   const [gateOpen, setGateOpen] = useState(false);
   const [gateFile, setGateFile] = useState<{ url: string; name: string; source: string } | null>(null);
@@ -182,6 +182,9 @@ export default function ExamDetail() {
   const syllabusHasHtml = syllabusItems.some((item) => HTML_FRAGMENT_RE.test(item));
   const syllabusRichHtml = syllabusHasHtml ? syllabusItems.join(" ") : "";
   const syllabusBadges = syllabusHasHtml ? [] : syllabusItems;
+  const samplePaperUrl = exam.sample_paper_url && exam.sample_paper_url !== "#" ? exam.sample_paper_url : "";
+  const questionPapers = Array.isArray(exam.question_papers)
+    ? exam.question_papers.filter((paper) => paper?.label && paper?.url && paper.url !== "#") : [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -245,14 +248,16 @@ export default function ExamDetail() {
             <div className="mb-3"><AuthorByline authorId={(exam as any).author_id} /></div>
             <div className="flex items-center gap-2 flex-wrap">
               <Button size="sm" className="h-10 rounded-xl bg-primary px-4 text-xs font-bold text-primary-foreground hover:bg-primary/90" onClick={openApplyGate}>
-                <ExternalLink className="w-3.5 h-3.5" />Apply Now
+                <ExternalLink className="w-3.5 h-3.5" />Application Portal
               </Button>
-              <Button
-                size="sm" variant="outline" className={HERO_SECONDARY_ACTION_CLASS}
-                onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Sample Papers", exam_slug: exam.slug }); } catch {}; openGate(exam.sample_paper_url || "#", `${exam.name}-sample-paper.pdf`, `exam_sample_${exam.slug}`); }}
-              >
-                <Download className="w-3.5 h-3.5" />Sample Papers
-              </Button>
+              {(samplePaperUrl || questionPapers.length > 0) && (
+                <Button
+                  size="sm" variant="outline" className={HERO_SECONDARY_ACTION_CLASS}
+                  onClick={() => document.getElementById("previous-papers")?.scrollIntoView({ behavior: "smooth" })}
+                >
+                  <Download className="w-3.5 h-3.5" />Available Papers
+                </Button>
+              )}
               {exam.website && exam.website !== "#" && (
                 <a href={exam.website} target="_blank" rel="noopener noreferrer" onClick={() => { try { trackEvent("cta_click", { page: "exam", cta: "Official Website", exam_slug: exam.slug }); } catch {} }}>
                   <Button size="sm" variant="outline" className={HERO_SECONDARY_ACTION_CLASS}><Globe className="w-3.5 h-3.5" />Official Website</Button>
@@ -281,7 +286,7 @@ export default function ExamDetail() {
           <ExamDecisionRail
             exam={exam}
             onDownloadSample={() =>
-              openGate(exam.sample_paper_url || "#", `${exam.name}-sample-paper.pdf`, `exam_rail_sample_${exam.slug}`)
+              openGate(samplePaperUrl, `${exam.name}-sample-paper.pdf`, `exam_rail_sample_${exam.slug}`)
             }
           />
         </div>
@@ -304,46 +309,40 @@ export default function ExamDetail() {
               ))}
             </div>
 
-            {/* Previous Year Papers - highlighted, gated download */}
-            <section id="previous-papers" className="relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-background to-accent/10 p-5 scroll-mt-32">
+            {/* Show only papers that have an uploaded file. */}
+            {(samplePaperUrl || questionPapers.length > 0) && <section id="previous-papers" className="relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-background to-accent/10 p-5 scroll-mt-32">
               <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-primary/20 blur-2xl pointer-events-none" />
               <div className="flex items-start justify-between gap-3 flex-wrap mb-3 relative">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10.5px] font-bold uppercase tracking-wide mb-1.5">
-                    <FileDown className="w-3 h-3" /> Free PDF
-                  </div>
-                  <h2 data-h className="text-lg md:text-xl font-bold text-foreground">Previous Year Question Papers</h2>
-                  <p className="text-xs md:text-sm text-muted-foreground mt-1">Download {exam.name} PYQ PDFs (last 5 years) with detailed solutions. 100% free.</p>
+                  <h2 data-h className="text-lg md:text-xl font-bold text-foreground">Available Question Papers</h2>
+                  <p className="text-xs md:text-sm text-muted-foreground mt-1">Choose an uploaded {exam.name} paper below. Check the current official pattern before you practise.</p>
                 </div>
-                {exam.sample_paper_url && exam.sample_paper_url !== "#" && (
+                {samplePaperUrl && (
                   <Button size="sm" className="rounded-xl text-xs gap-1 shrink-0"
-                    onClick={() => openGate(exam.sample_paper_url, `${exam.name}-sample-paper.pdf`, `exam_pyp_hero_${exam.slug}`)}>
+                    onClick={() => openGate(samplePaperUrl, `${exam.name}-sample-paper.pdf`, `exam_pyp_hero_${exam.slug}`)}>
                     <Download className="w-3.5 h-3.5" /> Download Sample Paper
                   </Button>
                 )}
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 relative">
-                {[year - 1, year - 2, year - 3, year - 4, year - 5].map((y) => {
-                  const url = exam.sample_paper_url || "#";
-                  return (
+                {questionPapers.map((paper, index) => (
                     <button
-                      key={y}
+                      key={`${paper.url}-${index}`}
                       type="button"
-                      onClick={() => openGate(url, `${exam.name}-${y}-question-paper.pdf`, `exam_pyp_${y}_${exam.slug}`)}
+                      onClick={() => openGate(paper.url, `${exam.name}-${paper.label}.pdf`, `exam_pyp_${index}_${exam.slug}`)}
                       className="flex items-center gap-2 p-2.5 bg-card hover:bg-primary/5 rounded-xl border border-border hover:border-primary/40 transition-colors text-left group"
                     >
                       <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                         <FileDown className="w-4 h-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-foreground truncate">{exam.name} {y} Question Paper</p>
+                        <p className="text-xs font-semibold text-foreground truncate">{paper.label}</p>
                         <p className="text-[10px] text-muted-foreground">PDF download</p>
                       </div>
                     </button>
-                  );
-                })}
+                ))}
               </div>
-            </section>
+            </section>}
 
             {/* Overview */}
             <RichSection id="overview" title={<>About</>} defaultOpen>
@@ -429,7 +428,7 @@ export default function ExamDetail() {
                 </div>
               )}
               <div className="mt-3">
-                <Button className="rounded-xl gap-1" onClick={openApplyGate}><ExternalLink className="w-4 h-4" />Apply Now{exam.registration_url && exam.registration_url !== "#" ? " on Official Website" : ""}</Button>
+                <Button className="rounded-xl gap-1" onClick={openApplyGate}><ExternalLink className="w-4 h-4" />{exam.registration_url && exam.registration_url !== "#" ? "View Application Portal" : "Ask About Applications"}</Button>
               </div>
             </RichSection>
 
@@ -625,46 +624,26 @@ export default function ExamDetail() {
               <ExamDecisionRail
                 exam={exam}
                 onDownloadSample={() =>
-                  openGate(exam.sample_paper_url || "#", `${exam.name}-sample-paper.pdf`, `exam_rail_sample_${exam.slug}`)
+                  openGate(samplePaperUrl, `${exam.name}-sample-paper.pdf`, `exam_rail_sample_${exam.slug}`)
                 }
               />
 
-              {/* Upcoming Exams */}
-              <div className="bg-card rounded-2xl border border-border p-4">
-                <h3 data-h className="text-sm font-bold text-foreground mb-3">📅 Upcoming Exams</h3>
-                <div className="space-y-2">
-                  {[`JEE Main ${new Date().getFullYear()}`, `NEET UG ${new Date().getFullYear()}`, `CAT ${new Date().getFullYear()}`, `GATE ${new Date().getFullYear()}`, `CLAT ${new Date().getFullYear()}`].map((e) => (
-                    <Link key={e} to={`/exams/${e.toLowerCase().replace(/\s+/g, "-")}`} className="block text-xs text-primary hover:underline py-1 border-b border-border last:border-0">{e}</Link>
-                  ))}
-                </div>
-              </div>
-
               {/* Previous Year Papers (sidebar mirror) */}
-              {exam.sample_paper_url && (
+              {questionPapers.length > 0 && (
                 <div className="bg-card rounded-2xl border border-border p-4">
                   <h3 data-h className="text-sm font-bold text-foreground mb-3">📄 Previous Year Papers</h3>
                   <div className="space-y-2">
-                    {[year - 1, year - 2, year - 3].map((y) => (
-                      <button key={y} type="button"
-                        onClick={() => openGate(exam.sample_paper_url, `${exam.name}-${y}-paper.pdf`, `exam_pyp_side_${y}_${exam.slug}`)}
+                    {questionPapers.slice(0, 3).map((paper, index) => (
+                      <button key={`${paper.url}-${index}`} type="button"
+                        onClick={() => openGate(paper.url, `${exam.name}-${paper.label}.pdf`, `exam_pyp_side_${index}_${exam.slug}`)}
                         className="flex items-center justify-between w-full py-1.5 border-b border-border last:border-0 hover:text-primary text-left">
-                        <span className="text-xs text-foreground">{exam.name} {y} Paper</span>
+                        <span className="text-xs text-foreground">{paper.label}</span>
                         <Download className="w-3.5 h-3.5 text-primary" />
                       </button>
                     ))}
                   </div>
                 </div>
               )}
-
-              {/* News & Updates */}
-              <div className="bg-card rounded-2xl border border-border p-4">
-                <h3 data-h className="text-sm font-bold text-foreground mb-3">📰 News & Updates</h3>
-                <div className="space-y-2">
-                  {[`${exam.name} ${new Date().getFullYear()} registration opens`, `${exam.name} syllabus updated`, `${exam.name} mock tests available`].map((n) => (
-                    <p key={n} className="text-xs text-muted-foreground py-1 border-b border-border last:border-0">{n}</p>
-                  ))}
-                </div>
-              </div>
 
               <PartnerCollegeStrip title="Partner Colleges" limit={5} compact />
 
@@ -673,7 +652,7 @@ export default function ExamDetail() {
         </div>
 
         <div className="mt-10">
-          <LeadCaptureForm variant="banner" title={`📝 Preparing for ${exam.name}? Get expert strategy for free!`} subtitle="Our mentors have helped thousands score top ranks" source={`exam_detail_bottom_${exam.slug}`} interestedExamSlug={exam.slug} brandLogoUrl={resolveExamLogo(exam)} brandName={exam.name} />
+          <LeadCaptureForm variant="banner" title={`Preparing for ${exam.name}? Ask for guidance`} subtitle="Get help comparing the exam requirements and your next steps." source={`exam_detail_bottom_${exam.slug}`} interestedExamSlug={exam.slug} brandLogoUrl={resolveExamLogo(exam)} brandName={exam.name} />
         </div>
       </main>
 
