@@ -31,11 +31,13 @@ describe("university map", () => {
     expect(screen.getByRole("heading", { name: /Only top universities of India, all in one place for you/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Explore universities in Haryana" })).toHaveAttribute("fill", "#e78046");
     expect(screen.getByRole("button", { name: "Explore universities in Andhra Pradesh" })).not.toHaveAttribute("fill", "#e78046");
-    expect(document.querySelectorAll('img[src^="/university-logos/"]')).toHaveLength(10);
+    expect(screen.getByRole("region", { name: "Handpicked universities, swipe to see more" }).querySelectorAll("img")).toHaveLength(10);
 
     const rail = screen.getByRole("region", { name: "Delhi NCR university lists, scroll horizontally" });
     expect(rail.children).toHaveLength(3);
     expect([...rail.children].map((column) => column.querySelectorAll("a").length)).toEqual([6, 6, 6]);
+    expect(within(rail).getAllByRole("link").every((link) => link.querySelector("img"))).toBe(true);
+    expect(screen.getByRole("link", { name: /University of Delhi, official website/ }).querySelector("img")).toHaveAttribute("src", "/university-logos/directory/delhi-emblem.webp");
     fireEvent.click(screen.getByRole("button", { name: "Sonipat" }));
     expect(within(rail).getAllByRole("link")).toHaveLength(2);
     expect(within(rail).getByRole("link", { name: /Ashoka University, Sonipat/ })).toBeInTheDocument();

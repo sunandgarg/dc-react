@@ -5,12 +5,20 @@ import { SEO } from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { INDIA_STATE_PATHS, INDIA_VIEWBOX } from "@/data/indiaStatePaths";
 import { DELHI_NCR_UNIVERSITIES, SPOTLIGHT_UNIVERSITIES, UNIVERSITIES_BY_STATE } from "@/data/applyUniversities";
+import universityLogos from "@/data/applyUniversityLogos.json";
 import styles from "./Apply.module.css";
 
 const stateNames: string[] = INDIA_STATE_PATHS.map((state) => state.name).sort((a, b) => a.localeCompare(b));
 const mapColours = ["#dce6f7", "#afc4e9", "#7da1d9", "#3f73bf", "#285bad", "#c6d6f0"];
 const highlightedStates = new Set(SPOTLIGHT_UNIVERSITIES.map((item) => item.state));
 const ncrCities = ["All cities", ...new Set(DELHI_NCR_UNIVERSITIES.map((item) => item.city))];
+const logos: Record<string, string> = universityLogos;
+
+function UniversityMark({ name }: { name: string }) {
+  const logo = logos[name];
+  const initials = name.split(" ").filter((word) => /^[A-Za-z]/.test(word)).slice(0, 2).map((word) => word[0]).join("");
+  return <span className={styles.universityMark} aria-hidden="true"><span>{initials}</span>{logo && <img src={logo} alt="" width="80" height="80" loading="lazy" onError={(event) => { event.currentTarget.hidden = true; }} />}</span>;
+}
 
 export default function Apply() {
   const [selectedState, setSelectedState] = useState("Delhi");
@@ -146,7 +154,7 @@ export default function Apply() {
                   <div className={styles.ncrColumnTop}><span>{String(columnIndex * 6 + 1).padStart(2, "0")} - {String(columnIndex * 6 + column.length).padStart(2, "0")}</span><span>OFFICIAL WEBSITES</span></div>
                   {column.map((university) => (
                     <a key={university.url} className={styles.ncrRow} href={university.url} target="_blank" rel="noopener noreferrer" aria-label={`${university.name}, ${university.city}, official website, opens in a new tab`}>
-                      <span><strong>{university.name}</strong><small>{university.city}</small></span><ArrowUpRight size={18} aria-hidden="true" />
+                      <UniversityMark name={university.name} /><span className={styles.ncrRowText}><strong>{university.name}</strong><small>{university.city}</small></span><ArrowUpRight size={18} aria-hidden="true" />
                     </a>
                   ))}
                 </div>
@@ -184,9 +192,9 @@ export default function Apply() {
               <h3>{selectedState}</h3>
               <p className={styles.resultLead}>{universities.length ? `A starting list of ${universities.length} universities in ${selectedState}. Open an official website to check courses, admissions and current dates.` : `We have not added a verified university headquarters in ${selectedState} to this shortlist yet. Use the UGC directory to check recognised universities and their latest details.`}</p>
               {universities.length > 0 && <div className={styles.universityList}>
-                {universities.map((university, index) => (
+                {universities.map((university) => (
                   <a key={university.url} className={styles.universityRow} href={university.url} target="_blank" rel="noopener noreferrer" aria-label={`${university.name}, official website, opens in a new tab`}>
-                    <span className={styles.rowNumber}>{String(index + 1).padStart(2, "0")}</span>
+                    <UniversityMark name={university.name} />
                     <span className={styles.rowText}><strong>{university.name}</strong><small>{university.city} · Official website</small></span>
                     <ArrowUpRight className={styles.rowArrow} size={20} aria-hidden="true" />
                   </a>
