@@ -1,0 +1,20 @@
+[
+  { "name": "University of Delhi", "city": "New Delhi", "url": "https://www.du.ac.in/" },
+  { "name": "Jawaharlal Nehru University", "city": "New Delhi", "url": "https://www.jnu.ac.in/" },
+  { "name": "Jamia Millia Islamia", "city": "New Delhi", "url": "https://www.jmi.ac.in/" },
+  { "name": "Delhi Technological University", "city": "Delhi", "url": "https://dtu.ac.in/" },
+  { "name": "Guru Gobind Singh Indraprastha University", "city": "Delhi", "url": "https://www.ipu.ac.in/" },
+  { "name": "Netaji Subhas University of Technology", "city": "Delhi", "url": "https://www.nsut.ac.in/" },
+  { "name": "Amity University Noida", "city": "Noida", "url": "https://noida.amity.edu/" },
+  { "name": "Shiv Nadar Institution of Eminence", "city": "Greater Noida", "url": "https://snu.edu.in/" },
+  { "name": "Gautam Buddha University", "city": "Greater Noida", "url": "https://www.gbu.ac.in/" },
+  { "name": "Sharda University", "city": "Greater Noida", "url": "https://www.sharda.ac.in/" },
+  { "name": "Galgotias University", "city": "Greater Noida", "url": "https://www.galgotiasuniversity.edu.in/p/home" },
+  { "name": "Bennett University", "city": "Greater Noida", "url": "https://www.bennett.edu.in/" },
+  { "name": "Ashoka University", "city": "Sonipat", "url": "https://www.ashoka.edu.in/" },
+  { "name": "O.P. Jindal Global University", "city": "Sonipat", "url": "https://jgu.edu.in/" },
+  { "name": "BML Munjal University", "city": "Gurugram", "url": "https://www.bmu.edu.in/" },
+  { "name": "Manav Rachna International Institute of Research and Studies", "city": "Faridabad", "url": "https://manavrachna.edu.in/mriirs/" },
+  { "name": "Chaudhary Charan Singh University", "city": "Meerut", "url": "https://www.ccsuniversity.ac.in/" },
+  { "name": "Santosh Deemed to be University", "city": "Ghaziabad", "url": "https://www.santosh.ac.in/" }
+]

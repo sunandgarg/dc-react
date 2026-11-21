@@ -25,8 +25,8 @@ const LISTING_QUERY_KEYS = {
 
 const STATIC_METADATA = new Map([
   ["/apply", {
-    title: "Find Universities by State in India | Official Links | DekhoCampus",
-    description: "Choose a state on the India map to explore selected universities and open their official websites. Check the university's admission notice before applying.",
+    title: "Top Universities in India by State | Official Links | DekhoCampus",
+    description: "Explore handpicked universities on an interactive India map. Browse Delhi NCR by city and open each university's official website.",
   }],
   ["/questions", {
     title: "Previous Year Question Papers by Exam | DekhoCampus",
