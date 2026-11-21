@@ -643,9 +643,9 @@ jobs:
           CLOUDFLARE_PAGES_DEPLOY_HOOK_URL=$(jq -r .cloudflarePagesDeployHookUrl <<<"$RUNTIME_SECRET")
           MERITTO_SECRET_KEY=$(jq -r '.merittoSecretKey // empty' <<<"$RUNTIME_SECRET")
           MERITTO_ACCESS_KEY=$(jq -r '.merittoAccessKey // empty' <<<"$RUNTIME_SECRET")
-          MERITTO_SYNC_ENABLED=$(if [[ -n "$MERITTO_SECRET_KEY" && -n "$MERITTO_ACCESS_KEY" ]]; then echo true; else echo false; fi)
+          MERITTO_SYNC_ENABLED=$(jq -r 'if (.merittoSecretKey // "") != "" and (.merittoAccessKey // "") != "" then "true" else "false" end' <<<"$RUNTIME_SECRET")
           LMS_GENERIC_LEAD_API_KEY=$(jq -r '.lmsGenericLeadApiKey // empty' <<<"$RUNTIME_SECRET")
-          LMS_SYNC_ENABLED=$(if [[ -n "$LMS_GENERIC_LEAD_API_KEY" ]]; then echo true; else echo false; fi)
+          LMS_SYNC_ENABLED=$(jq -r 'if (.lmsGenericLeadApiKey // "") != "" then "true" else "false" end' <<<"$RUNTIME_SECRET")
           CORS_ORIGIN=https://dekhocampus-aws-candidate.pages.dev,https://dekhocampus.com,https://www.dekhocampus.com,https://sarkari-dekhocampus.pages.dev,https://sarkari.dekhocampus.com
           STORAGE_MAX_UPLOAD_BYTES=20971520
           REQUEST_LOG=yes
