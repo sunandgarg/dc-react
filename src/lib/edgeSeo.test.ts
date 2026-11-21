@@ -39,6 +39,23 @@ describe("Cloudflare edge SEO", () => {
     expect(metadata.prerenderHtml).toContain("exam-logo.svg");
     expect(metadata.prerenderHtml).not.toContain("exam-banner.webp");
   });
+  it("renders the relevant exam subpage content without bypassing the paper lead gate", () => {
+    const exam = {
+      name: "Example Entrance Test",
+      summary_content: "<p>General exam overview</p>",
+      question_paper: "<p>Past papers help with the question format.</p>",
+      exam_pattern: "<p>The current exam pattern is on the authority website.</p>",
+      sample_paper_url: "/storage/v1/object/public/exam-sample-papers/example.pdf",
+      question_papers: [{ label: "2025 question paper", url: "/storage/v1/object/public/exam-question-papers/2025.pdf" }],
+    };
+    const page = entityEdgeSeo(exam, new URL("https://dekhocampus.com/exams/example-30001/sample-paper"), "exams");
+    expect(page.prerenderHtml).toContain("<h1>Example Entrance Test Sample Paper</h1>");
+    expect(page.prerenderHtml).toContain("2025 question paper");
+    expect(page.prerenderHtml).toContain("Past papers help with the question format.");
+    expect(page.prerenderHtml).not.toContain("General exam overview");
+    expect(page.prerenderHtml).not.toContain("2025.pdf");
+    expect(page.description).toContain("Past papers help with the question format.");
+  });
   it("serves self-canonical metadata for an indexable college filter", () => {
     const seo = edgeSeoFor("https://dekhocampus.com/colleges?stream=Management&state=Delhi+NCR");
     expect(seo.indexable).toBe(true);

@@ -387,6 +387,45 @@ const ENTITY_SEO = {
   },
 };
 
+const EXAM_TAB_FIELDS = {
+  dates: ["dates_content"],
+  application: ["application_process"],
+  eligibility: ["eligibility"],
+  syllabus: [],
+  pattern: ["exam_pattern"],
+  preparation: ["preparation_tips"],
+  "admit-card": ["center_content"],
+  "answer-key": ["question_paper"],
+  results: ["result_content"],
+  counselling: ["counselling_content"],
+  cutoff: ["cutoff_content"],
+  "sample-paper": ["question_paper", "exam_pattern", "preparation_tips"],
+};
+
+function examPaperLinks(entity) {
+  let papers = entity.question_papers;
+  if (typeof papers === "string") {
+    try { papers = JSON.parse(papers); } catch { papers = []; }
+  }
+  const links = [
+    ...(entity.sample_paper_url ? [{ label: "Sample paper PDF", url: entity.sample_paper_url }] : []),
+    ...(Array.isArray(papers) ? papers : []),
+  ].filter((paper) => paper && articleSafeUrl(paper.url) && paper.url !== "#");
+  if (!links.length) return "";
+  return `<section><h2>Available question papers</h2><ul>${links.map((paper) => `<li>${escapeHtml(String(paper.label || "Question paper"))}</li>`).join("")}</ul></section>`;
+}
+
+function examPrerenderBody(entity, tab) {
+  if (!tab) return ["summary_content", "dates_content", "syllabus_content", "result_content"].map((field) => articlePrerenderBlocks(entity[field])).join("");
+  const fields = EXAM_TAB_FIELDS[tab];
+  if (!fields) return articlePrerenderBlocks(entity.summary_content);
+  const papers = tab === "sample-paper" ? examPaperLinks(entity) : "";
+  const syllabus = tab === "syllabus" && Array.isArray(entity.syllabus)
+    ? `<ul>${entity.syllabus.filter((item) => typeof item === "string" && item.trim()).map((item) => `<li>${articlePrerenderBlocks(item)}</li>`).join("")}</ul>` : "";
+  const content = fields.map((field) => articlePrerenderBlocks(entity[field])).filter(Boolean).join("");
+  return `${papers}${syllabus}${content}`;
+}
+
 export function entityEdgeSeo(entity, url, entityType) {
   const config = ENTITY_SEO[entityType];
   if (!config) return edgeSeoFor(url);
@@ -400,7 +439,10 @@ export function entityEdgeSeo(entity, url, entityType) {
   const rawTitle = articlePlainText(entity.meta_title) || config.fallbackTitle(name);
   const titleWithTab = tab ? `${name} ${tab}` : rawTitle;
   const title = titleWithTab.includes("DekhoCampus") ? titleWithTab : `${titleWithTab} | DekhoCampus`;
-  const description = articlePlainText(entity.page_summary || entity.meta_description || entity.description)
+  const tabContent = entityType === "exams" && tab ? EXAM_TAB_FIELDS[segments.at(-1)]?.map((field) => articlePlainText(entity[field])).find(Boolean) : "";
+  const description = (tabContent ? tabContent.slice(0, 180) : "") || (entityType === "exams" && segments.at(-1) === "sample-paper"
+    ? `Browse available sample and previous year papers for ${name}. Check the exam authority for the current pattern and dates.` : "")
+    || articlePlainText(entity.page_summary || entity.meta_description || entity.description)
     || `Explore verified ${config.label.toLowerCase()} information for ${name} on DekhoCampus.`;
   const image = absoluteMediaUrl(entityType === "exams" ? entity.logo || entity.image : entity.image || entity.logo);
   const imageAlt = config.imageAlt(name);
@@ -485,7 +527,7 @@ export function entityEdgeSeo(entity, url, entityType) {
         },
       ],
     },
-    prerenderHtml: `<article data-dc-edge-prerender style="max-width:1180px;margin:24px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="${entityType === "exams" ? 96 : 1200}" height="${entityType === "exams" ? 96 : 675}" style="display:block;${entityType === "exams" ? "width:96px;height:96px;object-fit:contain" : "width:100%;height:auto;aspect-ratio:16/9;object-fit:cover"}" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(name)}</h1><p>${escapeHtml(description)}</p>${[...(entityType === "colleges" ? ["admission_process", "course_fee_content", "placement_content", "facilities_content"] : entityType === "courses" ? ["about_content", "subjects_content", "scope_content", "placements_content"] : ["summary_content", "dates_content", "syllabus_content", "result_content"])].map((field) => articlePrerenderBlocks(entity[field])).join("")}</article>`,
+    prerenderHtml: `<article data-dc-edge-prerender style="max-width:1180px;margin:24px auto;padding:0 20px;font-family:var(--font-site,sans-serif);line-height:1.6;color:#111827">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="${entityType === "exams" ? 96 : 1200}" height="${entityType === "exams" ? 96 : 675}" style="display:block;${entityType === "exams" ? "width:96px;height:96px;object-fit:contain" : "width:100%;height:auto;aspect-ratio:16/9;object-fit:cover"}" loading="eager" fetchpriority="high" decoding="async">` : ""}<h1>${escapeHtml(entityType === "exams" && tab ? `${name} ${tab}` : name)}</h1><p>${escapeHtml(description)}</p>${entityType === "exams" ? examPrerenderBody(entity, segments.length > 2 ? segments.at(-1) : "") : (entityType === "colleges" ? ["admission_process", "course_fee_content", "placement_content", "facilities_content"] : ["about_content", "subjects_content", "scope_content", "placements_content"]).map((field) => articlePrerenderBlocks(entity[field])).join("")}</article>`,
   };
 }
 

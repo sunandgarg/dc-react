@@ -55,6 +55,8 @@ jobs:
           grep -Fq 'id="dc-initial-page-data"' dist/news.html
           grep -Fq 'id="dc-initial-page-data"' dist/news/kalpana-chawla-scholarship-merit-list-2026-27-pdf.html
           grep -Fq 'Kalpana Chawla' dist/news/kalpana-chawla-scholarship-merit-list-2026-27-pdf.html
+          grep -Fq '<h1>VITREE Sample Paper</h1>' dist/exams/vitree-30815/sample-paper.html
+          grep -Fq '<link rel="canonical" href="https://dekhocampus.com/exams/vitree-30815/sample-paper"' dist/exams/vitree-30815/sample-paper.html
           grep -Fq 'sitemap-news-archive.xml' dist/sitemap.xml
           grep -Fq '/news/kalpana-chawla-scholarship-merit-list-2026-27-pdf</loc>' dist/sitemap-news-archive.xml
           grep -Fq '<link rel="canonical" href="https://dekhocampus.com/questions"' dist/questions.html
@@ -116,6 +118,10 @@ jobs:
             grep -Fq 'data-dc-edge-prerender' /tmp/dekhocampus-news.html
             grep -Fq 'id="dc-initial-page-data"' /tmp/dekhocampus-news.html
           done
+          curl --fail --silent --show-error --max-time 20 \
+            https://dekhocampus-aws-candidate.pages.dev/exams/vitree-30815/sample-paper \
+            -o /tmp/dekhocampus-exam-paper.html
+          grep -Fq '<h1>VITREE Sample Paper</h1>' /tmp/dekhocampus-exam-paper.html
           MISSING_STATUS=$(curl --silent --show-error --max-time 20 \
             --output /tmp/dekhocampus-404.html --write-out '%{http_code}' \
             https://dekhocampus-aws-candidate.pages.dev/definitely-not-a-page-404-check)

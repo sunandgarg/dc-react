@@ -14,6 +14,11 @@ if (process.env.CF_PAGES === "1") {
     return accept === "application/json" ? response.json() : response.text();
   };
   const xmlPaths = (xml) => [...xml.matchAll(/<loc>https:\/\/dekhocampus\.com(\/[^<]*)<\/loc>/g)].map((match) => match[1]);
+  const examTabs = new Set(["sample-paper", "answer-key", "dates", "application", "eligibility", "syllabus", "results"]);
+  const isCoreExamPath = (path) => {
+    const match = path.match(/^\/exams\/[^/?#]+(?:\/([^/?#]+))?$/);
+    return Boolean(match && (!match[1] || examTabs.has(match[1])));
+  };
   const paths = new Set(auditPaths);
   if (seedUrl) {
     const index = await request(new URL(new URL(seedUrl).pathname, apiOrigin), "text/xml");
@@ -23,7 +28,7 @@ if (process.env.CF_PAGES === "1") {
       const xml = await request(new URL(new URL(child).pathname, apiOrigin), "text/xml");
       // shortcut: Pages Free cannot hold 250k generated variants; move dynamic
       // pages to on-demand HTML when the site needs every route crawlable.
-      for (const path of xmlPaths(xml)) if ((path === "/news" || /^\/news\/[^/]+$/.test(path)) && !path.includes("?") && !path.includes("#")) paths.add(path);
+      for (const path of xmlPaths(xml)) if ((path === "/news" || /^\/news\/[^/]+$/.test(path) || isCoreExamPath(path)) && !path.includes("?") && !path.includes("#")) paths.add(path);
     }
   }
   console.log("[ai-readiness] article and audited routes:", paths.size);
