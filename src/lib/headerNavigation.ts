@@ -94,6 +94,7 @@ export function buildHeaderNavigation(data?: HeaderCatalog): HeaderSection[] {
         { label: "All Student Tools", href: "/tools" },
       ] },
       { title: "Guidance & Careers", items: [
+        { label: "Universities by State", href: "/apply" },
         { label: "College Predictor", href: "/college-predictor" },
         { label: "Eligibility Checker", href: "/eligibility-checker" },
         { label: "Compare Colleges", href: "/compare" },

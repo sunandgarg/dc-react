@@ -29,6 +29,7 @@ export function LockTargetFloatingPromo() {
   // Hide on the lock-target page itself, dashboard, auth, and admin
   if (
     pathname === "/" ||
+    pathname === "/apply" ||
     pathname === "/news" ||
     pathname.startsWith("/news/") ||
     pathname === "/articles" ||

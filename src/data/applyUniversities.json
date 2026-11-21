@@ -1,0 +1,501 @@
+{
+  "Andaman and Nicobar Islands": [],
+  "Andhra Pradesh": [
+    {
+      "name": "Andhra University",
+      "city": "Visakhapatnam",
+      "url": "https://www.andhrauniversity.edu.in/"
+    },
+    {
+      "name": "Sri Venkateswara University",
+      "city": "Tirupati",
+      "url": "https://svuniversity.edu.in/"
+    },
+    {
+      "name": "Acharya Nagarjuna University",
+      "city": "Guntur",
+      "url": "https://www.nagarjunauniversity.ac.in/"
+    }
+  ],
+  "Arunachal Pradesh": [
+    {
+      "name": "Rajiv Gandhi University",
+      "city": "Doimukh",
+      "url": "https://rgu.ac.in/"
+    },
+    {
+      "name": "North Eastern Regional Institute of Science and Technology",
+      "city": "Nirjuli",
+      "url": "https://www.nerist.ac.in/"
+    }
+  ],
+  "Assam": [
+    {
+      "name": "Gauhati University",
+      "city": "Guwahati",
+      "url": "https://gauhati.ac.in/"
+    },
+    {
+      "name": "Tezpur University",
+      "city": "Tezpur",
+      "url": "https://www.tezu.ernet.in/"
+    },
+    {
+      "name": "Dibrugarh University",
+      "city": "Dibrugarh",
+      "url": "https://dibru.ac.in/"
+    }
+  ],
+  "Bihar": [
+    {
+      "name": "Patna University",
+      "city": "Patna",
+      "url": "https://www.patnauniversity.ac.in/"
+    },
+    {
+      "name": "Nalanda University",
+      "city": "Rajgir",
+      "url": "https://nalandauniv.edu.in/"
+    },
+    {
+      "name": "Central University of South Bihar",
+      "city": "Gaya",
+      "url": "https://www.cusb.ac.in/"
+    }
+  ],
+  "Chandigarh": [
+    {
+      "name": "Panjab University",
+      "city": "Chandigarh",
+      "url": "https://puchd.ac.in/"
+    },
+    {
+      "name": "Punjab Engineering College",
+      "city": "Chandigarh",
+      "url": "https://pec.ac.in/"
+    }
+  ],
+  "Chhattisgarh": [
+    {
+      "name": "Guru Ghasidas Vishwavidyalaya",
+      "city": "Bilaspur",
+      "url": "https://www.ggu.ac.in/"
+    },
+    {
+      "name": "Pt. Ravishankar Shukla University",
+      "city": "Raipur",
+      "url": "https://www.prsu.ac.in/"
+    }
+  ],
+  "Dadra and Nagar Haveli and Daman and Diu": [],
+  "Delhi": [
+    {
+      "name": "University of Delhi",
+      "city": "New Delhi",
+      "url": "https://www.du.ac.in/"
+    },
+    {
+      "name": "Jawaharlal Nehru University",
+      "city": "New Delhi",
+      "url": "https://www.jnu.ac.in/"
+    },
+    {
+      "name": "Jamia Millia Islamia",
+      "city": "New Delhi",
+      "url": "https://www.jmi.ac.in/"
+    },
+    {
+      "name": "Delhi Technological University",
+      "city": "Delhi",
+      "url": "https://dtu.ac.in/"
+    }
+  ],
+  "Goa": [
+    {
+      "name": "Goa University",
+      "city": "Taleigao",
+      "url": "https://www.unigoa.ac.in/"
+    }
+  ],
+  "Gujarat": [
+    {
+      "name": "Gujarat University",
+      "city": "Ahmedabad",
+      "url": "https://www.gujaratuniversity.ac.in/"
+    },
+    {
+      "name": "The Maharaja Sayajirao University of Baroda",
+      "city": "Vadodara",
+      "url": "https://msubaroda.ac.in/"
+    },
+    {
+      "name": "Gujarat Technological University",
+      "city": "Ahmedabad",
+      "url": "https://www.gtu.ac.in/"
+    }
+  ],
+  "Haryana": [
+    {
+      "name": "Kurukshetra University",
+      "city": "Kurukshetra",
+      "url": "https://www.kuk.ac.in/"
+    },
+    {
+      "name": "Ashoka University",
+      "city": "Sonipat",
+      "url": "https://www.ashoka.edu.in/"
+    },
+    {
+      "name": "O.P. Jindal Global University",
+      "city": "Sonipat",
+      "url": "https://jgu.edu.in/"
+    }
+  ],
+  "Himachal Pradesh": [
+    {
+      "name": "Himachal Pradesh University",
+      "city": "Shimla",
+      "url": "https://www.hpuniv.ac.in/"
+    },
+    {
+      "name": "Central University of Himachal Pradesh",
+      "city": "Dharamshala",
+      "url": "https://www.cuhimachal.ac.in/"
+    }
+  ],
+  "Jammu and Kashmir": [
+    {
+      "name": "University of Kashmir",
+      "city": "Srinagar",
+      "url": "https://www.kashmiruniversity.net/"
+    },
+    {
+      "name": "University of Jammu",
+      "city": "Jammu",
+      "url": "https://www.jammuuniversity.ac.in/"
+    },
+    {
+      "name": "Shri Mata Vaishno Devi University",
+      "city": "Katra",
+      "url": "https://www.smvdu.ac.in/"
+    }
+  ],
+  "Jharkhand": [
+    {
+      "name": "Ranchi University",
+      "city": "Ranchi",
+      "url": "https://www.ranchiuniversity.ac.in/"
+    },
+    {
+      "name": "Birla Institute of Technology, Mesra",
+      "city": "Ranchi",
+      "url": "https://www.bitmesra.ac.in/"
+    },
+    {
+      "name": "Central University of Jharkhand",
+      "city": "Ranchi",
+      "url": "https://cuj.ac.in/"
+    }
+  ],
+  "Karnataka": [
+    {
+      "name": "Indian Institute of Science",
+      "city": "Bengaluru",
+      "url": "https://iisc.ac.in/"
+    },
+    {
+      "name": "CHRIST (Deemed to be University)",
+      "city": "Bengaluru",
+      "url": "https://christuniversity.in/"
+    },
+    {
+      "name": "Manipal Academy of Higher Education",
+      "city": "Manipal",
+      "url": "https://www.manipal.edu/"
+    },
+    {
+      "name": "University of Mysore",
+      "city": "Mysuru",
+      "url": "https://uni-mysore.ac.in/"
+    }
+  ],
+  "Kerala": [
+    {
+      "name": "University of Kerala",
+      "city": "Thiruvananthapuram",
+      "url": "https://www.keralauniversity.ac.in/"
+    },
+    {
+      "name": "Cochin University of Science and Technology",
+      "city": "Kochi",
+      "url": "https://cusat.ac.in/"
+    },
+    {
+      "name": "University of Calicut",
+      "city": "Malappuram",
+      "url": "https://uoc.ac.in/"
+    }
+  ],
+  "Ladakh": [
+    {
+      "name": "University of Ladakh",
+      "city": "Leh",
+      "url": "https://uol.ac.in/"
+    }
+  ],
+  "Lakshadweep": [],
+  "Madhya Pradesh": [
+    {
+      "name": "Devi Ahilya Vishwavidyalaya",
+      "city": "Indore",
+      "url": "https://www.dauniv.ac.in/"
+    },
+    {
+      "name": "Barkatullah University",
+      "city": "Bhopal",
+      "url": "https://bubhopal.ac.in/"
+    },
+    {
+      "name": "Jiwaji University",
+      "city": "Gwalior",
+      "url": "https://www.jiwaji.edu/"
+    }
+  ],
+  "Maharashtra": [
+    {
+      "name": "Savitribai Phule Pune University",
+      "city": "Pune",
+      "url": "https://www.unipune.ac.in/"
+    },
+    {
+      "name": "University of Mumbai",
+      "city": "Mumbai",
+      "url": "https://mu.ac.in/"
+    },
+    {
+      "name": "Institute of Chemical Technology",
+      "city": "Mumbai",
+      "url": "https://www.ictmumbai.edu.in/"
+    },
+    {
+      "name": "Symbiosis International University",
+      "city": "Pune",
+      "url": "https://www.siu.edu.in/"
+    }
+  ],
+  "Manipur": [
+    {
+      "name": "Manipur University",
+      "city": "Imphal",
+      "url": "https://www.manipuruniv.ac.in/"
+    },
+    {
+      "name": "Central Agricultural University",
+      "city": "Imphal",
+      "url": "https://cau.ac.in/"
+    }
+  ],
+  "Meghalaya": [
+    {
+      "name": "North Eastern Hill University",
+      "city": "Shillong",
+      "url": "https://www.nehu.ac.in/"
+    },
+    {
+      "name": "University of Science and Technology Meghalaya",
+      "city": "Ri-Bhoi",
+      "url": "https://ustm.ac.in/"
+    }
+  ],
+  "Mizoram": [
+    {
+      "name": "Mizoram University",
+      "city": "Aizawl",
+      "url": "https://mzu.edu.in/"
+    }
+  ],
+  "Nagaland": [
+    {
+      "name": "Nagaland University",
+      "city": "Lumami",
+      "url": "https://nagalanduniversity.ac.in/"
+    }
+  ],
+  "Odisha": [
+    {
+      "name": "Utkal University",
+      "city": "Bhubaneswar",
+      "url": "https://utkaluniversity.ac.in/"
+    },
+    {
+      "name": "Siksha 'O' Anusandhan",
+      "city": "Bhubaneswar",
+      "url": "https://www.soa.ac.in/"
+    },
+    {
+      "name": "KIIT",
+      "city": "Bhubaneswar",
+      "url": "https://kiit.ac.in/"
+    }
+  ],
+  "Puducherry": [
+    {
+      "name": "Pondicherry University",
+      "city": "Puducherry",
+      "url": "https://www.pondiuni.edu.in/"
+    },
+    {
+      "name": "Sri Balaji Vidyapeeth",
+      "city": "Puducherry",
+      "url": "https://sbvu.ac.in/"
+    }
+  ],
+  "Punjab": [
+    {
+      "name": "Guru Nanak Dev University",
+      "city": "Amritsar",
+      "url": "https://www.gndu.ac.in/"
+    },
+    {
+      "name": "Punjabi University",
+      "city": "Patiala",
+      "url": "https://punjabiuniversity.ac.in/"
+    },
+    {
+      "name": "Lovely Professional University",
+      "city": "Phagwara",
+      "url": "https://www.lpu.in/"
+    }
+  ],
+  "Rajasthan": [
+    {
+      "name": "Birla Institute of Technology and Science, Pilani",
+      "city": "Pilani",
+      "url": "https://www.bits-pilani.ac.in/"
+    },
+    {
+      "name": "University of Rajasthan",
+      "city": "Jaipur",
+      "url": "https://www.uniraj.ac.in/"
+    },
+    {
+      "name": "Central University of Rajasthan",
+      "city": "Ajmer",
+      "url": "https://www.curaj.ac.in/"
+    }
+  ],
+  "Sikkim": [
+    {
+      "name": "Sikkim University",
+      "city": "Gangtok",
+      "url": "https://cus.ac.in/"
+    }
+  ],
+  "Tamil Nadu": [
+    {
+      "name": "Anna University",
+      "city": "Chennai",
+      "url": "https://www.annauniv.edu/"
+    },
+    {
+      "name": "University of Madras",
+      "city": "Chennai",
+      "url": "https://www.unom.ac.in/"
+    },
+    {
+      "name": "Vellore Institute of Technology",
+      "city": "Vellore",
+      "url": "https://vit.ac.in/"
+    },
+    {
+      "name": "SRM Institute of Science and Technology",
+      "city": "Chengalpattu",
+      "url": "https://www.srmist.edu.in/"
+    }
+  ],
+  "Telangana": [
+    {
+      "name": "University of Hyderabad",
+      "city": "Hyderabad",
+      "url": "https://uohyd.ac.in/"
+    },
+    {
+      "name": "Osmania University",
+      "city": "Hyderabad",
+      "url": "https://www.osmania.ac.in/"
+    },
+    {
+      "name": "Kakatiya University",
+      "city": "Warangal",
+      "url": "https://www.kakatiya.ac.in/"
+    }
+  ],
+  "Tripura": [
+    {
+      "name": "Tripura University",
+      "city": "Agartala",
+      "url": "https://tripurauniv.ac.in/"
+    },
+    {
+      "name": "Maharaja Bir Bikram University",
+      "city": "Agartala",
+      "url": "https://mbbuniversity.ac.in/"
+    }
+  ],
+  "Uttar Pradesh": [
+    {
+      "name": "Banaras Hindu University",
+      "city": "Varanasi",
+      "url": "https://www.bhu.ac.in/"
+    },
+    {
+      "name": "Aligarh Muslim University",
+      "city": "Aligarh",
+      "url": "https://www.amu.ac.in/"
+    },
+    {
+      "name": "University of Lucknow",
+      "city": "Lucknow",
+      "url": "https://www.lkouniv.ac.in/"
+    },
+    {
+      "name": "University of Allahabad",
+      "city": "Prayagraj",
+      "url": "https://www.allduniv.ac.in/"
+    }
+  ],
+  "Uttarakhand": [
+    {
+      "name": "Hemvati Nandan Bahuguna Garhwal University",
+      "city": "Srinagar",
+      "url": "https://hnbgu.ac.in/"
+    },
+    {
+      "name": "Kumaun University",
+      "city": "Nainital",
+      "url": "https://www.kunainital.ac.in/"
+    },
+    {
+      "name": "Graphic Era University",
+      "city": "Dehradun",
+      "url": "https://geu.ac.in/"
+    }
+  ],
+  "West Bengal": [
+    {
+      "name": "Jadavpur University",
+      "city": "Kolkata",
+      "url": "https://jadavpuruniversity.in/"
+    },
+    {
+      "name": "University of Calcutta",
+      "city": "Kolkata",
+      "url": "https://www.caluniv.ac.in/"
+    },
+    {
+      "name": "Visva-Bharati",
+      "city": "Santiniketan",
+      "url": "https://www.visvabharati.ac.in/"
+    }
+  ]
+}

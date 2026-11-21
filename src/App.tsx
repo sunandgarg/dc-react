@@ -36,7 +36,7 @@ const IntentTrackingProvider = lazyRetry(() => import("@/components/IntentTracki
 
 function GlobalWhatsApp() {
   const { pathname } = useLocation();
-  if (pathname.startsWith("/admin") || pathname.startsWith("/ad/")) return null;
+  if (pathname === "/apply" || pathname.startsWith("/admin") || pathname.startsWith("/ad/")) return null;
   return <WhatsAppButton />;
 }
 
@@ -44,7 +44,7 @@ function GlobalDiya() {
   const { pathname } = useLocation();
   const isNews = pathname === "/news" || pathname.startsWith("/news/") || pathname === "/articles" || pathname.startsWith("/articles/");
   const isUpgradeYourself = pathname === "/premium-programs" || pathname.startsWith("/premium-programs/");
-  const hidden = pathname.startsWith("/admin") || pathname.startsWith("/auth") || pathname.startsWith("/ad/") || isNews || isUpgradeYourself;
+  const hidden = pathname === "/apply" || pathname.startsWith("/admin") || pathname.startsWith("/auth") || pathname.startsWith("/ad/") || isNews || isUpgradeYourself;
 
   useEffect(() => {
     if (hidden || window.sessionStorage.getItem("dc:open-diya-after-navigation") !== "footer") return;
@@ -59,7 +59,7 @@ function GlobalDiya() {
 
 function GlobalMobileNavigation() {
   const { pathname } = useLocation();
-  if (pathname.startsWith("/admin") || pathname.startsWith("/lp") || pathname.startsWith("/ad/") || pathname.startsWith("/landing/")) return null;
+  if (pathname === "/apply" || pathname.startsWith("/admin") || pathname.startsWith("/lp") || pathname.startsWith("/ad/") || pathname.startsWith("/landing/")) return null;
   return <HomeMobileBottomNav />;
 }
 
@@ -146,6 +146,7 @@ function DeferredGlobalUi() {
   );
 }
 const Index = lazyRetry(() => import("./pages/Index"), "Index");
+const Apply = lazyRetry(() => import("./pages/Apply"), "Apply");
 const NotFound = lazyRetry(() => import("./pages/NotFound"), "NotFound");
 const AllColleges = lazyRetry(() => import("./pages/AllColleges"), "AllColleges");
 const ComparePage = lazyRetry(() => import("./pages/ComparePage"), "compare");
@@ -359,6 +360,7 @@ const App = () => (
             <GlobalInternalAds area="top" />
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/apply" element={<Apply />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/colleges" element={<AllColleges />} />
               <Route path="/colleges/:slug" element={<CollegeRoute />} />
