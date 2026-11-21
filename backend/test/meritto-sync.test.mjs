@@ -18,6 +18,12 @@ test("Meritto payload preserves lead identity, location and UTM attribution", ()
   });
 });
 
+test("Meritto payload removes digits and punctuation from the CRM name", () => {
+  assert.equal(buildMerittoPayload({ ...lead, name: "TEST - Sunand Garg 2027" }).name, "TEST Sunand Garg");
+  assert.equal(lead.name, "Test Student");
+  assert.throws(() => buildMerittoPayload({ ...lead, name: "2027 -" }), /no letters/);
+});
+
 test("Meritto sync retries API failures without exposing credentials", async (t) => {
   const previousEnabled = process.env.MERITTO_SYNC_ENABLED;
   const previousSecret = process.env.MERITTO_SECRET_KEY;

@@ -3,9 +3,12 @@ import { prisma } from "./db.mjs";
 const ENDPOINT = "https://api.nopaperforms.io/lead/v1/createOrUpdate";
 
 export function buildMerittoPayload(lead) {
+  // Meritto rejects names containing digits or punctuation; keep the original in DekhoCampus.
+  const name = String(lead.name || "").replace(/[^\p{L}\s]/gu, " ").replace(/\s+/g, " ").trim();
+  if (!name) throw new Error("Meritto lead name has no letters");
   const payload = {
     search_criteria: "mobile",
-    name: lead.name,
+    name,
     email: lead.email,
     mobile: lead.phone,
     country_dial_code: "+91",
