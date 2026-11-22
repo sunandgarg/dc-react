@@ -12,6 +12,8 @@ import { SubjectNewsSection } from "@/components/study/SubjectNewsSection";
 import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { RichText } from "@/components/detail/RichText";
+import { toast } from "sonner";
+import { clearStudyBundleProof, getStudyBundleProof, requestStudyBundleDownload } from "@/lib/studyBundleProof";
 
 export default function StudySubject() {
   const { classSlug, boardSlug, subjectSlug, chapterSlug } = useParams<{ classSlug: string; boardSlug: string; subjectSlug: string; chapterSlug?: string }>();
@@ -47,10 +49,28 @@ export default function StudySubject() {
     return () => clearTimeout(t);
   }, [chapterSlug, chapters.length]);
 
-  // Always gate downloads (mandatory lead capture per project rules)
-  const handleDownload = (url: string, name: string, src: string, meta: any) => {
+  const handleDownload = async (url: string, name: string, src: string, meta: any) => {
     if (!url) return;
-    setGate({ url, name, src, meta });
+    if (/\.zip(?:[?#]|$)/i.test(url) && meta?.resource_id && src.startsWith("study_combined_")) {
+      const proof = getStudyBundleProof();
+      if (proof) {
+        try {
+          window.location.assign(await requestStudyBundleDownload(meta.resource_id, proof));
+          return;
+        } catch {
+          clearStudyBundleProof();
+          toast.error("Please verify your mobile again to download the bundle");
+        }
+      }
+      setGate({ url, name, src, meta: { ...meta, bundleResourceId: meta.resource_id } });
+      return;
+    }
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.click();
   };
 
   const combinedPack = subjectResources.find((r: any) => r.resource_type === "combined_10yr");
@@ -114,11 +134,11 @@ export default function StudySubject() {
                     <p className="font-bold text-foreground flex items-center gap-2">
                       Last 10 Years PYQ - Combined Pack <CircleDot className="w-4 h-4 text-primary" />
                     </p>
-                    <p className="text-xs text-muted-foreground">All previous year papers in a single PDF</p>
+                    <p className="text-xs text-muted-foreground">All previous year papers in one download</p>
                   </div>
                 </div>
                 <Button
-                  onClick={() => handleDownload(combinedPack.file_url, `${subject?.slug}-10yr-pack.pdf`, `study_combined_${classNum}_${boardSlug}_${subjectSlug}`, { resource_id: combinedPack.id })}
+                  onClick={() => handleDownload(combinedPack.file_url, `${subject?.slug}-10yr-pack.${/\.zip(?:[?#]|$)/i.test(combinedPack.file_url || "") ? "zip" : "pdf"}`, `study_combined_${classNum}_${boardSlug}_${subjectSlug}`, { resource_id: combinedPack.id })}
                   className="rounded-xl bg-primary text-primary-foreground"
                 >
                   <FileDown className="w-4 h-4 mr-2" /> Download Pack
@@ -234,7 +254,7 @@ export default function StudySubject() {
             ) : (
               <div className="space-y-3">
                 {chapters.map((ch: any, i: number) => (
-                  <ChapterRow key={ch.id} index={i + 1} chapter={ch} classNum={classNum} boardSlug={boardSlug!} subjectSlug={subjectSlug!} onDownload={handleDownload} />
+                  <ChapterRow key={ch.id} index={i + 1} chapter={ch} classNum={classNum} boardSlug={boardSlug!} subjectSlug={subjectSlug!} selectedChapterSlug={chapterSlug} onDownload={handleDownload} />
                 ))}
               </div>
             )}
@@ -286,9 +306,9 @@ export default function StudySubject() {
   );
 }
 
-function ChapterRow({ chapter, index, classNum, boardSlug, subjectSlug, onDownload }: any) {
+function ChapterRow({ chapter, index, classNum, boardSlug, subjectSlug, selectedChapterSlug, onDownload }: any) {
   const { data: resources = [] } = useStudyResources({ chapterId: chapter.id });
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(chapter.slug === selectedChapterSlug);
   const years = resources.filter((r: any) => r.resource_type === "pyq");
   const combined = resources.find((r: any) => r.resource_type === "combined_10yr");
   const extras = resources.filter((r: any) => !["pyq", "combined_10yr"].includes(r.resource_type));
@@ -315,7 +335,7 @@ function ChapterRow({ chapter, index, classNum, boardSlug, subjectSlug, onDownlo
                 <Package className="w-4 h-4 text-primary" />
                 <span className="text-sm font-semibold">Last 10 Years Combined Pack</span>
               </div>
-              <Button size="sm" onClick={() => onDownload(combined.file_url, `${chapter.slug}-10yr.pdf`, `study_combined_${classNum}_${boardSlug}_${subjectSlug}_${chapter.slug}`, { resource_id: combined.id })} className="rounded-lg">
+              <Button size="sm" onClick={() => onDownload(combined.file_url, `${chapter.slug}-10yr.${/\.zip(?:[?#]|$)/i.test(combined.file_url || "") ? "zip" : "pdf"}`, `study_combined_${classNum}_${boardSlug}_${subjectSlug}_${chapter.slug}`, { resource_id: combined.id })} className="rounded-lg">
                 <FileDown className="w-3.5 h-3.5 mr-1" /> Download
               </Button>
             </div>

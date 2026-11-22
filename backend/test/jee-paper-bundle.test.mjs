@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { handleRequest } from "../src/index.mjs";
 import { handleStorage, JEE_PAPERS_ZIP_PATH, LEGACY_JEE_PAPERS_ZIP_PATH } from "../src/storage.mjs";
-import { authSecurityInternals } from "../src/auth.mjs";
+import { authSecurityInternals, verifyStudyBundleProof } from "../src/auth.mjs";
 import { S3Client } from "@aws-sdk/client-s3";
 
 const request = body => new Request("https://api.example/v1/functions/jee-paper-bundle", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
@@ -31,9 +31,18 @@ test("ZIP verification issues a five-minute signed S3 download without querying 
 });
 
 test("both public ZIP URLs reject downloads without OTP", async () => {
-  for (const path of [JEE_PAPERS_ZIP_PATH, LEGACY_JEE_PAPERS_ZIP_PATH]) {
+  for (const path of [JEE_PAPERS_ZIP_PATH, LEGACY_JEE_PAPERS_ZIP_PATH, "class-12/cbse/physics/all-papers.zip"]) {
     await assert.rejects(handleStorage(new Request(`https://api.example/storage/v1/object/public/study-material/${path}`)), e => e.status === 403 && e.code === "OTP_REQUIRED");
   }
+});
+
+test("study bundle proof lasts a year and is bound to the verified phone", () => {
+  const token = authSecurityInternals.issueLeadOtpProof("+919876543210", "study_bundle");
+  const payload = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString("utf8"));
+  assert.equal(payload.exp - payload.iat, 365 * 24 * 60 * 60);
+  assert.equal(verifyStudyBundleProof(token, "+919876543210"), true);
+  assert.equal(verifyStudyBundleProof(token, "+919876543211"), false);
+  assert.equal(verifyStudyBundleProof(authSecurityInternals.issueLeadOtpProof("+919876543210"), "+919876543210"), false);
 });
 
 test("individual JEE papers download as attachments without OTP", async t => {

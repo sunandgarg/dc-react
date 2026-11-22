@@ -15,11 +15,9 @@ import { functionUrl } from "@/lib/backendMode";
 import { LeadConsentCheckbox, LEAD_CONSENT_TEXT } from "@/components/LeadConsentCheckbox";
 import { setLeadConsentPreference } from "@/lib/leadConsent";
 import { saveLeadPhase } from "@/lib/twoStepLead";
+import { requestStudyBundleDownload, saveStudyBundleProof } from "@/lib/studyBundleProof";
 
 const OTP_URL = functionUrl("send-otp");
-
-// NOTE: Free-skip bypass intentionally removed. Every download MUST pass through OTP.
-// Do NOT reintroduce a "first one free" pattern - project rule.
 
 interface Props {
   open: boolean;
@@ -38,6 +36,7 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
   const [form, setForm] = useState({ name: "", phone: "", email: "", class: "", state: "", city: "" });
   const [otp, setOtp] = useState("");
   const [otpVerificationToken, setOtpVerificationToken] = useState<string | null>(null);
+  const [studyBundleToken, setStudyBundleToken] = useState<string | null>(null);
   const [sentOtp, setSentOtp] = useState<string | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [consentAccepted, setConsentAccepted] = useState(true);
@@ -45,6 +44,7 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
   const { data: profile } = useUserProfile();
   const { data: leadSettings } = useLeadFormSettings();
   const otpChannel = leadSettings?.form_overrides?.study_material_download || leadSettings?.channel_preference || "sms";
+  const bundleResourceId = typeof meta?.bundleResourceId === "string" ? meta.bundleResourceId : null;
 
   // Prefill from profile + cookie when dialog opens
   useEffect(() => {
@@ -62,9 +62,9 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
-  const triggerDownload = () => {
+  const triggerDownload = (url = fileUrl) => {
     const a = document.createElement("a");
-    a.href = fileUrl;
+    a.href = url;
     a.download = fileName;
     a.target = "_blank";
     a.rel = "noopener";
@@ -147,11 +147,15 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phone: `+91${form.phone}`, otp, action: "verify", channel: otpChannel }),
+        body: JSON.stringify({ phone: `+91${form.phone}`, otp, action: "verify", channel: otpChannel, ...(bundleResourceId ? { purpose: "study_bundle" } : {}) }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok || !json.success || !json.verification_token) throw new Error(json.error || "Invalid OTP");
       setOtpVerificationToken(String(json.verification_token));
+      if (bundleResourceId) {
+        if (!json.study_bundle_token) throw new Error("Bundle verification could not be completed");
+        setStudyBundleToken(String(json.study_bundle_token));
+      }
       const saved = await saveLeadPhase({
         phase: "identity",
         name: form.name,
@@ -166,6 +170,7 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         consent_at: new Date().toISOString(),
       });
       setLeadId(saved.lead_id);
+      if (bundleResourceId && json.study_bundle_token) saveStudyBundleProof(String(json.study_bundle_token));
       setLeadConsentPreference(consentAccepted);
       toast.success("Mobile verified. Add your study preferences.");
       setStep("details");
@@ -199,8 +204,12 @@ export function DownloadGate({ open, onOpenChange, fileUrl, fileName, source, me
         otp_verification_token: otpVerificationToken,
       });
       savePrefillCookie({ name: form.name, phone: form.phone, email: form.email, state: form.state, city: form.city, className: form.class });
+      const downloadUrl = bundleResourceId
+        ? await requestStudyBundleDownload(bundleResourceId, { token: studyBundleToken || "", phone: `+91${form.phone}` })
+        : fileUrl;
+      if (bundleResourceId && studyBundleToken) saveStudyBundleProof(studyBundleToken);
       toast.success("Verified! Starting download...");
-      triggerDownload();
+      triggerDownload(downloadUrl);
     } catch (err: any) {
       toast.error(err.message || "Could not save your preferences");
     } finally {

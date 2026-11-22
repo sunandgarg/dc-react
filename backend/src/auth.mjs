@@ -305,14 +305,14 @@ async function consumePhoneOtp(phone, otp) {
   }
 }
 
-function issueLeadOtpProof(phone) {
+function issueLeadOtpProof(phone, purpose = "lead_otp") {
   const now = Math.floor(Date.now() / 1000);
   return signJwt({
     sub: `lead:${phone}`,
     phone,
-    purpose: "lead_otp",
+    purpose,
     iat: now,
-    exp: now + 15 * 60,
+    exp: now + (purpose === "study_bundle" ? 365 * 24 * 60 * 60 : 15 * 60),
   });
 }
 
@@ -325,13 +325,27 @@ export function verifyLeadOtpProof(value, phone) {
     && payload.sub === `lead:${normalizedPhone}`);
 }
 
+export function verifyStudyBundleProof(value, phone) {
+  const payload = verifyAccessToken(String(value || ""));
+  const normalizedPhone = normalizedOtpPhone(phone);
+  return Boolean(payload
+    && payload.purpose === "study_bundle"
+    && payload.phone === normalizedPhone
+    && payload.sub === `lead:${normalizedPhone}`);
+}
+
 export async function sendPhoneOtp(request) {
   const body = await request.json().catch(() => ({}));
   const phone = normalizedOtpPhone(body.phone);
   if (!/^\+91[6-9]\d{9}$/.test(phone)) throw Object.assign(new Error("Enter a valid Indian mobile number"), { status: 400, code: "INVALID_PHONE" });
   if (body.action === "verify") {
     await consumePhoneOtp(phone, String(body.otp || ""));
-    return { success: true, verified: true, verification_token: issueLeadOtpProof(phone) };
+    return {
+      success: true,
+      verified: true,
+      verification_token: issueLeadOtpProof(phone),
+      ...(body.purpose === "study_bundle" ? { study_bundle_token: issueLeadOtpProof(phone, "study_bundle") } : {}),
+    };
   }
   const recent = await prisma.app_auth_otps.findFirst({ where: { phone, created_at: { gt: new Date(Date.now() - 45_000) } }, orderBy: { created_at: "desc" } });
   if (recent) throw Object.assign(new Error("Please wait before requesting another OTP"), { status: 429, code: "OTP_RATE_LIMIT" });

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { handleRest, handleRpc } from "./rest.mjs";
 import { articleTranslationQueueStatus } from "./article-translation-queue.mjs";
 import { prisma } from "./db.mjs";
-import { auditImpersonatedWrite, handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp, verifyLeadOtpProof } from "./auth.mjs";
+import { auditImpersonatedWrite, handleAuth, resolveNativeIdentity, sendPhoneOtp, verifyPhoneOtp, verifyLeadOtpProof, verifyStudyBundleProof } from "./auth.mjs";
 import { JEE_PAPERS_ZIP_PATH, signStorageDownload, handleStorage } from "./storage.mjs";
 import { enqueueLeadAutomation, wakeLeadOutboxWorker } from "./lead-outbox.mjs";
 import { dispatchLead, previewLeadAutomation } from "./lead-automation.mjs";
@@ -852,6 +852,24 @@ export async function handleRequest(request) {
         });
       }
       if (functionMatch[1] === "send-otp") return json(200, await sendPhoneOtp(request), requestId, request);
+      if (functionMatch[1] === "study-bundle-download") {
+        if (request.method !== "POST") throw new HttpError(405, "METHOD_NOT_ALLOWED", "Use POST to request the ZIP");
+        const input = await readRateLimitedPublicJson(request, "save-lead", 4096);
+        const phone = String(input.phone || "").replace(/\D/g, "").slice(-10);
+        if (!/^[6-9]\d{9}$/.test(phone) || !verifyStudyBundleProof(input.study_bundle_token, `+91${phone}`)) {
+          throw new HttpError(403, "OTP_REQUIRED", "Verify your mobile number with OTP to download the ZIP");
+        }
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(input.resource_id || ""))) {
+          throw new HttpError(404, "BUNDLE_NOT_FOUND", "This bundle is unavailable");
+        }
+        const resource = await prisma.study_resources.findUnique({ where: { id: String(input.resource_id || "") }, select: { resource_type: true, file_url: true, is_active: true } });
+        if (!resource?.is_active || resource.resource_type !== "combined_10yr" || !resource.file_url) throw new HttpError(404, "BUNDLE_NOT_FOUND", "This bundle is unavailable");
+        let path;
+        try { path = decodeURIComponent(new URL(resource.file_url).pathname.match(/^\/storage\/v1\/object\/public\/study-material\/(.+\.zip)$/i)?.[1] || ""); } catch { /* Invalid or nonlocal bundle. */ }
+        if (!path || path.split("/").includes("..")) throw new HttpError(404, "BUNDLE_NOT_FOUND", "This bundle is unavailable");
+        const downloadUrl = await signStorageDownload("study-material", path, { expiresIn: 300, downloadName: path.split("/").at(-1) });
+        return json(200, { download_url: downloadUrl }, requestId, request, { "cache-control": "private, no-store" });
+      }
       if (functionMatch[1] === "phone-auth") return json(200, await verifyPhoneOtp(request), requestId, request);
       if (functionMatch[1] === "bootstrap") return json(200, await bootstrapPayload(url.searchParams.get("section")), requestId, request, { "cache-control": "public, max-age=30, stale-while-revalidate=60" });
       if (functionMatch[1] === "jee-paper-bundle") {

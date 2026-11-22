@@ -337,8 +337,8 @@ export async function handleStorage(request) {
   if (route.modifier === "public" && !PUBLIC_READ_BUCKETS.has(route.bucket)) {
     throw Object.assign(new Error("This storage bucket is private"), { status: 403, code: "STORAGE_BUCKET_PRIVATE" });
   }
-  if (route.bucket === "study-material" && [JEE_PAPERS_ZIP_PATH, LEGACY_JEE_PAPERS_ZIP_PATH].includes(route.objectPath) && route.modifier === "public") {
-    throw Object.assign(new Error("Verify your mobile number on the JEE Main page to download this ZIP"), { status: 403, code: "OTP_REQUIRED" });
+  if (route.bucket === "study-material" && route.objectPath.toLowerCase().endsWith(".zip") && route.modifier === "public") {
+    throw Object.assign(new Error("Verify your mobile number to download this ZIP"), { status: 403, code: "OTP_REQUIRED" });
   }
   const isPublicRead = ["GET", "HEAD"].includes(request.method)
     && route.modifier === "public"
