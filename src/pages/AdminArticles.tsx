@@ -39,7 +39,7 @@ import { useQuery } from "@tanstack/react-query";
 import { backendClient } from "@/integrations/backend/client";
 import { Link } from "react-router-dom";
 import { useDraftState } from "@/hooks/useDraftState";
-import { syncAutoSlug } from "@/lib/slugify";
+import { syncArticleAutoSlug } from "@/lib/slugify";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 import { normalizeArticleSlug, validateArticleSave } from "@/lib/articleEditor";
 import { indiaDate, publicationBounds } from "@/lib/articlePublicationDashboard";
@@ -298,7 +298,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const update = (field: string, value: any) => setEditing((prev) => {
     if (!prev) return prev;
     const next = { ...prev, [field]: value };
-    if (field === "title" && !(prev as any).id) next.slug = syncAutoSlug(prev.slug, prev.title, value);
+    if (field === "title" && !(prev as any).id) next.slug = syncArticleAutoSlug(prev.slug, prev.title, value);
     if (field === "status") next.is_active = value === "Published";
     return next;
   });
@@ -572,7 +572,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
                   </div>
                   {isWriter ? <p className="text-xs text-muted-foreground">Your own writer profile is attached automatically when you submit.</p> : <div><AuthorPicker value={(editing as any).author_id} onChange={(v) => update("author_id" as any, v)} label="Author profile (byline)" /></div>}
                   <div><label htmlFor="article-editor-title" className="text-xs font-medium text-muted-foreground">Title *</label><Input id="article-editor-title" value={editing.title || ""} onChange={(e) => update("title", e.target.value)} className="rounded-lg h-9 text-sm" /></div>
-                  <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="my-article-slug" className="rounded-lg h-9 text-sm" /></div>
+                  <div><label className="text-xs font-medium text-muted-foreground">Slug *</label><Input value={editing.slug || ""} onChange={(e) => update("slug", e.target.value)} placeholder="my-article-slug" className="rounded-lg h-9 text-sm" /><p className="mt-1 text-xs text-muted-foreground">Use a short, complete topic phrase. You can edit this before publishing.</p></div>
                   <div><label className="text-xs font-medium text-muted-foreground">Views</label><Input type="number" value={editing.views ?? 0} onChange={(e) => update("views", parseInt(e.target.value) || 0)} className="rounded-lg h-9 text-sm" /></div>
                   <div className="sm:col-span-2 lg:col-span-3"><FeaturedRankPicker value={(editing as any).featured_rank} onChange={(v) => update("featured_rank" as any, v)} label={isSarkari ? "Pin to Sarkari homepage top" : "Pin to News page top"} maxSlots={4} slotLabel={(r) => `#${r}${r === 1 ? " (Big Hero)" : ` (Small ${r - 1})`}`} helpText={isSarkari ? "Controls the four highlighted Sarkari update slots. Rankings are isolated from DekhoCampus news." : "#1 = big hero card on /news. #2-4 = the three small cards beside it. Picking a slot pushes existing pinned items down; anything beyond #4 unpins automatically."} /></div>
                 </div>

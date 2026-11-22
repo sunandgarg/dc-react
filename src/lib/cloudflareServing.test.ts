@@ -14,7 +14,7 @@ afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
 
 describe("Cloudflare serving failure classification", () => {
   it("limits Worker invocations and rewrites direct app links to the static shell", () => {
-    expect(routeConfig.include).toEqual(["/api/blog-agent-cron", "/sitemap-0.xml", "/news-sitemap.xml"]);
+    expect(routeConfig.include).toEqual(["/api/blog-agent-cron", "/sitemap-0.xml", "/news-sitemap.xml", "/news/*"]);
     expect(readFileSync("public/_redirects", "utf8")).not.toContain("/* /index.html 200");
     expect(routeConfig.exclude).toEqual([]);
   });
@@ -81,6 +81,15 @@ describe("Cloudflare serving failure classification", () => {
     expect(api.mock.calls[0][1]?.headers).toEqual({ accept: "application/json" });
     const options = api.mock.calls[0][1] as RequestInit & { cf: { cacheTtlByStatus: Record<string, number> } };
     expect(options.cf.cacheTtlByStatus["200-299"]).toBe(30);
+  });
+  it("serves a pre-rendered article without another database lookup", async () => {
+    const html = '<html><head><link rel="canonical" href="https://dekhocampus.com/news/existing-article"></head><body><main data-dc-edge-prerender><h1>Existing article</h1></main><script id="dc-initial-page-data" type="application/json">{}</script></body></html>';
+    const assets = { ASSETS: { fetch: async () => new Response(html, { headers: { "content-type": "text/html" } }) } };
+    const api = vi.spyOn(globalThis, "fetch");
+    const response = await worker.fetch(new Request("https://dekhocampus.com/news/existing-article"), assets, context);
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain("<h1>Existing article</h1>");
+    expect(api).not.toHaveBeenCalled();
   });
   it.each(routes)("keeps a successful existing lookup indexable: %s", async (route) => {
     const slug = route.split("/").at(-1)!.replace(/-12345$/, "");

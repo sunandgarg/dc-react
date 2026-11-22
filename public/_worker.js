@@ -279,6 +279,19 @@ async function serveAsset(request, env) {
     }
     const articleMatch = url.pathname.match(/^\/news\/([^/]+)\/?$/);
     if (articleMatch && articleMatch[1] !== "tag") {
+      // Published article snapshots already contain complete, self-canonical HTML.
+      // Only look up articles created after the latest Pages deployment.
+      const staticHtml = await response.clone().text();
+      const canonical = `${url.origin}${url.pathname.replace(/\/$/, "")}`;
+      if (staticHtml.includes('data-dc-edge-prerender')
+        && staticHtml.includes('id="dc-initial-page-data"')
+        && staticHtml.includes(`rel="canonical" href="${canonical}"`)) {
+        const staticHeaders = new Headers(response.headers);
+        staticHeaders.set("cache-control", "no-cache, no-store, must-revalidate");
+        return withSecurityHeaders(new Response(response.body, {
+          status: response.status, statusText: response.statusText, headers: staticHeaders,
+        }));
+      }
       const query = new URLSearchParams({
         select: "*",
         site_scope: "eq.dekhocampus",

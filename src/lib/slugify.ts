@@ -10,7 +10,7 @@
  * - Appends a 4-char base36 suffix to avoid collisions while keeping it short
  */
 
-export function slugify(input: string): string {
+function normalizedSlug(input: string): string {
   return (input || "")
     .toString()
     .normalize("NFKD")
@@ -18,9 +18,19 @@ export function slugify(input: string): string {
     .toLowerCase()
     .replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60)
-    .replace(/-+$/, "");
+    .replace(/^-+|-+$/g, "");
+}
+
+export function slugify(input: string): string {
+  return normalizedSlug(input).slice(0, 60).replace(/-+$/, "");
+}
+
+/** Article titles need room for a complete search intent, ending at a word. */
+export function articleSlugify(input: string): string {
+  const normalized = normalizedSlug(input);
+  if (normalized.length <= 100) return normalized;
+  const boundary = normalized.lastIndexOf("-", 100);
+  return normalized.slice(0, boundary > 40 ? boundary : 100).replace(/-+$/, "");
 }
 
 /** Keep a slug in sync with its source until an editor manually changes it. */
@@ -28,6 +38,13 @@ export function syncAutoSlug(currentSlug: string | null | undefined, previousSou
   const current = (currentSlug || "").trim();
   const previousAutoSlug = slugify(previousSource || "");
   return !current || current === previousAutoSlug ? slugify(nextSource) : current;
+}
+
+/** Preserve an editor's chosen article URL while updating untouched auto slugs. */
+export function syncArticleAutoSlug(currentSlug: string | null | undefined, previousSource: string | null | undefined, nextSource: string): string {
+  const current = (currentSlug || "").trim();
+  const previousAutoSlug = articleSlugify(previousSource || "");
+  return !current || current === previousAutoSlug ? articleSlugify(nextSource) : current;
 }
 
 /** Slug + 4-char random suffix (base36). Falls back to "item" if name empty. */
