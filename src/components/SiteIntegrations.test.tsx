@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SiteIntegrations } from "./SiteIntegrations";
@@ -32,7 +32,7 @@ describe("SiteIntegrations", () => {
     });
     expect(document.body).not.toHaveClass("content-copy-protected");
   });
-  it("queues the Ads destination before interaction and loads its tag even with GA4 configured", async () => {
+  it("configures the Ads destination immediately without waiting for interaction", async () => {
     settings.rows = [
       { key: "google_ads_id", value: "AW-17921423601", enabled: true },
       { key: "google_ads_conversion_label", value: "FnxTCITPl7gdEPHxzOFC", enabled: true },
@@ -41,8 +41,6 @@ describe("SiteIntegrations", () => {
     (window as any).gtag = vi.fn();
     render(<MemoryRouter><SiteIntegrations /></MemoryRouter>);
     await waitFor(() => expect((window as any).gtag).toHaveBeenCalledWith("config", "AW-17921423601"));
-    expect(document.getElementById("gads-lib")).toBeNull();
-    fireEvent.pointerDown(window);
     await waitFor(() => expect(document.getElementById("gads-lib")).toHaveAttribute("src", "https://www.googletagmanager.com/gtag/js?id=AW-17921423601"));
   });
 });

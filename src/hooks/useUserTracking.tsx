@@ -53,13 +53,7 @@ function getDevice(): string {
 }
 
 function getUtm(): Record<string, string> {
-  if (typeof window === "undefined") return {};
-  const sp = new URLSearchParams(window.location.search);
-  const out: Record<string, string> = {};
-  ["utm_source","utm_medium","utm_campaign","utm_content","utm_term","gclid","fbclid"].forEach((k) => {
-    const v = sp.get(k); if (v) out[k] = v;
-  });
-  return out;
+  return getLeadAttribution();
 }
 
 function getProfilePrefill(): { name?: string; email?: string; phone?: string } {

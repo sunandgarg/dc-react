@@ -1,3 +1,5 @@
+import { getLeadAttribution } from "@/lib/leadAttribution";
+
 /**
  * Lightweight analytics helper that fans events out to GA4 (gtag),
  * GTM (dataLayer) and Meta Pixel (fbq) when those are loaded by
@@ -30,7 +32,11 @@ const recordedLeadIds = new Set<string>();
 export function configureGoogleAdsConversion(id?: string, label?: string) {
   if (!/^AW-\d+$/.test(id || "") || !/^[A-Za-z0-9_-]+$/.test(label || "")) return;
   const destination = `${id}/${label}`;
-  if (destination !== googleAdsDestination) ensureGtag()("config", id);
+  const analyticsWindow = window as Window & { __dcGoogleAdsConfigured?: string };
+  if (destination !== googleAdsDestination && analyticsWindow.__dcGoogleAdsConfigured !== id) {
+    ensureGtag()("config", id);
+    analyticsWindow.__dcGoogleAdsConfigured = id;
+  }
   googleAdsDestination = destination;
   for (const params of pendingGoogleAdsLeads.values()) {
     ensureGtag()("event", "conversion", { ...params, send_to: destination });
@@ -55,13 +61,7 @@ export function ensureGtag() {
 
 export function getUtmParams(): AnalyticsParams {
   if (typeof window === "undefined") return {};
-  const sp = new URLSearchParams(window.location.search);
-  const out: AnalyticsParams = {};
-  ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "fbclid"].forEach((k) => {
-    const v = sp.get(k);
-    if (v) out[k] = v;
-  });
-  return out;
+  return getLeadAttribution();
 }
 
 export function trackEvent(name: LpEventName | string, params: AnalyticsParams = {}) {

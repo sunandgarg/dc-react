@@ -26,7 +26,7 @@ describe("durable lead acknowledgement", () => {
     expect(trackLeadConversion).toHaveBeenCalledExactlyOnceWith({ transaction_id: "saved", source: "website_form" });
   });
   it("keeps campaign attribution across navigation before a lead is saved", async () => {
-    window.history.replaceState({}, "", "/ad/jee-main-2027?utm_source=google&utm_medium=cpc&utm_campaign=jee_2027");
+    window.history.replaceState({}, "", "/ad/jee-main-2027?utm_source=google&utm_medium=cpc&utm_campaign=jee_2027&utm_content=creative_a&gclid=paid-click-id");
     const { getLeadAttribution } = await import("./leadAttribution");
     getLeadAttribution();
     window.history.replaceState({}, "", "/colleges");
@@ -35,6 +35,7 @@ describe("durable lead acknowledgement", () => {
     await saveLeadPhase({ ...identity, phase: "complete" });
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toMatchObject({
       utm_source: "google", utm_medium: "cpc", utm_campaign: "jee_2027",
+      utm_content: "creative_a", gclid: "paid-click-id",
     });
   });
   it("remembers a completed lead without optional cookie consent", async () => {

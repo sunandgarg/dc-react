@@ -13,23 +13,6 @@ export function SiteIntegrations() {
       for (const r of data) if (r.enabled && r.value) map[r.key] = r.value;
       configureGoogleAdsConversion(map.google_ads_id, map.google_ads_conversion_label);
 
-      // Analytics pixels are non-critical. Start them after interaction, with a
-      // fallback for visitors who stay on a static page.
-      await new Promise<void>((resolve) => {
-        let settled = false;
-        const events: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "scroll"];
-        const finish = () => {
-          if (settled) return;
-          settled = true;
-          events.forEach((event) => window.removeEventListener(event, finish));
-          window.clearTimeout(timer);
-          resolve();
-        };
-        events.forEach((event) => window.addEventListener(event, finish, { once: true, passive: true }));
-        const timer = window.setTimeout(finish, 15_000);
-      });
-      if (cancelled) return;
-
       const inject = (id: string, html: string) => {
         if (document.getElementById(id)) return;
         const tpl = document.createElement("template");

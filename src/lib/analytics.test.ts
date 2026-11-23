@@ -7,6 +7,7 @@ beforeEach(() => {
   (window as any).gtag = vi.fn();
   (window as any).fbq = vi.fn();
   (window as any).dataLayer = [];
+  delete (window as any).__dcGoogleAdsConfigured;
 });
 
 describe("durable lead conversions", () => {
@@ -26,6 +27,12 @@ describe("durable lead conversions", () => {
     expect(commands).toContainEqual(["config", "AW-17921423601"]);
     expect(commands).toContainEqual(["event", "conversion", expect.objectContaining({ send_to: destination, transaction_id: "queued-before-load" })]);
     expect((window as any).dataLayer.some((entry: unknown) => Array.isArray(entry))).toBe(false);
+  });
+  it("does not configure an Ads destination twice when the HTML already queued it", async () => {
+    (window as any).__dcGoogleAdsConfigured = "AW-17921423601";
+    const { configureGoogleAdsConversion } = await import("./analytics");
+    configureGoogleAdsConversion("AW-17921423601", "FnxTCITPl7gdEPHxzOFC");
+    expect((window as any).gtag).not.toHaveBeenCalledWith("config", "AW-17921423601");
   });
   it("queues a saved lead until the Ads destination is ready and records it once", async () => {
     const { trackLeadConversion, configureGoogleAdsConversion } = await import("./analytics");
