@@ -32,6 +32,7 @@ export function ArticleLeadLinks({ children, articleSlug, siteWide = false, onCo
   const capture = (event: ReactMouseEvent<HTMLDivElement> | globalThis.MouseEvent) => {
     if (event.button !== 0 && event.button !== 1) return;
     if (siteWide && /^\/(?:admin|auth|dashboard|onboarding)(?:\/|$)/.test(window.location.pathname)) return;
+    if (siteWide && window.location.pathname === "/news/icse-isc-2027-specimen-papers-revision-check") return;
     const anchor = (event.target as Element).closest?.('a[href]') as HTMLAnchorElement | null;
     // This campaign owns its destination-aware form for both PDFs and other links.
     if (siteWide && anchor?.closest('[data-lead-link-handler="jee-main"]')) return;

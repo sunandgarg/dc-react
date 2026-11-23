@@ -24,7 +24,7 @@ function fill() {
   fireEvent.change(screen.getByLabelText("Email address"), { target: { value: "reader@example.org" } });
   fireEvent.click(screen.getByRole("checkbox", { name: "Privacy and terms consent" }));
 }
-beforeEach(() => { vi.clearAllMocks(); document.cookie = "dc_lead_session_v1=; Max-Age=0; Path=/"; });
+beforeEach(() => { vi.clearAllMocks(); window.history.pushState({}, "", "/"); document.cookie = "dc_lead_session_v1=; Max-Age=0; Path=/"; });
 describe("article lead links", () => {
   it("round trips the opt-in attribute in the editor", () => {
     const editor = new Editor({ extensions: [StarterKit.configure({ link: false }), LeadCaptureLink], content: html });
@@ -87,6 +87,13 @@ describe("article lead links", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("link", { name: "Apply inside site" }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+  it("opens external links directly on the ICSE specimen-papers article", () => {
+    window.history.pushState({}, "", "/news/icse-isc-2027-specimen-papers-revision-check");
+    render(<><ArticleLeadLinks articleSlug="site" siteWide onContinue={proceed} /><a href="https://cisce.org/specimen-paper.pdf" onClick={(event) => event.preventDefault()}>Specimen paper</a></>);
+    fireEvent.click(screen.getByRole("link", { name: "Specimen paper" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(proceed).not.toHaveBeenCalled();
   });
   it.each(["/files/paper.PDF?download=1", "https://dekhocampus.com/paper.pdf", "https://media.dekhocampus.com/paper.pdf", "https://example.org/paper.pdf#page=2"])("always gates PDF link %s with the standard form", (url) => {
     render(<><ArticleLeadLinks articleSlug="site" siteWide onContinue={proceed} /><a href={url}>PDF resource</a></>);
