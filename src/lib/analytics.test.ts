@@ -4,24 +4,18 @@ const destination = "AW-17921423601/FnxTCITPl7gdEPHxzOFC";
 beforeEach(() => {
   vi.resetModules();
   window.history.replaceState({}, "", "/");
-  document.getElementById("dc-ga4-landing-events")?.remove();
-  delete (window as any).dcGa4EventsLayer;
-  delete (window as any).dcGa4EventsTag;
   (window as any).gtag = vi.fn();
   (window as any).fbq = vi.fn();
   (window as any).dataLayer = [];
 });
 
 describe("durable lead conversions", () => {
-  it("sends JEE funnel events to GA4 without another page view", async () => {
+  it("queues JEE funnel events once for the existing GTM Google tag", async () => {
     window.history.replaceState({}, "", "/ad/jee-main-2027");
-    const { configureGa4LandingEvents, trackEvent } = await import("./analytics");
+    const { trackEvent } = await import("./analytics");
     trackEvent("jee_main_year_open", { year: 2026 });
-    configureGa4LandingEvents("G-Y8E5HHTXLX");
-    const commands = (window as any).dcGa4EventsLayer.map((entry: IArguments) => Array.from(entry));
-    expect(commands).toContainEqual(["config", "G-Y8E5HHTXLX", { send_page_view: false }]);
-    expect(commands).toContainEqual(["event", "jee_main_year_open", expect.objectContaining({ year: 2026 })]);
-    expect(document.getElementById("dc-ga4-landing-events")).toHaveAttribute("src", "https://www.googletagmanager.com/gtag/js?id=G-Y8E5HHTXLX&l=dcGa4EventsLayer");
+    expect((window as any).gtag.mock.calls.filter((call: unknown[]) => call[0] === "event" && call[1] === "jee_main_year_open")).toHaveLength(1);
+    expect(document.getElementById("dc-ga4-landing-events")).toBeNull();
   });
   it("uses Google's Arguments queue format when gtag is not loaded yet", async () => {
     delete (window as any).gtag;
