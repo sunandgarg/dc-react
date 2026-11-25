@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "include": ["/api/blog-agent-cron", "/sitemap-0.xml", "/news-sitemap.xml", "/news/*"],
+  "include": ["/api/blog-agent-cron", "/sitemap.xml", "/sitemap-index.xml", "/sitemap-0.xml", "/sitemap-files/*", "/news-sitemap.xml", "/news/*"],
   "exclude": []
 }

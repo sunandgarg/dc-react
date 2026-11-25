@@ -72,11 +72,6 @@ const EXAM_GROUPS_BY_CATEGORY = new Map(Object.entries({
   Aviation: ["A.M.E."],
 }));
 const EXAM_TABS = ["overview", "highlights", "dates", "application", "eligibility", "syllabus", "pattern", "preparation", "admit-card", "answer-key", "results", "counselling", "cutoff", "colleges", "faq"];
-const COLLEGE_TABS = [
-  "overview", "highlights", "courses", "admissions", "placements", "cutoff", "rankings",
-  "infrastructure", "gallery", "faculty", "recruiters", "scholarships", "hostel", "compare",
-  "faq", "news",
-];
 const EXAM_STRATEGIES = [
   "sample-paper", "tips-and-tricks", "last-1-month-preparation-strategy", "15-days-preparation-strategy",
   "7-days-preparation-strategy", "3-days-preparation-strategy", "2-days-preparation-strategy", "1-day-preparation-strategy",
@@ -366,13 +361,13 @@ function newsFeedXml(articles) {
   ].join("\n");
 }
 
-function sitemapIndex(generation, count) {
+function sitemapIndex(generation, chunkNames) {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     `  <sitemap><loc>${PUBLISH_TARGET}/news-sitemap.xml</loc></sitemap>`,
     `  <sitemap><loc>${PUBLISH_TARGET}/sitemap-0.xml</loc></sitemap>`,
-    ...Array.from({ length: count }, (_, index) => `  <sitemap><loc>${PUBLISH_TARGET}/sitemap-files/${generation}/sitemap-${index + 1}.xml</loc></sitemap>`),
+    ...chunkNames.map((name) => `  <sitemap><loc>${PUBLISH_TARGET}/sitemap-files/${generation}/${name}.xml</loc></sitemap>`),
     "</sitemapindex>",
   ].join("\n");
 }
@@ -403,6 +398,29 @@ function mergeEntries(seed, dynamic) {
     });
   }
   return [...entries.values()];
+}
+
+function sitemapCategory(path) {
+  const root = String(path || "").split(/[/?]/)[1];
+  if (["colleges", "courses", "exams", "news", "scholarships"].includes(root)) return root;
+  if (["study-material", "college-study-material"].includes(root)) return "study-material";
+  return "other";
+}
+
+function categoryChunks(entries) {
+  const groups = new Map();
+  for (const entry of entries) {
+    const category = sitemapCategory(entry.path);
+    if (!groups.has(category)) groups.set(category, []);
+    groups.get(category).push(entry);
+  }
+  return [...groups].flatMap(([category, rows]) => {
+    const chunks = [];
+    for (let index = 0; index < rows.length; index += CHUNK_SIZE) {
+      chunks.push({ name: `${category}-${Math.floor(index / CHUNK_SIZE) + 1}`, entries: rows.slice(index, index + CHUNK_SIZE) });
+    }
+    return chunks;
+  });
 }
 
 function objectRepository() {
@@ -457,7 +475,7 @@ function objectRepository() {
 
 function publicKey(pathname) {
   if (/^\/(?:news-(?:sitemap|feed)|sitemap(?:-index|-\d+)?)\.xml$/.test(pathname)) return `${SITEMAP_PREFIX}/public/${pathname.slice(1)}`;
-  const generationMatch = pathname.match(/^\/sitemap-files\/([a-f0-9-]{36})\/(sitemap-\d+\.xml)$/);
+  const generationMatch = pathname.match(/^\/sitemap-files\/([a-f0-9-]{36})\/((?:sitemap|colleges|courses|exams|news|scholarships|study-material|other)-\d+\.xml)$/);
   return generationMatch ? `${SITEMAP_PREFIX}/generations/${generationMatch[1]}/${generationMatch[2]}` : null;
 }
 
@@ -791,7 +809,7 @@ async function dynamicEntries(prismaClient, now = Date.now()) {
     }
   }
   const entries = [
-    ...colleges.flatMap((row) => canonicalEntity("/colleges", row, "0.88", ["image", "logo", "carousel_images", "gallery_images"], COLLEGE_TABS)),
+    ...colleges.flatMap((row) => canonicalEntity("/colleges", row, "0.88", ["image", "logo", "carousel_images", "gallery_images"])),
     ...courses.flatMap((row) => canonicalEntity("/courses", row, "0.85", ["image"])),
     ...exams.flatMap((row) => [
       ...canonicalEntity("/exams", row, "0.85", ["image", "logo"], EXAM_TABS),
@@ -856,13 +874,12 @@ export async function publishSitemap(request, options = {}) {
     const imageCount = entries.reduce((total, entry) => total + (entry.images?.length || 0), 0);
     const filterUrlCount = entries.filter((entry) => /^\/(colleges|courses|exams)\?/.test(entry.path)).length;
     const generation = randomUUID();
-    const chunks = [];
-    for (let index = 0; index < entries.length; index += CHUNK_SIZE) chunks.push(entries.slice(index, index + CHUNK_SIZE));
-    await boundedMap(chunks, OBJECT_IO_CONCURRENCY, (chunk, index) => repository.put(`${SITEMAP_PREFIX}/generations/${generation}/sitemap-${index + 1}.xml`, sitemapXml(chunk)));
+    const chunks = categoryChunks(entries);
+    await boundedMap(chunks, OBJECT_IO_CONCURRENCY, (chunk) => repository.put(`${SITEMAP_PREFIX}/generations/${generation}/${chunk.name}.xml`, sitemapXml(chunk.entries)));
     await repository.put(`${SITEMAP_PREFIX}/public/news-sitemap.xml`, newsSitemapXml(newsEntries));
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap-0.xml`, sitemapXml(recentArticleEntries(dynamicResult.articles || [])));
     await repository.put(`${SITEMAP_PREFIX}/public/news-feed.xml`, newsFeedXml(dynamicResult.articles || []), "application/rss+xml; charset=utf-8");
-    const indexXml = sitemapIndex(generation, chunks.length);
+    const indexXml = sitemapIndex(generation, chunks.map((chunk) => chunk.name));
     const manifest = JSON.stringify({ generation, url_count: entries.length, news_url_count: newsEntries.length, image_count: imageCount, filter_url_count: filterUrlCount, chunk_count: chunks.length, source_counts: counts, generated_at: new Date().toISOString() });
     await repository.put(`${SITEMAP_PREFIX}/public/sitemap-index.xml`, indexXml);
     await repository.put(`${SITEMAP_PREFIX}/public/manifest.json`, manifest, "application/json; charset=utf-8");

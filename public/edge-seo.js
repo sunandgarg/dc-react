@@ -628,7 +628,8 @@ export function applyEdgeSeo(html, metadata) {
   output = output.replace(/<\/head>/i, `${(metadata.alternates || []).map(({ language, href }) => `<link rel="alternate" hreflang="${escapeHtml(language)}" href="${escapeHtml(new URL(href, SITE_URL).href)}">`).join("\n")}</head>`);
   output = replaceOrInsert(output, /<meta\s+name=["']description["'][^>]*>/i, `<meta name="description" content="${description}">`);
   output = replaceOrInsert(output, /<meta\s+name=["']robots["'][^>]*>/i, `<meta name="robots" content="${robots}">`);
-  output = replaceOrInsert(output, /<link\s+rel=["']canonical["'][^>]*>/i, `<link rel="canonical" href="${canonical}">`);
+  output = output.replace(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/gi, "");
+  output = output.replace(/<\/head>/i, `    <link rel="canonical" href="${canonical}">\n  </head>`);
   output = replaceOrInsert(output, /<meta\s+property=["']og:title["'][^>]*>/i, `<meta property="og:title" content="${title}">`);
   output = replaceOrInsert(output, /<meta\s+property=["']og:description["'][^>]*>/i, `<meta property="og:description" content="${description}">`);
   output = replaceOrInsert(output, /<meta\s+property=["']og:url["'][^>]*>/i, `<meta property="og:url" content="${canonical}">`);

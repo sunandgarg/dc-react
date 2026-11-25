@@ -70,6 +70,13 @@ function memoryRepository() {
   };
 }
 
+function publishedChunk(repository, generation) {
+  return [...repository.objects.entries()]
+    .filter(([key]) => key.startsWith(`system-sitemaps/generations/${generation}/`))
+    .map(([, object]) => object.body)
+    .join("\n");
+}
+
 test("sitemap publishing rejects incomplete core catalog data", async () => {
   await assert.rejects(
     publishSitemap(request(), { prismaClient: populatedDb(0), repository: memoryRepository() }),
@@ -109,7 +116,7 @@ test("workflow publishing reads its immutable build seed instead of the large li
   assert.equal(result.status, "published");
   assert.deepEqual(repository.reads.slice(0, 2), [`${seedPrefix}/sitemap.xml`, `${seedPrefix}/sitemap-1.xml`]);
   assert.equal(repository.reads.includes("system-sitemaps/public/sitemap.xml"), false);
-  const chunk = repository.objects.get(`system-sitemaps/generations/${result.generation}/sitemap-1.xml`)?.body || "";
+  const chunk = publishedChunk(repository, result.generation);
   assert.match(chunk, /\/tools\/build-owned-route/);
 });
 
@@ -152,8 +159,19 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   const index = repository.objects.get("system-sitemaps/public/sitemap.xml").body;
   assert.match(index, /https:\/\/dekhocampus\.com\/news-sitemap\.xml/);
   assert.match(index, /https:\/\/dekhocampus\.com\/sitemap-0\.xml/);
-  assert.match(index, new RegExp(`/sitemap-files/${result.generation}/sitemap-1\\.xml`));
-  const chunk = repository.objects.get(`system-sitemaps/generations/${result.generation}/sitemap-1.xml`)?.body || "";
+  assert.match(index, new RegExp(`/sitemap-files/${result.generation}/colleges-1\\.xml`));
+  assert.match(index, new RegExp(`/sitemap-files/${result.generation}/courses-1\\.xml`));
+  assert.match(index, new RegExp(`/sitemap-files/${result.generation}/exams-1\\.xml`));
+  for (const filename of ["colleges-1.xml", "courses-1.xml", "exams-1.xml"]) {
+    const response = await readPublishedSitemap(new Request(`https://dekhocampus.com/sitemap-files/${result.generation}/${filename}`), { repository });
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type"), /application\/xml/);
+    const xml = await response.text();
+    const root = filename.split("-")[0];
+    assert.match(xml, new RegExp(`https://dekhocampus\\.com/${root}(?:/|\\?)`));
+    assert.doesNotMatch(xml, new RegExp(`https://dekhocampus\\.com/(?:${["colleges", "courses", "exams"].filter((name) => name !== root).join("|")})(?:/|\\?)`));
+  }
+  const chunk = publishedChunk(repository, result.generation);
   assert.match(chunk, /\/colleges\/colleges-sample-101<\/loc>/);
   assert.match(chunk, /\/courses\/courses-sample-101<\/loc>/);
   assert.match(chunk, /\/exams\/exams-sample-101<\/loc>/);
@@ -174,8 +192,8 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.match(chunk, /\/courses\?group=MBA%2FPGDM&amp;mode=Full\+Time<\/loc>/);
   assert.match(chunk, /\/exams\?group=MBA%2FPGDM<\/loc>/);
   assert.doesNotMatch(chunk, /group=Unverified|state=Nowhere/);
-  assert.match(chunk, /\/colleges\/colleges-sample-101\/courses<\/loc>/);
-  assert.equal((chunk.match(/\/colleges\/colleges-sample-101\/[^<]+<\/loc>/g) || []).length, 16);
+  assert.doesNotMatch(chunk, /\/colleges\/colleges-sample-101\/courses<\/loc>/);
+  assert.equal((chunk.match(/\/colleges\/colleges-sample-101\/[^<]+<\/loc>/g) || []).length, 0);
   assert.doesNotMatch(chunk, /\/colleges\/colleges-sample-101\/(?:reviews|contact)<\/loc>/);
   assert.doesNotMatch(chunk, /\/courses\/courses-sample-101\//);
   assert.match(chunk, /\/exams\/exams-sample-101\/answer-key/);
