@@ -3,6 +3,8 @@ import DOMPurify from "isomorphic-dompurify";
 import { cn } from "@/lib/utils";
 import { splitDocumentViewers } from "@/lib/documentViewer";
 import { DocumentViewer } from "./DocumentViewer";
+import { renderArticleMath } from "@/lib/articleMath";
+import "katex/dist/katex.min.css";
 
 interface RichTextProps {
   html?: string | null;
@@ -34,7 +36,7 @@ const ALLOWED_ATTR = [
   "href","target","rel","title","alt","src","srcset","sizes","loading","decoding",
   "width","height","colspan","rowspan","scope","start","reversed","type",
   "class","style","id","name","data-width","data-align","data-dc-unclosed-anchor","data-lead-capture",
-  "data-title","data-pdf",
+  "data-title","data-pdf","data-type","data-latex",
 ];
 
 function postProcess(html: string): string {
@@ -209,9 +211,9 @@ export function RichText({ html, className, demoteH1 = false }: RichTextProps) {
       FORBID_ATTR: ["onerror","onclick","onload","onmouseover","onfocus","onblur"],
       ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|[#./])/i,
     });
-    if (!demoteH1) return postProcess(cleaned);
+    if (!demoteH1) return postProcess(renderArticleMath(cleaned));
     const singleHeadlineBody = cleaned.replace(/<h1(\s[^>]*)?>/gi, "<h2$1>").replace(/<\/h1\s*>/gi, "</h2>");
-    return postProcess(singleHeadlineBody);
+    return postProcess(renderArticleMath(singleHeadlineBody));
   }, [html, demoteH1]);
 
   if (!html) return null;
@@ -237,6 +239,7 @@ export function RichText({ html, className, demoteH1 = false }: RichTextProps) {
     "prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:before:content-none prose-code:after:content-none",
     "prose-pre:bg-muted prose-pre:text-foreground prose-pre:rounded-xl prose-pre:p-3",
     "prose-hr:border-border prose-hr:my-6",
+    "[&_.article-math.block-math]:my-4 [&_.article-math.block-math]:overflow-x-auto [&_.article-math.block-math]:text-center",
     // Figures / images
     "[&_img]:rounded-xl [&_img]:border [&_img]:border-border [&_img]:max-w-full [&_img]:h-auto [&_img]:my-4 [&_img]:mx-auto [&_img]:block",
     "[&_figure]:my-5 [&_figure]:text-center",

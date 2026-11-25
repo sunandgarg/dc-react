@@ -147,4 +147,13 @@ describe("RichTextEditor text interaction", () => {
     expect(editable).toHaveAttribute("contenteditable", "true");
     expect(editable?.className).toContain("!select-text");
   });
+
+  it("inserts an editable display equation from the toolbar", async () => {
+    const { container } = render(<RichTextEditor value="<p>Physics example</p>" onChange={() => undefined} />);
+    fireEvent.click(await screen.findByTitle("Insert or edit equation"));
+    fireEvent.change(screen.getByLabelText("Equation in LaTeX"), { target: { value: String.raw`F=G\frac{m_1m_2}{r^2}` } });
+    expect(screen.getByRole("dialog", { name: "Insert equation" }).querySelector(".katex")).not.toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Save equation" }));
+    expect(container.querySelector('[data-type="block-math"][data-latex]')).not.toBeNull();
+  });
 });

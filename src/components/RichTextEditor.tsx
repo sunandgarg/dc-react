@@ -11,11 +11,12 @@ import { TableCell } from "@tiptap/extension-table-cell";
 import { FontSize, TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Highlight } from "@tiptap/extension-highlight";
+import { Mathematics } from "@tiptap/extension-mathematics";
 import {
   Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, List, ListOrdered, Quote, Link as LinkIcon,
   Image as ImageIcon, Table as TableIcon, Minus, Code2, Maximize2, RemoveFormatting, Strikethrough,
-  ChevronDown, Palette, Highlighter, Eye, Pencil, FileText, Trash2, Pilcrow, Undo2, Redo2, Loader2,
+  ChevronDown, Palette, Highlighter, Eye, Pencil, FileText, Trash2, Pilcrow, Undo2, Redo2, Loader2, Sigma,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { RichText } from "@/components/detail/RichText";
@@ -27,6 +28,7 @@ import { backendClient } from "@/integrations/backend/client";
 import { optimizeImageFile } from "@/lib/imageOptimizer";
 import { toast } from "sonner";
 import { DocumentNode } from "@/components/admin/DocumentNode";
+import { normalizePastedMathHtml } from "@/lib/articleMath";
 
 interface RichTextEditorProps {
   label?: string;
@@ -179,6 +181,7 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
       LeadCaptureLink.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
       ResizableImage.configure({ HTMLAttributes: { class: "rounded-lg max-w-full my-2" } }),
       DocumentNode,
+      Mathematics.configure({ katexOptions: { throwOnError: false, trust: false } }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Placeholder.configure({ placeholder: placeholder || "Start typing…" }),
       Table.configure({ resizable: true, HTMLAttributes: { class: "border-collapse w-full my-2" } }),
@@ -195,11 +198,19 @@ export function RichTextEditor({ label, value, onChange, rows = 6, placeholder, 
       },
       handlePaste: (view, event) => {
         const files = Array.from(event.clipboardData?.files || []);
-        if (!files.some((file) => safeInlineImageTypes.has(file.type))) return false;
+        if (files.some((file) => safeInlineImageTypes.has(file.type))) {
+          event.preventDefault();
+          void insertImageFiles(files, view.state.selection.from);
+          return true;
+        }
+        const pasted = event.clipboardData?.getData("text/plain")?.trim() || "";
+        const latex = pasted.match(/^\$\$([\s\S]+)\$\$$|^\\\[([\s\S]+)\\\]$|^\\\(([\s\S]+)\\\)$|^\$([^$\n]+)\$$/)?.slice(1).find(Boolean)?.trim();
+        if (!latex || event.clipboardData?.getData("text/html")) return false;
         event.preventDefault();
-        void insertImageFiles(files, view.state.selection.from);
+        editorRef.current?.chain().focus().insertContent({ type: /^\$[^$]/.test(pasted) || pasted.startsWith("\\(") ? "inlineMath" : "blockMath", attrs: { latex } }).run();
         return true;
       },
+      transformPastedHTML: normalizePastedMathHtml,
       handleDrop: (view, event, _slice, moved) => {
         if (moved) return false;
         const files = Array.from(event.dataTransfer?.files || []);
@@ -294,6 +305,8 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
   const [editingImage, setEditingImage] = useState(false);
   const [, setEditorVersion] = useState(0);
   const [internalPickerOpen, setInternalPickerOpen] = useState(false);
+  const [mathDialog, setMathDialog] = useState(false);
+  const [mathLatex, setMathLatex] = useState("");
   const linkSelectionRef = useRef<EditorLinkSelection | null>(null);
 
   useEffect(() => {
@@ -449,6 +462,7 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       <Btn icon={LinkIcon} title="Insert / edit link" active={editor.isActive("link")} onClick={openLink} />
       <Btn icon={ImageIcon} title="Insert image" onClick={openImage} />
       <Btn icon={FileText} title="Insert document viewer (PDF or images)" onClick={openDoc} />
+      <Btn icon={Sigma} title="Insert or edit equation" onClick={() => { setMathLatex(String(editor.getAttributes("blockMath").latex || editor.getAttributes("inlineMath").latex || "")); setMathDialog(true); }} />
       <span className="w-px h-4 bg-border mx-1" />
       <div className="relative">
         <button type="button" onClick={() => setTableOpen(o => !o)} className="p-1.5 rounded text-muted-foreground hover:bg-muted hover:text-foreground flex items-center" title="Table">
@@ -473,6 +487,22 @@ function Toolbar({ editor, fullscreen, setFullscreen, previewMode, setPreviewMod
       <Btn icon={Code2} title="Code block" active={editor.isActive("codeBlock")} onClick={() => editor.chain().focus().toggleCodeBlock().run()} />
       <Btn icon={previewMode ? Pencil : Eye} title={previewMode ? "Back to editor" : "Preview as it appears on the site"} active={previewMode} onClick={() => setPreviewMode(!previewMode)} />
       <Btn icon={Maximize2} title={fullscreen ? "Exit fullscreen" : "Fullscreen"} active={fullscreen} onClick={() => setFullscreen(!fullscreen)} />
+
+      <Dialog open={mathDialog} onOpenChange={setMathDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogTitle>Insert equation</DialogTitle>
+          <label htmlFor="article-equation-latex" className="text-sm font-medium">Equation in LaTeX</label>
+          <textarea id="article-equation-latex" value={mathLatex} onChange={(event) => setMathLatex(event.target.value)} placeholder="F = G\\frac{m_1m_2}{r^2}" className="min-h-24 w-full rounded-md border border-border bg-background p-3 font-mono text-sm" />
+          <div className="min-h-12 overflow-x-auto rounded-md border border-border p-3"><RichText html={mathLatex ? `<div data-type="block-math" data-latex="${mathLatex.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")}"></div>` : ""} /></div>
+          <button type="button" disabled={!mathLatex.trim()} className="rounded-md bg-primary px-4 py-2 text-primary-foreground disabled:opacity-50" onClick={() => {
+            const latex = mathLatex.trim();
+            if (editor.isActive("blockMath")) editor.chain().focus().updateBlockMath({ latex }).run();
+            else if (editor.isActive("inlineMath")) editor.chain().focus().updateInlineMath({ latex }).run();
+            else editor.chain().focus().insertContent({ type: "blockMath", attrs: { latex } }).run();
+            setMathDialog(false);
+          }}>Save equation</button>
+        </DialogContent>
+      </Dialog>
 
       {editor.isActive("image") && (
         <div className="mt-1 flex basis-full flex-wrap items-center gap-1 border-t border-border/70 pt-1.5">
