@@ -13,6 +13,7 @@ test("document routes declare one absolute preferred canonical", () => {
     ["/exams/example-10001/syllabus", "/exams/example-10001/syllabus"],
     ["/scholarships/example", "/scholarships/example"],
     ["/news/example", "/news/example"],
+    ["/news/tag/Affiliation", "/news/tag/affiliation"],
     ["/study-material/class-12/cbse/physics", "/study-material/class-12/cbse/physics"],
     ["/colleges/example-10001?utm_source=test", "/colleges/example-10001"],
   ];

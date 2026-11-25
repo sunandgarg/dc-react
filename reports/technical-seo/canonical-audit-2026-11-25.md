@@ -7,6 +7,7 @@
 - The production root sitemap exposed only five static child files and 12,814 distinct locations in this audit. The AWS origin had a different, much larger 87-child sitemap index. The Pages route configuration bypassed the edge proxy for `/sitemap.xml`, exposing the stale static root to Google.
 - Initial HTML for a sampled live college URL, scholarship URL, study-material URL and career URL had the homepage canonical, whereas several rendered React pages had a route-specific canonical. The Pages Function is intentionally limited to news and selected paths because the free daily invocation limit has previously been exhausted. This is a separate, unresolved rendering problem.
 - A nonexistent college route returned HTTP 200 with the SPA shell in the sample, a soft-404 risk. Robots.txt allows Googlebot to crawl public paths. No sampled HTTP canonical `Link` header or `X-Robots-Tag` conflict was observed.
+- The mixed-case `/news/tag/Affiliation` URL initially declared a mixed-case canonical, while the hydrated page declared the lower-case tag URL. The sitemap uses lower-case tag slugs.
 
 ## Changes in this release
 
@@ -14,6 +15,7 @@
 - Publish live sitemap chunks by category (colleges, courses, exams, news, scholarships, study material, other), with 3,000 locations or fewer per chunk.
 - Route the root sitemap and immutable child files through the existing edge proxy. This makes the canonical-domain sitemap use the live AWS generation while keeping ordinary page views outside the free Worker quota.
 - Ensure the edge HTML transformer emits exactly one canonical link, even when the source shell contains duplicate canonical tags.
+- Canonicalize mixed-case news tag URLs to their existing lower-case tag path in initial HTML, matching the hydrated page and sitemap.
 - Add canonical, routing and category sitemap regression checks.
 
 ## Verification before deployment

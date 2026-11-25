@@ -165,7 +165,8 @@ export function edgeSeoFor(input) {
   const publicPath = isPublicPath(pathname);
   const indexable = !privatePath && publicPath && isIndexableQuery(url, pathname) && (!pathname.startsWith("/pyq-pdfs/") || pathname === "/pyq-pdfs/past-years/year-wise/jee/jee-main");
   const fullPageAlias = pathname.match(/^\/(colleges|courses)\/([^/]+)\/[^/]+$/);
-  const canonicalBase = fullPageAlias ? `/${fullPageAlias[1]}/${fullPageAlias[2]}` : landingPath;
+  const tagAlias = pathname.match(/^\/news\/tag\/([^/]+)$/);
+  const canonicalBase = fullPageAlias ? `/${fullPageAlias[1]}/${fullPageAlias[2]}` : tagAlias ? `/news/tag/${tagAlias[1].toLowerCase()}` : landingPath;
   const canonicalPath = indexable && url.search ? `${canonicalBase}${url.search}` : canonicalBase;
   const canonical = `${SITE_URL}${canonicalPath === "/" ? "" : canonicalPath}`;
 
