@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { articleAuthorFilter, articleCreatedSince, sortArticleAuthors } from "./adminArticleFilters";
+import { articleAuthorFilter, articleCreatedSince, excludedArticleAuthorsFilter, sortArticleAuthors } from "./adminArticleFilters";
 
 describe("admin article filters", () => {
   it("prioritizes the requested authors, then sorts remaining names alphabetically", () => {
@@ -16,5 +16,16 @@ describe("admin article filters", () => {
   });
   it("matches both author profile and legacy text without unescaped query separators", () => {
     expect(articleAuthorFilter({ id: "writer-id", name: "Manav, Writer" })).toBe('author_id.eq."writer-id",author.eq."Manav, Writer"');
+  });
+  it("excludes multiple linked or legacy authors without dropping rows with null author fields", () => {
+    expect(excludedArticleAuthorsFilter([
+      { id: "first", name: "First Writer" },
+      { id: "second", name: "Second, Writer" },
+    ])).toEqual([
+      'author_id.is.null,author_id.neq."first"',
+      'author.is.null,author.neq."First Writer"',
+      'author_id.is.null,author_id.neq."second"',
+      'author.is.null,author.neq."Second, Writer"',
+    ]);
   });
 });

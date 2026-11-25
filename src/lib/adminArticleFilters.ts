@@ -2,6 +2,7 @@ export interface ArticleAuthorOption { id: string; name: string }
 export interface AdminArticleFilters {
   createdSince?: string;
   author?: ArticleAuthorOption;
+  excludedAuthors?: ArticleAuthorOption[];
   status?: string;
   category?: string;
 }
@@ -24,4 +25,13 @@ export function articleCreatedSince(days: string, now = Date.now()) {
 export function articleAuthorFilter(author: ArticleAuthorOption) {
   // Match linked profiles as well as older articles using only the byline text.
   return `author_id.eq.${JSON.stringify(author.id)},author.eq.${JSON.stringify(author.name)}`;
+}
+
+export function excludedArticleAuthorsFilter(authors: ArticleAuthorOption[]) {
+  // A linked author or an older text-only byline can identify the same writer.
+  // Keep rows with NULL values in either column.
+  return authors.flatMap((author) => [
+    `author_id.is.null,author_id.neq.${JSON.stringify(author.id)}`,
+    `author.is.null,author.neq.${JSON.stringify(author.name)}`,
+  ]);
 }

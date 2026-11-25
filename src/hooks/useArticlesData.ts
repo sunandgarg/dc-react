@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { DEFAULT_SITE_SCOPE, type SiteScope } from "@/lib/siteScope";
 import { normalizeArticleSlug } from "@/lib/articleEditor";
 import type { ArticleFaqDraft } from "@/lib/articleFaqs";
-import { articleAuthorFilter, type AdminArticleFilters } from "@/lib/adminArticleFilters";
+import { articleAuthorFilter, excludedArticleAuthorsFilter, type AdminArticleFilters } from "@/lib/adminArticleFilters";
 import { initialPageData } from "@/lib/initialPageData";
 
 function isPendingReview(response: { status?: number | null }) {
@@ -166,6 +166,9 @@ export function useAdminArticles(search: string | undefined, page: number, pageS
 
       if (filters.createdSince) query = query.gte("created_at", filters.createdSince);
       if (filters.author) query = query.or(articleAuthorFilter(filters.author));
+      if (filters.excludedAuthors?.length) {
+        for (const expression of excludedArticleAuthorsFilter(filters.excludedAuthors)) query = query.or(expression);
+      }
       if (filters.status) query = query.eq("status", filters.status);
       if (filters.category) query = query.eq("category", filters.category);
 

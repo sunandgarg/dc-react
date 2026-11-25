@@ -110,6 +110,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   });
   const [dateFilter, setDateFilter] = useState("");
   const [authorFilter, setAuthorFilter] = useState("");
+  const [excludedAuthorIds, setExcludedAuthorIds] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const { data: filterAuthors = [], isError: authorsError } = useQuery({
@@ -122,7 +123,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
     staleTime: 60_000,
   });
   const createdSince = useMemo(() => articleCreatedSince(dateFilter), [dateFilter]);
-  const articleFilters = useMemo(() => ({ createdSince, author: filterAuthors.find((author) => author.id === authorFilter), status: statusFilter, category: categoryFilter }), [createdSince, filterAuthors, authorFilter, statusFilter, categoryFilter]);
+  const articleFilters = useMemo(() => ({ createdSince, author: filterAuthors.find((author) => author.id === authorFilter), excludedAuthors: filterAuthors.filter((author) => excludedAuthorIds.includes(author.id)), status: statusFilter, category: categoryFilter }), [createdSince, filterAuthors, authorFilter, excludedAuthorIds, statusFilter, categoryFilter]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(() => storedArticlePageSize(siteScope));
   const [customPageSize, setCustomPageSize] = useState(() => String(storedArticlePageSize(siteScope)));
@@ -186,7 +187,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
   const totalPages = Math.max(1, Math.ceil(totalArticles / pageSize));
   const standardPageSizes = ARTICLE_PAGE_SIZE_PRESETS;
 
-  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [normalizedSearch, pageSize, siteScope, dateFilter, authorFilter, statusFilter, categoryFilter]);
+  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [normalizedSearch, pageSize, siteScope, dateFilter, authorFilter, excludedAuthorIds, statusFilter, categoryFilter]);
   useEffect(() => { if (articlePage && page > totalPages) setPage(totalPages); }, [articlePage, page, totalPages]);
   useEffect(() => {
     window.localStorage.setItem(`admin.articles.page-size.${siteScope}`, String(pageSize));
@@ -361,17 +362,27 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
       </div>
 
       <div className="mb-4 rounded-xl border bg-card p-3">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <label className="text-xs font-medium">Created in
             <select aria-label="Article date filter" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} className="mt-1 h-10 w-full rounded-lg border bg-background px-2 text-sm">
               <option value="">All dates</option><option value="1">Last 1 day</option><option value="2">Last 2 days</option><option value="7">Last 7 days</option>
             </select>
           </label>
           <label className="text-xs font-medium">Author
-            <select aria-label="Article author filter" value={authorFilter} onChange={(e) => setAuthorFilter(e.target.value)} className="mt-1 h-10 w-full rounded-lg border bg-background px-2 text-sm">
+            <select aria-label="Article author filter" value={authorFilter} onChange={(e) => { setAuthorFilter(e.target.value); setExcludedAuthorIds((ids) => ids.filter((id) => id !== e.target.value)); }} className="mt-1 h-10 w-full rounded-lg border bg-background px-2 text-sm">
               <option value="">All authors</option>{filterAuthors.map((author) => <option key={author.id} value={author.id}>{author.name}</option>)}
             </select>
           </label>
+          <div className="text-xs font-medium">Exclude authors
+            <details className="relative mt-1">
+              <summary className="flex h-10 cursor-pointer items-center rounded-lg border bg-background px-2 text-sm font-normal">{excludedAuthorIds.length ? `${excludedAuthorIds.length} excluded` : "None excluded"}</summary>
+              <div className="absolute z-20 mt-1 max-h-64 w-full min-w-48 overflow-auto rounded-lg border bg-background p-2 shadow-lg">
+                {filterAuthors.map((author) => <label key={author.id} className="flex cursor-pointer items-center gap-2 rounded px-2 py-2 text-sm font-normal hover:bg-muted">
+                  <input type="checkbox" checked={excludedAuthorIds.includes(author.id)} onChange={(event) => { setExcludedAuthorIds((ids) => event.target.checked ? [...ids, author.id] : ids.filter((id) => id !== author.id)); if (event.target.checked && authorFilter === author.id) setAuthorFilter(""); }} />{author.name}
+                </label>)}
+              </div>
+            </details>
+          </div>
           <label className="text-xs font-medium">Status
             <select aria-label="Article status filter" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="mt-1 h-10 w-full rounded-lg border bg-background px-2 text-sm">
               <option value="">All statuses</option>{STATUSES.map((status) => <option key={status}>{status}</option>)}
@@ -382,7 +393,7 @@ export default function AdminArticles({ siteScope = DEFAULT_SITE_SCOPE, studioMo
               <option value="">All categories</option>{CATEGORIES.map((category) => <option key={category.slug} value={category.name}>{category.name}</option>)}
             </select>
           </label>
-          <Button variant="outline" className="self-end" onClick={() => { setDateFilter(""); setAuthorFilter(""); setStatusFilter(""); setCategoryFilter(""); setSearch(""); setDeferredSearch(""); }}>Clear filters</Button>
+          <Button variant="outline" className="self-end" onClick={() => { setDateFilter(""); setAuthorFilter(""); setExcludedAuthorIds([]); setStatusFilter(""); setCategoryFilter(""); setSearch(""); setDeferredSearch(""); }}>Clear filters</Button>
         </div>
         <p className="mt-2 text-xs text-muted-foreground">Date ranges use article creation time: the past 24 hours, 48 hours or 7 days. Filters apply across all pages.</p>
         {authorsError && <p role="alert" className="mt-2 text-xs text-destructive">Author options could not be loaded. Refresh to try again.</p>}
