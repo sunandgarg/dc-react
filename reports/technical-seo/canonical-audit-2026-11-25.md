@@ -31,3 +31,11 @@
 - Many dynamic entity pages still serve generic initial HTML. Making all of them server rendered requires a capacity-safe architecture change; routing every page through the current free Cloudflare Function would risk another quota outage. Do not treat the sitemap correction as a fix for this issue.
 - Some indexable routes may have thin, empty or duplicate main content. The 14-URL sample found one nonexistent college route returning HTTP 200. A full record-quality review and real 404 handling remain necessary.
 - Search Console counts lag deployments and will change only as Google recrawls. The 177,807 figure cannot be marked resolved immediately after release.
+
+## Production verification, 26 November 2026 IST
+
+- AWS deployment `45607747872` and Cloudflare deployment `45661028964` both completed successfully. The Cloudflare release used commit `0c6958e`.
+- The canonical-domain root sitemap now serves the live AWS index: 21 child files, including 19 category chunks. The category chunks contain 46,630 URLs: 16,192 college, 988 course, 17,129 exam, 8,566 news, 120 scholarship, 2,674 study-material and 961 other URLs. No college section alias was found in these chunks. The largest chunk has 3,000 URLs, below Google's 50,000-URL limit.
+- All 19 category child URLs returned HTTP 200 with XML content type on verification. Three concurrent HEAD probes timed out initially; each passed when retried sequentially. This is a performance observation, not an indexing confirmation.
+- `/news/tag/Affiliation` now declares a single lower-case `/news/tag/affiliation` canonical in initial HTML. The root sitemap returns HTTP 200 as `application/xml` with a path-specific edge cache response.
+- The 14-row CSV remains a **pre-deployment** representative snapshot. Its problems column records the original response, including unresolved generic initial HTML on non-news dynamic routes. Google Search Console's old exclusion totals must not be presented as post-deployment counts.
