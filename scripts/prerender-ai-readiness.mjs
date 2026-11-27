@@ -72,7 +72,10 @@ if (process.env.CF_PAGES === "1") {
       const found = new Map(rows.map((row) => [String(section === "news" ? row.slug : row.short_id), row]));
       for (const key of batch) {
         const row = found.get(key);
-        if (!row) throw new Error(`${table} ${key}: sitemap row missing`);
+        if (!row) {
+          console.warn(`[ai-readiness] skipping ${table} ${key}: sitemap row missing`);
+          continue;
+        }
         for (const path of group.get(key)) {
           const url = new URL(path, "https://dekhocampus.com");
           const metadata = section === "news" ? articleEdgeSeo(row, url) : entityEdgeSeo(row, url, section);
