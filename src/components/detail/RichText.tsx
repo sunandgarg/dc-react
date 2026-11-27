@@ -3,7 +3,7 @@ import DOMPurify from "isomorphic-dompurify";
 import { cn } from "@/lib/utils";
 import { splitDocumentViewers } from "@/lib/documentViewer";
 import { DocumentViewer } from "./DocumentViewer";
-import { renderArticleMath } from "@/lib/articleMath";
+import { renderArticleMath, renderDelimitedArticleMath } from "@/lib/articleMath";
 import "katex/dist/katex.min.css";
 
 interface RichTextProps {
@@ -211,9 +211,9 @@ export function RichText({ html, className, demoteH1 = false }: RichTextProps) {
       FORBID_ATTR: ["onerror","onclick","onload","onmouseover","onfocus","onblur"],
       ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|[#./])/i,
     });
-    if (!demoteH1) return postProcess(renderArticleMath(cleaned));
+    if (!demoteH1) return postProcess(renderDelimitedArticleMath(renderArticleMath(cleaned)));
     const singleHeadlineBody = cleaned.replace(/<h1(\s[^>]*)?>/gi, "<h2$1>").replace(/<\/h1\s*>/gi, "</h2>");
-    return postProcess(renderArticleMath(singleHeadlineBody));
+    return postProcess(renderDelimitedArticleMath(renderArticleMath(singleHeadlineBody)));
   }, [html, demoteH1]);
 
   if (!html) return null;

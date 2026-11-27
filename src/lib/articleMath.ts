@@ -38,3 +38,34 @@ export function renderArticleMath(html: string): string {
     return `<${tag} class="article-math ${type}">${math}</${tag}>`;
   });
 }
+
+export function renderDelimitedArticleMath(html: string): string {
+  if (!/\\\(|\\\[/.test(html) || typeof DOMParser === "undefined") return html;
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+  const nodes: Text[] = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+  nodes.forEach((node) => {
+    if (node.parentElement?.closest("code, pre, script, style, .katex, [data-type$='-math']")) return;
+    const value = node.textContent || "";
+    const pattern = /\\\(([\s\S]+?)\\\)|\\\[([\s\S]+?)\\\]/g;
+    if (!pattern.test(value)) return;
+    pattern.lastIndex = 0;
+    const fragment = doc.createDocumentFragment();
+    let offset = 0;
+    for (const match of value.matchAll(pattern)) {
+      fragment.append(doc.createTextNode(value.slice(offset, match.index)));
+      const displayMode = match[2] !== undefined;
+      const span = doc.createElement("span");
+      span.className = `article-math ${displayMode ? "block-math" : "inline-math"}`;
+      span.innerHTML = katex.renderToString((match[1] || match[2]).trim(), {
+        displayMode, output: "htmlAndMathml", throwOnError: false, trust: false, maxExpand: 1000,
+      });
+      fragment.append(span);
+      offset = match.index + match[0].length;
+    }
+    fragment.append(doc.createTextNode(value.slice(offset)));
+    node.replaceWith(fragment);
+  });
+  return doc.body.innerHTML;
+}

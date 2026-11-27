@@ -4,6 +4,7 @@ import { Mathematics } from "@tiptap/extension-mathematics";
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { RichText } from "@/components/detail/RichText";
+import { ArticleMarkdown } from "@/pages/ArticleDetail";
 import { normalizePastedMathHtml } from "./articleMath";
 
 describe("article equations", () => {
@@ -30,5 +31,19 @@ describe("article equations", () => {
   it("does not render executable HTML from an equation attribute", () => {
     const { container } = render(<RichText html={'<div data-type="block-math" data-latex="\\href{javascript:alert(1)}{x}"></div>'} />);
     expect(container.querySelector("script, a[href^='javascript:']")).toBeNull();
+  });
+
+  it("renders pasted TeX delimiters without changing adjacent prose or code", () => {
+    const equation = String.raw`\(\rho\left(\frac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla)\mathbf{u}\right) = -\nabla p + \mu\nabla^2\mathbf{u} + \mathbf{f}\)`;
+    const { container } = render(<RichText html={`<p>${equation} - fluid motion</p><pre><code>${equation}</code></pre>`} />);
+    expect(container.querySelectorAll(".article-math .katex")).toHaveLength(1);
+    expect(container.querySelector("p")?.textContent).toContain("fluid motion");
+    expect(container.querySelector("code")?.textContent).toContain(equation);
+  });
+
+  it("renders a delimited equation in a Markdown article", () => {
+    const { container } = render(<ArticleMarkdown content={String.raw`Motion: \(F = ma\).`} />);
+    expect(container.querySelector(".article-math .katex")).not.toBeNull();
+    expect(container.textContent).toContain("Motion:");
   });
 });

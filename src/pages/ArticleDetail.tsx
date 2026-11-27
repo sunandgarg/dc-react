@@ -21,6 +21,7 @@ import { AuthorByline } from "@/components/AuthorByline";
 import { useAuth } from "@/hooks/useAuth";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import katex from "katex";
 import { toast } from "sonner";
 import { useSEO } from "@/hooks/useSEO";
 import { RichText } from "@/components/detail/RichText";
@@ -86,13 +87,25 @@ function ArticleSidebarAd({ slug }: { slug: string }) {
   );
 }
 
-function ArticleMarkdown({ content }: { content: string }) {
+export function ArticleMarkdown({ content }: { content: string }) {
   if (!content.trim()) return null;
+  const equations: Array<{ latex: string; displayMode: boolean }> = [];
+  const withEquations = content.replace(/\\\(([\s\S]+?)\\\)|\\\[([\s\S]+?)\\\]/g, (_match, inline: string | undefined, block: string | undefined) => {
+    const index = equations.push({ latex: (inline || block).trim(), displayMode: block !== undefined }) - 1;
+    return `**DCARTICLEEQUATION${index}END**`;
+  });
   return (
     <div className="article-prose article-prose--news max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          strong: ({ children }) => {
+            const match = String(children).match(/^DCARTICLEEQUATION(\d+)END$/);
+            const equation = match && equations[Number(match[1])];
+            return equation
+              ? <span className={`article-math ${equation.displayMode ? "block-math" : "inline-math"}`} dangerouslySetInnerHTML={{ __html: katex.renderToString(equation.latex, { displayMode: equation.displayMode, output: "htmlAndMathml", throwOnError: false, trust: false, maxExpand: 1000 }) }} />
+              : <strong>{children}</strong>;
+          },
           h1: ({ children }) => <h2>{children}</h2>,
           h2: ({ children, ...props }) => <h2 id={slugifyHeading(String(children))} {...props}>{children}</h2>,
           h3: ({ children, ...props }) => <h3 id={slugifyHeading(String(children))} {...props}>{children}</h3>,
@@ -103,7 +116,7 @@ function ArticleMarkdown({ content }: { content: string }) {
             </div>
           ),
         }}
-      >{content}</ReactMarkdown>
+      >{withEquations}</ReactMarkdown>
     </div>
   );
 }
