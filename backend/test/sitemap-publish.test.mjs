@@ -18,7 +18,7 @@ function populatedDb(coreCount = 1) {
       const base = { slug: `${table}-sample`, short_id: 101, updated_at: new Date("2026-08-27T00:00:00Z"), image: "https://cdn.dekhocampus.com/catalog/sample.webp" };
       if (table === "colleges") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, name: `CAT Management College ${number}`, state: "Delhi NCR", city: "New Delhi", type: "Private", category: "Management", fees: "₹50,000 - ₹2,50,000 / year", tags: ["CAT"], approvals: ["UGC"], naac_grade: "A++", logo: "https://old-origin.example/storage/v1/object/public/admin-uploads/logos/sample.webp", carousel_images: [{ url: "https://www.youtube.com/embed/not-an-image", caption: "Campus tour" }], gallery_images: [] }));
       if (table === "courses") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, name: `MBA Business Analytics ${number}`, full_name: "Master of Business Administration", category: "Management", mode: "Full Time", duration: "2 Years", specializations: ["Business Analytics"] }));
-      if (table === "exams") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, category: "Management", exam_type: "Entrance", level: "PG", categories: ["MBA/PGDM"] }));
+      if (table === "exams") return [1, 2, 3].map((number) => ({ ...base, slug: number === 1 ? base.slug : `${base.slug}-${number}`, short_id: 100 + number, category: "Management", exam_type: "Entrance", level: "PG", categories: ["MBA/PGDM"], sample_paper_url: number === 1 ? "https://example.com/paper.pdf" : "", question_papers: [] }));
       if (table === "course_fees") return [1, 2, 3].map((number) => ({ college_slug: number === 1 ? "colleges-sample" : `colleges-sample-${number}`, course_slug: number === 1 ? "courses-sample" : `courses-sample-${number}`, course_group: "MBA / PGDM", specialization: "Business Analytics" }));
       if (table === "articles") return [{ ...base, title: "Articles sample", created_at: new Date("2026-08-27T10:00:00Z"), tags: ["Admissions", "https://aws-origin.dekhocampus.com/storage/v1/object/public/study-material"], featured_image: "https://cdn.dekhocampus.com/news/sample.webp", content: '<p>Campus guide</p><img src="https://cdn.dekhocampus.com/news/inline-campus.jpg" alt="Sample campus">' }];
       if (table === "study_subjects") return [{ ...base, id: "subject-1", class_num: 12, board_slug: "cbse" }];
@@ -198,6 +198,8 @@ test("sitemap publishing replaces the root index with AWS-backed immutable chunk
   assert.doesNotMatch(chunk, /\/courses\/courses-sample-101\//);
   assert.match(chunk, /\/exams\/exams-sample-101\/answer-key/);
   assert.match(chunk, /\/exams\/exams-sample-101\/sample-paper/);
+  assert.doesNotMatch(chunk, /\/exams\/exams-sample-102\/sample-paper/);
+  assert.doesNotMatch(chunk, /\/exams\/exams-sample-101\/15-minute-preparation-tips/);
   assert.match(chunk, /\/colleges\/top-engineering-colleges-in-india/);
   assert.match(chunk, /\/courses\/top-online-courses-in-india/);
   assert.match(chunk, /\/exams\/top-national-entrance-exams-in-india/);

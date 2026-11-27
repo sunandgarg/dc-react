@@ -132,6 +132,16 @@ describe("Cloudflare edge SEO", () => {
       .toBe("https://dekhocampus.com/courses/legacy-course");
   });
 
+  it("consolidates generated exam strategy pages and keeps paper collections only when real papers exist", () => {
+    const base = "https://dekhocampus.com/exams/jee-main-30001";
+    const strategyUrl = new URL(`${base}/15-minute-preparation-tips`);
+    expect(edgeSeoFor(strategyUrl).canonical).toBe(base);
+    const exam = { name: "JEE Main", slug: "jee-main", short_id: 30001 };
+    expect(entityEdgeSeo(exam, strategyUrl, "exams").canonical).toBe(base);
+    expect(entityEdgeSeo(exam, new URL(`${base}/sample-paper`), "exams").canonical).toBe(base);
+    expect(entityEdgeSeo({ ...exam, question_papers: [{ label: "2025 paper", url: "/paper.pdf" }] }, new URL(`${base}/sample-paper`), "exams").canonical).toBe(`${base}/sample-paper`);
+  });
+
   it("replaces homepage defaults in the initial HTML response", () => {
     const html = '<html><head><title>Home</title><meta name="description" content="home"><meta name="robots" content="index"><link rel="canonical" href="https://dekhocampus.com"><meta property="og:url" content="https://dekhocampus.com"></head></html>';
     const output = applyEdgeSeo(html, edgeSeoFor("https://dekhocampus.com/news/admission-update-2026"));

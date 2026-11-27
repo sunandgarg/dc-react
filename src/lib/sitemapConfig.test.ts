@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { canonicalSitemapSectionPath, COLLEGE_DETAIL_TABS, COURSE_DETAIL_TABS, EXAM_DETAIL_TABS, STATIC_SITEMAP_ROUTES } from "./sitemapConfig";
+import { canonicalSitemapSectionPath, COLLEGE_DETAIL_TABS, COURSE_DETAIL_TABS, EXAM_DETAIL_TABS, STATIC_SITEMAP_ROUTES, hasExamPapers } from "./sitemapConfig";
+
+it("submits exam paper routes only when a paper link exists", () => {
+  expect(hasExamPapers({ sample_paper_url: "#", question_papers: [] })).toBe(false);
+  expect(hasExamPapers({ sample_paper_url: "", question_papers: [{ label: "2025 paper", url: "https://example.com/paper.pdf" }] })).toBe(true);
+  expect(hasExamPapers({ sample_paper_url: "", question_papers: [{ url: "https://example.com/paper.pdf" }] })).toBe(false);
+  expect(hasExamPapers({ sample_paper_url: "", question_papers: '[{"url":"#"}]' })).toBe(false);
+});
 
 const REQUIRED_PUBLIC_ROOTS = [
   "/",

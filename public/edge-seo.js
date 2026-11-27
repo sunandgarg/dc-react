@@ -165,8 +165,11 @@ export function edgeSeoFor(input) {
   const publicPath = isPublicPath(pathname);
   const indexable = !privatePath && publicPath && isIndexableQuery(url, pathname) && (!pathname.startsWith("/pyq-pdfs/") || pathname === "/pyq-pdfs/past-years/year-wise/jee/jee-main");
   const fullPageAlias = pathname.match(/^\/(colleges|courses)\/([^/]+)\/[^/]+$/);
+  const examStrategyRoute = pathname.match(/^\/exams\/([^/]+)\/([^/]+)$/);
+  const examStrategyBase = examStrategyRoute && EXAM_GENERATED_STRATEGY_SLUGS.has(examStrategyRoute[2])
+    ? `/exams/${examStrategyRoute[1]}` : "";
   const tagAlias = pathname.match(/^\/news\/tag\/([^/]+)$/);
-  const canonicalBase = fullPageAlias ? `/${fullPageAlias[1]}/${fullPageAlias[2]}` : tagAlias ? `/news/tag/${tagAlias[1].toLowerCase()}` : landingPath;
+  const canonicalBase = fullPageAlias ? `/${fullPageAlias[1]}/${fullPageAlias[2]}` : examStrategyBase || (tagAlias ? `/news/tag/${tagAlias[1].toLowerCase()}` : landingPath);
   const canonicalPath = indexable && url.search ? `${canonicalBase}${url.search}` : canonicalBase;
   const canonical = `${SITE_URL}${canonicalPath === "/" ? "" : canonicalPath}`;
 
@@ -407,6 +410,12 @@ const EXAM_TAB_FIELDS = {
   cutoff: ["cutoff_content"],
   "sample-paper": ["question_paper", "exam_pattern", "preparation_tips"],
 };
+const EXAM_GENERATED_STRATEGY_SLUGS = new Set([
+  "tips-and-tricks", "last-1-month-preparation-strategy", "last-2-minute-preparation-tips",
+  ...[15, 7, 3, 2, 1].map((days) => `${days}-day${days === 1 ? "" : "s"}-preparation-strategy`),
+  ...[18, 12, 8, 6, 3, 1].map((hours) => `${hours}-hour${hours === 1 ? "" : "s"}-preparation-strategy`),
+  ...[30, 15, 10, 5].map((minutes) => `${minutes}-minute-preparation-tips`),
+]);
 
 function examPaperLinks(entity) {
   let papers = entity.question_papers;
@@ -416,7 +425,7 @@ function examPaperLinks(entity) {
   const links = [
     ...(entity.sample_paper_url ? [{ label: "Sample paper PDF", url: entity.sample_paper_url }] : []),
     ...(Array.isArray(papers) ? papers : []),
-  ].filter((paper) => paper && articleSafeUrl(paper.url) && paper.url !== "#");
+  ].filter((paper) => paper && paper.label && articleSafeUrl(paper.url) && paper.url !== "#");
   if (!links.length) return "";
   return `<section><h2>Available question papers</h2><ul>${links.map((paper) => `<li>${escapeHtml(String(paper.label || "Question paper"))}</li>`).join("")}</ul></section>`;
 }
@@ -439,7 +448,10 @@ export function entityEdgeSeo(entity, url, entityType) {
   // College/course section routes display the same full entity page, not separate content.
   const fullPageEntity = entityType === "colleges" || entityType === "courses";
   const canonicalSlug = entity.slug ? `${entity.slug}${entity.short_id ? `-${entity.short_id}` : ""}` : segments[1];
-  const canonical = `${SITE_URL}${fullPageEntity ? `/${entityType}/${canonicalSlug}` : cleanPath(url.pathname)}`;
+  const examTabSlug = entityType === "exams" ? segments.at(-1) : "";
+  const examStrategyAlias = entityType === "exams" && segments.length > 2
+    && (EXAM_GENERATED_STRATEGY_SLUGS.has(examTabSlug) || (examTabSlug === "sample-paper" && !examPaperLinks(entity)));
+  const canonical = `${SITE_URL}${fullPageEntity || examStrategyAlias ? `/${entityType}/${canonicalSlug}` : cleanPath(url.pathname)}`;
   const tab = segments.length > 2 ? titleCase(segments.at(-1)) : "";
   const name = String(entity.name || entity.full_name || titleCase(segments[1])).trim();
   const rawTitle = articlePlainText(entity.meta_title) || config.fallbackTitle(name);

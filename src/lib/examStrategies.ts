@@ -1,6 +1,6 @@
-// Single source of truth for exam strategy sub-pages.
-// Each strategy renders the same exam page with strategy-specific SEO + hero
-// so we can rank for long-tail searches like "JEE Main last 2 min strategy 2026".
+// Exam strategy routes render the full exam page with a focused introduction.
+// Generated time-plan variants canonicalize to the main exam guide; the paper
+// collection can stand alone when it contains real linked papers.
 
 export type ExamStrategy = {
   key: string;          // matches ExamStrategiesSection chip key

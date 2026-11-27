@@ -25,6 +25,7 @@ import { YouTubeVideoButton } from "@/components/YouTubeVideoButton";
 import { LatestNewsSection } from "@/components/detail/LatestNewsSection";
 import { DownloadGate } from "@/components/study/DownloadGate";
 import { findStrategyBySlug, EXAM_STRATEGIES } from "@/lib/examStrategies";
+import { hasExamPapers } from "@/lib/sitemapConfig";
 import { RichText } from "@/components/detail/RichText";
 import { RichSection } from "@/components/detail/RichSection";
 import { PageSummary } from "@/components/detail/PageSummary";
@@ -74,6 +75,7 @@ export default function ExamDetail() {
   const { data: exam, isLoading } = useDbExam(slug);
   const strategy = findStrategyBySlug(tab);
   const detailTab = EXAM_SECTIONS.find((section) => section.id === tab);
+  const strategyIsOwnPage = strategy?.slug === "sample-paper" && !!exam && hasExamPapers(exam);
 
   // Canonicalize to slug-with-id URL once exam resolves
   useEffect(() => {
@@ -112,14 +114,14 @@ export default function ExamDetail() {
       : (exam.meta_description || `${exam.name} ${year} exam dates, syllabus, preparation tips, cutoff`)
     ) : undefined,
     keywords: exam?.meta_keywords || undefined,
-    canonical: exam ? `${buildExamHref(exam as any)}${strategy ? `/${strategy.slug}` : detailTab ? `/${detailTab.id}` : ""}` : undefined,
+    canonical: exam ? `${buildExamHref(exam as any)}${strategyIsOwnPage ? "/sample-paper" : detailTab ? `/${detailTab.id}` : ""}` : undefined,
     ogImage: exam ? (resolveExamLogo(exam as any) || undefined) : undefined,
     jsonLd: exam ? {
       "@context": "https://schema.org",
       "@type": "WebPage",
       name: exam.full_name || exam.name,
       description: (exam as any).page_summary || exam.description || undefined,
-      url: absoluteSiteUrl(`${buildExamHref(exam as any)}${strategy ? `/${strategy.slug}` : detailTab ? `/${detailTab.id}` : ""}`),
+      url: absoluteSiteUrl(`${buildExamHref(exam as any)}${strategyIsOwnPage ? "/sample-paper" : detailTab ? `/${detailTab.id}` : ""}`),
       primaryImageOfPage: resolveExamLogo(exam as any) ? { "@type": "ImageObject", url: absoluteCanonical(resolveExamLogo(exam as any)), contentUrl: absoluteCanonical(resolveExamLogo(exam as any)), caption: `${exam.name} official logo` } : undefined,
       about: {
         "@type": "Thing",

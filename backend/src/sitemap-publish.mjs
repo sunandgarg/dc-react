@@ -72,13 +72,14 @@ const EXAM_GROUPS_BY_CATEGORY = new Map(Object.entries({
   Aviation: ["A.M.E."],
 }));
 const EXAM_TABS = ["overview", "highlights", "dates", "application", "eligibility", "syllabus", "pattern", "preparation", "admit-card", "answer-key", "results", "counselling", "cutoff", "colleges", "faq"];
-const EXAM_STRATEGIES = [
-  "sample-paper", "tips-and-tricks", "last-1-month-preparation-strategy", "15-days-preparation-strategy",
-  "7-days-preparation-strategy", "3-days-preparation-strategy", "2-days-preparation-strategy", "1-day-preparation-strategy",
-  "18-hours-preparation-strategy", "12-hours-preparation-strategy", "8-hours-preparation-strategy", "6-hours-preparation-strategy",
-  "3-hours-preparation-strategy", "1-hour-preparation-strategy", "30-minute-preparation-tips", "15-minute-preparation-tips",
-  "10-minute-preparation-tips", "5-minute-preparation-tips", "last-2-minute-preparation-tips",
-];
+// Strategy routes reuse the full exam page with generated advice. Do not submit
+// every variant as an independent page; a real paper collection can stand alone.
+function hasExamPapers(row) {
+  const direct = String(row.sample_paper_url || "").trim();
+  if (direct && direct !== "#") return true;
+  const papers = typeof row.question_papers === "string" ? (() => { try { return JSON.parse(row.question_papers); } catch { return []; } })() : row.question_papers;
+  return Array.isArray(papers) && papers.some((paper) => paper && typeof paper.label === "string" && paper.label.trim() && typeof paper.url === "string" && paper.url.trim() && paper.url.trim() !== "#");
+}
 const REBUILT_ROOTS = [
   "/colleges/", "/courses/", "/exams/", "/news/", "/careers/", "/scholarships/", "/landing/",
   "/cat-universe/", "/premium-programs/", "/jobs/", "/vacancies/", "/author/", "/legal/",
@@ -774,7 +775,7 @@ async function dynamicEntries(prismaClient, now = Date.now()) {
   const queryLoaders = [
     () => rows(prismaClient, "colleges", ["slug", "short_id", "updated_at", "name", "state", "city", "type", "category", "fees", "tags", "approvals", "naac_grade", "image", "logo", "carousel_images", "gallery_images"]),
     () => rows(prismaClient, "courses", ["slug", "short_id", "updated_at", "name", "full_name", "category", "mode", "duration", "specializations", "image"]),
-    () => rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "categories", "image", "logo"]),
+    () => rows(prismaClient, "exams", ["slug", "short_id", "updated_at", "category", "exam_type", "level", "categories", "image", "logo", "sample_paper_url", "question_papers"]),
     () => rows(prismaClient, "articles", ["slug", "title", "language_code", "created_at", "updated_at", "tags", "featured_image", "content"], true, " AND LOWER(TRIM(`status`)) = 'published' AND `site_scope` = 'dekhocampus'"),
     () => rows(prismaClient, "career_profiles", ["slug", "updated_at", "image"]),
     () => rows(prismaClient, "scholarships", ["slug", "updated_at", "image"]),
@@ -813,12 +814,12 @@ async function dynamicEntries(prismaClient, now = Date.now()) {
     ...courses.flatMap((row) => canonicalEntity("/courses", row, "0.85", ["image"])),
     ...exams.flatMap((row) => [
       ...canonicalEntity("/exams", row, "0.85", ["image", "logo"], EXAM_TABS),
-      ...EXAM_STRATEGIES.map((strategy) => ({
-        path: `${canonicalEntity("/exams", row, "0.85")[0].path}/${strategy}`,
+      ...(hasExamPapers(row) ? [{
+        path: `${canonicalEntity("/exams", row, "0.85")[0].path}/sample-paper`,
         lastmod: dateOnly(row.updated_at),
         changefreq: "weekly",
         priority: "0.64",
-      })),
+      }] : []),
     ]),
     ...simpleEntities("/news", articles, "0.7", ["featured_image", "content"]),
     ...[...tags].map((tag) => ({ path: `/news/tag/${encodeURIComponent(tag)}`, changefreq: "daily", priority: "0.62" })),

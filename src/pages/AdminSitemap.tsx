@@ -9,13 +9,13 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Download, RefreshCw, Copy, UploadCloud } from "lucide-react";
 import { buildCollegeHref, buildCourseHref, buildExamHref } from "@/lib/entityUrls";
-import { STRATEGY_SLUGS } from "@/lib/examStrategies";
 import { eligibilityComboSlugs, predictorComboSlugs } from "@/lib/seoSubSlugs";
 import { LOCK_TARGET_TRENDING_SLUGS, TOOL_SLUGS } from "@/lib/toolsRegistry";
 import {
   COLLEGE_DETAIL_TABS,
   COURSE_DETAIL_TABS,
   EXAM_DETAIL_TABS,
+  hasExamPapers,
   SITEMAP_CHUNK_SIZE,
   STATIC_SITEMAP_ROUTES,
   sitemapPriority,
@@ -142,7 +142,7 @@ export default function AdminSitemap() {
       ] = await Promise.all([
         fetchAllRows("colleges", "slug,short_id,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
         fetchAllRows("courses", "slug,short_id,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
-        fetchAllRows("exams", "slug,short_id,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
+        fetchAllRows("exams", "slug,short_id,updated_at,sample_paper_url,question_papers", (q) => q.eq("is_active", true).not("slug", "is", null)),
         fetchAllRows("articles", "slug,title,created_at,updated_at,tags", (q) => q.eq("site_scope", "dekhocampus").eq("status", "Published").eq("is_active", true).not("slug", "is", null)),
         fetchAllRows("career_profiles", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
         fetchAllRows("scholarships", "slug,updated_at", (q) => q.eq("is_active", true).not("slug", "is", null)),
@@ -162,7 +162,10 @@ export default function AdminSitemap() {
 
       pushDetails(urls, colleges, buildCollegeHref, 0.88, COLLEGE_DETAIL_TABS);
       pushDetails(urls, courses, buildCourseHref, 0.85, COURSE_DETAIL_TABS);
-      pushDetails(urls, exams, buildExamHref, 0.85, [...EXAM_DETAIL_TABS, ...STRATEGY_SLUGS]);
+      pushDetails(urls, exams, buildExamHref, 0.85, EXAM_DETAIL_TABS);
+      for (const exam of exams.filter(hasExamPapers)) {
+        urls.push({ loc: `${buildExamHref(exam)}/sample-paper`, pri: 0.64, cf: "weekly", lastmod: changed(exam.updated_at) });
+      }
       pushGenericDetails(urls, "/news", articles, 0.7);
       pushGenericDetails(urls, "/careers", careers, 0.72);
       pushGenericDetails(urls, "/scholarships", scholarships, 0.72);
@@ -217,7 +220,7 @@ export default function AdminSitemap() {
         courses: courses.length,
         course_subpages: courses.length * COURSE_DETAIL_TABS.length,
         exams: exams.length,
-        exam_subpages: exams.length * (EXAM_DETAIL_TABS.length + STRATEGY_SLUGS.length),
+        exam_subpages: exams.length * EXAM_DETAIL_TABS.length + exams.filter(hasExamPapers).length,
         articles: articles.length,
         google_news_urls: Math.min(1_000, recentNews),
         scholarships: scholarships.length,

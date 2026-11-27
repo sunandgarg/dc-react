@@ -77,6 +77,16 @@ export const EXAM_DETAIL_TABS = [
   "faq",
 ] as const;
 
+export function hasExamPapers(row: { sample_paper_url?: unknown; question_papers?: unknown }) {
+  const direct = String(row.sample_paper_url || "").trim();
+  if (direct && direct !== "#") return true;
+  let papers = row.question_papers;
+  if (typeof papers === "string") {
+    try { papers = JSON.parse(papers); } catch { papers = []; }
+  }
+  return Array.isArray(papers) && papers.some((paper) => paper && typeof paper.label === "string" && paper.label.trim() && typeof paper.url === "string" && paper.url.trim() && paper.url.trim() !== "#");
+}
+
 export function sitemapPriority(value: string, delta = 0) {
   const next = Math.max(0.1, Math.min(1, Number(value) + delta));
   return next.toFixed(2).replace(/0$/, "");

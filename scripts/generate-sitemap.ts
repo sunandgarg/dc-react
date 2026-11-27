@@ -5,11 +5,11 @@ import { loadEnv } from "vite";
 import { buildCollegeHref, buildCourseHref, buildExamHref } from "../src/lib/entityUrls";
 import { eligibilityComboSlugs, predictorComboSlugs } from "../src/lib/seoSubSlugs";
 import { LOCK_TARGET_TRENDING_SLUGS, TOOL_SLUGS } from "../src/lib/toolsRegistry";
-import { STRATEGY_SLUGS } from "../src/lib/examStrategies";
 import {
   COLLEGE_DETAIL_TABS,
   COURSE_DETAIL_TABS,
   EXAM_DETAIL_TABS,
+  hasExamPapers,
   SITEMAP_CHUNK_SIZE,
   STATIC_SITEMAP_ROUTES,
   sitemapPriority,
@@ -559,7 +559,7 @@ function writeSitemaps(entries: SitemapEntry[], articles: any[]) {
   const [colleges, courses, exams, careers, scholarships, articles, landing, catModules, premiumPrograms, jobs, authors, legalPages, study] = await Promise.all([
     fetchRows("colleges", "slug,short_id,updated_at,image,logo,carousel_images,gallery_images", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("courses", "slug,short_id,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
-    fetchRows("exams", "slug,short_id,updated_at,image,logo", (q) => q.eq("is_active", true).not("slug", "is", null)),
+    fetchRows("exams", "slug,short_id,updated_at,image,logo,sample_paper_url,question_papers", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("career_profiles", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("scholarships", "slug,updated_at,image", (q) => q.eq("is_active", true).not("slug", "is", null)),
     fetchRows("articles", "slug,title,language_code,created_at,updated_at,tags,featured_image", (q) => q.eq("site_scope", "dekhocampus").eq("is_active", true).eq("status", "Published").not("slug", "is", null)),
@@ -588,7 +588,8 @@ function writeSitemaps(entries: SitemapEntry[], articles: any[]) {
     ...canonicalDetailEntries(courses, buildCourseHref, "0.85", ["image"]),
     ...nestedDetailEntries(courses, buildCourseHref, COURSE_DETAIL_TABS, sitemapPriority("0.85", -0.12)),
     ...canonicalDetailEntries(exams, buildExamHref, "0.85", ["image", "logo"]),
-    ...nestedDetailEntries(exams, buildExamHref, [...EXAM_DETAIL_TABS, ...STRATEGY_SLUGS], sitemapPriority("0.85", -0.12)),
+    ...nestedDetailEntries(exams, buildExamHref, EXAM_DETAIL_TABS, sitemapPriority("0.85", -0.12)),
+    ...nestedDetailEntries(exams.filter(hasExamPapers), buildExamHref, ["sample-paper"], sitemapPriority("0.85", -0.21)),
     ...detailEntries("/careers", careers, "0.72", ["image"]),
     ...detailEntries("/scholarships", scholarships, "0.72", ["image"]),
     ...detailEntries("/news", articles, "0.7", ["featured_image"]),
