@@ -21,6 +21,16 @@ export async function assertArticlePublication(tx, article, previous = null) {
   }
   const publishing = article.status === "Published" && article.is_active !== false && article.is_active !== 0;
   const contentChanged = !previous || previous.status !== "Published" || previous.is_active === false || previous.is_active === 0 || previous.content !== article.content;
+  if (publishing && article.site_scope === "dekhocampus"
+    && (!previous || previous.status !== "Published" || previous.is_active === false || previous.is_active === 0)) {
+    const author = article.author_id
+      ? await tx.authors.findUnique({ where: { id: article.author_id }, select: { name: true } })
+      : null;
+    if ((author?.name === "Geethika Reddy" || article.author === "Geethika Reddy")
+      && !(Array.isArray(article.tags) && article.tags.includes("blog-studio"))) {
+      throw invalid("AI articles using Geethika Reddy's byline must be published through Editorial Blog Studio with its research and review checks. Save this article as Draft first.");
+    }
+  }
   if (publishing && contentChanged && hasBodyFaqs(article.content)) throw invalid("Move the FAQ section out of the article body into the dedicated FAQ fields before publishing.");
   if (publishing && language !== "en") {
     const faqs = article.faqs ?? await tx.faqs.findMany({ where: { page: article.site_scope === "sarkari" ? "sarkari_articles" : "articles", item_slug: article.slug } });
