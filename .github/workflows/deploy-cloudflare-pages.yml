@@ -80,7 +80,10 @@ jobs:
           fi
           curl --fail --silent --show-error --request POST "$DEPLOY_HOOK_URL" \
             --output /tmp/cloudflare-deployment.json
-          jq -e '.success == true or .id != null or .deployment_id != null' /tmp/cloudflare-deployment.json >/dev/null
+          # Pages deploy hooks can return 2xx with an empty body.
+          if [ -s /tmp/cloudflare-deployment.json ]; then
+            jq -e '.success == true or .id != null or .deployment_id != null' /tmp/cloudflare-deployment.json >/dev/null
+          fi
 
       - name: Verify published frontend and AWS API
         run: |
