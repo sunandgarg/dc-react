@@ -22,6 +22,17 @@ test('publishing rejects body FAQs across manual save paths, without blocking un
   assert.equal(hasBodyFaqs('## FAQs\n### Question?'), true);
   for (const { faq } of ARTICLE_LANGUAGES) assert.equal(hasBodyFaqs(`<h2>${faq}</h2>`), true);
 });
+test('direct imports cannot publish under the AI editor byline', async () => {
+  const authorTx = { authors: { findUnique: async () => ({ name: 'Geethika Reddy' }) } };
+  const aiArticle = { ...english, author_id: 'ai-editor', tags: [] };
+  await assert.rejects(assertArticlePublication(authorTx, aiArticle), /Editorial Blog Studio/);
+  await assert.rejects(assertArticlePublication({}, { ...aiArticle, author_id: null, author: 'Geethika Reddy' }), /Editorial Blog Studio/);
+  await assert.rejects(assertArticlePublication(authorTx, aiArticle, { ...aiArticle, status: 'Draft' }), /Editorial Blog Studio/);
+  await assertArticlePublication(authorTx, { ...aiArticle, status: 'Draft' });
+  await assertArticlePublication(authorTx, { ...aiArticle, title: 'Corrected' }, aiArticle);
+  await assertArticlePublication(authorTx, { ...aiArticle, tags: ['blog-studio'] });
+  await assertArticlePublication({ authors: { findUnique: async () => ({ name: 'Arjun Singh' }) } }, aiArticle);
+});
 test('translations need local-language public fields and dedicated translated FAQs', async () => {
   assert.equal(translationTextError(hindi), null);
   for (const key of ['title', 'description', 'content', 'meta_title', 'meta_description']) await assert.rejects(assertArticlePublication(tx(), { ...hindi, [key]: 'English only' }), /before publishing/);
