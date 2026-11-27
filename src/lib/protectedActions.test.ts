@@ -11,6 +11,18 @@ describe("protected action policy", () => {
     expect(classifyProtectedAction(exportButton)).toBe("download");
   });
 
+  it("does not treat article titles containing action words as downloads", () => {
+    const editButton = document.createElement("button");
+    editButton.setAttribute("aria-label", "Edit IBPS RRB Clerk Admit Card 2026: Hall Ticket Download Link");
+    expect(classifyProtectedAction(editButton)).toBe(null);
+    const selectButton = document.createElement("button");
+    selectButton.setAttribute("aria-label", "Select How to Download an Admit Card");
+    expect(classifyProtectedAction(selectButton)).toBe(null);
+    const downloadLink = document.createElement("a");
+    downloadLink.setAttribute("download", "");
+    expect(classifyProtectedAction(downloadLink)).toBe("download");
+  });
+
   it("requires an exact typed phrase for counted deletions", () => {
     expect(protectedActionCopy({ kind: "delete", count: 8 }).phrase).toBe("DELETE 8 RECORDS");
     expect(protectedActionCopy({ kind: "download", label: "lead export" }).phrase).toBe("");

@@ -82,14 +82,27 @@ describe("Cloudflare serving failure classification", () => {
     const options = api.mock.calls[0][1] as RequestInit & { cf: { cacheTtlByStatus: Record<string, number> } };
     expect(options.cf.cacheTtlByStatus["200-299"]).toBe(30);
   });
-  it("serves a pre-rendered article without another database lookup", async () => {
-    const html = '<html><head><link rel="canonical" href="https://dekhocampus.com/news/existing-article"></head><body><main data-dc-edge-prerender><h1>Existing article</h1></main><script id="dc-initial-page-data" type="application/json">{}</script></body></html>';
-    const assets = { ASSETS: { fetch: async () => new Response(html, { headers: { "content-type": "text/html" } }) } };
-    const api = vi.spyOn(globalThis, "fetch");
+  it("serves an updated article from the database instead of a stale static snapshot", async () => {
+    const snapshot = '<html><head><link rel="canonical" href="https://dekhocampus.com/news/existing-article"></head><body><main data-dc-edge-prerender><h1>Old article</h1></main><script id="dc-initial-page-data" type="application/json">{}</script></body></html>';
+    const assets = { ASSETS: { fetch: async (request: Request) => new Response(new URL(request.url).pathname === "/" ? shellHtml : snapshot, { headers: { "content-type": "text/html" } }) } };
+    const api = vi.spyOn(globalThis, "fetch").mockImplementation(async () => rowsResponse([{ slug: "existing-article", title: "Updated article", content: "<p>New information from the editor.</p>", status: "Published", is_active: true }]));
     const response = await worker.fetch(new Request("https://dekhocampus.com/news/existing-article"), assets, context);
     expect(response.status).toBe(200);
-    expect(await response.text()).toContain("<h1>Existing article</h1>");
-    expect(api).not.toHaveBeenCalled();
+    const html = await response.text();
+    expect(html).toContain("<h1>Updated article</h1>");
+    expect(html).toContain("New information from the editor.");
+    expect(html).not.toContain("Old article");
+    expect((html.match(/rel="canonical"/g) || []).length).toBe(1);
+    expect((html.match(/id="dc-initial-page-data"/g) || []).length).toBe(1);
+    expect(api).toHaveBeenCalledOnce();
+  });
+  it("returns 404 when a once-prerendered article is unpublished", async () => {
+    const snapshot = '<html><head><link rel="canonical" href="https://dekhocampus.com/news/existing-article"></head><body><main data-dc-edge-prerender><h1>Old article</h1></main></body></html>';
+    const assets = { ASSETS: { fetch: async (request: Request) => new Response(new URL(request.url).pathname === "/" ? shellHtml : snapshot, { headers: { "content-type": "text/html" } }) } };
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () => rowsResponse([]));
+    const response = await worker.fetch(new Request("https://dekhocampus.com/news/existing-article"), assets, context);
+    expect(response.status).toBe(404);
+    expect(await response.text()).not.toContain("Old article");
   });
   it.each(routes)("keeps a successful existing lookup indexable: %s", async (route) => {
     const slug = route.split("/").at(-1)!.replace(/-12345$/, "");

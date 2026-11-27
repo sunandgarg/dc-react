@@ -246,7 +246,12 @@ function missingPageMetadata(metadata) {
 
 async function serveAsset(request, env) {
   const url = new URL(request.url);
-  let response = await env.ASSETS.fetch(request);
+  const articleMatch = url.pathname.match(/^\/news\/([^/]+)\/?$/);
+  // Build-time article files become stale whenever an editor saves an update.
+  // Use the app shell and the current published row for every article response.
+  let response = await env.ASSETS.fetch(articleMatch && articleMatch[1] !== "tag"
+    ? new Request(new URL("/", url))
+    : request);
 
   // A top-level 404.html stops Pages from returning index.html with HTTP 200
   // for missing assets. Document routes still need the SPA shell so the edge
@@ -277,21 +282,7 @@ async function serveAsset(request, env) {
       if (page > 1 && articles.length === 0) metadata = { ...metadata, indexable: false, notFound: true };
       else metadata = newsListingEdgeSeo(articles.slice(0, 12), url, page, articles.length > 12);
     }
-    const articleMatch = url.pathname.match(/^\/news\/([^/]+)\/?$/);
     if (articleMatch && articleMatch[1] !== "tag") {
-      // Published article snapshots already contain complete, self-canonical HTML.
-      // Only look up articles created after the latest Pages deployment.
-      const staticHtml = await response.clone().text();
-      const canonical = `${url.origin}${url.pathname.replace(/\/$/, "")}`;
-      if (staticHtml.includes('data-dc-edge-prerender')
-        && staticHtml.includes('id="dc-initial-page-data"')
-        && staticHtml.includes(`rel="canonical" href="${canonical}"`)) {
-        const staticHeaders = new Headers(response.headers);
-        staticHeaders.set("cache-control", "no-cache, no-store, must-revalidate");
-        return withSecurityHeaders(new Response(response.body, {
-          status: response.status, statusText: response.statusText, headers: staticHeaders,
-        }));
-      }
       const query = new URLSearchParams({
         select: "*",
         site_scope: "eq.dekhocampus",

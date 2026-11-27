@@ -53,14 +53,10 @@ export async function requestProtectedAction(request: ProtectedActionRequest) {
 
 export function classifyProtectedAction(element: Element | null): ProtectedActionKind | null {
   if (!element) return null;
-  const label = [
-    element.textContent,
-    element.getAttribute("aria-label"),
-    element.getAttribute("title"),
-    element.getAttribute("download"),
-  ].filter(Boolean).join(" ").toLowerCase();
-  if (/\b(delete|remove|revoke|purge)\b/.test(label)) return "delete";
-  if (/\b(download|export|csv)\b/.test(label)) return "download";
+  if (element.hasAttribute("download")) return "download";
+  const label = (element.getAttribute("aria-label") || element.getAttribute("title") || element.textContent || "").trim().toLowerCase();
+  if (/^(?:(?:bulk|selected)\s+)?(?:delete|remove|revoke|purge)\b/.test(label)) return "delete";
+  if (/^(?:(?:bulk|selected)\s+)?(?:download|export|csv)\b/.test(label)) return "download";
   return null;
 }
 
