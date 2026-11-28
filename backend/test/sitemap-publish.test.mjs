@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFile } from "node:fs/promises";
-import { publishSitemap, readPublishedSitemap } from "../src/sitemap-publish.mjs";
+import { nextSitemapRefreshDelay, publishSitemap, readPublishedSitemap } from "../src/sitemap-publish.mjs";
+
+test("daily sitemap refresh runs at 02:30 IST", () => {
+  assert.equal(nextSitemapRefreshDelay(Date.parse("2026-11-28T20:59:00Z")), 60_000);
+  assert.equal(nextSitemapRefreshDelay(Date.parse("2026-11-28T21:01:00Z")), 23 * 60 * 60_000 + 59 * 60_000);
+});
 
 const request = (body = {}) => new Request("https://api.example/v1/functions/publish-sitemap", {
   method: "POST",

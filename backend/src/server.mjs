@@ -10,6 +10,7 @@ import { prisma } from "./db.mjs";
 import { createDatabasePoolWatchdog, databaseEndpointReachable } from "./database-pool-watchdog.mjs";
 import { publicContentCache } from "./public-content-cache.mjs";
 import { warmDirectorySearchCache } from "./directory-search.mjs";
+import { startSitemapRefreshWorker, stopSitemapRefreshWorker } from "./sitemap-publish.mjs";
 
 const port = Number(process.env.PORT || 8787);
 const host = process.env.HOST || "0.0.0.0";
@@ -66,6 +67,7 @@ if (backgroundWorkersEnabled) {
   startBackgroundTask("Lead outbox", startLeadOutboxWorker);
   startBackgroundTask("Blog agent", startBlogAgentWorker);
   startBackgroundTask("Data cleaner", startDataCleanerWorker);
+  startBackgroundTask("Daily sitemap refresh", startSitemapRefreshWorker);
 } else {
   console.log("Background workers are disabled for this standby instance");
 }
@@ -84,6 +86,7 @@ async function shutdown(signal) {
   stopLeadOutboxWorker();
   stopBlogAgentWorker();
   stopDataCleanerWorker();
+  stopSitemapRefreshWorker();
   server.close(async () => {
     await prisma.$disconnect();
     process.exit(0);

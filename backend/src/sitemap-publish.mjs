@@ -857,6 +857,45 @@ async function dynamicEntries(prismaClient, now = Date.now()) {
 }
 
 let publishing = false;
+let refreshTimer;
+let refreshStopped = false;
+
+export function nextSitemapRefreshDelay(now = Date.now()) {
+  // 21:00 UTC is 02:30 IST, when the full catalog scan is least disruptive.
+  const next = new Date(now);
+  next.setUTCHours(21, 0, 0, 0);
+  if (next.getTime() <= now) next.setUTCDate(next.getUTCDate() + 1);
+  return next.getTime() - now;
+}
+
+export function startSitemapRefreshWorker() {
+  if (refreshTimer || refreshStopped) return;
+  const run = async () => {
+    refreshTimer = undefined;
+    if (refreshStopped) return;
+    try {
+      const request = new Request("http://localhost/v1/functions/publish-sitemap", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ target: PUBLISH_TARGET }),
+      });
+      const result = await publishSitemap(request);
+      console.info(`[sitemap] Daily refresh published ${result.url_count} canonical URLs`);
+      if (!refreshStopped) refreshTimer = setTimeout(run, nextSitemapRefreshDelay()).unref();
+    } catch (error) {
+      console.error("[sitemap] Daily refresh failed; retrying in one hour", error);
+      if (!refreshStopped) refreshTimer = setTimeout(run, 60 * 60 * 1000).unref();
+    }
+  };
+  refreshTimer = setTimeout(run, nextSitemapRefreshDelay()).unref();
+}
+
+export function stopSitemapRefreshWorker() {
+  refreshStopped = true;
+  if (refreshTimer) clearTimeout(refreshTimer);
+  refreshTimer = undefined;
+}
+
 export async function publishSitemap(request, options = {}) {
   if (request.method !== "POST") throw publishError(405, "METHOD_NOT_ALLOWED", "Sitemap publishing requires POST");
   if (publishing && !options.allowConcurrent) throw publishError(409, "SITEMAP_PUBLISH_IN_PROGRESS", "A sitemap generation is already running");
