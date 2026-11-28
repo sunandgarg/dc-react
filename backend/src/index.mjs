@@ -26,6 +26,7 @@ import { consumeSarkariHomeFeedReadLimit, loadSarkariHomeFeed } from "./sarkari-
 import { queueIndexNowUrls } from "./indexnow.mjs";
 import { counselorSse, generateCounselorReply } from "./ai-counselor.mjs";
 import { publicContentCache } from "./public-content-cache.mjs";
+import { serveEntityPage } from "./entity-page.mjs";
 
 const publicReadTables = new Set([
   "about_founders", "about_milestones", "about_page", "about_press", "about_stats", "about_team", "about_values",
@@ -715,6 +716,8 @@ export async function handleRequest(request) {
   const requestId = request.headers.get("x-request-id") || randomUUID();
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...corsHeaders(request), "x-request-id": requestId } });
   const url = new URL(request.url);
+  const entityPage = await serveEntityPage(request, { prismaClient: prisma });
+  if (entityPage) return entityPage;
   if (url.pathname === "/health/live") {
     return json(200, { ok: true, backend: "node", requestId }, requestId, request);
   }
