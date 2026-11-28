@@ -8,6 +8,11 @@ on:
         required: false
         default: false
         type: boolean
+      skip_integration_probe:
+        description: Skip external API probe during a sitemap-only deploy
+        required: false
+        default: false
+        type: boolean
       budget_email:
         description: Email address for AWS budget alerts
         required: true
@@ -668,7 +673,9 @@ jobs:
           # External media normalization is a one-time, explicitly confirmed
           # maintenance migration. A routine deploy must never rescan every
           # string/JSON field in every table while the public API is serving.
-          npm --prefix backend run verify:integrations
+          if [[ '${{ inputs.skip_integration_probe }}' != 'true' ]]; then
+            npm --prefix backend run verify:integrations
+          fi
           pm2 reload dc-react-api --update-env --max-memory-restart "$PM2_MEMORY_LIMIT"
           pm2 save
           if ! command -v certbot >/dev/null 2>&1; then
